@@ -66,6 +66,14 @@ final class NpcDialogueFallback {
                 && containsAny(normalized, "bring", "take", "camp", "visit")) {
             return Optional.of("Bring fair trade, a quiet hand, and no greed; hobgoblins count manners as coin.");
         }
+        if (containsAny(normalized, "careful beginner", "beginner learn", "safe to learn first",
+                "before touching your craft", "touching your craft")) {
+            return Optional.of("*nods* \"Primer next steps: Witches' Oven for Wood Ash and fumes, then Kettle brews your Primer has opened; practice chalk and altar power before binding.\"");
+        }
+        Optional<String> settlementAnswer = settlementHunterAnswer(normalized);
+        if (settlementAnswer.isPresent()) {
+            return settlementAnswer;
+        }
         if (containsAny(normalized, "rite", "rites", "ritual", "rituals")
                 && containsAny(normalized, "alone", "by myself", "need a coven", "without a coven")) {
             return Optional.of("Lesser rites can be worked alone; coven work asks trust, power, and the right page.");
@@ -116,7 +124,7 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "owl", "owls") && !containsAny(normalized, "familiar", "familiars")) {
             return Optional.of("An owl on the roof is a warning, not a command. Watch it, then ward your door.");
         }
-        if (containsAny(normalized, "cat", "cats")) {
+        if (containsWord(normalized, "cat") || containsWord(normalized, "cats")) {
             return Optional.of("Cats stare at what owes them, " + name + ". Best not owe a cat.");
         }
         if (containsAny(normalized, "egg", "eggs")) {
@@ -608,7 +616,8 @@ final class NpcDialogueFallback {
     }
 
     private static boolean asksNpcEarnings(String normalized) {
-        return (normalized.contains("earn")
+        return (containsWord(normalized, "earn")
+                || containsAny(normalized, "earns", "earning", "earned")
                 || normalized.contains("profit")
                 || normalized.contains("make money")
                 || normalized.contains("make coin"))
@@ -711,6 +720,25 @@ final class NpcDialogueFallback {
     private static boolean asksDemonTrust(String normalized) {
         return containsAny(normalized, "demon", "demons", "devil", "imp")
                 && containsAny(normalized, "trust", "bargain", "bargains", "deal", "deals");
+    }
+
+    private static Optional<String> settlementHunterAnswer(String normalized) {
+        if (containsAny(normalized, "witch hunter", "witch hunters", "hunters after", "transformed folk")) {
+            return Optional.of("Witch Hunters pursue vampires and werewolves, shoot silver bolts, then close with blades; distance is wiser than bravado.");
+        }
+        if (containsAny(normalized, "silver")
+                && containsAny(normalized, "werewolf", "werewolves", "wolfman", "vampire", "vampires",
+                "transformed folk", "transformed creatures")) {
+            return Optional.of("Silver bites transformed flesh: Silver Swords and Silver Bolts hit vampires and werewolves harder.");
+        }
+        if (containsAny(normalized, "guard shouted", "guards shouted", "village guard", "village guards",
+                "guard angry", "guards angry")) {
+            return Optional.of("Village guards attack monsters, vampires, and werewolves; if one shouts, check what shape, curse, or company you are carrying.");
+        }
+        if (containsAny(normalized, "apothecary", "apothecaries")) {
+            return Optional.of("Apothecaries are village potion trade and practical help, not coven witches; buy supplies, but do not expect circle secrets.");
+        }
+        return Optional.empty();
     }
 
     private static boolean asksRecipeRiteLearning(String normalized) {
@@ -844,7 +872,8 @@ final class NpcDialogueFallback {
                 && containsAny(memory, "village thinks you are trouble", "village think you are trouble")) {
             return Optional.of("Not entirely. Trouble follows me, " + playerName + "; I just keep mine better trained.");
         }
-        if (containsAny(normalized, "did you bless me", "am i blessed", "your blessing", "you blessed me", "the luck")
+        if (containsAny(normalized, "did you bless me", "am i blessed", "your blessing", "you blessed me",
+                "the luck", "that blessing", "blessing do anything")
                 && containsAny(memory, "blessed with luck", "coven_witch_blessed")) {
             return Optional.of("A small luck, " + playerName + "; spend it before pride eats the shine off.");
         }
@@ -862,7 +891,8 @@ final class NpcDialogueFallback {
             return Optional.of("I gave one herb freely, " + playerName + "; plant it, brew it, or owe it respect.");
         }
         if (containsAny(normalized, "what scares me", "what did i say scares me", "what did i say i fear",
-                "what do i fear", "what am i afraid of", "nightmare", "nightmares", "bad dreams")
+                "what do i fear", "what am i afraid of", "what did i say makes me nervous",
+                "makes me nervous", "nightmare", "nightmares", "bad dreams")
                 && containsAny(memory, "wary of nightmares", "afraid of nightmares", "wary of nightmares",
                 "fear nightmares", "fears nightmares")) {
             return Optional.of("I remember your nightmare fear, " + playerName + "; keep a Dream Catcher close and mark your way back.");
@@ -1159,7 +1189,10 @@ final class NpcDialogueFallback {
                 || normalized.contains("you are looking for brew")
                 || normalized.contains("you are looking for a potion")
                 || normalized.contains("you are looking for help")
-                || normalized.contains("you are curious");
+                || normalized.contains("you are curious")
+                || normalized.contains("you have before entering")
+                || normalized.contains("you have a herb before")
+                || normalized.contains("you have herb before");
     }
 
     private static String playerNameFromMemory(String memoryContext) {
@@ -1236,6 +1269,12 @@ final class NpcDialogueFallback {
             }
         }
         return false;
+    }
+
+    private static boolean containsWord(String text, String word) {
+        return Pattern.compile("(^|\\s)" + Pattern.quote(word) + "($|\\s)")
+                .matcher(text)
+                .find();
     }
 
     private static boolean isGreeting(String normalized) {

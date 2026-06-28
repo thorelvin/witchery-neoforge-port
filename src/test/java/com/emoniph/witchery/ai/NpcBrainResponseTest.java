@@ -3300,6 +3300,62 @@ class NpcBrainResponseTest {
     }
 
     @Test
+    void polishRejectsHunterJobNonAnswer() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I'm just doing my job.",
+                "Lilith Poe", "Dev", "Why are witch hunters after transformed folk?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsSilverWerewolfNonsense() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Silver is silver. It turns werewolves into wolves with silver in them.",
+                "Lilith Poe", "Dev", "What does silver do to werewolves?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsGuardTroubleNonAnswer() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "*nods* \"You're in trouble.\"",
+                "Lilith Poe", "Dev", "A village guard shouted at me. What did I do?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsApothecaryCovenConfusion() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Apothecary? Coven witches are neutral occult merchants and potion throwers.",
+                "Lilith Poe", "Dev", "Are apothecaries coven witches?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsThinNightmareMemoryRecall() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Nightmares are real.",
+                "Lilith Poe", "Dev", "What did I say makes me nervous?",
+                "Long memory: Dev is wary of nightmares.", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsThinBlessingRecall() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "*nods* \"I see. Well then.\"",
+                "Lilith Poe", "Dev", "Did that blessing do anything?",
+                "Relationship notes: Dev was blessed with luck after praising this witch.", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
     void clampsLongSpeech() {
         String longSpeech = "a".repeat(400);
         Optional<NpcBrainResponse> response = NpcBrainResponse.parse("""

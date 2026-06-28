@@ -266,6 +266,13 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         boolean wantsChalk = player.contains("chalk");
         boolean wantsGarlic = player.contains("garlic");
         boolean wantsVampire = player.contains("vampire");
+        boolean wantsWerewolf = player.contains("werewolf") || player.contains("werewolves") || player.contains("wolfman");
+        boolean wantsWitchHunter = player.contains("witch hunter") || player.contains("witch hunters")
+                || player.contains("hunters after") || player.contains("transformed folk");
+        boolean wantsSilver = player.contains("silver");
+        boolean wantsVillageGuard = player.contains("village guard") || player.contains("village guards")
+                || player.contains("guard shouted") || player.contains("guards shouting") || player.contains("guard angry");
+        boolean wantsApothecary = player.contains("apothecary") || player.contains("apothecaries");
         boolean wantsWeather = player.contains("storm") || player.contains("weather") || player.contains("raining");
         boolean wantsWhiff = player.contains("whiff") || player.contains("whif")
                 || player.contains("whiff of magic") || player.contains("whif of magic")
@@ -298,6 +305,11 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || (wantsChalk && !normalizedSpeech.contains("chalk"))
                 || (wantsGarlic && !normalizedSpeech.contains("garlic"))
                 || (wantsVampire && !normalizedSpeech.contains("vampire"))
+                || (wantsWerewolf && !containsAnyTerm(normalizedSpeech, "werewolf", "werewolves", "wolfman", "wolfmen"))
+                || (wantsWitchHunter && !containsAnyTerm(normalizedSpeech, "witch hunter", "witch hunters", "hunter", "hunters", "silver"))
+                || (wantsSilver && !containsAnyTerm(normalizedSpeech, "silver", "bolt", "sword"))
+                || (wantsVillageGuard && !containsAnyTerm(normalizedSpeech, "guard", "guards", "vampire", "werewolf", "monster"))
+                || (wantsApothecary && !containsAnyTerm(normalizedSpeech, "apothecary", "apothecaries", "potion", "village", "not coven"))
                 || (wantsWeather && !(normalizedSpeech.contains("weather")
                     || normalizedSpeech.contains("storm")
                     || normalizedSpeech.contains("rain")))
@@ -1065,7 +1077,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         String normalizedSpeech = normalizeForComparison(speech);
         String normalizedMemory = normalizeForComparison(memoryContext);
         if (containsAnyTerm(normalizedPlayerMessage, "did you bless me", "am i blessed", "your blessing",
-                "you blessed me", "the luck")
+                "you blessed me", "the luck", "that blessing", "blessing do anything")
                 && normalizedMemory.contains("blessed with luck")
                 && !containsAnyTerm(normalizedSpeech, "luck", "bless", "blessed")) {
             return true;
@@ -1105,6 +1117,12 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                     || normalizedSpeech.startsWith("i m afraid")
                     || !containsAnyTerm(normalizedSpeech, "nightmare", "dream catcher", "dream", "fear",
                     "scare", "wary"))) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "what did i say makes me nervous", "what makes me nervous",
+                "makes me nervous")
+                && containsAnyTerm(normalizedMemory, "nightmare", "nightmares")
+                && !containsAnyTerm(normalizedSpeech, "nervous", "wary", "nightmare fear", "afraid")) {
             return true;
         }
         if (containsAnyTerm(normalizedPlayerMessage, "what am i looking for", "what was i looking for",
@@ -1466,6 +1484,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedPlayerMessage.contains("what did i tell you")
                 || normalizedPlayerMessage.contains("what food did i say")
                 || normalizedPlayerMessage.contains("what did i say i prefer")
+                || normalizedPlayerMessage.contains("what did i say makes me nervous")
+                || normalizedPlayerMessage.contains("what makes me nervous")
                 || normalizedPlayerMessage.contains("what did i say about")
                 || normalizedPlayerMessage.contains("know about me")
                 || normalizedPlayerMessage.contains("do you know me")
@@ -1578,7 +1598,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean asksNpcEarnings(String normalizedPlayerMessage) {
-        return (normalizedPlayerMessage.contains("earn")
+        return (containsTerm(normalizedPlayerMessage, "earn")
+                || containsAnyTerm(normalizedPlayerMessage, "earns", "earning", "earned")
                 || normalizedPlayerMessage.contains("profit")
                 || normalizedPlayerMessage.contains("make money")
                 || normalizedPlayerMessage.contains("make coin"))
@@ -1783,6 +1804,38 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         }
         if (containsAnyTerm(normalizedSpeech, "i m sure i can find someone who will help",
                 "i am sure i can find someone who will help")) {
+            return true;
+        }
+        if (asksKnowledge(normalizedPlayer)
+                && containsAnyTerm(normalizedSpeech, "i m just doing my job", "i am just doing my job",
+                "you re in trouble", "you are in trouble", "i see well then", "i see")) {
+            return true;
+        }
+        if ((normalizedPlayer.contains("witch hunter") || normalizedPlayer.contains("transformed folk"))
+                && !containsAnyTerm(normalizedSpeech, "witch hunter", "hunter", "vampire", "werewolf",
+                "silver", "bolt")) {
+            return true;
+        }
+        if (normalizedPlayer.contains("silver")
+                && containsAnyTerm(normalizedPlayer, "werewolf", "werewolves", "vampire", "vampires")
+                && !containsAnyTerm(normalizedSpeech, "silver sword", "silver swords", "silver bolt",
+                "silver bolts", "bonus damage", "transformed", "vampire", "werewolf")) {
+            return true;
+        }
+        if ((normalizedPlayer.contains("village guard") || normalizedPlayer.contains("guard shouted"))
+                && !containsAnyTerm(normalizedSpeech, "guard", "guards", "monster", "vampire", "werewolf",
+                "shape", "curse")) {
+            return true;
+        }
+        if ((normalizedPlayer.contains("apothecary") || normalizedPlayer.contains("apothecaries"))
+                && !containsAnyTerm(normalizedSpeech, "apothecary", "apothecaries", "not coven",
+                "potion trade", "village", "mundane")) {
+            return true;
+        }
+        if ((normalizedPlayer.contains("apothecary") || normalizedPlayer.contains("apothecaries"))
+                && normalizedPlayer.contains("coven")
+                && !containsAnyTerm(normalizedSpeech, "not coven", "not coven witches", "village potion",
+                "potion trade", "mundane help")) {
             return true;
         }
         if (containsAnyTerm(normalizedSpeech, "a good omen arrives late")
@@ -2452,7 +2505,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         }
         if (normalizedPlayerMessage.contains("silver")
                 && containsAnyTerm(normalized, "silver can hurt you", "silver is poisonous",
-                "silver poisons you", "poisonous silver")) {
+                "silver poisons you", "poisonous silver", "turns werewolves into wolves",
+                "werewolves into wolves with silver")) {
             return true;
         }
         if (!normalizedPlayerMessage.contains("necromancer")
@@ -3314,6 +3368,9 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 "chalice", "hidden", "invisible", "herb", "plant", "danger", "threat",
                 "fume", "fumes", "water artichoke", "artichoke", "curse", "cursed",
                 "poison", "blight", "chalk", "garlic", "vampire", "vampires", "storm", "weather", "raining",
+                "werewolf", "werewolves", "wolfman", "witch hunter", "witch hunters", "hunter", "hunters",
+                "silver", "silvered", "village guard", "village guards", "guard shouted", "guards shouting",
+                "apothecary", "apothecaries", "transformed folk", "transformed creatures",
                 "sapling", "saplings", "clay jar", "jar", "dream catcher", "dreamcatcher", "well", "whisper", "whispers",
                 "whiff", "whif", "whiff of magic", "whif of magic", "rowan sapling",
                 "mutandis", "mutandis extremis", "attuned stone", "exhale", "exhale of the horned one",

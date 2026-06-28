@@ -81,6 +81,28 @@ class NpcMemoryNotesTest {
     }
 
     @Test
+    void extractsSubjectMakesPlayerNervousFact() {
+        Optional<String> note = NpcMemoryNotes.extract("Dev", "Remember that nightmares make me nervous.");
+
+        assertTrue(note.isPresent());
+        assertEquals("Dev is wary of nightmares.", note.get());
+    }
+
+    @Test
+    void doesNotStoreCarryAdviceQuestionAsInventory() {
+        Optional<String> note = NpcMemoryNotes.extract("Dev", "What should I carry before entering the Spirit World?");
+
+        assertTrue(note.isEmpty());
+    }
+
+    @Test
+    void doesNotStoreHerbRequestAsInventory() {
+        Optional<String> note = NpcMemoryNotes.extract("Dev", "Can I have a herb before I go?");
+
+        assertTrue(note.isEmpty());
+    }
+
+    @Test
     void refusesTransientBrewWant() {
         Optional<String> note = NpcMemoryNotes.extract("Dev", "I want a brew that helps me escape, not fight.");
 

@@ -1117,6 +1117,12 @@ class NpcKnowledgeBaseTest {
         assertTrue(huntersLower.contains("werewolves"), hunters.get());
         assertTrue(huntersLower.contains("silver bolts"), hunters.get());
 
+        Optional<String> transformed = NpcKnowledgeBase.compactAnswer(
+                "why are witch hunters after transformed folk?", "Plains", "night");
+
+        assertTrue(transformed.isPresent());
+        assertTrue(transformed.get().toLowerCase(Locale.ROOT).contains("silver bolts"), transformed.get());
+
         Optional<String> silver = NpcKnowledgeBase.compactAnswer(
                 "what does silver damage do to werewolves?", "Plains", "night");
 
@@ -1125,6 +1131,12 @@ class NpcKnowledgeBaseTest {
         assertTrue(silverLower.contains("silver weapons"), silver.get());
         assertTrue(silverLower.contains("silver bolts"), silver.get());
         assertTrue(silverLower.contains("bonus damage"), silver.get());
+
+        Optional<String> silverPlain = NpcKnowledgeBase.compactAnswer(
+                "what does silver do to werewolves?", "Plains", "night");
+
+        assertTrue(silverPlain.isPresent());
+        assertTrue(silverPlain.get().toLowerCase(Locale.ROOT).contains("bonus damage"), silverPlain.get());
 
         Optional<String> armor = NpcKnowledgeBase.compactAnswer(
                 "what does silvered hunter armor do?", "Plains", "night");
@@ -1142,6 +1154,18 @@ class NpcKnowledgeBaseTest {
         assertTrue(guardsLower.contains("monsters"), guards.get());
         assertTrue(guardsLower.contains("vampires"), guards.get());
         assertTrue(guardsLower.contains("werewolves"), guards.get());
+
+        Optional<String> shouted = NpcKnowledgeBase.compactAnswer(
+                "a village guard shouted at me. what did i do?", "Plains", "night");
+
+        assertTrue(shouted.isPresent());
+        assertTrue(shouted.get().toLowerCase(Locale.ROOT).contains("guards"), shouted.get());
+
+        Optional<String> apothecaries = NpcKnowledgeBase.compactAnswer(
+                "are apothecaries coven witches?", "Plains", "night");
+
+        assertTrue(apothecaries.isPresent());
+        assertTrue(apothecaries.get().toLowerCase(Locale.ROOT).contains("not coven witches"), apothecaries.get());
     }
 
     @Test

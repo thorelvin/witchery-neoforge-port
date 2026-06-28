@@ -1172,6 +1172,68 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
+    void beginnerLearningDoesNotHitEarningsBranch() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What should a careful beginner learn before touching your craft?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("Primer next steps"), speech.get());
+        assertTrue(!speech.get().contains("earn enough"), speech.get());
+    }
+
+    @Test
+    void catchFumesDoesNotHitCatBranch() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "How do I catch fumes?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("Witch's Oven"), speech.get());
+        assertTrue(speech.get().contains("clay jars"), speech.get());
+        assertTrue(!speech.get().contains("Cats stare"), speech.get());
+    }
+
+    @Test
+    void recallsNightmaresMakeMeNervousMemory() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What did I say makes me nervous?", "Lilith Poe", "Dev", "Swamp", "night", "22:30", 1L,
+                "Long memory: Dev is wary of nightmares.");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("nightmare fear"), speech.get());
+    }
+
+    @Test
+    void recallsBlessingQuestionVariant() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "Did that blessing do anything?", "Lilith Poe", "Dev", "Swamp", "night", "22:30", 1L,
+                "Relationship notes: Dev was blessed with luck after praising this witch.");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("small luck"), speech.get());
+    }
+
+    @Test
+    void answersSettlementAndHunterCardsDirectly() {
+        Optional<String> hunters = NpcDialogueFallback.covenChat(
+                "Why are witch hunters after transformed folk?", "Lilith Poe", "Dev");
+        Optional<String> silver = NpcDialogueFallback.covenChat(
+                "What does silver do to werewolves?", "Lilith Poe", "Dev");
+        Optional<String> guards = NpcDialogueFallback.covenChat(
+                "A village guard shouted at me. What did I do?", "Lilith Poe", "Dev");
+        Optional<String> apothecaries = NpcDialogueFallback.covenChat(
+                "Are apothecaries coven witches?", "Lilith Poe", "Dev");
+
+        assertTrue(hunters.isPresent());
+        assertTrue(hunters.get().contains("silver bolts"), hunters.get());
+        assertTrue(silver.isPresent());
+        assertTrue(silver.get().contains("Silver Swords"), silver.get());
+        assertTrue(guards.isPresent());
+        assertTrue(guards.get().contains("Village guards"), guards.get());
+        assertTrue(apothecaries.isPresent());
+        assertTrue(apothecaries.get().contains("not coven witches"), apothecaries.get());
+    }
+
+    @Test
     void alternateFallbackAvoidsRecentAside() {
         String last = NpcDialogueFallback.lastResortAside("blargle snorp?", "Dev");
         Optional<String> alternate = NpcDialogueFallback.alternateForRepeatedFallback(

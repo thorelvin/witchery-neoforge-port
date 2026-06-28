@@ -20,6 +20,8 @@ final class NpcMemoryNotes {
             Pattern.compile("(?i)\\bi(?:\\s+am|'m)\\s+afraid\\s+of\\s+(.{2,70})");
     private static final Pattern PLAYER_NERVOUS_OF =
             Pattern.compile("(?i)\\bi(?:\\s+get|\\s+am|'m)\\s+nervous\\s+(?:around|about|near)\\s+(.{2,70})");
+    private static final Pattern PLAYER_SUBJECT_MAKES_NERVOUS =
+            Pattern.compile("(?i)\\b(?:remember\\s+(?:that\\s+)?)?(.{2,60})\\s+make(?:s)?\\s+me\\s+nervous\\b");
     private static final Pattern PLAYER_LOOKING_FOR =
             Pattern.compile("(?i)\\b(?:i(?:\\s+am|'m)\\s+looking\\s+for|looking\\s+for)\\s+(.{2,70})");
     private static final Pattern PLAYER_WANTS_TO_LEARN =
@@ -27,7 +29,7 @@ final class NpcMemoryNotes {
     private static final Pattern PLAYER_WANTS_TO_DO =
             Pattern.compile("(?i)\\bi\\s+(?:want|need|hope)\\s+to\\s+(?!learn\\b)(.{2,70})");
     private static final Pattern PLAYER_HAS =
-            Pattern.compile("(?i)\\bi(?:\\s+have|\\s+carry|\\s+got|\\s+have\\s+got|'ve\\s+got)\\s+(.{2,70})");
+            Pattern.compile("(?i)^(?:remember\\s+(?:that\\s+)?)?i(?:\\s+have|\\s+carry|\\s+got|\\s+have\\s+got|'ve\\s+got)\\s+(.{2,70})");
     private static final Pattern PLAYER_WILL_RETURN =
             Pattern.compile("(?i)\\bi\\s+(?:will|ll|'ll|can)\\s+come\\s+back\\s+(.{2,70})");
     private static final Pattern PLAYER_VILLAGE_THINKS =
@@ -49,6 +51,7 @@ final class NpcMemoryNotes {
                 .or(() -> firstMatch(speech, PLAYER_PREFERS, match -> name + " prefers " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_LIKES, match -> name + " likes " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_NERVOUS_OF, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(speech, PLAYER_SUBJECT_MAKES_NERVOUS, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_AFRAID_OF, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_DISLIKES, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_WANTS_TO_LEARN, match -> name + " wants to learn " + cleanFact(match.group(1)) + "."))
@@ -107,6 +110,9 @@ final class NpcMemoryNotes {
                 && !normalized.contains("looking for help")
                 && !normalized.contains("looking for advice")
                 && !normalized.contains("wants to make a practical step")
+                && !normalized.contains("has before entering")
+                && !normalized.contains("has a herb before")
+                && !normalized.contains("has herb before")
                 && !normalized.matches(".*<\\s*/?\\s*[a-z][a-z0-9_-]*\\b.*")
                 && !normalized.contains("json")
                 && !normalized.contains("api")
