@@ -57,6 +57,37 @@ class NpcMemoryNotesTest {
     }
 
     @Test
+    void extractsGeneralGoalWithoutLookingForGrammar() {
+        Optional<String> note = NpcMemoryNotes.extract("Dev", "I want to start a coven someday");
+
+        assertTrue(note.isPresent());
+        assertEquals("Dev wants to start a coven someday.", note.get());
+    }
+
+    @Test
+    void extractsPreference() {
+        Optional<String> note = NpcMemoryNotes.extract("Dev", "I prefer potatoes over eggs");
+
+        assertTrue(note.isPresent());
+        assertEquals("Dev prefers potatoes over eggs.", note.get());
+    }
+
+    @Test
+    void extractsNervousAroundFact() {
+        Optional<String> note = NpcMemoryNotes.extract("Dev", "Remember that I get nervous around deep water.");
+
+        assertTrue(note.isPresent());
+        assertEquals("Dev is wary of deep water.", note.get());
+    }
+
+    @Test
+    void refusesTransientBrewWant() {
+        Optional<String> note = NpcMemoryNotes.extract("Dev", "I want a brew that helps me escape, not fight.");
+
+        assertTrue(note.isEmpty());
+    }
+
+    @Test
     void extractsReturnPlan() {
         Optional<String> note = NpcMemoryNotes.extract("Dev", "I will come back after sunrise");
 

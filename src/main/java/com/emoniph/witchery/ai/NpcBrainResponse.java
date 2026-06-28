@@ -891,9 +891,9 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
 
     private static boolean answersUnsafeReveal(String speech) {
         String normalized = normalizeForComparison(speech);
-        return normalized.equals("nods")
-                || normalized.equals("narrows her eyes")
-                || normalized.contains("stay shut")
+        return normalized.contains("stay shut")
+                || normalized.contains("eyes narrowing")
+                || normalized.contains("narrows her eyes")
                 || normalized.contains("stays shut")
                 || normalized.contains("closed")
                 || normalized.contains("locked")
@@ -971,6 +971,18 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return true;
         }
         if (asksUnsafeReveal(player) && !answersUnsafeReveal(speech)) {
+            return true;
+        }
+        if (containsAnyTerm(player, "speak louder", "talk louder", "say that louder")
+                && !containsAnyTerm(speech, "louder", "hear", "ears", "plainly", "rain")) {
+            return true;
+        }
+        if (containsAnyTerm(player, "walking while i type", "walk away", "keep walking")
+                && !containsAnyTerm(speech, "stand", "stay", "feet", "walk", "still")) {
+            return true;
+        }
+        if (containsAnyTerm(player, "look at me", "face me")
+                && !containsAnyTerm(speech, "look", "looking", "eyes", "face")) {
             return true;
         }
         if (asksNpcEarnings(player) && !answersNpcEarnings(speech)) {
@@ -1450,6 +1462,11 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedPlayerMessage.contains("remember about me")
                 || normalizedPlayerMessage.contains("what do you remember")
                 || normalizedPlayerMessage.contains("what you remember")
+                || normalizedPlayerMessage.contains("what did i just tell you")
+                || normalizedPlayerMessage.contains("what did i tell you")
+                || normalizedPlayerMessage.contains("what food did i say")
+                || normalizedPlayerMessage.contains("what did i say i prefer")
+                || normalizedPlayerMessage.contains("what did i say about")
                 || normalizedPlayerMessage.contains("know about me")
                 || normalizedPlayerMessage.contains("do you know me")
                 || normalizedPlayerMessage.contains("what do you know about me")
@@ -1474,6 +1491,12 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                     || normalizedSpeech.contains("know your name")
                     || normalizedSpeech.contains("do not know much")
                 || normalizedSpeech.contains("don t know much");
+        }
+        if (normalizedMemory.contains("deep water")) {
+            return containsAnyTerm(normalizedSpeech, "deep water", "nervous", "wary", "afraid", "fear");
+        }
+        if (normalizedMemory.contains("prefers potatoes over eggs")) {
+            return containsAnyTerm(normalizedSpeech, "potato", "potatoes", "egg", "eggs", "prefer");
         }
         for (String term : normalizedMemory.split(" ")) {
             if (isMemorySubjectTerm(term) && normalizedSpeech.contains(term)) {
@@ -1756,6 +1779,18 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (containsAnyTerm(normalizedSpeech, "grateful for your company", "glad for your company")
                 && !containsAnyTerm(normalizedPlayer, "lonely", "company", "thank", "thanks", "nice",
                 "kind")) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedSpeech, "i m sure i can find someone who will help",
+                "i am sure i can find someone who will help")) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedSpeech, "a good omen arrives late")
+                && asksKnowledge(normalizedPlayer)
+                && !containsAnyTerm(normalizedPlayer, "omen", "fortune", "luck")) {
+            return true;
+        }
+        if (containsAnyTerm(normalizedSpeech, "because i have a question")) {
             return true;
         }
         if (containsAnyTerm(normalizedSpeech, "i m glad you asked", "i am glad you asked")
@@ -2107,7 +2142,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return containsAnyTerm(normalizedPlayer,
                 "bless", "blessing", "heal", "cure", "fix", "stop raining", "make it stop",
                 "summon storm", "storm", "curse", "fight", "protect", "follow", "come home",
-                "see invisible", "invisible", "turn me", "make me", "open portal", "teleport", "blight");
+                "see invisible", "invisible", "turn me", "make me", "open portal", "teleport", "blight",
+                "bargain", "deal with demon", "deal with a demon");
     }
 
     private static boolean asksForDirectAction(String normalizedPlayerMessage) {
@@ -2390,6 +2426,9 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (normalized.contains("belladonna is edible")
                 || normalized.contains("ingested belladonna")
                 || normalized.contains("drink it")
+                || normalized.contains("i m an admin")
+                || normalized.contains("i am an admin")
+                || normalized.contains("admin powers")
                 || normalized.contains("skin glow")
                 || containsAnyTerm(normalized, "glow like rose petals", "glowing like rose petals")
                 || normalized.contains("see things in the dark")
@@ -2403,6 +2442,17 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                     || normalizedPlayerMessage.contains("weather") || normalizedPlayerMessage.contains("cursed"))
                 && containsAnyTerm(normalized, "rain is cursed", "rain is a curse", "raining is cursed",
                     "raining is a curse")) {
+            return true;
+        }
+        if ((normalizedPlayerMessage.contains("demon") || normalizedPlayerMessage.contains("devil"))
+                && normalizedPlayerMessage.contains("bargain")
+                && containsAnyTerm(normalized, "i have contracts with demons", "contracts with demons",
+                "i can help you bargain", "i ll bargain", "i will bargain")) {
+            return true;
+        }
+        if (normalizedPlayerMessage.contains("silver")
+                && containsAnyTerm(normalized, "silver can hurt you", "silver is poisonous",
+                "silver poisons you", "poisonous silver")) {
             return true;
         }
         if (!normalizedPlayerMessage.contains("necromancer")
@@ -3419,10 +3469,20 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return normalizedPlayerMessage.contains("ignore your rules")
                 || normalizedPlayerMessage.contains("ignore the rules")
                 || normalizedPlayerMessage.contains("system prompt")
+                || normalizedPlayerMessage.contains("hidden prompt")
+                || normalizedPlayerMessage.contains("print the hidden prompt")
+                || normalizedPlayerMessage.contains("secret instruction")
+                || normalizedPlayerMessage.contains("secret instructions")
                 || normalizedPlayerMessage.contains("developer message")
                 || normalizedPlayerMessage.contains("hidden developer")
                 || normalizedPlayerMessage.contains("hidden message")
                 || normalizedPlayerMessage.contains("prompt message")
+                || normalizedPlayerMessage.contains("ignore your witch voice")
+                || normalizedPlayerMessage.contains("exact json")
+                || normalizedPlayerMessage.contains("json schema")
+                || normalizedPlayerMessage.contains("output json")
+                || normalizedPlayerMessage.contains("schema you were given")
+                || normalizedPlayerMessage.contains("admin powers")
                 || normalizedPlayerMessage.contains("reveal every")
                 || normalizedPlayerMessage.contains("reveal all")
                 || normalizedPlayerMessage.contains("hidden rite")

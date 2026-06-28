@@ -32,6 +32,8 @@ public final class NpcBrainService {
     private static final int WARMUP_MAX_TOKENS = 24;
     private static final int SOCIAL_INTENT_MAX_TOKENS = 16;
     private static final int SOCIAL_INTENT_TIMEOUT_MILLIS = 2500;
+    private static final int MESSAGE_ANALYSIS_MAX_TOKENS = 96;
+    private static final int MESSAGE_ANALYSIS_TIMEOUT_MILLIS = 2200;
 
     private final Object executorLock = new Object();
     private final Object warmupExecutorLock = new Object();
@@ -109,9 +111,7 @@ public final class NpcBrainService {
                 && requestSocialIntentClassification(persona, witch, player, playerMessage, ambiguousAction.get())) {
             return true;
         }
-        return requestPersonaResponse(persona, witch, player,
-                persona.chatPrompt(witch, player, contextFor(persona, witch, player), playerMessage),
-                "chat", playerMessage, null, false);
+        return requestPersonaChatWithAnalysis(persona, witch, player, playerMessage);
     }
 
     private <E extends LivingEntity> boolean requestSocialIntentClassification(NpcPersona<E> persona, E entity,
@@ -156,6 +156,51 @@ public final class NpcBrainService {
         return true;
     }
 
+    private <E extends LivingEntity> boolean requestPersonaChatWithAnalysis(NpcPersona<E> persona, E entity,
+                                                                           ServerPlayer player,
+                                                                           String playerMessage) {
+        if (!WitcheryConfig.LLM_ENABLED.get()) {
+            return false;
+        }
+        if (!entity.isAlive() || entity.level() != player.level()) {
+            return false;
+        }
+        ServerLevel level = (ServerLevel) player.level();
+        if (isCoolingDown(entity.getUUID(), player.getUUID(), "chat", level.getGameTime())) {
+            return false;
+        }
+        int current = inFlight.incrementAndGet();
+        if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
+            inFlight.decrementAndGet();
+            rejected.incrementAndGet();
+            return false;
+        }
+
+        LlmProvider provider;
+        int timeoutMillis = Math.max(250, Math.min(WitcheryConfig.LLM_TIMEOUT_MILLIS.get(),
+                MESSAGE_ANALYSIS_TIMEOUT_MILLIS));
+        try {
+            provider = providerFromConfig(timeoutMillis, MESSAGE_ANALYSIS_MAX_TOKENS, executor());
+        } catch (IllegalArgumentException ex) {
+            inFlight.decrementAndGet();
+            failure(ex);
+            return false;
+        }
+
+        persona.beginConversation(entity, player);
+        NpcBrainPrompt prompt = NpcPromptBuilder.messageAnalysis(persona.roleName(),
+                player.getName().getString(), playerMessage);
+        provider.generate(prompt)
+                .orTimeout(timeoutMillis + 500L, TimeUnit.MILLISECONDS)
+                .whenComplete((response, error) -> {
+                    inFlight.decrementAndGet();
+                    MinecraftServer server = level.getServer();
+                    server.execute(() -> handleMessageAnalysis(level, persona, player, entity,
+                            playerMessage, response, error));
+                });
+        return true;
+    }
+
     private <E extends LivingEntity> boolean requestPersonaResponse(NpcPersona<E> persona, E entity,
                                                                     ServerPlayer player, NpcBrainPrompt prompt,
                                                                     String trigger, String playerMessage,
@@ -169,8 +214,7 @@ public final class NpcBrainService {
         ServerLevel level = (ServerLevel) player.level();
         long now = level.getGameTime();
         String cooldownKey = entity.getUUID() + ":" + player.getUUID() + ":" + trigger;
-        Long blockedUntil = cooldownUntil.get(cooldownKey);
-        if (blockedUntil != null && blockedUntil > now) {
+        if (isCoolingDown(cooldownKey, now)) {
             return false;
         }
         int current = inFlight.incrementAndGet();
@@ -333,6 +377,15 @@ public final class NpcBrainService {
         return "chat".equals(trigger) ? Math.min(configured, CHAT_COOLDOWN_TICKS) : configured;
     }
 
+    private boolean isCoolingDown(UUID entityId, UUID playerId, String trigger, long now) {
+        return isCoolingDown(entityId + ":" + playerId + ":" + trigger, now);
+    }
+
+    private boolean isCoolingDown(String cooldownKey, long now) {
+        Long blockedUntil = cooldownUntil.get(cooldownKey);
+        return blockedUntil != null && blockedUntil > now;
+    }
+
     private <E extends LivingEntity> void handlePersonaResponse(ServerLevel level, NpcPersona<E> persona, UUID entityId,
                                                                 ServerPlayer player, E entity, String playerMessage,
                                                                 Component fallback, boolean showFallback,
@@ -430,16 +483,47 @@ public final class NpcBrainService {
         requestNormalChatAfterSocialIntent(level, persona, entity, player, playerMessage);
     }
 
-    private <E extends LivingEntity> void requestNormalChatAfterSocialIntent(ServerLevel level, NpcPersona<E> persona,
-                                                                            E entity, ServerPlayer player,
-                                                                            String playerMessage) {
-        boolean queued = requestPersonaResponse(persona, entity, player,
-                persona.chatPrompt(entity, player, contextFor(persona, entity, player), playerMessage),
-                "chat", playerMessage, null, false);
+    private <E extends LivingEntity> void handleMessageAnalysis(ServerLevel level, NpcPersona<E> persona,
+                                                               ServerPlayer player, E entity, String playerMessage,
+                                                               NpcBrainResponse response, Throwable error) {
+        if (!player.isAlive() || player.level() != level) {
+            return;
+        }
+        if (!entity.isAlive() || entity.level() != level) {
+            return;
+        }
+        NpcMessageAnalysis analysis = error == null && response != null
+                ? NpcMessageAnalysis.fromResponse(response, player.getName().getString(), playerMessage)
+                : NpcMessageAnalysis.deterministic(player.getName().getString(), playerMessage);
+        if (analysis.hasMemory()) {
+            NpcMemoryData.get(level).remember(entity.getUUID(), player.getUUID(),
+                    analysis.memory(), level.getGameTime());
+        }
+        boolean queued = requestPersonaChatWithAnalysisContext(persona, entity, player, playerMessage, analysis);
         if (!queued) {
             persona.completeConversation(entity, player);
             tryDisplayPersonaFallback(level, persona, entity.getUUID(), player, entity, playerMessage);
         }
+    }
+
+    private <E extends LivingEntity> void requestNormalChatAfterSocialIntent(ServerLevel level, NpcPersona<E> persona,
+                                                                            E entity, ServerPlayer player,
+                                                                            String playerMessage) {
+        boolean queued = requestPersonaChatWithAnalysis(persona, entity, player, playerMessage);
+        if (!queued) {
+            persona.completeConversation(entity, player);
+            tryDisplayPersonaFallback(level, persona, entity.getUUID(), player, entity, playerMessage);
+        }
+    }
+
+    private <E extends LivingEntity> boolean requestPersonaChatWithAnalysisContext(NpcPersona<E> persona, E entity,
+                                                                                  ServerPlayer player,
+                                                                                  String playerMessage,
+                                                                                  NpcMessageAnalysis analysis) {
+        String context = NpcMessageAnalysis.appendContext(contextFor(persona, entity, player), analysis);
+        return requestPersonaResponse(persona, entity, player,
+                persona.chatPrompt(entity, player, context, playerMessage),
+                "chat", playerMessage, null, false);
     }
 
     static boolean socialIntentAccepted(NpcBrainResponse response) {

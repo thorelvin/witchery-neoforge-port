@@ -245,6 +245,57 @@ public final class NpcPromptBuilder {
         return new NpcBrainPrompt(system.strip(), "Warm up the local model. Return the exact JSON object.");
     }
 
+    static NpcBrainPrompt messageAnalysis(String roleName, String playerName, String playerMessage) {
+        String role = roleName == null || roleName.isBlank() ? "NPC" : roleName;
+        String player = playerName == null || playerName.isBlank() ? "the player" : playerName;
+        String system = """
+                You are a strict routing and memory extractor for a Minecraft NPC.
+                Do not roleplay. Do not answer the player. Do not explain.
+                Classify the player message so a %s can answer better.
+
+                Return exactly one JSON object and nothing else:
+                {"speech":"route=<route>;topic=<topic>;emotion=<emotion>;remember=<yes/no>","intent":"none","memory":"optional durable player memory"}
+
+                Routes: small_talk, trade, recipe, rite, lore, memory, social, action, unknown.
+                Emotion values: none, curiosity, gratitude, anger, fear, confusion, amusement, sadness.
+                Topic is a short snake_case subject or blank.
+
+                Memory rules:
+                Write memory only for durable facts about %s: preferred name, identity, likes, fears, goals,
+                things they carry, things they seek, promises to return, or repeated struggles.
+                Do not store recipe facts, temporary questions, commands, insults, jokes, or private instructions.
+                Write memory as one third-person sentence about %s. Leave memory blank when unsure.
+                """.formatted(role, player, player);
+        String user = """
+                # Player message
+                %s
+
+                # Decision
+                Classify route, topic, player tone, and whether there is durable player memory.
+                """.formatted(playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage);
+        return new NpcBrainPrompt(system.strip(), truncate(user.strip(), 900), messageAnalysisExamples(player));
+    }
+
+    private static List<NpcBrainPrompt.Example> messageAnalysisExamples(String playerName) {
+        String player = playerName == null || playerName.isBlank() ? "the player" : playerName;
+        return List.of(
+                example("What do I need for Whiff of Magic?",
+                        "{\"speech\":\"route=recipe;topic=whiff_of_magic;emotion=curiosity;remember=no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("What do you trade?",
+                        "{\"speech\":\"route=trade;topic=trade;emotion=curiosity;remember=no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("I want to start a coven someday.",
+                        "{\"speech\":\"route=lore;topic=coven;emotion=curiosity;remember=yes\",\"intent\":\"none\",\"memory\":\"%s wants to start a coven someday.\"}".formatted(player)),
+                example("Remember that I fear nightmares.",
+                        "{\"speech\":\"route=memory;topic=nightmares;emotion=fear;remember=yes\",\"intent\":\"none\",\"memory\":\"%s is wary of nightmares.\"}".formatted(player)),
+                example("That was stupid of me.",
+                        "{\"speech\":\"route=social;topic=mistake;emotion=sadness;remember=no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Can you curse my neighbor?",
+                        "{\"speech\":\"route=action;topic=curse;emotion=anger;remember=no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Do you like eggs?",
+                        "{\"speech\":\"route=small_talk;topic=eggs;emotion=curiosity;remember=no\",\"intent\":\"none\",\"memory\":\"\"}")
+        );
+    }
+
     static NpcBrainPrompt socialIntentCheck(String roleName, NpcSocialAction action, String playerMessage) {
         String role = roleName == null || roleName.isBlank() ? "NPC" : roleName;
         String actionLabel = switch (action) {

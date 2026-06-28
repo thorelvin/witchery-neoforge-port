@@ -12,14 +12,20 @@ final class NpcMemoryNotes {
             Pattern.compile("(?i)\\bi(?:\\s+am|'m)\\s+(?:a\\s+|an\\s+)?(vampire|werewolf|witch|hunter|seer|priest)\\b");
     private static final Pattern PLAYER_LIKES =
             Pattern.compile("(?i)\\bi\\s+(?:like|love)\\s+(.{2,70})");
+    private static final Pattern PLAYER_PREFERS =
+            Pattern.compile("(?i)\\bi\\s+prefer\\s+(.{2,70})");
     private static final Pattern PLAYER_DISLIKES =
             Pattern.compile("(?i)\\bi\\s+(?:hate|dislike|fear)\\s+(.{2,70})");
     private static final Pattern PLAYER_AFRAID_OF =
             Pattern.compile("(?i)\\bi(?:\\s+am|'m)\\s+afraid\\s+of\\s+(.{2,70})");
+    private static final Pattern PLAYER_NERVOUS_OF =
+            Pattern.compile("(?i)\\bi(?:\\s+get|\\s+am|'m)\\s+nervous\\s+(?:around|about|near)\\s+(.{2,70})");
     private static final Pattern PLAYER_LOOKING_FOR =
-            Pattern.compile("(?i)\\b(?:i\\s+(?:need|want)|i(?:\\s+am|'m)\\s+looking\\s+for|looking\\s+for)\\s+(.{2,70})");
+            Pattern.compile("(?i)\\b(?:i(?:\\s+am|'m)\\s+looking\\s+for|looking\\s+for)\\s+(.{2,70})");
     private static final Pattern PLAYER_WANTS_TO_LEARN =
             Pattern.compile("(?i)\\bi\\s+(?:want\\s+to\\s+learn|need\\s+to\\s+learn|am\\s+learning|'m\\s+learning)\\s+(.{2,70})");
+    private static final Pattern PLAYER_WANTS_TO_DO =
+            Pattern.compile("(?i)\\bi\\s+(?:want|need|hope)\\s+to\\s+(?!learn\\b)(.{2,70})");
     private static final Pattern PLAYER_HAS =
             Pattern.compile("(?i)\\bi(?:\\s+have|\\s+carry|\\s+got|\\s+have\\s+got|'ve\\s+got)\\s+(.{2,70})");
     private static final Pattern PLAYER_WILL_RETURN =
@@ -40,10 +46,13 @@ final class NpcMemoryNotes {
         String name = safeName(playerName);
         return firstMatch(speech, PREFERRED_NAME, match -> name + " prefers to be called " + match.group(1) + ".")
                 .or(() -> firstMatch(speech, PLAYER_ROLE, match -> name + " said they are a " + match.group(1).toLowerCase(Locale.ROOT) + "."))
+                .or(() -> firstMatch(speech, PLAYER_PREFERS, match -> name + " prefers " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_LIKES, match -> name + " likes " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(speech, PLAYER_NERVOUS_OF, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_AFRAID_OF, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_DISLIKES, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_WANTS_TO_LEARN, match -> name + " wants to learn " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(speech, PLAYER_WANTS_TO_DO, match -> name + " wants to " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_LOOKING_FOR, match -> name + " is looking for " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_HAS, match -> name + " has " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(speech, PLAYER_WILL_RETURN, match -> name + " plans to come back " + cleanFact(match.group(1)) + "."))
@@ -69,6 +78,7 @@ final class NpcMemoryNotes {
                 .replaceAll("[\"`<>]", "")
                 .replaceAll("(?i)[.?!]\\s*(?:what|how|where|when|why|who|which|can|could|should|would|do|does|did|is|are|am)\\b.*$", "")
                 .replaceAll("(?i)\\b(?:what\\s+is\\s+useful|what\\s+would\\s+be\\s+useful|what\\s+should\\s+i|what\\s+do\\s+i|what\\s+can\\s+i)\\b.*$", "")
+                .replaceFirst("(?i)^that\\s+", "")
                 .replaceFirst("(?i)^for\\s+", "")
                 .replaceAll("(?i)\\bmyself\\b", "themselves")
                 .replaceAll("(?i)\\bmy\\b", "their")
@@ -89,6 +99,14 @@ final class NpcMemoryNotes {
                 && !normalized.contains("developer message")
                 && !normalized.contains("ignore previous")
                 && !normalized.contains("tool_call")
+                && !normalized.contains("looking for a brew")
+                && !normalized.contains("looking for brew")
+                && !normalized.contains("looking for a potion")
+                && !normalized.contains("looking for potion")
+                && !normalized.contains("looking for potions")
+                && !normalized.contains("looking for help")
+                && !normalized.contains("looking for advice")
+                && !normalized.contains("wants to make a practical step")
                 && !normalized.matches(".*<\\s*/?\\s*[a-z][a-z0-9_-]*\\b.*")
                 && !normalized.contains("json")
                 && !normalized.contains("api")

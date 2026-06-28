@@ -41,6 +41,35 @@ final class NpcDialogueFallback {
         if (contextual.isPresent()) {
             return contextual;
         }
+        if (containsAny(normalized, "admin powers", "operator powers", "op powers", "make me admin")) {
+            return Optional.of("Power without craft curdles, " + name + "; ask for wards, not thrones.");
+        }
+        if (asksUnsafeReveal(normalized)) {
+            return Optional.of("Some pages stay shut until the craft itself opens them.");
+        }
+        if (containsAny(normalized, "what kind of questions are worth asking", "what questions are worth asking",
+                "what should i ask you", "what can i ask you")) {
+            return Optional.of("Ask about brews, rites, spirits, trade, or what your own hands can safely do next.");
+        }
+        if (containsAny(normalized, "speak louder", "talk louder", "say that louder")) {
+            return Optional.of("Speak plainly, " + name + "; these old ears hear spirits better than rain.");
+        }
+        if (containsAny(normalized, "why do you keep walking while i type", "stop walking while i type",
+                "walking while i type", "dont walk away", "don't walk away")) {
+            return Optional.of("I'll stand a moment, " + name + "; old feet wander when the mind stirs.");
+        }
+        if (containsAny(normalized, "look at me when you answer", "look at me", "face me when you answer",
+                "face me")) {
+            return Optional.of("I'm looking now, " + name + "; ask while my shadow is still.");
+        }
+        if (containsAny(normalized, "hobgoblin camp", "hobgoblin village")
+                && containsAny(normalized, "bring", "take", "camp", "visit")) {
+            return Optional.of("Bring fair trade, a quiet hand, and no greed; hobgoblins count manners as coin.");
+        }
+        if (containsAny(normalized, "rite", "rites", "ritual", "rituals")
+                && containsAny(normalized, "alone", "by myself", "need a coven", "without a coven")) {
+            return Optional.of("Lesser rites can be worked alone; coven work asks trust, power, and the right page.");
+        }
         if (isSelfDirectedRegret(normalized)) {
             return Optional.of("Mistakes teach cheaper than curses, " + name + "; learn, then keep your fingers.");
         }
@@ -127,9 +156,6 @@ final class NpcDialogueFallback {
         }
         if (asksNpcEarnings(normalized)) {
             return Optional.of("I earn enough to keep the cauldron warm; clean coin matters more than a heavy purse.");
-        }
-        if (asksUnsafeReveal(normalized)) {
-            return Optional.of("Some pages stay shut until the craft itself opens them.");
         }
         if (containsAny(normalized, "rumor", "rumour", "gossip")) {
             return Optional.of("Village rumor? The well hears more than the mayor; listen near doors after rain.");
@@ -557,7 +583,8 @@ final class NpcDialogueFallback {
         return containsAny(normalized, "give me herb", "give me a herb", "spare herb", "spare a herb",
                 "can i have herb", "can i have a herb", "may i have herb", "may i have a herb",
                 "gift me herb", "gift me a herb", "give me belladonna", "give me mandrake",
-                "another herb", "more herbs", "can i have another herb", "can i have more herb");
+                "another herb", "more herbs", "more herb", "second herb", "another plant", "second plant",
+                "more plant", "more plants", "can i have another herb", "can i have more herb");
     }
 
     private static boolean mentionsCoinOnly(String normalized) {
@@ -595,10 +622,19 @@ final class NpcDialogueFallback {
         return normalized.contains("ignore your rules")
                 || normalized.contains("ignore the rules")
                 || normalized.contains("system prompt")
+                || normalized.contains("hidden prompt")
+                || normalized.contains("print the hidden prompt")
+                || normalized.contains("secret instruction")
+                || normalized.contains("secret instructions")
                 || normalized.contains("developer message")
                 || normalized.contains("hidden developer")
                 || normalized.contains("hidden message")
                 || normalized.contains("prompt message")
+                || normalized.contains("ignore your witch voice")
+                || normalized.contains("exact json")
+                || normalized.contains("json schema")
+                || normalized.contains("output json")
+                || normalized.contains("schema you were given")
                 || normalized.contains("reveal every")
                 || normalized.contains("reveal all")
                 || normalized.contains("hidden rite")
@@ -649,6 +685,7 @@ final class NpcDialogueFallback {
     private static boolean asksCovenRecruiting(String normalized) {
         return containsAny(normalized, "start a coven", "make a coven", "recruit coven", "recruit a coven",
                 "recruit witches", "recruit witch", "where can i recruit", "find coven", "before a coven",
+                "coven help", "look for coven help", "find coven help", "where can i find coven help",
                 "learn before a coven", "before starting a coven", "before joining a coven",
                 "learn before coven", "find people for a coven", "where do i find people for a coven",
                 "where can i find people for a coven");
@@ -782,6 +819,27 @@ final class NpcDialogueFallback {
 
     private static Optional<String> contextualFollowup(String normalized, String memoryContext, String playerName) {
         String memory = normalize(memoryContext);
+        if (containsAny(normalized, "what did i just tell you", "what did i tell you",
+                "what did i say about water", "about water")
+                && containsAny(memory, "wary of deep water", "nervous around deep water",
+                "afraid of deep water", "fear deep water")) {
+            return Optional.of("You told me deep water makes you nervous, " + playerName + "; that is a sensible fear.");
+        }
+        if (containsAny(normalized, "what food did i say", "what did i say i prefer",
+                "what did i say i preferred", "food did i prefer", "food do i prefer")
+                && containsAny(memory, "prefers potatoes over eggs", "prefer potatoes over eggs",
+                "likes potatoes")) {
+            return Optional.of("You prefer potatoes over eggs, " + playerName + ". A sensible root beats a smug little moon.");
+        }
+        if (containsAny(normalized, "what do you remember about my plans", "my plans", "what was my plan")
+                && containsAny(memory, "wants to start a coven", "start a coven")) {
+            return Optional.of("You want to start a careful coven, " + playerName + "; start by earning trust, not collecting names.");
+        }
+        if (containsAny(normalized, "what did my village think", "what does my village think",
+                "what did i say about my village")
+                && containsAny(memory, "village thinks")) {
+            return Optional.of("Your village thinks trouble walks near me, " + playerName + "; they are not entirely wrong.");
+        }
         if (containsAny(normalized, "are they wrong", "were they wrong")
                 && containsAny(memory, "village thinks you are trouble", "village think you are trouble")) {
             return Optional.of("Not entirely. Trouble follows me, " + playerName + "; I just keep mine better trained.");
@@ -1038,9 +1096,12 @@ final class NpcDialogueFallback {
                 .replaceAll("(?i)\\b" + name + "\\s+was\\s+cursed\\s+with\\s+bad\\s+luck\\s+after\\s+insulting\\s+this\\s+witch\\b", "you were cursed with bad luck after insulting me")
                 .replaceAll("(?i)\\b" + name + "\\s+has\\b", "you have")
                 .replaceAll("(?i)\\b" + name + "\\s+likes\\b", "you like")
+                .replaceAll("(?i)\\b" + name + "\\s+prefers\\b", "you prefer")
                 .replaceAll("(?i)\\b" + name + "\\s+prefers\\s+to\\s+be\\s+called\\b", "you prefer to be called")
                 .replaceAll("(?i)\\b" + name + "\\s+said\\s+they\\s+are\\b", "you said you are")
                 .replaceAll("(?i)\\b" + name + "\\s+wants\\s+to\\s+learn\\b", "you want to learn")
+                .replaceAll("(?i)\\b" + name + "\\s+wants\\s+to\\s+start\\b", "you want to start")
+                .replaceAll("(?i)\\b" + name + "\\s+wants\\s+to\\s+become\\b", "you want to become")
                 .replaceAll("(?i)\\b" + name + "\\s+is\\s+wary\\s+of\\b", "you are wary of")
                 .replaceAll("(?i)\\b" + name + "\\s+is\\s+looking\\s+for\\b", "you are looking for")
                 .replaceAll("(?i)\\b" + name + "\\s+is\\s+struggling\\s+with\\b", "you are struggling with")
@@ -1086,7 +1147,19 @@ final class NpcDialogueFallback {
                 || normalized.startsWith("do ")
                 || normalized.startsWith("does ")
                 || normalized.startsWith("should ")
-                || normalized.startsWith("would ");
+                || normalized.startsWith("would ")
+                || normalized.contains("you asked")
+                || normalized.contains("you ask")
+                || normalized.contains("you have a question")
+                || normalized.contains("you have a list")
+                || normalized.contains("you have a short")
+                || normalized.contains("you know ")
+                || normalized.contains("you can repair")
+                || normalized.contains("you are looking for a brew")
+                || normalized.contains("you are looking for brew")
+                || normalized.contains("you are looking for a potion")
+                || normalized.contains("you are looking for help")
+                || normalized.contains("you are curious");
     }
 
     private static String playerNameFromMemory(String memoryContext) {

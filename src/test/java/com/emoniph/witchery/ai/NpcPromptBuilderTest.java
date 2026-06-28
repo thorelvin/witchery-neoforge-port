@@ -172,4 +172,25 @@ class NpcPromptBuilderTest {
                 example.userPrompt().contains("Can you fool the guards")
                         && example.assistantResponse().contains("\"speech\":\"no\"")));
     }
+
+    @Test
+    void messageAnalysisPromptUsesRouterAndMemorySchema() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.messageAnalysis("witch", "Dev",
+                "Remember that I fear nightmares.");
+        String system = prompt.systemPrompt().toLowerCase();
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(system.contains("routing and memory extractor"), prompt.systemPrompt());
+        assertTrue(system.contains("route=<route>;topic=<topic>;emotion=<emotion>;remember=<yes/no>"),
+                prompt.systemPrompt());
+        assertTrue(system.contains("routes: small_talk, trade, recipe, rite, lore, memory, social, action, unknown"),
+                prompt.systemPrompt());
+        assertTrue(system.contains("write memory only for durable facts about dev"), prompt.systemPrompt());
+        assertTrue(user.contains("fear nightmares"), prompt.userPrompt());
+        assertTrue(prompt.examples().stream().anyMatch(example ->
+                example.assistantResponse().contains("route=recipe")
+                        && example.assistantResponse().contains("whiff_of_magic")));
+        assertTrue(prompt.examples().stream().anyMatch(example ->
+                example.assistantResponse().contains("Dev is wary of nightmares.")));
+    }
 }
