@@ -2927,6 +2927,60 @@ class NpcBrainResponseTest {
     }
 
     @Test
+    void polishRejectsTaglockCannotBeStolenClaim() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "*nods* \"No one can steal your magic. It's yours.\"",
+                "Lilith Poe", "Dev", "Can someone steal my taglock and hurt me?", "", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsVoodooPoppetAsProtectionConfusion() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "*nods* \"A voodoo poppet is a protective tool used by witches to shield their magic.\"",
+                "Lilith Poe", "Dev", "What is a voodoo poppet?", "", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsHobgoblinUnknownAnswer() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "I don't know.",
+                "Lilith Poe", "Dev", "I found a Hobgoblin hut. Should I talk to them?", "", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsHobgoblinQuestionAsWitchTradeStock() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "*nods* \"Salt, taglock kits, fumes, bat wool, herbs, and a few brews. Offer those things.\"",
+                "Lilith Poe", "Dev", "How do hobgoblin trades work?", "", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsMandrakeHarvestNightmareDrift() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "*nods* \"Mandrake is a good herb. Harvest it in the moonlight, and watch for nightmares.\"",
+                "Lilith Poe", "Dev", "How should I harvest mandrake without making a fool of myself?", "", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsOvenNeedsNoFuelClaim() {
+        Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
+                "A Witch's Oven burns saplings into fumes, but no fuel is required.",
+                "Lilith Poe", "Dev", "What does the Witch's Oven do that a furnace does not?", "", "22:30");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
     void polishRejectsOwlGiftClaimForFamiliarApproach() {
         Optional<String> speech = NpcBrainResponse.polishSpeechOrGroundedFollowup(
                 "I've got an owl for you.",

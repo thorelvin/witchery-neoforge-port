@@ -149,18 +149,19 @@ class LeonardPersonaTest {
 
     @Test
     void knowledgeBaseRoutesLeonardCard() {
-        String context = NpcKnowledgeBase.relevantContext("how do I summon Leonard?", "Plains", "night");
+        NpcCardRequest leonard = NpcCardRequest.persona("leonard");
+        String context = NpcKnowledgeBase.relevantContext("how do I summon Leonard?", "Plains", "night", leonard);
 
         assertTrue(context.contains("Nether Wart"), context);
         assertTrue(context.contains("10000 altar power"), context);
 
-        String origin = NpcKnowledgeBase.relevantContext("where were you summoned from?", "Plains", "night");
+        String origin = NpcKnowledgeBase.relevantContext("where were you summoned from?", "Plains", "night", leonard);
 
         assertTrue(origin.toLowerCase().contains("sabbath threshold"), origin);
         assertTrue(origin.toLowerCase().contains("goat"), origin);
 
         String coven = NpcKnowledgeBase.relevantContext("what do you think of my coven witches? leonard coven danger witches",
-                "Plains", "night");
+                "Plains", "night", leonard);
 
         assertTrue(coven.toLowerCase().contains("does not aid"), coven);
     }

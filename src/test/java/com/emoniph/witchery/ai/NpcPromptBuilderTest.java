@@ -144,6 +144,17 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void smokePromptDoesNotLeakBossPersonaCardsIntoCovenWitch() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.covenWitchSmoke(
+                "Evening, Lilith, the fog feels strange tonight.", "");
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(!user.contains("regal, hungry"), user);
+        assertTrue(!user.contains("vampire fire"), user);
+        assertTrue(!user.contains("current run"), user);
+    }
+
+    @Test
     void warmupPromptUsesInvisibleReadyJson() {
         NpcBrainPrompt prompt = NpcPromptBuilder.warmup();
 

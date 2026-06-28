@@ -153,6 +153,22 @@ class NpcMemoryDataTest {
     }
 
     @Test
+    void exchangeDoesNotStoreMemoryQuestionAsFearFact() {
+        NpcMemoryData data = new NpcMemoryData();
+        UUID witch = UUID.randomUUID();
+        UUID player = UUID.randomUUID();
+
+        data.rememberExchange(witch, player, "Lilith Poe", "Dev",
+                "Remember that nightmares make me nervous.", "I'll remember.", 20L);
+        data.rememberExchange(witch, player, "Lilith Poe", "Dev",
+                "What did I say makes me nervous?", "Nightmares.", 40L);
+
+        String context = data.getContext(witch, player);
+        assertTrue(context.contains("Dev is wary of nightmares"));
+        assertFalse(context.toLowerCase().contains("wary of what did i say"));
+    }
+
+    @Test
     void returnsLastNpcSpeech() {
         NpcMemoryData data = new NpcMemoryData();
         UUID witch = UUID.randomUUID();

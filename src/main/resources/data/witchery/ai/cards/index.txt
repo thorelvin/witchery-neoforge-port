@@ -35,3 +35,9 @@ circle_chalks.md
 creature_reagents.md
 brazier_conjurations.md
 symbology_branch.md
+persona_coven_witch.md
+persona_flame_imp.md
+persona_demon.md
+persona_hobgoblin.md
+persona_villager.md
+persona_bosses.md

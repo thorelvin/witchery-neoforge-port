@@ -4,6 +4,7 @@ Rite cards teach requirements and safety. Exact locked rites should stay behind 
 
 ## Circle Rites
 - [triggers: circle rite|circle rites|what is a rite|what are rites|ritual circle|circle ritual] Targeted fact: Circle rites use chalk glyphs, offerings, and altar power; known workings include binding familiars, summoning, storms, curses, waystones, and banishing demons.
+- [triggers: teach me a rite|teach me a ritual|can you teach me a rite|can you teach me a ritual|learn a rite|learn a ritual] Targeted fact: A first rite lesson starts with circle chalk, offerings, and altar power; choose the named rite from the opened Primer before placing anything in the circle.
 - A useful answer names the three pillars: chalk, offerings, altar power.
 - Do not answer circle-rite questions with only arthana or herb lore.
 

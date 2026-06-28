@@ -1781,6 +1781,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return !asksListening(normalizedPlayer);
         }
         if (normalizedSpeech.equals("i have no idea")
+                || normalizedSpeech.equals("i don t know")
+                || normalizedSpeech.equals("i do not know")
                 || normalizedSpeech.equals("the name s lilith poe")
                 || normalizedSpeech.equals("i ll need my wand")
                 || normalizedSpeech.equals("i ll need a clay jar")
@@ -1790,6 +1792,10 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedSpeech.equals("what s this")
                 || normalizedSpeech.equals("what is this")
                 || normalizedSpeech.equals("dream catcher")) {
+            return true;
+        }
+        if (asksKnowledge(normalizedPlayer)
+                && containsAnyTerm(normalizedSpeech, "i don t know", "i do not know", "i have no idea")) {
             return true;
         }
         if (normalizedSpeech.contains("i am not a monster")
@@ -2585,9 +2591,33 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return true;
         }
         if ((normalizedPlayerMessage.contains("taglock") || normalizedPlayerMessage.contains("tag lock"))
-                && containsAnyTerm(normalizedPlayerMessage, "harm me", "against me", "worried", "worry")
+                && containsAnyTerm(normalizedPlayerMessage, "harm me", "hurt me", "against me", "worried", "worry",
+                "steal", "stolen")
                 && containsAnyTerm(normalized, "no harm can come", "cannot harm you", "can t harm you",
-                "cant harm you")) {
+                "cant harm you", "no one can steal your magic", "no one can steal", "magic is yours")) {
+            return true;
+        }
+        if (normalizedPlayerMessage.contains("voodoo poppet")
+                && !normalizedPlayerMessage.contains("voodoo protection")
+                && containsAnyTerm(normalized, "protective tool", "shield their magic", "protective poppet",
+                "protects a witch", "protect you from harm")) {
+            return true;
+        }
+        if (normalizedPlayerMessage.contains("hobgoblin")
+                && containsAnyTerm(normalized, "i don t know", "i do not know", "salt taglock",
+                "salt taglocks", "taglock kits fumes", "fumes bat wool", "good trade offer those things")) {
+            return true;
+        }
+        if (normalizedPlayerMessage.contains("mandrake")
+                && normalizedPlayerMessage.contains("harvest")
+                && containsAnyTerm(normalized, "watch for nightmares", "harvest it in the moonlight")
+                && !containsAnyTerm(normalized, "scream", "screams", "earmuff", "earmuffs", "tall grass", "seeds")) {
+            return true;
+        }
+        if ((normalizedPlayerMessage.contains("witch s oven") || normalizedPlayerMessage.contains("witches oven")
+                || normalizedPlayerMessage.contains("fume") || normalizedPlayerMessage.contains("fumes"))
+                && containsAnyTerm(normalized, "doesn t need fuel", "does not need fuel", "no fuel required",
+                "no fuel is required")) {
             return true;
         }
         if ((normalizedPlayerMessage.contains("familiar") || normalizedPlayerMessage.contains("owl"))
@@ -3165,7 +3195,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     private static boolean asksBeginnerPathQuestion(String normalizedPlayerMessage) {
         return containsAnyTerm(normalizedPlayerMessage, "safe beginner path", "beginner path", "first recipe",
                 "first rite", "first ritual", "start learning", "safe to learn first",
-                "learn first", "what should i learn first", "what is safe to learn");
+                "learn first", "what should i learn first", "what is safe to learn",
+                "careful beginner", "beginner learn", "before touching your craft", "touching your craft");
     }
 
     private static boolean asksHutOrDoorSafetyQuestion(String normalizedPlayerMessage) {
@@ -3736,6 +3767,10 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (!normalizedSpeech.contains("mandrake")) {
             return false;
         }
+        if (containsAnyTerm(normalizedSpeech, "tall grass", "mandrake seeds", "scream", "screams",
+                "earmuff", "earmuffs", "night harvesting")) {
+            return true;
+        }
         if (normalizedSpeech.contains("graveyard")
                 || normalizedSpeech.contains("witch tree")
                 || normalizedSpeech.contains("forest")
@@ -3800,7 +3835,9 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedSpeech.contains("vulnerable")
                 || normalizedSpeech.contains("supernatural powers")
                 || normalizedSpeech.contains("enhance their abilities")
-                || normalizedSpeech.contains("grant them")) {
+                || normalizedSpeech.contains("grant them")
+                || normalizedSpeech.contains("no one can steal your magic")
+                || normalizedSpeech.contains("magic is yours")) {
             return false;
         }
         boolean namesTarget = normalizedSpeech.contains("person")
@@ -3829,7 +3866,10 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedSpeech.contains("gold")
                 || normalizedSpeech.contains("pieces")
                 || normalizedSpeech.contains("price")
-                || normalizedSpeech.contains("made for")) {
+                || normalizedSpeech.contains("made for")
+                || (normalizedSpeech.contains("voodoo poppet")
+                    && !normalizedSpeech.contains("voodoo protection")
+                    && containsAnyTerm(normalizedSpeech, "protective tool", "shield", "protects a witch"))) {
             return false;
         }
         boolean namesLink = normalizedSpeech.contains("taglock")

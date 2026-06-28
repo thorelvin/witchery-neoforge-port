@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public final class NpcPromptBuilder {
     private static final int MAX_USER_PROMPT_LENGTH = 3200;
+    private static final int MAX_CARD_TOPICS = 6;
 
     private NpcPromptBuilder() {
     }
@@ -53,7 +55,8 @@ public final class NpcPromptBuilder {
         LivingEntity target = witch.getTarget();
         String threat = target == null ? "none" : target.getType().getDescription().getString();
         boolean recruited = witch.isRecruitedBy(player);
-        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time);
+        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time,
+                cardRequest("coven_witch", witch.getUUID(), player, level));
 
         return covenWitchPrompt(
                 witchName,
@@ -76,7 +79,8 @@ public final class NpcPromptBuilder {
     static NpcBrainPrompt covenWitchSmoke(String playerMessage, String memory) {
         String biome = "Plains";
         String time = "night";
-        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time);
+        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time,
+                NpcCardRequest.persona("coven_witch"));
         return covenWitchPrompt(
                 "Lilith Poe",
                 "Dev",
@@ -131,7 +135,8 @@ public final class NpcPromptBuilder {
                 "valid altar nearby: power 12000/16000, recharge 20/t, range 32, distance 6.0 blocks",
                 "player coven 2/6; nearby coven witches: Lilith Poe, Mara Fen",
                 "main hand Arthana; offhand Leonard's Urn; wearing Witches' Hat",
-                NpcKnowledgeBase.relevantContext(playerMessage, "Plains", "night"),
+                NpcKnowledgeBase.relevantContext(playerMessage, "Plains", "night",
+                        NpcCardRequest.persona("leonard")),
                 memory,
                 playerMessage,
                 "the player spoke near the Shade of Leonard in chat",
@@ -146,7 +151,8 @@ public final class NpcPromptBuilder {
         String time = timeName(level.getDayTime());
         String biome = biomeName(level, leonard.blockPosition());
         String knowledgeQuery = leonardKnowledgeQuery(playerMessage);
-        String knowledge = NpcKnowledgeBase.relevantContext(knowledgeQuery, biome, time);
+        String knowledge = NpcKnowledgeBase.relevantContext(knowledgeQuery, biome, time,
+                cardRequest("leonard", leonard.getUUID(), player, level));
 
         return leonardPrompt(
                 name,
@@ -166,6 +172,12 @@ public final class NpcPromptBuilder {
                 playerMessage,
                 situation,
                 task);
+    }
+
+    private static NpcCardRequest cardRequest(String personaId, UUID npcId, ServerPlayer player, ServerLevel level) {
+        int turn = NpcMemoryData.get(level).exchangeCount(npcId, player.getUUID());
+        return new NpcCardRequest(personaId, npcId, player.getUUID(), level.getGameTime(),
+                turn, MAX_CARD_TOPICS, 1);
     }
 
     private static NpcBrainPrompt leonardPrompt(String leonardName, String playerName, String dimension,

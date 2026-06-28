@@ -3,7 +3,7 @@
 Small lesson cards for NPC teaching. These keep a coven witch practical: one real next step, one warning, no hidden-book dump.
 
 ## First Steps
-- [triggers: what should i do first|where do i start|how start witchery|how do i start witchcraft|beginner path|starter path|first machine|first station|what should i build first|early progression] Targeted fact: A sound first path is Witches' Oven for Wood Ash and fumes, then Mutandis for strange plants, then Kettle, Distillery, Circle Magic, and the Brazier as pages unlock.
+- [triggers: what should i do first|where do i start|how start witchery|how do i start witchcraft|beginner path|starter path|first machine|first station|what should i build first|early progression|careful beginner|before touching your craft|touching your craft|beginner learn] Targeted fact: A sound first path is Witches' Oven for Wood Ash and fumes, then Mutandis for strange plants, then Kettle, Distillery, Circle Magic, and the Brazier as pages unlock.
 - [triggers: after oven|after witches oven|after witch oven|what after oven|after wood ash|after whiff] Targeted fact: After the Witches' Oven, use Wood Ash and fumes for Mutandis and Attuned Stone, then move toward the Kettle and Distillery.
 - The broad Primer path is oven, herbology, brews, distilling, circle magic, conjuration, symbology, poppets, spirit work, creatures, and transformations.
 

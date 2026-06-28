@@ -252,6 +252,11 @@ public final class NpcMemoryData extends SavedData {
         return false;
     }
 
+    public int exchangeCount(UUID npc, UUID player) {
+        Memory memory = memories.get(new Key(npc, player));
+        return memory == null ? 0 : memory.exchanges().size();
+    }
+
     public void remember(UUID npc, UUID player, String memory, long gameTime) {
         String sanitized = NpcBrainResponse.sanitize(memory, NpcBrainResponse.MAX_MEMORY_LENGTH);
         if (sanitized.isBlank() || isUnsafeMemoryText(sanitized)) {

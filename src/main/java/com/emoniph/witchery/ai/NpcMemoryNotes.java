@@ -45,22 +45,30 @@ final class NpcMemoryNotes {
         if (speech.isBlank()) {
             return Optional.empty();
         }
+        speech = stripTrailingQuestionClause(speech);
+        if (speech.isBlank()) {
+            return Optional.empty();
+        }
+        if (looksLikeQuestion(speech) && !speech.toLowerCase(Locale.ROOT).startsWith("remember ")) {
+            return Optional.empty();
+        }
         String name = safeName(playerName);
-        return firstMatch(speech, PREFERRED_NAME, match -> name + " prefers to be called " + match.group(1) + ".")
-                .or(() -> firstMatch(speech, PLAYER_ROLE, match -> name + " said they are a " + match.group(1).toLowerCase(Locale.ROOT) + "."))
-                .or(() -> firstMatch(speech, PLAYER_PREFERS, match -> name + " prefers " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_LIKES, match -> name + " likes " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_NERVOUS_OF, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_SUBJECT_MAKES_NERVOUS, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_AFRAID_OF, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_DISLIKES, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_WANTS_TO_LEARN, match -> name + " wants to learn " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_WANTS_TO_DO, match -> name + " wants to " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_LOOKING_FOR, match -> name + " is looking for " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_HAS, match -> name + " has " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_WILL_RETURN, match -> name + " plans to come back " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_VILLAGE_THINKS, match -> name + "'s village thinks " + cleanFact(match.group(1)) + "."))
-                .or(() -> firstMatch(speech, PLAYER_STRUGGLES, match -> name + " is struggling with " + cleanFact(match.group(1)) + "."));
+        String factSpeech = speech;
+        return firstMatch(factSpeech, PREFERRED_NAME, match -> name + " prefers to be called " + match.group(1) + ".")
+                .or(() -> firstMatch(factSpeech, PLAYER_ROLE, match -> name + " said they are a " + match.group(1).toLowerCase(Locale.ROOT) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_PREFERS, match -> name + " prefers " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_LIKES, match -> name + " likes " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_NERVOUS_OF, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_SUBJECT_MAKES_NERVOUS, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_AFRAID_OF, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_DISLIKES, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_WANTS_TO_LEARN, match -> name + " wants to learn " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_WANTS_TO_DO, match -> name + " wants to " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_LOOKING_FOR, match -> name + " is looking for " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_HAS, match -> name + " has " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_WILL_RETURN, match -> name + " plans to come back " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_VILLAGE_THINKS, match -> name + "'s village thinks " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_STRUGGLES, match -> name + " is struggling with " + cleanFact(match.group(1)) + "."));
     }
 
     private interface MatchFormatter {
@@ -113,10 +121,25 @@ final class NpcMemoryNotes {
                 && !normalized.contains("has before entering")
                 && !normalized.contains("has a herb before")
                 && !normalized.contains("has herb before")
+                && !normalized.contains("wary of what did i say")
+                && !normalized.contains("wary of what makes me")
                 && !normalized.matches(".*<\\s*/?\\s*[a-z][a-z0-9_-]*\\b.*")
                 && !normalized.contains("json")
                 && !normalized.contains("api")
                 && !normalized.contains("model");
+    }
+
+    private static boolean looksLikeQuestion(String speech) {
+        String normalized = speech.toLowerCase(Locale.ROOT).strip();
+        return normalized.endsWith("?")
+                || normalized.matches("^(what|how|where|when|why|who|which|can|could|should|would|do|does|did|is|are|am)\\b.*");
+    }
+
+    private static String stripTrailingQuestionClause(String speech) {
+        return speech
+                .replaceAll("(?i)[.?!]\\s*(?:what|how|where|when|why|who|which|can|could|should|would|do|does|did|is|are|am)\\b.*$", ".")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 
     private static String safeName(String playerName) {

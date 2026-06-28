@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -71,6 +72,58 @@ class NpcKnowledgeBaseTest {
         assertTrue(lower.contains("targeted fact"));
         assertTrue(lower.contains("spirit world"));
         assertTrue(lower.contains("nightmare"));
+    }
+
+    @Test
+    void personaCardRequestCanUseSocialCueWithoutGenericLookupBecomingChatty() {
+        String generic = NpcKnowledgeBase.relevantContext("hi", "Plains", "day");
+        String persona = NpcKnowledgeBase.relevantContext("hi", "Plains", "day",
+                new NpcCardRequest("coven_witch", new UUID(1L, 2L), new UUID(3L, 4L), 0L, 0, 2, 1));
+
+        assertTrue(generic.isBlank());
+        assertTrue(persona.toLowerCase(Locale.ROOT).contains("targeted fact"), persona);
+        assertTrue(persona.toLowerCase(Locale.ROOT).contains("greet"), persona);
+    }
+
+    @Test
+    void genericLookupDoesNotUsePersonaOnlyBossCards() {
+        String context = NpcKnowledgeBase.relevantContext("Evening, Lilith, the fog feels strange tonight.",
+                "Plains", "night");
+        String lower = context.toLowerCase(Locale.ROOT);
+
+        assertTrue(!lower.contains("regal, hungry"), context);
+        assertTrue(!lower.contains("vampire fire"), context);
+        assertTrue(!lower.contains("current run"), context);
+    }
+
+    @Test
+    void personaCardRequestRotatesVariantsByConversationTurn() {
+        UUID npc = new UUID(11L, 12L);
+        UUID player = new UUID(21L, 22L);
+        Set<String> contexts = new LinkedHashSet<>();
+        for (int turn = 0; turn < 8; turn++) {
+            String context = NpcKnowledgeBase.relevantContext("where were you summoned from?", "Plains", "night",
+                    new NpcCardRequest("leonard", npc, player, 1200L, turn, 1, 1));
+            String lower = context.toLowerCase(Locale.ROOT);
+            assertTrue(lower.contains("targeted fact"), context);
+            assertTrue(!lower.contains("[topic:"), context);
+            assertTrue(!lower.contains("[persona:"), context);
+            assertTrue(!lower.contains("[weight:"), context);
+            contexts.add(context);
+        }
+
+        assertTrue(contexts.size() > 1, "Expected Leonard origin variants to rotate by turn: " + contexts);
+    }
+
+    @Test
+    void personaCardRequestFiltersOtherPersonaFacts() {
+        String context = NpcKnowledgeBase.relevantContext(
+                "where were you summoned from goat legs sabbath", "Plains", "night",
+                new NpcCardRequest("coven_witch", new UUID(31L, 32L), new UUID(41L, 42L), 0L, 0, 3, 1));
+        String lower = context.toLowerCase(Locale.ROOT);
+
+        assertTrue(!lower.contains("goat-legged"), context);
+        assertTrue(!lower.contains("sabbath threshold"), context);
     }
 
     @Test

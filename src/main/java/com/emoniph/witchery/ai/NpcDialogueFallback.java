@@ -180,6 +180,11 @@ final class NpcDialogueFallback {
                 && containsAny(normalized, "bring", "take", "camp", "visit")) {
             return Optional.of("Bring fair trade, a quiet hand, and no greed; hobgoblins count manners as coin.");
         }
+        if (containsAny(normalized, "hobgoblin hut", "found a hobgoblin", "talk to hobgoblin",
+                "talk to them")
+                && containsAny(normalized, "hobgoblin", "koboldite")) {
+            return Optional.of("Talk if you must, but keep trade honest; hobgoblins like Koboldite and dislike village manners.");
+        }
         if (containsAny(normalized, "careful beginner", "beginner learn", "safe to learn first",
                 "before touching your craft", "touching your craft")) {
             return Optional.of("*nods* \"Primer next steps: Witches' Oven for Wood Ash and fumes, then Kettle brews your Primer has opened; practice chalk and altar power before binding.\"");
@@ -976,7 +981,8 @@ final class NpcDialogueFallback {
     private static boolean asksBeginnerPath(String normalized) {
         return containsAny(normalized, "safe beginner path", "beginner path", "first recipe",
                 "first rite", "first ritual", "start learning", "safe to learn first",
-                "learn first", "what should i learn first", "what is safe to learn");
+                "learn first", "what should i learn first", "what is safe to learn",
+                "careful beginner", "beginner learn", "before touching your craft", "touching your craft");
     }
 
     private static boolean asksMixingWarning(String normalized) {

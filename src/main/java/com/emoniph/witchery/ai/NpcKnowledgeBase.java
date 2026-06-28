@@ -5,17 +5,24 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class NpcKnowledgeBase {
     private static final String RESOURCE = "/data/witchery/ai/coven_witch_knowledge.md";
     private static final String CARD_INDEX_RESOURCE = "/data/witchery/ai/cards/index.txt";
     private static final String CARD_RESOURCE_DIR = "/data/witchery/ai/cards/";
     private static final String TARGETED_PREFIX = "- [triggers:";
+    private static final String TARGETED_MARKER = "Targeted fact:";
+    private static final Pattern CARD_METADATA = Pattern.compile("\\[([a-zA-Z0-9_]+):\\s*([^\\]]+)]");
     private static final int MAX_CONTEXT_LENGTH = 1400;
     private static final int MAX_RELEVANT_SECTIONS = 3;
     private static final int MAX_TARGETED_NOTES = 6;
@@ -27,18 +34,26 @@ public final class NpcKnowledgeBase {
     }
 
     public static String relevantContext(String playerMessage, String biome, String timeOfDay) {
+        return relevantContext(playerMessage, biome, timeOfDay, NpcCardRequest.any());
+    }
+
+    public static String relevantContext(String playerMessage, String biome, String timeOfDay,
+                                         NpcCardRequest cardRequest) {
+        NpcCardRequest request = cardRequest == null ? NpcCardRequest.any() : cardRequest;
         String normalized = normalize(playerMessage);
         if (isFavoriteHerbQuestion(normalized)) {
             return "";
         }
-        if (!looksLikeKnowledgeQuestion(playerMessage) && !containsKnowledgeCue(normalized)) {
+        List<TargetedMatch> selectedNotes = selectedTargetedMatches(normalized, request);
+        boolean personaCue = !NpcCardRequest.ANY_PERSONA.equals(request.personaId()) && !selectedNotes.isEmpty();
+        if (!looksLikeKnowledgeQuestion(playerMessage) && !containsKnowledgeCue(normalized) && !personaCue) {
             return "";
         }
         Set<String> terms = terms((playerMessage == null ? "" : playerMessage) + " " + biome + " " + timeOfDay);
         List<SectionScore> scored = new ArrayList<>();
         StringBuilder context = new StringBuilder();
-        targetedMatches(normalized).stream()
-                .limit(MAX_TARGETED_NOTES)
+        selectedNotes.stream()
+                .limit(Math.min(MAX_TARGETED_NOTES, request.maxTopics() * request.maxFactsPerTopic()))
                 .forEach(match -> appendText(context, match.note().note()));
         for (Section section : SECTIONS) {
             int score = score(section, terms);
@@ -146,10 +161,60 @@ public final class NpcKnowledgeBase {
 
     private static List<TargetedMatch> targetedMatches(String normalized) {
         return TARGETED_NOTES.stream()
+                .filter(note -> note.matchesPersona(NpcCardRequest.ANY_PERSONA))
                 .map(note -> new TargetedMatch(note, note.matchScore(normalized)))
                 .filter(match -> match.score() > 0)
                 .sorted(Comparator.comparingInt(TargetedMatch::score).reversed())
                 .toList();
+    }
+
+    private static List<TargetedMatch> selectedTargetedMatches(String normalized, NpcCardRequest request) {
+        List<TargetedMatch> matches = TARGETED_NOTES.stream()
+                .filter(note -> note.matchesPersona(request.personaId()))
+                .map(note -> new TargetedMatch(note, note.matchScore(normalized)))
+                .filter(match -> match.score() > 0)
+                .sorted(Comparator.comparingInt(TargetedMatch::score).reversed())
+                .toList();
+        if (matches.isEmpty()) {
+            return List.of();
+        }
+        Map<String, List<TargetedMatch>> byTopic = new LinkedHashMap<>();
+        for (TargetedMatch match : matches) {
+            byTopic.computeIfAbsent(match.note().topic(), ignored -> new ArrayList<>()).add(match);
+        }
+        List<TargetedMatch> selected = new ArrayList<>();
+        int topics = 0;
+        for (Map.Entry<String, List<TargetedMatch>> entry : byTopic.entrySet()) {
+            if (topics >= request.maxTopics()) {
+                break;
+            }
+            List<TargetedMatch> variants = new ArrayList<>(entry.getValue());
+            int picks = Math.min(request.maxFactsPerTopic(), variants.size());
+            for (int pick = 0; pick < picks; pick++) {
+                TargetedMatch chosen = weightedVariant(entry.getKey(), variants, request, pick);
+                selected.add(chosen);
+                variants.remove(chosen);
+            }
+            topics++;
+        }
+        return selected;
+    }
+
+    private static TargetedMatch weightedVariant(String topic, List<TargetedMatch> variants,
+                                                 NpcCardRequest request, int pickIndex) {
+        int totalWeight = variants.stream()
+                .mapToInt(match -> Math.max(1, match.note().weight()))
+                .sum();
+        int slot = Math.floorMod(Objects.hash(topic, request.entityId(), request.playerId(),
+                request.conversationTurn(), pickIndex), totalWeight);
+        int cursor = 0;
+        for (TargetedMatch variant : variants) {
+            cursor += Math.max(1, variant.note().weight());
+            if (slot < cursor) {
+                return variant;
+            }
+        }
+        return variants.get(0);
     }
 
     private static Set<String> terms(String text) {
@@ -451,12 +516,61 @@ public final class NpcKnowledgeBase {
                 continue;
             }
             String triggers = line.substring(TARGETED_PREFIX.length(), end).strip();
-            String note = line.substring(end + 1).strip();
+            int factStart = line.indexOf(TARGETED_MARKER, end + 1);
+            if (factStart < 0) {
+                continue;
+            }
+            String metadata = line.substring(end + 1, factStart).strip();
+            String note = line.substring(factStart).strip();
             if (!triggers.isBlank() && !note.isBlank()) {
-                notes.add(new TargetedNote(triggers, note));
+                notes.add(new TargetedNote(
+                        triggers,
+                        note,
+                        cardMetadata(metadata, "topic").map(NpcKnowledgeBase::normalizeTopic)
+                                .orElse(defaultTopic(triggers)),
+                        cardMetadata(metadata, "persona").map(NpcCardRequest::normalizePersona)
+                                .orElse(NpcCardRequest.ANY_PERSONA),
+                        cardMetadata(metadata, "weight").map(NpcKnowledgeBase::parseWeight).orElse(1)));
             }
         }
         return notes;
+    }
+
+    private static Optional<String> cardMetadata(String metadata, String key) {
+        Matcher matcher = CARD_METADATA.matcher(metadata);
+        while (matcher.find()) {
+            if (matcher.group(1).equalsIgnoreCase(key)) {
+                String value = matcher.group(2).strip();
+                return value.isBlank() ? Optional.empty() : Optional.of(value);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static int parseWeight(String value) {
+        try {
+            return Math.max(1, Math.min(20, Integer.parseInt(value.strip())));
+        } catch (NumberFormatException ignored) {
+            return 1;
+        }
+    }
+
+    private static String defaultTopic(String triggers) {
+        for (String trigger : triggers.split("\\|")) {
+            String normalized = normalize(trigger);
+            if (!normalized.isBlank()) {
+                return normalizeTopic(normalized);
+            }
+        }
+        return "general";
+    }
+
+    private static String normalizeTopic(String topic) {
+        String normalized = topic.toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9_]+", "_")
+                .replaceAll("_+", "_")
+                .replaceAll("^_|_$", "");
+        return normalized.isBlank() ? "general" : normalized;
     }
 
     private static void addSection(List<Section> sections, String title, boolean always, StringBuilder body) {
@@ -492,9 +606,17 @@ public final class NpcKnowledgeBase {
     private record TargetedMatch(TargetedNote note, int score) {
     }
 
-    private record TargetedNote(String triggers, String note) {
+    private record TargetedNote(String triggers, String note, String topic, String personaId, int weight) {
         boolean matches(String normalized) {
             return matchScore(normalized) > 0;
+        }
+
+        boolean matchesPersona(String requestedPersona) {
+            String requested = NpcCardRequest.normalizePersona(requestedPersona);
+            if (NpcCardRequest.ANY_PERSONA.equals(requested)) {
+                return NpcCardRequest.ANY_PERSONA.equals(personaId);
+            }
+            return NpcCardRequest.ANY_PERSONA.equals(personaId) || personaId.equals(requested);
         }
 
         int matchScore(String normalized) {

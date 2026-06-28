@@ -17,7 +17,7 @@ Settlement cards should make the world feel watchful. Give practical warning fir
 
 ## Hobgoblins And Koboldite
 - [triggers: hobgoblin trade|hobgoblin trades|trade with hobgoblin|koboldite trade] Targeted fact: Hobgoblin trade unlocks in five steps: coal into dust, dust and gold into nuggets, then upward toward useful Koboldite.
-- [triggers: hobgoblin hut|where find hobgoblin|find hobgoblins|hobgoblin woodland] Targeted fact: Hobgoblins live in woodland huts, trade in Koboldite, mostly tolerate players, and hate villagers.
+- [triggers: hobgoblin hut|where find hobgoblin|find hobgoblins|hobgoblin woodland|found a hobgoblin hut|talk to hobgoblin|talk to hobgoblins|should i talk to hobgoblin|should i talk to them hobgoblin] Targeted fact: Hobgoblins live in woodland huts, trade in Koboldite, mostly tolerate players, and hate villagers.
 - [triggers: hobgoblin patron|statue of hobgoblin patron|patron statue|gulg mog] Targeted fact: The Hobgoblin Patron statue draws worship power from nearby hobgoblins; use may anger Gulg or Mog and make the hobgoblins hostile.
 - [triggers: koboldite pickaxe recipe|make koboldite pickaxe|craft koboldite pickaxe] Targeted fact: Koboldite Pickaxe is crafted from Koboldite Ingots and Sticks; hobgoblin metal makes stranger tools than iron.
 - [triggers: twisting band recipe|make twisting band|craft twisting band] Targeted fact: Twisting Band is crafted from Koboldite Ingots and an Attuned Stone Charged; that is hobgoblin-adjacent craft, not trinket work.
