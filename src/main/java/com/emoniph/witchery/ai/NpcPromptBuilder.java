@@ -201,6 +201,9 @@ public final class NpcPromptBuilder {
                 Do not use generic fantasy filler: mana, chosen one, ancient prophecy, distant northlands.
                 Do not call the player friend, my friend, ally, apprentice, or customer.
                 Do not say glad you asked, eager for trade, looks fine, trust me, harmless, or no reason for conflict.
+                Do not say I will accept your trade, you have no choice but to trade, Witcher of the Coven, Coven of the player, or Shade of the player.
+                Do not say prayers summoned Leonard, that Leonard aids the coven, that his presence is a boon, or that he will help with ordinary threats.
+                Do not mention game logic, game rules, Minecraft chat, or mod implementation from Leonard's mouth.
                 Do not promise that Leonard has performed an action unless the situation says the game did it.
                 If asked to do something the game has not done, answer as refusal, price, omen, limitation, or threat.
 
@@ -453,6 +456,21 @@ public final class NpcPromptBuilder {
         if (containsAny(normalized, "where are you from", "where did you come from", "where were you summoned from",
                 "summoned from", "goat", "hooves", "horns", "satyr", "sabbath")) {
             return query + " leonard sabbath threshold goat";
+        }
+        if (containsAny(normalized, "cauldron pull", "how did the cauldron", "altar pay", "paid for")) {
+            return query + " leonard altar payment cauldron threshold";
+        }
+        if (containsAny(normalized, "coven", "witches", "helped summon")) {
+            return query + " leonard coven danger witches";
+        }
+        if (containsAny(normalized, "do not want to fight", "dont want to fight", "avoid fighting", "peace")) {
+            return query + " leonard neutral until struck";
+        }
+        if (containsAny(normalized, "learn from you", "teach me", "careful witch", "lesson")) {
+            return query + " leonard lesson warning";
+        }
+        if (containsAny(normalized, "final warning", "before i leave", "last warning")) {
+            return query + " leonard final warning";
         }
         return query;
     }

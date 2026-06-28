@@ -28,6 +28,9 @@ final class NpcDialogueFallback {
 
         String name = safeName(playerName);
         String leonard = safeDisplayName(leonardName, "Shade of Leonard");
+        if (containsAny(normalized, "what should i call you", "what do i call you")) {
+            return Optional.of("Call me " + leonard + ", if your tongue can carry the debt.");
+        }
         if (asksNpcName(normalized)) {
             return Optional.of("I am " + leonard + ", the debt your cauldron dragged into shape.");
         }
@@ -38,11 +41,21 @@ final class NpcDialogueFallback {
             return Optional.of("You stand before a debt wearing a shape, " + name + ". Speak carefully.");
         }
         if (containsAny(normalized, "where are you from", "where did you come from", "where were you summoned from",
-                "summoned from", "goat legs", "goat leg", "hooves", "horns", "satyr", "sabbath")) {
+                "summoned from", "goat legs", "goat leg", "goat demon", "goat", "hooves", "horns", "satyr", "sabbath")) {
             return Optional.of("The cauldron dragged my Shade from an infernal sabbath threshold, " + name + "; these horns are older than your courage.");
+        }
+        if (containsAny(normalized, "how did the cauldron", "cauldron pull", "cauldron pulled",
+                "why did the cauldron", "what did my altar pay", "altar pay for")) {
+            return Optional.of("Your cauldron opened the threshold; the altar paid power enough to make my shadow stand.");
         }
         if (containsAny(normalized, "summon", "summoning", "call you", "called you", "bring you", "cauldron")) {
             return Optional.of("Nether Wart, Tear of the Goddess, Diamond Vapour, Diamond, Nether Star; then hat, cauldron, and ten thousand altar power.");
+        }
+        if (containsAny(normalized, "red soul", "red souls")) {
+            return Optional.of("Red souls fear fire and blast. Burn them or break them with explosions before you waste steel.");
+        }
+        if (containsAny(normalized, "black soul", "black souls")) {
+            return Optional.of("Black souls yield to magic and potions. Bring witchcraft, not swagger.");
         }
         if (containsAny(normalized, "lost soul", "lost souls", "souls", "green soul", "red soul", "black soul")) {
             return Optional.of("Break the souls first. Green takes steel, red fears fire and blast, black yields to magic and potions.");
@@ -54,6 +67,9 @@ final class NpcDialogueFallback {
             return Optional.of("Mortal Coil is my withering mark on attackers; survive the debt or end the fight quickly.");
         }
         if (containsAny(normalized, "urn", "leonards urn", "leonard s urn", "your urn")) {
+            if (containsAny(normalized, "arthana")) {
+                return Optional.of("Arthana marks ritual intent; the urn stores thrown brews. Hold the tool your debt requires.");
+            }
             return Optional.of("The urn stores thrown brews, cycles by sneak-use, and releases the selected brew through shadow magic.");
         }
         if (containsAny(normalized, "arthana")) {
@@ -66,6 +82,9 @@ final class NpcDialogueFallback {
             return Optional.of("I read your altar plainly: " + shortSceneFact(altarInfo) + ".");
         }
         if (containsAny(normalized, "coven", "witches", "nearby witches", "my coven", "coven size")) {
+            if (containsAny(normalized, "danger", "safe", "helped summon", "helped", "think of")) {
+                return Optional.of("Your witches are witnesses, not my flock: " + shortSceneFact(covenInfo) + ".");
+            }
             return Optional.of("Your coven is no shield: " + shortSceneFact(covenInfo) + ".");
         }
         if (containsAny(normalized, "gear", "equipment", "holding", "wearing", "carry", "carrying",
@@ -75,6 +94,9 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "bargain", "deal", "contract", "price", "debt")) {
             return Optional.of("A bargain is not a wish, " + name + ". Bring a real price, not a story.");
         }
+        if (containsAny(normalized, "strike you", "hit you", "attack you", "hurt you")) {
+            return Optional.of("Strike me and the debt becomes combat; Mortal Coil may mark attackers who mistake courage for payment.");
+        }
         if (containsAny(normalized, "how do i kill you", "how can i kill you", "how to kill you",
                 "how do i beat you", "weakness", "defeat you")) {
             return Optional.of("Strike by your own hand, break the souls when they rise, and save Demonbane for the wounded hour.");
@@ -82,6 +104,14 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "don't want to fight", "dont want to fight", "do not want to fight",
                 "no reason to fight", "i refuse to fight", "can we avoid fighting", "peace")) {
             return Optional.of("Then keep your hand from blood. I am neutral until struck, not gentle.");
+        }
+        if (containsAny(normalized, "waiting for me to make a mistake", "waiting for a mistake",
+                "just waiting", "make a mistake")) {
+            return Optional.of("I wait for payment or violence. Mistakes are yours to make, not mine to need.");
+        }
+        if (containsAny(normalized, "weakness should i remember", "what weakness should i remember",
+                "remember weakness", "weakness remember")) {
+            return Optional.of("Remember this: break the souls first, strike by your own hand, and save Demonbane for the wounded hour.");
         }
         if (containsAny(normalized, "phase", "health", "wounded", "fight")) {
             return Optional.of("Read the fight, " + name + ": " + shortSceneFact(phase) + ".");
@@ -92,6 +122,12 @@ final class NpcDialogueFallback {
         }
         if (containsAny(normalized, "help", "teach", "advice", "what should i do")) {
             return Optional.of("Ask for weakness, altar, coven, gear, or the price of summoning; spare me soft wandering.");
+        }
+        if (containsAny(normalized, "learn from you", "teach me", "careful witch")) {
+            return Optional.of("Learn warning, not comfort: circles fail, souls shield me, and every shortcut asks interest.");
+        }
+        if (containsAny(normalized, "final warning", "warning before i leave", "before i leave")) {
+            return Optional.of("When the souls rise, break them first. When the Coil bites, end the debt quickly.");
         }
         return Optional.of(leonardAside(normalized, name, ""));
     }
