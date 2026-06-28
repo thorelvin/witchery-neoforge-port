@@ -112,6 +112,18 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
     }
 
     @Override
+    public Optional<NpcSocialAction> ambiguousSocialAction(String playerMessage) {
+        String normalized = normalizeSocial(playerMessage);
+        if (normalized.isBlank()) {
+            return Optional.empty();
+        }
+        if (NpcDialogueFallback.isAmbiguousInsultCandidate(normalized)) {
+            return Optional.of(NpcSocialAction.INSULT);
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public boolean handleSocialAction(CovenWitchEntity entity, ServerPlayer player, String playerMessage,
                                       NpcSocialAction action, NpcSocialContext<CovenWitchEntity> context) {
         switch (action) {

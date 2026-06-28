@@ -21,10 +21,10 @@ Short effect cards for when the player asks what a brew does or what to learn fi
 
 ## Brew of Poison
 - [triggers: poison brew|brew of poison|poison potion|poisoned] Targeted fact: Brew of Poison harms targets; warn the player not to drink poison or eat dangerous herbs.
-- If asked for trade or combat use, speak as advice, not a promise to poison someone by chat.
+- If asked for trade or combat use, speak as advice, not a promise to poison someone with mere talk.
 
 ## Brew of Cleansing
-- [triggers: cleansing brew|brew of cleansing|cleanse blight|blight] Targeted fact: Brew of Cleansing scours Blight from the ground around where it is used; a witch can advise or trade, not cure it by chat.
+- [triggers: cleansing brew|brew of cleansing|cleanse blight|blight] Targeted fact: Brew of Cleansing scours Blight from the ground around where it is used; a witch can advise or trade, not cure it with mere talk.
 - Keep cleansing answers grounded in terrain use.
 
 ## Brew of Sprouting

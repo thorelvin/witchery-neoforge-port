@@ -41,6 +41,12 @@ final class NpcDialogueFallback {
         if (contextual.isPresent()) {
             return contextual;
         }
+        if (isSelfDirectedRegret(normalized)) {
+            return Optional.of("Mistakes teach cheaper than curses, " + name + "; learn, then keep your fingers.");
+        }
+        if (asksApology(normalized)) {
+            return Optional.of("Apology heard, " + name + "; anger passes faster when the tongue stays leashed.");
+        }
         if (asksHerbGift(normalized)) {
             return Optional.of("Ask with an empty hand and honest need; herbs remember greedy fingers.");
         }
@@ -476,9 +482,68 @@ final class NpcDialogueFallback {
     }
 
     static boolean isInsult(String normalized) {
+        if (isSelfDirectedInsult(normalized)) {
+            return false;
+        }
+        return startsDirectInsult(normalized, "you fool")
+                || startsDirectInsult(normalized, "you old hag")
+                || containsAny(normalized,
+                "shut up", "fuck you", "screw you",
+                "you are a fool", "you're a fool", "youre a fool",
+                "you old hag", "you hag", "you are a hag", "you're a hag", "youre a hag",
+                "you stupid", "you are stupid", "you're stupid", "youre stupid", "stupid witch",
+                "you idiot", "you are an idiot", "you're an idiot", "youre an idiot", "idiot witch",
+                "you dumb", "you are dumb", "you're dumb", "youre dumb", "dumb witch",
+                "you useless", "you are useless", "you're useless", "youre useless", "useless witch",
+                "you ugly", "you are ugly", "you're ugly", "youre ugly", "ugly witch",
+                "you trash", "you are trash", "you're trash", "youre trash", "trash witch",
+                "you garbage", "you are garbage", "you're garbage", "youre garbage", "garbage witch",
+                "your answer is garbage", "your answer is trash");
+    }
+
+    static boolean isAmbiguousInsultCandidate(String normalized) {
+        if (normalized == null || normalized.isBlank() || isInsult(normalized)) {
+            return false;
+        }
+        if (isSelfDirectedInsult(normalized) || isNonHostileInsultWordUse(normalized)) {
+            return false;
+        }
+        return containsAny(normalized, "fool", "foolish", "stupid", "idiot", "dumb", "useless",
+                "ugly", "trash", "garbage", "nonsense", "hag", "shit");
+    }
+
+    private static boolean isSelfDirectedInsult(String normalized) {
         return containsAny(normalized,
-                "stupid", "idiot", "fool", "useless", "shut up", "old hag", "hag",
-                "ugly", "dumb", "trash", "garbage", "fuck you", "screw you", "no shit");
+                "fool of myself", "fool of me", "make myself a fool", "making a fool of myself",
+                "stupid of me", "i was stupid", "i am stupid", "i'm stupid", "im stupid",
+                "feel like an idiot", "feel like a fool", "i was an idiot", "i am an idiot",
+                "i'm an idiot", "im an idiot", "my dumb mistake");
+    }
+
+    private static boolean isNonHostileInsultWordUse(String normalized) {
+        return containsAny(normalized,
+                "can you fool", "could you fool", "will you fool", "would you fool",
+                "how do i fool", "how can i fool", "how would i fool",
+                "fool the", "fool a ", "fool an ", "fool them", "fool him", "fool her",
+                "fool guards", "fool villagers", "fool enemies", "fool monsters",
+                "this answer sounds", "that answer sounds", "this sounds like nonsense",
+                "that sounds like nonsense");
+    }
+
+    private static boolean startsDirectInsult(String normalized, String phrase) {
+        return normalized.equals(phrase) || normalized.startsWith(phrase + " ");
+    }
+
+    private static boolean asksApology(String normalized) {
+        return containsAny(normalized, "sorry", "apologize", "apology", "that was rude", "i was angry");
+    }
+
+    private static boolean isSelfDirectedRegret(String normalized) {
+        return containsAny(normalized,
+                "that was stupid of me", "stupid of me", "i was stupid", "i am stupid", "i'm stupid",
+                "im stupid", "i was a fool", "i am a fool", "i'm a fool", "im a fool",
+                "i was an idiot", "i am an idiot", "i'm an idiot", "im an idiot",
+                "my mistake", "my dumb mistake");
     }
 
     static boolean isPraise(String normalized) {
@@ -603,7 +668,7 @@ final class NpcDialogueFallback {
 
     private static boolean asksRoadAdvice(String normalized) {
         return containsAny(normalized, "final advice", "advice for the road", "for the road",
-                "before i leave", "before i go", "before leaving");
+                "before i leave", "before i go", "before leaving", "one piece of advice");
     }
 
     private static boolean asksDemonTrust(String normalized) {
@@ -947,6 +1012,7 @@ final class NpcDialogueFallback {
                 .replaceAll("(?i)\\b[A-Za-z0-9_]{2,24}(?:\\s+[A-Za-z0-9_]{2,24})?:\\s*[^;.!?]{0,140}(?:[;.!?]|$)", "");
         source = rewritePlayerMemoryPerspective(source, rememberedPlayerName)
                 .replaceAll("(?i)without\\s+getting\\s+themselves\\s+killed", "without getting yourself killed")
+                .replaceAll("(?i)looking\\s+for\\s+for\\b", "looking for")
                 .replaceAll("(?i)([,;]\\s*)likes\\b", "$1you like")
                 .replaceAll("(?i)([,;]\\s*)is\\s+wary\\s+of\\b", "$1you are wary of")
                 .replaceAll("(?i)\\band\\s+is\\s+looking\\s+for\\b", "and you are looking for")

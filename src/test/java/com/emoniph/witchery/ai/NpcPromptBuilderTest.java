@@ -151,4 +151,25 @@ class NpcPromptBuilderTest {
         assertTrue(prompt.userPrompt().toLowerCase().contains("warm up"));
         assertEquals(0, prompt.examples().size());
     }
+
+    @Test
+    void socialIntentPromptUsesStrictYesNoSchema() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.socialIntentCheck("witch", NpcSocialAction.INSULT,
+                "How should I harvest mandrake without making a fool of myself?");
+        String system = prompt.systemPrompt().toLowerCase();
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(system.contains("{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}"), prompt.systemPrompt());
+        assertTrue(system.contains("{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"), prompt.systemPrompt());
+        assertTrue(system.contains("self-deprecation"), prompt.systemPrompt());
+        assertTrue(user.contains("insult_npc"), prompt.userPrompt());
+        assertTrue(user.contains("not magic requests"), prompt.userPrompt());
+        assertTrue(user.contains("fool of myself"), prompt.userPrompt());
+        assertTrue(prompt.examples().stream().anyMatch(example ->
+                example.userPrompt().contains("fool of myself")
+                        && example.assistantResponse().contains("\"speech\":\"no\"")));
+        assertTrue(prompt.examples().stream().anyMatch(example ->
+                example.userPrompt().contains("Can you fool the guards")
+                        && example.assistantResponse().contains("\"speech\":\"no\"")));
+    }
 }

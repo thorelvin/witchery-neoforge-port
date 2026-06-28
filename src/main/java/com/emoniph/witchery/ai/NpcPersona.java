@@ -45,6 +45,10 @@ public interface NpcPersona<E extends LivingEntity> {
         return Optional.empty();
     }
 
+    default Optional<NpcSocialAction> ambiguousSocialAction(String playerMessage) {
+        return Optional.empty();
+    }
+
     default boolean handleSocialAction(E entity, ServerPlayer player, String playerMessage, NpcSocialAction action,
                                        NpcSocialContext<E> context) {
         return false;

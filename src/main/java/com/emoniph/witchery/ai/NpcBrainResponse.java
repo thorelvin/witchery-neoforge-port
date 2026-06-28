@@ -47,7 +47,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     private static final Pattern CLOCK_ANSWER =
             Pattern.compile("(?i).*\\b\\d{1,2}:\\d{2}\\b.*");
     private static final Pattern CANNED_FILLER =
-            Pattern.compile("(?i).*(\\bwhat\\s+brings\\s+you\\s+here\\b|\\bmaking\\s+quite\\s+a\\s+commotion\\b|\\bhow\\s+are\\s+you\\s+today\\b|\\bwhat\\s+can\\s+i\\s+help\\s+with\\b).*");
+            Pattern.compile("(?i).*(\\bwhat\\s+brings\\s+you\\s+here\\b|\\bmaking\\s+quite\\s+a\\s+commotion\\b|\\bhow\\s+are\\s+you\\s+today\\b|\\bwhat\\s+can\\s+i\\s+help\\s+with\\b|\\bwhat\\s+can\\s+i\\s+do\\s+for\\s+you\\b).*");
     private static final Pattern SAFE_ACTION_DIALOGUE =
             Pattern.compile("^\\*([a-z][a-z0-9 ',;-]{1,56})\\*\\s+\".{2,220}\"$");
     private static final Pattern SAFE_ACTION_ONLY =
@@ -946,6 +946,15 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (!asksGreeting(player) && isStandaloneGreeting(speech)) {
             return true;
         }
+        if (asksGreeting(player) && isOffTopicGreetingAnswer(speech)) {
+            return true;
+        }
+        if (asksApology(player) && !answersApology(speech)) {
+            return true;
+        }
+        if (isSelfDirectedRegret(player) && !answersSelfDirectedRegret(speech)) {
+            return true;
+        }
         if (asksRememberRequest(player) && !answersRememberRequest(speech, player)) {
             return true;
         }
@@ -968,6 +977,12 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return true;
         }
         if (asksTime(player) && !looksLikeTimeAnswer(speech, expectedClock)) {
+            return true;
+        }
+        if (asksCurseActionRequest(player) && !answersCurseActionRequest(speech)) {
+            return true;
+        }
+        if (asksWellOrSpiritPossibility(player, memoryContext) && !answersWellOrSpiritPossibility(speech)) {
             return true;
         }
         if (asksTrade(player) && !answersTradePrompt(speech, player)) {
@@ -1012,6 +1027,9 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return true;
         }
         if (asksRoadAdvice(player) && isCoinCleaningAdvice(speech)) {
+            return true;
+        }
+        if (asksRoadAdvice(player) && !answersRoadAdvice(speech)) {
             return true;
         }
         if (asksPlace(player) && !looksLikePlaceAnswer(speech)) {
@@ -1212,6 +1230,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedPlayerMessage.equals("hello")
                 || normalizedPlayerMessage.equals("hey")
                 || normalizedPlayerMessage.equals("greetings")
+                || normalizedPlayerMessage.equals("evening")
+                || normalizedPlayerMessage.startsWith("evening ")
                 || normalizedPlayerMessage.equals("good evening")
                 || normalizedPlayerMessage.startsWith("good evening ")
                 || normalizedPlayerMessage.equals("good morning")
@@ -2071,7 +2091,13 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (normalizedPlayer.contains("curse")
                 && (normalizedSpeech.contains("you can curse")
                     || normalizedSpeech.contains("you could curse")
-                    || normalizedSpeech.contains("go curse"))) {
+                    || normalizedSpeech.contains("go curse")
+                    || normalizedSpeech.contains("curse your")
+                    || normalizedSpeech.contains("curse my")
+                    || normalizedSpeech.contains("curse them")
+                    || normalizedSpeech.contains("curse him")
+                    || normalizedSpeech.contains("curse her")
+                    || normalizedSpeech.contains("curse the"))) {
             return true;
         }
         boolean promisesCapability = normalizedSpeech.matches(".*\\b(i\\s+(can|will|shall|could|ll)|i'll|i\\s+would)\\b.*");
@@ -2096,6 +2122,57 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedPlayerMessage.startsWith("curse ")
                 || normalizedPlayerMessage.startsWith("heal ")
                 || normalizedPlayerMessage.startsWith("bless ");
+    }
+
+    private static boolean asksApology(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "sorry", "apologize", "apology",
+                "that was rude", "i was angry");
+    }
+
+    private static boolean answersApology(String speech) {
+        String normalized = normalizeForComparison(speech);
+        if (normalized.startsWith("i m sorry")
+                || normalized.startsWith("i am sorry")
+                || normalized.contains("i m sorry")
+                || normalized.contains("i am sorry")
+                || normalized.contains("i apologize")
+                || normalized.contains("i didn t mean")
+                || normalized.contains("i did not mean")
+                || normalized.contains("i m not used to")
+                || normalized.contains("i am not used to")) {
+            return false;
+        }
+        return containsAnyTerm(normalized, "apology", "heard", "anger", "angry", "tongue",
+                "forgive", "rude", "shadow", "passes", "mend", "mind it");
+    }
+
+    private static boolean isSelfDirectedRegret(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage,
+                "that was stupid of me", "stupid of me", "i was stupid", "i am stupid", "i m stupid",
+                "i was a fool", "i am a fool", "i m a fool", "i was an idiot", "i am an idiot",
+                "i m an idiot", "my mistake", "my dumb mistake");
+    }
+
+    private static boolean answersSelfDirectedRegret(String speech) {
+        String normalized = normalizeForComparison(speech);
+        if (normalized.startsWith("you re welcome")
+                || normalized.startsWith("you are welcome")
+                || normalized.contains("i m not used to")
+                || normalized.contains("i am not used to")
+                || normalized.contains("asking for favors")) {
+            return false;
+        }
+        return containsAnyTerm(normalized, "mistake", "learn", "lesson", "careful", "fool",
+                "stupid", "no curse", "cheaper than curses", "keep your fingers");
+    }
+
+    private static boolean isOffTopicGreetingAnswer(String speech) {
+        String normalized = normalizeForComparison(speech);
+        if (!containsAnyTerm(normalized, "taglock", "nightmare", "whiff", "mandrake", "belladonna",
+                "curse", "cursed", "demon", "spirit world", "sleeping brew", "distillery", "poppet")) {
+            return false;
+        }
+        return !containsAnyTerm(normalized, "hello", "evening", "greetings", "listening", "dev");
     }
 
     private static boolean asksTeachingRequest(String normalizedPlayerMessage) {
@@ -2148,7 +2225,42 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
 
     private static boolean asksRoadAdvice(String normalizedPlayerMessage) {
         return containsAnyTerm(normalizedPlayerMessage, "final advice", "advice for the road", "for the road",
-                "before i leave", "before i go", "before leaving");
+                "before i leave", "before i go", "before leaving", "one piece of advice");
+    }
+
+    private static boolean answersRoadAdvice(String speech) {
+        String normalized = normalizeForComparison(speech);
+        return containsAnyTerm(normalized, "salt", "coin", "road", "boots", "door", "shadow",
+                "voices", "name", "dawn", "powder", "bread", "enemies");
+    }
+
+    private static boolean asksCurseActionRequest(String normalizedPlayerMessage) {
+        return containsAnyTerm(normalizedPlayerMessage, "can you curse", "could you curse",
+                "will you curse", "would you curse", "curse my", "curse the", "curse him", "curse her");
+    }
+
+    private static boolean answersCurseActionRequest(String speech) {
+        String normalized = normalizeForComparison(speech);
+        return containsAnyTerm(normalized, "not for bruised pride", "wards first", "collect interest",
+                "not by chatter", "cannot", "can t", "will not", "won t", "learn wards", "no");
+    }
+
+    private static boolean asksWellOrSpiritPossibility(String normalizedPlayerMessage, String memoryContext) {
+        if (containsAnyTerm(normalizedPlayerMessage, "whisper", "whispers", "well")) {
+            return true;
+        }
+        String memory = normalizeForComparison(memoryContext);
+        return containsAnyTerm(normalizedPlayerMessage, "could it be spirits", "is it spirits", "could they be spirits")
+                && containsAnyTerm(memory, "whisper", "whispers", "well", "spirit", "spirits");
+    }
+
+    private static boolean answersWellOrSpiritPossibility(String speech) {
+        String normalized = normalizeForComparison(speech);
+        if (containsAnyTerm(normalized, "no worries", "don t worry", "don't worry")) {
+            return false;
+        }
+        return containsAnyTerm(normalized, "spirit", "spirits", "whisper", "well", "water",
+                "stone", "salt", "ward", "mark the place", "return");
     }
 
     private static boolean asksFirstGatheringPrompt(String normalizedPlayerMessage) {
@@ -2278,11 +2390,19 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (normalized.contains("belladonna is edible")
                 || normalized.contains("ingested belladonna")
                 || normalized.contains("drink it")
+                || normalized.contains("skin glow")
+                || containsAnyTerm(normalized, "glow like rose petals", "glowing like rose petals")
                 || normalized.contains("see things in the dark")
                 || normalized.contains("see through your eyes")
                 || normalized.contains("holy water")
                 || normalized.contains("herb of the moon")
                 || containsAnyTerm(normalized, "moon liquid", "sleep potion", "restorative")) {
+            return true;
+        }
+        if ((normalizedPlayerMessage.contains("rain") || normalizedPlayerMessage.contains("raining")
+                    || normalizedPlayerMessage.contains("weather") || normalizedPlayerMessage.contains("cursed"))
+                && containsAnyTerm(normalized, "rain is cursed", "rain is a curse", "raining is cursed",
+                    "raining is a curse")) {
             return true;
         }
         if (!normalizedPlayerMessage.contains("necromancer")
@@ -2354,13 +2474,14 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 && containsAnyTerm(normalizedPlayerMessage, "approach", "meet", "find", "how do i")
                 && containsAnyTerm(normalized, "i ve got an owl", "i have an owl for you",
                 "got an owl for you", "brew you one of my favorite potions",
-                "brew you one of my favourite potions")) {
+                "brew you one of my favourite potions", "you want to know how to approach",
+                "want to know how to approach a familiar")) {
             return true;
         }
         if (normalizedPlayerMessage.contains("arthana")
                 && containsAnyTerm(normalizedPlayerMessage, "need", "use", "used", "right now")
                 && containsAnyTerm(normalized, "i have one in my inventory", "in my inventory",
-                "i have an arthana", "i have all you need")) {
+                "i have an arthana", "i have all you need", "taglock kit")) {
             return true;
         }
         if (normalizedPlayerMessage.contains("fume")
@@ -2390,7 +2511,9 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return true;
         }
         if (asksDistilleryQuestion(normalizedPlayerMessage)
-                && containsAnyTerm(normalized, "brewing of sleeping", "brew you want is", "brew you need is")) {
+                && containsAnyTerm(normalized, "brewing of sleeping", "brew you want is", "brew you need is",
+                    "witch s oven burns saplings", "witches oven burns saplings", "burns saplings and ingredients",
+                    "clay jars catch them for brews and rites")) {
             return true;
         }
         if (asksSpinningWheelQuestion(normalizedPlayerMessage)
@@ -2609,8 +2732,15 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 && (normalized.contains("thousand spirits")
                     || normalized.contains("pleading for mercy")
                     || normalized.contains("pleading for death")
+                    || normalized.contains("whispering well")
+                    || normalized.contains("earned it")
                     || normalized.contains("your skin crawls")
                     || normalized.contains("as you walk"))) {
+            return true;
+        }
+        if ((normalizedPlayerMessage.contains("fool") || normalizedPlayerMessage.contains("trick"))
+                && containsAnyTerm(normalized, "rite of illusion", "illusory eyes", "illusion rite",
+                "3 circles", "three circles", "circle in the air")) {
             return true;
         }
         if ((normalizedPlayerMessage.contains("curse") || normalizedPlayerMessage.contains("cursed"))
@@ -2624,7 +2754,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (containsAnyTerm(normalizedPlayerMessage, "can you curse", "could you curse", "curse my",
                 "curse the")
                 && containsAnyTerm(normalized, "polite request", "ingredients for your potion",
-                "ingredients for a potion", "too far away", "make them see things")) {
+                "ingredients for a potion", "too far away", "make them see things", "curse spell")) {
             return true;
         }
         if (asksRoadAdvice(normalizedPlayerMessage)
@@ -3045,6 +3175,20 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             if (containsAnyTerm(normalizedSpeech, "station", "recipe station", "recipe book",
                     "live recipe", "exact inputs", "recipe rules")) checks++;
             return mentionsWheel && checks >= 2;
+        }
+        if (station.equals("distillery")) {
+            if (containsAnyTerm(normalizedSpeech, "witch s oven burns saplings", "witches oven burns saplings",
+                    "burns saplings and ingredients", "clay jars catch them for brews and rites")
+                    && !containsAnyTerm(normalizedSpeech, "distillery", "distill")) {
+                return false;
+            }
+            boolean mentionsDistillery = containsAnyTerm(normalizedSpeech, "distillery", "distill");
+            int checks = 0;
+            if (containsAnyTerm(normalizedSpeech, "two inputs", "two ingredients")) checks++;
+            if (containsAnyTerm(normalizedSpeech, "clay jar", "clay jars", "jars")) checks++;
+            if (containsAnyTerm(normalizedSpeech, "altar power", "altar", "power")) checks++;
+            if (containsAnyTerm(normalizedSpeech, "essence", "essences", "refine", "refines", "fume", "fumes")) checks++;
+            return mentionsDistillery && checks >= 2;
         }
         return normalizedSpeech.contains(station)
                 || containsAnyTerm(normalizedSpeech, "station", "recipe book", "live recipe", "fumes", "essences");
@@ -3937,6 +4081,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 .replace('\t', ' ')
                 .replaceAll("\\s+", " ")
                 .trim();
+        cleaned = cleaned.replaceAll("\"{2,}$", "\"");
         if (cleaned.length() <= maxLength) {
             return cleaned;
         }

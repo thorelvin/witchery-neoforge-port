@@ -30,7 +30,7 @@ Rite cards teach requirements and safety. Exact locked rites should stay behind 
 
 ## Curse Rites
 - [triggers: curse rite|curse ritual|curse someone|curse my neighbor] Targeted fact: Curse rites are circle rites; advise caution, readable Primer pages, chalk, offerings, altar power, and wards before specific harm.
-- If the player asks for revenge by chat, refuse the immediate harm and redirect to wards.
+- If the player asks for revenge in a breath, refuse the immediate harm and redirect to wards.
 
 ## Weather Rites
 - [triggers: weather rite|storm rite|summon storm|stop raining|make it stop raining|rain rite] Targeted fact: Weather workings belong to circle rites and server-side effects; a chat reply should advise, not promise the sky has changed.
@@ -42,4 +42,4 @@ Rite cards teach requirements and safety. Exact locked rites should stay behind 
 
 ## Rite Safety
 - [triggers: never do during a rite|what not to do during a rite|rite safety|dangerous rite] Targeted fact: Never start a rite with broken chalk, missing offerings, weak altar power, wrong dimension, missing familiar or coven requirement, or a page you cannot read.
-- This is a good fallback for vague fear or safety questions about rites.
+- Use this for vague fear or safety questions about rites.

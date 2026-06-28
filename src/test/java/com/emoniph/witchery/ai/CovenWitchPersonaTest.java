@@ -19,6 +19,8 @@ class CovenWitchPersonaTest {
     void classifiesInsults() {
         assertEquals(Optional.of(NpcSocialAction.INSULT),
                 CovenWitchPersona.INSTANCE.socialAction("You old hag."));
+        assertEquals(Optional.of(NpcSocialAction.INSULT),
+                CovenWitchPersona.INSTANCE.socialAction("You fool."));
     }
 
     @Test
@@ -31,6 +33,24 @@ class CovenWitchPersonaTest {
     void leavesOrdinaryKnowledgeQuestionsForConversation() {
         assertTrue(CovenWitchPersona.INSTANCE.socialAction("what is witches salt for?").isEmpty());
         assertTrue(CovenWitchPersona.INSTANCE.socialAction("how do I know if a place is cursed?").isEmpty());
+        assertTrue(CovenWitchPersona.INSTANCE.socialAction(
+                "How should I harvest mandrake without making a fool of myself?").isEmpty());
+        assertTrue(CovenWitchPersona.INSTANCE.socialAction(
+                "I insulted a guard earlier. Should I apologize?").isEmpty());
+    }
+
+    @Test
+    void routesAmbiguousInsultWordsThroughIntentCheck() {
+        assertTrue(CovenWitchPersona.INSTANCE.ambiguousSocialAction(
+                "How should I harvest mandrake without making a fool of myself?").isEmpty());
+        assertTrue(CovenWitchPersona.INSTANCE.ambiguousSocialAction(
+                "That was stupid of me.").isEmpty());
+        assertTrue(CovenWitchPersona.INSTANCE.ambiguousSocialAction(
+                "Can you fool the guards with a rite?").isEmpty());
+        assertTrue(CovenWitchPersona.INSTANCE.ambiguousSocialAction(
+                "This answer sounds like nonsense.").isEmpty());
+        assertTrue(CovenWitchPersona.INSTANCE.ambiguousSocialAction(
+                "I insulted a guard earlier. Should I apologize?").isEmpty());
     }
 
     @Test

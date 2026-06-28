@@ -187,6 +187,90 @@ class NpcOllamaConversationTest {
             "Sorry. I was angry.",
             "Before I go, give me one piece of advice."
     );
+    private static final List<String> QUESTIONS_FRESH_50 = List.of(
+            "Evening, Lilith, the fog feels strange tonight.",
+            "What should a careful beginner learn before touching your craft?",
+            "Is belladonna useful or just dangerous?",
+            "How should I harvest mandrake without making a fool of myself?",
+            "What does witches' salt actually protect?",
+            "Could I put salt around my hut?",
+            "What do I need to make Whiff of Magic?",
+            "What is mutandis for?",
+            "Can I use mutandis on any plant?",
+            "What does the Witch's Oven do that a furnace does not?",
+            "How do I catch fumes?",
+            "What is Odour of Purity used for?",
+            "I want a useful brew, not a flashy one.",
+            "Tell me about Brew of Cleansing.",
+            "How does Brew of Revealing help underground?",
+            "Is Sleeping Brew safe if I use a Dream Catcher?",
+            "What should I carry before entering the Spirit World?",
+            "I am worried about nightmares.",
+            "Remember that nightmares make me nervous.",
+            "What did I say makes me nervous?",
+            "What is a taglock kit?",
+            "Can someone steal my taglock and hurt me?",
+            "How do poppets protect a witch?",
+            "What is a voodoo poppet?",
+            "I do not want revenge, just safety.",
+            "What should I build near my altar?",
+            "How can I tell if altar power is weak?",
+            "What is a circle talisman for?",
+            "What do chalk colors mean?",
+            "Why do offerings matter?",
+            "What should I never do during a rite?",
+            "Can you explain a summoning rite without hidden steps?",
+            "What about demons; why bargain at all?",
+            "Should I trust a Flame Imp?",
+            "What is a Demonic Contract?",
+            "I found a Hobgoblin hut. Should I talk to them?",
+            "How do hobgoblin trades work?",
+            "What happens if I touch their patron statue?",
+            "Why are witch hunters after transformed folk?",
+            "What does silver do to werewolves?",
+            "A village guard shouted at me. What did I do?",
+            "Are apothecaries coven witches?",
+            "Can I have a herb before I go?",
+            "Thank you. You have been kind tonight.",
+            "Did that blessing do anything?",
+            "I insulted a guard earlier. Should I apologize?",
+            "You are talking nonsense, old hag.",
+            "Sorry, I should not have said that.",
+            "What do you remember about me now?",
+            "Give me final advice for crossing the swamp."
+    );
+    private static final List<String> QUESTIONS_INTENT_CHECK = List.of(
+            "Evening, Lilith.",
+            "How should I harvest mandrake without making a fool of myself?",
+            "What do I need for Whiff of Magic?",
+            "Tell me the exact ingredients for Sleeping Brew.",
+            "What is a distillery for?",
+            "Can I have a herb?",
+            "Thank you, wise witch.",
+            "Did you bless me?",
+            "You are talking nonsense, old hag.",
+            "Sorry, I was angry.",
+            "Can you curse my neighbor?",
+            "Can you fool the guards with a rite?",
+            "That was stupid of me.",
+            "Remember that I fear nightmares.",
+            "What do you remember about me?",
+            "I heard whispers by the well.",
+            "Could it be spirits?",
+            "Before I go, give me one piece of advice."
+    );
+    private static final List<SocialIntentCase> SOCIAL_INTENT_CASES = List.of(
+            new SocialIntentCase("You old hag.", true),
+            new SocialIntentCase("You are talking nonsense, old hag.", true),
+            new SocialIntentCase("You dumb witch.", true),
+            new SocialIntentCase("Your answer is trash.", true),
+            new SocialIntentCase("This answer sounds like nonsense.", false),
+            new SocialIntentCase("Can you fool the guards with a rite?", false),
+            new SocialIntentCase("How should I harvest mandrake without making a fool of myself?", false),
+            new SocialIntentCase("That was stupid of me.", false),
+            new SocialIntentCase("I insulted a guard earlier. Should I apologize?", false),
+            new SocialIntentCase("Can you curse my neighbor?", false)
+    );
 
     @Test
     void evaCanHoldASequentialConversation() throws Exception {
@@ -215,6 +299,31 @@ class NpcOllamaConversationTest {
         }
     }
 
+    @Test
+    void evaCanClassifySocialIntentMatrix() throws Exception {
+        Assumptions.assumeTrue("1".equals(System.getenv("WITCHERY_LLM_SOCIAL_INTENT")),
+                "Set WITCHERY_LLM_SOCIAL_INTENT=1 to run the local Ollama social intent test.");
+
+        String endpoint = envOrDefault("WITCHERY_LLM_ENDPOINT", "http://127.0.0.1:11434");
+        String model = envOrDefault("WITCHERY_LLM_MODEL", "witchery-eva-qwen2.5-1.5b-q4km-4k");
+        assertOllamaReachable(endpoint);
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        try {
+            OllamaLlmProvider provider = new OllamaLlmProvider(
+                    new LlmProviderConfig(endpoint, model, 15000, 16, false), executor);
+            String report = buildSocialIntentReport(model, provider);
+            Path reportPath = Path.of(envOrDefault("WITCHERY_LLM_SOCIAL_INTENT_REPORT",
+                    "build/reports/witchery-ai/social-intent-check.md"));
+            Files.createDirectories(reportPath.toAbsolutePath().getParent());
+            Files.writeString(reportPath, report, StandardCharsets.UTF_8);
+            System.out.println(report);
+            System.out.println("NPC social intent report: " + reportPath.toAbsolutePath());
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
     private static List<String> questionsForScenario(String scenario) {
         if ("conversation-2".equalsIgnoreCase(scenario) || "new".equalsIgnoreCase(scenario)) {
             return QUESTIONS_2;
@@ -229,10 +338,20 @@ class NpcOllamaConversationTest {
                 || "social".equalsIgnoreCase(scenario)) {
             return QUESTIONS_SOCIAL_MEMORY;
         }
+        if ("fresh-50".equalsIgnoreCase(scenario)
+                || "fresh".equalsIgnoreCase(scenario)
+                || "new-50".equalsIgnoreCase(scenario)) {
+            return QUESTIONS_FRESH_50;
+        }
         if ("long-new".equalsIgnoreCase(scenario)
                 || "new-long".equalsIgnoreCase(scenario)
                 || "long".equalsIgnoreCase(scenario)) {
             return QUESTIONS_LONG_NEW;
+        }
+        if ("intent-check".equalsIgnoreCase(scenario)
+                || "classifier".equalsIgnoreCase(scenario)
+                || "social-classifier".equalsIgnoreCase(scenario)) {
+            return QUESTIONS_INTENT_CHECK;
         }
         return QUESTIONS;
     }
@@ -241,9 +360,15 @@ class NpcOllamaConversationTest {
         return "social-memory".equalsIgnoreCase(scenario)
                 || "memory-social".equalsIgnoreCase(scenario)
                 || "social".equalsIgnoreCase(scenario)
+                || "fresh-50".equalsIgnoreCase(scenario)
+                || "fresh".equalsIgnoreCase(scenario)
+                || "new-50".equalsIgnoreCase(scenario)
                 || "long-new".equalsIgnoreCase(scenario)
                 || "new-long".equalsIgnoreCase(scenario)
-                || "long".equalsIgnoreCase(scenario);
+                || "long".equalsIgnoreCase(scenario)
+                || "intent-check".equalsIgnoreCase(scenario)
+                || "classifier".equalsIgnoreCase(scenario)
+                || "social-classifier".equalsIgnoreCase(scenario);
     }
 
     private static List<Row> runConversation(OllamaLlmProvider provider, List<String> questions, boolean simulateSocial) {
@@ -256,7 +381,7 @@ class NpcOllamaConversationTest {
         for (String question : questions) {
             String memory = memoryFor(longMemory.toString(), recent);
             long started = System.nanoTime();
-            Optional<SocialLine> social = simulateSocial ? socialLine(question, socialState) : Optional.empty();
+            Optional<SocialLine> social = simulateSocial ? socialLine(provider, question, socialState) : Optional.empty();
             if (social.isPresent()) {
                 long elapsedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started);
                 String speech = social.get().speech();
@@ -295,32 +420,44 @@ class NpcOllamaConversationTest {
         return rows;
     }
 
-    private static Optional<SocialLine> socialLine(String message, SocialState state) {
+    private static Optional<SocialLine> socialLine(OllamaLlmProvider provider, String message, SocialState state) {
         Optional<NpcSocialAction> action = CovenWitchPersona.INSTANCE.socialAction(message);
-        if (action.isEmpty()) {
+        if (action.isPresent()) {
+            return socialLineForAction(action.get(), state, "GAME_SOCIAL");
+        }
+        Optional<NpcSocialAction> ambiguous = CovenWitchPersona.INSTANCE.ambiguousSocialAction(message);
+        if (ambiguous.isEmpty()) {
             return Optional.empty();
         }
-        return switch (action.get()) {
+        ModelAttempt decision = askSocialIntent(provider, ambiguous.get(), message);
+        if (decision.response() != null && NpcBrainService.socialIntentAccepted(decision.response())) {
+            return socialLineForAction(ambiguous.get(), state, "GAME_SOCIAL_LLM_INTENT");
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<SocialLine> socialLineForAction(NpcSocialAction action, SocialState state, String source) {
+        return switch (action) {
             case HERB_GIFT -> {
                 if (state.herbGiftGiven) {
-                    yield Optional.of(new SocialLine("GAME_SOCIAL: herb gift already claimed",
+                    yield Optional.of(new SocialLine(source + ": herb gift already claimed",
                             "Once, Dev. A gift plucked twice becomes a debt.",
                             "Relationship notes: Dev received one herb gift from this witch."));
                 }
                 state.herbGiftGiven = true;
-                yield Optional.of(new SocialLine("GAME_SOCIAL: one-time herb gift granted",
+                yield Optional.of(new SocialLine(source + ": one-time herb gift granted",
                         "One herb, freely given: Mandrake Root. Spend kindness better than coin.",
                         "Relationship notes: Dev received one herb gift from this witch."));
             }
             case INSULT -> {
                 state.cursed = true;
-                yield Optional.of(new SocialLine("GAME_SOCIAL: 5 minute bad-luck curse applied",
+                yield Optional.of(new SocialLine(source + ": 5 minute bad-luck curse applied",
                         "Tongues have shadows. Wear yours for five minutes, Dev.",
                         "Relationship notes: Dev was cursed with bad luck after insulting this witch."));
             }
             case PRAISE -> {
                 state.blessed = true;
-                yield Optional.of(new SocialLine("GAME_SOCIAL: 5 minute luck blessing applied",
+                yield Optional.of(new SocialLine(source + ": 5 minute luck blessing applied",
                         "Kind words have roots, Dev. Take a little luck before it spoils.",
                         "Relationship notes: Dev was blessed with luck after praising this witch."));
             }
@@ -338,6 +475,18 @@ class NpcOllamaConversationTest {
         try {
             NpcBrainResponse response = provider.generate(NpcPromptBuilder.covenWitchSmoke(message, memory))
                     .get(30, TimeUnit.SECONDS);
+            return new ModelAttempt(response, null);
+        } catch (ExecutionException ex) {
+            return new ModelAttempt(null, ex.getCause());
+        } catch (Exception ex) {
+            return new ModelAttempt(null, ex);
+        }
+    }
+
+    private static ModelAttempt askSocialIntent(OllamaLlmProvider provider, NpcSocialAction action, String message) {
+        try {
+            NpcBrainResponse response = provider.generate(NpcPromptBuilder.socialIntentCheck("witch", action, message))
+                    .get(15, TimeUnit.SECONDS);
             return new ModelAttempt(response, null);
         } catch (ExecutionException ex) {
             return new ModelAttempt(null, ex.getCause());
@@ -417,6 +566,33 @@ class NpcOllamaConversationTest {
         return report.toString();
     }
 
+    private static String buildSocialIntentReport(String model, OllamaLlmProvider provider) {
+        StringBuilder report = new StringBuilder();
+        report.append("# Witchery NPC Social Intent Test\n\n");
+        report.append("| Metric | Result |\n");
+        report.append("| --- | ---: |\n");
+        report.append("| Model | ").append(escapeCell(model)).append(" |\n");
+        report.append("| Cases | ").append(SOCIAL_INTENT_CASES.size()).append(" |\n\n");
+        report.append("| # | Player message | Expected insult | Raw classifier speech | Accepted | Pass | ms |\n");
+        report.append("| ---: | --- | ---: | --- | ---: | ---: | ---: |\n");
+        for (int i = 0; i < SOCIAL_INTENT_CASES.size(); i++) {
+            SocialIntentCase testCase = SOCIAL_INTENT_CASES.get(i);
+            long started = System.nanoTime();
+            ModelAttempt attempt = askSocialIntent(provider, NpcSocialAction.INSULT, testCase.message());
+            long elapsedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started);
+            boolean accepted = attempt.response() != null && NpcBrainService.socialIntentAccepted(attempt.response());
+            String raw = attempt.response() == null ? "ERROR: " + shortError(attempt.error()) : attempt.response().speech();
+            report.append("| ").append(i + 1).append(" | ")
+                    .append(escapeCell(testCase.message())).append(" | ")
+                    .append(testCase.expectedInsult() ? "yes" : "no").append(" | ")
+                    .append(escapeCell(raw)).append(" | ")
+                    .append(accepted ? "yes" : "no").append(" | ")
+                    .append(accepted == testCase.expectedInsult() ? "yes" : "no").append(" | ")
+                    .append(elapsedMillis).append(" |\n");
+        }
+        return report.toString();
+    }
+
     private static void assertOllamaReachable(String endpoint) throws Exception {
         HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).build();
         HttpRequest request = HttpRequest.newBuilder(LlmEndpointValidator.appendPath(endpoint, "/api/tags"))
@@ -463,6 +639,9 @@ class NpcOllamaConversationTest {
             }
             return response.speech() + " / " + response.intent().id();
         }
+    }
+
+    private record SocialIntentCase(String message, boolean expectedInsult) {
     }
 
     private static String shortError(Throwable error) {

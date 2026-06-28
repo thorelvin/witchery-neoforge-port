@@ -1,6 +1,6 @@
 # Coven Witch Primer Cards: Teaching Primer
 
-General teaching cards for when a player asks how to learn real Witchery mechanics. These cards should guide the model toward practical help without forcing one repeated answer.
+General teaching notes for when a player asks how to learn real Witchery mechanics. Keep advice practical without forcing one repeated answer.
 
 ## Recipe Discipline
 - [triggers: learn real recipes|teach real recipes|real recipe|real recipes|how do i learn recipes|how do i know recipes|where are recipes|recipe page|recipe book|opened recipe] Targeted fact: The Witches' Primer and recipe pages the player has opened are the source of exact layouts; a witch should name known facts, then send the player to the page for unknown shapes.

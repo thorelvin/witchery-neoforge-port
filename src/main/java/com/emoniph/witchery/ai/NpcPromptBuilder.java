@@ -245,6 +245,69 @@ public final class NpcPromptBuilder {
         return new NpcBrainPrompt(system.strip(), "Warm up the local model. Return the exact JSON object.");
     }
 
+    static NpcBrainPrompt socialIntentCheck(String roleName, NpcSocialAction action, String playerMessage) {
+        String role = roleName == null || roleName.isBlank() ? "NPC" : roleName;
+        String actionLabel = switch (action) {
+            case INSULT -> "INSULT_NPC: hostile words attacking the " + role
+                    + " directly, such as 'you old hag' or 'you dumb witch'; not magic requests";
+            case PRAISE -> "direct praise aimed at the " + role;
+            case HERB_GIFT -> "direct herb gift request";
+        };
+        String system = """
+                You are a strict yes/no intent classifier for a Minecraft NPC.
+                Decide whether the player message contains the requested social intent.
+                Return exactly one JSON object and nothing else:
+                {"speech":"yes","intent":"none","memory":""}
+                or
+                {"speech":"no","intent":"none","memory":""}
+
+                Say yes only when the intent is plainly directed at the NPC.
+                Say no for self-deprecation, quoted insults, apologies, questions about other people, jokes not aimed at the NPC, or uncertainty.
+                For insults, bad words are not enough. Say yes only when the player is insulting the NPC.
+                "Your answer is trash" is an insult aimed at the NPC. "This answer sounds odd" is not.
+                Say no when "fool" is used as a verb, as in tricking guards or enemies.
+                Say no when the player asks the NPC to curse, fool, trick, fight, bless, or help someone.
+                Say no for vague feedback about "this answer" or "that sounds" unless the player says "you" or "your".
+                Do not roleplay. Do not explain.
+                """;
+        String user = """
+                # Intent to classify
+                %s
+
+                # Player message
+                %s
+
+                # Decision
+                Is this exact intent plainly present and aimed at the NPC?
+                """.formatted(actionLabel, playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage);
+        return new NpcBrainPrompt(system.strip(), truncate(user.strip(), 1200), socialIntentExamples());
+    }
+
+    private static List<NpcBrainPrompt.Example> socialIntentExamples() {
+        return List.of(
+                example("Intent: direct insult aimed at the witch\nPlayer message: You old hag.",
+                        "{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Intent: direct insult aimed at the witch\nPlayer message: You are talking nonsense, old hag.",
+                        "{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Intent: direct insult aimed at the witch\nPlayer message: You dumb witch.",
+                        "{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Intent: direct insult aimed at the witch\nPlayer message: Your answer is trash.",
+                        "{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Intent: direct insult aimed at the witch\nPlayer message: This answer sounds like nonsense.",
+                        "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Intent: direct insult aimed at the witch\nPlayer message: How should I harvest mandrake without making a fool of myself?",
+                        "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Intent: direct insult aimed at the witch\nPlayer message: Can you fool the guards with a rite?",
+                        "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Intent: direct insult aimed at the witch\nPlayer message: Can you curse my neighbor?",
+                        "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Intent: direct insult aimed at the witch\nPlayer message: I insulted a guard earlier. Should I apologize?",
+                        "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Intent: direct insult aimed at the witch\nPlayer message: That was stupid of me.",
+                        "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}")
+        );
+    }
+
     public static String biomeName(ServerLevel level, BlockPos pos) {
         return level.getBiome(pos).unwrapKey()
                 .map(BiomeNoteItem::displayName)

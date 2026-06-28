@@ -26,6 +26,33 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
+    void separatesDirectInsultsFromAmbiguousInsultWords() {
+        assertTrue(NpcDialogueFallback.isInsult("you old hag"));
+        assertTrue(NpcDialogueFallback.isInsult("you fool"));
+        assertTrue(!NpcDialogueFallback.isInsult("can you fool the guards with a rite"));
+        assertTrue(!NpcDialogueFallback.isInsult("how do i harvest mandrake without making a fool of myself"));
+        assertTrue(!NpcDialogueFallback.isAmbiguousInsultCandidate(
+                "can you fool the guards with a rite"));
+        assertTrue(!NpcDialogueFallback.isAmbiguousInsultCandidate(
+                "this answer sounds like nonsense"));
+        assertTrue(!NpcDialogueFallback.isAmbiguousInsultCandidate(
+                "how do i harvest mandrake without making a fool of myself"));
+        assertTrue(!NpcDialogueFallback.isAmbiguousInsultCandidate(
+                "i insulted a guard earlier should i apologize"));
+    }
+
+    @Test
+    void answersApologiesAndSelfDirectedRegretWithoutSocialPunishment() {
+        Optional<String> apology = NpcDialogueFallback.covenChat("Sorry, I was angry.", "Lilith Poe", "Dev");
+        Optional<String> regret = NpcDialogueFallback.covenChat("That was stupid of me.", "Lilith Poe", "Dev");
+
+        assertTrue(apology.isPresent());
+        assertTrue(apology.get().contains("Apology heard"), apology.get());
+        assertTrue(regret.isPresent());
+        assertTrue(regret.get().contains("Mistakes teach"), regret.get());
+    }
+
+    @Test
     void answersTradeDetailsWithStock() {
         Optional<String> speech = NpcDialogueFallback.covenChat("what do you trade?", "Lilith Poe", "Dev");
 
@@ -362,6 +389,18 @@ class NpcDialogueFallbackTest {
 
         assertTrue(speech.isPresent());
         assertTrue(speech.get().contains("you have coin, you like belladonna, and you are looking for an arthana"), speech.get());
+    }
+
+    @Test
+    void memoryAnswerDoesNotRepeatLookingForPreposition() {
+        Optional<String> memory = NpcMemoryNotes.extract("Dev", "What do I need for Whiff of Magic?");
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What do you remember about me?", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L,
+                "Entity memory: witch is Lilith Poe; player is Dev. Long memory: "
+                        + memory.orElse("Dev is looking for for Whiff of Magic."));
+
+        assertTrue(speech.isPresent());
+        assertTrue(!speech.get().contains("for for"), speech.get());
     }
 
     @Test

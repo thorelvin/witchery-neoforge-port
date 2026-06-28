@@ -69,6 +69,7 @@ final class NpcMemoryNotes {
                 .replaceAll("[\"`<>]", "")
                 .replaceAll("(?i)[.?!]\\s*(?:what|how|where|when|why|who|which|can|could|should|would|do|does|did|is|are|am)\\b.*$", "")
                 .replaceAll("(?i)\\b(?:what\\s+is\\s+useful|what\\s+would\\s+be\\s+useful|what\\s+should\\s+i|what\\s+do\\s+i|what\\s+can\\s+i)\\b.*$", "")
+                .replaceFirst("(?i)^for\\s+", "")
                 .replaceAll("(?i)\\bmyself\\b", "themselves")
                 .replaceAll("(?i)\\bmy\\b", "their")
                 .replaceAll("(?i)\\bmine\\b", "theirs")

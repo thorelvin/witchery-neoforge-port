@@ -1,6 +1,6 @@
 # Coven Witch Primer Cards: Basic Recipes
 
-Compact recipe cards for practical player teaching. These cards are grounded in local recipe JSON and Primer text.
+Compact recipe notes for practical player teaching. These notes are grounded in local recipes and Primer text.
 
 ## Whiff of Magic
 - [triggers: whiff|whif|whiff of magic|whif of magic|rowan sapling|circle reagent] Targeted fact: Whiff of Magic comes from cooking a Rowan Sapling in a Witch's Oven; use fuel and a Clay Jar, and expect Wood Ash as the other oven output.
