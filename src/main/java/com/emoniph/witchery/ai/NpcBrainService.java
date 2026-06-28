@@ -2,6 +2,8 @@ package com.emoniph.witchery.ai;
 
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.particles.ParticleTypes;
@@ -112,6 +114,34 @@ public final class NpcBrainService {
             return true;
         }
         return requestPersonaChatWithAnalysis(persona, witch, player, playerMessage);
+    }
+
+    public boolean requestLeonardGreeting(LeonardEntity leonard, ServerPlayer player, Component fallback) {
+        if (!WitcheryConfig.LLM_ENABLED.get()) {
+            return false;
+        }
+        LeonardPersona persona = NpcPersonas.LEONARD;
+        return requestPersonaResponse(persona, leonard, player,
+                persona.greetingPrompt(leonard, player, contextFor(persona, leonard, player)),
+                "greet", "", fallback, true);
+    }
+
+    public boolean requestLeonardGaze(LeonardEntity leonard, ServerPlayer player, Component fallback) {
+        if (!WitcheryConfig.LLM_ENABLED.get()) {
+            return false;
+        }
+        LeonardPersona persona = NpcPersonas.LEONARD;
+        return requestPersonaResponse(persona, leonard, player,
+                NpcPromptBuilder.leonardGaze(leonard, player, contextFor(persona, leonard, player)),
+                "gaze", "", fallback, true);
+    }
+
+    public boolean requestLeonardChat(LeonardEntity leonard, ServerPlayer player, String playerMessage) {
+        if (!WitcheryConfig.LLM_ENABLED.get()) {
+            return false;
+        }
+        LeonardPersona persona = NpcPersonas.LEONARD;
+        return requestPersonaChatWithAnalysis(persona, leonard, player, playerMessage);
     }
 
     private <E extends LivingEntity> boolean requestSocialIntentClassification(NpcPersona<E> persona, E entity,
@@ -632,7 +662,7 @@ public final class NpcBrainService {
         if (swingsForBeat(cue)) {
             entity.swing(InteractionHand.MAIN_HAND, true);
         }
-        SoundEvent sound = soundForBeat(cue);
+        SoundEvent sound = soundForBeat(entity, cue);
         float volume = volumeForBeat(cue);
         float pitch = pitchForBeat(cue);
         level.playSound(null, entity.blockPosition(), sound, SoundSource.NEUTRAL, volume, pitch);
@@ -646,7 +676,10 @@ public final class NpcBrainService {
         };
     }
 
-    private static SoundEvent soundForBeat(String beat) {
+    private static SoundEvent soundForBeat(LivingEntity entity, String beat) {
+        if (entity instanceof LeonardEntity) {
+            return WitcherySoundEvents.ENTITY_LEONARD_SAY.get();
+        }
         return switch (beat) {
             case "nods", "smiles thinly" -> SoundEvents.VILLAGER_YES;
             case "narrows her eyes", "folds her arms" -> SoundEvents.VILLAGER_NO;

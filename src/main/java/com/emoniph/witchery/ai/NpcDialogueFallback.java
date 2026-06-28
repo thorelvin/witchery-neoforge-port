@@ -18,6 +18,84 @@ final class NpcDialogueFallback {
         return covenChat(playerMessage, witchName, playerName, biome, timeOfDay, clock, day, "");
     }
 
+    static Optional<String> leonardChat(String playerMessage, String leonardName, String playerName,
+                                        String phase, String altarInfo, String covenInfo, String gearInfo,
+                                        String memoryContext) {
+        String normalized = normalize(playerMessage);
+        if (normalized.isBlank()) {
+            return Optional.empty();
+        }
+
+        String name = safeName(playerName);
+        String leonard = safeDisplayName(leonardName, "Shade of Leonard");
+        if (asksNpcName(normalized)) {
+            return Optional.of("I am " + leonard + ", the debt your cauldron dragged into shape.");
+        }
+        if (asksPlayerName(normalized)) {
+            return Optional.of("Your name is " + name + ". Names are the first coin of every bargain.");
+        }
+        if (isGreeting(normalized)) {
+            return Optional.of("You stand before a debt wearing a shape, " + name + ". Speak carefully.");
+        }
+        if (containsAny(normalized, "where are you from", "where did you come from", "where were you summoned from",
+                "summoned from", "goat legs", "goat leg", "hooves", "horns", "satyr", "sabbath")) {
+            return Optional.of("The cauldron dragged my Shade from an infernal sabbath threshold, " + name + "; these horns are older than your courage.");
+        }
+        if (containsAny(normalized, "summon", "summoning", "call you", "called you", "bring you", "cauldron")) {
+            return Optional.of("Nether Wart, Tear of the Goddess, Diamond Vapour, Diamond, Nether Star; then hat, cauldron, and ten thousand altar power.");
+        }
+        if (containsAny(normalized, "lost soul", "lost souls", "souls", "green soul", "red soul", "black soul")) {
+            return Optional.of("Break the souls first. Green takes steel, red fears fire and blast, black yields to magic and potions.");
+        }
+        if (containsAny(normalized, "demonbane", "harm demons", "weakness brew", "brew weakness")) {
+            return Optional.of("Demonbane bites deepest when I am already wounded. Bring it late, not proudly early.");
+        }
+        if (containsAny(normalized, "mortal coil", "death coil", "coil", "withering", "wither")) {
+            return Optional.of("Mortal Coil is my withering mark on attackers; survive the debt or end the fight quickly.");
+        }
+        if (containsAny(normalized, "urn", "leonards urn", "leonard s urn", "your urn")) {
+            return Optional.of("The urn stores thrown brews, cycles by sneak-use, and releases the selected brew through shadow magic.");
+        }
+        if (containsAny(normalized, "arthana")) {
+            return Optional.of("An arthana names sacrifice and precision. Against me, it is still only the hand behind it.");
+        }
+        if (containsAny(normalized, "mystic branch", "branch", "spell", "glyph", "symbol")) {
+            return Optional.of("A branch speaks symbols. I answer with older grammar.");
+        }
+        if (containsAny(normalized, "altar", "altar power", "power", "nearby altar")) {
+            return Optional.of("I read your altar plainly: " + shortSceneFact(altarInfo) + ".");
+        }
+        if (containsAny(normalized, "coven", "witches", "nearby witches", "my coven", "coven size")) {
+            return Optional.of("Your coven is no shield: " + shortSceneFact(covenInfo) + ".");
+        }
+        if (containsAny(normalized, "gear", "equipment", "holding", "wearing", "carry", "carrying",
+                "my items", "my item", "my armor", "my armour")) {
+            return Optional.of("You carry your argument openly: " + shortSceneFact(gearInfo) + ".");
+        }
+        if (containsAny(normalized, "bargain", "deal", "contract", "price", "debt")) {
+            return Optional.of("A bargain is not a wish, " + name + ". Bring a real price, not a story.");
+        }
+        if (containsAny(normalized, "how do i kill you", "how can i kill you", "how to kill you",
+                "how do i beat you", "weakness", "defeat you")) {
+            return Optional.of("Strike by your own hand, break the souls when they rise, and save Demonbane for the wounded hour.");
+        }
+        if (containsAny(normalized, "don't want to fight", "dont want to fight", "do not want to fight",
+                "no reason to fight", "i refuse to fight", "can we avoid fighting", "peace")) {
+            return Optional.of("Then keep your hand from blood. I am neutral until struck, not gentle.");
+        }
+        if (containsAny(normalized, "phase", "health", "wounded", "fight")) {
+            return Optional.of("Read the fight, " + name + ": " + shortSceneFact(phase) + ".");
+        }
+        if (asksMemory(normalized)) {
+            return Optional.of(memoryAnswer(memoryContext, name)
+                    .orElse("I know your name, " + name + ", and little else worth pricing."));
+        }
+        if (containsAny(normalized, "help", "teach", "advice", "what should i do")) {
+            return Optional.of("Ask for weakness, altar, coven, gear, or the price of summoning; spare me soft wandering.");
+        }
+        return Optional.of(leonardAside(normalized, name, ""));
+    }
+
     static Optional<String> covenChat(String playerMessage, String witchName, String playerName,
                                       String biome, String timeOfDay, String clock, long day,
                                       String memoryContext) {
@@ -346,6 +424,36 @@ final class NpcDialogueFallback {
             return Optional.empty();
         }
         return Optional.of(oldWitchAside(normalized, safeName(playerName), avoidSpeech));
+    }
+
+    static String leonardLastResort(String playerMessage, String playerName, String avoidSpeech) {
+        return leonardAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+    }
+
+    static Optional<String> leonardAlternate(String playerMessage, String playerName, String avoidSpeech) {
+        String line = leonardAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
+    }
+
+    private static String leonardAside(String normalized, String playerName, String avoidSpeech) {
+        String[] lines = {
+                "Speak plainly, " + playerName + ". Even debts tire of weak mouths.",
+                "Careful. Not every silence is empty; some are measuring you.",
+                "Your courage has a smell. I have not decided whether it is rot or ripeness.",
+                "A thin question. Bring a sharper one before I lose patience.",
+                "The crossroads heard you. It found you small."
+        };
+        for (String line : lines) {
+            if (!NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
+                return line;
+            }
+        }
+        return "Ask again, " + playerName + "; this time bring a sharper question.";
+    }
+
+    private static String shortSceneFact(String text) {
+        String cleaned = NpcBrainResponse.sanitize(text, 150);
+        return cleaned.isBlank() ? "nothing worth naming" : cleaned;
     }
 
     private static Optional<String> specificAlternate(String normalized, String playerName, String avoidSpeech) {

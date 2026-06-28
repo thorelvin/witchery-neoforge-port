@@ -524,7 +524,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (text.isBlank()) {
             return "";
         }
-        if (text.contains("hand")
+        if ((text.contains("hand") && !text.contains("spread"))
                 || text.contains("give")
                 || text.contains("take")
                 || text.contains("throw")
@@ -543,7 +543,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return "leans closer";
         }
         if (text.contains("lower") && text.contains("voice")) {
-            return "lowers her voice";
+            return text.contains("his") ? "lowers his voice" : "lowers her voice";
         }
         if (text.contains("sigh")) {
             return "sighs";
@@ -572,6 +572,9 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (text.contains("coin") && (text.contains("study") || text.contains("examine") || text.contains("regard"))) {
             return "studies your coin";
         }
+        if (text.contains("blade") && (text.contains("study") || text.contains("examine") || text.contains("regard"))) {
+            return "studies your blade";
+        }
         if (text.contains("study") || text.contains("examine") || text.contains("regard")) {
             return "studies you";
         }
@@ -579,7 +582,13 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return "taps a finger";
         }
         if (text.contains("tilt") && text.contains("head")) {
-            return "tilts her head";
+            return text.contains("his") ? "tilts his head" : "tilts her head";
+        }
+        if (text.contains("turn") && text.contains("gaze")) {
+            return "turns his gaze";
+        }
+        if (text.contains("spread") && text.contains("hand")) {
+            return "spreads his hands";
         }
         if (text.contains("adjust") && text.contains("robe")) {
             return "adjusts her robe";
@@ -587,7 +596,9 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return switch (text) {
             case "narrows her eyes", "leans closer", "raises an eyebrow", "folds her arms", "nods",
                     "smiles thinly", "gestures", "studies your coin", "studies you", "taps a finger",
-                    "tilts her head", "shrugs", "yawns", "lowers her voice", "sighs", "adjusts her robe" -> text;
+                    "tilts her head", "shrugs", "yawns", "lowers her voice", "sighs", "adjusts her robe",
+                    "lowers his voice", "studies your blade", "tilts his head", "turns his gaze",
+                    "spreads his hands" -> text;
             default -> "";
         };
     }
@@ -710,13 +721,18 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalized.equals("smiles thinly")
                 || normalized.equals("gestures")
                 || normalized.equals("studies your coin")
+                || normalized.equals("studies your blade")
                 || normalized.equals("studies you")
                 || normalized.equals("taps a finger")
                 || normalized.equals("tilts her head")
+                || normalized.equals("tilts his head")
                 || normalized.equals("adjusts her robe")
+                || normalized.equals("turns his gaze")
+                || normalized.equals("spreads his hands")
                 || normalized.equals("shrugs")
                 || normalized.equals("yawns")
                 || normalized.equals("lowers her voice")
+                || normalized.equals("lowers his voice")
                 || normalized.equals("sighs");
     }
 

@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.ai.NpcBrainService;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
@@ -26,6 +27,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -51,6 +54,7 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Shade of Leonard — source {@code EntityLeonard} (1.7.10-0.24.1).
@@ -76,6 +80,10 @@ public class LeonardEntity extends Monster implements RangedAttackMob {
     private static final int   SOUL_SPAWN_DELAY = 10;
     private static final float SOURCE_DEMONBANE_HEALTH_GATE = 0.4F;
     private static final float SOURCE_DEMONBANE_DAMAGE_CAP = 15.0F;
+    private static final long ATTENTION_PENDING_TICKS = 20L * 20L;
+    private static final long ATTENTION_AFTER_REPLY_TICKS = 35L * 20L;
+    private static final long ATTENTION_BRIEF_TICKS = 12L * 20L;
+    private static final double ATTENTION_MAX_DISTANCE_SQR = 18.0 * 18.0;
 
     private static final Identifier GIANT_SCALE_MODIFIER_ID =
             Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "leonard.giant_scale");
@@ -92,6 +100,9 @@ public class LeonardEntity extends Monster implements RangedAttackMob {
     private long lifetime;
     private int soulSpawnDelay = SOUL_SPAWN_DELAY;
     private boolean large;
+    @Nullable
+    private UUID attentionPlayer;
+    private long attentionUntil;
 
     public LeonardEntity(EntityType<? extends LeonardEntity> type, Level level) {
         super(type, level);
@@ -118,9 +129,10 @@ public class LeonardEntity extends Monster implements RangedAttackMob {
         // Source: a ranged spell-caster — no melee-pursuit goal; it kites and casts.
         goalSelector.addGoal(1, new FloatGoal(this));
         goalSelector.addGoal(2, new RangedAttackGoal(this, 1.0, 20, 60, 30.0F));
-        goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        goalSelector.addGoal(3, new PlayerAttentionGoal());
+        goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0));
+        goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         // Neutral: only retaliates when attacked.
         targetSelector.addGoal(1, new HurtByTargetGoal(this));
     }
@@ -177,6 +189,11 @@ public class LeonardEntity extends Monster implements RangedAttackMob {
             bossEvent.setProgress(getHealth() / getMaxHealth());
             serverAiTick(serverLevel);
         }
+        Player player = activeAttentionPlayer();
+        if (player != null) {
+            stopMovingForAttention();
+            faceAttentionPlayer(player);
+        }
     }
 
     // ── Server AI tick (source func_70619_bc) ──────────────────────────────────
@@ -210,6 +227,131 @@ public class LeonardEntity extends Monster implements RangedAttackMob {
 
     private boolean hasCombatInterest() {
         return getTarget() != null || getLastHurtByMob() != null;
+    }
+
+    public boolean isInCombat() {
+        return hasCombatInterest();
+    }
+
+    public boolean isCoalescing() {
+        return invulnerableStartTicks > 0;
+    }
+
+    public boolean isLargeForm() {
+        return large;
+    }
+
+    public boolean hasNearbyLostSouls(ServerLevel level) {
+        return soulsShielding(level);
+    }
+
+    public void beginPlayerConversation(Player player) {
+        holdPlayerAttention(player, ATTENTION_PENDING_TICKS, true);
+    }
+
+    public void completePlayerConversation(Player player) {
+        holdPlayerAttention(player, ATTENTION_AFTER_REPLY_TICKS, false);
+    }
+
+    public void nudgePlayerAttention(Player player) {
+        holdPlayerAttention(player, ATTENTION_BRIEF_TICKS, true);
+        if (level() instanceof ServerLevel serverLevel) {
+            serverLevel.playSound(null, blockPosition(), WitcherySoundEvents.ENTITY_LEONARD_SAY.get(),
+                    SoundSource.HOSTILE, 0.42F, 0.82F);
+        }
+    }
+
+    private void holdPlayerAttention(Player player, long ticks, boolean extendOnly) {
+        if (level().isClientSide() || player == null || !player.isAlive() || player.level() != level()) {
+            return;
+        }
+        faceAttentionPlayer(player);
+        if (hasCombatInterest()) {
+            return;
+        }
+        long until = level().getGameTime() + ticks;
+        if (extendOnly && player.getUUID().equals(attentionPlayer) && attentionUntil >= until) {
+            stopMovingForAttention();
+            return;
+        }
+        attentionPlayer = player.getUUID();
+        attentionUntil = until;
+        stopMovingForAttention();
+    }
+
+    @Nullable
+    private Player activeAttentionPlayer() {
+        if (attentionPlayer == null || level().getGameTime() > attentionUntil || hasCombatInterest()) {
+            clearAttention();
+            return null;
+        }
+        Player player = level().getPlayerByUUID(attentionPlayer);
+        if (player == null || !player.isAlive() || player.level() != level()
+                || distanceToSqr(player) > ATTENTION_MAX_DISTANCE_SQR) {
+            clearAttention();
+            return null;
+        }
+        return player;
+    }
+
+    private void clearAttention() {
+        attentionPlayer = null;
+        attentionUntil = 0L;
+    }
+
+    private void stopMovingForAttention() {
+        getNavigation().stop();
+        setDeltaMovement(getDeltaMovement().multiply(0.0, 1.0, 0.0));
+    }
+
+    private void faceAttentionPlayer(Player player) {
+        getLookControl().setLookAt(player, 30.0F, 30.0F);
+        double dx = player.getX() - getX();
+        double dz = player.getZ() - getZ();
+        if (dx * dx + dz * dz > 1.0E-4) {
+            float yaw = (float) (Mth.atan2(dz, dx) * (180.0F / Math.PI)) - 90.0F;
+            setYRot(yaw);
+            setYBodyRot(yaw);
+            setYHeadRot(yaw);
+        }
+    }
+
+    private final class PlayerAttentionGoal extends Goal {
+        PlayerAttentionGoal() {
+            setFlags(java.util.EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            return activeAttentionPlayer() != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return activeAttentionPlayer() != null;
+        }
+
+        @Override
+        public void start() {
+            stopMovingForAttention();
+        }
+
+        @Override
+        public void stop() {
+            if (activeAttentionPlayer() == null) {
+                clearAttention();
+            }
+        }
+
+        @Override
+        public void tick() {
+            Player player = activeAttentionPlayer();
+            if (player == null) {
+                return;
+            }
+            stopMovingForAttention();
+            faceAttentionPlayer(player);
+        }
     }
 
     // ── Mortal Coil hex + random hexes ─────────────────────────────────────────
@@ -457,6 +599,28 @@ public class LeonardEntity extends Monster implements RangedAttackMob {
         }
         playSound(SoundEvents.IRON_GOLEM_ATTACK, 1.0F, 1.0F);
         return hit;
+    }
+
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (hand != InteractionHand.MAIN_HAND) {
+            return InteractionResult.PASS;
+        }
+        if (level().isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        beginPlayerConversation(player);
+        String name = getDisplayName().getString();
+        Component fallback = Component.literal("\u00a79<" + name + "> \u00a7r")
+                .append(Component.literal(hasCombatInterest()
+                        ? "Your violence is already speaking."
+                        : "A bargain dragged me here. Speak, if you must."));
+        boolean queued = player instanceof ServerPlayer serverPlayer
+                && NpcBrainService.INSTANCE.requestLeonardGreeting(this, serverPlayer, fallback);
+        if (!queued) {
+            player.displayClientMessage(fallback, false);
+        }
+        return InteractionResult.CONSUME;
     }
 
     @Override

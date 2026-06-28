@@ -12,6 +12,7 @@ spirit_world.md
 poppets_wards.md
 curses_counterplay.md
 demons_bosses.md
+leonard_boss.md
 rumors_omens.md
 books_progression.md
 scrying_waystones.md

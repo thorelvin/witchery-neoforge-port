@@ -3,24 +3,33 @@ package com.emoniph.witchery.events;
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.ai.NpcBrainService;
 import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.entity.LeonardEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
 
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public final class NpcBrainEvents {
     private static final double CHAT_RANGE = 10.0;
     private static final double CASUAL_CHAT_RANGE = 6.0;
+    private static final double LEONARD_CHAT_RANGE = 12.0;
+    private static final double LEONARD_CASUAL_CHAT_RANGE = 8.0;
+    private static final double LEONARD_GAZE_RANGE = 7.0;
+    private static final long LEONARD_GAZE_COOLDOWN_TICKS = 20L * 45L;
+    private static final ConcurrentHashMap<String, Long> LEONARD_GAZE_COOLDOWNS = new ConcurrentHashMap<>();
 
     private NpcBrainEvents() {
     }
@@ -32,6 +41,13 @@ public final class NpcBrainEvents {
         }
         String message = event.getRawText();
         if (message == null || message.isBlank() || !(player.level() instanceof ServerLevel level)) {
+            return;
+        }
+        LeonardEntity leonard = findLeonardChatTarget(level, player, message);
+        if (leonard != null) {
+            if (!NpcBrainService.INSTANCE.requestLeonardChat(leonard, player, message)) {
+                leonard.nudgePlayerAttention(player);
+            }
             return;
         }
         CovenWitchEntity witch = findChatTarget(level, player, message);
@@ -52,12 +68,37 @@ public final class NpcBrainEvents {
     }
 
     @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)
+                || !(player.level() instanceof ServerLevel level)
+                || player.tickCount % 20 != 0) {
+            return;
+        }
+        LeonardEntity leonard = findGazedLeonard(level, player);
+        if (leonard == null) {
+            return;
+        }
+        long now = level.getGameTime();
+        String key = leonard.getUUID() + ":" + player.getUUID() + ":gaze";
+        Long blockedUntil = LEONARD_GAZE_COOLDOWNS.get(key);
+        if (blockedUntil != null && blockedUntil > now) {
+            return;
+        }
+        LEONARD_GAZE_COOLDOWNS.put(key, now + LEONARD_GAZE_COOLDOWN_TICKS);
+        String name = leonard.getDisplayName().getString();
+        Component fallback = Component.literal("\u00a79<" + name + "> \u00a7r")
+                .append(Component.literal("You look at the bargain, and the bargain looks back."));
+        NpcBrainService.INSTANCE.requestLeonardGaze(leonard, player, fallback);
+    }
+
+    @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
         NpcBrainService.INSTANCE.prewarm();
     }
 
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
+        LEONARD_GAZE_COOLDOWNS.clear();
         NpcBrainService.INSTANCE.shutdown();
     }
 
@@ -85,12 +126,66 @@ public final class NpcBrainEvents {
         return null;
     }
 
+    private static LeonardEntity findLeonardChatTarget(ServerLevel level, ServerPlayer player, String message) {
+        List<LeonardEntity> shades = level.getEntitiesOfClass(
+                LeonardEntity.class, player.getBoundingBox().inflate(LEONARD_CHAT_RANGE, 6.0, LEONARD_CHAT_RANGE));
+        if (shades.isEmpty()) {
+            return null;
+        }
+        shades.sort(Comparator.comparingDouble(player::distanceToSqr));
+        for (LeonardEntity shade : shades) {
+            if (isNamedLeonardAddress(shade, message)) {
+                return shade;
+            }
+        }
+        LeonardEntity nearest = shades.getFirst();
+        double distance = player.distanceToSqr(nearest);
+        if (distance <= LEONARD_CASUAL_CHAT_RANGE * LEONARD_CASUAL_CHAT_RANGE
+                && isLookingAt(player, nearest)
+                && isConversational(message)) {
+            return nearest;
+        }
+        return null;
+    }
+
+    private static LeonardEntity findGazedLeonard(ServerLevel level, ServerPlayer player) {
+        List<LeonardEntity> shades = level.getEntitiesOfClass(
+                LeonardEntity.class, player.getBoundingBox().inflate(LEONARD_GAZE_RANGE, 4.0, LEONARD_GAZE_RANGE));
+        if (shades.isEmpty()) {
+            return null;
+        }
+        shades.sort(Comparator.comparingDouble(player::distanceToSqr));
+        for (LeonardEntity shade : shades) {
+            if (!shade.isInCombat() && player.hasLineOfSight(shade) && isLookingAt(player, shade)) {
+                return shade;
+            }
+        }
+        return null;
+    }
+
     private static boolean isNamedAddress(CovenWitchEntity witch, String message) {
         String normalized = normalize(message);
         if (normalized.contains("witch")) {
             return true;
         }
         String name = witch.hasCustomName() ? witch.getCustomName().getString() : "";
+        if (name.isBlank()) {
+            return false;
+        }
+        String normalizedName = normalize(name);
+        if (normalized.contains(normalizedName)) {
+            return true;
+        }
+        String first = normalizedName.split("\\s+")[0];
+        return first.length() >= 3 && normalized.contains(first);
+    }
+
+    private static boolean isNamedLeonardAddress(LeonardEntity leonard, String message) {
+        String normalized = normalize(message);
+        if (normalized.contains("leonard") || normalized.contains("shade")) {
+            return true;
+        }
+        String name = leonard.hasCustomName() ? leonard.getCustomName().getString() : "";
         if (name.isBlank()) {
             return false;
         }
@@ -151,7 +246,7 @@ public final class NpcBrainEvents {
                 || normalized.contains("come back");
     }
 
-    private static boolean isLookingAt(ServerPlayer player, CovenWitchEntity witch) {
+    private static boolean isLookingAt(ServerPlayer player, LivingEntity witch) {
         Vec3 eye = player.getEyePosition();
         Vec3 witchCenter = witch.position().add(0.0, witch.getBbHeight() * 0.55, 0.0);
         Vec3 offset = witchCenter.subtract(eye);
