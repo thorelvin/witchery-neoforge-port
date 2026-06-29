@@ -127,6 +127,54 @@ class NpcKnowledgeBaseTest {
     }
 
     @Test
+    void retrievesAmbientChestAndTheftCardsForWitchPersona() {
+        String warning = NpcKnowledgeBase.relevantContext(
+                "ambient looking into the witch's chest", "Plains", "night",
+                new NpcCardRequest("coven_witch", new UUID(51L, 52L), new UUID(61L, 62L), 0L, 0, 3, 1));
+        String warningLower = warning.toLowerCase(Locale.ROOT);
+
+        assertTrue(warningLower.contains("targeted fact"), warning);
+        assertTrue(warningLower.contains("chest"), warning);
+        assertTrue(warningLower.contains("fingers") || warningLower.contains("pockets"), warning);
+
+        String theft = NpcKnowledgeBase.relevantContext(
+                "ambient sneaking into the witch chest darkness curse", "Plains", "night",
+                new NpcCardRequest("coven_witch", new UUID(53L, 54L), new UUID(63L, 64L), 0L, 0, 3, 1));
+        String theftLower = theft.toLowerCase(Locale.ROOT);
+
+        assertTrue(theftLower.contains("curse"), theft);
+        assertTrue(theftLower.contains("theft")
+                || theftLower.contains("stolen")
+                || theftLower.contains("punishment"), theft);
+    }
+
+    @Test
+    void retrievesAmbientPrimerCardWithoutVisiblePageLanguage() {
+        String context = NpcKnowledgeBase.relevantContext(
+                "ambient reading the Witches Primer", "Plains", "day",
+                new NpcCardRequest("coven_witch", new UUID(55L, 56L), new UUID(65L, 66L), 0L, 0, 3, 1));
+        String lower = context.toLowerCase(Locale.ROOT);
+
+        assertTrue(lower.contains("targeted fact"), context);
+        assertTrue(lower.contains("primer"), context);
+        assertTrue(!lower.contains("visible pages"), context);
+        assertTrue(lower.contains("book") || lower.contains("read"), context);
+    }
+
+    @Test
+    void retrievesAmbientInvisiblePlayerCardForCreepyCroneRemark() {
+        String context = NpcKnowledgeBase.relevantContext(
+                "ambient invisible player lingering near the witch", "Plains", "night",
+                new NpcCardRequest("coven_witch", new UUID(57L, 58L), new UUID(67L, 68L), 0L, 0, 3, 1));
+        String lower = context.toLowerCase(Locale.ROOT);
+
+        assertTrue(lower.contains("targeted fact"), context);
+        assertTrue(lower.contains("invisible"), context);
+        assertTrue(lower.contains("absence") || lower.contains("breath") || lower.contains("draft"), context);
+        assertTrue(!lower.contains("perfect sight"), context);
+    }
+
+    @Test
     void retrievesTargetedHerbLoreWithoutQuestionShape() {
         String context = NpcKnowledgeBase.relevantContext("belladonna then", "Plains", "day");
         String lower = context.toLowerCase(Locale.ROOT);
@@ -602,7 +650,7 @@ class NpcKnowledgeBaseTest {
         assertTrue(golden.isPresent());
         String goldenLower = golden.get().toLowerCase(Locale.ROOT);
         assertTrue(goldenLower.contains("brew bags"), golden.get());
-        assertTrue(goldenLower.contains("witches robes"), golden.get());
+        assertTrue(goldenLower.contains("witches' robes"), golden.get());
 
         Optional<String> tormented = NpcKnowledgeBase.compactAnswer("what is tormented twine for?", "Plains", "night");
 
@@ -1332,7 +1380,9 @@ class NpcKnowledgeBaseTest {
         String removeLower = remove.get().toLowerCase(Locale.ROOT);
         assertTrue(removeLower.contains("2000 altar power"), remove.get());
         assertTrue(removeLower.contains("taglock"), remove.get());
-        assertTrue(removeLower.contains("worsen"), remove.get());
+        assertTrue(removeLower.contains("small ritual"), remove.get());
+        assertTrue(removeLower.contains("breath of the goddess"), remove.get());
+        assertTrue(removeLower.contains("vampire removal"), remove.get());
 
         Optional<String> transpose = NpcKnowledgeBase.compactAnswer(
                 "how does rite of transposition move a player?", "Plains", "night");

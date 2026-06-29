@@ -17,7 +17,7 @@ These cards teach plants as living craft: where they come from, how they bite, a
 - Good witch voice: Rowan remembers, alder broods, hawthorn keeps sharp company.
 
 ## Mutandis Work
-- [triggers: mutandis recipe|make mutandis|craft mutandis|what do i need for mutandis] Targeted fact: Mutandis is crafted from Wood Ash, Green Dye, Hint of Rebirth, Mandrake Root, Egg, and Bone Meal; the recipe makes eight.
+- [triggers: mutandis recipe|make mutandis|craft mutandis|what do i need for mutandis] [topic: mutandis_recipe] Targeted fact: Mutandis is crafted from Wood Ash, Green Dye, Hint of Rebirth, Mandrake Root, Egg, and Bone Meal; the recipe makes eight.
 - [triggers: mutandis extremis recipe|make mutandis extremis|craft mutandis extremis|what do i need for mutandis extremis] Targeted fact: Mutandis Extremis is crafted from Nether Wart surrounded by Mutandis; it pushes mutation into stronger plant work.
 - [triggers: what does mutandis do|use mutandis|mutandis use|mutate plants|strange plants|witchery plants] Targeted fact: Mutandis changes small plants into Witchery growths such as rowan, alder, hawthorn, Spanish Moss, Glint Weed, and Ember Moss.
 - [triggers: glint weed|where get glint weed|where find glint weed|where do i get glint weed|how do i get glint weed|grow glint weed] Targeted fact: Glint Weed comes randomly from Mutandis on small plants; it glows, spreads, and belongs in flame and spirit-brew work.

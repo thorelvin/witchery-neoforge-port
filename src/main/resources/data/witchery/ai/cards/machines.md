@@ -39,7 +39,7 @@ Machine-use cards for practical witch teaching. Exact shaped layouts belong to t
 ## Altar
 - [triggers: altar|altar power|power altar|weak altar|altar too weak|not enough altar power] Targeted fact: An altar gathers power from varied nearby nature; skulls, candelabra, pentacles, filled chalices, arthanas, and rare trophies improve power or range.
 - [triggers: use altar|how do i use altar|how do i build altar structure|altar structure|wake an altar] Targeted fact: Place six Altar blocks as one flat 2 by 3 rectangle; nearby nature feeds power, and fittings such as chalices or arthanas improve it.
-- [triggers: altar recipe|craft altar|make altar] Targeted fact: An Altar is crafted from Breath of the Goddess, a Water Potion, Exhale of the Horned One, Stone Bricks, and Rowan Logs; it yields three altar blocks.
+- [triggers: altar recipe|craft altar|make altar] [topic: altar_recipe] Targeted fact: An Altar is crafted from Breath of the Goddess, a Water Potion, Exhale of the Horned One, Stone Bricks, and Rowan Logs; it yields three altar blocks.
 - If a rite fails, check altar power before blaming the moon.
 
 ## Witch's Cauldron

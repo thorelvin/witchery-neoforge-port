@@ -347,7 +347,7 @@ class NpcDialogueFallbackTest {
         Optional<String> speech = NpcDialogueFallback.covenChat("Any final advice for the road?", "Lilith Poe", "Dev");
 
         assertTrue(speech.isPresent());
-        assertTrue(speech.get().contains("salt"));
+        assertTrue(speech.get().contains("coin") || speech.get().contains("boots"), speech.get());
         assertTrue(!speech.get().contains("Spirit World"));
     }
 
@@ -1128,6 +1128,51 @@ class NpcDialogueFallbackTest {
     @Test
     void detectsSecondHerbAsGiftRequest() {
         assertTrue(NpcDialogueFallback.asksHerbGift("can i have a second herb for my garden"));
+    }
+
+    @Test
+    void detectsOneHerbForRoadAsGiftRequest() {
+        assertTrue(NpcDialogueFallback.asksHerbGift("can i have one herb for the road"));
+    }
+
+    @Test
+    void answersWellWhispersWithoutGenericAside() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What should I do if spirits whisper by the well?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("well"), speech.get());
+        assertTrue(speech.get().contains("daylight"), speech.get());
+        assertTrue(!speech.get().contains("turnip"), speech.get());
+    }
+
+    @Test
+    void answersFloorboardSmallTalkDirectly() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "I was testing if the floorboards creak.", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("floorboards"), speech.get());
+    }
+
+    @Test
+    void answersDarknessCurseAfterChestTheft() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "Why did everything go dark after I opened your chest?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("Darkness curse"), speech.get());
+        assertTrue(speech.get().contains("chest"), speech.get());
+    }
+
+    @Test
+    void answersGrimoireSummaryWithConcreteLessonNotes() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "Before I leave, what should I write in my grimoire?", "Lilith Poe", "Dev");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("recipes need"), speech.get());
+        assertTrue(speech.get().contains("rites need"), speech.get());
     }
 
     @Test

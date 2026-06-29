@@ -5,7 +5,7 @@ Recipe-backed poppet cards for when the player asks for exact protection, bindin
 ## Poppet Foundations
 - [triggers: bone needle recipe|make bone needle|craft bone needle|what do i need for bone needle] Targeted fact: Bone Needles are shapeless craft from Bone and Flint; the recipe makes eight needles for poppets and taglock work.
 - [triggers: poppet recipe|basic poppet recipe|blank poppet recipe|make basic poppet|craft basic poppet|what do i need for a poppet] Targeted fact: A basic Poppet is crafted from Wool, Spanish Moss, Bone Needle, and String; bind it before expecting it to know a person.
-- [triggers: taglock kit recipe|make taglock kit|craft taglock kit|what do i need for taglock kit] Targeted fact: A Taglock Kit is shapeless craft from Glass Bottle and Bone Needle; use a filled kit to bind poppets or focus personal magic.
+- [triggers: taglock kit recipe|make taglock kit|craft taglock kit|what do i need for taglock kit] [topic: taglock_kit_recipe] Targeted fact: A Taglock Kit is shapeless craft from Glass Bottle and Bone Needle; use a filled kit to bind poppets or focus personal magic.
 - [triggers: bind poppet recipe|poppet binding recipe|bind poppet with taglock|how do i bind a poppet] Targeted fact: Bind a poppet with a filled Taglock Kit through the poppet binding recipe; an unbound poppet is only cloth with ambitions.
 
 ## Protection Poppets
@@ -25,5 +25,5 @@ Recipe-backed poppet cards for when the player asks for exact protection, bindin
 - [triggers: protect from voodoo|protect from vampiric poppet|counter voodoo|counter poppet magic] Targeted fact: Use Voodoo Protection Poppets, Poppet Protection Poppets, wards, and cat familiar help against hostile sympathetic magic.
 
 ## Shelves And Storage
-- [triggers: poppet shelf recipe|make poppet shelf|craft poppet shelf|what do i need for poppet shelf] Targeted fact: A Poppet Shelf is crafted from Attuned Stones, Green Wool, and Nether Brick; it holds up to nine poppets where they can still protect.
+- [triggers: poppet shelf recipe|make poppet shelf|craft poppet shelf|what do i need for poppet shelf] [topic: poppet_shelf_recipe] Targeted fact: A Poppet Shelf is crafted from Attuned Stones, Green Wool, and Nether Brick; it holds up to nine poppets where they can still protect.
 - [triggers: which poppet should i make|what poppet do i need|choose poppet|best poppet] Targeted fact: Choose by danger: death, fire, water, earth, hunger, tool, armor, voodoo, or poppet protection; bind the poppet before relying on it.

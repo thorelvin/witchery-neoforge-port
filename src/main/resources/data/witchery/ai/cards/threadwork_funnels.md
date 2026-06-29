@@ -11,14 +11,14 @@ Recipe-backed cards for spinning-wheel outputs, witch cloth, and oven fume upgra
 
 ## Cotton And Cloth
 - [triggers: what is fanciful thread for|use fanciful thread|fanciful thread use] Targeted fact: Fanciful Thread feeds Flowing Spirit, dream charms, dream weavers, and can be crafted back into white wool in a pinch.
-- [triggers: what is golden thread for|use golden thread|golden thread use] Targeted fact: Golden Thread is used for Brew Bags, Witches Robes, Witches Hats, and other sewn witch gear.
+- [triggers: what is golden thread for|use golden thread|golden thread use] Targeted fact: Golden Thread is used for Brew Bags, Witches' Robes, Witches' Hats, and other sewn witch gear.
 - [triggers: what is tormented twine for|use tormented twine|tormented twine use] Targeted fact: Tormented Twine is darker threadwork for Dream Weavers and nightmare-shaped craft; handle it like it remembers screaming.
 - [triggers: cloth from thread|thread to wool|make wool from fanciful thread] Targeted fact: Four Fanciful Thread craft into White Wool; useful when spirit cotton leaves you rich in thread and poor in sheep.
 
 ## Witch Leather And Clothing Chain
 - [triggers: impregnated leather recipe|make impregnated leather|craft impregnated leather|what do i need for impregnated leather] Targeted fact: Impregnated Leather is crafted from Whiff of Magic, Leather, and Diamond Vapour; the recipe makes four.
-- [triggers: why need impregnated leather|use impregnated leather|impregnated leather use] Targeted fact: Impregnated Leather is the sewn base for Brew Bags, Witches Robes, Witches Hats, and other durable witch gear.
-- [triggers: golden chalk recipe|make golden chalk|craft golden chalk|chalk golden] Targeted fact: Golden Chalk is crafted from Gold Nuggets, Yellow Dye, Chalk, and Redstone; use it for stronger circle markings when the lesson asks.
+- [triggers: why need impregnated leather|use impregnated leather|impregnated leather use] Targeted fact: Impregnated Leather is the sewn base for Brew Bags, Witches' Robes, Witches' Hats, and other durable witch gear.
+- [triggers: golden chalk recipe|make golden chalk|craft golden chalk|chalk golden] Targeted fact: Golden Chalk is crafted from Gold Nuggets, Yellow Dye, Ritual Chalk, and Redstone; use it for stronger circle markings when the lesson asks.
 
 ## Fume Funnel Upgrades
 - [triggers: fume funnel recipe|make fume funnel|craft fume funnel|what do i need for fume funnel] Targeted fact: A Fume Funnel is crafted from Iron Blocks, Buckets, Glowstone, Iron Bars, and Lava Bucket; it improves Witch's Oven fume work.

@@ -19,7 +19,7 @@ These cards cover rite categories players ask about. Give requirements and dange
 - [triggers: rite of beastial call|beastial call|call animals|summon animals|gather animals] Targeted fact: Rite of Beastial Call draws animals from a wide area into the circle and may steal from nearby ranches; it is useful but rude near villages.
 
 ## Curse And Death Work
-- [triggers: rite of remove curse|remove curse rite|remove a curse|cure curse|cleansing curse|waking nightmares curse] Targeted fact: Rite of Remove Curse uses a medium circle, 2000 altar power per curse type, and a Taglock Kit bound to the cursed player; weak work can worsen the curse.
+- [triggers: rite of remove curse|remove curse rite|remove a curse|cure curse|cleansing curse|waking nightmares curse] [topic: curse_cures] Targeted fact: Ordinary curse cures use a small Ritual circle, filled Taglock Kit, Breath of the Goddess, matching offerings, and 2000 altar power; vampire removal is separate medium coven work.
 - [triggers: rite of prior incarnation|prior incarnation|recover items after death|lost death items|death point] Targeted fact: Rite of Prior Incarnation recalls items lost from death if cast in the same world within 16 blocks of where the player died.
 - [triggers: rite of manifestation|manifestation rite|dream self|send sleeping being|spirit manifestation] Targeted fact: Rite of Manifestation sends sleeping beings to the Overworld as a dream self; more nearby coven witches lengthen the manifestation.
 - Good witch voice: Death is terrible with receipts; keep the place of falling marked.

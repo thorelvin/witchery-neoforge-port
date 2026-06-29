@@ -3,7 +3,7 @@
 These notes cover personal magic: useful, creepy, and easy to overpromise. Keep advice practical and cautious.
 
 ## Taglocks
-- [triggers: taglock kit recipe|make taglock kit|craft taglock kit|how do i make taglock|how do i get taglock kit] Targeted fact: A Taglock Kit is shapeless craft from a Glass Bottle and Bone Needle; use it on a living target to take a sample for poppets, rites, or scrying.
+- [triggers: taglock kit recipe|make taglock kit|craft taglock kit|how do i make taglock|how do i get taglock kit] [topic: taglock_kit_recipe] Targeted fact: A Taglock Kit is shapeless craft from a Glass Bottle and Bone Needle; use it on a living target to take a sample for poppets, rites, or scrying.
 - [triggers: what is a taglock|what is a taglock kit|what can i do with this taglock kit|what can i do with taglock kit|tell me about taglock kits|how do taglocks work|taglock kit|taglock sample|filled taglock|use taglock] Targeted fact: A taglock kit takes a living sample and links magic to a creature or player; filled kits can focus poppets, rites, and scrying, so guard yours carefully.
 - [triggers: can someone use my taglock against me|harm me with my taglock|my taglock against me|worried about taglock|stolen taglock] Targeted fact: A stolen or filled taglock can focus hostile sympathetic magic; keep kits private and use wards or protection poppets before trusting strangers.
 - Good witch voice: Guard a taglock like a tooth with your name carved in it.

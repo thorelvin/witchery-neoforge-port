@@ -3,7 +3,7 @@
 Grounded tool cards for practical answers about altar strength, ritual blades, clothing, and containers.
 
 ## Altar And Fittings
-- [triggers: altar recipe|craft altar|make altar|how do i make an altar|what do i need for altar] Targeted fact: An Altar is crafted from Breath of the Goddess, Water Potion, Exhale of the Horned One, Stone Bricks, and Rowan Logs; it yields three altar blocks.
+- [triggers: altar recipe|craft altar|make altar|how do i make an altar|what do i need for altar] [topic: altar_recipe] Targeted fact: An Altar is crafted from Breath of the Goddess, Water Potion, Exhale of the Horned One, Stone Bricks, and Rowan Logs; it yields three altar blocks.
 - [triggers: weak altar|altar too weak|altar is weak|not enough altar power|altar lacks power|make altar stronger] Targeted fact: A weak altar wants varied nearby nature, then fittings: skulls, candelabras, pentacles, filled chalices, arthanas, and rare trophies improve power or range.
 - [triggers: candelabra recipe|make candelabra|craft candelabra|what do i need for candelabra] Targeted fact: A Candelabra is crafted from Torches, Iron Ingots, and an Attuned Stone; on an altar it improves recharge, not raw bragging rights.
 - [triggers: chalice recipe|make chalice|craft chalice|what do i need for chalice] Targeted fact: A Chalice is crafted from Gold Nuggets, an Attuned Stone, and Gold Ingots; placed on an altar it improves power capacity.
@@ -19,8 +19,8 @@ Grounded tool cards for practical answers about altar strength, ritual blades, c
 - [triggers: use brew bag|how does brew bag work|brew bag for|throw brews from bag] Targeted fact: Store throwable brews in a Brew Bag, sneak-use to choose the next slot, then use it to throw the selected brew.
 
 ## Worn And Stored Witchcraft
-- [triggers: witches hat recipe|witch hat recipe|make witches hat|make witch hat|craft witches hat|craft witch hat|what do i need for witches hat|what do i need for witch hat] Targeted fact: A Witches Hat is crafted from Impregnated Leather, Golden Thread, and Glowstone Dust; it helps brew work when worn.
-- [triggers: witches robes recipe|witch robes recipe|make witches robes|make witch robes|craft witches robes|craft witch robes|what do i need for witches robes|what do i need for witch robes] Targeted fact: Witches Robes are crafted from Impregnated Leather, Golden Thread, and Creeper Heart; they help brews and make creepers lose interest.
+- [triggers: witches hat recipe|witch hat recipe|make witches hat|make witch hat|craft witches hat|craft witch hat|what do i need for witches hat|what do i need for witch hat] Targeted fact: A Witches' Hat is crafted from Impregnated Leather, Golden Thread, and Glowstone Dust; it helps brew work when worn.
+- [triggers: witches robes recipe|witch robes recipe|make witches robes|make witch robes|craft witches robes|craft witch robes|what do i need for witches robes|what do i need for witch robes] Targeted fact: Witches' Robes are crafted from Impregnated Leather, Golden Thread, and Creeper Heart; they help brews and make creepers lose interest.
 - [triggers: garlic garland recipe|make garlic garland|craft garlic garland|what do i need for garlic garland] Targeted fact: A Garlic Garland is crafted from String and Garlic; hang it to trouble vampires and make thresholds less inviting.
 - [triggers: leech chest|what is a leech chest|use leech chest|taglock chest] Targeted fact: A Leech Chest stores items and recent visitor samples for Taglock Kits; it keeps its own-sample refusal, so respect the bite.
 - [triggers: blood rose|what is a blood rose|harvest blood rose|get blood rose] Targeted fact: Blood Roses store blood samples when touched; break one with a Boline for the rose item, or use a Taglock Kit for samples.

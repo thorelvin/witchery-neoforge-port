@@ -13,7 +13,7 @@ Small teaching cards for early Witchery progression. These should give the witch
 - [triggers: reek|reek of misfortune|how get reek|alder sapling fume] Targeted fact: Reek of Misfortune comes from cooking an Alder Sapling in a Witch's Oven with fuel and a Clay Jar.
 - [triggers: odour|odor|odour of purity|odor of purity|how get odour|how get odor|hawthorn sapling fume] Targeted fact: Odour of Purity comes from cooking a Hawthorn Sapling in a Witch's Oven with fuel and a Clay Jar.
 - [triggers: foul fume|how get foul fume|acacia sapling fume|dark oak sapling fume|jungle sapling fume] Targeted fact: Foul Fume comes from cooking Acacia, Dark Oak, or Jungle Saplings in a Witch's Oven with fuel and a Clay Jar.
-- [triggers: witches salt recipe|witch salt recipe|make witches salt|make witch salt|how do i make witches salt|how do i get witches salt|how get witches salt|how get witch salt|what do i need for witches salt|kelp salt] Targeted fact: Witches' Salt comes from cooking Kelp in a Witch's Oven; the oven recipe gives two salt.
+- [triggers: witches salt recipe|witch salt recipe|make witches salt|make witch salt|how do i make witches salt|how do i get witches salt|how get witches salt|how get witch salt|what do i need for witches salt|kelp salt] [topic: witches_salt_recipe] Targeted fact: Witches' Salt comes from cooking Kelp in a Witch's Oven; the oven recipe gives two salt.
 - If the player asks generally about fumes, name one source and ask which fume they need next.
 
 ## Attuned Stone
@@ -21,7 +21,7 @@ Small teaching cards for early Witchery progression. These should give the witch
 - Attuned Stone links early fumes to machines and stronger craft.
 
 ## Mutandis
-- [triggers: mutandis recipe|make mutandis|craft mutandis|what do i need for mutandis] Targeted fact: Mutandis can be crafted from Wood Ash, Green Dye, Hint of Rebirth, Mandrake Root, Egg, and Bone Meal; the recipe makes eight.
+- [triggers: mutandis recipe|make mutandis|craft mutandis|what do i need for mutandis] [topic: mutandis_recipe] Targeted fact: Mutandis can be crafted from Wood Ash, Green Dye, Hint of Rebirth, Mandrake Root, Egg, and Bone Meal; the recipe makes eight.
 - [triggers: cauldron mutandis|brew mutandis|old mutandis path|mutandis cauldron path] Targeted fact: The cauldron path for Mutandis uses a heated filled Witch's Cauldron, Mandrake Root, Egg, and Exhale of the Horned One; it makes six.
 - [triggers: what does mutandis do|use mutandis|mutandis use|mutate plants|strange plants] Targeted fact: Mutandis changes natural plants and saplings into other growths, including Witchery plants; it is mutation, not bonemeal.
 - Mutandis is a practical way into rowan, alder, hawthorn, and stranger herbology.

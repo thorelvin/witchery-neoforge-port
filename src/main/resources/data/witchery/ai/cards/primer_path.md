@@ -3,7 +3,7 @@
 Small lesson cards for NPC teaching. These keep a coven witch practical: one real next step, one warning, no hidden-book dump.
 
 ## First Steps
-- [triggers: what should i do first|where do i start|how start witchery|how do i start witchcraft|beginner path|starter path|first machine|first station|what should i build first|early progression|careful beginner|before touching your craft|touching your craft|beginner learn] Targeted fact: A sound first path is Witches' Oven for Wood Ash and fumes, then Mutandis for strange plants, then Kettle, Distillery, Circle Magic, and the Brazier as pages unlock.
+- [triggers: what should i do first|where do i start|how start witchery|beginner path|starter path|first machine|what should i build first|early progression|careful beginner|before touching your craft|touching your craft] [topic: beginner_path] Targeted fact: A sound first path is Witches' Oven for Wood Ash and fumes, then Mutandis for strange plants, then Kettle, Distillery, Circle Magic, and the Brazier as pages unlock.
 - [triggers: after oven|after witches oven|after witch oven|what after oven|after wood ash|after whiff] Targeted fact: After the Witches' Oven, use Wood Ash and fumes for Mutandis and Attuned Stone, then move toward the Kettle and Distillery.
 - The broad Primer path is oven, herbology, brews, distilling, circle magic, conjuration, symbology, poppets, spirit work, creatures, and transformations.
 
@@ -17,6 +17,6 @@ Small lesson cards for NPC teaching. These keep a coven witch practical: one rea
 - Do not reveal locked rite offerings unless an opened rite card or server state supplies them.
 
 ## First Tags And Poppets
-- [triggers: taglock kit recipe|make taglock kit|craft taglock kit|how do i make taglock|how do i get taglock kit] Targeted fact: A Taglock Kit is shapeless craft from a Glass Bottle and Bone Needle; it links poppets and other magic to a creature or player.
+- [triggers: taglock kit recipe|make taglock kit|craft taglock kit|how do i make taglock|how do i get taglock kit] [topic: taglock_kit_recipe] Targeted fact: A Taglock Kit is shapeless craft from a Glass Bottle and Bone Needle; it links poppets and other magic to a creature or player.
 - [triggers: how use taglock|how do i use taglock|use taglock kit|taglock sample] Targeted fact: Use a Taglock Kit on a living target to take a sample; bind that filled kit to poppets or workings that need a named target.
 - Taglocks are personal magic. Do not pretend a blank kit already knows its target.

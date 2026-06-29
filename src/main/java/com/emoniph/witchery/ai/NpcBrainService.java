@@ -116,6 +116,18 @@ public final class NpcBrainService {
         return requestPersonaChatWithAnalysis(persona, witch, player, playerMessage);
     }
 
+    public boolean requestCovenAmbient(CovenWitchEntity witch, ServerPlayer player, String ambientCue,
+                                       Component fallback) {
+        if (!WitcheryConfig.LLM_ENABLED.get()) {
+            return false;
+        }
+        CovenWitchPersona persona = NpcPersonas.COVEN_WITCH;
+        String cue = NpcBrainResponse.sanitize(ambientCue == null ? "" : ambientCue, 180);
+        return requestPersonaResponse(persona, witch, player,
+                NpcPromptBuilder.covenWitchAmbient(witch, player, contextFor(persona, witch, player), cue),
+                "ambient", "[ambient] " + cue, fallback, true, false);
+    }
+
     public boolean requestLeonardGreeting(LeonardEntity leonard, ServerPlayer player, Component fallback) {
         if (!WitcheryConfig.LLM_ENABLED.get()) {
             return false;
@@ -235,6 +247,15 @@ public final class NpcBrainService {
                                                                     ServerPlayer player, NpcBrainPrompt prompt,
                                                                     String trigger, String playerMessage,
                                                                     Component fallback, boolean showFallback) {
+        return requestPersonaResponse(persona, entity, player, prompt, trigger, playerMessage, fallback,
+                showFallback, true);
+    }
+
+    private <E extends LivingEntity> boolean requestPersonaResponse(NpcPersona<E> persona, E entity,
+                                                                    ServerPlayer player, NpcBrainPrompt prompt,
+                                                                    String trigger, String playerMessage,
+                                                                    Component fallback, boolean showFallback,
+                                                                    boolean rememberExchange) {
         if (!WitcheryConfig.LLM_ENABLED.get()) {
             return false;
         }
@@ -271,7 +292,7 @@ public final class NpcBrainService {
                     inFlight.decrementAndGet();
                     MinecraftServer server = level.getServer();
                     server.execute(() -> handlePersonaResponse(level, persona, entity.getUUID(), player, entity,
-                            playerMessage, fallback, showFallback, response, error));
+                            playerMessage, fallback, showFallback, rememberExchange, response, error));
                 });
         return true;
     }
@@ -419,6 +440,7 @@ public final class NpcBrainService {
     private <E extends LivingEntity> void handlePersonaResponse(ServerLevel level, NpcPersona<E> persona, UUID entityId,
                                                                 ServerPlayer player, E entity, String playerMessage,
                                                                 Component fallback, boolean showFallback,
+                                                                boolean rememberExchange,
                                                                 NpcBrainResponse response, Throwable error) {
         if (!player.isAlive() || player.level() != level) {
             return;
@@ -454,7 +476,8 @@ public final class NpcBrainService {
             Optional<String> relaxedSpeech = rawAfterRepeatedFallback(level, persona, entityId, player, entity,
                     playerMessage, response.speech(), memoryContext);
             if (relaxedSpeech.isPresent()) {
-                displayPersonaSpeech(level, persona, entity, player, playerMessage, relaxedSpeech.get());
+                displayPersonaSpeech(level, persona, entity, player, playerMessage, relaxedSpeech.get(),
+                        rememberExchange);
                 if (!response.memory().isBlank()) {
                     NpcMemoryData.get(level).remember(entityId, player.getUUID(), response.memory(), level.getGameTime());
                 }
@@ -480,7 +503,8 @@ public final class NpcBrainService {
             return;
         }
         Optional<String> supportFollowup = persona.supportFollowup(playerMessage, polishedSpeech.get());
-        displayPersonaSpeech(level, persona, entity, player, playerMessage, polishedSpeech.get(), supportFollowup);
+        displayPersonaSpeech(level, persona, entity, player, playerMessage, polishedSpeech.get(), supportFollowup,
+                rememberExchange);
         if (!response.memory().isBlank()) {
             NpcMemoryData.get(level).remember(entityId, player.getUUID(), response.memory(), level.getGameTime());
         }
@@ -635,13 +659,26 @@ public final class NpcBrainService {
     private <E extends LivingEntity> void displayPersonaSpeech(ServerLevel level, NpcPersona<E> persona, E entity,
                                                                ServerPlayer player, String playerMessage,
                                                                String speech) {
+        displayPersonaSpeech(level, persona, entity, player, playerMessage, speech, true);
+    }
+
+    private <E extends LivingEntity> void displayPersonaSpeech(ServerLevel level, NpcPersona<E> persona, E entity,
+                                                               ServerPlayer player, String playerMessage,
+                                                               String speech, boolean rememberExchange) {
         displayPersonaSpeech(level, persona, entity, player, playerMessage, speech,
-                persona.supportFollowup(playerMessage, speech));
+                persona.supportFollowup(playerMessage, speech), rememberExchange);
     }
 
     private <E extends LivingEntity> void displayPersonaSpeech(ServerLevel level, NpcPersona<E> persona, E entity,
                                                                ServerPlayer player, String playerMessage,
                                                                String speech, Optional<String> supportFollowup) {
+        displayPersonaSpeech(level, persona, entity, player, playerMessage, speech, supportFollowup, true);
+    }
+
+    private <E extends LivingEntity> void displayPersonaSpeech(ServerLevel level, NpcPersona<E> persona, E entity,
+                                                               ServerPlayer player, String playerMessage,
+                                                               String speech, Optional<String> supportFollowup,
+                                                               boolean rememberExchange) {
         String npcName = persona.displayName(entity);
         persona.nudgeAttention(entity, player);
         playVisibleBeat(level, entity, speech);
@@ -649,8 +686,10 @@ public final class NpcBrainService {
         player.displayClientMessage(Component.literal("\u00a79<" + npcName + "> \u00a7r" + speech), false);
         supportFollowup.ifPresent(followup ->
                 player.displayClientMessage(Component.literal("\u00a79<" + npcName + "> \u00a7r" + followup), false));
-        String rememberedSpeech = supportFollowup.map(followup -> speech + " " + followup).orElse(speech);
-        rememberExchange(persona, entity, player, playerMessage, rememberedSpeech);
+        if (rememberExchange) {
+            String rememberedSpeech = supportFollowup.map(followup -> speech + " " + followup).orElse(speech);
+            rememberExchange(persona, entity, player, playerMessage, rememberedSpeech);
+        }
     }
 
     private static void playVisibleBeat(ServerLevel level, LivingEntity entity, String speech) {

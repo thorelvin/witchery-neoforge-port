@@ -2,16 +2,28 @@ package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.ai.NpcBrainService;
+import com.emoniph.witchery.blocks.LeechChestBlock;
 import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.init.WitcheryItems;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ServerChatEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -29,7 +41,14 @@ public final class NpcBrainEvents {
     private static final double LEONARD_CASUAL_CHAT_RANGE = 8.0;
     private static final double LEONARD_GAZE_RANGE = 7.0;
     private static final long LEONARD_GAZE_COOLDOWN_TICKS = 20L * 45L;
+    private static final double WITCH_AMBIENT_RANGE = 8.0;
+    private static final long WITCH_AMBIENT_COOLDOWN_TICKS = 20L * 55L;
+    private static final long WITCH_IDLE_COOLDOWN_TICKS = 20L * 120L;
+    private static final int WITCH_IDLE_TRIGGER_TICKS = 20 * 25;
+    private static final int WITCH_DARKNESS_CURSE_TICKS = 20 * 45;
     private static final ConcurrentHashMap<String, Long> LEONARD_GAZE_COOLDOWNS = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Long> WITCH_AMBIENT_COOLDOWNS = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<java.util.UUID, PlayerAmbientState> PLAYER_AMBIENT_STATES = new ConcurrentHashMap<>();
 
     private NpcBrainEvents() {
     }
@@ -70,10 +89,75 @@ public final class NpcBrainEvents {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)
-                || !(player.level() instanceof ServerLevel level)
-                || player.tickCount % 20 != 0) {
+                || !(player.level() instanceof ServerLevel level)) {
             return;
         }
+        if (!player.onGround() && player.getDeltaMovement().y > 0.22D) {
+            CovenWitchEntity witch = findNearbyCovenWitch(level, player, WITCH_AMBIENT_RANGE);
+            if (witch != null) {
+                dispatchWitchAmbient(level, witch, player,
+                        "jumping or hopping around near the witch",
+                        "If you're trying to fly, start with ointment, not my floorboards.",
+                        WITCH_AMBIENT_COOLDOWN_TICKS);
+            }
+        }
+        if (player.tickCount % 20 != 0) {
+            return;
+        }
+        handleLeonardGaze(level, player);
+        handleWitchAmbientTick(level, player);
+    }
+
+    @SubscribeEvent
+    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getHand() != InteractionHand.MAIN_HAND
+                || event.isCanceled()
+                || !(event.getEntity() instanceof ServerPlayer player)
+                || !(event.getLevel() instanceof ServerLevel level)) {
+            return;
+        }
+        BlockState state = level.getBlockState(event.getPos());
+        if (!isChestLike(state)) {
+            return;
+        }
+        CovenWitchEntity witch = findNearbyCovenWitch(level, player, WITCH_AMBIENT_RANGE);
+        if (witch == null) {
+            return;
+        }
+        if (player.isShiftKeyDown()) {
+            applyWitchDarknessCurse(level, player);
+            dispatchWitchAmbient(level, witch, player,
+                    "sneaking into the witch's chest; the Darkness curse was applied",
+                    "Take from my chest and the dark takes from your eyes.",
+                    WITCH_AMBIENT_COOLDOWN_TICKS);
+            return;
+        }
+        dispatchWitchAmbient(level, witch, player,
+                "looking into the witch's chest",
+                "Careful with that chest, " + player.getName().getString() + ". It remembers fingers.",
+                WITCH_AMBIENT_COOLDOWN_TICKS);
+    }
+
+    @SubscribeEvent
+    public static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        if (event.getHand() != InteractionHand.MAIN_HAND
+                || event.isCanceled()
+                || !(event.getEntity() instanceof ServerPlayer player)
+                || !(event.getLevel() instanceof ServerLevel level)
+                || !event.getItemStack().is(WitcheryItems.WITCHES_PRIMER.get())) {
+            return;
+        }
+        CovenWitchEntity witch = findNearbyCovenWitch(level, player, WITCH_AMBIENT_RANGE);
+        if (witch == null) {
+            return;
+        }
+        dispatchWitchAmbient(level, witch, player,
+                "reading the Witches' Primer near the witch",
+                "Read slowly. The Primer dislikes greedy eyes.",
+                WITCH_AMBIENT_COOLDOWN_TICKS);
+    }
+
+    private static void handleLeonardGaze(ServerLevel level, ServerPlayer player) {
         LeonardEntity leonard = findGazedLeonard(level, player);
         if (leonard == null) {
             return;
@@ -91,6 +175,51 @@ public final class NpcBrainEvents {
         NpcBrainService.INSTANCE.requestLeonardGaze(leonard, player, fallback);
     }
 
+    private static void handleWitchAmbientTick(ServerLevel level, ServerPlayer player) {
+        CovenWitchEntity witch = findNearbyCovenWitch(level, player, WITCH_AMBIENT_RANGE);
+        if (witch == null) {
+            PLAYER_AMBIENT_STATES.remove(player.getUUID());
+            return;
+        }
+        if (player.isInvisible() || player.hasEffect(MobEffects.INVISIBILITY)) {
+            dispatchWitchAmbient(level, witch, player,
+                    "invisible player lingering near the witch",
+                    "Do not bother hiding, little absence. Your breath still fogs the rafters.",
+                    WITCH_AMBIENT_COOLDOWN_TICKS);
+            return;
+        }
+        if (isHoldingPrimer(player)) {
+            dispatchWitchAmbient(level, witch, player,
+                    "holding and reading the Witches' Primer near the witch",
+                    "That Primer has teeth, " + player.getName().getString() + ". Read with both eyes open.",
+                    WITCH_AMBIENT_COOLDOWN_TICKS);
+            return;
+        }
+        if (player.isShiftKeyDown()) {
+            dispatchWitchAmbient(level, witch, player,
+                    "sneaking around near the witch",
+                    "Sneaking is for thieves and secrets. Which one are you today?",
+                    WITCH_AMBIENT_COOLDOWN_TICKS);
+            return;
+        }
+
+        PlayerAmbientState previous = PLAYER_AMBIENT_STATES.get(player.getUUID());
+        Vec3 position = player.position();
+        int idleTicks = 20;
+        if (previous != null && previous.level() == level && previous.position().distanceToSqr(position) < 0.0125D
+                && player.onGround()) {
+            idleTicks = previous.idleTicks() + 20;
+        }
+        PLAYER_AMBIENT_STATES.put(player.getUUID(), new PlayerAmbientState(level, position, idleTicks));
+        if (idleTicks >= WITCH_IDLE_TRIGGER_TICKS) {
+            boolean sheltered = !level.canSeeSky(player.blockPosition());
+            dispatchWitchAmbient(level, witch, player,
+                    sheltered ? "idling quietly in the witch's hut" : "loitering close to the witch",
+                    sheltered ? "If you're haunting my hut, haunt it usefully." : "Roots grow from standing still, not answers.",
+                    WITCH_IDLE_COOLDOWN_TICKS);
+        }
+    }
+
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
         NpcBrainService.INSTANCE.prewarm();
@@ -99,7 +228,19 @@ public final class NpcBrainEvents {
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
         LEONARD_GAZE_COOLDOWNS.clear();
+        WITCH_AMBIENT_COOLDOWNS.clear();
+        PLAYER_AMBIENT_STATES.clear();
         NpcBrainService.INSTANCE.shutdown();
+    }
+
+    private static CovenWitchEntity findNearbyCovenWitch(ServerLevel level, ServerPlayer player, double range) {
+        List<CovenWitchEntity> witches = level.getEntitiesOfClass(
+                CovenWitchEntity.class, player.getBoundingBox().inflate(range, 4.0, range));
+        if (witches.isEmpty()) {
+            return null;
+        }
+        witches.sort(Comparator.comparingDouble(player::distanceToSqr));
+        return witches.getFirst();
     }
 
     private static CovenWitchEntity findChatTarget(ServerLevel level, ServerPlayer player, String message) {
@@ -258,5 +399,47 @@ public final class NpcBrainEvents {
 
     private static String normalize(String text) {
         return text.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_ ]+", " ").replaceAll("\\s+", " ").trim();
+    }
+
+    private static boolean isChestLike(BlockState state) {
+        return state.getBlock() instanceof ChestBlock || state.getBlock() instanceof LeechChestBlock;
+    }
+
+    private static boolean isHoldingPrimer(ServerPlayer player) {
+        ItemStack main = player.getMainHandItem();
+        ItemStack offhand = player.getOffhandItem();
+        return main.is(WitcheryItems.WITCHES_PRIMER.get()) || offhand.is(WitcheryItems.WITCHES_PRIMER.get());
+    }
+
+    private static void dispatchWitchAmbient(ServerLevel level, CovenWitchEntity witch, ServerPlayer player,
+                                             String cue, String fallbackSpeech, long cooldownTicks) {
+        long now = level.getGameTime();
+        String topic = normalize(cue);
+        String key = witch.getUUID() + ":" + player.getUUID() + ":" + topic;
+        Long blockedUntil = WITCH_AMBIENT_COOLDOWNS.get(key);
+        if (blockedUntil != null && blockedUntil > now) {
+            return;
+        }
+        WITCH_AMBIENT_COOLDOWNS.put(key, now + cooldownTicks);
+        Component fallback = speechComponent(witch, fallbackSpeech);
+        if (!NpcBrainService.INSTANCE.requestCovenAmbient(witch, player, cue, fallback)) {
+            witch.nudgePlayerAttention(player);
+            player.displayClientMessage(fallback, false);
+        }
+    }
+
+    private static Component speechComponent(CovenWitchEntity witch, String speech) {
+        String witchName = witch.hasCustomName() ? witch.getCustomName().getString() : witch.getDisplayName().getString();
+        return Component.literal("\u00a79<" + witchName + "> \u00a7r").append(Component.literal(speech));
+    }
+
+    private static void applyWitchDarknessCurse(ServerLevel level, ServerPlayer player) {
+        player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, WITCH_DARKNESS_CURSE_TICKS, 0, true, true));
+        level.playSound(null, player.blockPosition(), SoundEvents.WITCH_CELEBRATE, SoundSource.NEUTRAL, 0.75F, 0.65F);
+        level.sendParticles(ParticleTypes.WITCH, player.getX(), player.getY() + 1.0D, player.getZ(),
+                14, 0.45D, 0.5D, 0.45D, 0.03D);
+    }
+
+    private record PlayerAmbientState(ServerLevel level, Vec3 position, int idleTicks) {
     }
 }

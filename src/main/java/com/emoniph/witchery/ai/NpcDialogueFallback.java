@@ -234,6 +234,14 @@ final class NpcDialogueFallback {
         if (asksHutOrDoorSafety(normalized)) {
             return Optional.of("Witches' salt by the threshold, light inside, and no promises made through a closed door.");
         }
+        if (containsAny(normalized, "floorboard", "floorboards", "creak", "creaks", "creaking")) {
+            return Optional.of("If the floorboards answer once, listen; if they answer twice, stop testing them.");
+        }
+        if (containsAny(normalized, "everything go dark", "everything went dark", "why is it dark",
+                "darkness curse", "can't see", "can t see", "cant see")
+                && containsAny(normalized, "dark", "chest", "steal", "stole", "took", "sneak", "curse")) {
+            return Optional.of("That was the Darkness curse, " + name + "; leave my chest alone and it will pass.");
+        }
         if (containsAny(normalized, "dream catcher", "dreamcatcher")) {
             return Optional.of("Keep a Dream Catcher near the bed if you must sleep close to strange magic.");
         }
@@ -290,15 +298,15 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "village thinks you are trouble", "village think you are trouble")) {
             return Optional.of("Then your village has eyes. Trouble and I are old neighbors.");
         }
-        if (asksRoadAdvice(normalized)) {
-            return Optional.of("Keep salt dry, coin hidden, and do not answer voices that know your name too sweetly.");
-        }
-        if (asksDemonTrust(normalized)) {
-            return Optional.of("Never trust a demon's first bargain. Bind it, ward yourself, and leave room to run.");
-        }
         Optional<String> recipeOrRite = recipeOrRiteAnswer(normalized, name);
         if (recipeOrRite.isPresent()) {
             return recipeOrRite;
+        }
+        if (asksRoadAdvice(normalized)) {
+            return Optional.of("Keep coin hidden, boots dry, and do not answer voices that know your name too sweetly.");
+        }
+        if (asksDemonTrust(normalized)) {
+            return Optional.of("Never trust a demon's first bargain. Bind it, ward yourself, and leave room to run.");
         }
         if (asksTeachMe(normalized)) {
             Optional<String> knowledge = NpcKnowledgeBase.compactAnswer(playerMessage, biome, timeOfDay);
@@ -375,6 +383,9 @@ final class NpcDialogueFallback {
                 && containsAny(normalized, "danger", "dangerous", "safe", "eat", "edible", "food")) {
             return Optional.of("Belladonna is useful but dangerous, not food; handle it as an ingredient and keep it from idle mouths.");
         }
+        if (containsAny(normalized, "spirit", "spirits", "whisper", "whispers", "well")) {
+            return Optional.of("Could be spirits, could be water talking to stone. Mark the well, ward your door, and return by daylight.");
+        }
         Optional<String> knowledge = NpcKnowledgeBase.compactAnswer(playerMessage, biome, timeOfDay);
         if (knowledge.isPresent()) {
             return Optional.of(knowledge.get());
@@ -418,8 +429,8 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "demon", "demons", "imp", "torment", "hell")) {
             return Optional.of("Never trust a demon's first bargain. Bind it, ward yourself, and leave room to run.");
         }
-        if (containsAny(normalized, "spirit", "spirits", "whispers", "well")) {
-            return Optional.of("Could be spirits, could be water talking to stone. Mark the place and return with salt.");
+        if (containsAny(normalized, "spirit", "spirits", "whisper", "whispers", "well")) {
+            return Optional.of("Could be spirits, could be water talking to stone. Mark the well, ward your door, and return by daylight.");
         }
         if (containsAny(normalized, "time", "what time", "clock", "day is it", "what day")) {
             return Optional.of(sceneTime(timeOfDay, clock, day)
@@ -739,6 +750,7 @@ final class NpcDialogueFallback {
     static boolean asksHerbGift(String normalized) {
         return containsAny(normalized, "give me herb", "give me a herb", "spare herb", "spare a herb",
                 "can i have herb", "can i have a herb", "may i have herb", "may i have a herb",
+                "can i have one herb", "may i have one herb", "one herb for the road", "herb for the road",
                 "gift me herb", "gift me a herb", "give me belladonna", "give me mandrake",
                 "another herb", "more herbs", "more herb", "second herb", "another plant", "second plant",
                 "more plant", "more plants", "can i have another herb", "can i have more herb");
@@ -1151,7 +1163,7 @@ final class NpcDialogueFallback {
                 "Mind your shadow after midnight; it learns bad habits.",
                 "If the moon answers first, pretend you did not hear it.",
                 "*narrows her eyes* \"Never trust a quiet jar; silence ferments.\"",
-                "Salt at the door, ash at the hearth, and questions where I can see them.",
+                "Ash at the hearth, jars in a row, and questions where I can see them.",
                 "A good omen arrives late and complains about the road.",
                 "If you mean trouble, stand downwind so I can smell it coming.",
                 "Some questions need rainwater. Some need teeth.",
@@ -1184,7 +1196,7 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "coven")) {
             return "First coven lesson: a familiar opens doors, but a witch's trial decides if you may enter.";
         }
-        return "First lesson: salt wards, taglocks bind, and every rite asks payment before it asks permission.";
+        return "First lesson: taglocks bind, jars matter, and every rite asks payment before it asks permission.";
     }
 
     private static String teachingKnowledgeAnswer(String knowledge, String normalized, String playerName) {

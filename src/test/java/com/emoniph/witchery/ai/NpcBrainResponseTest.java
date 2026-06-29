@@ -3410,6 +3410,78 @@ class NpcBrainResponseTest {
     }
 
     @Test
+    void polishRejectsUnaskedSaltDriftForFumeQuestion() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Salt. Salt cleanses.",
+                "Lilith Poe", "Dev", "This primer keeps mentioning fumes. Where do I start?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsUnaskedSaltDriftForFloorboardSmallTalk() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Salt cleanses; keep it by the door.",
+                "Lilith Poe", "Dev", "I was testing if the floorboards creak.");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishStillAllowsDoorSaltAdvice() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Witches' salt by the threshold, light inside, and no promises made through a closed door.",
+                "Lilith Poe", "Dev", "What should I keep by the door?");
+
+        assertTrue(speech.isPresent());
+    }
+
+    @Test
+    void polishRejectsAmbientChestLineThatIgnoresChest() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "*studies you* \"The hut feels alive tonight. You just need to stand downwind.\"",
+                "Lilith Poe", "Dev", "ambient looking into the witch's chest");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishRejectsAmbientTheftBareBeat() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "*nods solemnly*",
+                "Lilith Poe", "Dev", "ambient sneaking into the witch's chest; the Darkness curse was applied");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishAllowsAmbientChestWarning() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "*narrows her eyes* \"Careful with that chest, Dev; it remembers fingers.\"",
+                "Lilith Poe", "Dev", "ambient looking into the witch's chest");
+
+        assertTrue(speech.isPresent());
+    }
+
+    @Test
+    void polishRejectsAmbientInvisibleLineThatIgnoresInvisibility() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "*studies you* \"The hut feels alive tonight. Ask plainly if you want answers.\"",
+                "Lilith Poe", "Dev", "ambient invisible player lingering near the witch");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
+    void polishAllowsAmbientInvisibleCroneWarning() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "*tilts her head* \"Do not bother hiding, little absence; your breath still fogs the rafters.\"",
+                "Lilith Poe", "Dev", "ambient invisible player lingering near the witch");
+
+        assertTrue(speech.isPresent());
+    }
+
+    @Test
     void clampsLongSpeech() {
         String longSpeech = "a".repeat(400);
         Optional<NpcBrainResponse> response = NpcBrainResponse.parse("""

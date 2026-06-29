@@ -43,6 +43,15 @@ public final class NpcPromptBuilder {
                 "answer the player naturally in one short in-character line");
     }
 
+    public static NpcBrainPrompt covenWitchAmbient(CovenWitchEntity witch, ServerPlayer player, String memory,
+                                                  String ambientCue) {
+        String cue = ambientCue == null || ambientCue.isBlank() ? "standing nearby" : ambientCue;
+        return covenWitch(witch, player, memory,
+                "the player is nearby; server observed this behavior: " + cue,
+                "ambient " + cue,
+                "react once to the observed behavior in one short in-character line");
+    }
+
     private static NpcBrainPrompt covenWitch(CovenWitchEntity witch, ServerPlayer player, String memory,
                                             String situation, String playerMessage, String task) {
         ServerLevel level = (ServerLevel) player.level();
@@ -97,6 +106,31 @@ public final class NpcPromptBuilder {
                 playerMessage,
                 "the player spoke near the witch in chat",
                 "answer the player naturally in one short in-character line");
+    }
+
+    static NpcBrainPrompt covenWitchAmbientSmoke(String ambientCue, String memory) {
+        String biome = "Plains";
+        String time = "night";
+        String cue = ambientCue == null || ambientCue.isBlank() ? "standing nearby" : ambientCue;
+        String playerMessage = "ambient " + cue;
+        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time,
+                NpcCardRequest.persona("coven_witch"));
+        return covenWitchPrompt(
+                "Lilith Poe",
+                "Dev",
+                false,
+                "minecraft:overworld",
+                biome,
+                time,
+                "22:30",
+                1L,
+                "clear",
+                "none",
+                knowledge,
+                memory,
+                playerMessage,
+                "the player is nearby; server observed this behavior: " + cue,
+                "react once to the observed behavior in one short in-character line");
     }
 
     public static NpcBrainPrompt leonardGreeting(LeonardEntity leonard, ServerPlayer player, String memory) {
@@ -379,6 +413,7 @@ public final class NpcPromptBuilder {
                 If the player asks what you remember, answer about the player from memory; do not summarize the witch's identity or stock.
                 Relationship notes are lived history. If the player asks about a gift, blessing, curse, apology, or prior kindness, answer from those notes.
                 If memory says the witch is sworn, trust the Relationship field over memory.
+                If the situation says server observed nearby behavior, react to what the player is doing; do not say the player spoke the ambient cue.
                 If the player asks the time, answer using time of day, clock, and day.
                 If naming the player, use the player's name. Only use the witch's name if the witch introduces herself.
                 Do not include angle brackets or speaker names.
@@ -410,9 +445,9 @@ public final class NpcPromptBuilder {
                 example("hi",
                         "{\"speech\":\"Hello, %s.\",\"intent\":\"none\",\"memory\":\"\"}".formatted(player)),
                 example("what do you trade?",
-                        "{\"speech\":\"*studies your coin* \\\"Salt, taglocks, fumes, bat wool, herbs, and a few brews if your coin is clean.\\\"\",\"intent\":\"open_trade\",\"memory\":\"\"}"),
-                example("what is witches salt for?",
-                        "{\"speech\":\"Witches' salt cleanses, wards, and keeps hostile workings from crossing the line.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                        "{\"speech\":\"*studies your coin* \\\"Fumes, taglocks, bat wool, herbs, a few brews, and salt if your coin is clean.\\\"\",\"intent\":\"open_trade\",\"memory\":\"\"}"),
+                example("how do I start with fumes?",
+                        "{\"speech\":\"Use a Witch's Oven, saplings or ingredients, and clay jars; fumes are caught, not guessed.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("what can I do with this taglock kit?",
                         "{\"speech\":\"A taglock links magic to a creature or player; poppets need the right link before they can work.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("what do I need before summoning anything?",

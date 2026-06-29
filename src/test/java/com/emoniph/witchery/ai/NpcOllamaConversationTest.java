@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class NpcOllamaConversationTest {
     private static final String WITCH_NAME = "Lilith Poe";
     private static final String PLAYER_NAME = "Dev";
+    private static final String AMBIENT_PREFIX = "[ambient] ";
     private static final String BASE_MEMORY = """
             Entity memory: witch is Lilith Poe; player is Dev.
             """;
@@ -134,6 +135,33 @@ class NpcOllamaConversationTest {
             "Are they wrong?",
             "Do you remember giving me a herb?",
             "Any advice now?"
+    );
+    private static final List<String> QUESTIONS_AMBIENT_25 = List.of(
+            "Good evening, Lilith. The hut feels alive tonight.",
+            AMBIENT_PREFIX + "idling quietly in the witch's hut",
+            "I am only waiting out the rain.",
+            AMBIENT_PREFIX + "holding and reading the Witches' Primer near the witch",
+            "This primer keeps mentioning fumes. Where do I start?",
+            "What is Whiff of Magic?",
+            AMBIENT_PREFIX + "looking into the witch's chest",
+            "I was just checking what you keep there.",
+            AMBIENT_PREFIX + "sneaking around near the witch",
+            "Fine, fine, I will stand normally.",
+            "What do you sell if my coin is clean?",
+            "Can I have one herb for the road?",
+            "Thank you, wise witch.",
+            AMBIENT_PREFIX + "jumping or hopping around near the witch",
+            "I was testing if the floorboards creak.",
+            "Do you know a safe beginner brew?",
+            "Tell me the exact Sleeping Brew ingredients.",
+            AMBIENT_PREFIX + "sneaking into the witch's chest; the Darkness curse was applied",
+            "Ow. Why did everything go dark?",
+            "I am sorry. I should not steal from a witch.",
+            "What should I do if spirits whisper by the well?",
+            "Remember that I fear nightmares.",
+            "What do you remember about me?",
+            "Before I leave, what should I write in my grimoire?",
+            "Good night, Lilith."
     );
     private static final List<String> QUESTIONS_LONG_NEW = List.of(
             "Good evening, are you still awake?",
@@ -338,6 +366,11 @@ class NpcOllamaConversationTest {
                 || "social".equalsIgnoreCase(scenario)) {
             return QUESTIONS_SOCIAL_MEMORY;
         }
+        if ("ambient-25".equalsIgnoreCase(scenario)
+                || "ambient".equalsIgnoreCase(scenario)
+                || "latest".equalsIgnoreCase(scenario)) {
+            return QUESTIONS_AMBIENT_25;
+        }
         if ("fresh-50".equalsIgnoreCase(scenario)
                 || "fresh".equalsIgnoreCase(scenario)
                 || "new-50".equalsIgnoreCase(scenario)) {
@@ -360,6 +393,9 @@ class NpcOllamaConversationTest {
         return "social-memory".equalsIgnoreCase(scenario)
                 || "memory-social".equalsIgnoreCase(scenario)
                 || "social".equalsIgnoreCase(scenario)
+                || "ambient-25".equalsIgnoreCase(scenario)
+                || "ambient".equalsIgnoreCase(scenario)
+                || "latest".equalsIgnoreCase(scenario)
                 || "fresh-50".equalsIgnoreCase(scenario)
                 || "fresh".equalsIgnoreCase(scenario)
                 || "new-50".equalsIgnoreCase(scenario)
@@ -381,7 +417,10 @@ class NpcOllamaConversationTest {
         for (String question : questions) {
             String memory = memoryFor(longMemory.toString(), recent);
             long started = System.nanoTime();
-            Optional<SocialLine> social = simulateSocial ? socialLine(provider, question, socialState) : Optional.empty();
+            boolean ambient = isAmbientTurn(question);
+            Optional<SocialLine> social = simulateSocial && !ambient
+                    ? socialLine(provider, question, socialState)
+                    : Optional.empty();
             if (social.isPresent()) {
                 long elapsedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started);
                 String speech = social.get().speech();
@@ -405,16 +444,18 @@ class NpcOllamaConversationTest {
             rows.add(new Row(question, attempt.describe(), finalSpeech.speech(), finalSpeech.fallbackUsed(),
                     finalSpeech.fallbackText(), false, elapsedMillis));
 
-            recent.add("Dev: " + question);
-            recent.add("Lilith Poe: " + finalSpeech.speech());
-            while (recent.size() > 10) {
-                recent.remove(0);
-            }
-            lastNpcSpeech = finalSpeech.speech();
-            NpcMemoryNotes.extract(PLAYER_NAME, question)
-                    .ifPresent(note -> longMemory.append("\n").append(note));
-            if (attempt.response() != null && !attempt.response().memory().isBlank()) {
-                longMemory.append("\n").append(attempt.response().memory().strip());
+            if (!ambient) {
+                recent.add("Dev: " + question);
+                recent.add("Lilith Poe: " + finalSpeech.speech());
+                while (recent.size() > 10) {
+                    recent.remove(0);
+                }
+                lastNpcSpeech = finalSpeech.speech();
+                NpcMemoryNotes.extract(PLAYER_NAME, question)
+                        .ifPresent(note -> longMemory.append("\n").append(note));
+                if (attempt.response() != null && !attempt.response().memory().isBlank()) {
+                    longMemory.append("\n").append(attempt.response().memory().strip());
+                }
             }
         }
         return rows;
@@ -473,7 +514,10 @@ class NpcOllamaConversationTest {
 
     private static ModelAttempt askModel(OllamaLlmProvider provider, String message, String memory) {
         try {
-            NpcBrainResponse response = provider.generate(NpcPromptBuilder.covenWitchSmoke(message, memory))
+            NpcBrainPrompt prompt = isAmbientTurn(message)
+                    ? NpcPromptBuilder.covenWitchAmbientSmoke(ambientCue(message), memory)
+                    : NpcPromptBuilder.covenWitchSmoke(message, memory);
+            NpcBrainResponse response = provider.generate(prompt)
                     .get(30, TimeUnit.SECONDS);
             return new ModelAttempt(response, null);
         } catch (ExecutionException ex) {
@@ -497,17 +541,22 @@ class NpcOllamaConversationTest {
 
     private static FinalSpeech finalSpeech(NpcBrainResponse response, String message,
                                            String memory, String lastNpcSpeech) {
+        String effectiveMessage = isAmbientTurn(message) ? "ambient " + ambientCue(message) : message;
         if (response != null && CovenWitchPersona.allowsIntent(response.intent(), false)) {
             Optional<String> polished = NpcBrainResponse.polishSpeechOrGroundedFollowup(
-                    response.speech(), WITCH_NAME, PLAYER_NAME, message, memory, "22:30");
+                    response.speech(), WITCH_NAME, PLAYER_NAME, effectiveMessage, memory, "22:30");
             if (polished.isPresent() && !NpcBrainResponse.sameMeaningForRepetition(polished.get(), lastNpcSpeech)) {
-                String speech = NpcBrainResponse.supportFollowup(message, polished.get())
+                String speech = NpcBrainResponse.supportFollowup(effectiveMessage, polished.get())
                         .map(followup -> polished.get() + " " + followup)
                         .orElse(polished.get());
                 return new FinalSpeech(speech, false, "");
             }
         }
 
+        if (isAmbientTurn(message)) {
+            String fallbackSpeech = ambientFallback(ambientCue(message), lastNpcSpeech);
+            return new FinalSpeech(fallbackSpeech, true, fallbackSpeech);
+        }
         Optional<String> fallback = NpcDialogueFallback.covenChat(
                         message, WITCH_NAME, PLAYER_NAME, "Plains", "night", "22:30", 1L, memory)
                 .flatMap(reply -> NpcBrainResponse.polishSpeechAfterFallback(reply, WITCH_NAME, PLAYER_NAME, message, memory, "22:30"));
@@ -521,6 +570,40 @@ class NpcOllamaConversationTest {
             }
         }
         return new FinalSpeech(fallbackSpeech, true, fallbackSpeech);
+    }
+
+    private static boolean isAmbientTurn(String message) {
+        return message != null && message.startsWith(AMBIENT_PREFIX);
+    }
+
+    private static String ambientCue(String message) {
+        return message == null ? "" : message.substring(AMBIENT_PREFIX.length()).strip();
+    }
+
+    private static String ambientFallback(String cue, String lastNpcSpeech) {
+        String normalized = cue.toLowerCase(java.util.Locale.ROOT);
+        String speech;
+        if (normalized.contains("darkness") || normalized.contains("sneaking into")) {
+            speech = "Take from my chest and the dark takes from your eyes.";
+        } else if (normalized.contains("invisible") || normalized.contains("unseen")) {
+            speech = "Do not bother hiding, little absence. Your breath still fogs the rafters.";
+        } else if (normalized.contains("chest")) {
+            speech = "Careful with that chest, Dev. It remembers fingers.";
+        } else if (normalized.contains("primer")) {
+            speech = "Read slowly. The Primer dislikes greedy eyes.";
+        } else if (normalized.contains("jump") || normalized.contains("hop")) {
+            speech = "If you're trying to fly, start with ointment, not my floorboards.";
+        } else if (normalized.contains("sneak")) {
+            speech = "Sneaking is for thieves and secrets. Which one are you today?";
+        } else if (normalized.contains("idle") || normalized.contains("loiter")) {
+            speech = "If you're haunting my hut, haunt it usefully.";
+        } else {
+            speech = "Mind the jars, Dev. Some of them mind back.";
+        }
+        if (NpcBrainResponse.sameMeaningForRepetition(speech, lastNpcSpeech)) {
+            return "The room has noticed you, Dev. Try not to disappoint it.";
+        }
+        return speech;
     }
 
     private static String buildReport(String model, String scenario, List<Row> rows) {

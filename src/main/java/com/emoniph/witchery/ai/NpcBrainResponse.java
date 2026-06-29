@@ -992,6 +992,10 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (asksIdentity(playerMessage) && !answersIdentity(speech, npcName, player)) {
             return true;
         }
+        String normalizedSpeech = normalizeForComparison(speech);
+        if (isAmbientCue(player) && !answersAmbientCue(speech, normalizedSpeech, player)) {
+            return true;
+        }
         if (asksHutOrDoorSafetyQuestion(player) && !answersHutOrDoorSafety(speech)) {
             return true;
         }
@@ -1036,7 +1040,6 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 "you are", "know your name", "not given me much", "not told me much")) {
             return true;
         }
-        String normalizedSpeech = normalizeForComparison(speech);
         if (asksBasicBrewRecipeQuestion(player) && !looksLikeBasicBrewRecipeAnswer(normalizedSpeech)) {
             return true;
         }
@@ -1751,6 +1754,9 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 && !allowsShortKeywordFragment(normalizedPlayer, normalizedSpeech)) {
             return true;
         }
+        if (isUnaskedSaltDrift(normalizedSpeech, normalizedPlayer)) {
+            return true;
+        }
         if (asksGreeting(normalizedPlayer)
                 && (normalizedSpeech.contains("trade")
                     || normalizedSpeech.contains("stock")
@@ -2162,6 +2168,87 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         }
         return containsAnyTerm(normalizedPlayer, "taglock", "tag lock", "poppet")
                 && containsAnyTerm(normalizedSpeech, "taglock", "poppet");
+    }
+
+    private static boolean isUnaskedSaltDrift(String normalizedSpeech, String normalizedPlayer) {
+        if (!containsAnyTerm(normalizedSpeech, "salt", "witches salt", "witch salt")) {
+            return false;
+        }
+        if (containsAnyTerm(normalizedPlayer, "salt", "witches salt", "witch salt")) {
+            return false;
+        }
+        if (asksTrade(normalizedPlayer)
+                || asksRoadAdvice(normalizedPlayer)
+                || asksHutOrDoorSafetyQuestion(normalizedPlayer)
+                || containsAnyTerm(normalizedPlayer, "threshold", "door", "ward", "wards", "protect", "cleanse",
+                "cleansing", "purify", "hostile magic")) {
+            return false;
+        }
+        if ((asksFirstGatheringPrompt(normalizedPlayer)
+                    || asksBeginnerPathQuestion(normalizedPlayer)
+                    || normalizedPlayer.contains("careful apprentice"))
+                && containsAnyTerm(normalizedSpeech, "ash", "jar", "clay jar", "primer", "herb",
+                "rite", "taglock", "opened page")) {
+            return false;
+        }
+        int words = normalizedSpeech.isBlank() ? 0 : normalizedSpeech.split("\\s+").length;
+        if (words <= 14
+                && containsAnyTerm(normalizedSpeech, "salt cleanses", "salt cleanse", "salt wards",
+                "salt at the door", "return with salt", "keep salt dry", "salt the threshold")) {
+            return true;
+        }
+        if (words <= 10
+                && (normalizedSpeech.startsWith("salt ")
+                    || normalizedSpeech.startsWith("witches salt ")
+                    || normalizedSpeech.startsWith("witch salt "))) {
+            return true;
+        }
+        return words <= 18
+                && containsAnyTerm(normalizedSpeech, "salt")
+                && !containsKnowledgeCue(normalizedPlayer)
+                && !containsAnyTerm(normalizedPlayer, "road", "door", "hut", "threshold", "ward", "protect");
+    }
+
+    private static boolean isAmbientCue(String normalizedPlayerMessage) {
+        return normalizedPlayerMessage.startsWith("ambient ");
+    }
+
+    private static boolean answersAmbientCue(String speech, String normalizedSpeech, String normalizedPlayerMessage) {
+        String spoken = normalizeForComparison(spokenWithoutAction(speech));
+        if (spoken.isBlank() || SAFE_ACTION_ONLY.matcher(speech == null ? "" : speech.trim()).matches()) {
+            return false;
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "darkness curse", "stealing", "chest theft",
+                "sneaking into the witch s chest")) {
+            return containsAnyTerm(normalizedSpeech, "darkness", "curse", "stolen", "steal", "thief",
+                    "chest", "finger", "fingers", "pocket", "pockets", "eyes", "shadow");
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "invisible", "unseen", "hidden player")) {
+            return containsAnyTerm(normalizedSpeech, "invisible", "unseen", "hidden", "absence",
+                    "breath", "breathing", "floorboard", "floorboards", "shadow", "draft",
+                    "footstep", "footsteps", "boots", "quiet", "hide", "hiding", "rafters");
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "chest")) {
+            return containsAnyTerm(normalizedSpeech, "chest", "finger", "fingers", "pocket", "pockets",
+                    "hand", "hands", "busy", "rummage", "borrow", "borrowed", "take", "steal", "lid");
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "primer", "book", "reading")) {
+            return containsAnyTerm(normalizedSpeech, "primer", "book", "page", "read", "reading",
+                    "oven", "fume", "fumes", "rite", "herb", "lesson");
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "sneaking", "sneak", "crouching", "crouch")) {
+            return containsAnyTerm(normalizedSpeech, "sneak", "thief", "spy", "secret", "shadow",
+                    "floorboard", "floorboards", "dust", "quiet", "crouch");
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "jumping", "hopping", "jump", "hop")) {
+            return containsAnyTerm(normalizedSpeech, "jump", "hop", "floorboard", "floorboards",
+                    "broom", "fly", "flying", "ointment", "frog", "cork", "restless", "feet", "fast");
+        }
+        if (containsAnyTerm(normalizedPlayerMessage, "idling", "loitering", "standing nearby")) {
+            return containsAnyTerm(normalizedSpeech, "hut", "loiter", "idle", "haunt", "furniture",
+                    "jar", "jars", "kettle", "sweep", "stir", "question", "standing", "breathing");
+        }
+        return true;
     }
 
     private static boolean isUnsupportedGeneralAdvice(String speech, String playerMessage) {
