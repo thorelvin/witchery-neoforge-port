@@ -47,6 +47,37 @@ class NpcKnowledgeBaseTest {
     }
 
     @Test
+    void retrievesCardByTagsWhenTriggerWordsAreAbsent() {
+        String context = NpcKnowledgeBase.relevantContext(
+                "which mystic branch shadow vessel handles brew focus?", "Plains", "night",
+                new NpcCardRequest("leonard", new UUID(71L, 72L), new UUID(81L, 82L), 0L, 0, 3, 1));
+        String lower = context.toLowerCase(Locale.ROOT);
+
+        assertTrue(lower.contains("leonard's urn"), context);
+        assertTrue(lower.contains("without consuming it"), context);
+    }
+
+    @Test
+    void retrievesCompassCardByTrackingToolTag() {
+        Optional<String> answer = NpcKnowledgeBase.compactAnswer(
+                "what does the bound player compass do?", "Plains", "day");
+
+        assertTrue(answer.isPresent());
+        assertTrue(answer.get().contains("Player Compass"), answer.get());
+    }
+
+    @Test
+    void retrievesCardFactsByFilenameAlias() {
+        String context = NpcKnowledgeBase.relevantContext("what are special tools compasses?", "Plains", "day");
+        String lower = context.toLowerCase(Locale.ROOT);
+
+        assertTrue(lower.contains("targeted fact"), context);
+        assertTrue(lower.contains("book of biomes")
+                || lower.contains("player compass")
+                || lower.contains("poppet shelf compass"), context);
+    }
+
+    @Test
     void retrievesNatureKnowledgeForHerbQuestions() {
         String context = NpcKnowledgeBase.relevantContext("where do I find mandrake and belladonna?", "Forest", "day");
         String lower = context.toLowerCase(Locale.ROOT);

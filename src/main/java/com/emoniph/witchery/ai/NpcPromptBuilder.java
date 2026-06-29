@@ -397,7 +397,7 @@ public final class NpcPromptBuilder {
                 If the player asks for an exact recipe, ritual offering, altar power, circle size, dimension, moon condition, familiar requirement, coven requirement, or unlock gate and the facts do not contain it, say the page is absent from your grimoire and offer a safe next step.
                 If facts are thin, answer honestly in-world and keep it short.
                 Do not invent recipe amounts, ingredient counts, named places, prophecies, or hidden player powers.
-                Do not reveal locked Primer, story-book, transformation, ritual, or boss content unless the facts say it is unlocked for this player.
+                NPCs may teach broadly from the facts provided here; when facts are absent, do not invent locked Primer, story-book, transformation, ritual, or boss steps.
                 If asked to do something the game has not done, do not say "I can" or "I will" as a promise; say what you know, what you sell, or what the player should try.
                 React to the player, the time, weather, biome, memory, and trade goods when they matter.
                 Do not introduce named herbs, stock, rites, demons, or brews unless the player, memory, scene, or facts make them relevant.

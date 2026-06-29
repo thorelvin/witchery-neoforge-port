@@ -28,7 +28,7 @@ public final class NpcKnowledgeBase {
     private static final int MAX_TARGETED_NOTES = 6;
     private static final String MARKDOWN = loadMarkdown();
     private static final List<Section> SECTIONS = loadSections(MARKDOWN);
-    private static final List<TargetedNote> TARGETED_NOTES = loadTargetedNotes(MARKDOWN);
+    private static final List<TargetedNote> TARGETED_NOTES = loadTargetedNotes();
 
     private NpcKnowledgeBase() {
     }
@@ -282,117 +282,156 @@ public final class NpcKnowledgeBase {
     }
 
     private static boolean containsKnowledgeCue(String normalized) {
+        return containsSocialOrTradeCue(normalized)
+                || containsBrewMachineOrRecipeCue(normalized)
+                || containsHerbOrReagentCue(normalized)
+                || containsRitePoppetOrCurseCue(normalized)
+                || containsSpiritCreatureOrWorldCue(normalized)
+                || containsToolBookOrStructureCue(normalized)
+                || containsTransformationInfusionOrSymbolCue(normalized);
+    }
+
+    private static boolean containsSocialOrTradeCue(String normalized) {
         return containsAnyTerm(normalized,
-                "brew", "brewing", "potion", "altar", "taglock", "poppet", "mandrake",
-                "bone needle", "death protection", "fire protection", "water protection",
-                "earth protection", "hunger protection", "tool protection", "armor protection",
-                "armour protection", "poppet protection", "voodoo poppet", "vampiric poppet",
-                "belladonna", "demon", "demons", "imp", "flame imp", "familiar", "familiars",
                 "coven", "covens", "recruit", "recruiting", "trial", "quest",
                 "trade", "trades", "trading", "wares", "stock", "buy", "sell", "coin", "coins",
                 "emerald", "emeralds", "gift", "bless", "blessing", "luck", "apology", "insult",
                 "thank", "thanks", "praise", "sorry", "forgive", "rude", "stupid", "hag",
                 "egg", "eggs", "potato", "potatoes",
-                "witches salt", "witch salt", "flowing spirit",
-                "spirit", "spirits", "spirit world", "dream", "dreams", "nightmare", "arthana",
-                "oven", "kettle", "cauldron", "witch cauldron", "witch s cauldron", "witches cauldron",
-                "anointing paste", "wake cauldron", "heated cauldron", "cauldron working",
-                "cauldron mutandis", "cauldron mutandis extremis", "cauldron drop of luck",
-                "distillery", "spinning wheel", "brazier", "brazier conjuration",
-                "light brazier", "ignite brazier", "clear brazier", "empty brazier", "weak smoke", "brazier smoke",
+                "witchery", "witchcraft", "rumor", "rumour", "gossip", "omen", "omens", "fortune",
+                "prophecy", "teach me", "lesson", "next step", "what next", "what now", "build first",
+                "where do i start", "start witchery", "start witchcraft");
+    }
+
+    private static boolean containsBrewMachineOrRecipeCue(String normalized) {
+        return containsAnyTerm(normalized,
+                "brew", "brewing", "potion", "altar", "oven", "kettle", "cauldron",
+                "witch cauldron", "witch s cauldron", "witches cauldron", "anointing paste",
+                "wake cauldron", "heated cauldron", "cauldron working", "cauldron mutandis",
+                "cauldron mutandis extremis", "cauldron drop of luck", "distillery",
+                "spinning wheel", "brazier", "brazier conjuration", "light brazier",
+                "ignite brazier", "clear brazier", "empty brazier", "weak smoke", "brazier smoke",
                 "brazier fizz", "brazier fizzing", "fizzing brazier", "fizz", "flint and steel",
-                "circle", "rite", "ritual", "summon", "summoned",
-                "summoning", "spectre", "spectres", "banshee", "banshees", "poltergeist", "poltergeists",
-                "chalice", "hidden", "invisible", "herb", "herbs", "plant", "plants",
-                "rowan", "wormwood", "snowbell", "wolfsbane", "cat", "owl", "toad", "witchcraft",
-                "alder", "hawthorn", "rowan berries", "belladonna seeds", "mandrake seeds",
-                "snowbell seeds", "wolfsbane seeds", "water artichoke", "artichoke globe",
-                "glint weed", "spanish moss", "ember moss", "blood poppy", "blood poppies",
-                "mutating sprig", "mutator", "grassper", "grasspers", "wispy cotton",
-                "disturbed cotton", "treefyd seeds", "wood ash", "ent twig",
-                "redstone soup", "flying ointment", "mystic unguent", "quicklime",
-                "drop of luck", "graveyard dust", "brew of bats", "brew of erosion",
-                "brew of webs", "brew of ice", "brew of vines", "brew of thorns",
-                "combustion brew", "brew of the depths", "brew of depths", "brew of raising",
-                "brew of substitution", "brew modifiers", "modifier", "modifiers",
-                "splash brew", "throwable brew", "gas brew", "dispersal",
-                "refined evil", "condensed fear", "focused will", "ender dew", "infernal blood",
-                "diamond vapour", "diamond vapor", "oil of vitriol", "tear of the goddess",
-                "tear of goddess", "glowstone dust", "netherrack infernal blood",
-                "fanciful thread", "golden thread", "tormented twine", "impregnated leather",
-                "fume funnel", "fume filter", "filtered fume funnel", "golden chalk",
-                "hay bale golden thread", "threadwork", "woven", "cloth",
-                "ritual chalk", "infernal chalk", "otherwhere chalk", "chalk color", "chalk colour",
-                "chalk colors", "chalk colours", "glyph", "glyphs", "center glyph", "circle size",
-                "circle shape", "small circle", "medium circle", "large circle", "circle talisman",
-                "pit dirt", "pit grass", "false floor",
-                "bat wool", "wool of bat", "tongue of dog", "toe of frog", "owlet wing",
-                "owlet s wing", "creeper heart", "spectral dust", "hellhound head",
-                "creature drops", "rare drops", "polynesia charm", "animal trade", "animal trades",
-                "devil s tongue charm", "devils tongue charm", "demonic contract",
-                "concentrated bat ball", "frozen heart", "brew of frogs tongue", "wormy apple",
-                "witchery", "rumor", "rumour", "gossip", "omen", "omens", "fortune", "prophecy",
-                "baba yaga", "death", "binky", "lilith", "leonard", "goat", "hooves", "horns",
-                "satyr", "sabbath", "torment", "poison", "blight",
-                "curse", "curses", "cursed", "remove curse", "ward", "wards", "voodoo", "protection",
-                "curse of misfortune", "misfortune curse", "curse of sinking", "sinking curse",
-                "curse of overheating", "overheating curse", "curse of insanity", "insanity curse",
-                "curse creature", "creature curse", "waking nightmare curse", "curse of waking nightmare",
+                "redstone soup", "flying ointment", "mystic unguent", "drop of luck",
+                "brew of bats", "brew of erosion", "brew of webs", "brew of ice",
+                "brew of vines", "brew of thorns", "combustion brew", "brew of the depths",
+                "brew of depths", "brew of raising", "brew of substitution", "brew modifiers",
+                "modifier", "modifiers", "splash brew", "throwable brew", "gas brew", "dispersal",
+                "poison", "blight", "fume", "fumes", "clay jar", "jar", "machine", "machines",
+                "station", "stations", "recipe page", "recipe book", "opened recipe", "opened page",
+                "readable page", "crafting page", "crafting recipe");
+    }
+
+    private static boolean containsHerbOrReagentCue(String normalized) {
+        return containsAnyTerm(normalized,
+                "mandrake", "belladonna", "witches salt", "witch salt", "flowing spirit",
+                "herb", "herbs", "plant", "plants", "rowan", "wormwood", "snowbell",
+                "wolfsbane", "alder", "hawthorn", "rowan berries", "belladonna seeds",
+                "mandrake seeds", "snowbell seeds", "wolfsbane seeds", "water artichoke",
+                "artichoke globe", "glint weed", "spanish moss", "ember moss", "blood poppy",
+                "blood poppies", "mutating sprig", "mutator", "grassper", "grasspers",
+                "wispy cotton", "disturbed cotton", "treefyd seeds", "wood ash", "ent twig",
+                "quicklime", "graveyard dust", "refined evil", "condensed fear", "focused will",
+                "ender dew", "infernal blood", "diamond vapour", "diamond vapor", "oil of vitriol",
+                "tear of the goddess", "tear of goddess", "glowstone dust",
+                "netherrack infernal blood", "fanciful thread", "golden thread",
+                "tormented twine", "impregnated leather", "fume funnel", "fume filter",
+                "filtered fume funnel", "hay bale golden thread", "threadwork", "woven", "cloth",
+                "whiff", "whif", "whiff of magic", "whif of magic", "mutandis",
+                "mutandis extremis", "attuned stone", "exhale", "exhale of the horned one",
+                "breath of the goddess", "hint of rebirth", "reek of misfortune",
+                "odour of purity", "odor of purity", "odour", "odor", "reek", "foul fume",
+                "witches salt recipe", "witch salt recipe", "sapling", "saplings");
+    }
+
+    private static boolean containsRitePoppetOrCurseCue(String normalized) {
+        return containsAnyTerm(normalized,
+                "taglock", "poppet", "bone needle", "death protection", "fire protection",
+                "water protection", "earth protection", "hunger protection", "tool protection",
+                "armor protection", "armour protection", "poppet protection", "voodoo poppet",
+                "vampiric poppet", "circle", "rite", "ritual", "summon", "summoned",
+                "summoning", "chalice", "hidden", "invisible", "golden chalk", "ritual chalk",
+                "infernal chalk", "otherwhere chalk", "chalk color", "chalk colour",
+                "chalk colors", "chalk colours", "center glyph", "circle size", "circle shape",
+                "small circle", "medium circle", "large circle", "circle talisman", "pit dirt",
+                "pit grass", "false floor", "curse", "curses", "cursed", "remove curse",
+                "ward", "wards", "voodoo", "protection", "curse of misfortune",
+                "misfortune curse", "curse of sinking", "sinking curse", "curse of overheating",
+                "overheating curse", "curse of insanity", "insanity curse", "curse creature",
+                "creature curse", "waking nightmare curse", "curse of waking nightmare",
                 "corrupt poppet", "hell on earth", "curse hell on earth", "protective poppet",
                 "curse blocked", "curse failed", "witch hunter curse protection", "am i cursed",
-                "sanctity", "transposition", "manifestation", "prior incarnation", "beastial call",
-                "sky wrath", "sky s wrath", "lightning", "barrier", "force field", "banish",
-                "anguish of the dead", "fortification of the corpse", "deathly veil", "drain growth", "graveyard mist",
-                "chalk", "garlic", "vampire", "vampires", "storm", "weather", "raining",
-                "werewolf", "werewolves", "lycanthropy", "wolf curse", "full moon", "wolf altar",
-                "transformation", "transformations", "infusion", "infusions", "infernal animus",
-                "coffin", "stake", "glass goblet", "vampire goblet", "blood stained wool", "woven cruor",
-                "mesmerise", "mesmerize", "wolftrap", "wolf trap", "moon charm", "silver sword", "silver bolt",
-                "silvered armor", "silvered armour", "vampire book", "observations of an immortal",
-                "ghost of the light", "soul of the world", "spirit of otherwhere",
-                "lasting infusion", "permanent infusion", "rite of infusion", "infusion recharge",
-                "light infusion", "overworld infusion", "otherwhere infusion", "infernal infusion",
-                "ghost of light", "soul of world", "spirit otherwhere", "choose infusion",
-                "fume", "fumes", "clay jar", "jar", "sapling", "saplings", "dream catcher", "dreamcatcher",
-                "dream weaver", "dream weavers", "dream weave", "fleet foot", "iron arm", "fasting",
-                "nightmares weave", "intensity weave",
-                "well", "whisper", "whispers", "scry", "scrying", "crystal ball", "seer stone",
-                "player compass", "compass", "waystone", "waystones", "bound waystone", "blooded waystone",
-                "boline", "brew bag", "witches hat", "witch hat", "witches robes", "witch robes",
-                "candelabra", "filled chalice", "pentacle", "koboldite pentacle", "leech chest",
-                "blood rose", "critter snare", "garlic garland", "leonard s urn", "leonards urn",
-                "whiff", "whif", "whiff of magic", "whif of magic",
-                "mutandis", "mutandis extremis", "attuned stone", "exhale", "exhale of the horned one",
-                "breath of the goddess", "hint of rebirth", "reek of misfortune", "odour of purity",
-                "odor of purity", "odour", "odor", "reek", "foul fume", "witches salt recipe", "witch salt recipe",
-                "book", "books", "lesson book", "circle magic book", "book of circle magic",
-                "book of poppets", "book of spirit world", "book of herbology", "book of the oven",
-                "book of distilling", "book of creatures", "book of transformations", "book of infusions",
-                "book of wands", "symbology", "mystic branch", "air glyph", "branch spell",
-                "symbol spell", "draw symbol", "draw glyph", "unknown symbol", "branch fizzles",
-                "infused energy", "infusion energy", "demon soul glyph", "learn symbol",
-                "ignianima", "carnosa diem", "tormentum", "morsmordre", "crucio", "imperio",
-                "avada kedavra", "accio", "episkey", "expelliarmus", "flipendo", "impedimenta",
-                "incendio", "lumos", "nox", "stupefy", "aguamenti", "alohomora", "defodio",
-                "ennervate", "attraho", "cave inimicum", "meteolojinx", "protego", "flagrate",
-                "colloportus", "caelum", "baratrum", "ortus", "occasus",
-                "witch hand", "witches hand", "creature power", "creature powers", "altar kill power",
-                "machine", "machines", "station", "stations", "recipe page", "recipe book", "opened recipe",
-                "opened page", "readable page", "unlock", "unlocked", "crafting page", "crafting recipe",
-                "teach me", "lesson", "next step", "what next", "what now", "build first",
-                "where do i start", "start witchery", "start witchcraft",
-                "poppet shelf", "shelf compass", "poppet shelf compass", "fanciful thinking",
-                "hobgoblin", "hobgoblins", "koboldite", "ent", "ents", "treefyd", "treefyds",
-                "flying monkey", "flying monkeys", "witch hunter", "witch hunters", "apothecary",
+                "sanctity", "transposition", "manifestation", "prior incarnation",
+                "beastial call", "sky wrath", "sky s wrath", "lightning", "barrier",
+                "force field", "banish", "anguish of the dead", "fortification of the corpse",
+                "deathly veil", "drain growth", "graveyard mist", "chalk", "poppet shelf");
+    }
+
+    private static boolean containsSpiritCreatureOrWorldCue(String normalized) {
+        return containsAnyTerm(normalized,
+                "demon", "demons", "imp", "flame imp", "familiar", "familiars",
+                "spirit", "spirits", "spirit world", "dream", "dreams", "nightmare",
+                "spectre", "spectres", "banshee", "banshees", "poltergeist", "poltergeists",
+                "cat", "owl", "toad", "bat wool", "wool of bat", "tongue of dog",
+                "toe of frog", "owlet wing", "owlet s wing", "creeper heart", "spectral dust",
+                "hellhound head", "creature drops", "rare drops", "polynesia charm",
+                "animal trade", "animal trades", "devil s tongue charm", "devils tongue charm",
+                "demonic contract", "concentrated bat ball", "frozen heart",
+                "brew of frogs tongue", "wormy apple", "dream catcher", "dreamcatcher",
+                "dream weaver", "dream weavers", "dream weave", "fleet foot", "iron arm",
+                "fasting", "nightmares weave", "intensity weave", "hobgoblin", "hobgoblins",
+                "koboldite", "ent", "ents", "treefyd", "treefyds", "flying monkey",
+                "flying monkeys");
+    }
+
+    private static boolean containsToolBookOrStructureCue(String normalized) {
+        return containsAnyTerm(normalized,
+                "arthana", "well", "whisper", "whispers", "scry", "scrying", "crystal ball",
+                "seer stone", "player compass", "compass", "waystone", "waystones",
+                "bound waystone", "blooded waystone", "boline", "brew bag", "witches hat",
+                "witch hat", "witches robes", "witch robes", "candelabra", "filled chalice",
+                "pentacle", "koboldite pentacle", "leech chest", "blood rose", "critter snare",
+                "garlic garland", "leonard s urn", "leonards urn", "book", "books",
+                "lesson book", "circle magic book", "book of circle magic", "book of poppets",
+                "book of spirit world", "book of herbology", "book of the oven",
+                "book of distilling", "book of creatures", "book of transformations",
+                "book of infusions", "book of wands", "unlock", "unlocked",
+                "shelf compass", "poppet shelf compass", "fanciful thinking", "apothecary",
                 "village guard", "village guards", "guards shouting", "guards angry",
                 "hunter clothes", "hunter clothing", "hunter armor", "hunter armour",
-                "silver damage", "silver hurts werewolves", "silver hurts vampires",
-                "silver against werewolves", "silver against vampires", "hunter curse protection",
                 "hobgoblin trade", "hobgoblin trades", "koboldite trade", "hobgoblin hut",
                 "hobgoblin patron", "statue of hobgoblin patron", "patron statue",
                 "koboldite pickaxe", "twisting band", "village walls", "walled village",
-                "diamond vapour", "diamond vapor", "oil of vitriol", "tear of the goddess",
-                "fanciful thread", "golden thread", "tormented twine");
+                "witch hunter", "witch hunters");
+    }
+
+    private static boolean containsTransformationInfusionOrSymbolCue(String normalized) {
+        return containsAnyTerm(normalized,
+                "baba yaga", "death", "binky", "lilith", "leonard", "goat", "hooves", "horns",
+                "satyr", "sabbath", "torment", "garlic", "vampire", "vampires", "storm",
+                "weather", "raining", "werewolf", "werewolves", "lycanthropy", "wolf curse",
+                "full moon", "wolf altar", "transformation", "transformations", "infusion",
+                "infusions", "infernal animus", "coffin", "stake", "glass goblet",
+                "vampire goblet", "blood stained wool", "woven cruor", "mesmerise",
+                "mesmerize", "wolftrap", "wolf trap", "moon charm", "silver sword",
+                "silver bolt", "silvered armor", "silvered armour", "vampire book",
+                "observations of an immortal", "ghost of the light", "soul of the world",
+                "spirit of otherwhere", "lasting infusion", "permanent infusion",
+                "rite of infusion", "infusion recharge", "light infusion", "overworld infusion",
+                "otherwhere infusion", "infernal infusion", "ghost of light", "soul of world",
+                "spirit otherwhere", "choose infusion", "symbology", "mystic branch",
+                "air glyph", "branch spell", "symbol spell", "draw symbol", "draw glyph",
+                "unknown symbol", "branch fizzles", "infused energy", "infusion energy",
+                "demon soul glyph", "learn symbol", "glyph", "glyphs", "ignianima",
+                "carnosa diem", "tormentum", "morsmordre", "crucio", "imperio",
+                "avada kedavra", "accio", "episkey", "expelliarmus", "flipendo",
+                "impedimenta", "incendio", "lumos", "nox", "stupefy", "aguamenti",
+                "alohomora", "defodio", "ennervate", "attraho", "cave inimicum",
+                "meteolojinx", "protego", "flagrate", "colloportus", "caelum",
+                "baratrum", "ortus", "occasus", "witch hand", "witches hand",
+                "creature power", "creature powers", "altar kill power", "silver damage",
+                "silver hurts werewolves", "silver hurts vampires", "silver against werewolves",
+                "silver against vampires", "hunter curse protection");
     }
 
     private static boolean isFavoriteHerbQuestion(String normalized) {
@@ -437,24 +476,44 @@ public final class NpcKnowledgeBase {
         return sections.isEmpty() ? fallbackSections() : List.copyOf(sections);
     }
 
-    private static List<TargetedNote> loadTargetedNotes(String markdown) {
-        List<TargetedNote> notes = parseTargetedNotes(markdown);
+    private static List<TargetedNote> loadTargetedNotes() {
+        List<TargetedNote> notes = new ArrayList<>(parseTargetedNotes(loadResource(RESOURCE), ""));
+        for (String cardPath : cardIndexPaths()) {
+            String resource = cardPath.startsWith("/") ? cardPath : CARD_RESOURCE_DIR + cardPath;
+            notes.addAll(parseTargetedNotes(loadResource(resource), sourceAlias(cardPath)));
+        }
         return List.copyOf(notes);
     }
 
     private static String loadMarkdown() {
         StringBuilder markdown = new StringBuilder();
         appendMarkdown(markdown, loadResource(RESOURCE));
-        String index = loadResource(CARD_INDEX_RESOURCE);
-        for (String rawLine : index.split("\\R")) {
-            String line = rawLine.strip();
-            if (line.isBlank() || line.startsWith("#")) {
-                continue;
-            }
+        for (String line : cardIndexPaths()) {
             String resource = line.startsWith("/") ? line : CARD_RESOURCE_DIR + line;
             appendMarkdown(markdown, loadResource(resource));
         }
         return markdown.toString();
+    }
+
+    private static List<String> cardIndexPaths() {
+        List<String> paths = new ArrayList<>();
+        String index = loadResource(CARD_INDEX_RESOURCE);
+        for (String rawLine : index.split("\\R")) {
+            String line = rawLine.strip();
+            if (!line.isBlank() && !line.startsWith("#")) {
+                paths.add(line);
+            }
+        }
+        return paths;
+    }
+
+    private static String sourceAlias(String cardPath) {
+        String name = cardPath == null ? "" : cardPath;
+        int slash = name.lastIndexOf('/');
+        if (slash >= 0) {
+            name = name.substring(slash + 1);
+        }
+        return name.replaceFirst("\\.md$", "").replace('_', ' ');
     }
 
     private static void appendMarkdown(StringBuilder markdown, String text) {
@@ -504,10 +563,15 @@ public final class NpcKnowledgeBase {
         return sections;
     }
 
-    private static List<TargetedNote> parseTargetedNotes(String markdown) {
+    private static List<TargetedNote> parseTargetedNotes(String markdown, String sourceAlias) {
         List<TargetedNote> notes = new ArrayList<>();
+        String sectionTitle = "";
         for (String rawLine : markdown.split("\\R")) {
             String line = rawLine.strip();
+            if (line.startsWith("## ")) {
+                sectionTitle = line.substring(3).strip();
+                continue;
+            }
             if (!line.toLowerCase(Locale.ROOT).startsWith(TARGETED_PREFIX)) {
                 continue;
             }
@@ -530,7 +594,10 @@ public final class NpcKnowledgeBase {
                                 .orElse(defaultTopic(triggers)),
                         cardMetadata(metadata, "persona").map(NpcCardRequest::normalizePersona)
                                 .orElse(NpcCardRequest.ANY_PERSONA),
-                        cardMetadata(metadata, "weight").map(NpcKnowledgeBase::parseWeight).orElse(1)));
+                        cardMetadata(metadata, "weight").map(NpcKnowledgeBase::parseWeight).orElse(1),
+                        cardMetadata(metadata, "tags").orElse(""),
+                        sectionTitle,
+                        sourceAlias));
             }
         }
         return notes;
@@ -606,7 +673,8 @@ public final class NpcKnowledgeBase {
     private record TargetedMatch(TargetedNote note, int score) {
     }
 
-    private record TargetedNote(String triggers, String note, String topic, String personaId, int weight) {
+    private record TargetedNote(String triggers, String note, String topic, String personaId, int weight,
+                                String tags, String sectionTitle, String sourceAlias) {
         boolean matches(String normalized) {
             return matchScore(normalized) > 0;
         }
@@ -634,7 +702,35 @@ public final class NpcKnowledgeBase {
                     best = Math.max(best, score);
                 }
             }
+            best = Math.max(best, aliasMatchScore(normalized, topic, 8));
+            best = Math.max(best, aliasMatchScore(normalized, tags, 6));
+            best = Math.max(best, aliasMatchScore(normalized, sectionTitle, 4));
+            best = Math.max(best, aliasMatchScore(normalized, sourceAlias, 3));
             return best;
+        }
+
+        private static int aliasMatchScore(String normalized, String aliases, int baseScore) {
+            int best = 0;
+            for (String alias : aliases.split("[,|]")) {
+                String cleaned = normalize(alias.strip());
+                if (cleaned.length() < 5 || isWeakAlias(cleaned)) {
+                    continue;
+                }
+                if (containsTerm(normalized, cleaned)) {
+                    best = Math.max(best, baseScore + terms(cleaned).size() * 3);
+                }
+            }
+            return best;
+        }
+
+        private static boolean isWeakAlias(String cleaned) {
+            return cleaned.equals("item")
+                    || cleaned.equals("tool")
+                    || cleaned.equals("boss")
+                    || cleaned.equals("brew")
+                    || cleaned.equals("recipe")
+                    || cleaned.equals("structure")
+                    || cleaned.equals("worldgen");
         }
 
         String spokenFact() {

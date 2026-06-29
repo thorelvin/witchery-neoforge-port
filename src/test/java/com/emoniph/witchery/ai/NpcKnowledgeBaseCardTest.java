@@ -77,6 +77,8 @@ class NpcKnowledgeBaseCardTest {
                 assertWeight(value, path, lineNumber);
             } else if ("persona".equals(key)) {
                 assertKnownPersona(value, path, lineNumber);
+            } else if ("tags".equals(key)) {
+                assertTags(value, path, lineNumber);
             }
         }
         assertTrue(sawTriggers, path + ":" + lineNumber + " targeted fact did not expose trigger metadata.");
@@ -96,6 +98,13 @@ class NpcKnowledgeBaseCardTest {
         String persona = NpcCardRequest.normalizePersona(value);
         assertTrue(ACTIVE_PERSONAS.contains(persona) || FUTURE_PERSONAS.contains(persona),
                 path + ":" + lineNumber + " persona is neither registered nor marked as future: " + value);
+    }
+
+    private static void assertTags(String value, String path, int lineNumber) {
+        for (String tag : value.split("[,|]")) {
+            assertFalse(tag.strip().isBlank(),
+                    path + ":" + lineNumber + " contains a blank tag in [tags: " + value + "]");
+        }
     }
 
     private static void assertNoStalePhrases(String line, String path, int lineNumber) {

@@ -55,6 +55,16 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void smokePromptTeachesBroadlyFromProvidedFactsWithoutUnlockStateClaim() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.covenWitchSmoke(
+                "tell me about vampire sunlight", "");
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(user.contains("may teach broadly from the facts provided here"), prompt.userPrompt());
+        assertTrue(!user.contains("unless the facts say it is unlocked for this player"), prompt.userPrompt());
+    }
+
+    @Test
     void smokePromptIncludesWhiffSourceCard() {
         NpcBrainPrompt prompt = NpcPromptBuilder.covenWitchSmoke("how do I get whif of magic?", "");
         String user = prompt.userPrompt().toLowerCase();
