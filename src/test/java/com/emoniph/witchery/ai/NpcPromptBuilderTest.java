@@ -205,6 +205,68 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void cardRepairUsesRoutingToAvoidSmallTalkAndMemoryCollisions() {
+        Optional<NpcBrainPrompt> smallTalk = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
+                "Do you like eggs?",
+                "Message routing: route=small_talk; topic=eggs; reply strategy=answer small talk.",
+                "Witches' salt is protective.");
+        Optional<NpcBrainPrompt> memory = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
+                "What is my name?",
+                "Message routing: route=memory; topic=name; reply strategy=answer remembered player facts.",
+                "Belladonna grows in old gardens.");
+        Optional<NpcBrainPrompt> social = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
+                "Sorry, that was rude.",
+                "Message routing: route=social; topic=apology; reply strategy=respond to tone first.",
+                "Ask for a brew by name.");
+
+        assertTrue(smallTalk.isEmpty());
+        assertTrue(memory.isEmpty());
+        assertTrue(social.isEmpty());
+    }
+
+    @Test
+    void cardRepairUsesRoutingToAvoidGenericAtmosphereCollisions() {
+        Optional<NpcBrainPrompt> prompt = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
+                "The rain feels strange tonight.",
+                "Message routing: route=atmosphere; topic=rain; reply strategy=answer scene remark.",
+                "Witches' salt is protective.");
+
+        assertTrue(prompt.isEmpty());
+    }
+
+    @Test
+    void cardRepairStillAllowsConcreteRoutesAndAmbientBehavior() {
+        Optional<NpcBrainPrompt> recipe = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
+                "how do I use the kettle?",
+                "Message routing: route=recipe; topic=kettle; reply strategy=answer exact known ingredient.",
+                "Hello again, Dev.");
+        Optional<NpcBrainPrompt> lore = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
+                "What is witches salt for?",
+                "Message routing: route=lore; topic=witches_salt; reply strategy=stay on topic.",
+                "The rain has teeth.");
+        Optional<NpcBrainPrompt> trade = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
+                "what do you trade?",
+                "Message routing: route=trade; topic=trade; reply strategy=answer trade directly.",
+                "The witch says hi.");
+        Optional<NpcBrainPrompt> ambient = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
+                "ambient reading the witches primer",
+                "Message routing: route=atmosphere; topic=ambient_behavior; reply strategy=answer scene remark.",
+                "Visible pages are on the screen.");
+
+        assertTrue(recipe.isPresent());
+        assertTrue(recipe.get().userPrompt().toLowerCase().contains("fill the kettle with water"),
+                recipe.get().userPrompt());
+        assertTrue(lore.isPresent());
+        assertTrue(lore.get().userPrompt().toLowerCase().contains("witches' salt")
+                || lore.get().userPrompt().toLowerCase().contains("witches salt"), lore.get().userPrompt());
+        assertTrue(trade.isPresent());
+        assertTrue(trade.get().userPrompt().toLowerCase().contains("right-click")
+                || trade.get().userPrompt().toLowerCase().contains("stock"), trade.get().userPrompt());
+        assertTrue(ambient.isPresent());
+        assertTrue(ambient.get().userPrompt().toLowerCase().contains("primer"), ambient.get().userPrompt());
+    }
+
+    @Test
     void socialIntentPromptUsesStrictYesNoSchema() {
         NpcBrainPrompt prompt = NpcPromptBuilder.socialIntentCheck("witch", NpcSocialAction.INSULT,
                 "How should I harvest mandrake without making a fool of myself?");

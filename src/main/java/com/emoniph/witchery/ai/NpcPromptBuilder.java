@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public final class NpcPromptBuilder {
     private static final int MAX_USER_PROMPT_LENGTH = 3200;
@@ -1422,7 +1423,7 @@ public final class NpcPromptBuilder {
 
     static Optional<NpcBrainPrompt> cardRepair(String personaId, String npcName, String playerName,
                                               String playerMessage, String memory, String rejectedSpeech) {
-        if (!shouldRepairWithCards(playerMessage)) {
+        if (!shouldRepairWithCards(playerMessage, memory)) {
             return Optional.empty();
         }
         String persona = NpcCardRequest.normalizePersona(personaId);
@@ -1536,7 +1537,7 @@ public final class NpcPromptBuilder {
         );
     }
 
-    private static boolean shouldRepairWithCards(String playerMessage) {
+    private static boolean shouldRepairWithCards(String playerMessage, String memoryContext) {
         String normalized = playerMessage == null ? "" : playerMessage.toLowerCase(java.util.Locale.ROOT)
                 .replaceAll("[^a-z0-9 ]+", " ")
                 .replaceAll("\\s+", " ")
@@ -1544,7 +1545,32 @@ public final class NpcPromptBuilder {
         if (normalized.isBlank()) {
             return false;
         }
-        if (normalized.startsWith("what ")
+        NpcDialogueRoute route = NpcMessageAnalysis.routeFromContext(memoryContext);
+        if (!routeAllowsCardRepair(route, normalized)) {
+            return false;
+        }
+        if (route == NpcDialogueRoute.ATMOSPHERE) {
+            return hasAmbientRepairCue(normalized);
+        }
+        if (hasQuestionRepairShape(normalized)
+                && (route == NpcDialogueRoute.UNKNOWN || hasSpecificRepairCue(normalized))) {
+            return true;
+        }
+        return hasSpecificRepairCue(normalized);
+    }
+
+    private static boolean routeAllowsCardRepair(NpcDialogueRoute route, String normalized) {
+        return switch (route) {
+            case TRADE, RECIPE, RITE, LORE -> true;
+            case ACTION -> hasSpecificRepairCue(normalized);
+            case ATMOSPHERE -> hasAmbientRepairCue(normalized);
+            case UNKNOWN -> true;
+            case SMALL_TALK, MEMORY, SOCIAL -> false;
+        };
+    }
+
+    private static boolean hasQuestionRepairShape(String normalized) {
+        return normalized.startsWith("what ")
                 || normalized.startsWith("how ")
                 || normalized.startsWith("why ")
                 || normalized.startsWith("where ")
@@ -1555,9 +1581,10 @@ public final class NpcPromptBuilder {
                 || normalized.startsWith("do you know ")
                 || normalized.startsWith("tell me ")
                 || normalized.startsWith("explain ")
-                || normalized.startsWith("teach ")) {
-            return true;
-        }
+                || normalized.startsWith("teach ");
+    }
+
+    private static boolean hasSpecificRepairCue(String normalized) {
         return containsAnyRepairCue(normalized,
                 "recipe", "ingredient", "ingredients", "craft", "make", "use", "using",
                 "trade", "sell", "buy", "stock", "wares", "coin",
@@ -1568,13 +1595,43 @@ public final class NpcPromptBuilder {
                 "vampire", "werewolf", "leonard", "baba yaga");
     }
 
+    private static boolean hasAmbientRepairCue(String normalized) {
+        return containsAnyRepairCue(normalized,
+                "ambient chest", "ambient stealing", "ambient sneaking", "ambient jumping",
+                "ambient hopping", "ambient primer", "ambient invisible", "ambient unseen",
+                "looking into the witch chest", "reading the witches primer", "reading the witch primer",
+                "sneaking into the witch chest", "darkness curse");
+    }
+
     private static boolean containsAnyRepairCue(String normalized, String... cues) {
         for (String cue : cues) {
-            if (normalized.contains(cue)) {
+            if (containsRepairCue(normalized, cue)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean containsRepairCue(String normalized, String cue) {
+        if (cue == null || cue.isBlank()) {
+            return false;
+        }
+        String target = cue.toLowerCase(java.util.Locale.ROOT)
+                .replaceAll("[^a-z0-9 ]+", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+        if (target.isBlank()) {
+            return false;
+        }
+        if (target.indexOf(' ') >= 0) {
+            return Pattern.compile("(^|\\s)" + Pattern.quote(target) + "($|\\s)")
+                    .matcher(normalized)
+                    .find();
+        }
+        String suffix = target.endsWith("s") ? "" : "s?";
+        return Pattern.compile("\\b" + Pattern.quote(target) + suffix + "\\b")
+                .matcher(normalized)
+                .find();
     }
 
     static NpcBrainPrompt messageAnalysis(String roleName, String playerName, String playerMessage) {

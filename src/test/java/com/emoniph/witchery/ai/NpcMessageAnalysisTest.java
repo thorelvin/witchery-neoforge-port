@@ -118,6 +118,15 @@ class NpcMessageAnalysisTest {
     }
 
     @Test
+    void extractsRouteFromContextLineForDownstreamGates() {
+        String context = "Entity memory: witch is Lilith Poe; player is Dev. "
+                + "Message routing: route=recipe; topic=whiff_of_magic; reply strategy=answer exact known ingredient.";
+
+        assertEquals(NpcDialogueRoute.RECIPE, NpcMessageAnalysis.routeFromContext(context));
+        assertEquals(NpcDialogueRoute.UNKNOWN, NpcMessageAnalysis.routeFromContext("Entity memory only."));
+    }
+
+    @Test
     void doesNotRouteCovenAsOvenRecipe() {
         NpcMessageAnalysis analysis = NpcMessageAnalysis.deterministic("Dev",
                 "Where can I recruit a coven?");

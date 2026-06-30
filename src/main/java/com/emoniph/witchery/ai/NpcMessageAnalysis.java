@@ -120,6 +120,18 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
         return base.isBlank() ? line : NpcBrainResponse.sanitize(base + " " + line, 1800);
     }
 
+    static NpcDialogueRoute routeFromContext(String context) {
+        if (context == null || context.isBlank()) {
+            return NpcDialogueRoute.UNKNOWN;
+        }
+        Matcher matcher = Pattern.compile("(?i)\\bmessage\\s+routing\\s*:\\s*route\\s*[:=]\\s*([a-z0-9_ -]+)")
+                .matcher(context);
+        if (!matcher.find()) {
+            return NpcDialogueRoute.UNKNOWN;
+        }
+        return NpcDialogueRoute.parse(matcher.group(1));
+    }
+
     boolean hasMemory() {
         return remember && !memory.isBlank();
     }
