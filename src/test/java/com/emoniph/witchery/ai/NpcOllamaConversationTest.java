@@ -287,6 +287,33 @@ class NpcOllamaConversationTest {
             "Could it be spirits?",
             "Before I go, give me one piece of advice."
     );
+    private static final List<String> QUESTIONS_STRANGE_25 = List.of(
+            "Lilith, the fog followed me in a straight line.",
+            "My shadow moved before I did. Should I worry?",
+            "A jar on my shelf laughed once and then went quiet.",
+            "Can witches' salt stop a bad dream from entering a room?",
+            "I found an egg that points north when I turn away.",
+            "Is that an omen, or just breakfast with opinions?",
+            "What would you do if the moon blinked?",
+            "The well whispered my name but used my father's voice.",
+            "Could that be the Spirit World leaking through?",
+            "I want to brew something for seeing hidden things.",
+            "What does Revealing Brew need from me?",
+            "The cauldron smoke shaped itself like a small door.",
+            "Should I open strange doors in smoke?",
+            "Remember that I do not trust singing jars.",
+            "What do you remember about my jars?",
+            "I saw a black goat standing on my roof.",
+            "Could it be a demon sign, or just village nonsense?",
+            "Should I make a poppet of myself for safety?",
+            "Would that protect me from whatever copied my footsteps?",
+            "Can I have a herb for courage?",
+            "Thank you, wise witch. That helps more than you know.",
+            "If I insult the fog, will it follow someone else?",
+            "You old hag, the fog is still staring at me.",
+            "Sorry. Fear made my tongue stupid.",
+            "Give me one final strange rule before I go."
+    );
     private static final List<SocialIntentCase> SOCIAL_INTENT_CASES = List.of(
             new SocialIntentCase("You old hag.", true),
             new SocialIntentCase("You are talking nonsense, old hag.", true),
@@ -386,6 +413,12 @@ class NpcOllamaConversationTest {
                 || "social-classifier".equalsIgnoreCase(scenario)) {
             return QUESTIONS_INTENT_CHECK;
         }
+        if ("strange-25".equalsIgnoreCase(scenario)
+                || "strange".equalsIgnoreCase(scenario)
+                || "weird-25".equalsIgnoreCase(scenario)
+                || "weird".equalsIgnoreCase(scenario)) {
+            return QUESTIONS_STRANGE_25;
+        }
         return QUESTIONS;
     }
 
@@ -404,7 +437,11 @@ class NpcOllamaConversationTest {
                 || "long".equalsIgnoreCase(scenario)
                 || "intent-check".equalsIgnoreCase(scenario)
                 || "classifier".equalsIgnoreCase(scenario)
-                || "social-classifier".equalsIgnoreCase(scenario);
+                || "social-classifier".equalsIgnoreCase(scenario)
+                || "strange-25".equalsIgnoreCase(scenario)
+                || "strange".equalsIgnoreCase(scenario)
+                || "weird-25".equalsIgnoreCase(scenario)
+                || "weird".equalsIgnoreCase(scenario);
     }
 
     private static List<Row> runConversation(OllamaLlmProvider provider, List<String> questions, boolean simulateSocial) {

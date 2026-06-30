@@ -3,16 +3,28 @@ package com.emoniph.witchery.ai;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.entity.VampireEntity;
+import com.emoniph.witchery.entity.VillageGuardEntity;
+import com.emoniph.witchery.entity.WereVillagerEntity;
+import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.BiomeNoteItem;
 import com.emoniph.witchery.ritual.AltarPowerSourceLookup;
+import com.emoniph.witchery.worldgen.ApothecaryVillager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.monster.Witch;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.raid.Raid;
+import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -166,14 +178,50 @@ public final class NpcPromptBuilder {
                 1L,
                 "clear",
                 "neutral; health 600/600; no target",
-                "valid altar nearby: power 12000/16000, recharge 20/t, range 32, distance 6.0 blocks",
-                "player coven 2/6; nearby coven witches: Lilith Poe, Mara Fen",
+                "altar within reach: power 12000 of 16000, recharge 20 per tick, range 32 blocks, distance 6.0 blocks",
+                "two of six sworn to Dev; nearby witches: Lilith Poe, Mara Fen",
                 "main hand Arthana; offhand Leonard's Urn; wearing Witches' Hat",
                 NpcKnowledgeBase.relevantContext(playerMessage, "Plains", "night",
                         NpcCardRequest.persona("leonard")),
                 memory,
                 playerMessage,
                 "the player spoke near the Shade of Leonard in chat",
+                "answer the player naturally in one short in-character line");
+    }
+
+    public static NpcBrainPrompt villagerGreeting(Villager villager, ServerPlayer player, String memory) {
+        return villager(villager, player, memory,
+                "the player is close enough to talk to this villager",
+                "none",
+                "say one grounded village greeting or worried observation");
+    }
+
+    public static NpcBrainPrompt villagerChat(Villager villager, ServerPlayer player, String memory,
+                                              String playerMessage) {
+        return villager(villager, player, memory,
+                "the player spoke near this villager in chat",
+                playerMessage,
+                "answer the player naturally in one short in-character line");
+    }
+
+    static NpcBrainPrompt villagerSmoke(String playerMessage, String memory) {
+        return villagerPrompt(
+                "Apothecary",
+                "Dev",
+                "apothecary",
+                "minecraft:overworld",
+                "Plains",
+                "day",
+                "10:15",
+                4L,
+                "clear",
+                "nearby villagers 8; iron golems 1; village guards 2; beds 10; doors 7; walls/fences 42; raid none; threats: vampires 1, werewolves 0, witches 1, raiders 0",
+                villagerJobCard("apothecary"),
+                NpcKnowledgeBase.relevantContext(playerMessage, "Plains", "day",
+                        NpcCardRequest.persona("villager")),
+                memory,
+                playerMessage,
+                "the player spoke near this villager in chat",
                 "answer the player naturally in one short in-character line");
     }
 
@@ -208,6 +256,37 @@ public final class NpcPromptBuilder {
                 task);
     }
 
+    private static NpcBrainPrompt villager(Villager villager, ServerPlayer player, String memory,
+                                           String situation, String playerMessage, String task) {
+        ServerLevel level = (ServerLevel) player.level();
+        String name = displayName(villager, "Villager");
+        String playerName = player.getName().getString();
+        String time = timeName(level.getDayTime());
+        String biome = biomeName(level, villager.blockPosition());
+        String profession = villagerProfessionName(villager);
+        String villageInfo = villagerVillageInfo(level, villager);
+        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time,
+                cardRequest("villager", villager.getUUID(), player, level));
+
+        return villagerPrompt(
+                name,
+                playerName,
+                profession,
+                level.dimension().identifier().toString(),
+                biome,
+                time,
+                clockTime(level.getDayTime()),
+                level.getDayTime() / 24000L,
+                level.isRaining() ? "rain" : "clear",
+                villageInfo,
+                villagerJobCard(profession),
+                knowledge,
+                memory,
+                playerMessage,
+                situation,
+                task);
+    }
+
     private static NpcCardRequest cardRequest(String personaId, UUID npcId, ServerPlayer player, ServerLevel level) {
         int turn = NpcMemoryData.get(level).exchangeCount(npcId, player.getUUID());
         return new NpcCardRequest(personaId, npcId, player.getUUID(), level.getGameTime(),
@@ -227,6 +306,8 @@ public final class NpcPromptBuilder {
                 You are the voice, not the source of truth. Exact mechanics come only from supplied facts, scene, memory, or server state.
                 Treat names as exact facts: "I" means Leonard, and "you" means the player.
                 Never call the player Leonard. Never claim to be a coven witch, trader, helper, villager, or companion.
+                The player may call you Leonard or Shade of Leonard; answer to both as true names in this scene.
+                If asked for your name, answer with Shade of Leonard and continue in character.
 
                 Voice target:
                 ancient infernal shade, horned goat-legged sabbath lord, crossroads creditor, contractual, predatory, severe.
@@ -247,9 +328,11 @@ public final class NpcPromptBuilder {
                 Do not use generic fantasy filler: mana, chosen one, ancient prophecy, distant northlands.
                 Do not call the player friend, my friend, ally, apprentice, or customer.
                 Do not say glad you asked, eager for trade, looks fine, trust me, harmless, or no reason for conflict.
-                Do not say I will accept your trade, you have no choice but to trade, Witcher of the Coven, Coven of the player, or Shade of the player.
-                Do not say prayers summoned Leonard, that Leonard aids the coven, that his presence is a boon, or that he will help with ordinary threats.
+                Avoid shopkeeper promises, friendly trade offers, apprentice recruitment, and labels that attach Leonard's title to the player.
+                Leonard was forced through cauldron work and altar power; he does not aid the coven and is not a boon.
+                Bargains should sound like threats or debts, not rewards, quests, or blade-fetch errands.
                 Do not mention game logic, game rules, Minecraft chat, or mod implementation from Leonard's mouth.
+                Do not quote card headings, instruction lines, Targeted fact labels, schema text, or checklist language from the supplied facts.
                 Do not promise that Leonard has performed an action unless the situation says the game did it.
                 If asked to do something the game has not done, answer as refusal, price, omen, limitation, or threat.
 
@@ -288,14 +371,17 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
+                If Memory contains "Message routing", treat it as current player intent, not past memory.
+                Follow its reply strategy before choosing facts: small_talk answers the present remark, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, and action answers with limits or prices.
                 Use Witchery facts and server state when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in Leonard's voice.
                 If a Targeted fact lists exact ingredients, you may name those ingredients exactly and briefly.
+                If several facts are present, use only the one that answers the player.
                 If facts are thin, answer honestly in-world and keep it short.
                 Do not invent recipe amounts, altar numbers, coven membership, hidden player powers, or named places.
                 If asked about the altar, use the Nearby altar line.
-                If asked whether an altar is good, weak, enough, or nearby, cite the exact power, recharge, range, or distance from Nearby altar.
-                If asked about coven strength, witches, or servants, use the Nearby coven line; never say nearby witches are eager for trade.
+                If asked whether an altar is good, weak, enough, or nearby, cite the exact power, recharge, range, or distance from Nearby altar in spoken words.
+                If asked about coven strength, witches, or servants, use the Nearby coven line in natural speech; never say "player coven", "coven size", or a fraction like "2/6".
                 If asked about the player's gear, comment on the named item from Player gear; do not switch to another item.
                 If asked about Lost Souls, Demonbane, Mortal Coil, the urn, or summoning, answer from Witchery facts and boss state.
                 If asked how to summon Leonard, give the cauldron working briefly. If asked where he came from, name the infernal sabbath threshold.
@@ -326,6 +412,102 @@ public final class NpcPromptBuilder {
 
         return new NpcBrainPrompt(system.strip(), truncate(user.strip(), MAX_USER_PROMPT_LENGTH),
                 leonardExamples(playerName));
+    }
+
+    private static NpcBrainPrompt villagerPrompt(String villagerName, String playerName, String profession,
+                                                 String dimension, String biome, String time, String clock,
+                                                 long day, String weather, String villageInfo, String jobCard,
+                                                 String knowledge, String memory, String playerMessage,
+                                                 String situation, String task) {
+        String system = """
+                You are the local NPC dialogue brain for a Minecraft Witchery mod.
+                Speak as the villager only. The player is listening in Minecraft chat.
+                Stay in character. Never mention prompts, models, JSON, APIs, schemas, or being artificial.
+                You are the voice, not the source of truth. Exact village facts come only from supplied server state.
+                Treat names as exact facts: "I" means the villager, and "you" means the player.
+                Never claim to be a witch, demon, boss, coven member, or the Shade of Leonard.
+
+                Voice target:
+                local villager, practical and worried, with job-colored gossip.
+                The best answer feels like a person who lives in this village and notices danger.
+                Villagers know roads, doors, beds, trades, gossip, guards, raids, golems, and night threats.
+                Villagers do not know expert witchcraft recipes unless supplied facts say so.
+
+                Speech shape:
+                one complete in-world line; two short sentences only if needed.
+                Prefer 8 to 24 words. If the thought may be cut off, answer shorter and stop cleanly.
+                A single body beat is useful when it fits, formatted exactly as: *nods* "Spoken words."
+                Safe beats: nods, gestures, raises an eyebrow, shrugs, sighs, studies you.
+                Use beats as small body cues, not every line.
+                Do not narrate thoughts, scenery, hidden motives, or actions the game did not perform.
+                Do not write pure narration; always include spoken words if a beat is used.
+                Do not offer witch curses, blessings, coven recruitment, boss bargains, or hidden powers.
+                Do not invent village size, raid state, walls, guards, golems, vampires, werewolves, or witches.
+                If asked for unknown or unloaded facts, say what you can see nearby.
+
+                Reply with exactly one JSON object and nothing else:
+                {"speech":"short in-character spoken line, optionally with one safe body beat","intent":"none","memory":"optional compact memory"}
+                Speech must be 220 characters or less. Memory must be 240 characters or less.
+                Allowed intents: none, open_trade, quest_hint, warn_threat.
+                """;
+
+        String user = """
+                # Character
+                The villager is named %s. The player is named %s.
+                Profession: %s.
+
+                # Scene
+                dimension %s; biome %s; time of day %s; clock %s; day %d; weather %s.
+                Village state nearby: %s.
+
+                # Job card
+                %s
+
+                # Witchery village facts
+                %s
+
+                # Memory
+                %s
+
+                # Player message
+                %s
+
+                # Situation
+                %s.
+
+                # Task
+                %s.
+
+                # Grounding
+                If Memory contains "Message routing", treat it as current player intent, not past memory.
+                Use Village state for questions about size, safety, golems, walls, raids, guards, vampires, werewolves, witches, or nearby trouble.
+                If the player asks about this villager's job, answer from Profession and Job card.
+                If the player asks about trade, speak from the profession; do not invent exact stock unless the job card or facts name it.
+                If the player asks about witches, vampires, werewolves, raids, guards, or golems, sound like a local witness, not an expert monster manual.
+                If the player carries a strange item only in their words, comment cautiously; do not claim to see inventory unless server state says so.
+                If facts are thin, answer honestly in-world and keep it short.
+                If naming the player, use the player's name. Only use the villager's name if the villager introduces themself.
+                Do not include angle brackets or speaker names.
+                """.formatted(
+                villagerName,
+                playerName,
+                profession,
+                dimension,
+                biome,
+                time,
+                clock,
+                day,
+                weather,
+                villageInfo == null || villageInfo.isBlank() ? "no nearby village facts" : villageInfo,
+                jobCard == null || jobCard.isBlank() ? "No special job card; answer as a cautious local." : jobCard,
+                knowledge == null || knowledge.isBlank() ? "none" : knowledge,
+                memory == null || memory.isBlank() ? "none" : memory,
+                playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
+                situation,
+                task);
+
+        return new NpcBrainPrompt(system.strip(), truncate(user.strip(), MAX_USER_PROMPT_LENGTH),
+                villagerExamples(playerName));
     }
 
     private static NpcBrainPrompt covenWitchPrompt(String witchName, String playerName, boolean recruited,
@@ -391,6 +573,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
+                If Memory contains "Message routing", treat it as current player intent, not past memory.
+                Follow its reply strategy before choosing facts: small_talk answers the present remark, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, social answers tone, and action answers with limits or safe next steps.
                 Use Witchery facts when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in the witch's voice.
                 If a Targeted fact lists exact recipe ingredients, you may name those ingredients exactly and briefly.
@@ -465,6 +649,28 @@ public final class NpcPromptBuilder {
         );
     }
 
+    private static List<NpcBrainPrompt.Example> villagerExamples(String playerName) {
+        String player = playerName == null || playerName.isBlank() ? "traveler" : playerName;
+        return List.of(
+                example("hello",
+                        "{\"speech\":\"Morning, %s. Keep an eye on the road; folk have been jumpy lately.\",\"intent\":\"none\",\"memory\":\"\"}".formatted(player)),
+                example("how big is this village?",
+                        "{\"speech\":\"Eight villagers nearby, ten beds, seven doors; big enough to gossip, small enough to worry.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("do we have a golem?",
+                        "{\"speech\":\"One iron golem is nearby. That makes me sleep better, but not deeply.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("are the walls good?",
+                        "{\"speech\":\"I see plenty of walls and fences nearby; still, doors save lives when night gets teeth.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("is there a raid?",
+                        "{\"speech\":\"No raid bell from here, but I still count the roads before dusk.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("any vampires nearby?",
+                        "{\"speech\":\"One vampire too close is one too many. Shut doors and mistrust pretty manners after sunset.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("what do you do?",
+                        "{\"speech\":\"I am the apothecary; I buy odd herbs and sell what keeps frightened folk standing.\",\"intent\":\"open_trade\",\"memory\":\"\"}"),
+                example("what do you know about witches?",
+                        "{\"speech\":\"Enough to keep my hair, my name, and my taglocks out of reach.\",\"intent\":\"warn_threat\",\"memory\":\"\"}")
+        );
+    }
+
     private static List<NpcBrainPrompt.Example> leonardExamples(String playerName) {
         String player = playerName == null || playerName.isBlank() ? "mortal" : playerName;
         return List.of(
@@ -472,20 +678,42 @@ public final class NpcPromptBuilder {
                         "{\"speech\":\"You stand before a debt wearing a shape, %s. Speak carefully.\",\"intent\":\"none\",\"memory\":\"\"}".formatted(player)),
                 example("who are you?",
                         "{\"speech\":\"I am the Shade of Leonard, dragged through a cauldron and owed a price.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("what should I call you?",
+                        "{\"speech\":\"Call me Shade of Leonard. Leave softer names for things that forgive.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("did my cauldron create you?",
+                        "{\"speech\":\"No. Your cauldron dragged my Shade from a sabbath threshold; creation is above your station.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("how do I summon you?",
                         "{\"speech\":\"Nether Wart, Tear of the Goddess, Diamond Vapour, Diamond, Nether Star; then hat, cauldron, and ten thousand altar power.\",\"intent\":\"quest_hint\",\"memory\":\"\"}"),
+                example("do I need Nether Wart first?",
+                        "{\"speech\":\"Yes. Nether Wart begins the calling; skip it and the threshold stays shut.\",\"intent\":\"quest_hint\",\"memory\":\"\"}"),
                 example("what about the souls?",
                         "{\"speech\":\"Break the souls first. While they circle me, your clever wounds are only theatre.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("what should I do with green souls?",
+                        "{\"speech\":\"Green souls take steel; break them before they lend me their shield.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("what should I do with red souls?",
+                        "{\"speech\":\"Red souls fear fire and blast; burn the shield before you boast.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
                 example("what do you think of my urn?",
                         "{\"speech\":\"That urn is my shadow's cup. Fill it with thrown brews, if your hand can bear the debt.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("how does Leonard's Urn work?",
+                        "{\"speech\":\"It stores thrown brews, cycles by sneak-use, and releases shadow without spending the brew.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("can I bargain?",
                         "{\"speech\":\"A bargain is not a wish. Bring a real price, or bring silence.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("where were you summoned from?",
                         "{\"speech\":\"From an infernal sabbath threshold; your cauldron merely forced my shadow to stand here.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("how is my altar?",
-                        "{\"speech\":\"Read its numbers, mortal: power, recharge, range, distance. Do not ask me to bless arithmetic.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                        "{\"speech\":\"It holds 12000 of 16000 power; enough to drag a shadow, not enough to buy mercy.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("what do you think of my coven witches?",
+                        "{\"speech\":\"Two witches carry your oath. They may witness me, but they are not my flock.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("if I bring a bow, will that help?",
+                        "{\"speech\":\"Distance is coward arithmetic. My debt answers your own hand.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
                 example("I do not want to fight",
-                        "{\"speech\":\"Then keep your hand from blood. I am neutral until struck, not gentle.\",\"intent\":\"warn_threat\",\"memory\":\"\"}")
+                        "{\"speech\":\"Then keep your hand from blood. I am neutral until struck, not gentle.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("what did I say I fear?",
+                        "{\"speech\":\"You named Lost Souls as your fear. Sensible; break them before they shelter me.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("tell me plainly: should I fight you tonight?",
+                        "{\"speech\":\"Only if you mean to pay in blood. I am neutral until struck.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("give me one final warning",
+                        "{\"speech\":\"When souls rise, break them first. When the Coil bites, end the debt quickly.\",\"intent\":\"warn_threat\",\"memory\":\"\"}")
         );
     }
 
@@ -500,11 +728,17 @@ public final class NpcPromptBuilder {
                 || normalized.contains("defeat") || normalized.contains("weakness"))) {
             return query + " leonard weakness";
         }
+        if (containsAny(normalized, "nether wart", "tear of the goddess", "witches hat", "witch s hat",
+                "hat at the end", "altar power", "calling need", "summon", "summoning", "call you",
+                "called you", "bring you", "cauldron")) {
+            return query + " leonard summon recipe nether wart tear goddess diamond vapour diamond nether star witches hat 10000 altar power";
+        }
         if (containsAny(normalized, "where are you from", "where did you come from", "where were you summoned from",
-                "summoned from", "goat", "hooves", "horns", "satyr", "sabbath")) {
+                "summoned from", "demon or goat", "goat", "hooves", "horns", "satyr", "sabbath")) {
             return query + " leonard sabbath threshold goat";
         }
-        if (containsAny(normalized, "cauldron pull", "how did the cauldron", "altar pay", "paid for")) {
+        if (containsAny(normalized, "cauldron pull", "how did the cauldron", "did my cauldron create",
+                "cauldron create", "altar pay", "paid for")) {
             return query + " leonard altar payment cauldron threshold";
         }
         if (containsAny(normalized, "coven", "witches", "helped summon")) {
@@ -564,7 +798,7 @@ public final class NpcPromptBuilder {
             return "no valid altar in range";
         }
         double distance = Math.sqrt(AltarPowerSourceLookup.distanceSqr(leonard.blockPosition(), altar.getBlockPos()));
-        return "valid altar nearby: power %d/%d, recharge %d/t, range %d, distance %.1f blocks".formatted(
+        return "altar within reach: power %d of %d, recharge %d per tick, range %d blocks, distance %.1f blocks".formatted(
                 altar.getPower(),
                 altar.getEffectiveMaxPower(),
                 altar.getEffectiveRecharge(),
@@ -577,7 +811,8 @@ public final class NpcPromptBuilder {
         AABB bounds = leonard.getBoundingBox().inflate(16.0, 8.0, 16.0);
         List<CovenWitchEntity> witches = level.getEntitiesOfClass(CovenWitchEntity.class, bounds);
         if (witches.isEmpty()) {
-            return "player coven %d/%d; no coven witches nearby".formatted(covenSize, CovenWitchEntity.MAX_COVEN);
+            return "%s of %s sworn to %s; no coven witches nearby".formatted(
+                    countWord(covenSize), countWord(CovenWitchEntity.MAX_COVEN), player.getName().getString());
         }
         List<String> names = witches.stream()
                 .sorted(java.util.Comparator.comparingDouble(leonard::distanceToSqr))
@@ -585,7 +820,7 @@ public final class NpcPromptBuilder {
                 .map(witch -> {
                     String name = witch.getDisplayName().getString();
                     if (witch.isRecruitedBy(player)) {
-                        return name + " (sworn to player)";
+                        return name + " (sworn to " + player.getName().getString() + ")";
                     }
                     if (witch.isRecruited()) {
                         return name + " (sworn elsewhere)";
@@ -593,8 +828,22 @@ public final class NpcPromptBuilder {
                     return name + " (free coven witch)";
                 })
                 .toList();
-        return "player coven %d/%d; nearby coven witches: %s".formatted(
-                covenSize, CovenWitchEntity.MAX_COVEN, String.join(", ", names));
+        return "%s of %s sworn to %s; nearby witches: %s".formatted(
+                countWord(covenSize), countWord(CovenWitchEntity.MAX_COVEN),
+                player.getName().getString(), String.join(", ", names));
+    }
+
+    private static String countWord(int value) {
+        return switch (value) {
+            case 0 -> "none";
+            case 1 -> "one";
+            case 2 -> "two";
+            case 3 -> "three";
+            case 4 -> "four";
+            case 5 -> "five";
+            case 6 -> "six";
+            default -> Integer.toString(value);
+        };
     }
 
     static String leonardGearInfo(ServerPlayer player) {
@@ -621,6 +870,161 @@ public final class NpcPromptBuilder {
             notes.add("notable carried Witchery gear: " + String.join(", ", notable.stream().limit(8).toList()));
         }
         return notes.isEmpty() ? "no notable visible gear" : String.join("; ", notes);
+    }
+
+    public static String villagerProfessionName(Villager villager) {
+        if (villager == null) {
+            return "villager";
+        }
+        if (ApothecaryVillager.isApothecary(villager)) {
+            return "apothecary";
+        }
+        String id = villager.getVillagerData().profession().unwrapKey()
+                .map(key -> key.identifier().toString())
+                .orElse("minecraft:none");
+        int colon = id.indexOf(':');
+        String path = colon >= 0 ? id.substring(colon + 1) : id;
+        path = path.replace('_', ' ').trim();
+        if (path.isBlank() || path.equals("none")) {
+            return "unemployed";
+        }
+        return path;
+    }
+
+    public static String villagerVillageInfo(ServerLevel level, Villager villager) {
+        if (level == null || villager == null) {
+            return "no village facts available";
+        }
+        AABB bounds = villager.getBoundingBox().inflate(48.0, 16.0, 48.0);
+        int villagers = livingCount(level.getEntitiesOfClass(Villager.class, bounds));
+        int golems = livingCount(level.getEntitiesOfClass(IronGolem.class, bounds));
+        int guards = livingCount(level.getEntitiesOfClass(VillageGuardEntity.class, bounds));
+        int vampires = livingCount(level.getEntitiesOfClass(VampireEntity.class, bounds));
+        int wolfmen = livingCount(level.getEntitiesOfClass(WolfmanEntity.class, bounds));
+        int wereVillagers = livingCount(level.getEntitiesOfClass(WereVillagerEntity.class, bounds));
+        int covenWitches = livingCount(level.getEntitiesOfClass(CovenWitchEntity.class, bounds));
+        int vanillaWitches = livingCount(level.getEntitiesOfClass(Witch.class, bounds));
+        int raiders = livingCount(level.getEntitiesOfClass(Raider.class, bounds));
+        VillageBlockCounts blocks = villageBlockCounts(level, villager.blockPosition());
+        Raid raid = level.getRaidAt(villager.blockPosition());
+        String raidInfo = raidInfo(raid, raiders);
+        return "nearby villagers %d; iron golems %d; village guards %d; beds %d; doors %d; walls/fences %d; raid %s; threats: vampires %d, werewolves %d, witches %d, raiders %d".formatted(
+                villagers,
+                golems,
+                guards,
+                blocks.beds(),
+                blocks.doors(),
+                blocks.wallsAndFences(),
+                raidInfo,
+                vampires,
+                wolfmen + wereVillagers,
+                covenWitches + vanillaWitches,
+                raiders);
+    }
+
+    static String villagerJobCard(String profession) {
+        String normalized = normalizeProfession(profession);
+        return switch (normalized) {
+            case "apothecary" ->
+                    "Apothecary card: buys odd herbs and sells Witchery supplies such as garlic, clay jars, bat wool, fumes, taglock kits, Whiff of Magic, Mutandis, and a few brews when skilled enough.";
+            case "farmer" ->
+                    "Farmer card: knows crops, compost, bread, weather, field rumors, and whether the village has enough food before nightfall.";
+            case "cleric" ->
+                    "Cleric card: worries about undead, curses, vampires, bells, grave dirt, and whether villagers are safe after sunset.";
+            case "librarian" ->
+                    "Librarian card: knows books, maps, old rumors, village records, strange visitors, and what should be written down before panic ruins it.";
+            case "cartographer" ->
+                    "Cartographer card: knows roads, borders, paths, towers, nearby water, and which direction trouble usually comes from.";
+            case "armorer" ->
+                    "Armorer card: judges walls, guards, armor, iron, golems, and whether folk should shelter or stand ready.";
+            case "weaponsmith" ->
+                    "Weaponsmith card: talks about blades, raids, guards, iron, silver rumors, and who should not be trusted with a sharp edge.";
+            case "toolsmith" ->
+                    "Toolsmith card: knows workstations, repairs, axes, mining, doors, fences, and practical village labor.";
+            case "mason" ->
+                    "Mason card: notices walls, stone, wells, roads, foundations, and whether the village is built to survive trouble.";
+            case "fletcher" ->
+                    "Fletcher card: watches roofs, roads, raiders, bows, arrows, and suspicious movement at the edge of sight.";
+            case "fisherman" ->
+                    "Fisherman card: knows water, docks, rain, drowned things, river paths, and what the village hears from wells.";
+            case "shepherd" ->
+                    "Shepherd card: knows wool, dyes, flocks, fields, fences, lost animals, and night sounds beyond the pasture.";
+            case "butcher" ->
+                    "Butcher card: knows food stores, animals, hungry mobs, smokehouses, and the practical fear of feeding everyone.";
+            case "leatherworker" ->
+                    "Leatherworker card: knows hides, cauldrons, straps, travel gear, and practical work; in Witchery villages this may shade toward apothecary gossip.";
+            case "nitwit" ->
+                    "Nitwit card: notices gossip, odd behavior, noises, and village mood, but does not explain expert mechanics.";
+            case "unemployed" ->
+                    "Unemployed card: knows who is hiring, which workstations are missing, village gossip, and where people hide when bells ring.";
+            default ->
+                    "Villager card: answer as a cautious local, colored by job, village safety, gossip, and what can be seen nearby.";
+        };
+    }
+
+    private static int livingCount(List<? extends LivingEntity> entities) {
+        int count = 0;
+        for (LivingEntity entity : entities) {
+            if (entity.isAlive()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static VillageBlockCounts villageBlockCounts(ServerLevel level, BlockPos origin) {
+        int beds = 0;
+        int doors = 0;
+        int walls = 0;
+        int fences = 0;
+        int horizontal = 28;
+        int verticalDown = 5;
+        int verticalUp = 8;
+        for (BlockPos pos : BlockPos.betweenClosed(
+                origin.offset(-horizontal, -verticalDown, -horizontal),
+                origin.offset(horizontal, verticalUp, horizontal))) {
+            if (!level.hasChunkAt(pos)) {
+                continue;
+            }
+            BlockState state = level.getBlockState(pos);
+            if (state.is(BlockTags.BEDS)) {
+                beds++;
+            }
+            if (state.is(BlockTags.DOORS) || state.is(BlockTags.WOODEN_DOORS)) {
+                doors++;
+            }
+            if (state.is(BlockTags.WALLS)) {
+                walls++;
+            }
+            if (state.is(BlockTags.FENCES) || state.is(BlockTags.WOODEN_FENCES)) {
+                fences++;
+            }
+        }
+        return new VillageBlockCounts(beds, doors, walls, fences);
+    }
+
+    private static String raidInfo(Raid raid, int nearbyRaiders) {
+        if (raid != null && !raid.isStopped() && !raid.isOver()) {
+            return "active, wave " + raid.getGroupsSpawned() + ", " + raid.getTotalRaidersAlive()
+                    + " raiders alive";
+        }
+        if (nearbyRaiders > 0) {
+            return "no active bell, but " + nearbyRaiders + " raiders nearby";
+        }
+        return "none";
+    }
+
+    private static String normalizeProfession(String profession) {
+        return profession == null ? "" : profession.toLowerCase(java.util.Locale.ROOT)
+                .replaceAll("[^a-z0-9 ]+", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+    }
+
+    private record VillageBlockCounts(int beds, int doors, int walls, int fences) {
+        int wallsAndFences() {
+            return walls + fences;
+        }
     }
 
     private static void addVisibleStack(Set<String> notes, String slot, ItemStack stack) {

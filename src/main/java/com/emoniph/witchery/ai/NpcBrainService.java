@@ -15,6 +15,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.npc.villager.Villager;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -101,19 +102,7 @@ public final class NpcBrainService {
     }
 
     public boolean requestCovenChat(CovenWitchEntity witch, ServerPlayer player, String playerMessage) {
-        if (!WitcheryConfig.LLM_ENABLED.get()) {
-            return false;
-        }
-        CovenWitchPersona persona = NpcPersonas.COVEN_WITCH;
-        if (tryHandleSocialInteraction(persona, witch, player, playerMessage)) {
-            return true;
-        }
-        Optional<NpcSocialAction> ambiguousAction = persona.ambiguousSocialAction(playerMessage);
-        if (ambiguousAction.isPresent()
-                && requestSocialIntentClassification(persona, witch, player, playerMessage, ambiguousAction.get())) {
-            return true;
-        }
-        return requestPersonaChatWithAnalysis(persona, witch, player, playerMessage);
+        return requestChat(NpcPersonas.COVEN_WITCH, witch, player, playerMessage);
     }
 
     public boolean requestCovenAmbient(CovenWitchEntity witch, ServerPlayer player, String ambientCue,
@@ -149,11 +138,30 @@ public final class NpcBrainService {
     }
 
     public boolean requestLeonardChat(LeonardEntity leonard, ServerPlayer player, String playerMessage) {
+        return requestChat(NpcPersonas.LEONARD, leonard, player, playerMessage);
+    }
+
+    public boolean requestVillagerChat(Villager villager, ServerPlayer player, String playerMessage) {
+        return requestChat(NpcPersonas.VILLAGER, villager, player, playerMessage);
+    }
+
+    public <E extends LivingEntity> boolean requestChat(NpcPersona<E> persona, E entity, ServerPlayer player,
+                                                        String playerMessage) {
         if (!WitcheryConfig.LLM_ENABLED.get()) {
             return false;
         }
-        LeonardPersona persona = NpcPersonas.LEONARD;
-        return requestPersonaChatWithAnalysis(persona, leonard, player, playerMessage);
+        if (persona == null || entity == null || player == null) {
+            return false;
+        }
+        if (tryHandleSocialInteraction(persona, entity, player, playerMessage)) {
+            return true;
+        }
+        Optional<NpcSocialAction> ambiguousAction = persona.ambiguousSocialAction(playerMessage);
+        if (ambiguousAction.isPresent()
+                && requestSocialIntentClassification(persona, entity, player, playerMessage, ambiguousAction.get())) {
+            return true;
+        }
+        return requestPersonaChatWithAnalysis(persona, entity, player, playerMessage);
     }
 
     private <E extends LivingEntity> boolean requestSocialIntentClassification(NpcPersona<E> persona, E entity,
@@ -256,6 +264,16 @@ public final class NpcBrainService {
                                                                     String trigger, String playerMessage,
                                                                     Component fallback, boolean showFallback,
                                                                     boolean rememberExchange) {
+        return requestPersonaResponse(persona, entity, player, prompt, trigger, playerMessage, fallback,
+                showFallback, rememberExchange, "");
+    }
+
+    private <E extends LivingEntity> boolean requestPersonaResponse(NpcPersona<E> persona, E entity,
+                                                                    ServerPlayer player, NpcBrainPrompt prompt,
+                                                                    String trigger, String playerMessage,
+                                                                    Component fallback, boolean showFallback,
+                                                                    boolean rememberExchange,
+                                                                    String memoryContextOverride) {
         if (!WitcheryConfig.LLM_ENABLED.get()) {
             return false;
         }
@@ -292,7 +310,8 @@ public final class NpcBrainService {
                     inFlight.decrementAndGet();
                     MinecraftServer server = level.getServer();
                     server.execute(() -> handlePersonaResponse(level, persona, entity.getUUID(), player, entity,
-                            playerMessage, fallback, showFallback, rememberExchange, response, error));
+                            playerMessage, fallback, showFallback, rememberExchange, memoryContextOverride,
+                            response, error));
                 });
         return true;
     }
@@ -441,6 +460,7 @@ public final class NpcBrainService {
                                                                 ServerPlayer player, E entity, String playerMessage,
                                                                 Component fallback, boolean showFallback,
                                                                 boolean rememberExchange,
+                                                                String memoryContextOverride,
                                                                 NpcBrainResponse response, Throwable error) {
         if (!player.isAlive() || player.level() != level) {
             return;
@@ -454,7 +474,8 @@ public final class NpcBrainService {
             if (showFallback && fallback != null) {
                 player.displayClientMessage(fallback, false);
             } else if (!showFallback) {
-                tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage);
+                tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage,
+                        memoryContextOverride);
             }
             return;
         }
@@ -463,13 +484,13 @@ public final class NpcBrainService {
             if (showFallback && fallback != null) {
                 player.displayClientMessage(fallback, false);
             } else if (!showFallback) {
-                tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage);
+                tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage,
+                        memoryContextOverride);
             }
             return;
         }
         NpcMemoryData memoryData = NpcMemoryData.get(level);
-        String memoryContext = memoryData.getContext(entityId, player.getUUID(), persona.roleName(),
-                persona.displayName(entity), player.getName().getString(), persona::relationshipNotes);
+        String memoryContext = memoryContextFor(memoryData, entityId, player, persona, entity, memoryContextOverride);
         var polishedSpeech = persona.polishRaw(response.speech(), entity, player, playerMessage, memoryContext,
                 NpcPromptBuilder.clockTime(level.getDayTime()));
         if (polishedSpeech.isEmpty()) {
@@ -487,18 +508,21 @@ public final class NpcBrainService {
             if (showFallback && fallback != null) {
                 player.displayClientMessage(fallback, false);
             } else if (!showFallback) {
-                tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage);
+                tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage,
+                        memoryContextOverride);
             }
             return;
         }
         String lastNpcSpeech = memoryData.getLastNpcSpeech(entityId, player.getUUID());
         if (NpcBrainResponse.sameMeaningForRepetition(polishedSpeech.get(), lastNpcSpeech)
+                || memoryData.repeatsRecentNpcSpeech(entityId, player.getUUID(), polishedSpeech.get())
                 || memoryData.repeatsRecentPlayerSpeech(entityId, player.getUUID(), polishedSpeech.get())) {
             rejected.incrementAndGet();
             if (showFallback && fallback != null) {
                 player.displayClientMessage(fallback, false);
             } else if (!showFallback) {
-                tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage);
+                tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage,
+                        memoryContextOverride);
             }
             return;
         }
@@ -556,7 +580,8 @@ public final class NpcBrainService {
         boolean queued = requestPersonaChatWithAnalysisContext(persona, entity, player, playerMessage, analysis);
         if (!queued) {
             persona.completeConversation(entity, player);
-            tryDisplayPersonaFallback(level, persona, entity.getUUID(), player, entity, playerMessage);
+            tryDisplayPersonaFallback(level, persona, entity.getUUID(), player, entity, playerMessage,
+                    NpcMessageAnalysis.appendContext(contextFor(persona, entity, player), analysis));
         }
     }
 
@@ -566,7 +591,7 @@ public final class NpcBrainService {
         boolean queued = requestPersonaChatWithAnalysis(persona, entity, player, playerMessage);
         if (!queued) {
             persona.completeConversation(entity, player);
-            tryDisplayPersonaFallback(level, persona, entity.getUUID(), player, entity, playerMessage);
+            tryDisplayPersonaFallback(level, persona, entity.getUUID(), player, entity, playerMessage, "");
         }
     }
 
@@ -577,7 +602,7 @@ public final class NpcBrainService {
         String context = NpcMessageAnalysis.appendContext(contextFor(persona, entity, player), analysis);
         return requestPersonaResponse(persona, entity, player,
                 persona.chatPrompt(entity, player, context, playerMessage),
-                "chat", playerMessage, null, false);
+                "chat", playerMessage, null, false, true, context);
     }
 
     static boolean socialIntentAccepted(NpcBrainResponse response) {
@@ -590,13 +615,13 @@ public final class NpcBrainService {
 
     private <E extends LivingEntity> boolean tryDisplayPersonaFallback(ServerLevel level, NpcPersona<E> persona,
                                                                        UUID entityId, ServerPlayer player, E entity,
-                                                                       String playerMessage) {
+                                                                       String playerMessage,
+                                                                       String memoryContextOverride) {
         if (playerMessage == null || playerMessage.isBlank()) {
             return false;
         }
         NpcMemoryData memoryData = NpcMemoryData.get(level);
-        String memoryContext = memoryData.getContext(entityId, player.getUUID(), persona.roleName(),
-                persona.displayName(entity), player.getName().getString(), persona::relationshipNotes);
+        String memoryContext = memoryContextFor(memoryData, entityId, player, persona, entity, memoryContextOverride);
         var fallback = persona.fallback(level, entity, player, playerMessage, memoryContext)
                 .flatMap(speech -> persona.polishFallback(speech, entity, player, playerMessage, memoryContext,
                         NpcPromptBuilder.clockTime(level.getDayTime())));
@@ -604,6 +629,7 @@ public final class NpcBrainService {
         String fallbackSpeech = fallback.orElseGet(() ->
                 persona.lastResortFallback(entity, player, playerMessage, lastNpcSpeech));
         if (NpcBrainResponse.sameMeaningForRepetition(fallbackSpeech, lastNpcSpeech)
+                || memoryData.repeatsRecentNpcSpeech(entityId, player.getUUID(), fallbackSpeech)
                 || memoryData.repeatsRecentPlayerSpeech(entityId, player.getUUID(), fallbackSpeech)) {
             Optional<String> alternate = persona.alternateForRepeatedFallback(entity, player, playerMessage,
                     lastNpcSpeech);
@@ -613,6 +639,16 @@ public final class NpcBrainService {
         }
         displayPersonaSpeech(level, persona, entity, player, playerMessage, fallbackSpeech, Optional.empty());
         return true;
+    }
+
+    private <E extends LivingEntity> String memoryContextFor(NpcMemoryData memoryData, UUID entityId,
+                                                             ServerPlayer player, NpcPersona<E> persona, E entity,
+                                                             String memoryContextOverride) {
+        if (memoryContextOverride != null && !memoryContextOverride.isBlank()) {
+            return memoryContextOverride;
+        }
+        return memoryData.getContext(entityId, player.getUUID(), persona.roleName(),
+                persona.displayName(entity), player.getName().getString(), persona::relationshipNotes);
     }
 
     private <E extends LivingEntity> Optional<String> rawAfterRepeatedFallback(ServerLevel level,
@@ -639,6 +675,7 @@ public final class NpcBrainService {
         }
         String lastNpcSpeech = memoryData.getLastNpcSpeech(entityId, player.getUUID());
         if (NpcBrainResponse.sameMeaningForRepetition(relaxed.get(), lastNpcSpeech)
+                || memoryData.repeatsRecentNpcSpeech(entityId, player.getUUID(), relaxed.get())
                 || memoryData.repeatsRecentPlayerSpeech(entityId, player.getUUID(), relaxed.get())) {
             return Optional.empty();
         }
@@ -718,6 +755,13 @@ public final class NpcBrainService {
     private static SoundEvent soundForBeat(LivingEntity entity, String beat) {
         if (entity instanceof LeonardEntity) {
             return WitcherySoundEvents.ENTITY_LEONARD_SAY.get();
+        }
+        if (entity instanceof Villager) {
+            return switch (beat) {
+                case "nods", "smiles thinly" -> SoundEvents.VILLAGER_YES;
+                case "narrows her eyes", "folds her arms" -> SoundEvents.VILLAGER_NO;
+                default -> SoundEvents.VILLAGER_AMBIENT;
+            };
         }
         return switch (beat) {
             case "nods", "smiles thinly" -> SoundEvents.VILLAGER_YES;

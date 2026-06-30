@@ -95,6 +95,33 @@ class NpcBrainResponseTest {
     }
 
     @Test
+    void polishRejectsCardInstructionLeakage() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "Nightmares: If the player is frightened, answer with one practical precaution and one warning.",
+                "Shade of Leonard", "Dev", "What do you think of my arthana?");
+
+        assertFalse(speech.isPresent());
+    }
+
+    @Test
+    void polishRejectsPlaceholderInsideSafeBeat() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "*leans closer* \"Spoken words\"",
+                "Shade of Leonard", "Dev", "Remind me of the calling order after Nether Wart.");
+
+        assertFalse(speech.isPresent());
+    }
+
+    @Test
+    void polishRejectsMidLineNpcSpeakerLabel() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "You look more angry than hungry. Shade of Leonard: Speak plainly, Dev.",
+                "Shade of Leonard", "Dev", "Maybe I should have stayed home.");
+
+        assertFalse(speech.isPresent());
+    }
+
+    @Test
     void polishRejectsMemoryDumpForGreeting() {
         Optional<String> speech = NpcBrainResponse.polishSpeech(
                 "Dev is looking for an arthana. Spend coin wisely; my wares answer need, not noise.",

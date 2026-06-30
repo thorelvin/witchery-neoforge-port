@@ -16,6 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,6 +29,7 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -39,6 +41,8 @@ public final class NpcBrainEvents {
     private static final double CASUAL_CHAT_RANGE = 6.0;
     private static final double LEONARD_CHAT_RANGE = 12.0;
     private static final double LEONARD_CASUAL_CHAT_RANGE = 8.0;
+    private static final double VILLAGER_CHAT_RANGE = 10.0;
+    private static final double VILLAGER_CASUAL_CHAT_RANGE = 5.0;
     private static final double LEONARD_GAZE_RANGE = 7.0;
     private static final long LEONARD_GAZE_COOLDOWN_TICKS = 20L * 45L;
     private static final double WITCH_AMBIENT_RANGE = 8.0;
@@ -62,18 +66,12 @@ public final class NpcBrainEvents {
         if (message == null || message.isBlank() || !(player.level() instanceof ServerLevel level)) {
             return;
         }
-        LeonardEntity leonard = findLeonardChatTarget(level, player, message);
-        if (leonard != null) {
-            if (!NpcBrainService.INSTANCE.requestLeonardChat(leonard, player, message)) {
-                leonard.nudgePlayerAttention(player);
-            }
+        ChatTarget target = findNearestChatTarget(level, player, message);
+        if (target == null) {
             return;
         }
-        CovenWitchEntity witch = findChatTarget(level, player, message);
-        if (witch == null) {
-            return;
-        }
-        if (isStayRequest(message)) {
+        if (target.kind() == ChatPersona.COVEN_WITCH && target.entity() instanceof CovenWitchEntity witch
+                && isStayRequest(message)) {
             witch.beginPlayerConversation(player);
             String witchName = witch.hasCustomName() ? witch.getCustomName().getString() : "Witch";
             String speech = "I'll stay a moment, " + player.getName().getString() + ".";
@@ -81,8 +79,8 @@ public final class NpcBrainEvents {
             NpcBrainService.INSTANCE.rememberCovenExchange(witch, player, message, speech);
             return;
         }
-        if (!NpcBrainService.INSTANCE.requestCovenChat(witch, player, message)) {
-            witch.nudgePlayerAttention(player);
+        if (!requestTargetChat(target, player, message)) {
+            nudgeTarget(target, player);
         }
     }
 
@@ -243,50 +241,131 @@ public final class NpcBrainEvents {
         return witches.getFirst();
     }
 
-    private static CovenWitchEntity findChatTarget(ServerLevel level, ServerPlayer player, String message) {
+    private static ChatTarget findNearestChatTarget(ServerLevel level, ServerPlayer player, String message) {
+        List<ChatTarget> candidates = new ArrayList<>();
+        addCovenChatCandidates(level, player, message, candidates);
+        addLeonardChatCandidates(level, player, message, candidates);
+        addVillagerChatCandidates(level, player, message, candidates);
+        return candidates.stream()
+                .min(Comparator.comparingDouble(ChatTarget::distanceSqr))
+                .orElse(null);
+    }
+
+    private static void addCovenChatCandidates(ServerLevel level, ServerPlayer player, String message,
+                                               List<ChatTarget> candidates) {
         List<CovenWitchEntity> witches = level.getEntitiesOfClass(
                 CovenWitchEntity.class, player.getBoundingBox().inflate(CHAT_RANGE, 4.0, CHAT_RANGE));
         if (witches.isEmpty()) {
-            return null;
+            return;
         }
         witches.sort(Comparator.comparingDouble(player::distanceToSqr));
+        boolean otherPersonaNamed = explicitlyNamesLeonard(message) || explicitlyNamesVillager(message);
         for (CovenWitchEntity witch : witches) {
             if (isNamedAddress(witch, message)) {
-                return witch;
+                candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, witch, player.distanceToSqr(witch)));
             }
+        }
+        if (otherPersonaNamed) {
+            return;
         }
         CovenWitchEntity nearest = witches.getFirst();
         double distance = player.distanceToSqr(nearest);
         if (distance <= CASUAL_CHAT_RANGE * CASUAL_CHAT_RANGE
                 && (isCasualAddress(message) || isShortFollowUp(message))) {
-            return nearest;
+            candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, nearest, distance));
+            return;
         }
         if (distance <= CHAT_RANGE * CHAT_RANGE && isLookingAt(player, nearest) && isConversational(message)) {
-            return nearest;
+            candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, nearest, distance));
         }
-        return null;
     }
 
-    private static LeonardEntity findLeonardChatTarget(ServerLevel level, ServerPlayer player, String message) {
+    private static void addLeonardChatCandidates(ServerLevel level, ServerPlayer player, String message,
+                                                 List<ChatTarget> candidates) {
         List<LeonardEntity> shades = level.getEntitiesOfClass(
                 LeonardEntity.class, player.getBoundingBox().inflate(LEONARD_CHAT_RANGE, 6.0, LEONARD_CHAT_RANGE));
         if (shades.isEmpty()) {
-            return null;
+            return;
         }
         shades.sort(Comparator.comparingDouble(player::distanceToSqr));
+        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesVillager(message);
         for (LeonardEntity shade : shades) {
             if (isNamedLeonardAddress(shade, message)) {
-                return shade;
+                candidates.add(new ChatTarget(ChatPersona.LEONARD, shade, player.distanceToSqr(shade)));
             }
+        }
+        if (otherPersonaNamed) {
+            return;
         }
         LeonardEntity nearest = shades.getFirst();
         double distance = player.distanceToSqr(nearest);
         if (distance <= LEONARD_CASUAL_CHAT_RANGE * LEONARD_CASUAL_CHAT_RANGE
                 && isLookingAt(player, nearest)
                 && isConversational(message)) {
-            return nearest;
+            candidates.add(new ChatTarget(ChatPersona.LEONARD, nearest, distance));
         }
-        return null;
+    }
+
+    private static void addVillagerChatCandidates(ServerLevel level, ServerPlayer player, String message,
+                                                  List<ChatTarget> candidates) {
+        List<Villager> villagers = level.getEntitiesOfClass(
+                Villager.class, player.getBoundingBox().inflate(VILLAGER_CHAT_RANGE, 4.0, VILLAGER_CHAT_RANGE));
+        if (villagers.isEmpty()) {
+            return;
+        }
+        villagers.sort(Comparator.comparingDouble(player::distanceToSqr));
+        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesLeonard(message);
+        for (Villager villager : villagers) {
+            if (isNamedVillagerAddress(villager, message)) {
+                candidates.add(new ChatTarget(ChatPersona.VILLAGER, villager, player.distanceToSqr(villager)));
+            }
+        }
+        if (otherPersonaNamed) {
+            return;
+        }
+        Villager nearest = villagers.getFirst();
+        double distance = player.distanceToSqr(nearest);
+        if (distance <= VILLAGER_CASUAL_CHAT_RANGE * VILLAGER_CASUAL_CHAT_RANGE
+                && (isCasualAddress(message) || isShortFollowUp(message))) {
+            candidates.add(new ChatTarget(ChatPersona.VILLAGER, nearest, distance));
+            return;
+        }
+        if (distance <= VILLAGER_CHAT_RANGE * VILLAGER_CHAT_RANGE && isLookingAt(player, nearest)
+                && isConversational(message)) {
+            candidates.add(new ChatTarget(ChatPersona.VILLAGER, nearest, distance));
+        }
+    }
+
+    private static boolean requestTargetChat(ChatTarget target, ServerPlayer player, String message) {
+        return switch (target.kind()) {
+            case COVEN_WITCH -> target.entity() instanceof CovenWitchEntity witch
+                    && NpcBrainService.INSTANCE.requestCovenChat(witch, player, message);
+            case LEONARD -> target.entity() instanceof LeonardEntity leonard
+                    && NpcBrainService.INSTANCE.requestLeonardChat(leonard, player, message);
+            case VILLAGER -> target.entity() instanceof Villager villager
+                    && NpcBrainService.INSTANCE.requestVillagerChat(villager, player, message);
+        };
+    }
+
+    private static void nudgeTarget(ChatTarget target, ServerPlayer player) {
+        switch (target.kind()) {
+            case COVEN_WITCH -> {
+                if (target.entity() instanceof CovenWitchEntity witch) {
+                    witch.nudgePlayerAttention(player);
+                }
+            }
+            case LEONARD -> {
+                if (target.entity() instanceof LeonardEntity leonard) {
+                    leonard.nudgePlayerAttention(player);
+                }
+            }
+            case VILLAGER -> {
+                if (target.entity() instanceof Villager villager) {
+                    villager.getNavigation().stop();
+                    villager.getLookControl().setLookAt(player, 30.0F, 30.0F);
+                }
+            }
+        }
     }
 
     private static LeonardEntity findGazedLeonard(ServerLevel level, ServerPlayer player) {
@@ -336,6 +415,60 @@ public final class NpcBrainEvents {
         }
         String first = normalizedName.split("\\s+")[0];
         return first.length() >= 3 && normalized.contains(first);
+    }
+
+    private static boolean isNamedVillagerAddress(Villager villager, String message) {
+        String normalized = normalize(message);
+        if (normalized.contains("villager")) {
+            return true;
+        }
+        String name = villager.hasCustomName() && villager.getCustomName() != null
+                ? villager.getCustomName().getString()
+                : "";
+        if (!name.isBlank()) {
+            String normalizedName = normalize(name);
+            if (normalized.contains(normalizedName)) {
+                return true;
+            }
+            String first = normalizedName.split("\\s+")[0];
+            if (first.length() >= 3 && normalized.contains(first)) {
+                return true;
+            }
+        }
+        String profession = com.emoniph.witchery.ai.NpcPromptBuilder.villagerProfessionName(villager);
+        return !profession.isBlank() && normalized.contains(normalize(profession));
+    }
+
+    private static boolean explicitlyNamesWitch(String message) {
+        String normalized = normalize(message);
+        return normalized.contains("witch") || normalized.contains("coven");
+    }
+
+    private static boolean explicitlyNamesLeonard(String message) {
+        String normalized = normalize(message);
+        return normalized.contains("leonard") || normalized.contains("shade of leonard")
+                || normalized.contains("the shade");
+    }
+
+    private static boolean explicitlyNamesVillager(String message) {
+        String normalized = normalize(message);
+        return normalized.contains("villager")
+                || normalized.contains("apothecary")
+                || normalized.contains("farmer")
+                || normalized.contains("cleric")
+                || normalized.contains("librarian")
+                || normalized.contains("cartographer")
+                || normalized.contains("armorer")
+                || normalized.contains("armourer")
+                || normalized.contains("weaponsmith")
+                || normalized.contains("toolsmith")
+                || normalized.contains("mason")
+                || normalized.contains("fletcher")
+                || normalized.contains("fisherman")
+                || normalized.contains("shepherd")
+                || normalized.contains("butcher")
+                || normalized.contains("leatherworker")
+                || normalized.contains("nitwit");
     }
 
     private static boolean isCasualAddress(String message) {
@@ -441,5 +574,14 @@ public final class NpcBrainEvents {
     }
 
     private record PlayerAmbientState(ServerLevel level, Vec3 position, int idleTicks) {
+    }
+
+    private enum ChatPersona {
+        COVEN_WITCH,
+        LEONARD,
+        VILLAGER
+    }
+
+    private record ChatTarget(ChatPersona kind, LivingEntity entity, double distanceSqr) {
     }
 }

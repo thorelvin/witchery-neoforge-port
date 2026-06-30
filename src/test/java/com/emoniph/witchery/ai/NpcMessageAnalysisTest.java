@@ -18,6 +18,8 @@ class NpcMessageAnalysisTest {
         assertEquals("whiff_of_magic", analysis.topic());
         assertEquals(NpcEmotionHint.CURIOSITY, analysis.emotion());
         assertFalse(analysis.hasMemory());
+        assertTrue(analysis.contextLine().contains("reply strategy="), analysis.contextLine());
+        assertTrue(analysis.contextLine().contains("exact known ingredient"), analysis.contextLine());
     }
 
     @Test
@@ -97,6 +99,7 @@ class NpcMessageAnalysisTest {
         assertTrue(context.contains("Entity memory"), context);
         assertTrue(context.contains("Message routing: route=lore"), context);
         assertTrue(context.contains("topic=coven"), context);
+        assertTrue(context.contains("reply strategy="), context);
         assertTrue(context.contains("Dev wants to start a coven someday"), context);
     }
 
@@ -107,5 +110,30 @@ class NpcMessageAnalysisTest {
 
         assertEquals(NpcDialogueRoute.LORE, analysis.route());
         assertEquals("coven", analysis.topic());
+    }
+
+    @Test
+    void deterministicRouteRecognizesLeonardMechanicTopics() {
+        NpcMessageAnalysis tear = NpcMessageAnalysis.deterministic("Dev",
+                "What follows the Tear of the Goddess?");
+        NpcMessageAnalysis coil = NpcMessageAnalysis.deterministic("Dev",
+                "Tell me what Mortal Coil actually does.");
+
+        assertEquals(NpcDialogueRoute.RECIPE, tear.route());
+        assertEquals("leonard_summoning", tear.topic());
+        assertTrue(tear.contextLine().contains("exact known ingredient"), tear.contextLine());
+        assertEquals(NpcDialogueRoute.LORE, coil.route());
+        assertEquals("mortal_coil", coil.topic());
+        assertTrue(coil.contextLine().contains("stay on topic mortal_coil"), coil.contextLine());
+    }
+
+    @Test
+    void smallTalkGuidanceDiscouragesMechanicPivot() {
+        NpcMessageAnalysis analysis = NpcMessageAnalysis.deterministic("Dev",
+                "Why do you keep calling everything a debt?");
+
+        assertEquals(NpcDialogueRoute.SMALL_TALK, analysis.route());
+        assertTrue(analysis.contextLine().contains("small talk"), analysis.contextLine());
+        assertTrue(analysis.contextLine().contains("do not pivot to mechanics"), analysis.contextLine());
     }
 }

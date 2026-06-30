@@ -126,6 +126,19 @@ class NpcMemoryDataTest {
     }
 
     @Test
+    void exchangeExtractsDistrustAsWaryMemory() {
+        NpcMemoryData data = new NpcMemoryData();
+        UUID witch = UUID.randomUUID();
+        UUID player = UUID.randomUUID();
+
+        data.rememberExchange(witch, player, "Lilith Poe", "Dev",
+                "I do not trust singing jars", "Wise.", 20L);
+
+        String context = data.getContext(witch, player);
+        assertTrue(context.contains("Dev is wary of singing jars."), context);
+    }
+
+    @Test
     void exchangeIgnoresPromptControlAsMemoryFact() {
         NpcMemoryData data = new NpcMemoryData();
         UUID witch = UUID.randomUUID();
@@ -191,6 +204,23 @@ class NpcMemoryDataTest {
 
         assertTrue(data.repeatsRecentPlayerSpeech(witch, player, "I have a coin."));
         assertFalse(data.repeatsRecentPlayerSpeech(witch, player, "Spend it wisely."));
+    }
+
+    @Test
+    void detectsRecentNpcSpeechRepeatsBeyondLastTurn() {
+        NpcMemoryData data = new NpcMemoryData();
+        UUID witch = UUID.randomUUID();
+        UUID player = UUID.randomUUID();
+
+        data.rememberExchange(witch, player, "Lilith Poe", "Dev",
+                "teach me", "Ask plainly, Dev; brews, rites, spirits, or trade?", 20L);
+        data.rememberExchange(witch, player, "Lilith Poe", "Dev",
+                "what is salt for", "Witches' salt wards, cleanses, and keeps hostile workings from crossing the line.", 40L);
+
+        assertTrue(data.repeatsRecentNpcSpeech(witch, player,
+                "Ask plainly, Dev; brews, rites, spirits, or trade?"));
+        assertFalse(data.repeatsRecentNpcSpeech(witch, player,
+                "The moon has not forgotten you."));
     }
 
     @Test

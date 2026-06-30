@@ -81,6 +81,46 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
+    void covenFallbackUsesMessageAnalysisRouteForTradeAndRecipe() {
+        String tradeContext = "Message routing: route=trade; topic=trade; reply strategy=answer trade directly.";
+        Optional<String> trade = NpcDialogueFallback.covenChat(
+                "business?", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L, tradeContext);
+
+        assertTrue(trade.isPresent());
+        assertTrue(trade.get().contains("I trade"), trade::toString);
+        assertTrue(trade.get().contains("belladonna"), trade::toString);
+
+        String recipeContext = "Message routing: route=recipe; topic=whiff_of_magic; reply strategy=answer exact known ingredient.";
+        Optional<String> recipe = NpcDialogueFallback.covenChat(
+                "that first smoke bottle?", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L, recipeContext);
+
+        assertTrue(recipe.isPresent());
+        assertTrue(recipe.get().toLowerCase(Locale.ROOT).contains("whiff"), recipe::toString);
+    }
+
+    @Test
+    void leonardFallbackUsesMessageAnalysisTopicAndTone() {
+        String recipeContext = "Message routing: route=recipe; topic=leonard_summoning; reply strategy=answer exact order.";
+        Optional<String> recipe = NpcDialogueFallback.leonardChat(
+                "the order again?", "Shade of Leonard", "Dev",
+                "neutral", "altar within reach: power 12000 of 16000", "two of six sworn", "main hand Arthana",
+                recipeContext);
+
+        assertTrue(recipe.isPresent());
+        assertTrue(recipe.get().contains("Nether Wart"), recipe::toString);
+        assertTrue(recipe.get().contains("Diamond Vapour"), recipe::toString);
+
+        String fearContext = "Message routing: route=small_talk; topic=rain; player tone=fear; reply strategy=answer tone.";
+        Optional<String> fear = NpcDialogueFallback.leonardChat(
+                "this feels wrong", "Shade of Leonard", "Dev",
+                "neutral", "altar within reach: power 12000 of 16000", "two of six sworn", "main hand Arthana",
+                fearContext);
+
+        assertTrue(fear.isPresent());
+        assertTrue(fear.get().contains("Fear"), fear::toString);
+    }
+
+    @Test
     void answersWitcheryKnowledgeQuestion() {
         Optional<String> speech = NpcDialogueFallback.covenChat("what is witches salt for?", "Lilith Poe", "Dev");
 
@@ -1248,6 +1288,39 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
+    void recallsDistrustOfSingingJarsFromMemory() {
+        Optional<String> speech = NpcDialogueFallback.covenChat(
+                "What do you remember about my jars?", "Lilith Poe", "Dev", "Swamp", "night", "22:30", 1L,
+                "Long memory: Dev is wary of singing jars.");
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("singing jars"), speech.get());
+        assertTrue(speech.get().contains("stop listening"), speech.get());
+    }
+
+    @Test
+    void answersStrangeOmenQuestionsWithoutGenericStockOrSalt() {
+        Optional<String> fog = NpcDialogueFallback.covenChat(
+                "Lilith, the fog followed me in a straight line.", "Lilith Poe", "Dev");
+        Optional<String> shadow = NpcDialogueFallback.covenChat(
+                "My shadow moved before I did. Should I worry?", "Lilith Poe", "Dev");
+        Optional<String> smokeDoor = NpcDialogueFallback.covenChat(
+                "Should I open strange doors in smoke?", "Lilith Poe", "Dev");
+        Optional<String> goat = NpcDialogueFallback.covenChat(
+                "I saw a black goat standing on my roof.", "Lilith Poe", "Dev");
+
+        assertTrue(fog.isPresent());
+        assertTrue(fog.get().contains("Fog that walks straight"), fog.get());
+        assertTrue(!fog.get().contains("salt"), fog.get());
+        assertTrue(shadow.isPresent());
+        assertTrue(shadow.get().contains("shadow moves first"), shadow.get());
+        assertTrue(smokeDoor.isPresent());
+        assertTrue(smokeDoor.get().contains("doors made of smoke"), smokeDoor.get());
+        assertTrue(goat.isPresent());
+        assertTrue(goat.get().contains("demon wearing local manners"), goat.get());
+    }
+
+    @Test
     void recallsBlessingQuestionVariant() {
         Optional<String> speech = NpcDialogueFallback.covenChat(
                 "Did that blessing do anything?", "Lilith Poe", "Dev", "Swamp", "night", "22:30", 1L,
@@ -1286,5 +1359,70 @@ class NpcDialogueFallbackTest {
 
         assertTrue(alternate.isPresent());
         assertTrue(!NpcBrainResponse.sameMeaningForRepetition(last, alternate.get()));
+    }
+
+    @Test
+    void villagerFallbackAnswersVillageStateAndProfession() {
+        String info = "nearby villagers 8; iron golems 1; village guards 2; beds 10; doors 7; walls/fences 42; raid none; threats: vampires 1, werewolves 0, witches 1, raiders 0";
+
+        Optional<String> golem = NpcDialogueFallback.villagerChat(
+                "do we have a golem?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> size = NpcDialogueFallback.villagerChat(
+                "how big is this village?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> trade = NpcDialogueFallback.villagerChat(
+                "what do you trade?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> vampire = NpcDialogueFallback.villagerChat(
+                "any vampires nearby?", "Marta", "Dev", "apothecary", info, "");
+
+        assertTrue(golem.isPresent());
+        assertTrue(golem.get().contains("one iron golem"), golem.get());
+        assertTrue(size.isPresent());
+        assertTrue(size.get().contains("villagers 8"), size.get());
+        assertTrue(size.get().contains("beds 10"), size.get());
+        assertTrue(trade.isPresent());
+        assertTrue(trade.get().contains("herbs") || trade.get().contains("jars"), trade.get());
+        assertTrue(vampire.isPresent());
+        assertTrue(vampire.get().contains("one vampire"), vampire.get());
+    }
+
+    @Test
+    void villagerFallbackUsesRouterContext() {
+        String info = "nearby villagers 4; iron golems 0; village guards 0; beds 3; doors 2; walls/fences 0; raid none; threats: vampires 0, werewolves 0, witches 0, raiders 0";
+        String context = "Message routing: route=lore; topic=village; player tone=fear; reply strategy=answer current village safety.";
+
+        Optional<String> speech = NpcDialogueFallback.villagerChat(
+                "this place feels wrong", "Marta", "Dev", "farmer", info, context);
+
+        assertTrue(speech.isPresent());
+        assertTrue(speech.get().contains("villagers 4") || speech.get().contains("Fear keeps villagers alive"),
+                speech.get());
+    }
+
+    @Test
+    void villagerFallbackLimitsWitchcraftAndActionClaims() {
+        String info = "nearby villagers 8; iron golems 1; village guards 2; beds 10; doors 7; walls/fences 42; raid none; threats: vampires 1, werewolves 0, witches 1, raiders 0";
+
+        Optional<String> whiff = NpcDialogueFallback.villagerChat(
+                "Do you know Whiff of Magic?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> teaching = NpcDialogueFallback.villagerChat(
+                "Can you teach me witchcraft?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> bell = NpcDialogueFallback.villagerChat(
+                "If I ring the bell, what happens?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> sleep = NpcDialogueFallback.villagerChat(
+                "Should I sleep here tonight?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> remember = NpcDialogueFallback.villagerChat(
+                "Remember that I am afraid of vampires.", "Marta", "Dev", "apothecary", info, "");
+
+        assertTrue(whiff.isPresent());
+        assertTrue(whiff.get().contains("apothecary stock"), whiff.get());
+        assertTrue(teaching.isPresent());
+        assertTrue(teaching.get().contains("Primer") || teaching.get().contains("proper witch"), teaching.get());
+        assertTrue(bell.isPresent());
+        assertTrue(bell.get().contains("villagers run for doors"), bell.get());
+        assertTrue(sleep.isPresent());
+        assertTrue(sleep.get().contains("bed"), sleep.get());
+        assertTrue(!sleep.get().contains("hide behind me"), sleep.get());
+        assertTrue(remember.isPresent());
+        assertTrue(remember.get().contains("vampires frighten you"), remember.get());
     }
 }

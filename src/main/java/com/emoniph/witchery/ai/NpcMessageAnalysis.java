@@ -78,11 +78,12 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
         if (emotion != NpcEmotionHint.NONE) {
             builder.append("; player tone=").append(emotion.id());
         }
+        builder.append("; reply strategy=").append(replyStrategy());
         if (remember && !memory.isBlank()) {
             builder.append("; durable player memory=").append(memory);
         }
         builder.append('.');
-        return NpcBrainResponse.sanitize(builder.toString(), 360);
+        return NpcBrainResponse.sanitize(builder.toString(), 520);
     }
 
     static String appendContext(String baseContext, NpcMessageAnalysis analysis) {
@@ -91,7 +92,7 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
         if (line.isBlank()) {
             return base;
         }
-        return base.isBlank() ? line : NpcBrainResponse.sanitize(base + " " + line, 1600);
+        return base.isBlank() ? line : NpcBrainResponse.sanitize(base + " " + line, 1800);
     }
 
     boolean hasMemory() {
@@ -146,7 +147,9 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
         }
         if (hasAny(normalized, "recipe", "ingredient", "brew", "brewing", "whiff", "mutandis",
                 "attuned", "kettle", "cauldron", "oven", "distillery", "how do i make",
-                "how to make")) {
+                "how to make", "nether wart", "tear of the goddess", "witches hat",
+                "witch's hat", "diamond vapour", "diamond vapor", "calling order",
+                "what follows")) {
             return NpcDialogueRoute.RECIPE;
         }
         if (hasAny(normalized, "rite", "ritual", "circle", "chalk", "altar", "offering",
@@ -159,7 +162,9 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
         }
         if (hasAny(normalized, "spirit world", "demon", "imp", "hobgoblin", "vampire",
                 "werewolf", "taglock", "poppet", "coven", "witchery", "mandrake",
-                "belladonna", "witches salt", "witch's salt")) {
+                "belladonna", "witches salt", "witch's salt", "mortal coil", "lost soul",
+                "lost souls", "green soul", "red soul", "black soul", "demonbane",
+                "arthana", "urn", "sabbath threshold", "horn", "hooves")) {
             return NpcDialogueRoute.LORE;
         }
         if (hasAny(normalized, "thank", "sorry", "apolog", "you are kind", "you are wise",
@@ -189,6 +194,17 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
                 {"silver", "silver"},
                 {"witch_hunter", "witch hunter", "witch hunters"},
                 {"demon", "demon"},
+                {"mortal_coil", "mortal coil"},
+                {"lost_souls", "lost soul", "lost souls"},
+                {"green_soul", "green soul", "green souls"},
+                {"red_soul", "red soul", "red souls"},
+                {"black_soul", "black soul", "black souls"},
+                {"demonbane", "demonbane"},
+                {"leonards_urn", "leonard's urn", "leonards urn", "urn"},
+                {"leonard_summoning", "nether wart", "tear of the goddess", "witches hat",
+                        "witch's hat", "diamond vapour", "diamond vapor", "calling order"},
+                {"sabbath_threshold", "sabbath threshold", "horn", "hooves"},
+                {"altar", "altar"},
                 {"flame_imp", "flame imp"},
                 {"hobgoblin", "hobgoblin"},
                 {"water", "water", "deep water"},
@@ -208,6 +224,33 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
             }
         }
         return "";
+    }
+
+    private String replyStrategy() {
+        String base = switch (route) {
+            case SMALL_TALK -> "answer the player's actual small talk or atmosphere directly; do not pivot to mechanics, trade, recipes, or identity";
+            case TRADE -> "answer trade, stock, price, or bargaining directly; do not drift into unrelated lore";
+            case RECIPE -> "answer with the exact known ingredient, order, or crafting step for the topic; if facts are absent, say the page is missing";
+            case RITE -> "answer with exact ritual, altar, circle, or offering facts from supplied state; do not invent numbers";
+            case LORE -> "give one grounded lore fact about the topic in character; do not swap to another topic";
+            case MEMORY -> "answer from durable player memory; if memory is absent, say little is remembered";
+            case SOCIAL -> "respond to the player's tone first; do not dump mechanics";
+            case ACTION -> "treat this as a request for action; answer with refusal, limit, price, or safe next step, not an unperformed promise";
+            case UNKNOWN -> "ask for clearer words in character";
+        };
+        String tone = switch (emotion) {
+            case FEAR -> " player sounds afraid; acknowledge fear while staying in character";
+            case CONFUSION -> " player sounds confused; give one clear next step";
+            case ANGER -> " player sounds angry; set a boundary without derailing";
+            case GRATITUDE -> " player sounds grateful; acknowledge it briefly";
+            case AMUSEMENT -> " player is playful; a dry aside is acceptable";
+            case SADNESS -> " player sounds regretful; answer with a restrained, practical line";
+            case CURIOSITY, NONE -> "";
+        };
+        if (!topic.isBlank()) {
+            base += "; stay on topic " + topic;
+        }
+        return NpcBrainResponse.sanitize(base + tone, 260);
     }
 
     private static NpcEmotionHint inferEmotion(String normalized) {

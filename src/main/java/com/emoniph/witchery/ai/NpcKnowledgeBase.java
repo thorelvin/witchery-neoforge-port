@@ -111,8 +111,8 @@ public final class NpcKnowledgeBase {
         int score = 0;
         String haystack = section.searchText();
         for (String term : terms) {
-            if (term.length() >= 3 && haystack.contains(term)) {
-                score += section.titleLower().contains(term) ? 3 : 1;
+            if (term.length() >= 3 && containsTerm(haystack, term)) {
+                score += containsTerm(section.titleLower(), term) ? 3 : 1;
             }
         }
         return score;
@@ -149,7 +149,7 @@ public final class NpcKnowledgeBase {
         int score = 0;
         String haystack = sentence.toLowerCase(Locale.ROOT);
         for (String term : queryTerms) {
-            if (term.length() >= 3 && haystack.contains(term)) {
+            if (term.length() >= 3 && containsTerm(haystack, term)) {
                 score++;
                 if (haystack.startsWith(term + ":") || haystack.startsWith(term + " ")) {
                     score += 4;

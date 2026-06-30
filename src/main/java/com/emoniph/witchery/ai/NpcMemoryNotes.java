@@ -16,6 +16,8 @@ final class NpcMemoryNotes {
             Pattern.compile("(?i)\\bi\\s+prefer\\s+(.{2,70})");
     private static final Pattern PLAYER_DISLIKES =
             Pattern.compile("(?i)\\bi\\s+(?:hate|dislike|fear)\\s+(.{2,70})");
+    private static final Pattern PLAYER_DISTRUSTS =
+            Pattern.compile("(?i)\\bi\\s+(?:do\\s+not|don't|dont)\\s+trust\\s+(.{2,70})");
     private static final Pattern PLAYER_AFRAID_OF =
             Pattern.compile("(?i)\\bi(?:\\s+am|'m)\\s+afraid\\s+of\\s+(.{2,70})");
     private static final Pattern PLAYER_NERVOUS_OF =
@@ -61,6 +63,7 @@ final class NpcMemoryNotes {
                 .or(() -> firstMatch(factSpeech, PLAYER_NERVOUS_OF, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(factSpeech, PLAYER_SUBJECT_MAKES_NERVOUS, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(factSpeech, PLAYER_AFRAID_OF, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
+                .or(() -> firstMatch(factSpeech, PLAYER_DISTRUSTS, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(factSpeech, PLAYER_DISLIKES, match -> name + " is wary of " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(factSpeech, PLAYER_WANTS_TO_LEARN, match -> name + " wants to learn " + cleanFact(match.group(1)) + "."))
                 .or(() -> firstMatch(factSpeech, PLAYER_WANTS_TO_DO, match -> name + " wants to " + cleanFact(match.group(1)) + "."))

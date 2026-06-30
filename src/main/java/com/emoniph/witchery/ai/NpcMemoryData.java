@@ -237,6 +237,21 @@ public final class NpcMemoryData extends SavedData {
         return false;
     }
 
+    public boolean repeatsRecentNpcSpeech(UUID npc, UUID player, String npcSpeech) {
+        Memory memory = memories.get(new Key(npc, player));
+        if (memory == null || memory.exchanges().isEmpty()) {
+            return false;
+        }
+        for (int i = memory.exchanges().size() - 1; i >= 0; i--) {
+            String recentNpcSpeech = memory.exchanges().get(i).npcSpeech();
+            if (!recentNpcSpeech.isBlank()
+                    && NpcBrainResponse.sameMeaningForRepetition(npcSpeech, recentNpcSpeech)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean hasRecentNpcAnswerForPlayerSpeech(UUID npc, UUID player, String playerSpeech, String npcSpeech) {
         Memory memory = memories.get(new Key(npc, player));
         if (memory == null || memory.exchanges().isEmpty()) {

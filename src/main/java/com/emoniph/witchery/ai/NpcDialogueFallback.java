@@ -37,19 +37,50 @@ final class NpcDialogueFallback {
         if (asksPlayerName(normalized)) {
             return Optional.of("Your name is " + name + ". Names are the first coin of every bargain.");
         }
+        if (containsAny(normalized, "can you hear me", "hear me", "do you hear me")) {
+            return Optional.of("I hear you, " + name + ". Speak carefully; debts have good ears.");
+        }
+        if (containsAny(normalized, "good night", "goodbye", "farewell", "bye")) {
+            return Optional.of("Go, then. Keep your blood unspent and your debts behind you.");
+        }
         if (isGreeting(normalized)) {
             return Optional.of("You stand before a debt wearing a shape, " + name + ". Speak carefully.");
+        }
+        if (containsAny(normalized, "demon or a goat", "demon or goat", "are you a demon", "are you goat")) {
+            return Optional.of("Demon enough to collect the debt, goat-horned enough to remind you where the sabbath keeps its doors.");
         }
         if (containsAny(normalized, "where are you from", "where did you come from", "where were you summoned from",
                 "summoned from", "goat legs", "goat leg", "goat demon", "goat", "hooves", "horns", "satyr", "sabbath")) {
             return Optional.of("The cauldron dragged my Shade from an infernal sabbath threshold, " + name + "; these horns are older than your courage.");
         }
+        if (containsAny(normalized, "did my cauldron create", "cauldron create", "cauldron made you",
+                "cauldron make you")) {
+            return Optional.of("No. Your cauldron dragged my Shade from a sabbath threshold; creation is above your station.");
+        }
         if (containsAny(normalized, "how did the cauldron", "cauldron pull", "cauldron pulled",
                 "why did the cauldron", "what did my altar pay", "altar pay for")) {
             return Optional.of("Your cauldron opened the threshold; the altar paid power enough to make my shadow stand.");
         }
-        if (containsAny(normalized, "summon", "summoning", "call you", "called you", "bring you", "cauldron")) {
+        if (containsAny(normalized, "nether wart first", "need nether wart first")) {
+            return Optional.of("Yes. Nether Wart begins the calling; skip the first debt and the threshold stays shut.");
+        }
+        if (containsAny(normalized, "after tear of the goddess", "after the tear", "what comes after tear",
+                "what follows the tear", "follows the tear", "follows tear of the goddess")) {
+            return Optional.of("Diamond Vapour follows the Tear, then Diamond, then Nether Star, before the hat seals it.");
+        }
+        if (containsAny(normalized, "witches hat at the end", "witch s hat at the end", "hat at the end",
+                "use a witches hat", "use a witch s hat", "witches hat the last step",
+                "witch s hat the last step", "hat the last step", "hat last step")) {
+            return Optional.of("Yes. The Witches' Hat is the last hand on the cauldron, after the five offerings.");
+        }
+        if (containsAny(normalized, "how much altar power", "altar power does", "calling need", "power does the calling")) {
+            return Optional.of("Ten thousand altar power. Less than that buys only smoke and embarrassment.");
+        }
+        if (containsAny(normalized, "summon", "summoning", "calling order", "call you", "called you", "bring you", "cauldron")) {
             return Optional.of("Nether Wart, Tear of the Goddess, Diamond Vapour, Diamond, Nether Star; then hat, cauldron, and ten thousand altar power.");
+        }
+        if (containsAny(normalized, "green soul", "green souls")) {
+            return Optional.of("Green souls take steel; break them before they lend me their shield.");
         }
         if (containsAny(normalized, "red soul", "red souls")) {
             return Optional.of("Red souls fear fire and blast. Burn them or break them with explosions before you waste steel.");
@@ -70,6 +101,12 @@ final class NpcDialogueFallback {
             if (containsAny(normalized, "arthana")) {
                 return Optional.of("Arthana marks ritual intent; the urn stores thrown brews. Hold the tool your debt requires.");
             }
+            if (containsAny(normalized, "how", "work", "works", "what does", "what do")) {
+                return Optional.of("Sneak-use changes the stored brew; use releases it through the urn's shadow without spending the brew.");
+            }
+            if (containsAny(normalized, "spend", "consume", "uses up", "use up", "stored brew")) {
+                return Optional.of("The urn releases the selected stored brew without consuming it. That is its cruelty and its gift.");
+            }
             return Optional.of("The urn stores thrown brews, cycles by sneak-use, and releases the selected brew through shadow magic.");
         }
         if (containsAny(normalized, "arthana")) {
@@ -79,22 +116,31 @@ final class NpcDialogueFallback {
             return Optional.of("A branch speaks symbols. I answer with older grammar.");
         }
         if (containsAny(normalized, "altar", "altar power", "power", "nearby altar")) {
-            return Optional.of("I read your altar plainly: " + shortSceneFact(altarInfo) + ".");
+            return Optional.of("I read your altar plainly: " + altarSceneFact(altarInfo) + ".");
+        }
+        if (containsAny(normalized, "safe while", "safe if", "lilith", "mara")
+                && containsAny(normalized, "safe", "stand here", "near me", "nearby")) {
+            return Optional.of("They are witnesses, not payment. Keep steel sheathed and your witches remain beneath their own oaths.");
+        }
+        if (containsAny(normalized, "hate witches", "hate the witches", "hate my witches")) {
+            return Optional.of("I do not waste hate on witches. They are witnesses, tools, rivals, or debts, depending on their nerve.");
         }
         if (containsAny(normalized, "coven", "witches", "nearby witches", "my coven", "coven size")) {
             if (containsAny(normalized, "danger", "safe", "helped summon", "helped", "think of")) {
-                return Optional.of("Your witches are witnesses, not my flock: " + shortSceneFact(covenInfo) + ".");
+                return Optional.of("Your witches are witnesses, not my flock: " + covenSceneFact(covenInfo) + ".");
             }
-            return Optional.of("Your coven is no shield: " + shortSceneFact(covenInfo) + ".");
+            return Optional.of("Your coven is no shield: " + covenSceneFact(covenInfo) + ".");
         }
         if (containsAny(normalized, "gear", "equipment", "holding", "wearing", "carry", "carrying",
                 "my items", "my item", "my armor", "my armour")) {
-            return Optional.of("You carry your argument openly: " + shortSceneFact(gearInfo) + ".");
+            return Optional.of("You carry your argument openly: " + gearSceneFact(gearInfo) + ".");
         }
         if (containsAny(normalized, "bargain", "deal", "contract", "price", "debt")) {
             return Optional.of("A bargain is not a wish, " + name + ". Bring a real price, not a story.");
         }
-        if (containsAny(normalized, "strike you", "hit you", "attack you", "hurt you")) {
+        if (containsAny(normalized, "strike you", "hit you", "attack you", "hurt you",
+                "touch you with steel", "touch you with blade", "touch you with my blade",
+                "touch you with my steel")) {
             return Optional.of("Strike me and the debt becomes combat; Mortal Coil may mark attackers who mistake courage for payment.");
         }
         if (containsAny(normalized, "how do i kill you", "how can i kill you", "how to kill you",
@@ -105,6 +151,18 @@ final class NpcDialogueFallback {
                 "no reason to fight", "i refuse to fight", "can we avoid fighting", "peace")) {
             return Optional.of("Then keep your hand from blood. I am neutral until struck, not gentle.");
         }
+        if (containsAny(normalized, "should i fight", "fight you tonight", "fight tonight")) {
+            return Optional.of("Only if you mean to pay in blood. I am neutral until struck.");
+        }
+        if (containsAny(normalized, "neutral until struck", "until struck")) {
+            return Optional.of("Yes. I am neutral until struck; spill blood, and the debt becomes combat.");
+        }
+        if (containsAny(normalized, "bow", "arrow", "arrows", "projectile")) {
+            return Optional.of("A bow is distance pretending to be courage. My debt answers your own hand.");
+        }
+        if (containsAny(normalized, "walk away", "leave now", "go away now", "if i leave")) {
+            return Optional.of("Walk away while your hand is clean. The debt waits better than flesh does.");
+        }
         if (containsAny(normalized, "waiting for me to make a mistake", "waiting for a mistake",
                 "just waiting", "make a mistake")) {
             return Optional.of("I wait for payment or violence. Mistakes are yours to make, not mine to need.");
@@ -114,7 +172,7 @@ final class NpcDialogueFallback {
             return Optional.of("Remember this: break the souls first, strike by your own hand, and save Demonbane for the wounded hour.");
         }
         if (containsAny(normalized, "phase", "health", "wounded", "fight")) {
-            return Optional.of("Read the fight, " + name + ": " + shortSceneFact(phase) + ".");
+            return Optional.of("Read the fight, " + name + ": " + phaseSceneFact(phase) + ".");
         }
         if (asksMemory(normalized)) {
             return Optional.of(memoryAnswer(memoryContext, name)
@@ -129,7 +187,137 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "final warning", "warning before i leave", "before i leave")) {
             return Optional.of("When the souls rise, break them first. When the Coil bites, end the debt quickly.");
         }
+        Optional<String> routed = leonardRoutedFallback(normalized, name, memoryContext);
+        if (routed.isPresent()) {
+            return routed;
+        }
         return Optional.of(leonardAside(normalized, name, ""));
+    }
+
+    static Optional<String> villagerChat(String playerMessage, String villagerName, String playerName,
+                                         String profession, String villageInfo, String memoryContext) {
+        String normalized = normalize(playerMessage);
+        if (normalized.isBlank()) {
+            return Optional.empty();
+        }
+
+        String name = safeName(playerName);
+        String villager = safeDisplayName(villagerName, "Villager");
+        String job = safeDisplayName(profession, "villager").toLowerCase(Locale.ROOT);
+        String facts = NpcBrainResponse.sanitize(villageInfo, 320);
+        if (asksNpcName(normalized)) {
+            return Optional.of("I'm " + villager + ", " + article(job) + " " + job + " of this place.");
+        }
+        if (asksPlayerName(normalized)) {
+            return Optional.of("You're " + name + ". Folk say names carefully when witches are near.");
+        }
+        if (normalized.startsWith("remember ") && containsAny(normalized, "afraid", "fear", "nervous", "do not trust", "don't trust", "dont trust")) {
+            if (containsAny(normalized, "vampire", "vampires")) {
+                return Optional.of("I'll remember, " + name + ": vampires frighten you. Sensible fear keeps blood inside.");
+            }
+            return Optional.of("I'll remember that, " + name + ". Villages survive by keeping small fears in order.");
+        }
+        if (containsAny(normalized, "goodbye", "farewell", "bye")) {
+            return Optional.of("Go careful, " + name + ". Doors shut, eyes open, and do not follow pretty voices after dusk.");
+        }
+        if (isGreeting(normalized)) {
+            return Optional.of("Hello, " + name + ". Mind the roads; village nerves are thin these days.");
+        }
+        if (containsAny(normalized, "live in this village", "do you live here", "live here")) {
+            return Optional.of("I live here, sell here, and worry here. That is most of village life.");
+        }
+        if (containsAny(normalized, "what do you do", "your job", "profession", "work here", "who are you")) {
+            return Optional.of(villagerJobAnswer(job));
+        }
+        if (containsAny(normalized, "teach me witchcraft", "teach witchcraft", "learn witchcraft",
+                "can you teach me magic", "teach me magic")) {
+            return Optional.of("I sell what cautious folk buy. For witchcraft, find a Primer or a witch with patience.");
+        }
+        if (containsAny(normalized, "whiff", "whif", "mutandis", "witchery recipe", "witchery recipes")) {
+            return Optional.of("I know some names as apothecary stock. Exact witch recipes belong to a Primer or a proper witch.");
+        }
+        if (containsAny(normalized, "how big", "village size", "how many villagers", "population",
+                "how many people", "beds", "doors")) {
+            return Optional.of("Nearby I count " + villageFactSummary(facts) + ".");
+        }
+        if (containsAny(normalized, "golem", "iron golem", "protector")) {
+            int golems = countAfter(facts, "iron golems");
+            if (golems <= 0) {
+                return Optional.of("No iron golem close enough for comfort. Shut doors early, " + name + ".");
+            }
+            return Optional.of(countWord(golems) + " iron golem" + (golems == 1 ? " is" : "s are")
+                    + " nearby. Good iron, but not a miracle.");
+        }
+        if (containsAny(normalized, "wall", "walls", "fence", "fences", "protected", "safe")) {
+            int barriers = countAfter(facts, "walls/fences");
+            if (barriers >= 24) {
+                return Optional.of("There are walls and fences enough to slow trouble. Enough to stop it? Ask the bell.");
+            }
+            if (barriers > 0) {
+                return Optional.of("Some walls and fences, yes, but I would not wager a child's sleep on them.");
+            }
+            return Optional.of("I see no proper wall nearby. Doors, golems, and daylight will have to do.");
+        }
+        if (containsAny(normalized, "raid", "raider", "raiders", "pillager", "pillagers", "bell")) {
+            if (containsAny(normalized, "ring the bell", "if i ring", "when i ring", "what happens")) {
+                return Optional.of("Ring the bell for danger; villagers run for doors, and anyone brave looks for trouble.");
+            }
+            if (facts.contains("raid active")) {
+                return Optional.of("Raid's active. Find a door, find the bell, and stop asking me like I enjoy it.");
+            }
+            int raiders = countAfter(facts, "raiders");
+            if (raiders > 0) {
+                return Optional.of("No proper raid bell, but " + countWord(raiders)
+                        + " raider" + (raiders == 1 ? "" : "s") + " nearby is bad enough.");
+            }
+            return Optional.of("No raid I can see. That is not the same as safe.");
+        }
+        if (containsAny(normalized, "vampire", "vampires")) {
+            int vampires = countAfter(facts, "vampires");
+            if (vampires > 0) {
+                return Optional.of(countWord(vampires) + " vampire" + (vampires == 1 ? "" : "s")
+                        + " nearby. Keep garlic close and invitations closer.");
+            }
+            return Optional.of("No vampire nearby by my count, but pretty manners after sunset still worry me.");
+        }
+        if (containsAny(normalized, "werewolf", "werewolves", "wolfman", "wolfmen")) {
+            int werewolves = countAfter(facts, "werewolves");
+            if (werewolves > 0) {
+                return Optional.of(countWord(werewolves) + " werewolf sign" + (werewolves == 1 ? "" : "s")
+                        + " nearby. Silver and closed doors, " + name + ".");
+            }
+            return Optional.of("No werewolf sign nearby. Keep listening after moonrise anyway.");
+        }
+        if (containsAny(normalized, "witch", "witches", "coven", "curse", "taglock", "poppet")) {
+            int witches = countAfter(facts, "witches");
+            if (witches > 0) {
+                return Optional.of("Witches nearby make villagers count their hair twice. Keep your name out of bottles.");
+            }
+            return Optional.of("No witch close by that I can see. Still, never leave hair where strangers sweep.");
+        }
+        if (containsAny(normalized, "guard", "guards")) {
+            int guards = countAfter(facts, "village guards");
+            if (guards > 0) {
+                return Optional.of(countWord(guards) + " guard" + (guards == 1 ? " is" : "s are")
+                        + " nearby. Good for noise, better with a golem.");
+            }
+            return Optional.of("No village guard near us. If trouble comes, the bell will do the shouting.");
+        }
+        if (containsAny(normalized, "trade", "sell", "buy", "stock", "emerald")) {
+            return Optional.of(villagerTradeAnswer(job));
+        }
+        if (containsAny(normalized, "sleep here", "sleep tonight", "stay here tonight", "safe to sleep")) {
+            return Optional.of("Sleep only if there is a bed, a door, and no bell screaming. Villages are safer with witnesses.");
+        }
+        if (asksMemory(normalized)) {
+            return Optional.of(memoryAnswer(memoryContext, name)
+                    .orElse("I know your name, " + name + ", and not much else fit for village gossip."));
+        }
+        Optional<String> routed = villagerRoutedFallback(normalized, name, job, facts, memoryContext);
+        if (routed.isPresent()) {
+            return routed;
+        }
+        return Optional.of(villagerAside(normalized, name, ""));
     }
 
     static Optional<String> covenChat(String playerMessage, String witchName, String playerName,
@@ -230,6 +418,36 @@ final class NpcDialogueFallback {
         }
         if (containsAny(normalized, "lost", "can't find my way", "cant find my way")) {
             return Optional.of("If you are lost, follow water downhill and do not trust lights that answer back.");
+        }
+        if (containsAny(normalized, "fog")
+                && containsAny(normalized, "followed", "following", "straight line", "staring", "insult")) {
+            return Optional.of("Fog that walks straight has been given a road. Cross running water before you trust it.");
+        }
+        if (containsAny(normalized, "shadow")
+                && containsAny(normalized, "moved before", "moved first", "before i did", "midnight", "learns")) {
+            return Optional.of("When your shadow moves first, stand in lamplight and ask what it is running from.");
+        }
+        if (containsAny(normalized, "moon blinked", "moon blink", "moon winked", "moon wink")) {
+            return Optional.of("If the moon blinks, look down, not up; something close by wanted your eyes busy.");
+        }
+        if (containsAny(normalized, "well")
+                && containsAny(normalized, "whispered", "whispers", "father", "voice", "my name")) {
+            return Optional.of("A well using family voices wants you leaning over it. Answer from three steps back.");
+        }
+        if (containsAny(normalized, "smoke")
+                && containsAny(normalized, "door", "doors", "open", "shaped itself")) {
+            return Optional.of("Do not open doors made of smoke unless you marked the floor first and like difficult returns.");
+        }
+        if (containsAny(normalized, "egg", "eggs")
+                && containsAny(normalized, "north", "points", "turn away", "turning away")) {
+            return Optional.of("An egg that points north is not breakfast yet; bury it at dawn or watch what hatches from direction.");
+        }
+        if (containsAny(normalized, "black goat", "goat on my roof", "goat standing on my roof", "roof goat")) {
+            return Optional.of("A black goat on a roof is either escaped trouble or a demon wearing local manners.");
+        }
+        if (containsAny(normalized, "copied my footsteps", "copying my footsteps", "footsteps copied",
+                "followed my footsteps")) {
+            return Optional.of("If footsteps copy yours, walk through water, then count which set keeps going.");
         }
         if (asksHutOrDoorSafety(normalized)) {
             return Optional.of("Witches' salt by the threshold, light inside, and no promises made through a closed door.");
@@ -440,6 +658,10 @@ final class NpcDialogueFallback {
             return Optional.of(scenePlace(biome, timeOfDay)
                     .orElse(oldWitchAside(normalized, name)));
         }
+        Optional<String> routed = covenRoutedFallback(playerMessage, normalized, name, biome, timeOfDay, memoryContext);
+        if (routed.isPresent()) {
+            return routed;
+        }
         if (containsAny(normalized, "night", "moon")) {
             return Optional.of(oldWitchAside(normalized, name));
         }
@@ -487,6 +709,256 @@ final class NpcDialogueFallback {
         return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
     }
 
+    static String villagerLastResort(String playerMessage, String playerName, String avoidSpeech) {
+        return villagerAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+    }
+
+    static Optional<String> villagerAlternate(String playerMessage, String playerName, String avoidSpeech) {
+        String line = villagerAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
+    }
+
+    private static Optional<String> leonardRoutedFallback(String normalized, String playerName,
+                                                          String memoryContext) {
+        if (!hasMessageRouting(memoryContext)) {
+            return Optional.empty();
+        }
+        if (analysisTopic(memoryContext, "leonard_summoning")
+                || (analysisRoute(memoryContext, "recipe")
+                    && containsAny(normalized, "order", "again", "calling", "summon", "after"))) {
+            return Optional.of("Nether Wart, Tear of the Goddess, Diamond Vapour, Diamond, Nether Star; then hat, cauldron, and ten thousand altar power.");
+        }
+        if (analysisTopic(memoryContext, "mortal_coil")) {
+            return Optional.of("Mortal Coil is my withering mark on attackers; survive the debt or end the fight quickly.");
+        }
+        if (analysisTopic(memoryContext, "green_soul")) {
+            return Optional.of("Green souls take steel; break them before they lend me their shield.");
+        }
+        if (analysisTopic(memoryContext, "red_soul")) {
+            return Optional.of("Red souls fear fire and blast. Burn them or break them with explosions before you waste steel.");
+        }
+        if (analysisTopic(memoryContext, "black_soul")) {
+            return Optional.of("Black souls yield to magic and potions. Bring witchcraft, not swagger.");
+        }
+        if (analysisTopic(memoryContext, "lost_souls")) {
+            return Optional.of("Break the souls first. Green takes steel, red fears fire and blast, black yields to magic and potions.");
+        }
+        if (analysisTopic(memoryContext, "demonbane")) {
+            return Optional.of("Demonbane bites deepest when I am already wounded. Bring it late, not proudly early.");
+        }
+        if (analysisTone(memoryContext, "fear")) {
+            return Optional.of("Fear is the one honest scout you brought, " + playerName + ". Listen, but do not let it hold the blade.");
+        }
+        if (analysisTone(memoryContext, "confusion")) {
+            return Optional.of("Name one debt at a time, " + playerName + "; altar, souls, urn, or blade.");
+        }
+        if (analysisRoute(memoryContext, "action")) {
+            return Optional.of("I do not perform wishes. Bring a price, a threat, or a sharper question.");
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<String> villagerRoutedFallback(String normalized, String playerName,
+                                                           String profession, String villageInfo,
+                                                           String memoryContext) {
+        if (!hasMessageRouting(memoryContext)) {
+            return Optional.empty();
+        }
+        if (analysisRoute(memoryContext, "trade")) {
+            return Optional.of(villagerTradeAnswer(profession));
+        }
+        if (analysisRoute(memoryContext, "lore")) {
+            if (analysisTopic(memoryContext, "village") || containsAny(normalized, "village", "safe", "walls")) {
+                return Optional.of("From here I know this much: " + villageFactSummary(villageInfo) + ".");
+            }
+            if (analysisTopic(memoryContext, "witch") || analysisTopic(memoryContext, "curse")) {
+                return Optional.of("Witch trouble starts small: missing hair, odd bottles, neighbors whispering too softly.");
+            }
+        }
+        if (analysisTone(memoryContext, "fear")) {
+            return Optional.of("Fear keeps villagers alive, " + playerName + ". Doors first, questions second.");
+        }
+        if (analysisTone(memoryContext, "confusion")) {
+            return Optional.of("Ask me plainly: village, golem, walls, raid, trade, or night trouble.");
+        }
+        if (analysisRoute(memoryContext, "action")) {
+            return Optional.of("I can warn, trade, or point at trouble. I cannot make the village brave by talking.");
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<String> covenRoutedFallback(String playerMessage, String normalized,
+                                                        String playerName, String biome, String timeOfDay,
+                                                        String memoryContext) {
+        if (!hasMessageRouting(memoryContext)) {
+            return Optional.empty();
+        }
+        if (analysisRoute(memoryContext, "trade")) {
+            return Optional.of(tradeStockAnswer(normalized));
+        }
+        if (analysisRoute(memoryContext, "recipe")) {
+            Optional<String> answer = routedRecipeAnswer(playerMessage, biome, timeOfDay, memoryContext);
+            if (answer.isPresent()) {
+                return answer;
+            }
+        }
+        if (analysisTone(memoryContext, "fear")) {
+            return Optional.of("Fear is useful, " + playerName + "; it keeps fingers attached. Name the danger and I will name the ward.");
+        }
+        if (analysisTone(memoryContext, "confusion")) {
+            return Optional.of("One question at a time, " + playerName + ": brew, rite, spirit, trade, or trouble?");
+        }
+        if (analysisRoute(memoryContext, "social")) {
+            return Optional.of("Tongue heard, " + playerName + ". Now spend it on a real question.");
+        }
+        if (analysisRoute(memoryContext, "action")) {
+            return Optional.of("Some requests need hands, not wishes. Tell me what you want done and what you can pay.");
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<String> routedRecipeAnswer(String playerMessage, String biome, String timeOfDay,
+                                                       String memoryContext) {
+        String question = "";
+        if (analysisTopic(memoryContext, "whiff_of_magic")) {
+            question = "how do I make whiff of magic";
+        } else if (analysisTopic(memoryContext, "mutandis")) {
+            question = "how do I make mutandis";
+        } else if (analysisTopic(memoryContext, "attuned_stone")) {
+            question = "how do I make attuned stone";
+        } else if (analysisTopic(memoryContext, "brew_of_sleeping")) {
+            question = "how do I make brew of sleeping";
+        } else if (analysisTopic(memoryContext, "brew_of_revealing")) {
+            question = "how do I make brew of revealing";
+        } else {
+            question = playerMessage;
+        }
+        return NpcKnowledgeBase.compactAnswer(question, biome, timeOfDay);
+    }
+
+    private static String villagerJobAnswer(String profession) {
+        return switch (profession) {
+            case "apothecary" ->
+                    "I'm the apothecary; herbs, jars, fumes, and worried villagers keep my counter busy.";
+            case "farmer" ->
+                    "I work the fields; food quiets panic better than speeches.";
+            case "cleric" ->
+                    "I keep the shrine and listen for undead trouble after the bell stops shaking.";
+            case "librarian" ->
+                    "I keep books and rumors. One is shelved better than the other.";
+            case "cartographer" ->
+                    "I draw roads and borders, mostly so we know where not to be after dark.";
+            case "armorer" ->
+                    "I shape armor and count dents; that tells more truth than gossip.";
+            case "weaponsmith" ->
+                    "I make blades and hear who thinks they need one.";
+            case "toolsmith" ->
+                    "I keep tools working. A village falls apart one broken axe at a time.";
+            case "mason" ->
+                    "I work stone and judge walls. Bad foundations gossip louder than villagers.";
+            case "fletcher" ->
+                    "I make arrows and watch the road. Movement at dusk has a language.";
+            case "fisherman" ->
+                    "I fish and listen to water. Wells repeat the strangest things.";
+            case "shepherd" ->
+                    "I mind wool and fences; sheep know fear before people admit it.";
+            case "butcher" ->
+                    "I keep the meat stores honest. Hunger makes worse monsters than night does.";
+            case "leatherworker" ->
+                    "I work hides and cauldrons. Practical things, mostly; practical fear too.";
+            case "nitwit" ->
+                    "Me? I notice things clever folk walk past.";
+            case "unemployed" ->
+                    "No trade yet. I know which workstations are missing and who complains loudest.";
+            default ->
+                    "I work where the village needs me, and I worry where the village forgets to.";
+        };
+    }
+
+    private static String villagerTradeAnswer(String profession) {
+        return switch (profession) {
+            case "apothecary" ->
+                    "I sell herbs, jars, fumes, taglock kits, and cautious brews when my counter is stocked.";
+            case "farmer" ->
+                    "Farmers trade food and crop goods. Emeralds spend best when bellies are empty.";
+            case "cleric" ->
+                    "Clerics trade shrine goods and oddities; ask at the stand, not in the road.";
+            case "librarian" ->
+                    "Books, paper, and secrets with covers. The trade screen gives the honest price.";
+            case "armorer", "weaponsmith", "toolsmith" ->
+                    "Iron work, if the stand is stocked. Good metal costs less than panic.";
+            case "cartographer" ->
+                    "Maps and paper work, mostly. Roads become cheaper when you know them.";
+            case "mason" ->
+                    "Stone, clay, and patient work. Nothing glamorous survives weather without patience.";
+            case "fletcher" ->
+                    "Sticks, string, arrows, bows. Useful when the road grows teeth.";
+            case "fisherman" ->
+                    "Fish and river work. Not fancy, but fancy folk still eat.";
+            case "shepherd" ->
+                    "Wool and dyes, mostly. Warm beds calm brave mouths.";
+            case "butcher" ->
+                    "Meat and animal goods. Hunger makes everyone bargain badly.";
+            case "leatherworker" ->
+                    "Leather and cauldron work. Travel gear matters when home stops feeling safe.";
+            default ->
+                    "Right-click a working villager for real stock; gossip is free, goods are not.";
+        };
+    }
+
+    private static String villageFactSummary(String villageInfo) {
+        String text = NpcBrainResponse.sanitize(villageInfo, 260);
+        if (text.isBlank()) {
+            return "too little from here to swear by";
+        }
+        text = text.replace("nearby ", "")
+                .replace("threats: ", "")
+                .replace("; ", ", ");
+        return NpcBrainResponse.sanitize(text, 180);
+    }
+
+    private static int countAfter(String villageInfo, String label) {
+        String text = villageInfo == null ? "" : villageInfo.toLowerCase(Locale.ROOT);
+        Matcher matcher = Pattern.compile(Pattern.quote(label.toLowerCase(Locale.ROOT)) + "\\s+(\\d+)")
+                .matcher(text);
+        if (!matcher.find()) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(matcher.group(1));
+        } catch (NumberFormatException ex) {
+            return 0;
+        }
+    }
+
+    private static String article(String word) {
+        if (word == null || word.isBlank()) {
+            return "a";
+        }
+        char first = Character.toLowerCase(word.charAt(0));
+        return first == 'a' || first == 'e' || first == 'i' || first == 'o' || first == 'u' ? "an" : "a";
+    }
+
+    private static String villagerAside(String normalized, String playerName, String avoidSpeech) {
+        String[] lines = {
+                "Keep your voice low, " + playerName + "; walls have ears when witches visit.",
+                "Ask at the bell if you want panic. Ask me if you want gossip.",
+                "Road dust, bad moon, strange visitor. Villages learn to count all three.",
+                "If you mean trouble, stand where the golem can see you.",
+                "Close doors at dusk. It is boring advice because it works.",
+                "Every village has two maps: the one on paper, and the one fear keeps.",
+                "*shrugs* \"I have heard worse questions from better-dressed fools.\""
+        };
+        int start = Math.floorMod(normalized.hashCode(), lines.length);
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[(start + i) % lines.length];
+            if (!NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
+                return line;
+            }
+        }
+        return "Ask again, " + playerName + "; make it useful this time.";
+    }
+
     private static String leonardAside(String normalized, String playerName, String avoidSpeech) {
         String[] lines = {
                 "Speak plainly, " + playerName + ". Even debts tire of weak mouths.",
@@ -495,7 +967,9 @@ final class NpcDialogueFallback {
                 "A thin question. Bring a sharper one before I lose patience.",
                 "The crossroads heard you. It found you small."
         };
-        for (String line : lines) {
+        int start = Math.floorMod(normalized.hashCode(), lines.length);
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[(start + i) % lines.length];
             if (!NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
                 return line;
             }
@@ -506,6 +980,110 @@ final class NpcDialogueFallback {
     private static String shortSceneFact(String text) {
         String cleaned = NpcBrainResponse.sanitize(text, 150);
         return cleaned.isBlank() ? "nothing worth naming" : cleaned;
+    }
+
+    private static String altarSceneFact(String text) {
+        String cleaned = shortSceneFact(text);
+        Matcher modern = Pattern.compile(
+                "power\\s+(\\d+)\\s*/\\s*(\\d+),\\s*recharge\\s+(\\d+)\\s*/t,\\s*range\\s+(\\d+),\\s*distance\\s+([0-9.]+)\\s+blocks",
+                Pattern.CASE_INSENSITIVE).matcher(cleaned);
+        if (modern.find()) {
+            return "it holds %s of %s power, gathers %s each tick, reaches %s blocks, and stands %s blocks from me"
+                    .formatted(modern.group(1), modern.group(2), modern.group(3), modern.group(4), modern.group(5));
+        }
+        Matcher spoken = Pattern.compile(
+                "power\\s+(\\d+)\\s+of\\s+(\\d+),\\s*recharge\\s+(\\d+)\\s+per\\s+tick,\\s*range\\s+(\\d+)\\s+blocks,\\s*distance\\s+([0-9.]+)\\s+blocks",
+                Pattern.CASE_INSENSITIVE).matcher(cleaned);
+        if (spoken.find()) {
+            return "it holds %s of %s power, gathers %s each tick, reaches %s blocks, and stands %s blocks from me"
+                    .formatted(spoken.group(1), spoken.group(2), spoken.group(3), spoken.group(4), spoken.group(5));
+        }
+        if (cleaned.toLowerCase(Locale.ROOT).contains("no valid altar")) {
+            return "no altar close enough to matter";
+        }
+        return cleaned.replaceFirst("(?i)^valid altar nearby:\\s*", "")
+                .replaceFirst("(?i)^altar within reach:\\s*", "");
+    }
+
+    private static String covenSceneFact(String text) {
+        String cleaned = shortSceneFact(text)
+                .replaceAll("\\s*\\((?:sworn to player|sworn elsewhere|free coven witch)\\)", "")
+                .replaceFirst("(?i)^player coven\\s+(\\d+)/(\\d+);\\s*nearby coven witches:\\s*", "$1 of $2 sworn; nearby witches: ")
+                .replaceFirst("(?i)^player coven\\s+(\\d+)/(\\d+);\\s*no coven witches nearby", "$1 of $2 sworn; no coven witches nearby")
+                .replaceFirst("(?i)^nearby coven witches:\\s*", "nearby witches: ");
+        Matcher numeric = Pattern.compile("^(\\d+)\\s+of\\s+(\\d+)\\s+sworn;\\s*(.*)$", Pattern.CASE_INSENSITIVE)
+                .matcher(cleaned);
+        if (numeric.find()) {
+            return covenOathFact(Integer.parseInt(numeric.group(1)), numeric.group(3));
+        }
+        Matcher spoken = Pattern.compile(
+                "^(none|one|two|three|four|five|six|\\d+)\\s+of\\s+(?:none|one|two|three|four|five|six|\\d+)\\s+sworn(?:\\s+to\\s+[^;]+)?;\\s*(.*)$",
+                Pattern.CASE_INSENSITIVE).matcher(cleaned);
+        if (spoken.find()) {
+            return covenOathFact(wordCount(spoken.group(1)), spoken.group(2));
+        }
+        return cleaned.replaceFirst("(?i)^nearby witches:\\s*", "nearby witches: ");
+    }
+
+    private static String covenOathFact(int count, String nearby) {
+        String oath = switch (count) {
+            case 0 -> "no witches carry your oath";
+            case 1 -> "one witch carries your oath";
+            default -> countWord(count) + " witches carry your oath";
+        };
+        String rewrittenNearby = NpcBrainResponse.sanitize(nearby, 120)
+                .replaceAll("\\s*\\((?:sworn to [^)]+|sworn elsewhere|free coven witch)\\)", "")
+                .replaceFirst("(?i)^nearby coven witches:\\s*", "nearby: ")
+                .replaceFirst("(?i)^nearby witches:\\s*", "nearby: ")
+                .replaceFirst("(?i)^no coven witches nearby$", "none stand nearby");
+        return rewrittenNearby.isBlank() ? oath : oath + "; " + rewrittenNearby;
+    }
+
+    private static String gearSceneFact(String text) {
+        String cleaned = shortSceneFact(text)
+                .replaceAll("(?i)main hand\\s+", "in your hand: ")
+                .replaceAll("(?i)offhand\\s+", "offhand: ")
+                .replaceAll("(?i)wearing\\s+", "wearing ");
+        return cleaned;
+    }
+
+    private static String phaseSceneFact(String text) {
+        String cleaned = shortSceneFact(text)
+                .replace("; no target", "")
+                .replace("; target none", "");
+        return cleaned;
+    }
+
+    private static String countWord(int value) {
+        return switch (value) {
+            case 0 -> "none";
+            case 1 -> "one";
+            case 2 -> "two";
+            case 3 -> "three";
+            case 4 -> "four";
+            case 5 -> "five";
+            case 6 -> "six";
+            default -> Integer.toString(value);
+        };
+    }
+
+    private static int wordCount(String value) {
+        return switch (value == null ? "" : value.toLowerCase(Locale.ROOT)) {
+            case "none", "zero" -> 0;
+            case "one" -> 1;
+            case "two" -> 2;
+            case "three" -> 3;
+            case "four" -> 4;
+            case "five" -> 5;
+            case "six" -> 6;
+            default -> {
+                try {
+                    yield Integer.parseInt(value);
+                } catch (NumberFormatException ex) {
+                    yield 0;
+                }
+            }
+        };
     }
 
     private static Optional<String> specificAlternate(String normalized, String playerName, String avoidSpeech) {
@@ -1015,6 +1593,12 @@ final class NpcDialogueFallback {
                 "afraid of deep water", "fear deep water")) {
             return Optional.of("You told me deep water makes you nervous, " + playerName + "; that is a sensible fear.");
         }
+        if (containsAny(normalized, "my jars", "about my jars", "what do you remember about jars",
+                "singing jars", "trust jars")
+                && containsAny(memory, "wary of singing jars", "do not trust singing jars",
+                "dont trust singing jars", "don't trust singing jars")) {
+            return Optional.of("You do not trust singing jars, " + playerName + "; wise. Label them, then stop listening after the second note.");
+        }
         if (containsAny(normalized, "what food did i say", "what did i say i prefer",
                 "what did i say i preferred", "food did i prefer", "food do i prefer")
                 && containsAny(memory, "prefers potatoes over eggs", "prefer potatoes over eggs",
@@ -1229,7 +1813,8 @@ final class NpcDialogueFallback {
         return containsAny(normalized,
                 "remember me", "remember about me", "remember of me", "what do you remember",
                 "what you remember", "know about me", "do you know me", "what do you know about me",
-                "have we met", "met before", "seen me before");
+                "have we met", "met before", "seen me before", "what did i say i fear",
+                "what did i say scares me", "what did i say makes me nervous", "what did i say i was afraid");
     }
 
     private static Optional<String> memoryAnswer(String memoryContext, String playerName) {
@@ -1431,6 +2016,28 @@ final class NpcDialogueFallback {
             }
         }
         return false;
+    }
+
+    private static boolean hasMessageRouting(String memoryContext) {
+        return normalize(memoryContext).contains("message routing route");
+    }
+
+    private static boolean analysisRoute(String memoryContext, String route) {
+        String normalized = normalize(memoryContext);
+        String expected = normalize(route).replace("_", " ");
+        return normalized.contains("message routing route " + expected);
+    }
+
+    private static boolean analysisTopic(String memoryContext, String topic) {
+        String normalized = normalize(memoryContext);
+        String expected = normalize(topic).replace("_", " ");
+        return normalized.contains("topic " + expected);
+    }
+
+    private static boolean analysisTone(String memoryContext, String tone) {
+        String normalized = normalize(memoryContext);
+        String expected = normalize(tone).replace("_", " ");
+        return normalized.contains("player tone " + expected);
     }
 
     private static boolean containsWord(String text, String word) {

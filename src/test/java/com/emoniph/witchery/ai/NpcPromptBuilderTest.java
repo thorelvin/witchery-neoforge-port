@@ -214,4 +214,45 @@ class NpcPromptBuilderTest {
         assertTrue(prompt.examples().stream().anyMatch(example ->
                 example.assistantResponse().contains("Dev is wary of nightmares.")));
     }
+
+    @Test
+    void npcChatPromptsTreatRoutingAsCurrentIntent() {
+        String memory = "Message routing: route=small_talk; topic=debt; reply strategy=answer the player's actual small talk.";
+        NpcBrainPrompt witch = NpcPromptBuilder.covenWitchSmoke("Why call everything a debt?", memory);
+        NpcBrainPrompt leonard = NpcPromptBuilder.leonardSmoke("Why call everything a debt?", memory);
+        NpcBrainPrompt villager = NpcPromptBuilder.villagerSmoke("Why is everyone worried?", memory);
+
+        assertTrue(witch.userPrompt().contains("treat it as current player intent"), witch.userPrompt());
+        assertTrue(witch.userPrompt().contains("small_talk answers the present remark"), witch.userPrompt());
+        assertTrue(leonard.userPrompt().contains("treat it as current player intent"), leonard.userPrompt());
+        assertTrue(leonard.userPrompt().contains("small_talk answers the present remark"), leonard.userPrompt());
+        assertTrue(villager.userPrompt().contains("treat it as current player intent"), villager.userPrompt());
+    }
+
+    @Test
+    void villagerSmokePromptIncludesVillageFactsAndJobCard() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.villagerSmoke(
+                "do we have a golem and are vampires nearby?", "Entity memory: villager is Marta; player is Dev.");
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(user.contains("the villager is named apothecary"), prompt.userPrompt());
+        assertTrue(user.contains("profession: apothecary"), prompt.userPrompt());
+        assertTrue(user.contains("village state nearby"), prompt.userPrompt());
+        assertTrue(user.contains("iron golems 1"), prompt.userPrompt());
+        assertTrue(user.contains("walls/fences 42"), prompt.userPrompt());
+        assertTrue(user.contains("vampires 1"), prompt.userPrompt());
+        assertTrue(user.contains("apothecary card"), prompt.userPrompt());
+        assertTrue(user.contains("herbs"), prompt.userPrompt());
+    }
+
+    @Test
+    void villagerSmokePromptDoesNotSoundLikeWitchOrLeonard() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.villagerSmoke("who are you?", "");
+        String system = prompt.systemPrompt().toLowerCase();
+
+        assertTrue(system.contains("speak as the villager only"), prompt.systemPrompt());
+        assertTrue(system.contains("never claim to be a witch"), prompt.systemPrompt());
+        assertTrue(system.contains("shade of leonard"), prompt.systemPrompt());
+        assertTrue(system.contains("local villager"), prompt.systemPrompt());
+    }
 }
