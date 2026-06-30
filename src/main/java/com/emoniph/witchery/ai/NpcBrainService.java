@@ -37,6 +37,7 @@ public final class NpcBrainService {
     private static final int SOCIAL_INTENT_TIMEOUT_MILLIS = 2500;
     private static final int MESSAGE_ANALYSIS_MAX_TOKENS = 96;
     private static final int MESSAGE_ANALYSIS_TIMEOUT_MILLIS = 2200;
+    private static final int SPEECH_TEXT_COLOR = 0xFFFFFF;
 
     private final Object executorLock = new Object();
     private final Object warmupExecutorLock = new Object();
@@ -141,6 +142,22 @@ public final class NpcBrainService {
         return requestChat(NpcPersonas.LEONARD, leonard, player, playerMessage);
     }
 
+    public boolean requestBabaYagaGreeting(com.emoniph.witchery.entity.BabaYagaEntity baba, ServerPlayer player,
+                                           Component fallback) {
+        if (!WitcheryConfig.LLM_ENABLED.get()) {
+            return false;
+        }
+        BabaYagaPersona persona = NpcPersonas.BABA_YAGA;
+        return requestPersonaResponse(persona, baba, player,
+                persona.greetingPrompt(baba, player, contextFor(persona, baba, player)),
+                "greet", "", fallback, true);
+    }
+
+    public boolean requestBabaYagaChat(com.emoniph.witchery.entity.BabaYagaEntity baba, ServerPlayer player,
+                                       String playerMessage) {
+        return requestChat(NpcPersonas.BABA_YAGA, baba, player, playerMessage);
+    }
+
     public boolean requestVillagerChat(Villager villager, ServerPlayer player, String playerMessage) {
         return requestChat(NpcPersonas.VILLAGER, villager, player, playerMessage);
     }
@@ -162,6 +179,32 @@ public final class NpcBrainService {
             return true;
         }
         return requestPersonaChatWithAnalysis(persona, entity, player, playerMessage);
+    }
+
+    public static <E extends LivingEntity> Component speechComponent(NpcPersona<E> persona, E entity, String speech) {
+        return speechComponent(persona.displayName(entity), persona.chatColorRgb(), speech);
+    }
+
+    public static <E extends LivingEntity> Component speechComponent(NpcPersona<E> persona, E entity,
+                                                                     Component speech) {
+        return speechComponent(persona.displayName(entity), persona.chatColorRgb(), speech);
+    }
+
+    public static Component speechComponent(String npcName, int chatColorRgb, String speech) {
+        return speechComponent(npcName, chatColorRgb, Component.literal(speech));
+    }
+
+    public static Component speechComponent(String npcName, int chatColorRgb, Component speech) {
+        String safeName = NpcBrainResponse.sanitize(npcName, 80);
+        if (safeName.isBlank()) {
+            safeName = "NPC";
+        }
+        Component spoken = Component.literal("")
+                .withStyle(style -> style.withColor(SPEECH_TEXT_COLOR))
+                .append(speech);
+        return Component.literal("<" + safeName + "> ")
+                .withStyle(style -> style.withColor(chatColorRgb))
+                .append(spoken);
     }
 
     private <E extends LivingEntity> boolean requestSocialIntentClassification(NpcPersona<E> persona, E entity,
@@ -720,9 +763,9 @@ public final class NpcBrainService {
         persona.nudgeAttention(entity, player);
         playVisibleBeat(level, entity, speech);
         successes.incrementAndGet();
-        player.displayClientMessage(Component.literal("\u00a79<" + npcName + "> \u00a7r" + speech), false);
+        player.displayClientMessage(speechComponent(npcName, persona.chatColorRgb(), speech), false);
         supportFollowup.ifPresent(followup ->
-                player.displayClientMessage(Component.literal("\u00a79<" + npcName + "> \u00a7r" + followup), false));
+                player.displayClientMessage(speechComponent(npcName, persona.chatColorRgb(), followup), false));
         if (rememberExchange) {
             String rememberedSpeech = supportFollowup.map(followup -> speech + " " + followup).orElse(speech);
             rememberExchange(persona, entity, player, playerMessage, rememberedSpeech);
@@ -747,7 +790,7 @@ public final class NpcBrainService {
     private static boolean swingsForBeat(String beat) {
         return switch (beat) {
             case "gestures", "studies your coin", "taps a finger", "shrugs", "folds her arms",
-                    "adjusts her robe" -> true;
+                    "adjusts her robe", "touches a charm" -> true;
             default -> false;
         };
     }
@@ -760,6 +803,7 @@ public final class NpcBrainService {
             return switch (beat) {
                 case "nods", "smiles thinly" -> SoundEvents.VILLAGER_YES;
                 case "narrows her eyes", "folds her arms" -> SoundEvents.VILLAGER_NO;
+                case "touches a charm", "glances at the road" -> SoundEvents.VILLAGER_AMBIENT;
                 default -> SoundEvents.VILLAGER_AMBIENT;
             };
         }
@@ -774,6 +818,7 @@ public final class NpcBrainService {
     private static float volumeForBeat(String beat) {
         return switch (beat) {
             case "lowers her voice", "leans closer", "studies you", "studies your coin" -> 0.28F;
+            case "glances at the road", "touches a charm" -> 0.32F;
             case "yawns", "sighs", "shrugs" -> 0.35F;
             default -> 0.42F;
         };

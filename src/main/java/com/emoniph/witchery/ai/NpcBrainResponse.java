@@ -569,6 +569,12 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (text.contains("gesture")) {
             return "gestures";
         }
+        if (text.contains("glance") && text.contains("road")) {
+            return "glances at the road";
+        }
+        if (text.contains("touch") && text.contains("charm")) {
+            return "touches a charm";
+        }
         if (text.contains("coin") && (text.contains("study") || text.contains("examine") || text.contains("regard"))) {
             return "studies your coin";
         }
@@ -598,7 +604,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                     "smiles thinly", "gestures", "studies your coin", "studies you", "taps a finger",
                     "tilts her head", "shrugs", "yawns", "lowers her voice", "sighs", "adjusts her robe",
                     "lowers his voice", "studies your blade", "tilts his head", "turns his gaze",
-                    "spreads his hands" -> text;
+                    "spreads his hands", "glances at the road", "touches a charm" -> text;
             default -> "";
         };
     }
@@ -735,6 +741,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalized.equals("nods")
                 || normalized.equals("smiles thinly")
                 || normalized.equals("gestures")
+                || normalized.equals("glances at the road")
+                || normalized.equals("touches a charm")
                 || normalized.equals("studies your coin")
                 || normalized.equals("studies your blade")
                 || normalized.equals("studies you")

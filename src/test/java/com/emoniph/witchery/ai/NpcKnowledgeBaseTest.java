@@ -206,6 +206,29 @@ class NpcKnowledgeBaseTest {
     }
 
     @Test
+    void retrievesSharedAtmosphereCardsForPersonaSceneCues() {
+        String witch = NpcKnowledgeBase.relevantContext(
+                "The rain and crows make your hut feel restless.", "Plains", "night",
+                new NpcCardRequest("coven_witch", new UUID(59L, 60L), new UUID(69L, 70L), 0L, 0, 3, 1));
+        String baba = NpcKnowledgeBase.relevantContext(
+                "The old road and hungry night found your door.", "Swamp", "night",
+                new NpcCardRequest("baba_yaga", new UUID(71L, 72L), new UUID(73L, 74L), 0L, 0, 3, 1));
+        String leonard = NpcKnowledgeBase.relevantContext(
+                "The threshold is cold and the silence is heavy.", "Plains", "night",
+                new NpcCardRequest("leonard", new UUID(75L, 76L), new UUID(77L, 78L), 0L, 0, 3, 1));
+        String villager = NpcKnowledgeBase.relevantContext(
+                "The harvest looks thin and the roads are mud.", "Plains", "day",
+                new NpcCardRequest("villager", new UUID(79L, 80L), new UUID(81L, 82L), 0L, 0, 3, 1));
+
+        assertTrue(witch.toLowerCase(Locale.ROOT).contains("reagent pressure"), witch);
+        assertTrue(baba.toLowerCase(Locale.ROOT).contains("old roads"), baba);
+        assertTrue(leonard.toLowerCase(Locale.ROOT).contains("debt language"), leonard);
+        String villagerLower = villager.toLowerCase(Locale.ROOT);
+        assertTrue(villagerLower.contains("harvest") || villagerLower.contains("weather as work")
+                || villagerLower.contains("roads"), villager);
+    }
+
+    @Test
     void retrievesTargetedHerbLoreWithoutQuestionShape() {
         String context = NpcKnowledgeBase.relevantContext("belladonna then", "Plains", "day");
         String lower = context.toLowerCase(Locale.ROOT);

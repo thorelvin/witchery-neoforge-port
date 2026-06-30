@@ -1,5 +1,6 @@
 package com.emoniph.witchery.ai;
 
+import net.minecraft.network.chat.Component;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -204,8 +205,9 @@ class NpcPromptBuilderTest {
         assertTrue(system.contains("routing and memory extractor"), prompt.systemPrompt());
         assertTrue(system.contains("route=<route>;topic=<topic>;emotion=<emotion>;remember=<yes/no>"),
                 prompt.systemPrompt());
-        assertTrue(system.contains("routes: small_talk, trade, recipe, rite, lore, memory, social, action, unknown"),
+        assertTrue(system.contains("routes: small_talk, atmosphere, trade, recipe, rite, lore, memory, social, action, unknown"),
                 prompt.systemPrompt());
+        assertTrue(system.contains("use atmosphere for weather"), prompt.systemPrompt());
         assertTrue(system.contains("write memory only for durable facts about dev"), prompt.systemPrompt());
         assertTrue(user.contains("fear nightmares"), prompt.userPrompt());
         assertTrue(prompt.examples().stream().anyMatch(example ->
@@ -213,6 +215,9 @@ class NpcPromptBuilderTest {
                         && example.assistantResponse().contains("whiff_of_magic")));
         assertTrue(prompt.examples().stream().anyMatch(example ->
                 example.assistantResponse().contains("Dev is wary of nightmares.")));
+        assertTrue(prompt.examples().stream().anyMatch(example ->
+                example.assistantResponse().contains("route=atmosphere")
+                        && example.assistantResponse().contains("crows")));
     }
 
     @Test
@@ -223,10 +228,11 @@ class NpcPromptBuilderTest {
         NpcBrainPrompt villager = NpcPromptBuilder.villagerSmoke("Why is everyone worried?", memory);
 
         assertTrue(witch.userPrompt().contains("treat it as current player intent"), witch.userPrompt());
-        assertTrue(witch.userPrompt().contains("small_talk answers the present remark"), witch.userPrompt());
+        assertTrue(witch.userPrompt().contains("atmosphere answers scene or behavior cues"), witch.userPrompt());
         assertTrue(leonard.userPrompt().contains("treat it as current player intent"), leonard.userPrompt());
-        assertTrue(leonard.userPrompt().contains("small_talk answers the present remark"), leonard.userPrompt());
+        assertTrue(leonard.userPrompt().contains("atmosphere answers scene or behavior cues"), leonard.userPrompt());
         assertTrue(villager.userPrompt().contains("treat it as current player intent"), villager.userPrompt());
+        assertTrue(villager.userPrompt().contains("atmosphere answers scene or behavior cues"), villager.userPrompt());
     }
 
     @Test
@@ -243,6 +249,9 @@ class NpcPromptBuilderTest {
         assertTrue(user.contains("vampires 1"), prompt.userPrompt());
         assertTrue(user.contains("apothecary card"), prompt.userPrompt());
         assertTrue(user.contains("herbs"), prompt.userPrompt());
+        assertTrue(user.contains("not a coven witch"), prompt.userPrompt());
+        assertTrue(user.contains("do not claim to brew witchcraft"), prompt.userPrompt());
+        assertTrue(user.contains("sell fumes"), prompt.userPrompt());
     }
 
     @Test
@@ -253,6 +262,52 @@ class NpcPromptBuilderTest {
         assertTrue(system.contains("speak as the villager only"), prompt.systemPrompt());
         assertTrue(system.contains("never claim to be a witch"), prompt.systemPrompt());
         assertTrue(system.contains("shade of leonard"), prompt.systemPrompt());
-        assertTrue(system.contains("local villager"), prompt.systemPrompt());
+        assertTrue(system.contains("peasant local"), prompt.systemPrompt());
+        assertTrue(system.contains("do not claim to brew witchcraft"), prompt.systemPrompt());
+        assertTrue(system.contains("demons are worse than witches"), prompt.systemPrompt());
+    }
+
+    @Test
+    void villagerSmokePromptUsesPeasantFolkloreVoice() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.villagerSmoke("is the road safe?", "");
+        String system = prompt.systemPrompt().toLowerCase();
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(system.contains("superstitious"), prompt.systemPrompt());
+        assertTrue(system.contains("folklore-minded"), prompt.systemPrompt());
+        assertTrue(system.contains("crows"), prompt.systemPrompt());
+        assertTrue(system.contains("threshold"), prompt.systemPrompt());
+        assertTrue(user.contains("peasant folklore"), prompt.userPrompt());
+        assertTrue(user.contains("wary local"), prompt.userPrompt());
+    }
+
+    @Test
+    void villagerSmokePromptIncludesWitchWeatherAndHarvestCards() {
+        NpcBrainPrompt witches = NpcPromptBuilder.villagerSmoke(
+                "Are there good witches as well as bad witches?", "");
+        String witchUser = witches.userPrompt().toLowerCase();
+        assertTrue(witchUser.contains("not all alike") || witchUser.contains("fair trade"),
+                witches.userPrompt());
+        assertTrue(witchUser.contains("others curse") || witchUser.contains("hidden taglocks"),
+                witches.userPrompt());
+
+        NpcBrainPrompt harvest = NpcPromptBuilder.villagerSmoke(
+                "How is the harvest looking if the weather turns rainy?", "");
+        String harvestUser = harvest.userPrompt().toLowerCase();
+        assertTrue(harvestUser.contains("harvest"), harvest.userPrompt());
+        assertTrue(harvestUser.contains("weather"), harvest.userPrompt());
+        assertTrue(harvestUser.contains("bread") || harvestUser.contains("crops"), harvest.userPrompt());
+    }
+
+    @Test
+    void personasDeclareDistinctChatColors() {
+        assertEquals(0xFF55FF, NpcPersonas.COVEN_WITCH.chatColorRgb());
+        assertEquals(0xFF5555, NpcPersonas.LEONARD.chatColorRgb());
+        assertEquals(0xFFAA00, NpcPersonas.VILLAGER.chatColorRgb());
+
+        Component line = NpcBrainService.speechComponent("Marta", NpcPersonas.VILLAGER.chatColorRgb(),
+                "Mind the road.");
+        assertEquals("<Marta> Mind the road.", line.getString());
+        assertEquals(0xFFAA00, line.getStyle().getColor().getValue());
     }
 }

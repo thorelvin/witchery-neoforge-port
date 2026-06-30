@@ -4,6 +4,7 @@ import java.util.Locale;
 
 enum NpcDialogueRoute {
     SMALL_TALK("small_talk"),
+    ATMOSPHERE("atmosphere"),
     TRADE("trade"),
     RECIPE("recipe"),
     RITE("rite"),

@@ -34,6 +34,11 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
     }
 
     @Override
+    public int chatColorRgb() {
+        return 0xFF5555;
+    }
+
+    @Override
     public void beginConversation(LeonardEntity entity, ServerPlayer player) {
         entity.beginPlayerConversation(player);
     }
@@ -205,6 +210,14 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
         if (containsAny(normalized, "nightmares if the player", "if the player is frightened", "targeted fact")) {
             return true;
         }
+        if (containsAny(normalized, "i serve my coven", "serve my coven", "serve the coven",
+                "my coven in whatever way", "i hate witches", "hate witches")) {
+            return true;
+        }
+        if (containsAny(normalized, "things that come after tear of the goddess", "these are things that come after",
+                "altar is crafted from breath of the goddess")) {
+            return true;
+        }
         if ((player.contains("hear me") || player.contains("can you hear"))
                 && (normalized.split(" ").length > 22 || !containsAny(normalized, "hear", "listen", "listening"))) {
             return true;
@@ -220,6 +233,11 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
         }
         if ((player.contains("altar") || player.contains("paid for"))
                 && !containsAny(normalized, "altar", "power", "recharge", "range", "distance", "12000", "16000")) {
+            return true;
+        }
+        if (containsAny(player, "look at my altar", "altar strong", "strong enough")
+                && containsAny(normalized, "breath of the goddess", "water potion", "stone bricks", "rowan logs",
+                "altar blocks", "varied nearby nature")) {
             return true;
         }
         if ((containsAny(player, "strong enough", "is it strong", "altar strong") && player.contains("altar"))
@@ -241,6 +259,14 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
         }
         if (containsAny(player, "coven", "witches")
                 && containsAny(normalized, "aid", "boon", "help", "protect")) {
+            return true;
+        }
+        if (containsAny(player, "serve the coven", "serve my coven", "do you serve")
+                && containsAny(normalized, "serve my coven", "serve the coven", "whatever way is necessary")) {
+            return true;
+        }
+        if (containsAny(player, "hate witches", "do you hate witches")
+                && containsAny(normalized, "i hate witches", "hate witches")) {
             return true;
         }
         if (containsAny(player, "urn", "leonard s urn", "leonards urn")
@@ -347,6 +373,10 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
         }
         if (containsAny(player, "what did i say i fear", "what do i fear", "what am i afraid")
                 && !containsAny(normalized, "lost soul", "lost souls", "fear", "afraid")) {
+            return true;
+        }
+        if (containsAny(player, "what do you remember about me", "what do you remember", "remember about me")
+                && containsAny(normalized, "i fear them", "i fear lost souls", "my only true enemy")) {
             return true;
         }
         if (containsAny(player, "waiting for me to make a mistake", "waiting for a mistake", "make a mistake")

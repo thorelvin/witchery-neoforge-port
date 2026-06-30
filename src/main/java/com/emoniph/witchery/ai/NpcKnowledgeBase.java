@@ -202,6 +202,16 @@ public final class NpcKnowledgeBase {
 
     private static TargetedMatch weightedVariant(String topic, List<TargetedMatch> variants,
                                                  NpcCardRequest request, int pickIndex) {
+        if (pickIndex == 0 && variants.size() > 1) {
+            int bestScore = variants.get(0).score();
+            int secondBest = variants.stream().skip(1)
+                    .mapToInt(TargetedMatch::score)
+                    .max()
+                    .orElse(0);
+            if (bestScore >= secondBest + 8) {
+                return variants.get(0);
+            }
+        }
         int totalWeight = variants.stream()
                 .mapToInt(match -> Math.max(1, match.note().weight()))
                 .sum();

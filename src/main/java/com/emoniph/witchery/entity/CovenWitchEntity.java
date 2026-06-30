@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.ai.NpcBrainService;
+import com.emoniph.witchery.ai.NpcPersonas;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -356,9 +357,8 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         }
 
         beginPlayerConversation(player);
-        String witchName = getDisplayName().getString();
-        Component fallbackGreeting = Component.literal("\u00a79<" + witchName + "> \u00a7r")
-                .append(Component.translatable(GREET_KEYS[random.nextInt(GREET_KEYS.length)]));
+        Component fallbackGreeting = NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, this,
+                Component.translatable(GREET_KEYS[random.nextInt(GREET_KEYS.length)]));
         boolean queued = player instanceof ServerPlayer serverPlayer
                 && NpcBrainService.INSTANCE.requestCovenGreeting(this, serverPlayer, fallbackGreeting);
         if (!queued) {
@@ -441,13 +441,13 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         questRemaining = quest.count();
         questKind = quest.kind().ordinal();
         if (quest.kind() == QuestKind.FETCH) {
-            player.displayClientMessage(Component.literal("§9<" + witchName + "> §r").append(
+            player.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, this,
                     Component.translatable("witchery.witch.say.questoffer",
                             questRemaining, questItem.getDefaultInstance().getHoverName())), false);
         } else {
             spawnFightQuestMonster(serverLevel, player, quest.kind(), witchName);
-            player.displayClientMessage(Component.literal("§9<" + witchName + "> §r")
-                    .append(Component.translatable(quest.descKey())), false);
+            player.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, this,
+                    Component.translatable(quest.descKey())), false);
         }
     }
 
@@ -458,7 +458,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
             case PROGRESS -> {
                 player.getMainHandItem().shrink(1);
                 questRemaining--;
-                player.displayClientMessage(Component.literal("§9<" + witchName + "> §r").append(
+                player.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, this,
                         Component.translatable("witchery.witch.say.questitemsremaining", questRemaining)), false);
             }
             case COMPLETE -> {
@@ -533,8 +533,8 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     }
 
     private void covenSay(Player player, String witchName, String key) {
-        player.displayClientMessage(
-                Component.literal("§9<" + witchName + "> §r").append(Component.translatable(key)), false);
+        player.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, this,
+                Component.translatable(key)), false);
     }
 
     // ── Coven combat — recruited witches defend their leader (source: EntityCovenWitch fights) ──

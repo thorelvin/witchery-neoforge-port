@@ -2,6 +2,7 @@ package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.ai.NpcBrainService;
+import com.emoniph.witchery.ai.NpcPersonas;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
@@ -610,11 +611,10 @@ public class LeonardEntity extends Monster implements RangedAttackMob {
             return InteractionResult.SUCCESS;
         }
         beginPlayerConversation(player);
-        String name = getDisplayName().getString();
-        Component fallback = Component.literal("\u00a79<" + name + "> \u00a7r")
-                .append(Component.literal(hasCombatInterest()
+        Component fallback = NpcBrainService.speechComponent(NpcPersonas.LEONARD, this,
+                hasCombatInterest()
                         ? "Your violence is already speaking."
-                        : "A bargain dragged me here. Speak, if you must."));
+                        : "A bargain dragged me here. Speak, if you must.");
         boolean queued = player instanceof ServerPlayer serverPlayer
                 && NpcBrainService.INSTANCE.requestLeonardGreeting(this, serverPlayer, fallback);
         if (!queued) {

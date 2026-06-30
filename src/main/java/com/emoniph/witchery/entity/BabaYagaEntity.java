@@ -1,6 +1,8 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.ai.NpcBrainService;
+import com.emoniph.witchery.ai.NpcPersonas;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -26,6 +28,8 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.monster.spider.CaveSpider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -392,6 +396,26 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
 
     public void setOwner(String name) { this.ownerName = name; }
     @Nullable public String getOwnerName() { return ownerName; }
+
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (hand != InteractionHand.MAIN_HAND) {
+            return InteractionResult.PASS;
+        }
+        if (level().isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        getNavigation().stop();
+        getLookControl().setLookAt(player, 30.0F, 30.0F);
+        Component fallback = NpcBrainService.speechComponent(NpcPersonas.BABA_YAGA, this,
+                "Speak quickly. My pot is patient, but I am not.");
+        boolean queued = player instanceof ServerPlayer serverPlayer
+                && NpcBrainService.INSTANCE.requestBabaYagaGreeting(this, serverPlayer, fallback);
+        if (!queued) {
+            player.displayClientMessage(fallback, false);
+        }
+        return InteractionResult.CONSUME;
+    }
 
     // ── Spawn init — wield enchanted broom ───────────────────────────────────
 

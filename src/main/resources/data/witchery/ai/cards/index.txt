@@ -16,6 +16,7 @@ poppets_wards.md
 curses_counterplay.md
 demons_bosses.md
 leonard_boss.md
+baba_yaga_boss.md
 leonard_boss_state.md
 rumors_omens.md
 books_progression.md
@@ -48,3 +49,4 @@ persona_demon.md
 persona_hobgoblin.md
 persona_villager.md
 persona_bosses.md
+persona_atmosphere.md

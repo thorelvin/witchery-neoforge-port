@@ -23,7 +23,7 @@ class NpcKnowledgeBaseCardTest {
     private static final int MAX_TARGETED_LINE_LENGTH = 520;
     private static final Pattern METADATA = Pattern.compile("\\[([a-zA-Z0-9_]+):\\s*([^\\]]+)]");
     private static final Set<String> KNOWN_METADATA = Set.of("triggers", "topic", "persona", "weight", "unlock", "tags");
-    private static final Set<String> ACTIVE_PERSONAS = Set.of("any", "coven_witch", "leonard");
+    private static final Set<String> ACTIVE_PERSONAS = Set.of("any", "coven_witch", "leonard", "baba_yaga");
     private static final Set<String> FUTURE_PERSONAS = Set.of("boss", "demon", "flame_imp", "hobgoblin", "villager");
     private static final List<String> STALE_PHRASES = List.of(
             "spends the stored brew",

@@ -99,6 +99,39 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
+    void routedFallbackAnswersAtmosphereForEachPersona() {
+        String witchContext = "Message routing: route=atmosphere; topic=ambient_behavior; reply strategy=answer scene remark.";
+        Optional<String> witch = NpcDialogueFallback.covenChat(
+                "I am looking into your chest", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L, witchContext);
+
+        String babaContext = "Message routing: route=atmosphere; topic=rain; reply strategy=answer scene remark.";
+        Optional<String> baba = NpcDialogueFallback.babaYagaChat(
+                "Rain is getting into my boots.", "Baba Yaga", "Dev",
+                "health 500/500", "main hand Hand Bow", babaContext);
+
+        String leonardContext = "Message routing: route=atmosphere; topic=shadow; reply strategy=answer scene remark.";
+        Optional<String> leonard = NpcDialogueFallback.leonardChat(
+                "This silence is heavy.", "Shade of Leonard", "Dev",
+                "neutral", "altar within reach: power 12000 of 16000", "two of six sworn", "main hand Arthana",
+                leonardContext);
+
+        String villageContext = "Message routing: route=atmosphere; topic=rain; reply strategy=answer scene remark.";
+        String info = "nearby villagers 4; iron golems 0; village guards 0; beds 3; doors 2; walls/fences 0; raid none; threats: vampires 0, werewolves 0, witches 0, raiders 0";
+        Optional<String> villager = NpcDialogueFallback.villagerChat(
+                "The rain has drowned the road.", "Marta", "Dev", "farmer", info, villageContext);
+
+        assertTrue(witch.isPresent());
+        assertTrue(witch.get().contains("chests learn names"), witch.get());
+        assertTrue(baba.isPresent());
+        assertTrue(baba.get().contains("Swamps breathe"), baba.get());
+        assertTrue(leonard.isPresent());
+        assertTrue(leonard.get().contains("Silence is not empty"), leonard.get());
+        assertTrue(villager.isPresent());
+        assertTrue(villager.get().contains("road") || villager.get().contains("Weather")
+                || villager.get().contains("Rain") || villager.get().contains("boots"), villager.get());
+    }
+
+    @Test
     void leonardFallbackUsesMessageAnalysisTopicAndTone() {
         String recipeContext = "Message routing: route=recipe; topic=leonard_summoning; reply strategy=answer exact order.";
         Optional<String> recipe = NpcDialogueFallback.leonardChat(
@@ -1373,6 +1406,16 @@ class NpcDialogueFallbackTest {
                 "what do you trade?", "Marta", "Dev", "apothecary", info, "");
         Optional<String> vampire = NpcDialogueFallback.villagerChat(
                 "any vampires nearby?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> weather = NpcDialogueFallback.villagerChat(
+                "How is the weather treating the village?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> harvest = NpcDialogueFallback.villagerChat(
+                "How is the harvest looking?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> witches = NpcDialogueFallback.villagerChat(
+                "Are there good witches as well as bad witches?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> respect = NpcDialogueFallback.villagerChat(
+                "Why would villagers respect a witch?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> demons = NpcDialogueFallback.villagerChat(
+                "What do villagers think about demons?", "Marta", "Dev", "apothecary", info, "");
 
         assertTrue(golem.isPresent());
         assertTrue(golem.get().contains("one iron golem"), golem.get());
@@ -1383,6 +1426,19 @@ class NpcDialogueFallbackTest {
         assertTrue(trade.get().contains("herbs") || trade.get().contains("jars"), trade.get());
         assertTrue(vampire.isPresent());
         assertTrue(vampire.get().contains("one vampire"), vampire.get());
+        assertTrue(weather.isPresent());
+        assertTrue(weather.get().contains("Weather") || weather.get().contains("weather")
+                || weather.get().contains("Rain"), weather.get());
+        assertTrue(harvest.isPresent());
+        assertTrue(harvest.get().contains("Harvest") || harvest.get().contains("bread")
+                || harvest.get().contains("village brave"), harvest.get());
+        assertTrue(witches.isPresent());
+        assertTrue(witches.get().contains("good witches") || witches.get().contains("bad"), witches.get());
+        assertTrue(respect.isPresent());
+        assertTrue(respect.get().contains("earn respect") || respect.get().contains("debt"), respect.get());
+        assertTrue(demons.isPresent());
+        assertTrue(demons.get().contains("Worse than witches") || demons.get().contains("debt has teeth"),
+                demons.get());
     }
 
     @Test
@@ -1406,6 +1462,8 @@ class NpcDialogueFallbackTest {
                 "Do you know Whiff of Magic?", "Marta", "Dev", "apothecary", info, "");
         Optional<String> teaching = NpcDialogueFallback.villagerChat(
                 "Can you teach me witchcraft?", "Marta", "Dev", "apothecary", info, "");
+        Optional<String> apothecary = NpcDialogueFallback.villagerChat(
+                "Are apothecaries coven witches?", "Marta", "Dev", "apothecary", info, "");
         Optional<String> bell = NpcDialogueFallback.villagerChat(
                 "If I ring the bell, what happens?", "Marta", "Dev", "apothecary", info, "");
         Optional<String> sleep = NpcDialogueFallback.villagerChat(
@@ -1414,9 +1472,13 @@ class NpcDialogueFallbackTest {
                 "Remember that I am afraid of vampires.", "Marta", "Dev", "apothecary", info, "");
 
         assertTrue(whiff.isPresent());
-        assertTrue(whiff.get().contains("apothecary stock"), whiff.get());
+        assertTrue(whiff.get().contains("over counters") || whiff.get().contains("Primer"), whiff.get());
+        assertTrue(!whiff.get().contains("I sell fumes"), whiff.get());
         assertTrue(teaching.isPresent());
         assertTrue(teaching.get().contains("Primer") || teaching.get().contains("proper witch"), teaching.get());
+        assertTrue(apothecary.isPresent());
+        assertTrue(apothecary.get().contains("not coven witches"), apothecary.get());
+        assertTrue(apothecary.get().contains("herbs and remedies"), apothecary.get());
         assertTrue(bell.isPresent());
         assertTrue(bell.get().contains("villagers run for doors"), bell.get());
         assertTrue(sleep.isPresent());

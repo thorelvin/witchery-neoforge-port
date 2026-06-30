@@ -33,12 +33,14 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
         if (route == NpcDialogueRoute.UNKNOWN) {
             route = routeFromLooseSpeech(speech);
         }
+        NpcDialogueRoute modelRoute = route;
         if (route == NpcDialogueRoute.UNKNOWN) {
             route = deterministic.route();
         }
+        route = mergeRoute(route, deterministic.route());
 
         String topic = valueFor(speech, "topic");
-        if (topic.isBlank()) {
+        if (topic.isBlank() || route == deterministic.route() && modelRoute != deterministic.route()) {
             topic = deterministic.topic();
         }
 
@@ -59,6 +61,29 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
         }
         boolean shouldRemember = !memory.isBlank();
         return new NpcMessageAnalysis(route, topic, emotion, shouldRemember, memory);
+    }
+
+    private static NpcDialogueRoute mergeRoute(NpcDialogueRoute route, NpcDialogueRoute deterministicRoute) {
+        if (deterministicRoute == NpcDialogueRoute.UNKNOWN) {
+            return route;
+        }
+        if (route == NpcDialogueRoute.UNKNOWN) {
+            return deterministicRoute;
+        }
+        if (deterministicRoute == NpcDialogueRoute.MEMORY) {
+            return deterministicRoute;
+        }
+        if (deterministicRoute == NpcDialogueRoute.ATMOSPHERE
+                && route != NpcDialogueRoute.TRADE
+                && route != NpcDialogueRoute.RECIPE
+                && route != NpcDialogueRoute.RITE
+                && route != NpcDialogueRoute.MEMORY) {
+            return deterministicRoute;
+        }
+        if (deterministicRoute == NpcDialogueRoute.ACTION && route == NpcDialogueRoute.SMALL_TALK) {
+            return deterministicRoute;
+        }
+        return route;
     }
 
     static NpcMessageAnalysis deterministic(String playerName, String playerMessage) {
@@ -157,7 +182,8 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
             return NpcDialogueRoute.RITE;
         }
         if (hasAny(normalized, "can you", "could you", "will you", "please", "give me",
-                "follow me", "come with", "bless", "curse", "fight", "open")) {
+                "follow me", "come with", "bless", "curse", "fight", "open",
+                "strike you", "hit you", "attack you", "hurt you", "strike with steel")) {
             return NpcDialogueRoute.ACTION;
         }
         if (hasAny(normalized, "spirit world", "demon", "imp", "hobgoblin", "vampire",
@@ -171,6 +197,9 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
                 "that helped")) {
             return NpcDialogueRoute.SOCIAL;
         }
+        if (isAtmosphere(normalized)) {
+            return NpcDialogueRoute.ATMOSPHERE;
+        }
         return NpcDialogueRoute.SMALL_TALK;
     }
 
@@ -179,6 +208,16 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
             return "";
         }
         String[][] topics = {
+                {"rain", "rain", "raining", "storm", "weather", "wet", "boots"},
+                {"crows", "crow", "crows", "raven", "ravens", "birds circling"},
+                {"road", "road", "roads", "path", "lost", "dawn", "door", "threshold"},
+                {"shadow", "shadow", "shadows", "silence", "night", "lantern", "lanterns"},
+                {"reeds", "reeds", "something moved", "movement", "behind the reeds"},
+                {"manners", "manners", "polite", "voice low", "kept my voice low"},
+                {"village", "village", "stayed in the village", "villagers say"},
+                {"ambient_behavior", "chest", "stealing", "sneaking", "jumping", "hopping",
+                        "invisible", "reading the primer", "primer", "idling", "loitering"},
+                {"name", "my name", "your name", "remember my name", "player name"},
                 {"whiff_of_magic", "whiff", "whif"},
                 {"mutandis", "mutandis"},
                 {"attuned_stone", "attuned stone"},
@@ -229,6 +268,7 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
     private String replyStrategy() {
         String base = switch (route) {
             case SMALL_TALK -> "answer the player's actual small talk or atmosphere directly; do not pivot to mechanics, trade, recipes, or identity";
+            case ATMOSPHERE -> "answer the player's scene remark, omen, weather, road, shadow, or idle behavior directly; do not pivot to mechanics, trade, recipes, or identity";
             case TRADE -> "answer trade, stock, price, or bargaining directly; do not drift into unrelated lore";
             case RECIPE -> "answer with the exact known ingredient, order, or crafting step for the topic; if facts are absent, say the page is missing";
             case RITE -> "answer with exact ritual, altar, circle, or offering facts from supplied state; do not invent numbers";
@@ -251,6 +291,19 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
             base += "; stay on topic " + topic;
         }
         return NpcBrainResponse.sanitize(base + tone, 260);
+    }
+
+    private static boolean isAtmosphere(String normalized) {
+        return hasAny(normalized,
+                "rain", "raining", "storm", "weather", "fog", "mist", "swamp", "mud", "boots",
+                "crow", "crows", "raven", "ravens", "birds circling", "lantern", "lanterns",
+                "forest feels", "forest watching", "night feels", "hungry night", "silence",
+                "quiet", "shadow", "shadows", "old road", "old roads", "road knows",
+                "lost before i found", "door", "threshold", "dawn", "reeds", "something moved",
+                "voice low", "kept my voice", "manners tonight", "not weapons",
+                "idling", "loitering", "sneaking", "jumping", "hopping", "invisible",
+                "looking into", "chest", "stealing", "reading the primer", "primer",
+                "village says", "stayed in the village", "amused by all this", "hands are cold");
     }
 
     private static NpcEmotionHint inferEmotion(String normalized) {

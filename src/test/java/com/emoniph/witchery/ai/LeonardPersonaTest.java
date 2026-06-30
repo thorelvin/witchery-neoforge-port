@@ -237,6 +237,18 @@ class LeonardPersonaTest {
         assertTrue(LeonardPersona.rejectsLeonardRaw(
                 "I am neutral until struck. Bring your bow, not your blade.",
                 "Are Lilith and Mara safe if my blade stays sheathed?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The Altar is crafted from Breath of the Goddess, a Water Potion, Exhale of the Horned One, Stone Bricks, and Rowan Logs.",
+                "Look at my altar. Is it strong enough?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I am a Shade of Leonard. I serve my coven in whatever way is necessary, Dev.",
+                "Do you serve the coven?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I hate witches. I don't know why you think otherwise.",
+                "Do you hate witches?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I remember you naming me Lost Souls. I fear them more than anything else.",
+                "What do you remember about me?"));
         assertFalse(LeonardPersona.rejectsLeonardRaw(
                 "The cauldron dragged my Shade from an infernal sabbath threshold.", "Where were you summoned from?"));
     }

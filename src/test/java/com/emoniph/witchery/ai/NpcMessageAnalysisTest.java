@@ -58,6 +58,17 @@ class NpcMessageAnalysisTest {
     }
 
     @Test
+    void deterministicMemoryRouteBeatsWeakModelRoute() {
+        NpcMessageAnalysis analysis = NpcMessageAnalysis.fromResponse(
+                new NpcBrainResponse("route=small_talk;topic=name;emotion=none;remember=no",
+                        NpcIntent.NONE, ""),
+                "Dev", "Do you remember my name?");
+
+        assertEquals(NpcDialogueRoute.MEMORY, analysis.route());
+        assertEquals("name", analysis.topic());
+    }
+
+    @Test
     void deterministicMemoryCapturesNervousAroundFact() {
         NpcMessageAnalysis analysis = NpcMessageAnalysis.deterministic("Dev",
                 "Remember that I get nervous around deep water.");
@@ -82,10 +93,13 @@ class NpcMessageAnalysisTest {
     @Test
     void deterministicRouteHandlesActionsWithoutCallingThemInsults() {
         NpcMessageAnalysis analysis = NpcMessageAnalysis.deterministic("Dev", "Can you curse my neighbor?");
+        NpcMessageAnalysis strike = NpcMessageAnalysis.deterministic("Dev",
+                "What happens if I strike you with steel?");
 
         assertEquals(NpcDialogueRoute.ACTION, analysis.route());
         assertEquals(NpcEmotionHint.ANGER, analysis.emotion());
         assertFalse(analysis.hasMemory());
+        assertEquals(NpcDialogueRoute.ACTION, strike.route());
     }
 
     @Test
@@ -135,5 +149,31 @@ class NpcMessageAnalysisTest {
         assertEquals(NpcDialogueRoute.SMALL_TALK, analysis.route());
         assertTrue(analysis.contextLine().contains("small talk"), analysis.contextLine());
         assertTrue(analysis.contextLine().contains("do not pivot to mechanics"), analysis.contextLine());
+    }
+
+    @Test
+    void deterministicRouteRecognizesAtmosphere() {
+        NpcMessageAnalysis rain = NpcMessageAnalysis.deterministic("Dev",
+                "The night feels hungry and the road is wet.");
+        NpcMessageAnalysis ambient = NpcMessageAnalysis.deterministic("Dev",
+                "I am reading the Primer beside your chest.");
+
+        assertEquals(NpcDialogueRoute.ATMOSPHERE, rain.route());
+        assertEquals("rain", rain.topic());
+        assertTrue(rain.contextLine().contains("route=atmosphere"), rain.contextLine());
+        assertTrue(rain.contextLine().contains("scene remark"), rain.contextLine());
+        assertEquals(NpcDialogueRoute.ATMOSPHERE, ambient.route());
+        assertEquals("ambient_behavior", ambient.topic());
+    }
+
+    @Test
+    void deterministicAtmosphereRouteBeatsWeakModelRoute() {
+        NpcMessageAnalysis analysis = NpcMessageAnalysis.fromResponse(
+                new NpcBrainResponse("route=small_talk;topic=question;emotion=none;remember=no",
+                        NpcIntent.NONE, ""),
+                "Dev", "The silence here feels hungry.");
+
+        assertEquals(NpcDialogueRoute.ATMOSPHERE, analysis.route());
+        assertEquals("shadow", analysis.topic());
     }
 }

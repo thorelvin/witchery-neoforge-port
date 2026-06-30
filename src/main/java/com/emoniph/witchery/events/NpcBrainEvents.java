@@ -2,7 +2,9 @@ package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.ai.NpcBrainService;
+import com.emoniph.witchery.ai.NpcPersonas;
 import com.emoniph.witchery.blocks.LeechChestBlock;
+import com.emoniph.witchery.entity.BabaYagaEntity;
 import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.init.WitcheryItems;
@@ -41,6 +43,8 @@ public final class NpcBrainEvents {
     private static final double CASUAL_CHAT_RANGE = 6.0;
     private static final double LEONARD_CHAT_RANGE = 12.0;
     private static final double LEONARD_CASUAL_CHAT_RANGE = 8.0;
+    private static final double BABA_YAGA_CHAT_RANGE = 12.0;
+    private static final double BABA_YAGA_CASUAL_CHAT_RANGE = 8.0;
     private static final double VILLAGER_CHAT_RANGE = 10.0;
     private static final double VILLAGER_CASUAL_CHAT_RANGE = 5.0;
     private static final double LEONARD_GAZE_RANGE = 7.0;
@@ -73,9 +77,9 @@ public final class NpcBrainEvents {
         if (target.kind() == ChatPersona.COVEN_WITCH && target.entity() instanceof CovenWitchEntity witch
                 && isStayRequest(message)) {
             witch.beginPlayerConversation(player);
-            String witchName = witch.hasCustomName() ? witch.getCustomName().getString() : "Witch";
             String speech = "I'll stay a moment, " + player.getName().getString() + ".";
-            player.displayClientMessage(Component.literal("\u00a79<" + witchName + "> \u00a7r" + speech), false);
+            player.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, witch, speech),
+                    false);
             NpcBrainService.INSTANCE.rememberCovenExchange(witch, player, message, speech);
             return;
         }
@@ -167,9 +171,8 @@ public final class NpcBrainEvents {
             return;
         }
         LEONARD_GAZE_COOLDOWNS.put(key, now + LEONARD_GAZE_COOLDOWN_TICKS);
-        String name = leonard.getDisplayName().getString();
-        Component fallback = Component.literal("\u00a79<" + name + "> \u00a7r")
-                .append(Component.literal("You look at the bargain, and the bargain looks back."));
+        Component fallback = NpcBrainService.speechComponent(NpcPersonas.LEONARD, leonard,
+                "You look at the bargain, and the bargain looks back.");
         NpcBrainService.INSTANCE.requestLeonardGaze(leonard, player, fallback);
     }
 
@@ -245,6 +248,7 @@ public final class NpcBrainEvents {
         List<ChatTarget> candidates = new ArrayList<>();
         addCovenChatCandidates(level, player, message, candidates);
         addLeonardChatCandidates(level, player, message, candidates);
+        addBabaYagaChatCandidates(level, player, message, candidates);
         addVillagerChatCandidates(level, player, message, candidates);
         return candidates.stream()
                 .min(Comparator.comparingDouble(ChatTarget::distanceSqr))
@@ -259,7 +263,8 @@ public final class NpcBrainEvents {
             return;
         }
         witches.sort(Comparator.comparingDouble(player::distanceToSqr));
-        boolean otherPersonaNamed = explicitlyNamesLeonard(message) || explicitlyNamesVillager(message);
+        boolean otherPersonaNamed = explicitlyNamesLeonard(message) || explicitlyNamesBabaYaga(message)
+                || explicitlyNamesVillager(message);
         for (CovenWitchEntity witch : witches) {
             if (isNamedAddress(witch, message)) {
                 candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, witch, player.distanceToSqr(witch)));
@@ -288,7 +293,8 @@ public final class NpcBrainEvents {
             return;
         }
         shades.sort(Comparator.comparingDouble(player::distanceToSqr));
-        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesVillager(message);
+        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesBabaYaga(message)
+                || explicitlyNamesVillager(message);
         for (LeonardEntity shade : shades) {
             if (isNamedLeonardAddress(shade, message)) {
                 candidates.add(new ChatTarget(ChatPersona.LEONARD, shade, player.distanceToSqr(shade)));
@@ -306,6 +312,33 @@ public final class NpcBrainEvents {
         }
     }
 
+    private static void addBabaYagaChatCandidates(ServerLevel level, ServerPlayer player, String message,
+                                                  List<ChatTarget> candidates) {
+        List<BabaYagaEntity> crones = level.getEntitiesOfClass(
+                BabaYagaEntity.class, player.getBoundingBox().inflate(BABA_YAGA_CHAT_RANGE, 6.0, BABA_YAGA_CHAT_RANGE));
+        if (crones.isEmpty()) {
+            return;
+        }
+        crones.sort(Comparator.comparingDouble(player::distanceToSqr));
+        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesLeonard(message)
+                || explicitlyNamesVillager(message);
+        for (BabaYagaEntity crone : crones) {
+            if (isNamedBabaYagaAddress(crone, message)) {
+                candidates.add(new ChatTarget(ChatPersona.BABA_YAGA, crone, player.distanceToSqr(crone)));
+            }
+        }
+        if (otherPersonaNamed) {
+            return;
+        }
+        BabaYagaEntity nearest = crones.getFirst();
+        double distance = player.distanceToSqr(nearest);
+        if (distance <= BABA_YAGA_CASUAL_CHAT_RANGE * BABA_YAGA_CASUAL_CHAT_RANGE
+                && isLookingAt(player, nearest)
+                && isConversational(message)) {
+            candidates.add(new ChatTarget(ChatPersona.BABA_YAGA, nearest, distance));
+        }
+    }
+
     private static void addVillagerChatCandidates(ServerLevel level, ServerPlayer player, String message,
                                                   List<ChatTarget> candidates) {
         List<Villager> villagers = level.getEntitiesOfClass(
@@ -314,7 +347,8 @@ public final class NpcBrainEvents {
             return;
         }
         villagers.sort(Comparator.comparingDouble(player::distanceToSqr));
-        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesLeonard(message);
+        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesLeonard(message)
+                || explicitlyNamesBabaYaga(message);
         for (Villager villager : villagers) {
             if (isNamedVillagerAddress(villager, message)) {
                 candidates.add(new ChatTarget(ChatPersona.VILLAGER, villager, player.distanceToSqr(villager)));
@@ -342,6 +376,8 @@ public final class NpcBrainEvents {
                     && NpcBrainService.INSTANCE.requestCovenChat(witch, player, message);
             case LEONARD -> target.entity() instanceof LeonardEntity leonard
                     && NpcBrainService.INSTANCE.requestLeonardChat(leonard, player, message);
+            case BABA_YAGA -> target.entity() instanceof BabaYagaEntity baba
+                    && NpcBrainService.INSTANCE.requestBabaYagaChat(baba, player, message);
             case VILLAGER -> target.entity() instanceof Villager villager
                     && NpcBrainService.INSTANCE.requestVillagerChat(villager, player, message);
         };
@@ -357,6 +393,12 @@ public final class NpcBrainEvents {
             case LEONARD -> {
                 if (target.entity() instanceof LeonardEntity leonard) {
                     leonard.nudgePlayerAttention(player);
+                }
+            }
+            case BABA_YAGA -> {
+                if (target.entity() instanceof BabaYagaEntity baba) {
+                    baba.getNavigation().stop();
+                    baba.getLookControl().setLookAt(player, 30.0F, 30.0F);
                 }
             }
             case VILLAGER -> {
@@ -417,6 +459,25 @@ public final class NpcBrainEvents {
         return first.length() >= 3 && normalized.contains(first);
     }
 
+    private static boolean isNamedBabaYagaAddress(BabaYagaEntity baba, String message) {
+        String normalized = normalize(message);
+        if (normalized.contains("baba yaga") || normalized.contains("baba") || normalized.contains("yaga")) {
+            return true;
+        }
+        String name = baba.hasCustomName() && baba.getCustomName() != null
+                ? baba.getCustomName().getString()
+                : "";
+        if (name.isBlank()) {
+            return false;
+        }
+        String normalizedName = normalize(name);
+        if (normalized.contains(normalizedName)) {
+            return true;
+        }
+        String first = normalizedName.split("\\s+")[0];
+        return first.length() >= 3 && normalized.contains(first);
+    }
+
     private static boolean isNamedVillagerAddress(Villager villager, String message) {
         String normalized = normalize(message);
         if (normalized.contains("villager")) {
@@ -448,6 +509,11 @@ public final class NpcBrainEvents {
         String normalized = normalize(message);
         return normalized.contains("leonard") || normalized.contains("shade of leonard")
                 || normalized.contains("the shade");
+    }
+
+    private static boolean explicitlyNamesBabaYaga(String message) {
+        String normalized = normalize(message);
+        return normalized.contains("baba yaga") || normalized.contains("baba") || normalized.contains("yaga");
     }
 
     private static boolean explicitlyNamesVillager(String message) {
@@ -562,8 +628,7 @@ public final class NpcBrainEvents {
     }
 
     private static Component speechComponent(CovenWitchEntity witch, String speech) {
-        String witchName = witch.hasCustomName() ? witch.getCustomName().getString() : witch.getDisplayName().getString();
-        return Component.literal("\u00a79<" + witchName + "> \u00a7r").append(Component.literal(speech));
+        return NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, witch, speech);
     }
 
     private static void applyWitchDarknessCurse(ServerLevel level, ServerPlayer player) {
@@ -579,6 +644,7 @@ public final class NpcBrainEvents {
     private enum ChatPersona {
         COVEN_WITCH,
         LEONARD,
+        BABA_YAGA,
         VILLAGER
     }
 

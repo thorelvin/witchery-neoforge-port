@@ -17,6 +17,10 @@ public interface NpcPersona<E extends LivingEntity> {
 
     Class<E> entityClass();
 
+    default int chatColorRgb() {
+        return 0xFFFFFF;
+    }
+
     default String displayName(E entity) {
         Component name = entity.getDisplayName();
         String text = name == null ? "" : name.getString();

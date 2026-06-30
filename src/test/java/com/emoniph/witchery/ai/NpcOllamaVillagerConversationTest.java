@@ -33,8 +33,11 @@ class NpcOllamaVillagerConversationTest {
             """;
     private static final List<String> QUESTIONS = List.of(
             "Hello there, do you live in this village?",
+            "How is the weather treating the village today?",
             "What do you do here?",
             "What do you sell as an apothecary?",
+            "How is the harvest looking this season?",
+            "Does rain help the crops or just make trouble?",
             "How big is this village?",
             "Do we have an iron golem?",
             "Are the walls good enough?",
@@ -43,19 +46,46 @@ class NpcOllamaVillagerConversationTest {
             "I saw someone pale near the road. Any vampires nearby?",
             "What about werewolves?",
             "Are witches near the village?",
+            "Are there good witches as well as bad witches?",
             "Should I trust the witch at the edge of town?",
+            "What signs tell you a witch is bad news?",
+            "Can a witch help a village harvest?",
             "I want to buy something for travel.",
             "Do you know Whiff of Magic?",
             "Can you teach me witchcraft?",
+            "Should I read a Primer or leave that to witches?",
+            "What should we do if the weather turns stormy?",
             "Remember that I am afraid of vampires.",
             "What did I say I fear?",
+            "I found hair in my brush missing. Should I worry?",
+            "How do I keep a taglock safe?",
             "If I ring the bell, what happens?",
             "Should I sleep here tonight?",
+            "Do witches curse crops, or is that just gossip?",
+            "Who watches the roads after sunset?",
+            "Are the food stores enough if monsters keep us indoors?",
+            "What omens come before a bad harvest?",
+            "What does a clear sky mean to folk here?",
+            "What would a farmer say about these fields?",
+            "What do villagers think of coven witches?",
+            "If a witch heals someone, does that make her good?",
+            "If a witch asks for my hair, what should I do?",
+            "How do I avoid offending the witch without trusting her too much?",
+            "The witch at the edge sells herbs. Is that a good sign?",
+            "Are apothecaries coven witches?",
+            "What should I do if a demon comes down the road?",
+            "Is garlic worth carrying, or is that just old talk?",
+            "What should I do before dusk?",
+            "Tell me a village rumor.",
+            "Do crows really mean anything to you?",
+            "If the milk turns sour overnight, what do folk blame first?",
+            "Is hunger more dangerous than monsters?",
+            "What should I bring on the road besides a sword?",
             "Goodbye, Marta. Keep your doors shut."
     );
 
     @Test
-    void evaCanHoldVillagerConversationTwentyTurns() throws Exception {
+    void evaCanHoldVillagerConversationFiftyTurns() throws Exception {
         Assumptions.assumeTrue("1".equals(System.getenv("WITCHERY_LLM_VILLAGER_CONVERSATION")),
                 "Set WITCHERY_LLM_VILLAGER_CONVERSATION=1 to run the local Ollama villager conversation test.");
 
@@ -70,7 +100,7 @@ class NpcOllamaVillagerConversationTest {
             List<Row> rows = runConversation(provider);
             String report = buildReport(model, rows);
             Path reportPath = Path.of(envOrDefault("WITCHERY_LLM_VILLAGER_CONVERSATION_REPORT",
-                    "build/reports/witchery-ai/villager-conversation-20.md"));
+                    "build/reports/witchery-ai/villager-conversation-50.md"));
             Files.createDirectories(reportPath.toAbsolutePath().getParent());
             Files.writeString(reportPath, report, StandardCharsets.UTF_8);
             System.out.println(report);

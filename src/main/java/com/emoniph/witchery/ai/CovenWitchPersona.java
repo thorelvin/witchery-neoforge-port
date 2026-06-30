@@ -45,6 +45,11 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
     }
 
     @Override
+    public int chatColorRgb() {
+        return 0xFF55FF;
+    }
+
+    @Override
     public void beginConversation(CovenWitchEntity entity, ServerPlayer player) {
         entity.beginPlayerConversation(player);
     }
