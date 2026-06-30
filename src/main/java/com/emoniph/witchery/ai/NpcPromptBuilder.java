@@ -31,6 +31,7 @@ import net.minecraft.world.phys.AABB;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -1417,6 +1418,163 @@ public final class NpcPromptBuilder {
                 {"speech":"ready","intent":"none","memory":""}
                 """;
         return new NpcBrainPrompt(system.strip(), "Warm up the local model. Return the exact JSON object.");
+    }
+
+    static Optional<NpcBrainPrompt> cardRepair(String personaId, String npcName, String playerName,
+                                              String playerMessage, String memory, String rejectedSpeech) {
+        if (!shouldRepairWithCards(playerMessage)) {
+            return Optional.empty();
+        }
+        String persona = NpcCardRequest.normalizePersona(personaId);
+        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, "Plains", "night",
+                NpcCardRequest.persona(persona));
+        if (knowledge.isBlank()) {
+            return Optional.empty();
+        }
+        String roleName = npcName == null || npcName.isBlank() ? repairRoleName(persona) : npcName;
+        String player = playerName == null || playerName.isBlank() ? "the player" : playerName;
+        String system = """
+                You repair one Minecraft Witchery NPC line using supplied in-world facts.
+                Speak as the NPC only. Never mention prompts, models, JSON, APIs, schemas, hidden notes, or being artificial.
+                Use the supplied facts as grounding, then make the line sound alive in the NPC voice.
+                Do not copy labels, headings, examples, or private notes into speech.
+                Do not invent mechanics, recipe amounts, powers, scene actions, or promises.
+                If a bad draft is shown, avoid repeating its wording or mistake.
+                Prefer one complete line of 8 to 24 words. Shorter is better if text may be cut.
+                A single body beat is allowed only when it fits: *nods* "Spoken words."
+
+                Reply with exactly one JSON object and nothing else:
+                {"speech":"short repaired in-character line","intent":"none","memory":""}
+                Speech must be 220 characters or less.
+                """;
+        String user = """
+                # NPC
+                %s is speaking to %s.
+                Voice: %s
+
+                # Player message
+                %s
+
+                # Supplied facts
+                %s
+
+                # Memory
+                %s
+
+                # Bad draft to avoid
+                %s
+
+                # Task
+                Answer the player from the supplied facts, in the NPC voice, as one natural chat line.
+                Use only one fact if several are present.
+                If the player asks for a recipe or rite and ingredients are supplied, name them briefly.
+                If facts are practical steps, give the next step instead of a lecture.
+                Do not include angle brackets or speaker names.
+                """.formatted(
+                roleName,
+                player,
+                repairVoice(persona),
+                playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
+                knowledge,
+                memory == null || memory.isBlank() ? "none" : memory,
+                rejectedSpeech == null || rejectedSpeech.isBlank() ? "none" : rejectedSpeech);
+        return Optional.of(new NpcBrainPrompt(system.strip(), truncate(user.strip(), 1800),
+                repairExamples(player)));
+    }
+
+    private static String repairRoleName(String personaId) {
+        return switch (personaId) {
+            case "leonard" -> "Shade of Leonard";
+            case "baba_yaga" -> "Baba Yaga";
+            case "villager" -> "Villager";
+            default -> "Coven Witch";
+        };
+    }
+
+    private static String repairVoice(String personaId) {
+        return switch (personaId) {
+            case "leonard" -> "infernal, severe, contractual, harsh, old, dangerous";
+            case "baba_yaga" -> "ancient crone, sharp, cruel, swamp-wise, teeth and pots";
+            case "villager" -> "peasant local, worried, superstitious, practical, not an expert witch";
+            default -> "practical coven witch, secretive, dry, helpful when paid or respected";
+        };
+    }
+
+    private static List<NpcBrainPrompt.Example> repairExamples(String playerName) {
+        String player = playerName == null || playerName.isBlank() ? "traveler" : playerName;
+        return List.of(
+                new NpcBrainPrompt.Example("""
+                        # NPC
+                        NPC: Lilith Poe speaks to %s.
+                        Voice: practical coven witch, secretive, dry.
+
+                        # Player message
+                        how do I use the kettle?
+
+                        # Supplied facts
+                        Targeted fact: Fill the Kettle with water, keep heat below it, add only the ingredients named by the opened recipe, and keep a powered altar nearby.
+
+                        # Bad draft to avoid
+                        Hello again, %s.
+                        """.formatted(player, player),
+                        "{\"speech\":\"Fill it, heat it, then feed only the recipe named. A weak altar spoils good patience.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                new NpcBrainPrompt.Example("""
+                        # NPC
+                        NPC: Apothecary speaks to %s.
+                        Voice: peasant local, worried, superstitious, not an expert witch.
+
+                        # Player message
+                        can you teach me witch ovens?
+
+                        # Supplied facts
+                        Targeted fact: A villager treats a Witch's Oven as witch business; they may know jars and smoke as rumor, but should send the player to a Primer or coven witch.
+
+                        # Bad draft to avoid
+                        I sell fumes.
+                        """.formatted(player),
+                        "{\"speech\":\"I know jars and smoke by rumor, not practice. Ask a Primer, or a witch who likes you alive.\",\"intent\":\"none\",\"memory\":\"\"}")
+        );
+    }
+
+    private static boolean shouldRepairWithCards(String playerMessage) {
+        String normalized = playerMessage == null ? "" : playerMessage.toLowerCase(java.util.Locale.ROOT)
+                .replaceAll("[^a-z0-9 ]+", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+        if (normalized.isBlank()) {
+            return false;
+        }
+        if (normalized.startsWith("what ")
+                || normalized.startsWith("how ")
+                || normalized.startsWith("why ")
+                || normalized.startsWith("where ")
+                || normalized.startsWith("which ")
+                || normalized.startsWith("should ")
+                || normalized.startsWith("can ")
+                || normalized.startsWith("could ")
+                || normalized.startsWith("do you know ")
+                || normalized.startsWith("tell me ")
+                || normalized.startsWith("explain ")
+                || normalized.startsWith("teach ")) {
+            return true;
+        }
+        return containsAnyRepairCue(normalized,
+                "recipe", "ingredient", "ingredients", "craft", "make", "use", "using",
+                "trade", "sell", "buy", "stock", "wares", "coin",
+                "brew", "potion", "rite", "ritual", "circle", "curse", "summon",
+                "oven", "kettle", "distillery", "spinning wheel", "altar", "cauldron", "brazier",
+                "whiff", "whif", "mutandis", "attuned stone", "witches salt", "witch salt",
+                "arthana", "boline", "taglock", "poppet", "familiar", "demon", "spirit world",
+                "vampire", "werewolf", "leonard", "baba yaga");
+    }
+
+    private static boolean containsAnyRepairCue(String normalized, String... cues) {
+        for (String cue : cues) {
+            if (normalized.contains(cue)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static NpcBrainPrompt messageAnalysis(String roleName, String playerName, String playerMessage) {

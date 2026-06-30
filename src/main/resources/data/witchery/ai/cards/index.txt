@@ -8,6 +8,7 @@ machines.md
 rites.md
 primer_path.md
 teaching_primer.md
+practical_teaching.md
 covens_familiars.md
 creaking_familiar.md
 spirit_world.md

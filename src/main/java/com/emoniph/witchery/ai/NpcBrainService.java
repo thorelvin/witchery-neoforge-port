@@ -37,6 +37,8 @@ public final class NpcBrainService {
     private static final int SOCIAL_INTENT_TIMEOUT_MILLIS = 2500;
     private static final int MESSAGE_ANALYSIS_MAX_TOKENS = 96;
     private static final int MESSAGE_ANALYSIS_TIMEOUT_MILLIS = 2200;
+    private static final int REPAIR_MAX_TOKENS = 96;
+    private static final int REPAIR_TIMEOUT_MILLIS = 2600;
     private static final int SPEECH_TEXT_COLOR = 0xFFFFFF;
 
     private final Object executorLock = new Object();
@@ -548,6 +550,10 @@ public final class NpcBrainService {
                 return;
             }
             rejected.incrementAndGet();
+            if (!showFallback && requestPersonaRepair(level, persona, entityId, player, entity, playerMessage,
+                    response.speech(), memoryContext, rememberExchange)) {
+                return;
+            }
             if (showFallback && fallback != null) {
                 player.displayClientMessage(fallback, false);
             } else if (!showFallback) {
@@ -561,6 +567,10 @@ public final class NpcBrainService {
                 || memoryData.repeatsRecentNpcSpeech(entityId, player.getUUID(), polishedSpeech.get())
                 || memoryData.repeatsRecentPlayerSpeech(entityId, player.getUUID(), polishedSpeech.get())) {
             rejected.incrementAndGet();
+            if (!showFallback && requestPersonaRepair(level, persona, entityId, player, entity, playerMessage,
+                    polishedSpeech.get(), memoryContext, rememberExchange)) {
+                return;
+            }
             if (showFallback && fallback != null) {
                 player.displayClientMessage(fallback, false);
             } else if (!showFallback) {
@@ -572,6 +582,100 @@ public final class NpcBrainService {
         Optional<String> supportFollowup = persona.supportFollowup(playerMessage, polishedSpeech.get());
         displayPersonaSpeech(level, persona, entity, player, playerMessage, polishedSpeech.get(), supportFollowup,
                 rememberExchange);
+        if (!response.memory().isBlank()) {
+            NpcMemoryData.get(level).remember(entityId, player.getUUID(), response.memory(), level.getGameTime());
+        }
+    }
+
+    private <E extends LivingEntity> boolean requestPersonaRepair(ServerLevel level, NpcPersona<E> persona,
+                                                                  UUID entityId, ServerPlayer player, E entity,
+                                                                  String playerMessage, String rejectedSpeech,
+                                                                  String memoryContext,
+                                                                  boolean rememberExchange) {
+        if (!WitcheryConfig.LLM_ENABLED.get()
+                || playerMessage == null
+                || playerMessage.isBlank()
+                || !entity.isAlive()
+                || entity.level() != level
+                || player.level() != level) {
+            return false;
+        }
+        Optional<NpcBrainPrompt> prompt = NpcPromptBuilder.cardRepair(
+                persona.id(),
+                persona.displayName(entity),
+                player.getName().getString(),
+                playerMessage,
+                memoryContext,
+                rejectedSpeech);
+        if (prompt.isEmpty()) {
+            return false;
+        }
+        int current = inFlight.incrementAndGet();
+        if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
+            inFlight.decrementAndGet();
+            rejected.incrementAndGet();
+            return false;
+        }
+
+        LlmProvider provider;
+        try {
+            provider = providerFromConfig(REPAIR_TIMEOUT_MILLIS,
+                    Math.min(REPAIR_MAX_TOKENS, WitcheryConfig.LLM_MAX_TOKENS.get()), executor());
+        } catch (IllegalArgumentException ex) {
+            inFlight.decrementAndGet();
+            failure(ex);
+            return false;
+        }
+
+        persona.beginConversation(entity, player);
+        provider.generate(prompt.get())
+                .orTimeout(REPAIR_TIMEOUT_MILLIS + 500L, TimeUnit.MILLISECONDS)
+                .whenComplete((response, error) -> {
+                    inFlight.decrementAndGet();
+                    MinecraftServer server = level.getServer();
+                    server.execute(() -> handlePersonaRepairResponse(level, persona, entityId, player, entity,
+                            playerMessage, memoryContext, rememberExchange, response, error));
+                });
+        return true;
+    }
+
+    private <E extends LivingEntity> void handlePersonaRepairResponse(ServerLevel level, NpcPersona<E> persona,
+                                                                      UUID entityId, ServerPlayer player, E entity,
+                                                                      String playerMessage, String memoryContext,
+                                                                      boolean rememberExchange,
+                                                                      NpcBrainResponse response, Throwable error) {
+        if (!player.isAlive() || player.level() != level) {
+            return;
+        }
+        if (!entity.isAlive() || entity.level() != level) {
+            return;
+        }
+        persona.completeConversation(entity, player);
+        if (error != null || response == null) {
+            failure(error);
+            tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage, memoryContext);
+            return;
+        }
+        if (!persona.allowsIntent(response.intent(), entity, player)) {
+            rejected.incrementAndGet();
+            tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage, memoryContext);
+            return;
+        }
+        Optional<String> polishedSpeech = persona.polishRaw(response.speech(), entity, player, playerMessage,
+                memoryContext, NpcPromptBuilder.clockTime(level.getDayTime()))
+                .or(() -> persona.polishFallback(response.speech(), entity, player, playerMessage, memoryContext,
+                        NpcPromptBuilder.clockTime(level.getDayTime())));
+        NpcMemoryData memoryData = NpcMemoryData.get(level);
+        String lastNpcSpeech = memoryData.getLastNpcSpeech(entityId, player.getUUID());
+        if (polishedSpeech.isEmpty()
+                || NpcBrainResponse.sameMeaningForRepetition(polishedSpeech.get(), lastNpcSpeech)
+                || memoryData.repeatsRecentNpcSpeech(entityId, player.getUUID(), polishedSpeech.get())
+                || memoryData.repeatsRecentPlayerSpeech(entityId, player.getUUID(), polishedSpeech.get())) {
+            rejected.incrementAndGet();
+            tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage, memoryContext);
+            return;
+        }
+        displayPersonaSpeech(level, persona, entity, player, playerMessage, polishedSpeech.get(), rememberExchange);
         if (!response.memory().isBlank()) {
             NpcMemoryData.get(level).remember(entityId, player.getUUID(), response.memory(), level.getGameTime());
         }

@@ -515,6 +515,47 @@ class NpcKnowledgeBaseTest {
     }
 
     @Test
+    void practicalTeachingCardsCoverStationFailures() {
+        Optional<String> kettle = NpcKnowledgeBase.compactAnswer("why did the kettle fail?", "Plains", "night");
+        Optional<String> distillery = NpcKnowledgeBase.compactAnswer("why did distillery fail?", "Plains", "night");
+        Optional<String> spinning = NpcKnowledgeBase.compactAnswer("why did spinning wheel fail?", "Plains", "night");
+
+        assertTrue(kettle.isPresent(), "No Kettle troubleshooting answer");
+        assertTrue(kettle.get().toLowerCase(Locale.ROOT).contains("water"), kettle.get());
+        assertTrue(kettle.get().toLowerCase(Locale.ROOT).contains("heat"), kettle.get());
+
+        assertTrue(distillery.isPresent(), "No Distillery troubleshooting answer");
+        assertTrue(distillery.get().toLowerCase(Locale.ROOT).contains("clay jar"), distillery.get());
+        assertTrue(distillery.get().toLowerCase(Locale.ROOT).contains("altar"), distillery.get());
+
+        assertTrue(spinning.isPresent(), "No Spinning Wheel troubleshooting answer");
+        assertTrue(spinning.get().toLowerCase(Locale.ROOT).contains("altar"), spinning.get());
+        assertTrue(spinning.get().toLowerCase(Locale.ROOT).contains("fibre")
+                || spinning.get().toLowerCase(Locale.ROOT).contains("fiber"), spinning.get());
+    }
+
+    @Test
+    void practicalTeachingCardsCarryPersonaSpecificVoice() {
+        String witch = NpcKnowledgeBase.relevantContext("how do I use the oven?", "Plains", "day",
+                NpcCardRequest.persona("coven_witch")).toLowerCase(Locale.ROOT);
+        String villager = NpcKnowledgeBase.relevantContext("how do I use the oven?", "Plains", "day",
+                NpcCardRequest.persona("villager")).toLowerCase(Locale.ROOT);
+        String leonard = NpcKnowledgeBase.relevantContext("how do I use the oven?", "Plains", "day",
+                NpcCardRequest.persona("leonard")).toLowerCase(Locale.ROOT);
+        String baba = NpcKnowledgeBase.relevantContext("teach me a rite", "Swamp", "night",
+                NpcCardRequest.persona("baba_yaga")).toLowerCase(Locale.ROOT);
+
+        assertTrue(witch.contains("coven witch teaches the oven plainly"), witch);
+        assertTrue(witch.contains("wood ash"), witch);
+        assertTrue(villager.contains("witch business"), villager);
+        assertTrue(villager.contains("primer") || villager.contains("coven witch"), villager);
+        assertTrue(leonard.contains("lesser smoke-work"), leonard);
+        assertTrue(leonard.contains("larger powers"), leonard);
+        assertTrue(baba.contains("chalk makes the plate"), baba);
+        assertTrue(baba.contains("fools stand too close"), baba);
+    }
+
+    @Test
     void retrievesRumorCueForRumorQuestions() {
         String context = NpcKnowledgeBase.relevantContext("can you tell me a village rumor?", "Plains", "night");
 

@@ -3,6 +3,8 @@ package com.emoniph.witchery.ai;
 import net.minecraft.network.chat.Component;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -172,6 +174,34 @@ class NpcPromptBuilderTest {
         assertTrue(prompt.systemPrompt().contains("{\"speech\":\"ready\",\"intent\":\"none\",\"memory\":\"\"}"));
         assertTrue(prompt.userPrompt().toLowerCase().contains("warm up"));
         assertEquals(0, prompt.examples().size());
+    }
+
+    @Test
+    void cardRepairPromptUsesRelevantFactsAndBadDraft() {
+        Optional<NpcBrainPrompt> prompt = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
+                "how do I use the kettle?", "Message routing: route=recipe;topic=kettle;remember=no",
+                "Hello again, Dev.");
+
+        assertTrue(prompt.isPresent());
+        String system = prompt.get().systemPrompt().toLowerCase();
+        String user = prompt.get().userPrompt().toLowerCase();
+
+        assertTrue(system.contains("repair one minecraft witchery npc line"), prompt.get().systemPrompt());
+        assertTrue(system.contains("supplied in-world facts"), prompt.get().systemPrompt());
+        assertTrue(user.contains("lilith poe is speaking to dev"), prompt.get().userPrompt());
+        assertTrue(user.contains("fill the kettle with water"), prompt.get().userPrompt());
+        assertTrue(user.contains("bad draft to avoid"), prompt.get().userPrompt());
+        assertTrue(user.contains("hello again, dev"), prompt.get().userPrompt());
+        assertTrue(prompt.get().examples().stream().anyMatch(example ->
+                example.assistantResponse().contains("Fill it, heat it")));
+    }
+
+    @Test
+    void cardRepairPromptSkipsSmallTalkWithoutFacts() {
+        Optional<NpcBrainPrompt> prompt = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
+                "hello there", "", "Welcome to the Witchery world.");
+
+        assertTrue(prompt.isEmpty());
     }
 
     @Test
