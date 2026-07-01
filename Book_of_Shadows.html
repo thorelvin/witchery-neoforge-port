@@ -153,7 +153,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <p class="subtitle">A Complete Guide to the Craft of Witchery Rewoven</p>
   <p class="divider">· · · ✦ · · ·</p>
   <p class="edition">Witchery Rewoven — NeoForge 1.21.11 Edition</p>
-  <p class="version">Version 12 — Eleventh Edition — Item workings reconciled to the craft as it now stands</p>
+  <p class="version">Version 13 — Twelfth Edition — NPC voices, goblin labor, and guarded workings</p>
 </div>
 
 <div class="callout callout-tip" style="margin-bottom:2.5rem;">
@@ -168,8 +168,13 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <li>The Witch's Cauldron has answered its last withholdings: creeping <strong>liquid</strong> brews and drifting <strong>gas</strong>, the brew bucket, casting straight from the pot over <a href="#ch9b">Tongue of Dog</a> with optional <strong>Bound Waystone</strong> targeting, the <strong>Gas Mask</strong> that turns aside foul fumes, and the <strong>Brew of Disease</strong> with the Purified-Milk cure that lifts it.</li>
   <li>A new and uncanny companion: the <strong><a href="#ch7">Creaking familiar</a></strong> of the pale groves, bound by the Rite of the Creakening — still and watchful, moving only when no eye is on it.</li>
   <li>The <a href="#ch23">Crystal Ball</a> truly scries now: hold a Taglock Kit, a Bound Waystone, or a <strong>Blooded Waystone</strong> and the ball bears your sight out for a sustained minute — a real vision that follows a soul or hovers above a waystone's place, spending altar power as it holds. Dropped bound and Blooded Waystones also <a href="#ch18">transpose</a> the living and loose things near them out of an Otherwhere circle.</li>
+  <li>Some old mouths have learned to answer back. If local NPC voices are enabled, witches, villagers, hobgoblins, Leonard, Baba Yaga, demons, imps, and stranger reflections may answer nearby speech in their own manner. Their words may guide, warn, gossip, or mock, but the real bargains are still trades, rites, items, and server rules.</li>
   <li>The earlier printing's additions remain: the <a href="#ch13">spectral coven</a> raised from five remembered tales; the early chapters reordered so the <a href="#ch1">Oven</a> precedes <a href="#ch2">Seeds and Mutandis</a>; the truer <a href="#ch23">Crystal Ball</a> prophecies; the <a href="#ch31">Hellhound and Mindrake</a>; the <a href="#ch12b">Morsmordre</a> glyph; the <a href="#ch34">Specialist Gear</a> chapter; <a href="#ch35">Worldgen &amp; Structures</a>; and the fuller <a href="#appD">Item ID</a> and <a href="#appF">reference-book</a> tables.</li>
 </ul>
+</div>
+
+<div class="callout callout-tip" style="margin-bottom:2.5rem;">
+<strong>Speaking with the folk of Witchery</strong> — on worlds with local NPC voices enabled, nearby speech may be answered by the creature you are looking at or addressing. This is a voice layer, not a loophole: a witch cannot chat an item into your pocket, Leonard cannot be flattered into service, and a villager does not suddenly know circle craft. Ask plainly, listen for clues, then use the real machines, trades, rites, and commands the world provides.
 </div>
 
 <!-- TABLE OF CONTENTS -->
@@ -1718,7 +1723,9 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <p>The Pentacle at trade 5 is the altar's ×2 multiplicative recharge upgrade — the primary reason to work through this chain. Work upward. The koboldite at the end is genuinely useful.</p>
 
 <h3>Koboldite Dust from Mining</h3>
-<p>Beyond trading: a 15% chance for Koboldite Dust when a Hobgoblin mines any block. Build a mining area near your hobgoblins and let them work. It is slow, but it is renewable.</p>
+<p>Beyond trading: a 15% chance for Koboldite Dust when a Hobgoblin mines a block. A leashed hobgoblin carrying a pickaxe can be ordered in nearby chat to <strong>mine</strong>, <strong>work</strong>, or <strong>dig</strong>. It will look for nearby natural stone, earth, and ore, path to the work, break blocks, wear down its pickaxe, and drop or deposit what it finds. Ask plainly. Goblin patience is not a deep well.</p>
+
+<p>The same command sense can tell a hobgoblin to <strong>worship</strong> or <strong>pray</strong> at a nearby Patron statue, or to stay, stop, follow, come closer, go away, or guard. Owners and trusted players command; strangers mostly get suspicion.</p>
 
 <h3>The Patron Statue — A Final Warning</h3>
 <p>The Statue collects worship from hobgoblins within 16 blocks. Each worship event has a 25% chance of angering nearby hobgoblins named Gulg or Mog into attacking the player. There is no reliable prevention. Build the statue behind barriers, or simply do not build it at all if you would prefer not to fight goblins.</p>
@@ -2144,6 +2151,13 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <h2 class="chapter" id="ch33">Chapter 33: The Craft in Conflict — Multiplayer and PvP<span class="stage stage-late">Late</span> <a href="#toc" class="ch-top">&uarr; Contents</a></h2>
 
 <p>Witchcraft in a multiplayer world is not merely a progression system — it is an adversarial toolkit. This chapter covers the craft as a weapon and a defense: how to pursue another player through taglock and rite, and how to make yourself as difficult a target as possible.</p>
+
+<h3>Claims, Commands, and Guarded Ground</h3>
+<p>On protected servers, Witchery checks whether a player may alter the ground before many terrain-changing workings take hold. Mutandis, sprigs, cauldron work, brew effects, chalk, hand magic, traps, and other block-changing craft should respect ordinary build permission and supported claim systems when the server has them installed.</p>
+
+<div class="callout callout-tip">Broad effects usually skip protected blocks. Destructive core effects may fail instead. Server config decides the exact temper, but the rule is simple: another witch's claimed ground should not become sand, vines, ice, or ash just because your bottle was clever.</div>
+
+<p>NPC commands are guarded too. Recruited witches and working hobgoblins should answer their owner or an authorized player, not every passing voice with a shovel and a poor idea.</p>
 
 <h3>The Attacker's Toolkit</h3>
 
@@ -2840,7 +2854,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <div class="callout callout-tip">If a chapter refuses to open, you have simply not yet earned its book. For testing, <code>/witchery guide unlock [all|&lt;book&gt;]</code> opens chapters and <code>/witchery guide reset</code> shuts them again. The <strong>Witches' Brews</strong> Cauldron Book (<span class="item">witchery:cauldron_book</span>) and <strong>Immortals' Observations</strong> stand apart from the chain as guides of their own. Where a recipe has not yet reached the Primer, JEI covers the machines and this Book of Shadows covers the rest.</div>
 
 <div class="page-footer">
-  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 12 &nbsp;·&nbsp; Eleventh Edition &nbsp;·&nbsp; ☽ ✦ ☾
+  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 13 &nbsp;·&nbsp; Twelfth Edition &nbsp;·&nbsp; ☽ ✦ ☾
 </div>
 
 </body>

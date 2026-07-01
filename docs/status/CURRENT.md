@@ -29,6 +29,11 @@ enough to read before starting work. Long historical deltas belong in
 
 ## High-Value Work Buckets
 
+- Playtest the local AI persona layer in normal survival-like sessions: Coven
+  Witches, Leonard, villagers, hobgoblins, Baba Yaga, demons/flame imps, and
+  reflections should sound distinct while keeping server mechanics authoritative.
+- In-server QA for the new protection facade: vanilla spawn/build limits plus
+  Open Parties and Claims, FTB Chunks, and Common Protection API when installed.
 - In-game QA for recently restored or polished systems: Flame Imp contracts,
   Vanishing Witch Hut, NBT structures, dream entry/exit, cursed well warnings,
   and custom brew/ritual edge cases.
@@ -45,6 +50,16 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Local AI NPC dialogue has moved from a Coven Witch-only experiment into a
+  general persona framework. The current playtest path uses local Ollama/EVA by
+  default, prewarms the model, loads compact markdown knowledge cards, keeps
+  per-entity/player memory, uses LLM checks for routing/social/command intent
+  where useful, and still treats code/fallbacks as the source of authority.
+- The protection facade is live for NPC command ownership and terrain-changing
+  magic. It checks vanilla permissions and optional reflective adapters for
+  Open Parties and Claims, FTB Chunks, and Common Protection API, with config
+  modes for broad terrain effects (`skip`) and destructive core effects
+  (`fail`).
 - Curse of Insanity now uses source-shaped hallucinations instead of the earlier
   nausea stand-in: victim-only fake Creeper/Spider/Zombie entities spawn near
   the cursed player, render only for that player, make private fake sounds, deal

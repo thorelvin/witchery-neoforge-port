@@ -20,6 +20,7 @@ The aim is to restore the *feel* and mechanics of original Witchery first — th
 
 - [Current State](#current-state)
 - [Feature Highlights](#feature-highlights)
+- [Local AI NPCs](#local-ai-npcs)
 - [Not Done Yet](#not-done-yet)
 - [Status Docs](#status-docs)
 - [Build](#build)
@@ -31,9 +32,9 @@ The aim is to restore the *feel* and mechanics of original Witchery first — th
 
 ## Current State
 
-The remake is playable and well beyond prototype stage, but it remains an active parity remake rather than a polished release. Many systems are implemented, and many more are in the "works, needs in-game verification and edge-case parity" phase. Recent work has focused on maturing the native Modonomicon guidebook and placed Primer block, source-style Crystal Ball and Waystone scrying, dropped Waystone transposition parity, Player Compass needle parity, vanilla-shaped custom brew liquids, source-shaped thrown brew transport, gas-brew protection/lifetime parity, Disease brew and disease-block spread parity, Purified Milk disease cleanup, Dog Tongue ritualized cauldron brew release, data-driven triggered cursed blocks, Apothecary villager stability, the Spectral Coven, the Creaking familiar, ritual dispatcher safety, continued village generation stability, and exact-ID promotion.
+The remake is playable and well beyond prototype stage, but it remains an active parity remake rather than a polished release. Many systems are implemented, and many more are in the "works, needs in-game verification and edge-case parity" phase. Recent work has focused on maturing the native Modonomicon guidebook and placed Primer block, source-style Crystal Ball and Waystone scrying, dropped Waystone transposition parity, Player Compass needle parity, vanilla-shaped custom brew liquids, source-shaped thrown brew transport, gas-brew protection/lifetime parity, Disease brew and disease-block spread parity, Purified Milk disease cleanup, Dog Tongue ritualized cauldron brew release, data-driven triggered cursed blocks, Apothecary villager stability, the Spectral Coven, the Creaking familiar, ritual dispatcher safety, continued village generation stability, local AI NPC personas, hobgoblin labor depth, claim-aware terrain protection, and exact-ID promotion.
 
-Latest QA polish also tightened the everyday surface of the mod: source-shaped brew bottle art is used broadly, composed brew containers keep their contents/power/color stamp when bottled, thrown, debug-given, or scooped back into a Brew Bucket, the live legacy placeholder roster is empty, internal utility blocks are hidden from the Witchery creative tab, Rowan/Alder/Hawthorn leaf items now use combined foliage art with visible berries/flowers instead of runtime tint layers, stockades stack with the lower post changing shape, Death's Hand deploys its scythe as source-style state on the same item with hand-aware held rendering and clearer hit/toggle feedback, Mystic Branch casts answer with named/colored feedback, Leonard's Urn focus casts no longer spend the stored brew and urns can upgrade capacity by combining, Witch Hand Otherwhere movement has cooldown/safe-path feedback, Duplication Grenades can be charged from inhabited mirrors with a Quartz Sphere and altar power, Book of Biomes pages show practical climate stats, Crystal Ball scrying refuses bad foci before charging altar power, brew buckets describe gas vs. liquid correctly, Dream Weavers report placement and wake effects, braziers douse more reliably with water, Wolftraps steer their lured Wolfman back toward the bait, Parasytic Lice show their potion bite, Sun Collector/Sun Grenade releases have clearer light cues, and the player/shelf compasses answer with small scrying feedback.
+Latest QA polish also tightened the everyday surface of the mod: source-shaped brew bottle art is used broadly, composed brew containers keep their contents/power/color stamp when bottled, thrown, debug-given, or scooped back into a Brew Bucket, the live legacy placeholder roster is empty, internal utility blocks are hidden from the Witchery creative tab, Rowan/Alder/Hawthorn leaf items now use combined foliage art with visible berries/flowers instead of runtime tint layers, stockades stack with the lower post changing shape, Death's Hand deploys its scythe as source-style state on the same item with hand-aware held rendering and clearer hit/toggle feedback, Mystic Branch casts answer with named/colored feedback, Leonard's Urn focus casts no longer spend the stored brew and urns can upgrade capacity by combining, Witch Hand Otherwhere movement has cooldown/safe-path feedback, Duplication Grenades can be charged from inhabited mirrors with a Quartz Sphere and altar power, Book of Biomes pages show practical climate stats, Crystal Ball scrying refuses bad foci before charging altar power, brew buckets describe gas vs. liquid correctly, Dream Weavers report placement and wake effects, braziers douse more reliably with water, Wolftraps steer their lured Wolfman back toward the bait, Parasytic Lice show their potion bite, Sun Collector/Sun Grenade releases have clearer light cues, the player/shelf compasses answer with small scrying feedback, and Witchery terrain magic now routes block changes through vanilla and optional claim-mod protection checks.
 
 High-level estimate:
 
@@ -54,6 +55,7 @@ Substantial restored or in-progress systems include:
 - Crystal Ball, Waystone, and Player Compass parity is now practical: Bound Waystones, Blooded Waystones, and filled Taglock Kits can drive source-style held scrying, dropped bound/Blooded Waystones transpose nearby living entities and loose items from Otherwhere circles, and Player Compasses use source-style 32-frame needle art while preserving direct player/taglock binding.
 - Poppets, taglocks, familiars, creature traps, belts, vampire clothing, and many source-backed item recipe paths. Familiars span owls, cats, toads, and spectral companions, with the newest being the **Creaking familiar**: the **Rite of the Creakening** binds a wild vanilla Creaking through a parallel familiar implementation (bind/follow/defend/sit/dismiss are working; the freeze-when-watched behaviour, resin cadence, and overall feel remain in-game QA).
 - A living **Coven**: a witch with a bound familiar can recruit wandering Coven Witches into her own coven (up to six). Each recruit first sets a trial — fetch an ingredient, or slay a pet she conjures (a buffed spider or zombie) and return its remains — before swearing in. Sworn witches **fight for their leader**, hurling harmful brews at whatever she strikes or at any foe that strikes her, while never turning on her or their sister witches. The roster is persisted, so it holds across logout and the witches unloading, and the **Seer Stone** and `/witchery status` report your coven size and any trial a nearby witch has set you.
+- Optional local **AI NPC personas** can give the world a spoken layer: Coven Witches, Leonard, villagers, hobgoblins, Baba Yaga, demons, flame imps, and reflection-style voices use compact markdown knowledge cards, local memory, route/intent checks, and deterministic safety fallbacks. The local model can flavor dialogue and help classify social/command intent; it cannot grant items, bypass trades, rewrite quests, or override combat logic.
 - **Vampirism**, including vampire clothing set bonuses for feeding, fire survival, and mesmerise behavior. The vampire level 1-10 climb is now gated through its source quest chain: blood-feeding, the villager and **caged-villager** blood quests, the sun-endurance and **three-village pilgrimage** stages, source-shaped Elle-to-Lilith lava transformation, Lilith's empty-goblet blood reward, Poppy mastery boon, cure, and item blessing handoffs. The daylight rules are source-faithful: a fledgling caught in the sun loses all blood power and burns (a starved vampire dies outright), while a level-5+ vampire **resists the sun**, bleeding blood power to endure daylight under heavy debuffs.
 - **Lycanthropy** is now a full 1–10 progression climbed at the **Wolf Altar**, not a flat mastery placeholder: offering gates (gold, mutton, Tongue of Dog), the **Horn of the Hunt** boss quest against the Horned Huntsman, then deeds of the beast (airborne kills, howling across distinct lands, taming a pack, slaying pigmen, and finally taking a life). Werewolves shift between the four-legged **wolf** and upright **wolfman** shapes via the Moon Charm, each with its own powers — digging up bones, feasting on kills, a paralysing or pack-summoning howl, armour-rending claws — capped by the level-10 **infectious bite** that spreads the curse to villagers and players. A baited, silvered **Wolftrap** beside a Wolf Altar lures and catches a wolfman to carry the curse onward.
 - Player **infusions** channel active powers through the **Witch's Hand**: Light raises light-barrier cages and shield walls, Otherwhere phase-steps and recall-drags through the Ender, Overworld cushions falls and shapes earth-metal (fling armoured foes, magnetise and smelt ore, hurl loose rock, raise pillars, ground-slam shockwaves), and the Infernal witch **enslaves** mobs to a thrall army — bound minions never turn on their master and rally to avenge them, can be **sacrificed** for their creature power, and the witch's stolen beast powers ward the world's blows (extinguishing fire, breathing under a drowning, soaking a lightning strike for charge).
@@ -65,9 +67,33 @@ Substantial restored or in-progress systems include:
 - Vanilla villages now receive Witchery village buildings and, on roughly 40% of villages, adaptive town walls (the rest stay open): apothecaries, bookshops, witch huts, watch towers, keeps, wall guards, gatehouses, and biome-aware village materials are live and under active QA. Apothecary residents now keep their cauldron jobsite anchor, custom look/name, and full levelled trade list across reload/profession churn.
 - A **Vanishing Witch Hut** brings folklore to the worldgen: an uncommon designer-authored NBT hut that generates in forests and swamps and will not be watched. Step inside, leave, and look away and it vanishes in a gust of ash and debris, rebuilding itself elsewhere — usually a nearby spot, but sometimes slipping across into the dream-lit Spirit World at matching coordinates. It never moves while someone is inside or watching, leaves loose planks and cobwebs on restored natural ground where it stood, and carries its **same resident witch** with it (she keeps to her hearth and won't wander out). The old remedy holds it fast: a three-mark line of **Witches' Salt** laid across the doorway threshold (the salt trace reuses the redstone-wire connection rendering, tinted white; obtain salt by smelting kelp in the Witches' Oven or buying it from a Coven Witch). QA via `/witchery setup vanishing_hut`, `/witchery goto vanishing_hut`, `/witchery hut move`, and `/witchery hut watch`.
 - Designer-authored NBT structures are now part of the worldgen path. The Vanishing Witch Hut, Hobgoblin Hut, wells, and Warped Coven keep standard structure-block-readable NBT assets while Java handles terrain adaptation, cleanup, residents, loot, and special behavior. The Hobgoblin Hut uses a cleaned NBT template in forests and swamps, rejects water/steep footprints, clears only local clutter, has no chest, and spawns a resident Hobgoblin. The Warped Coven is a Nether warped-forest structure with terrain/clearance checks, late vegetation cleanup, a Coven Witch resident, and a focused infernal loot chest.
+- Hobgoblins now have a practical old-goblin work loop: authorized chat commands can send leashed, pickaxe-equipped hobgoblins to mine nearby natural blocks, worship a nearby Patron statue, stay, stop, follow, come closer, go away, or guard. Work and worship state persists, mining wears the pickaxe, normal drops are produced, and Koboldite Dust can be deposited nearby or dropped into the world.
 - A large exact-ID cleanup pass has promoted or removed the former legacy placeholder roster. Source and community fan-mod aliases now cover guidebooks, hunter gear, brew containers, contracts, waystones, special wearables, utility tools, mounted trophy heads, and many old food/ingredient items; deeper behavior and visual QA continue family by family.
 - Practical Ice World, Stockade, Shaded Glass, Pit Trap, Infinity Egg, Sun Collector, Silver Vat, Blood Crucible, and other block-family slices are restored or partially restored. Stockades now use the pointy-top/stacked-lower visual split and retain cactus-style contact damage; Pit Dirt and Pit Grass remain craftable cauldron trap outputs but are no longer exposed as ordinary creative-tab picks.
 - The in-game guidebook is powered by **Modonomicon** as a required dependency. JEI integration is declared optional and can be wired in as current Minecraft/NeoForge availability allows.
+
+## Local AI NPCs
+
+Local AI dialogue is experimental but now integrated enough for playtesting. It is enabled by default in `config/witchery-common.toml` under `[llm]`, but the Windows launcher asks before installing Ollama or downloading model files. The default playtest model is `witchery-eva-qwen2.5-1.5b-q4km-4k`, served locally through Ollama at `http://127.0.0.1:11434`.
+
+The model is used as a voice and classifier layer, not as game authority. Persona cards under `src/main/resources/data/witchery/ai/cards/` provide compact facts about recipes, brews, rites, mobs, social behavior, and entity-specific lore. The mod still validates output, falls back when needed, and keeps all real mechanics in server code.
+
+Useful AI config keys:
+
+```toml
+[llm]
+enabled = true
+prewarmEnabled = true
+provider = "ollama"
+endpoint = "http://127.0.0.1:11434"
+model = "witchery-eva-qwen2.5-1.5b-q4km-4k"
+timeoutMillis = 3000
+maxConcurrentRequests = 1
+maxTokens = 80
+allowLanEndpoint = false
+```
+
+Set `enabled = false` to disable AI dialogue entirely. Keep `allowLanEndpoint = false` unless the model endpoint is on a trusted LAN machine.
 
 ## Not Done Yet
 
@@ -81,6 +107,8 @@ Every grimoire has blank pages. Important remaining work includes:
 - Village additions and the first NBT-backed wild structures are live, but still need cross-biome visual QA, traversal checks, and continued tuning for walls, gatehouses, guard movement, and structure placement.
 - Ritual execution is powerful but still carries old-queue/refund/edge-case parity risk.
 - Public-release cleanup remains: licensing clarity, asset audit/replacement direction, packaging, balance passes, and broad multiplayer/server QA.
+- The local AI layer is playtest-ready, not release-final: it needs more real-session testing, more cards, and final decisions about whether it ships as default, optional, or dev-only.
+- Protection adapters for Open Parties and Claims, FTB Chunks, and Common Protection API are reflective/no-hard-dependency integrations. They need in-server QA with those mods installed.
 
 ## Status Docs
 
@@ -93,6 +121,7 @@ Consult [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md) before choosing what to work on
 - [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md) — backlog and slice candidates.
 - [docs/status/BUGS.md](docs/status/BUGS.md) — active/fixed bug board and parity notes.
 - [docs/status/ITEM_REVIEW.md](docs/status/ITEM_REVIEW.md) — item roster, exact-ID promotions, and follow-up decisions.
+- [docs/experiments/LLM_NPCS.md](docs/experiments/LLM_NPCS.md) — local AI NPC setup, scope, config, and model notes.
 - [docs/reference/REMAKE_NOTES.md](docs/reference/REMAKE_NOTES.md) — historical implementation notes and reference findings.
 
 ## Build
@@ -131,7 +160,7 @@ Windows launcher:
 .\RUN_MINECRAFT.bat --stacktrace
 ```
 
-`RUN_MINECRAFT.bat --diagnose` checks the local Java/Gradle/client setup without launching Minecraft and writes support details to `run/logs/launcher-latest.log`. If the client crashes after startup, also check `run/logs/latest.log`, `run/logs/debug.log`, and `run/crash-reports`.
+`RUN_MINECRAFT.bat` also runs the local AI preflight. If `[llm].enabled = true`, it checks Ollama/model availability and prompts before installing or downloading anything. `RUN_MINECRAFT.bat --diagnose` checks the local Java/Gradle/client setup without launching Minecraft and writes support details to `run/logs/launcher-latest.log`. If the client crashes after startup, also check `run/logs/latest.log`, `run/logs/debug.log`, and `run/crash-reports`.
 
 If setup fails with `compiler is null` or `jdk.compiler module` missing, Windows is launching Gradle with a JRE. Install a Java 21 JDK, not a JRE and not JDK 25/26, then set `JAVA_HOME` to the JDK folder, for example `C:\Program Files\Eclipse Adoptium\jdk-21...`.
 
@@ -163,6 +192,7 @@ Structure goto targets currently include `hobgoblin_hut`, `vanishing_hut`, `cove
 - `/witchery dream`, `/witchery torment`, `/witchery mirror`, and `/witchery exit` — dimension QA shortcuts. Dream entry uses the normal Spirit World flow: it stores the Overworld return point, enters at the matching X/Z with a same-column Y safety check, and wakes through `/witchery exit`.
 - `/witchery nightmare`, `/witchery nightmare false`, and `/witchery nightmare demonic` — switch the Spirit World between its three atmospheres for QA: a normal **dream** (pink sky/fog), a **nightmare** (green), and a **demonic** nightmare (red). Run from the Overworld to enter directly, or while already in the Spirit World to switch in place; nightmare/demonic also force a victim-bound Nightmare (demonic adds fireballs/demons). `/witchery status` reports the current mode.
 - `/witchery vampire`, `/witchery werewolf`, `/witchery blood`, `/witchery infusion`, `/witchery familiar <owl|cat|toad|spectral|creaking|none>`, and `/witchery status` — player-state QA helpers.
+- `/witchery ai status`, `/witchery ai chat <message>`, `/witchery ai memory`, `/witchery ai knowledge <query>`, `/witchery ai probe [prompt]`, `/witchery ai reload`, and `/witchery ai forget [nearest|all|<npc-uuid>]` — local NPC dialogue QA helpers.
 
 ## Mirror / Torment QA Notes
 

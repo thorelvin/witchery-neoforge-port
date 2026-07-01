@@ -1,6 +1,6 @@
 # Local LLM NPC Experiment
 
-This branch adds a local NPC dialogue test for Coven Witches. AI dialogue is enabled by default, but the launcher asks before installing Ollama or downloading model files.
+This branch adds a local NPC dialogue layer for Witchery entities. AI dialogue is enabled by default, but the launcher asks before installing Ollama or downloading model files.
 
 ## Runtime
 
@@ -47,9 +47,15 @@ Set `allowLanEndpoint = true` only when the model is running on a trusted LAN si
 
 ## Current Scope
 
-Coven Witch trade greetings and nearby player chat replies are wired. Prompt context includes the witch name, player name, current biome, time of day, day count, weather, nearby threat, relationship state, and compact memory. Existing trading, recruitment, quests, dismissal, and combat remain authoritative. The model may produce flavor text and a validated intent, but it cannot grant items, change trades, bypass quest gates, run commands, or control combat logic. Small social reactions are deterministic: praise can earn a short blessing, insults can earn a short curse, and an explicit herb request can receive one free herb per witch/player memory.
+The current persona framework covers Coven Witches, Leonard, villagers, hobgoblins, Baba Yaga, demons/flame imps, boss/atmosphere voices, and reflections. Prompt context can include entity name, player name, biome, time of day, day count, weather, nearby threats, relationship state, nearby altar/coven facts, carried gear, trade stock, and compact entity/player memory where relevant.
+
+Existing trading, recruitment, quests, dismissal, combat, item grants, curses, and command execution remain authoritative server code. The model may produce flavor text, help classify route/social/command intent, and extract durable player memory, but it cannot grant items, change trades, bypass quest gates, run commands by itself, or control combat logic.
+
+Small social reactions are deterministic after validation: praise can earn a short blessing, insults can earn a short curse, and an explicit herb request can receive one free herb per witch/player memory. If a fallback has already been used for a repeated nearby question, the dialogue layer may allow more raw model voice through when it is safe enough.
 
 Nearby chat replies trigger when the player is close to a Coven Witch and addresses her by name/`witch`, asks a question, says a greeting, or looks at her while sending a short conversational message.
+
+Hobgoblins also understand guarded chat commands through `NpcCommandKind`: mine, worship/pray, stay, stop, come here, go away, follow, and guard. The obvious command cases are caught cheaply first; ambiguous cases can ask the local model for a tiny yes/no command-intent check. Command execution is still entity-specific and permission-checked.
 
 ## Knowledge Cards
 
@@ -61,7 +67,15 @@ Card lines use this shape:
 - [triggers: whiff|whif|whiff of magic] Targeted fact: Whiff of Magic is crafted with ...
 ```
 
-The cards are guidance, not a hard script. The prompt presents them as targeted facts, the model phrases the answer in character, and deterministic fallback uses them only when the raw answer is unsafe or too vague. Tests also compare key recipe cards against the local recipe JSON so the witch does not drift away from the mod's actual content.
+The cards are guidance, not a hard script. The prompt presents them as targeted facts, the model phrases the answer in character, and deterministic fallback uses them only when the raw answer is unsafe, too vague, or leaks internal prompt/card language. Tests also compare key recipe cards against the local recipe JSON so NPCs do not drift away from the mod's actual content.
+
+## Safety And Authority
+
+- AI dialogue is local by default. The launcher prepares Ollama/EVA only after user approval.
+- `allowLanEndpoint = false` blocks non-loopback endpoints unless a trusted LAN sidecar is explicitly configured.
+- `WitcheryProtectionService` guards NPC commands and terrain-changing magic.
+- Optional reflective adapters check Open Parties and Claims, FTB Chunks, and Common Protection API when those mods are installed.
+- Model output is treated as speech or classifier help, never as direct game-state authority.
 
 ## Model Comparison
 

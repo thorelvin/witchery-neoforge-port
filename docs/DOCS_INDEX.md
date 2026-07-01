@@ -34,6 +34,8 @@ write new notes.
   parity status. Use it for feature state changes, not session journaling.
 - [status/NEXT_TASKS.md](status/NEXT_TASKS.md) - backlog and slice candidates.
   Keep it focused on future work.
+- [status/COMMIT_AUDIT.md](status/COMMIT_AUDIT.md) - compact recent-commit
+  audit for the active branch when a handoff needs commit-level context.
 
 ## Player-Facing Docs
 
@@ -57,6 +59,10 @@ for players changed. Do not copy every dev-note into them.
   mechanics worth preserving.
 - [reference/SPIRIT_WORLD_ATMOSPHERE.md](reference/SPIRIT_WORLD_ATMOSPHERE.md)
   - Spirit World atmosphere notes.
+- [experiments/LLM_NPCS.md](experiments/LLM_NPCS.md) - local AI NPC setup,
+  scope, config, model notes, and playtest boundaries.
+- [experiments/LLM_NPC_PROMPTING_RESEARCH.md](experiments/LLM_NPC_PROMPTING_RESEARCH.md)
+  - prompting/card-structure research for the local NPC dialogue layer.
 
 Reference docs should be stable. If a note is only useful for "what happened
 today", put it in `status/CURRENT.md` or the changelog instead.
