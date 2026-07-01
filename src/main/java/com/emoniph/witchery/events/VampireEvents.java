@@ -3,10 +3,12 @@ package com.emoniph.witchery.events;
 import com.emoniph.witchery.blocks.entity.BloodCrucibleBlockEntity;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.entity.AttackBatEntity;
 import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.level.Level;
 import com.emoniph.witchery.item.VampireClothingUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
@@ -86,6 +88,7 @@ public class VampireEvents {
     // Coarse cell size (1<<6 = 64 blocks) used to treat one village as a single visit, matching the
     // ~64-block reach of the village POI test. The visited set is persisted in the player's vampire state.
     private static final int VILLAGE_CELL_SHIFT      = 6;
+    private static final int SWARM_BAT_COUNT         = 15;
 
     // ── Tick ─────────────────────────────────────────────────────────────────
 
@@ -461,6 +464,48 @@ public class VampireEvents {
                 SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.6F, 1.4F);
         vampire.displayClientMessage(Component.translatable("witchery.vampire.mesmerise.success",
                 target.getName(), duration / 20), true);
+    }
+
+    public static boolean tryActivateSwarmUltimate(ServerPlayer vampire) {
+        if (!vampire.getMainHandItem().isEmpty()
+                || !vampire.getOffhandItem().isEmpty()
+                || !vampire.isShiftKeyDown()
+                || vampire.getXRot() > -75.0F) {
+            return false;
+        }
+        WitcheryPlayerData data = WitcheryAttachments.get(vampire);
+        if (!data.isVampire()
+                || data.getVampireLevel() < 10
+                || data.getVampireUltimate() != WitcheryPlayerData.VampireUltimate.SWARM) {
+            return false;
+        }
+        if (!data.spendVampireUltimateCharge()) {
+            vampire.displayClientMessage(Component.translatable("witchery.vampire.ultimate.no_charges"), true);
+            return false;
+        }
+        if (!(vampire.level() instanceof ServerLevel level)) {
+            return false;
+        }
+
+        for (int i = 0; i < SWARM_BAT_COUNT; i++) {
+            double angle = level.random.nextDouble() * Math.PI * 2.0D;
+            double radius = 0.75D + level.random.nextDouble() * 2.25D;
+            double x = vampire.getX() + Math.cos(angle) * radius;
+            double y = vampire.getY() + 2.5D + level.random.nextDouble() * 1.5D;
+            double z = vampire.getZ() + Math.sin(angle) * radius;
+            AttackBatEntity bat = AttackBatEntity.create(level, vampire, x, y, z);
+            if (bat != null) {
+                level.addFreshEntity(bat);
+            }
+        }
+
+        level.playSound(null, vampire.blockPosition(), SoundEvents.BAT_AMBIENT, SoundSource.PLAYERS, 1.4F, 0.65F);
+        level.playSound(null, vampire.blockPosition(), SoundEvents.WITCH_THROW, SoundSource.PLAYERS, 0.8F, 0.8F);
+        level.sendParticles(ParticleTypes.SMOKE, vampire.getX(), vampire.getY() + 1.5D, vampire.getZ(),
+                32, 1.5D, 1.2D, 1.5D, 0.04D);
+        vampire.displayClientMessage(Component.translatable("witchery.vampire.ultimate.swarm"), true);
+        PacketDistributor.sendToPlayer(vampire, SyncPlayerDataPayload.from(vampire, data));
+        return true;
     }
 
     private static boolean isMesmerised(LivingEntity target) {

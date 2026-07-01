@@ -191,9 +191,9 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
                 BrewType type = getBrewType();
                 int tier = getPower();
                 if (isGas()) {
-                    type.applyGas(serverLevel, pos, tier);
+                    type.applyGas(serverLevel, pos, tier, getOwner());
                 } else {
-                    type.applySplash(serverLevel, pos, tier);
+                    type.applySplash(serverLevel, pos, tier, getOwner());
                 }
             }
             spawnImpactParticles(serverLevel, pos, brewColor(), isGas());

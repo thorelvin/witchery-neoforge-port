@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,6 +12,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -52,7 +54,7 @@ public class BrewOfSproutingItem extends BrewItem {
 
         Player player = context.getPlayer();
         int placed = growBranch(serverLevel, context.getClickedPos(), context.getClickedFace(),
-                hasBrewMastery(player) ? ENHANCED_EXTENT : NORMAL_EXTENT);
+                hasBrewMastery(player) ? ENHANCED_EXTENT : NORMAL_EXTENT, player);
         if (placed <= 0) {
             return InteractionResult.PASS;
         }
@@ -73,7 +75,7 @@ public class BrewOfSproutingItem extends BrewItem {
             surface = surface.relative(facing.getOpposite());
         }
 
-        growBranch(serverLevel, surface, facing, hasBrewMastery(player) ? ENHANCED_EXTENT : NORMAL_EXTENT);
+        growBranch(serverLevel, surface, facing, hasBrewMastery(player) ? ENHANCED_EXTENT : NORMAL_EXTENT, player);
     }
 
     private static boolean hasBrewMastery(Player player) {
@@ -85,6 +87,15 @@ public class BrewOfSproutingItem extends BrewItem {
     }
 
     public static int growBranch(ServerLevel level, BlockPos clickedPos, Direction face, int extent, boolean feedback) {
+        return growBranch(level, clickedPos, face, extent, null, feedback, false);
+    }
+
+    public static int growBranch(ServerLevel level, BlockPos clickedPos, Direction face, int extent, Entity actor) {
+        return growBranch(level, clickedPos, face, extent, actor, true, true);
+    }
+
+    private static int growBranch(ServerLevel level, BlockPos clickedPos, Direction face, int extent, Entity actor,
+                                  boolean feedback, boolean protect) {
         BlockState clickedState = level.getBlockState(clickedPos);
         BranchBlocks blocks = chooseBranchBlocks(clickedState, level.random);
         BlockState log = orientLog(blocks.log().defaultBlockState(), face);
@@ -98,12 +109,12 @@ public class BrewOfSproutingItem extends BrewItem {
             if (pos.getY() < level.getMinY() || pos.getY() >= level.getMaxY()) {
                 break;
             }
-            if (!setBranchBlock(level, pos, log, feedback)) {
+            if (!setBranchBlock(level, pos, log, actor, feedback, protect)) {
                 break;
             }
 
             placed++;
-            placeRandomLeaf(level, pos, face, leaves, feedback);
+            placeRandomLeaf(level, pos, face, leaves, actor, feedback, protect);
         }
 
         if (placed > 0 && feedback) {
@@ -124,19 +135,26 @@ public class BrewOfSproutingItem extends BrewItem {
         return state;
     }
 
-    private static void placeRandomLeaf(ServerLevel level, BlockPos pos, Direction face, BlockState leaves, boolean feedback) {
+    private static void placeRandomLeaf(ServerLevel level, BlockPos pos, Direction face, BlockState leaves, Entity actor,
+                                        boolean feedback, boolean protect) {
         RandomSource random = level.random;
         int lx = face.getAxis() != Direction.Axis.X && random.nextInt(4) == 0 ? random.nextInt(3) - 1 : 0;
         int ly = face.getAxis() != Direction.Axis.Y && lx == 0 && random.nextInt(4) == 0 ? random.nextInt(3) - 1 : 0;
         int lz = face.getAxis() != Direction.Axis.Z && lx == 0 && ly == 0 && random.nextInt(4) == 0 ? random.nextInt(3) - 1 : 0;
         if (lx != 0 || ly != 0 || lz != 0) {
-            setBranchBlock(level, pos.offset(lx, ly, lz), leaves, feedback);
+            setBranchBlock(level, pos.offset(lx, ly, lz), leaves, actor, feedback, protect);
         }
     }
 
-    private static boolean setBranchBlock(ServerLevel level, BlockPos pos, BlockState state, boolean feedback) {
+    private static boolean setBranchBlock(ServerLevel level, BlockPos pos, BlockState state, Entity actor,
+                                          boolean feedback, boolean protect) {
         BlockState current = level.getBlockState(pos);
         if (current.isSolid() || current.hasBlockEntity()) {
+            return false;
+        }
+        if (protect && !(current.isAir()
+                ? WitcheryTerrainProtection.canPlace(actor, level, pos)
+                : WitcheryTerrainProtection.canTransform(actor, level, pos))) {
             return false;
         }
 

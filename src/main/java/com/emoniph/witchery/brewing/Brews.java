@@ -25,6 +25,8 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.WaystoneItem;
 import com.emoniph.witchery.item.WerewolfShiftUtil;
+import com.emoniph.witchery.protection.WitcheryProtectionAction;
+import com.emoniph.witchery.protection.WitcheryProtectionService;
 import com.emoniph.witchery.ritual.RitualCircleDetector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,6 +40,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -1583,7 +1586,7 @@ public final class Brews {
                 }
             } else if (action.action() == Ingredient.BrewAction.SPROUT) {
                 com.emoniph.witchery.item.BrewOfSproutingItem.growBranch(level, blockImpact, side,
-                        8 + 2 * strength);
+                        8 + 2 * strength, source);
             } else if (action.action() == Ingredient.BrewAction.PLANT) {
                 plantSeeds(level, blockImpact, blockRadius, strength, source);
             } else if (action.action() == Ingredient.BrewAction.RAISE_DEAD) {
@@ -1712,7 +1715,18 @@ public final class Brews {
     }
 
     private static boolean sourceMayModify(ServerLevel level, BlockPos pos, Entity source) {
-        return !(source instanceof Player player) || level.mayInteract(player, pos);
+        return WitcheryProtectionService.canModifyBlock(sourcePlayer(level, source), level, pos,
+                WitcheryProtectionAction.BLOCK_TRANSFORM);
+    }
+
+    private static ServerPlayer sourcePlayer(ServerLevel level, Entity source) {
+        if (source instanceof ServerPlayer player) {
+            return player;
+        }
+        if (source instanceof Player player) {
+            return level.getServer().getPlayerList().getPlayer(player.getUUID());
+        }
+        return null;
     }
 
     private static void replaceSourceConnectedWaterSphere(ServerLevel level, BlockPos center, int radius) {

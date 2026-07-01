@@ -1,8 +1,11 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.protection.WitcheryProtectionAction;
+import com.emoniph.witchery.protection.WitcheryProtectionService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -38,7 +41,7 @@ public class BrewOfErosionItem extends BrewItem {
             return InteractionResult.SUCCESS;
         }
 
-        erodeBlocks((ServerLevel) level, center);
+        erodeBlocks((ServerLevel) level, center, context.getPlayer());
         consumeBrew(context.getPlayer(), context.getHand(), context.getItemInHand());
         return InteractionResult.SUCCESS;
     }
@@ -64,7 +67,7 @@ public class BrewOfErosionItem extends BrewItem {
         }
 
         BlockPos center = player.blockPosition();
-        erodeBlocks(serverLevel, center);
+        erodeBlocks(serverLevel, center, player);
         List<LivingEntity> targets = serverLevel.getEntitiesOfClass(LivingEntity.class, new AABB(center).inflate(3.0),
                 target -> target != player);
         for (LivingEntity target : targets) {
@@ -87,7 +90,7 @@ public class BrewOfErosionItem extends BrewItem {
                 target.getBbWidth() * 0.35D, 0.02D);
     }
 
-    private static void erodeBlocks(ServerLevel level, BlockPos center) {
+    private static void erodeBlocks(ServerLevel level, BlockPos center, Player player) {
         int obsidianMelted = 0;
         for (BlockPos pos : BlockPos.betweenClosed(center.offset(-BLOCK_RADIUS, -BLOCK_RADIUS, -BLOCK_RADIUS),
                 center.offset(BLOCK_RADIUS, BLOCK_RADIUS, BLOCK_RADIUS))) {
@@ -96,6 +99,11 @@ public class BrewOfErosionItem extends BrewItem {
             }
             BlockState state = level.getBlockState(pos);
             if (!canErode(level, pos, state)) {
+                continue;
+            }
+            ServerPlayer serverPlayer = player instanceof ServerPlayer sp ? sp : null;
+            if (!WitcheryProtectionService.canModifyBlock(serverPlayer, level, pos,
+                    WitcheryProtectionAction.BLOCK_BREAK)) {
                 continue;
             }
             if (state.is(Blocks.OBSIDIAN)) {

@@ -5,6 +5,7 @@ import com.emoniph.witchery.entity.EntEntity;
 import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.blocks.StockadeBlock;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -83,21 +84,22 @@ public class BrewOfIceItem extends BrewItem {
         }
 
         BlockPos clicked = context.getClickedPos();
-        if (tryApplyIceWorldConversion(serverLevel, clicked) > 0) {
+        Player player = context.getPlayer();
+        if (tryApplyIceWorldConversion(serverLevel, clicked, player) > 0) {
             consumeBrew(context.getPlayer(), context.getHand(), context.getItemInHand());
             return InteractionResult.SUCCESS;
         }
 
         int placed;
         if (hasAdjacentWater(serverLevel, clicked)) {
-            placed = freezeSurroundingWater(serverLevel, clicked, FREEZE_RANGE);
+            placed = freezeSurroundingWater(serverLevel, clicked, player, FREEZE_RANGE);
         } else if (context.getClickedFace() == Direction.DOWN) {
             return InteractionResult.PASS;
         } else {
             BlockPos shieldPos = context.getClickedFace() == Direction.UP
                     ? clicked
                     : clicked.relative(context.getClickedFace());
-            placed = createIceShield(serverLevel, context.getPlayer(), shieldPos, SHIELD_HEIGHT);
+            placed = createIceShield(serverLevel, player, shieldPos, SHIELD_HEIGHT);
         }
 
         if (placed <= 0) {
@@ -117,7 +119,7 @@ public class BrewOfIceItem extends BrewItem {
             return InteractionResult.PASS;
         }
 
-        int placed = createIceBlock(serverLevel, target);
+        int placed = createIceBlock(serverLevel, player, target);
         if (placed <= 0) {
             return InteractionResult.PASS;
         }
@@ -133,8 +135,8 @@ public class BrewOfIceItem extends BrewItem {
         }
 
         BlockPos center = player.blockPosition();
-        freezeNearbyWater(serverLevel, center, FREEZE_RANGE);
-        createIceShell(serverLevel, center, FREEZE_RANGE);
+        freezeNearbyWater(serverLevel, player, center, FREEZE_RANGE);
+        createIceShell(serverLevel, player, center, FREEZE_RANGE);
     }
 
     private static boolean hasAdjacentWater(ServerLevel level, BlockPos center) {
@@ -146,10 +148,10 @@ public class BrewOfIceItem extends BrewItem {
         return false;
     }
 
-    private static int tryApplyIceWorldConversion(ServerLevel level, BlockPos pos) {
+    private static int tryApplyIceWorldConversion(ServerLevel level, BlockPos pos, Player player) {
         BlockState current = level.getBlockState(pos);
         if (isIceWorldDoor(current)) {
-            return freezeDoor(level, pos, current);
+            return freezeDoor(level, pos, current, player);
         }
         if (current.hasBlockEntity()) {
             return 0;
@@ -159,13 +161,16 @@ public class BrewOfIceItem extends BrewItem {
         if (replacement == null || replacement.getBlock() == current.getBlock()) {
             return 0;
         }
+        if (!WitcheryTerrainProtection.canTransform(player, level, pos)) {
+            return 0;
+        }
 
         level.setBlock(pos, replacement, 3);
         iceWorldFeedback(level, pos);
         return 1;
     }
 
-    private static int freezeDoor(ServerLevel level, BlockPos pos, BlockState clickedState) {
+    private static int freezeDoor(ServerLevel level, BlockPos pos, BlockState clickedState, Player player) {
         BlockPos lowerPos = clickedState.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
         BlockPos upperPos = lowerPos.above();
         BlockState lower = level.getBlockState(lowerPos);
@@ -174,6 +179,10 @@ public class BrewOfIceItem extends BrewItem {
             return 0;
         }
         if (level.getBlockEntity(lowerPos) != null || level.getBlockEntity(upperPos) != null) {
+            return 0;
+        }
+        if (!WitcheryTerrainProtection.canTransform(player, level, lowerPos)
+                || !WitcheryTerrainProtection.canTransform(player, level, upperPos)) {
             return 0;
         }
 
@@ -318,7 +327,7 @@ public class BrewOfIceItem extends BrewItem {
                 .setValue(StockadeBlock.WATERLOGGED, from.getValue(StockadeBlock.WATERLOGGED));
     }
 
-    private static int freezeSurroundingWater(ServerLevel level, BlockPos origin, int range) {
+    private static int freezeSurroundingWater(ServerLevel level, BlockPos origin, Player player, int range) {
         int frozen = 0;
         ArrayDeque<BlockPos> queue = new ArrayDeque<>();
         Set<BlockPos> visited = new HashSet<>();
@@ -336,7 +345,8 @@ public class BrewOfIceItem extends BrewItem {
                 if (!visited.add(next)) {
                     continue;
                 }
-                if (level.getBlockState(next).is(Blocks.WATER)) {
+                if (level.getBlockState(next).is(Blocks.WATER)
+                        && WitcheryTerrainProtection.canTransform(player, level, next)) {
                     level.setBlock(next, Blocks.ICE.defaultBlockState(), 3);
                     frozen++;
                     level.sendParticles(ParticleTypes.POOF,
@@ -363,48 +373,48 @@ public class BrewOfIceItem extends BrewItem {
         BlockPos base = level.getBlockState(pos).isSolid() ? pos : pos.below();
         Direction side = player != null ? player.getDirection().getClockWise() : Direction.EAST;
         int placed = 0;
-        placed += createIceColumn(level, base.above(), height);
-        placed += createIceColumn(level, base.above().relative(side), height);
-        placed += createIceColumn(level, base.above().relative(side.getOpposite()), height);
+        placed += createIceColumn(level, player, base.above(), height);
+        placed += createIceColumn(level, player, base.above().relative(side), height);
+        placed += createIceColumn(level, player, base.above().relative(side.getOpposite()), height);
         if (placed > 0) {
             level.playSound(null, base, SoundEvents.GLASS_PLACE, SoundSource.BLOCKS, 0.8F, 0.7F);
         }
         return placed;
     }
 
-    private static int createIceColumn(ServerLevel level, BlockPos start, int height) {
+    private static int createIceColumn(ServerLevel level, Player player, BlockPos start, int height) {
         int placed = 0;
         for (int i = 0; i < height; i++) {
-            if (setBlockIfNotSolid(level, start.above(i), Blocks.ICE.defaultBlockState())) {
+            if (setBlockIfNotSolid(level, player, start.above(i), Blocks.ICE.defaultBlockState())) {
                 placed++;
             }
         }
         return placed;
     }
 
-    private static int createIceBlock(ServerLevel level, LivingEntity target) {
+    private static int createIceBlock(ServerLevel level, Player player, LivingEntity target) {
         int x = (int)Math.round(target.getX());
         int y = Mth.floor(target.getY()) - 1;
         int z = (int)Math.round(target.getZ());
         BlockPos base = new BlockPos(x, y, z);
 
         if (isIceResistant(target)) {
-            return setBlockIfNotSolid(level, base.above(), Blocks.FIRE.defaultBlockState()) ? 1 : 0;
+            return setBlockIfNotSolid(level, player, base.above(), Blocks.FIRE.defaultBlockState()) ? 1 : 0;
         }
 
         int placed = 0;
         for (int i = 0; i < CAGE_HEIGHT; i++) {
             for (BlockPos offset : CAGE_RING_OFFSETS) {
-                if (setBlockIfNotSolid(level, base.offset(offset).above(i), Blocks.ICE.defaultBlockState())) {
+                if (setBlockIfNotSolid(level, player, base.offset(offset).above(i), Blocks.ICE.defaultBlockState())) {
                     placed++;
                 }
             }
         }
-        if (setBlockIfNotSolid(level, base, Blocks.ICE.defaultBlockState())) {
+        if (setBlockIfNotSolid(level, player, base, Blocks.ICE.defaultBlockState())) {
             placed++;
         }
         for (BlockPos offset : CAGE_TOP_OFFSETS) {
-            if (setBlockIfNotSolid(level, base.offset(offset).above(CAGE_HEIGHT - 1), Blocks.ICE.defaultBlockState())) {
+            if (setBlockIfNotSolid(level, player, base.offset(offset).above(CAGE_HEIGHT - 1), Blocks.ICE.defaultBlockState())) {
                 placed++;
             }
         }
@@ -425,12 +435,17 @@ public class BrewOfIceItem extends BrewItem {
                 || target instanceof IronGolem;
     }
 
-    private static boolean setBlockIfNotSolid(ServerLevel level, BlockPos pos, BlockState newState) {
+    private static boolean setBlockIfNotSolid(ServerLevel level, Player player, BlockPos pos, BlockState newState) {
         BlockState current = level.getBlockState(pos);
         if (current.isSolid() || current.hasBlockEntity()) {
             return false;
         }
         if (newState.is(Blocks.FIRE) && !newState.canSurvive(level, pos)) {
+            return false;
+        }
+        if (!(current.isAir()
+                ? WitcheryTerrainProtection.canPlace(player, level, pos)
+                : WitcheryTerrainProtection.canTransform(player, level, pos))) {
             return false;
         }
 
@@ -441,12 +456,13 @@ public class BrewOfIceItem extends BrewItem {
         return true;
     }
 
-    private static void freezeNearbyWater(ServerLevel level, BlockPos center, int radius) {
+    private static void freezeNearbyWater(ServerLevel level, Player player, BlockPos center, int radius) {
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 for (int dz = -radius; dz <= radius; dz++) {
                     BlockPos pos = center.offset(dx, dy, dz);
-                    if (level.getBlockState(pos).is(Blocks.WATER)) {
+                    if (level.getBlockState(pos).is(Blocks.WATER)
+                            && WitcheryTerrainProtection.canTransform(player, level, pos)) {
                         level.setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
                     }
                 }
@@ -454,7 +470,7 @@ public class BrewOfIceItem extends BrewItem {
         }
     }
 
-    private static void createIceShell(ServerLevel level, BlockPos center, int radius) {
+    private static void createIceShell(ServerLevel level, Player player, BlockPos center, int radius) {
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dy = -1; dy <= radius; dy++) {
                 for (int dz = -radius; dz <= radius; dz++) {
@@ -465,7 +481,7 @@ public class BrewOfIceItem extends BrewItem {
                     if (Math.abs(dx) <= 1 && Math.abs(dz) <= 1 && dy >= 0 && dy <= 1) {
                         continue;
                     }
-                    setBlockIfNotSolid(level, center.offset(dx, dy, dz), Blocks.ICE.defaultBlockState());
+                    setBlockIfNotSolid(level, player, center.offset(dx, dy, dz), Blocks.ICE.defaultBlockState());
                 }
             }
         }

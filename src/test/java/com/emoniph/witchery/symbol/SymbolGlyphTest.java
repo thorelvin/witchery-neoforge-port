@@ -1,10 +1,17 @@
 package com.emoniph.witchery.symbol;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Locks the Mystic Branch glyph → spell mapping against the source {@code StrokeSet} registrations
@@ -55,15 +62,15 @@ class SymbolGlyphTest {
         // Phase C unforgivable curses.
         assertGlyph("witchery.pott.crucio",      1, 1, 3, 1, 1, 2);        // D L D D R
         assertGlyph("witchery.pott.imperio",     1, 2, 1, 1, 1, 1);        // R D D D D
-        assertGlyph("witchery.pott.avadakedavra", 1, 1, 2, 2, 0, 0, 3, 3, 3, 3, 1, 1, 2);
-        assertGlyph("witchery.pott.protego",     1, 1, 1, 0, 0);              // D D U U
+        assertGlyph("witchery.pott.avadakedavra", 1, 1, 1, 2, 2, 0, 0, 3, 3, 3, 3, 1, 1, 2);
+        assertGlyph("witchery.pott.protego",     1, 1, 1, 0);                 // D D U
         // Higher-level variants (bigger effect).
         assertGlyph("witchery.pott.aguamenti",    2, 0, 0, 0, 2, 2, 1, 1);
         assertGlyph("witchery.pott.defodio",      3, 0, 0, 0, 0, 3, 3, 3, 1, 1, 1, 2, 2);
         assertGlyph("witchery.pott.ennervate",    3, 0, 3, 3, 3, 0, 2, 2, 2, 3, 3, 3, 0, 2, 2, 2);
         assertGlyph("witchery.pott.caveinimicum", 2, 0, 3, 3, 0, 0, 0, 2, 2);
         // System-blocked spells, now live.
-        assertGlyph("witchery.pott.flagrate",    1, 0, 2, 3, 0, 2);        // U R L U R
+        assertGlyph("witchery.pott.flagrate",    1, 2, 0, 2, 3, 0, 2);     // R U R L U R
         assertGlyph("witchery.pott.colloportus", 1, 3, 3, 1, 1, 2);        // L L D D R
         assertGlyph("witchery.pott.caelum",      1, 2, 0, 3, 3, 1);        // R U L L D
         assertGlyph("witchery.pott.baratrum",    1, 3, 1, 2, 2, 0);        // L D R R U
@@ -76,5 +83,90 @@ class SymbolGlyphTest {
         EffectRegistry.bootstrap();
         assertNull(EffectRegistry.instance().getEffect(new byte[]{0}), "a single up is not a spell");
         assertNull(EffectRegistry.instance().getEffect(new byte[]{0, 1}), "up-down is not a spell");
+    }
+
+    @Test
+    void sourceBytecodeGlyphVariantsResolveToTheCorrectSpell() {
+        EffectRegistry.bootstrap();
+        assertGlyph("witchery.pott.aguamenti", 1, 0, 0, 2, 2, 2, 1);
+        assertGlyph("witchery.pott.aguamenti", 2, 0, 0, 0, 2, 2, 2, 1, 1);
+        assertGlyph("witchery.pott.aguamenti", 3, 0, 0, 0, 0, 2, 2, 2, 1, 1, 1);
+        assertGlyph("witchery.pott.alohomora", 1, 2, 0, 2, 2, 2, 1);
+        assertGlyph("witchery.pott.alohomora", 1, 2, 0, 0, 2, 2, 1, 1);
+        assertGlyph("witchery.pott.alohomora", 1, 2, 0, 0, 2, 2, 2, 1, 1);
+        assertGlyph("witchery.pott.defodio", 1, 0, 0, 0, 3, 1, 1);
+        assertGlyph("witchery.pott.defodio", 1, 0, 0, 3, 3, 1, 2);
+        assertGlyph("witchery.pott.defodio", 2, 0, 0, 0, 0, 3, 3, 1, 1, 1, 2);
+        assertGlyph("witchery.pott.defodio", 2, 0, 0, 0, 3, 3, 3, 1, 1, 2, 2);
+        assertGlyph("witchery.pott.caveinimicum", 1, 0, 3, 0, 0, 0, 2);
+        assertGlyph("witchery.pott.caveinimicum", 1, 0, 3, 3, 0, 0, 2, 2);
+        assertGlyph("witchery.pott.ignianima", 1, 3, 3, 0, 0, 1, 1, 1, 1);
+        assertGlyph("witchery.pott.ignianima", 1, 3, 3, 3, 0, 1, 1);
+        assertGlyph("witchery.pott.ignianima", 1, 3, 3, 3, 3, 0, 0, 1, 1, 1, 1);
+        assertGlyph("witchery.pott.carnosadiem", 1, 2, 2, 0, 0, 1, 1, 1, 1);
+        assertGlyph("witchery.pott.carnosadiem", 1, 2, 2, 2, 0, 1, 1);
+        assertGlyph("witchery.pott.carnosadiem", 1, 2, 2, 2, 2, 0, 0, 1, 1, 1, 1);
+        assertGlyph("witchery.pott.tormentum", 1, 1, 1, 3, 3, 2, 2, 2, 2);
+        assertGlyph("witchery.pott.tormentum", 1, 1, 1, 1, 3, 2, 2);
+        assertGlyph("witchery.pott.tormentum", 1, 1, 1, 1, 1, 3, 3, 2, 2, 2, 2);
+        assertGlyph("witchery.pott.colloportus", 1, 3, 3, 1, 1, 1, 2);
+        assertGlyph("witchery.pott.colloportus", 1, 3, 3, 3, 1, 1, 2, 2);
+        assertGlyph("witchery.pott.colloportus", 1, 3, 3, 3, 1, 1, 2, 1, 2);
+        assertGlyph("witchery.pott.protego", 1, 1, 1, 1, 0, 0);
+        assertGlyph("witchery.pott.protego", 1, 1, 1, 1, 1, 0, 0, 0);
+
+        assertNull(EffectRegistry.instance().getEffect(new byte[]{1, 1, 0, 0}),
+                "shifted old port Protego glyph should not shadow the source short form");
+        assertNull(EffectRegistry.instance().getEffect(new byte[]{0, 2, 3, 0, 2}),
+                "shifted old port Flagrate glyph should not shadow the source bytecode form");
+    }
+
+    @Test
+    void tormentumProtectsBossTypesButNotOrdinaryMobs() {
+        assertFalse(EffectRegistry.isTormentumProtectedType(EntityType.ZOMBIE));
+        assertFalse(EffectRegistry.isTormentumProtectedType(EntityType.WITCH));
+        assertTrue(EffectRegistry.isTormentumProtectedType(EntityType.WITHER));
+        assertTrue(EffectRegistry.isTormentumProtectedType(EntityType.ENDER_DRAGON));
+    }
+
+    @Test
+    void aguamentiWaterShapeMatchesSourceLevels() {
+        assertEquals(java.util.List.of(BlockPos.ZERO), EffectRegistry.aguamentiWaterOffsets(1, false));
+        assertEquals(7, EffectRegistry.aguamentiWaterOffsets(2, false).size());
+        assertTrue(EffectRegistry.aguamentiWaterOffsets(2, false).contains(BlockPos.ZERO.above()));
+        assertTrue(EffectRegistry.aguamentiWaterOffsets(3, false).contains(BlockPos.ZERO.south()));
+
+        assertEquals(java.util.List.of(), EffectRegistry.aguamentiWaterOffsets(1, true));
+        assertEquals(java.util.List.of(), EffectRegistry.aguamentiWaterOffsets(2, true));
+        assertEquals(java.util.List.of(BlockPos.ZERO), EffectRegistry.aguamentiWaterOffsets(3, true));
+    }
+
+    @Test
+    void protegoBarrierShapeMatchesSourceShieldColumns() {
+        BlockPos hit = new BlockPos(10, 64, -3);
+        java.util.List<BlockPos> solidHit = EffectRegistry.protegoShieldPositions(hit, Direction.NORTH, true);
+        assertEquals(9, solidHit.size());
+        assertTrue(solidHit.contains(hit.above()));
+        assertTrue(solidHit.contains(hit.above(3)));
+        assertTrue(solidHit.contains(hit.above().east()));
+        assertTrue(solidHit.contains(hit.above(3).west()));
+        assertFalse(solidHit.contains(hit), "solid block hits should build the shield above the struck block");
+
+        java.util.List<BlockPos> nonSolidHit = EffectRegistry.protegoShieldPositions(hit, Direction.NORTH, false);
+        assertTrue(nonSolidHit.contains(hit));
+        assertTrue(nonSolidHit.contains(hit.above(2).east()));
+    }
+
+    @Test
+    void flagrateUsesSourceTopFaceGlyphPlacement() {
+        BlockPos hit = new BlockPos(4, 70, 8);
+        BlockHitResult topHit = new BlockHitResult(Vec3.ZERO, Direction.UP, hit, false);
+        BlockHitResult sideHit = new BlockHitResult(Vec3.ZERO, Direction.NORTH, hit, false);
+
+        assertEquals(hit.above(), EffectRegistry.flagrateGlyphPosition(topHit, false));
+        assertNull(EffectRegistry.flagrateGlyphPosition(sideHit, false),
+                "new Flagrate glyphs should only draw from top-face hits like source ItemChalk");
+        assertEquals(hit, EffectRegistry.flagrateGlyphPosition(sideHit, true),
+                "existing glyphs can be converted or rerolled at their own position");
     }
 }

@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -207,7 +208,7 @@ public class StaffOfDuplicationItem extends Item {
             BlockPos target = origin.offset(rotatedX(entry.getIntOr(TAG_X, 0), entry.getIntOr(TAG_Z, 0), width, depth, rotationIndex),
                     entry.getIntOr(TAG_Y, 0),
                     rotatedZ(entry.getIntOr(TAG_X, 0), entry.getIntOr(TAG_Z, 0), width, depth, rotationIndex));
-            if (level.mayInteract(player, target)) {
+            if (canPlaceSchematicBlock(level, player, target)) {
                 level.setBlock(target, state.rotate(rotation), Block.UPDATE_ALL);
             }
         }
@@ -226,6 +227,13 @@ public class StaffOfDuplicationItem extends Item {
             return Blocks.AIR.defaultBlockState();
         }
         return NbtUtils.readBlockState(blockLookup, entry.getCompoundOrEmpty(TAG_STATE));
+    }
+
+    private static boolean canPlaceSchematicBlock(ServerLevel level, Player player, BlockPos target) {
+        BlockState current = level.getBlockState(target);
+        return current.isAir()
+                ? WitcheryTerrainProtection.canPlace(player, level, target)
+                : WitcheryTerrainProtection.canTransform(player, level, target);
     }
 
     private static int rotatedX(int x, int z, int width, int depth, int rotation) {

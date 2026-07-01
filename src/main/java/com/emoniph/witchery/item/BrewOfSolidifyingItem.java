@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -55,12 +56,13 @@ public abstract class BrewOfSolidifyingItem extends BrewItem {
             return InteractionResult.PASS;
         }
 
-        int changed = solidify(serverLevel, start);
+        Player player = context.getPlayer();
+        int changed = solidify(serverLevel, start, player);
         if (changed <= 0) {
             return InteractionResult.PASS;
         }
 
-        consumeBrew(context.getPlayer(), context.getHand(), context.getItemInHand());
+        consumeBrew(player, context.getHand(), context.getItemInHand());
         return InteractionResult.SUCCESS;
     }
 
@@ -74,7 +76,7 @@ public abstract class BrewOfSolidifyingItem extends BrewItem {
         // Direct block use is the practical port of the source thrown-brew behavior.
     }
 
-    private int solidify(ServerLevel level, BlockPos start) {
+    private int solidify(ServerLevel level, BlockPos start, Player player) {
         Deque<BlockPos> pending = new ArrayDeque<>();
         Set<BlockPos> visited = new HashSet<>();
         pending.add(start.immutable());
@@ -86,7 +88,9 @@ public abstract class BrewOfSolidifyingItem extends BrewItem {
                 continue;
             }
 
-            replaceHollowTears(level, pos);
+            if (!replaceHollowTears(level, pos, player)) {
+                continue;
+            }
             changed++;
 
             for (Direction direction : Direction.values()) {
@@ -103,22 +107,36 @@ public abstract class BrewOfSolidifyingItem extends BrewItem {
         return changed;
     }
 
-    private void replaceHollowTears(ServerLevel level, BlockPos pos) {
-        level.sendParticles(ParticleTypes.WITCH,
-                pos.getX() + 0.5D, pos.getY() + 1.5D, pos.getZ() + 0.5D,
-                16, 2.0D, 2.0D, 2.0D, 0.0D);
-
+    private boolean replaceHollowTears(ServerLevel level, BlockPos pos, Player player) {
         if (replacementBlock == null) {
+            if (!WitcheryTerrainProtection.canBreak(player, level, pos)) {
+                return false;
+            }
+            solidifyingParticles(level, pos);
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             BlockPos below = pos.below();
             BlockState belowState = level.getBlockState(below);
             if (canBreakWithoutDrops(level, below, belowState)) {
+                if (!WitcheryTerrainProtection.canBreak(player, level, below)) {
+                    return true;
+                }
                 level.setBlock(below, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             }
-            return;
+            return true;
         }
 
+        if (!WitcheryTerrainProtection.canTransform(player, level, pos)) {
+            return false;
+        }
+        solidifyingParticles(level, pos);
         level.setBlock(pos, replacementBlock.defaultBlockState(), Block.UPDATE_ALL);
+        return true;
+    }
+
+    private static void solidifyingParticles(ServerLevel level, BlockPos pos) {
+        level.sendParticles(ParticleTypes.WITCH,
+                pos.getX() + 0.5D, pos.getY() + 1.5D, pos.getZ() + 0.5D,
+                16, 2.0D, 2.0D, 2.0D, 0.0D);
     }
 
     private static BlockPos findHollowTears(Level level, BlockPos clickedPos, Direction face) {

@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -43,6 +44,9 @@ public class BrewOfInfectionItem extends BrewItem {
         }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
+        }
+        if (!WitcheryTerrainProtection.canTransform(context.getPlayer(), level, pos)) {
+            return InteractionResult.FAIL;
         }
 
         level.setBlock(pos, infected.get(), Block.UPDATE_ALL);

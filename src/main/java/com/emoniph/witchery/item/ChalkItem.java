@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.init.WitcheryBlockTags;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -42,6 +43,9 @@ public class ChalkItem extends Item {
         BlockState next = placementState(level, target, mark.state);
 
         if (mark.state.is(WitcheryBlockTags.CHALK_CIRCLES)) {
+            if (!WitcheryTerrainProtection.canTransform(ctx.getPlayer(), level, mark.pos)) {
+                return InteractionResult.FAIL;
+            }
             level.setBlock(mark.pos, next, 3);
             level.playSound(null, mark.pos, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.6f, 1.4f);
             if (ctx.getPlayer() != null) ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
@@ -51,6 +55,11 @@ public class ChalkItem extends Item {
         if (ctx.getClickedFace() != Direction.UP) return InteractionResult.PASS;
         if (!mark.state.canBeReplaced()) return InteractionResult.PASS;
         if (!next.canSurvive(level, mark.pos)) return InteractionResult.PASS;
+        if (!(mark.state.isAir()
+                ? WitcheryTerrainProtection.canPlace(ctx.getPlayer(), level, mark.pos)
+                : WitcheryTerrainProtection.canTransform(ctx.getPlayer(), level, mark.pos))) {
+            return InteractionResult.FAIL;
+        }
 
         level.setBlock(mark.pos, next, 3);
         level.playSound(null, mark.pos, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.6f, 1.4f);

@@ -2,12 +2,21 @@ package com.emoniph.witchery.events;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.ai.NpcBrainService;
+import com.emoniph.witchery.ai.NpcCommandKind;
 import com.emoniph.witchery.ai.NpcPersonas;
 import com.emoniph.witchery.blocks.LeechChestBlock;
+import com.emoniph.witchery.blocks.MirrorBlock;
 import com.emoniph.witchery.entity.BabaYagaEntity;
 import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.entity.HobgoblinEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.entity.ReflectionEntity;
+import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.protection.WitcheryProtectionService;
+import com.emoniph.witchery.world.MirrorHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +31,7 @@ import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -35,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @EventBusSubscriber(modid = WitcheryMod.MODID)
@@ -47,14 +58,23 @@ public final class NpcBrainEvents {
     private static final double BABA_YAGA_CASUAL_CHAT_RANGE = 8.0;
     private static final double VILLAGER_CHAT_RANGE = 10.0;
     private static final double VILLAGER_CASUAL_CHAT_RANGE = 5.0;
+    private static final double HOBGOBLIN_CHAT_RANGE = 10.0;
+    private static final double HOBGOBLIN_CASUAL_CHAT_RANGE = 6.0;
+    private static final double REFLECTION_CHAT_RANGE = 12.0;
+    private static final double REFLECTION_CASUAL_CHAT_RANGE = 8.0;
     private static final double LEONARD_GAZE_RANGE = 7.0;
+    private static final double REFLECTION_GAZE_RANGE = 8.0;
     private static final long LEONARD_GAZE_COOLDOWN_TICKS = 20L * 45L;
+    private static final long REFLECTION_GAZE_COOLDOWN_TICKS = 20L * 35L;
+    private static final long MIRROR_WORLD_AMBIENT_COOLDOWN_TICKS = 20L * 80L;
     private static final double WITCH_AMBIENT_RANGE = 8.0;
     private static final long WITCH_AMBIENT_COOLDOWN_TICKS = 20L * 55L;
     private static final long WITCH_IDLE_COOLDOWN_TICKS = 20L * 120L;
     private static final int WITCH_IDLE_TRIGGER_TICKS = 20 * 25;
     private static final int WITCH_DARKNESS_CURSE_TICKS = 20 * 45;
     private static final ConcurrentHashMap<String, Long> LEONARD_GAZE_COOLDOWNS = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Long> REFLECTION_GAZE_COOLDOWNS = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Long> MIRROR_WORLD_AMBIENT_COOLDOWNS = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, Long> WITCH_AMBIENT_COOLDOWNS = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<java.util.UUID, PlayerAmbientState> PLAYER_AMBIENT_STATES = new ConcurrentHashMap<>();
 
@@ -70,17 +90,15 @@ public final class NpcBrainEvents {
         if (message == null || message.isBlank() || !(player.level() instanceof ServerLevel level)) {
             return;
         }
-        ChatTarget target = findNearestChatTarget(level, player, message);
-        if (target == null) {
+        if (handleMirrorChant(level, player, message)) {
             return;
         }
-        if (target.kind() == ChatPersona.COVEN_WITCH && target.entity() instanceof CovenWitchEntity witch
-                && isStayRequest(message)) {
-            witch.beginPlayerConversation(player);
-            String speech = "I'll stay a moment, " + player.getName().getString() + ".";
-            player.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, witch, speech),
-                    false);
-            NpcBrainService.INSTANCE.rememberCovenExchange(witch, player, message, speech);
+        ChatTarget target = findNearestChatTarget(level, player, message);
+        if (target == null) {
+            handleMirrorTalk(level, player, message);
+            return;
+        }
+        if (handleNpcCommand(level, target, player, message)) {
             return;
         }
         if (!requestTargetChat(target, player, message)) {
@@ -107,6 +125,8 @@ public final class NpcBrainEvents {
             return;
         }
         handleLeonardGaze(level, player);
+        handleReflectionGaze(level, player);
+        handleMirrorWorldAmbient(level, player);
         handleWitchAmbientTick(level, player);
     }
 
@@ -229,6 +249,8 @@ public final class NpcBrainEvents {
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
         LEONARD_GAZE_COOLDOWNS.clear();
+        REFLECTION_GAZE_COOLDOWNS.clear();
+        MIRROR_WORLD_AMBIENT_COOLDOWNS.clear();
         WITCH_AMBIENT_COOLDOWNS.clear();
         PLAYER_AMBIENT_STATES.clear();
         NpcBrainService.INSTANCE.shutdown();
@@ -250,6 +272,8 @@ public final class NpcBrainEvents {
         addLeonardChatCandidates(level, player, message, candidates);
         addBabaYagaChatCandidates(level, player, message, candidates);
         addVillagerChatCandidates(level, player, message, candidates);
+        addHobgoblinChatCandidates(level, player, message, candidates);
+        addReflectionChatCandidates(level, player, message, candidates);
         return candidates.stream()
                 .min(Comparator.comparingDouble(ChatTarget::distanceSqr))
                 .orElse(null);
@@ -264,7 +288,8 @@ public final class NpcBrainEvents {
         }
         witches.sort(Comparator.comparingDouble(player::distanceToSqr));
         boolean otherPersonaNamed = explicitlyNamesLeonard(message) || explicitlyNamesBabaYaga(message)
-                || explicitlyNamesVillager(message);
+                || explicitlyNamesVillager(message) || explicitlyNamesHobgoblin(message)
+                || explicitlyNamesReflection(message);
         for (CovenWitchEntity witch : witches) {
             if (isNamedAddress(witch, message)) {
                 candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, witch, player.distanceToSqr(witch)));
@@ -294,7 +319,8 @@ public final class NpcBrainEvents {
         }
         shades.sort(Comparator.comparingDouble(player::distanceToSqr));
         boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesBabaYaga(message)
-                || explicitlyNamesVillager(message);
+                || explicitlyNamesVillager(message) || explicitlyNamesHobgoblin(message)
+                || explicitlyNamesReflection(message);
         for (LeonardEntity shade : shades) {
             if (isNamedLeonardAddress(shade, message)) {
                 candidates.add(new ChatTarget(ChatPersona.LEONARD, shade, player.distanceToSqr(shade)));
@@ -321,7 +347,8 @@ public final class NpcBrainEvents {
         }
         crones.sort(Comparator.comparingDouble(player::distanceToSqr));
         boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesLeonard(message)
-                || explicitlyNamesVillager(message);
+                || explicitlyNamesVillager(message) || explicitlyNamesHobgoblin(message)
+                || explicitlyNamesReflection(message);
         for (BabaYagaEntity crone : crones) {
             if (isNamedBabaYagaAddress(crone, message)) {
                 candidates.add(new ChatTarget(ChatPersona.BABA_YAGA, crone, player.distanceToSqr(crone)));
@@ -348,7 +375,8 @@ public final class NpcBrainEvents {
         }
         villagers.sort(Comparator.comparingDouble(player::distanceToSqr));
         boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesLeonard(message)
-                || explicitlyNamesBabaYaga(message);
+                || explicitlyNamesBabaYaga(message) || explicitlyNamesHobgoblin(message)
+                || explicitlyNamesReflection(message);
         for (Villager villager : villagers) {
             if (isNamedVillagerAddress(villager, message)) {
                 candidates.add(new ChatTarget(ChatPersona.VILLAGER, villager, player.distanceToSqr(villager)));
@@ -370,6 +398,71 @@ public final class NpcBrainEvents {
         }
     }
 
+    private static void addHobgoblinChatCandidates(ServerLevel level, ServerPlayer player, String message,
+                                                   List<ChatTarget> candidates) {
+        List<HobgoblinEntity> hobgoblins = level.getEntitiesOfClass(
+                HobgoblinEntity.class, player.getBoundingBox().inflate(HOBGOBLIN_CHAT_RANGE, 4.0, HOBGOBLIN_CHAT_RANGE));
+        if (hobgoblins.isEmpty()) {
+            return;
+        }
+        hobgoblins.sort(Comparator.comparingDouble(player::distanceToSqr));
+        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesLeonard(message)
+                || explicitlyNamesBabaYaga(message) || explicitlyNamesVillager(message)
+                || explicitlyNamesReflection(message);
+        for (HobgoblinEntity hobgoblin : hobgoblins) {
+            if (isNamedHobgoblinAddress(hobgoblin, message)) {
+                candidates.add(new ChatTarget(ChatPersona.HOBGOBLIN, hobgoblin, player.distanceToSqr(hobgoblin)));
+            }
+        }
+        if (otherPersonaNamed) {
+            return;
+        }
+        HobgoblinEntity nearest = hobgoblins.getFirst();
+        double distance = player.distanceToSqr(nearest);
+        if (distance <= HOBGOBLIN_CASUAL_CHAT_RANGE * HOBGOBLIN_CASUAL_CHAT_RANGE
+                && (isCasualAddress(message) || isShortFollowUp(message))) {
+            candidates.add(new ChatTarget(ChatPersona.HOBGOBLIN, nearest, distance));
+            return;
+        }
+        if (distance <= HOBGOBLIN_CHAT_RANGE * HOBGOBLIN_CHAT_RANGE && isLookingAt(player, nearest)
+                && isConversational(message)) {
+            candidates.add(new ChatTarget(ChatPersona.HOBGOBLIN, nearest, distance));
+        }
+    }
+
+    private static void addReflectionChatCandidates(ServerLevel level, ServerPlayer player, String message,
+                                                    List<ChatTarget> candidates) {
+        List<ReflectionEntity> reflections = level.getEntitiesOfClass(
+                ReflectionEntity.class, player.getBoundingBox().inflate(REFLECTION_CHAT_RANGE, 6.0, REFLECTION_CHAT_RANGE));
+        if (reflections.isEmpty()) {
+            return;
+        }
+        reflections.sort(Comparator.comparingDouble(player::distanceToSqr));
+        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesLeonard(message)
+                || explicitlyNamesBabaYaga(message) || explicitlyNamesVillager(message)
+                || explicitlyNamesHobgoblin(message);
+        for (ReflectionEntity reflection : reflections) {
+            if (isNamedReflectionAddress(reflection, message)) {
+                candidates.add(new ChatTarget(ChatPersona.REFLECTION, reflection, player.distanceToSqr(reflection)));
+            }
+        }
+        if (otherPersonaNamed) {
+            return;
+        }
+        ReflectionEntity nearest = reflections.getFirst();
+        double distance = player.distanceToSqr(nearest);
+        if (distance <= REFLECTION_CASUAL_CHAT_RANGE * REFLECTION_CASUAL_CHAT_RANGE
+                && isLookingAt(player, nearest)
+                && (isCasualAddress(message) || isShortFollowUp(message) || WitcheryDimensions.isMirrorWorld(level))) {
+            candidates.add(new ChatTarget(ChatPersona.REFLECTION, nearest, distance));
+            return;
+        }
+        if (distance <= REFLECTION_CHAT_RANGE * REFLECTION_CHAT_RANGE && isLookingAt(player, nearest)
+                && isConversational(message)) {
+            candidates.add(new ChatTarget(ChatPersona.REFLECTION, nearest, distance));
+        }
+    }
+
     private static boolean requestTargetChat(ChatTarget target, ServerPlayer player, String message) {
         return switch (target.kind()) {
             case COVEN_WITCH -> target.entity() instanceof CovenWitchEntity witch
@@ -380,7 +473,216 @@ public final class NpcBrainEvents {
                     && NpcBrainService.INSTANCE.requestBabaYagaChat(baba, player, message);
             case VILLAGER -> target.entity() instanceof Villager villager
                     && NpcBrainService.INSTANCE.requestVillagerChat(villager, player, message);
+            case HOBGOBLIN -> target.entity() instanceof HobgoblinEntity hobgoblin
+                    && NpcBrainService.INSTANCE.requestHobgoblinChat(hobgoblin, player, message);
+            case REFLECTION -> target.entity() instanceof ReflectionEntity reflection
+                    && NpcBrainService.INSTANCE.requestReflectionChat(reflection, player, message);
         };
+    }
+
+    private static boolean handleNpcCommand(ServerLevel level, ChatTarget target, ServerPlayer player, String message) {
+        Optional<NpcCommandKind> command = NpcCommandKind.candidate(message);
+        if (command.isEmpty()) {
+            return false;
+        }
+        NpcCommandKind kind = command.get();
+        if (!supportsCommand(target, kind)) {
+            return false;
+        }
+        if (!WitcheryProtectionService.canCommandNpc(player, target.entity(), kind)) {
+            denyNpcCommand(level, target, player, message);
+            return true;
+        }
+        if (kind.isPlainDirect(message)) {
+            executeNpcCommand(level, target, player, message, kind);
+            return true;
+        }
+        if (NpcCommandKind.isClearlyQuestion(message)) {
+            return false;
+        }
+        return requestNpcCommandIntent(level, target, player, message, kind);
+    }
+
+    private static boolean supportsCommand(ChatTarget target, NpcCommandKind kind) {
+        return switch (target.kind()) {
+            case COVEN_WITCH -> kind == NpcCommandKind.STAY || kind == NpcCommandKind.STOP;
+            case HOBGOBLIN -> kind == NpcCommandKind.MINE
+                    || kind == NpcCommandKind.WORSHIP
+                    || kind == NpcCommandKind.STAY
+                    || kind == NpcCommandKind.STOP
+                    || kind == NpcCommandKind.COME_HERE
+                    || kind == NpcCommandKind.GO_AWAY;
+            case LEONARD, BABA_YAGA, VILLAGER, REFLECTION -> false;
+        };
+    }
+
+    private static void denyNpcCommand(ServerLevel level, ChatTarget target, ServerPlayer player, String message) {
+        switch (target.kind()) {
+            case COVEN_WITCH -> {
+                if (target.entity() instanceof CovenWitchEntity witch) {
+                    String speech = witch.isRecruited()
+                            ? "My word is already sworn, " + player.getName().getString() + "."
+                            : "Words are wind unless I choose to heed them.";
+                    player.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, witch, speech),
+                            false);
+                    NpcBrainService.INSTANCE.rememberCovenExchange(witch, player, message, speech);
+                }
+            }
+            case HOBGOBLIN -> {
+                if (target.entity() instanceof HobgoblinEntity hobgoblin) {
+                    String owner = hobgoblin.commandOwnerName();
+                    String speech = owner.isBlank()
+                            ? "*clutches the rope* \"Not your leash. Not your work.\""
+                            : "*squints* \"Rope has a name. " + owner + ". Not you.\"";
+                    sayHobgoblin(level, hobgoblin, player, message, speech);
+                }
+            }
+            case LEONARD, BABA_YAGA, VILLAGER, REFLECTION -> nudgeTarget(target, player);
+        }
+    }
+
+    private static boolean requestNpcCommandIntent(ServerLevel level, ChatTarget target, ServerPlayer player,
+                                                   String message, NpcCommandKind kind) {
+        return switch (target.kind()) {
+            case COVEN_WITCH -> target.entity() instanceof CovenWitchEntity witch
+                    && NpcBrainService.INSTANCE.requestCommandIntent(
+                    NpcPersonas.COVEN_WITCH,
+                    witch,
+                    player,
+                    message,
+                    kind,
+                    () -> executeNpcCommand(level, target, player, message, kind),
+                    () -> requestChatAfterRejectedCommand(level, target, player, message));
+            case HOBGOBLIN -> target.entity() instanceof HobgoblinEntity hobgoblin
+                    && NpcBrainService.INSTANCE.requestCommandIntent(
+                    NpcPersonas.HOBGOBLIN,
+                    hobgoblin,
+                    player,
+                    message,
+                    kind,
+                    () -> executeNpcCommand(level, target, player, message, kind),
+                    () -> requestChatAfterRejectedCommand(level, target, player, message));
+            case LEONARD, BABA_YAGA, VILLAGER, REFLECTION -> false;
+        };
+    }
+
+    private static void requestChatAfterRejectedCommand(ServerLevel level, ChatTarget target,
+                                                        ServerPlayer player, String message) {
+        if (requestTargetChat(target, player, message)) {
+            return;
+        }
+        if (target.kind() == ChatPersona.HOBGOBLIN && target.entity() instanceof HobgoblinEntity hobgoblin) {
+            sayHobgoblin(level, hobgoblin, player, message,
+                    "*shrugs* \"Speak plain. Work-order, or just words?\"");
+            return;
+        }
+        nudgeTarget(target, player);
+    }
+
+    private static void executeNpcCommand(ServerLevel level, ChatTarget target, ServerPlayer player,
+                                          String message, NpcCommandKind kind) {
+        switch (target.kind()) {
+            case COVEN_WITCH -> {
+                if (target.entity() instanceof CovenWitchEntity witch) {
+                    executeCovenWitchCommand(witch, player, message, kind);
+                }
+            }
+            case HOBGOBLIN -> {
+                if (target.entity() instanceof HobgoblinEntity hobgoblin) {
+                    executeHobgoblinCommand(level, hobgoblin, player, message, kind);
+                }
+            }
+            case LEONARD, BABA_YAGA, VILLAGER, REFLECTION -> {
+            }
+        }
+    }
+
+    private static void executeCovenWitchCommand(CovenWitchEntity witch, ServerPlayer player,
+                                                 String message, NpcCommandKind kind) {
+        if (kind != NpcCommandKind.STAY && kind != NpcCommandKind.STOP) {
+            return;
+        }
+        witch.beginPlayerConversation(player);
+        String speech = kind == NpcCommandKind.STOP
+                ? "I'll stop a moment, " + player.getName().getString() + "."
+                : "I'll stay a moment, " + player.getName().getString() + ".";
+        player.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, witch, speech),
+                false);
+        NpcBrainService.INSTANCE.rememberCovenExchange(witch, player, message, speech);
+    }
+
+    private static void executeHobgoblinCommand(ServerLevel level, HobgoblinEntity hobgoblin,
+                                                ServerPlayer player, String message, NpcCommandKind kind) {
+        hobgoblin.claimCommandOwner(player);
+        String speech = switch (kind) {
+            case MINE -> executeHobgoblinMineCommand(hobgoblin, player);
+            case WORSHIP -> executeHobgoblinWorshipCommand(hobgoblin, player);
+            case STAY -> {
+                hobgoblin.beginPlayerConversation(player);
+                yield "*squints* \"Feet stay. For now.\"";
+            }
+            case STOP -> {
+                hobgoblin.commandStopWork(player);
+                hobgoblin.beginPlayerConversation(player);
+                yield "*grumbles* \"Stopping. Work stops. Prayer stops. Happy?\"";
+            }
+            case COME_HERE -> {
+                hobgoblin.getLookControl().setLookAt(player, 30.0F, 30.0F);
+                boolean moving = hobgoblin.getNavigation().moveTo(player, 0.85D);
+                yield moving
+                        ? "Coming, coming. Big feet wait."
+                        : "*sniffs* \"Path says no. Move closer.\"";
+            }
+            case GO_AWAY -> {
+                hobgoblin.getLookControl().setLookAt(player, 30.0F, 30.0F);
+                boolean moving = moveHobgoblinAwayFromPlayer(hobgoblin, player);
+                yield moving
+                        ? "*backs off* \"Away, away. Good?\""
+                        : "*shrugs* \"No path away. World too cramped.\"";
+            }
+            case FOLLOW, GUARD -> "";
+        };
+        if (!speech.isBlank()) {
+            sayHobgoblin(level, hobgoblin, player, message, speech);
+        }
+    }
+
+    private static String executeHobgoblinMineCommand(HobgoblinEntity hobgoblin, ServerPlayer player) {
+        if (!hobgoblin.isLeashed()) {
+            return "*shrugs* \"No rope, no work. Hobgoblin feet choose elsewhere.\"";
+        }
+        if (!hobgoblin.hasMiningPickaxe()) {
+            return "*gestures* \"Give pickaxe first. Then work, work.\"";
+        }
+        if (hobgoblin.commandMine(player)) {
+            return "Work, work... rope bossy, shiny maybe.";
+        }
+        return "*sniffs* \"No good stone here. Move feet, move rope.\"";
+    }
+
+    private static String executeHobgoblinWorshipCommand(HobgoblinEntity hobgoblin, ServerPlayer player) {
+        if (hobgoblin.commandWorship(player)) {
+            return "*nods* \"Patron sees. Small prayers go up.\"";
+        }
+        return "*gestures* \"No goblin altar nearby. Put stone god close.\"";
+    }
+
+    private static boolean moveHobgoblinAwayFromPlayer(HobgoblinEntity hobgoblin, ServerPlayer player) {
+        Vec3 away = hobgoblin.position().subtract(player.position());
+        if (away.lengthSqr() < 1.0E-4D) {
+            away = Vec3.directionFromRotation(0.0F, player.getYRot()).scale(-1.0D);
+        }
+        Vec3 target = hobgoblin.position().add(away.normalize().scale(6.0D));
+        return hobgoblin.getNavigation().moveTo(target.x, target.y, target.z, 0.85D);
+    }
+
+    private static void sayHobgoblin(ServerLevel level, HobgoblinEntity hobgoblin, ServerPlayer player,
+                                     String playerMessage, String speech) {
+        player.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.HOBGOBLIN, hobgoblin, speech),
+                false);
+        level.playSound(null, hobgoblin.blockPosition(), SoundEvents.VILLAGER_AMBIENT,
+                SoundSource.NEUTRAL, 0.35F, 0.82F);
+        NpcBrainService.INSTANCE.rememberExchange(NpcPersonas.HOBGOBLIN, hobgoblin, player, playerMessage, speech);
     }
 
     private static void nudgeTarget(ChatTarget target, ServerPlayer player) {
@@ -407,6 +709,16 @@ public final class NpcBrainEvents {
                     villager.getLookControl().setLookAt(player, 30.0F, 30.0F);
                 }
             }
+            case HOBGOBLIN -> {
+                if (target.entity() instanceof HobgoblinEntity hobgoblin) {
+                    hobgoblin.nudgePlayerAttention(player);
+                }
+            }
+            case REFLECTION -> {
+                if (target.entity() instanceof ReflectionEntity reflection) {
+                    reflection.getLookControl().setLookAt(player, 30.0F, 30.0F);
+                }
+            }
         }
     }
 
@@ -423,6 +735,71 @@ public final class NpcBrainEvents {
             }
         }
         return null;
+    }
+
+    private static void handleReflectionGaze(ServerLevel level, ServerPlayer player) {
+        if (!WitcheryDimensions.isMirrorWorld(level)) {
+            return;
+        }
+        ReflectionEntity reflection = findGazedReflection(level, player);
+        if (reflection == null) {
+            return;
+        }
+        long now = level.getGameTime();
+        String key = reflection.getUUID() + ":" + player.getUUID() + ":gaze";
+        Long blockedUntil = REFLECTION_GAZE_COOLDOWNS.get(key);
+        if (blockedUntil != null && blockedUntil > now) {
+            return;
+        }
+        REFLECTION_GAZE_COOLDOWNS.put(key, now + REFLECTION_GAZE_COOLDOWN_TICKS);
+        Component fallback = NpcBrainService.speechComponent(NpcPersonas.REFLECTION, reflection,
+                "Your echo arrived early, " + player.getName().getString() + ".");
+        NpcBrainService.INSTANCE.requestReflectionGaze(reflection, player, fallback);
+    }
+
+    private static ReflectionEntity findGazedReflection(ServerLevel level, ServerPlayer player) {
+        List<ReflectionEntity> reflections = level.getEntitiesOfClass(
+                ReflectionEntity.class, player.getBoundingBox().inflate(REFLECTION_GAZE_RANGE, 5.0, REFLECTION_GAZE_RANGE));
+        if (reflections.isEmpty()) {
+            return null;
+        }
+        reflections.sort(Comparator.comparingDouble(player::distanceToSqr));
+        for (ReflectionEntity reflection : reflections) {
+            if (player.hasLineOfSight(reflection) && isLookingAt(player, reflection)) {
+                return reflection;
+            }
+        }
+        return null;
+    }
+
+    private static void handleMirrorWorldAmbient(ServerLevel level, ServerPlayer player) {
+        if (!WitcheryDimensions.isMirrorWorld(level)) {
+            return;
+        }
+        long now = level.getGameTime();
+        String key = player.getUUID() + ":mirror_world";
+        Long blockedUntil = MIRROR_WORLD_AMBIENT_COOLDOWNS.get(key);
+        if (blockedUntil != null && blockedUntil > now) {
+            return;
+        }
+        if (level.random.nextFloat() > 0.08F) {
+            return;
+        }
+        MIRROR_WORLD_AMBIENT_COOLDOWNS.put(key, now + MIRROR_WORLD_AMBIENT_COOLDOWN_TICKS);
+        String speech = mirrorAmbientLine(player);
+        mirrorSpeech(level, player, speech);
+    }
+
+    private static String mirrorAmbientLine(ServerPlayer player) {
+        String name = player.getName().getString();
+        String[] lines = {
+                "Your footstep arrives a breath late, " + name + ".",
+                "The silver remembers every face that tried to leave.",
+                "Somewhere nearby, a mirror exhales.",
+                "The room is not empty. It is only copying silence.",
+                "Your shadow looks toward the way home before you do."
+        };
+        return lines[Math.floorMod(player.getUUID().hashCode() + player.tickCount / 20, lines.length)];
     }
 
     private static boolean isNamedAddress(CovenWitchEntity witch, String message) {
@@ -500,6 +877,60 @@ public final class NpcBrainEvents {
         return !profession.isBlank() && normalized.contains(normalize(profession));
     }
 
+    private static boolean isNamedHobgoblinAddress(HobgoblinEntity hobgoblin, String message) {
+        String normalized = normalize(message);
+        if (normalized.contains("hobgoblin")
+                || normalized.contains("koboldite")
+                || normalized.contains("patron")
+                || normalized.contains("goblin altar")
+                || normalized.contains("mog")
+                || normalized.contains("gulg")
+                || NpcCommandKind.MINE.matchesCandidate(normalized)
+                || NpcCommandKind.WORSHIP.matchesCandidate(normalized)) {
+            return true;
+        }
+        String name = hobgoblin.hasCustomName() && hobgoblin.getCustomName() != null
+                ? hobgoblin.getCustomName().getString()
+                : "";
+        if (name.isBlank()) {
+            return false;
+        }
+        String normalizedName = normalize(name);
+        if (normalized.contains(normalizedName)) {
+            return true;
+        }
+        String first = normalizedName.split("\\s+")[0];
+        return first.length() >= 3 && normalized.contains(first);
+    }
+
+    private static boolean isNamedReflectionAddress(ReflectionEntity reflection, String message) {
+        String normalized = normalize(message);
+        if (explicitlyNamesReflection(message)) {
+            return true;
+        }
+        String ownerName = reflection.getOwnerName();
+        if (ownerName != null && !ownerName.isBlank()) {
+            String owner = normalize(ownerName);
+            if (normalized.contains(owner + " reflection")
+                    || normalized.contains(owner + "s reflection")
+                    || normalized.contains("my reflection")) {
+                return true;
+            }
+        }
+        String name = reflection.hasCustomName() && reflection.getCustomName() != null
+                ? reflection.getCustomName().getString()
+                : "";
+        if (name.isBlank()) {
+            return false;
+        }
+        String normalizedName = normalize(name);
+        if (normalized.contains(normalizedName)) {
+            return true;
+        }
+        String first = normalizedName.split("\\s+")[0];
+        return first.length() >= 3 && normalized.contains(first);
+    }
+
     private static boolean explicitlyNamesWitch(String message) {
         String normalized = normalize(message);
         return normalized.contains("witch") || normalized.contains("coven");
@@ -537,6 +968,27 @@ public final class NpcBrainEvents {
                 || normalized.contains("nitwit");
     }
 
+    private static boolean explicitlyNamesHobgoblin(String message) {
+        String normalized = normalize(message);
+        return normalized.contains("hobgoblin")
+                || normalized.contains("koboldite")
+                || normalized.contains("patron")
+                || normalized.contains("goblin altar")
+                || normalized.contains("mog")
+                || normalized.contains("gulg")
+                || NpcCommandKind.MINE.matchesCandidate(normalized)
+                || NpcCommandKind.WORSHIP.matchesCandidate(normalized);
+    }
+
+    private static boolean explicitlyNamesReflection(String message) {
+        String normalized = normalize(message);
+        return normalized.contains("reflection")
+                || normalized.contains("mirror guardian")
+                || normalized.contains("mirror world")
+                || normalized.contains("my echo")
+                || normalized.contains("mirror mirror");
+    }
+
     private static boolean isCasualAddress(String message) {
         String normalized = normalize(message);
         return normalized.matches("^(hi|hello|hey|hail|greetings|yo|sup)\\b.*")
@@ -557,35 +1009,6 @@ public final class NpcBrainEvents {
                 || normalized.length() <= 18;
     }
 
-    private static boolean isStayRequest(String message) {
-        String normalized = message.toLowerCase(Locale.ROOT)
-                .replace("'", "")
-                .replace("\u2019", "")
-                .replaceAll("[^a-z0-9_ ]+", " ")
-                .replaceAll("\\s+", " ")
-                .trim();
-        return normalized.equals("stay")
-                || normalized.equals("wait")
-                || normalized.equals("stop")
-                || normalized.contains("dont run")
-                || normalized.contains("do not run")
-                || normalized.contains("stop running")
-                || normalized.contains("dont leave")
-                || normalized.contains("do not leave")
-                || normalized.contains("dont wander")
-                || normalized.contains("do not wander")
-                || normalized.contains("stop wandering")
-                || normalized.contains("dont move")
-                || normalized.contains("do not move")
-                || normalized.contains("stop moving")
-                || normalized.contains("stay here")
-                || normalized.contains("stay still")
-                || normalized.contains("stand still")
-                || normalized.contains("hold still")
-                || normalized.contains("wait here")
-                || normalized.contains("come back");
-    }
-
     private static boolean isLookingAt(ServerPlayer player, LivingEntity witch) {
         Vec3 eye = player.getEyePosition();
         Vec3 witchCenter = witch.position().add(0.0, witch.getBbHeight() * 0.55, 0.0);
@@ -598,6 +1021,125 @@ public final class NpcBrainEvents {
 
     private static String normalize(String text) {
         return text.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_ ]+", " ").replaceAll("\\s+", " ").trim();
+    }
+
+    private static boolean handleMirrorChant(ServerLevel level, ServerPlayer player, String message) {
+        String normalized = normalize(message);
+        if (!normalized.startsWith("mirror mirror")) {
+            return false;
+        }
+        BlockPos mirrorPos = findNearestMirror(level, player, 12.0, false);
+        if (mirrorPos == null) {
+            return false;
+        }
+        if (WitcheryDimensions.isMirrorWorld(level)
+                && containsAny(normalized, "send me home", "go home", "take me home", "let me out")) {
+            BlockPos exitMirror = findNearestMirror(level, player, 16.0, true);
+            if (exitMirror != null) {
+                mirrorSpeech(level, player, "Then step through, " + player.getName().getString()
+                        + ". The way home still has your shape.");
+                MirrorHelper.exitMirrorWorld(player, level, exitMirror);
+                playMirrorCue(level, exitMirror);
+            } else {
+                mirrorSpeech(level, player, "No home-facing glass answers you.");
+                playMirrorCue(level, mirrorPos);
+            }
+            return true;
+        }
+        if (containsAny(normalized, "fairest", "on the wall", "who is fair", "who is the fair")) {
+            mirrorSpeech(level, player, "You are fairest here, " + player.getName().getString()
+                    + ", because no wiser face stayed to compete.");
+            playMirrorCue(level, mirrorPos);
+            return true;
+        }
+        mirrorSpeech(level, player, "The mirror listens, but only some names open doors.");
+        playMirrorCue(level, mirrorPos);
+        return true;
+    }
+
+    private static boolean handleMirrorTalk(ServerLevel level, ServerPlayer player, String message) {
+        String normalized = normalize(message);
+        if (!containsAny(normalized, "mirror", "fairest", "reflection", "glass")) {
+            return false;
+        }
+        BlockPos mirrorPos = findNearestMirror(level, player, 7.0, false);
+        if (mirrorPos == null) {
+            return false;
+        }
+        String speech;
+        if (containsAny(normalized, "who are you", "what are you")) {
+            speech = "I am only glass until you give me a face.";
+        } else if (containsAny(normalized, "how do i leave", "get out", "go home", "send me home")) {
+            speech = WitcheryDimensions.isMirrorWorld(level)
+                    ? "The linked mirror is the kindest exit this room remembers."
+                    : "Step through only if you are ready to meet what steps back.";
+        } else if (containsAny(normalized, "fairest")) {
+            speech = "Fairest is a dangerous word. It attracts hungry reflections.";
+        } else {
+            speech = "The silver clouds, then clears with a face almost like yours.";
+        }
+        mirrorSpeech(level, player, speech);
+        playMirrorCue(level, mirrorPos);
+        return true;
+    }
+
+    private static BlockPos findNearestMirror(ServerLevel level, ServerPlayer player, double range,
+                                              boolean requireUnbreakable) {
+        int radius = (int) Math.ceil(range);
+        BlockPos center = player.blockPosition();
+        BlockPos best = null;
+        double bestDistance = Double.MAX_VALUE;
+        for (BlockPos check : BlockPos.betweenClosed(center.offset(-radius, -4, -radius),
+                center.offset(radius, 4, radius))) {
+            BlockState state = level.getBlockState(check);
+            if (!state.is(WitcheryBlocks.MIRROR.get())) {
+                continue;
+            }
+            BlockPos foot = mirrorFootPos(state, check);
+            BlockState footState = level.getBlockState(foot);
+            if (!footState.is(WitcheryBlocks.MIRROR.get())) {
+                continue;
+            }
+            if (requireUnbreakable && (!footState.hasProperty(MirrorBlock.UNBREAKABLE)
+                    || !footState.getValue(MirrorBlock.UNBREAKABLE))) {
+                continue;
+            }
+            double distance = player.distanceToSqr(Vec3.atCenterOf(foot));
+            if (distance < bestDistance && distance <= range * range) {
+                best = foot.immutable();
+                bestDistance = distance;
+            }
+        }
+        return best;
+    }
+
+    private static BlockPos mirrorFootPos(BlockState state, BlockPos pos) {
+        return state.hasProperty(MirrorBlock.PART) && state.getValue(MirrorBlock.PART) == BedPart.HEAD
+                ? pos.below()
+                : pos;
+    }
+
+    private static void mirrorSpeech(ServerLevel level, ServerPlayer player, String speech) {
+        player.displayClientMessage(NpcBrainService.speechComponent("Mirror", 0x55FFFF, speech), false);
+        level.sendParticles(ParticleTypes.ENCHANT,
+                player.getX(), player.getY() + 1.0D, player.getZ(),
+                6, 0.35D, 0.25D, 0.35D, 0.01D);
+    }
+
+    private static void playMirrorCue(ServerLevel level, BlockPos pos) {
+        level.playSound(null, pos, SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.BLOCKS, 0.45F, 0.7F);
+        level.sendParticles(ParticleTypes.WITCH,
+                pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
+                8, 0.25D, 0.35D, 0.25D, 0.02D);
+    }
+
+    private static boolean containsAny(String text, String... needles) {
+        for (String needle : needles) {
+            if (text.contains(needle)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isChestLike(BlockState state) {
@@ -645,7 +1187,9 @@ public final class NpcBrainEvents {
         COVEN_WITCH,
         LEONARD,
         BABA_YAGA,
-        VILLAGER
+        VILLAGER,
+        HOBGOBLIN,
+        REFLECTION
     }
 
     private record ChatTarget(ChatPersona kind, LivingEntity entity, double distanceSqr) {

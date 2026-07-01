@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -33,7 +34,7 @@ public class BrewOfHollowTearsItem extends BrewItem {
         }
 
         BlockPos placePos = placementPos(serverLevel, context.getClickedPos(), context.getClickedFace());
-        if (!depositHollowTears(serverLevel, placePos)) {
+        if (!depositHollowTears(serverLevel, placePos, context.getPlayer())) {
             return InteractionResult.PASS;
         }
 
@@ -50,7 +51,7 @@ public class BrewOfHollowTearsItem extends BrewItem {
             return InteractionResult.PASS;
         }
 
-        if (!depositHollowTears(serverLevel, target.blockPosition())) {
+        if (!depositHollowTears(serverLevel, target.blockPosition(), player)) {
             return InteractionResult.PASS;
         }
 
@@ -61,7 +62,7 @@ public class BrewOfHollowTearsItem extends BrewItem {
     @Override
     protected void applyEffect(Player player, Level level) {
         if (level instanceof ServerLevel serverLevel) {
-            depositHollowTears(serverLevel, player.blockPosition());
+            depositHollowTears(serverLevel, player.blockPosition(), player);
         }
     }
 
@@ -73,12 +74,17 @@ public class BrewOfHollowTearsItem extends BrewItem {
         return placePos;
     }
 
-    private static boolean depositHollowTears(ServerLevel level, BlockPos pos) {
+    private static boolean depositHollowTears(ServerLevel level, BlockPos pos, Player player) {
         BlockState current = level.getBlockState(pos);
         if (current.is(WitcheryBlocks.HOLLOW_TEARS.get())) {
             return false;
         }
         if (!canDisplace(current)) {
+            return false;
+        }
+        if (!(current.isAir()
+                ? WitcheryTerrainProtection.canPlace(player, level, pos)
+                : WitcheryTerrainProtection.canTransform(player, level, pos))) {
             return false;
         }
 

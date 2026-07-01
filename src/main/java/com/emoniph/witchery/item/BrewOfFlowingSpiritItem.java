@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.SpiritLiquidBlock;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -37,7 +38,7 @@ public class BrewOfFlowingSpiritItem extends BrewItem {
         }
 
         BlockPos pos = depositPosition(serverLevel, context.getClickedPos(), context.getClickedFace());
-        if (!placeFlowingSpirit(serverLevel, pos)) {
+        if (!placeFlowingSpirit(serverLevel, pos, context.getPlayer())) {
             return InteractionResult.PASS;
         }
 
@@ -55,7 +56,7 @@ public class BrewOfFlowingSpiritItem extends BrewItem {
         }
 
         BlockPos pos = new BlockPos(Mth.floor(target.getX()), Mth.floor(target.getY()), Mth.floor(target.getZ()));
-        if (!placeFlowingSpirit(serverLevel, pos)) {
+        if (!placeFlowingSpirit(serverLevel, pos, player)) {
             return InteractionResult.PASS;
         }
 
@@ -65,7 +66,7 @@ public class BrewOfFlowingSpiritItem extends BrewItem {
 
     @Override
     protected void applyEffect(Player player, Level level) {
-        if (level instanceof ServerLevel serverLevel && placeFlowingSpirit(serverLevel, player.blockPosition())) {
+        if (level instanceof ServerLevel serverLevel && placeFlowingSpirit(serverLevel, player.blockPosition(), player)) {
             serverLevel.sendParticles(ParticleTypes.POOF, player.getX(), player.getY() + 0.5D, player.getZ(),
                     8, 0.35D, 0.25D, 0.35D, 0.01D);
         }
@@ -79,9 +80,14 @@ public class BrewOfFlowingSpiritItem extends BrewItem {
         return pos;
     }
 
-    private static boolean placeFlowingSpirit(ServerLevel level, BlockPos pos) {
+    private static boolean placeFlowingSpirit(ServerLevel level, BlockPos pos, Player player) {
         BlockState current = level.getBlockState(pos);
         if (!SpiritLiquidBlock.canDisplace(current)) {
+            return false;
+        }
+        if (!(current.isAir()
+                ? WitcheryTerrainProtection.canPlace(player, level, pos)
+                : WitcheryTerrainProtection.canTransform(player, level, pos))) {
             return false;
         }
 

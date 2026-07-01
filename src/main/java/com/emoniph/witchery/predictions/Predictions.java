@@ -1,6 +1,7 @@
 package com.emoniph.witchery.predictions;
 
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.entity.BabaYagaEntity;
 import com.emoniph.witchery.world.PredictionData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -314,7 +315,7 @@ public final class Predictions {
             case ARROW -> spawnHostile(level, player, EntityType.SKELETON);
             case ENT -> spawnHostile(level, player, WitcheryEntities.ENT.get());
             case BABA_BAD -> spawnHostile(level, player, WitcheryEntities.BABA_YAGA.get());
-            case BABA_GOOD -> spawnNeutral(level, player, WitcheryEntities.BABA_YAGA.get());
+            case BABA_GOOD -> spawnFriendlyBabaYaga(level, player);
             case FRIEND -> spawnTamedWolf(level, player);
             case RESCUE -> spawnRescuer(level, player);
             case LOVE -> spawnNeutral(level, player, EntityType.VILLAGER);
@@ -348,6 +349,14 @@ public final class Predictions {
 
     private static boolean spawnNeutral(ServerLevel level, ServerPlayer player, EntityType<? extends Mob> type) {
         return spawnNearby(level, player, type) != null;
+    }
+
+    private static boolean spawnFriendlyBabaYaga(ServerLevel level, ServerPlayer player) {
+        if (spawnNearby(level, player, WitcheryEntities.BABA_YAGA.get()) instanceof BabaYagaEntity baba) {
+            baba.beginFriendlyVisit(player);
+            return true;
+        }
+        return false;
     }
 
     private static boolean spawnTamedWolf(ServerLevel level, ServerPlayer player) {

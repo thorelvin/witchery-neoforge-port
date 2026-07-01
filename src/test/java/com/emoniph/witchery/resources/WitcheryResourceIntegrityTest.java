@@ -147,6 +147,14 @@ class WitcheryResourceIntegrityTest {
                 + joinFailures(failures));
     }
 
+    @Test
+    void summonedEntityLangKeysExist() throws IOException {
+        JsonObject lang = readJson(ASSETS.resolve(Path.of("lang", "en_us.json")));
+        assertTrue(lang.has("entity.witchery.attack_bat"), "Attack Bat entity is missing an en_us lang key");
+        assertTrue(lang.has("witchery.vampire.ultimate.swarm"), "Vampire swarm ultimate is missing an en_us lang key");
+        assertTrue(lang.has("witchery.vampire.ultimate.no_charges"), "Vampire ultimate no-charge feedback is missing an en_us lang key");
+    }
+
     private static List<ModelReference> collectItemModelReferences(JsonElement root) {
         List<ModelReference> references = new ArrayList<>();
         collectStringValues(root, "", references, Set.of("model", "base"));

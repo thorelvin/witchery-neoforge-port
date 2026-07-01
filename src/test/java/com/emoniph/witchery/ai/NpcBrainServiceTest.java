@@ -14,4 +14,13 @@ class NpcBrainServiceTest {
         assertFalse(NpcBrainService.socialIntentAccepted(new NpcBrainResponse("no", NpcIntent.NONE, "")));
         assertFalse(NpcBrainService.socialIntentAccepted(null));
     }
+
+    @Test
+    void commandIntentUsesSameStrictAcceptance() {
+        assertTrue(NpcBrainService.commandIntentAccepted(new NpcBrainResponse("yes", NpcIntent.NONE, "")));
+        assertTrue(NpcBrainService.commandIntentAccepted(new NpcBrainResponse("\"yes\"", NpcIntent.NONE, "")));
+        assertFalse(NpcBrainService.commandIntentAccepted(new NpcBrainResponse("yes, master", NpcIntent.NONE, "")));
+        assertFalse(NpcBrainService.commandIntentAccepted(new NpcBrainResponse("no", NpcIntent.NONE, "")));
+        assertFalse(NpcBrainService.commandIntentAccepted(null));
+    }
 }

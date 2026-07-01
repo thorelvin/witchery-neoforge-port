@@ -24,6 +24,7 @@ import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import com.emoniph.witchery.network.PlacedModonomiconPageTurnPayload;
 import com.emoniph.witchery.network.ScryingCameraPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import com.emoniph.witchery.network.VampireUltimatePayload;
 import com.mojang.logging.LogUtils;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -116,6 +117,10 @@ public class WitcheryMod {
                         HowlPayload.TYPE,
                         HowlPayload.STREAM_CODEC,
                         HowlPayload::handleOnServer)
+                .playToServer(
+                        VampireUltimatePayload.TYPE,
+                        VampireUltimatePayload.STREAM_CODEC,
+                        VampireUltimatePayload::handleOnServer)
                 .playToServer(
                         BroomControlPayload.TYPE,
                         BroomControlPayload.STREAM_CODEC,

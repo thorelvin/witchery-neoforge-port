@@ -11,7 +11,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -28,20 +30,48 @@ public class WitcheryAttachments {
     /** Mystic Branch spell knowledge learned from Demon souls (a set of {@code knowledgeKey}s). */
     public static final class LearnedSymbols {
         public final Set<String> keys = new HashSet<>();
+        public final Map<String, Long> cooldownUntil = new HashMap<>();
 
         public static final MapCodec<LearnedSymbols> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                Codec.STRING.listOf().fieldOf("keys").forGetter(learned -> new ArrayList<>(learned.keys))
-        ).apply(i, list -> {
+                Codec.STRING.listOf().fieldOf("keys").forGetter(learned -> new ArrayList<>(learned.keys)),
+                Codec.unboundedMap(Codec.STRING, Codec.LONG)
+                        .optionalFieldOf("cooldown_until", Map.of())
+                        .forGetter(learned -> new HashMap<>(learned.cooldownUntil))
+        ).apply(i, (list, cooldowns) -> {
             LearnedSymbols learned = new LearnedSymbols();
             learned.keys.addAll(list);
+            learned.cooldownUntil.putAll(cooldowns);
             return learned;
         }));
+
+        public long cooldownRemaining(String key, long gameTime) {
+            if (key == null || key.isBlank()) {
+                return 0L;
+            }
+            Long until = cooldownUntil.get(key);
+            if (until == null) {
+                return 0L;
+            }
+            long remaining = until - gameTime;
+            if (remaining <= 0L) {
+                cooldownUntil.remove(key);
+                return 0L;
+            }
+            return remaining;
+        }
+
+        public void setCooldownUntil(String key, long gameTime) {
+            if (key != null && !key.isBlank() && gameTime > 0L) {
+                cooldownUntil.put(key, gameTime);
+            }
+        }
     }
 
     public static final Supplier<AttachmentType<LearnedSymbols>> LEARNED_SYMBOLS =
             ATTACHMENT_TYPES.register("learned_symbols", () ->
                     AttachmentType.builder(LearnedSymbols::new)
                             .serialize(LearnedSymbols.CODEC)
+                            .copyOnDeath()
                             .build());
 
     /**

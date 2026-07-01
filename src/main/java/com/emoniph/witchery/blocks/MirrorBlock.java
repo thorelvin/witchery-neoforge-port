@@ -2,6 +2,7 @@ package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.MirrorBlockEntity;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
+import com.emoniph.witchery.ai.NpcBrainService;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
@@ -42,6 +43,7 @@ import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -208,6 +210,48 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
     }
 
     // ── Portal logic ─────────────────────────────────────────────────────────
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+                                               BlockHitResult hit) {
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return InteractionResult.PASS;
+        }
+        BlockPos footPos = state.getValue(PART) == BedPart.HEAD ? pos.below() : pos;
+        BlockState footState = level.getBlockState(footPos);
+        boolean mirrorWorld = WitcheryDimensions.isMirrorWorld(level);
+        boolean unbreakable = footState.hasProperty(UNBREAKABLE) && footState.getValue(UNBREAKABLE);
+        String speech = mirrorRightClickSpeech(serverLevel, footPos, player, mirrorWorld, unbreakable);
+        player.displayClientMessage(NpcBrainService.speechComponent("Mirror", 0x55FFFF, speech), false);
+        serverLevel.playSound(null, footPos, SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.BLOCKS, 0.45F, 0.72F);
+        serverLevel.sendParticles(ParticleTypes.WITCH,
+                footPos.getX() + 0.5D, footPos.getY() + 1.0D, footPos.getZ() + 0.5D,
+                8, 0.25D, 0.35D, 0.25D, 0.02D);
+        serverLevel.sendParticles(ParticleTypes.ENCHANT,
+                footPos.getX() + 0.5D, footPos.getY() + 1.0D, footPos.getZ() + 0.5D,
+                6, 0.3D, 0.35D, 0.3D, 0.01D);
+        return InteractionResult.CONSUME;
+    }
+
+    private static String mirrorRightClickSpeech(ServerLevel level, BlockPos footPos, Player player,
+                                                 boolean mirrorWorld, boolean unbreakable) {
+        if (mirrorWorld && unbreakable) {
+            return "The way home waits behind the silver, " + player.getName().getString() + ".";
+        }
+        if (mirrorWorld) {
+            return "A deeper room clouds the glass. It is listening.";
+        }
+        if (level.getBlockEntity(footPos) instanceof MirrorBlockEntity mirror && mirror.hasRoom()) {
+            if (mirror.isDemonKilled()) {
+                return "Only your own face answers. The dangerous one is gone.";
+            }
+            return "Something with your eyes waits behind this mirror.";
+        }
+        return "The glass is quiet, but not empty.";
+    }
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,

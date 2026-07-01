@@ -41,6 +41,12 @@ public class WitcheryConfig {
     public static final ModConfigSpec.BooleanValue ENABLE_BRAMBLE_PATCHES;
     public static final ModConfigSpec.IntValue VILLAGE_WALL_SPAWN_PERCENT;
 
+    // Protection / anti-grief
+    public static final ModConfigSpec.BooleanValue PROTECT_NPC_COMMANDS;
+    public static final ModConfigSpec.BooleanValue PROTECT_TERRAIN_MAGIC;
+    public static final ModConfigSpec.ConfigValue<String> TERRAIN_MAGIC_PROTECTED_AREA_MODE;
+    public static final ModConfigSpec.ConfigValue<String> TERRAIN_MAGIC_DESTRUCTIVE_CORE_MODE;
+
     // Local-only NPC LLM experiment
     public static final ModConfigSpec.BooleanValue LLM_ENABLED;
     public static final ModConfigSpec.BooleanValue LLM_PREWARM_ENABLED;
@@ -127,6 +133,21 @@ public class WitcheryConfig {
         VILLAGE_WALL_SPAWN_PERCENT = BUILDER
                 .comment("Percent chance (0-100) that a village receives adaptive Witchery walls. Deterministic per village. 0 = never, 100 = every village. Default: 40")
                 .defineInRange("villageWallSpawnPercent", VillageWallGenerator.DEFAULT_WALL_SPAWN_PERCENT, 0, 100);
+        BUILDER.pop();
+
+        BUILDER.push("protection");
+        PROTECT_NPC_COMMANDS = BUILDER
+                .comment("If true, hobgoblins and recruited witches only obey commands from their owner/authorized player. Default: true")
+                .define("protectNpcCommands", true);
+        PROTECT_TERRAIN_MAGIC = BUILDER
+                .comment("If true, Witchery terrain-changing magic checks player build permissions before modifying blocks. Default: true")
+                .define("protectTerrainMagic", true);
+        TERRAIN_MAGIC_PROTECTED_AREA_MODE = BUILDER
+                .comment("How broad terrain magic handles protected blocks: skip or fail. Default: skip")
+                .define("terrainMagicProtectedAreaMode", "skip");
+        TERRAIN_MAGIC_DESTRUCTIVE_CORE_MODE = BUILDER
+                .comment("How destructive core effects handle protected blocks: fail or skip. Default: fail")
+                .define("terrainMagicDestructiveCoreMode", "fail");
         BUILDER.pop();
 
         BUILDER.push("llm");

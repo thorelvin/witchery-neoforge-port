@@ -16,6 +16,7 @@ import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.EarmuffsItem;
 import com.emoniph.witchery.network.BroomControlPayload;
 import com.emoniph.witchery.network.HowlPayload;
+import com.emoniph.witchery.network.VampireUltimatePayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -295,11 +296,13 @@ public class WitcheryClientEvents {
 
     @SubscribeEvent
     public static void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
+        if (tryVampireUltimate(event.getEntity(), event.getHand())) return;
         tryHowl(event.getEntity(), event.getHand());
     }
 
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (tryVampireUltimate(event.getEntity(), event.getHand())) return;
         tryHowl(event.getEntity(), event.getHand());
     }
 
@@ -411,6 +414,21 @@ public class WitcheryClientEvents {
         if (!player.isShiftKeyDown()) return;
         if (player.getXRot() > -75f) return;
         ClientPacketDistributor.sendToServer(HowlPayload.INSTANCE);
+    }
+
+    private static boolean tryVampireUltimate(Player player, InteractionHand hand) {
+        if (hand != InteractionHand.MAIN_HAND) return false;
+        if (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()) return false;
+        if (!player.isShiftKeyDown()) return false;
+        if (player.getXRot() > -75f) return false;
+        var data = WitcheryAttachments.get(player);
+        if (!data.isVampire()
+                || data.getVampireUltimate() != WitcheryPlayerData.VampireUltimate.SWARM
+                || data.getVampireUltimateCharges() <= 0) {
+            return false;
+        }
+        ClientPacketDistributor.sendToServer(VampireUltimatePayload.INSTANCE);
+        return true;
     }
 
     @SubscribeEvent

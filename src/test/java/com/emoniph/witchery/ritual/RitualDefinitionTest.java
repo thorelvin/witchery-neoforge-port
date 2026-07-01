@@ -1,17 +1,22 @@
 package com.emoniph.witchery.ritual;
 
+import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.WaystoneItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -88,6 +93,7 @@ class RitualDefinitionTest {
         assertEquals("bind_creaking_familiar", match(MEDIUM, new ItemStack(Blocks.CREAKING_HEART.asItem()), RITUAL));
         assertEquals("call_familiar", match(MEDIUM, new ItemStack(WitcheryItems.BREATH_OF_GODDESS.get()), RITUAL));
         assertEquals("call_familiar", match(MEDIUM, new ItemStack(WitcheryItems.HINT_OF_REBIRTH.get()), RITUAL));
+        assertEquals("infusion_recharge", match(MEDIUM, PotionContents.createItemStack(Items.POTION, Potions.REGENERATION), RITUAL));
         assertEquals("rain_of_toads", match(MEDIUM, new ItemStack(Items.LILY_PAD), INFERNAL));
         assertEquals("rain_of_toads", match(MEDIUM, new ItemStack(Items.FROGSPAWN), INFERNAL));
         assertEquals("blight", match(MEDIUM, new ItemStack(Items.WITHER_ROSE), INFERNAL));
@@ -125,6 +131,24 @@ class RitualDefinitionTest {
 
         // A rite with no companion requirement reports none.
         assertEquals(List.of(), rings(SMALL, new ItemStack(Items.FEATHER), RITUAL));
+    }
+
+    @Test
+    void infusionRiteUsesSourcePowerAndRadius() {
+        assertEquals(2000, RitualExecutor.infusionStartupCost(InfusionType.LIGHT));
+        assertEquals(4000, RitualExecutor.infusionStartupCost(InfusionType.OVERWORLD));
+        assertEquals(4000, RitualExecutor.infusionStartupCost(InfusionType.OTHERWHERE));
+        assertEquals(4000, RitualExecutor.infusionStartupCost(InfusionType.INFERNAL));
+        assertEquals(0, RitualExecutor.infusionStartupCost(InfusionType.NONE));
+
+        BlockPos center = new BlockPos(10, 64, -5);
+        assertTrue(RitualExecutor.isInsideInfusionRiteRadius(new Vec3(14.0D, 64.0D, -5.0D), center, 4));
+        assertTrue(RitualExecutor.isInsideInfusionRiteRadius(new Vec3(10.5D, 64.0D, -4.5D), center, 4));
+        assertFalse(RitualExecutor.isInsideInfusionRiteRadius(new Vec3(14.1D, 64.0D, -5.0D), center, 4));
+
+        assertTrue(RitualExecutor.shouldGrantInfusionAfterOrdeal(true, 0.2F));
+        assertFalse(RitualExecutor.shouldGrantInfusionAfterOrdeal(true, 0.1F));
+        assertFalse(RitualExecutor.shouldGrantInfusionAfterOrdeal(false, 20.0F));
     }
 
     @Test

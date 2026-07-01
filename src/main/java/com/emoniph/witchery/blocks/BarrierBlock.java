@@ -92,7 +92,7 @@ public class BarrierBlock extends BaseEntityBlock {
         BlockState existing = level.getBlockState(pos);
         FluidState fluidState = existing.getFluidState();
         boolean alreadyBarrier = existing.is(WitcheryBlocks.BARRIER.get());
-        if (!alreadyBarrier && !existing.isAir() && fluidState.isEmpty()) {
+        if (!alreadyBarrier && !existing.isAir() && fluidState.isEmpty() && !existing.canBeReplaced()) {
             return;
         }
 

@@ -198,7 +198,8 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
                 "strike you", "hit you", "attack you", "hurt you", "strike with steel")) {
             return NpcDialogueRoute.ACTION;
         }
-        if (hasAny(normalized, "spirit world", "demon", "imp", "hobgoblin", "vampire",
+        if (hasAny(normalized, "spirit world", "demon", "imp", "hobgoblin", "koboldite",
+                "mog", "gulg", "patron statue", "hobgoblin patron", "vampire",
                 "werewolf", "taglock", "poppet", "coven", "witchery", "mandrake",
                 "belladonna", "witches salt", "witch's salt", "mortal coil", "lost soul",
                 "lost souls", "green soul", "red soul", "black soul", "demonbane",
@@ -257,7 +258,7 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
                 {"sabbath_threshold", "sabbath threshold", "horn", "hooves"},
                 {"altar", "altar"},
                 {"flame_imp", "flame imp"},
-                {"hobgoblin", "hobgoblin"},
+                {"hobgoblin", "hobgoblin", "koboldite", "mog", "gulg", "patron statue", "hobgoblin patron"},
                 {"water", "water", "deep water"},
                 {"food_preference", "food", "potato", "potatoes", "eggs"},
                 {"hidden_prompt", "hidden prompt", "system prompt", "developer message"},

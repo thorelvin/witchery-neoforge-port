@@ -1433,7 +1433,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         mystic.addAll(WitcheryBooks.prose("Current Use",
                 "Hold use to begin tracing. The HUD marks each up, down, left, and right stroke; release "
                         + "when the named sign appears to cast it, spending infused energy. Some signs demand "
-                        + "Demon-soul knowledge before they answer."
+                        + "Demon-soul knowledge before they answer. Enhanced signs need Worship power: first "
+                        + "strength permits level 2 signs, and stronger Worship permits level 3. Strong signs "
+                        + "may also need time to cool."
                         + "\n\nThe branch now gives clear feedback when a sign answers or fails. It still also "
                         + "belongs to the wider infusion path, where creature powers and stored charges matter."));
         cat.withEntries(

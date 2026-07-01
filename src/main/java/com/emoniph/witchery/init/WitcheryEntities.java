@@ -44,6 +44,12 @@ public class WitcheryEntities {
                     EntityType.Builder.of(RavenEntity::new, MobCategory.CREATURE)
                             .sized(0.6F, 0.6F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "raven"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<AttackBatEntity>> ATTACK_BAT =
+            ENTITY_TYPES.register("attack_bat", () ->
+                    EntityType.Builder.of(AttackBatEntity::new, MobCategory.MONSTER)
+                            .sized(0.5F, 0.9F).clientTrackingRange(8).updateInterval(2)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "attack_bat"))));
+
     public static final DeferredHolder<EntityType<?>, EntityType<CatFamiliarEntity>> FAMILIAR_CAT =
             ENTITY_TYPES.register("familiar_cat", () ->
                     EntityType.Builder.of(CatFamiliarEntity::new, MobCategory.CREATURE)
@@ -150,6 +156,24 @@ public class WitcheryEntities {
             ENTITY_TYPES.register("dark_mark", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.DarkMarkEntity::new, MobCategory.MISC)
                             .sized(2.0F, 2.0F).fireImmune().noSummon().clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "dark_mark"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.IllusionEntity.Creeper>> ILLUSION_CREEPER =
+            ENTITY_TYPES.register("illusion_creeper", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.IllusionEntity.Creeper::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.7F).clientTrackingRange(10).updateInterval(2).noSave().noSummon()
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "illusion_creeper"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.IllusionEntity.Spider>> ILLUSION_SPIDER =
+            ENTITY_TYPES.register("illusion_spider", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.IllusionEntity.Spider::new, MobCategory.MONSTER)
+                            .sized(1.4F, 0.9F).clientTrackingRange(10).updateInterval(2).noSave().noSummon()
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "illusion_spider"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.IllusionEntity.Zombie>> ILLUSION_ZOMBIE =
+            ENTITY_TYPES.register("illusion_zombie", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.IllusionEntity.Zombie::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.95F).clientTrackingRange(10).updateInterval(2).noSave().noSummon()
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "illusion_zombie"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<MandrakeEntity>> MANDRAKE_MOB =
             ENTITY_TYPES.register("mandrake_mob", () ->
@@ -403,6 +427,7 @@ public class WitcheryEntities {
     public static void onEntityAttributeCreation(EntityAttributeCreationEvent event) {
         event.put(OWL.get(),           OwlFamiliarEntity.createAttributes().build());
         event.put(RAVEN.get(),         RavenEntity.createAttributes().build());
+        event.put(ATTACK_BAT.get(),    net.minecraft.world.entity.ambient.Bat.createAttributes().build());
         event.put(FAMILIAR_CAT.get(),  CatFamiliarEntity.createAttributes().build());
         event.put(SPECTRAL_FAMILIAR.get(), SpectralFamiliarEntity.createAttributes().build());
         event.put(TOAD.get(),          ToadFamiliarEntity.createAttributes().build());
@@ -421,6 +446,9 @@ public class WitcheryEntities {
         event.put(HELLHOUND.get(),     com.emoniph.witchery.entity.HellhoundEntity.createAttributes().build());
         event.put(MINDRAKE.get(),      com.emoniph.witchery.entity.MindrakeEntity.createAttributes().build());
         event.put(DARK_MARK.get(),     com.emoniph.witchery.entity.DarkMarkEntity.createAttributes().build());
+        event.put(ILLUSION_CREEPER.get(), com.emoniph.witchery.entity.IllusionEntity.createAttributes().build());
+        event.put(ILLUSION_SPIDER.get(),  com.emoniph.witchery.entity.IllusionEntity.createAttributes().build());
+        event.put(ILLUSION_ZOMBIE.get(),  com.emoniph.witchery.entity.IllusionEntity.createAttributes().build());
         event.put(MANDRAKE_MOB.get(),  MandrakeEntity.createAttributes().build());
         event.put(DEMON.get(),         DemonEntity.createAttributes().build());
         event.put(NIGHTMARE.get(),        NightmareEntity.createAttributes().build());

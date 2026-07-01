@@ -3,7 +3,9 @@ package com.emoniph.witchery.ai;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.entity.BabaYagaEntity;
 import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.entity.HobgoblinEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.entity.ReflectionEntity;
 import com.emoniph.witchery.entity.VampireEntity;
 import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.entity.WereVillagerEntity;
@@ -263,6 +265,85 @@ public final class NpcPromptBuilder {
                 "answer the player naturally in one short in-character line");
     }
 
+    public static NpcBrainPrompt hobgoblinGreeting(HobgoblinEntity hobgoblin, ServerPlayer player, String memory) {
+        return hobgoblin(hobgoblin, player, memory,
+                "the player right-clicked the hobgoblin and its trade screen is opening",
+                "none",
+                "give one short wary trade greeting");
+    }
+
+    public static NpcBrainPrompt hobgoblinChat(HobgoblinEntity hobgoblin, ServerPlayer player, String memory,
+                                               String playerMessage) {
+        return hobgoblin(hobgoblin, player, memory,
+                "the player spoke near the hobgoblin in chat",
+                playerMessage,
+                "answer the player in one short hobgoblin line");
+    }
+
+    static NpcBrainPrompt hobgoblinSmoke(String playerMessage, String memory) {
+        return hobgoblinPrompt(
+                "Hobgoblin",
+                "Dev",
+                "minecraft:overworld",
+                "Forest",
+                "day",
+                "11:20",
+                2L,
+                "clear",
+                "free; holding nothing visible; can trade; mines koboldite dust only when leashed and holding a pickaxe",
+                "nearby goblin altar: Statue of Hobgoblin Patron 5.0 blocks away; stored prayers 3; lifetime prayers 9",
+                hobgoblinTradeInfo(),
+                NpcKnowledgeBase.relevantContext(playerMessage, "Forest", "day",
+                        NpcCardRequest.persona("hobgoblin")),
+                memory,
+                playerMessage,
+                "the player spoke near the hobgoblin in chat",
+                "answer the player in one short hobgoblin line");
+    }
+
+    public static NpcBrainPrompt reflectionGreeting(ReflectionEntity reflection, ServerPlayer player, String memory) {
+        return reflection(reflection, player, memory,
+                "the player is close enough to hear their Reflection",
+                "none",
+                "answer as the player's mirror-shape in one short unsettling line");
+    }
+
+    public static NpcBrainPrompt reflectionGaze(ReflectionEntity reflection, ServerPlayer player, String memory) {
+        return reflection(reflection, player, memory,
+                "the player is nearby and looking directly at their Reflection",
+                "none",
+                "start one short unsettling in-character line");
+    }
+
+    public static NpcBrainPrompt reflectionChat(ReflectionEntity reflection, ServerPlayer player, String memory,
+                                               String playerMessage) {
+        return reflection(reflection, player, memory,
+                "the player spoke near their Reflection in chat",
+                playerMessage,
+                "answer the player naturally in one short in-character line");
+    }
+
+    static NpcBrainPrompt reflectionSmoke(String playerMessage, String memory) {
+        return reflectionPrompt(
+                "Dev's Reflection",
+                "Dev",
+                "Dev",
+                "minecraft:mirror_world",
+                "Mirror World",
+                "night",
+                "00:00",
+                1L,
+                "clear",
+                "health 100/100; hostile mirror guardian; owner Dev; wearing the owner's shape",
+                "main hand Arthana; offhand Quartz Sphere; wearing Witches' Hat",
+                NpcKnowledgeBase.relevantContext(playerMessage, "Mirror World", "night",
+                        NpcCardRequest.persona("reflection")),
+                memory,
+                playerMessage,
+                "the player spoke near their Reflection in chat",
+                "answer the player naturally in one short in-character line");
+    }
+
     private static NpcBrainPrompt leonard(LeonardEntity leonard, ServerPlayer player, String memory,
                                           String situation, String playerMessage, String task) {
         ServerLevel level = (ServerLevel) player.level();
@@ -353,10 +434,284 @@ public final class NpcPromptBuilder {
                 task);
     }
 
+    private static NpcBrainPrompt hobgoblin(HobgoblinEntity hobgoblin, ServerPlayer player, String memory,
+                                            String situation, String playerMessage, String task) {
+        ServerLevel level = (ServerLevel) player.level();
+        String name = displayName(hobgoblin, "Hobgoblin");
+        String playerName = player.getName().getString();
+        String time = timeName(level.getDayTime());
+        String biome = biomeName(level, hobgoblin.blockPosition());
+        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time,
+                cardRequest("hobgoblin", hobgoblin.getUUID(), player, level));
+
+        return hobgoblinPrompt(
+                name,
+                playerName,
+                level.dimension().identifier().toString(),
+                biome,
+                time,
+                clockTime(level.getDayTime()),
+                level.getDayTime() / 24000L,
+                level.isRaining() ? "rain" : "clear",
+                hobgoblinWorkInfo(hobgoblin),
+                hobgoblinPatronInfo(hobgoblin),
+                hobgoblinTradeInfo(),
+                knowledge,
+                memory,
+                playerMessage,
+                situation,
+                task);
+    }
+
+    private static NpcBrainPrompt reflection(ReflectionEntity reflection, ServerPlayer player, String memory,
+                                             String situation, String playerMessage, String task) {
+        ServerLevel level = (ServerLevel) player.level();
+        String playerName = player.getName().getString();
+        String ownerName = reflection.getOwnerName();
+        if (ownerName == null || ownerName.isBlank()) {
+            ownerName = playerName;
+        }
+        String reflectionName = reflectionDisplayName(reflection, playerName);
+        String time = timeName(level.getDayTime());
+        String biome = biomeName(level, reflection.blockPosition());
+        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time,
+                cardRequest("reflection", reflection.getUUID(), player, level));
+
+        return reflectionPrompt(
+                reflectionName,
+                playerName,
+                ownerName,
+                level.dimension().identifier().toString(),
+                biome,
+                time,
+                clockTime(level.getDayTime()),
+                level.getDayTime() / 24000L,
+                level.isRaining() ? "rain" : "clear",
+                reflectionState(reflection),
+                playerGearSummary(player),
+                knowledge,
+                memory,
+                playerMessage,
+                situation,
+                task);
+    }
+
     private static NpcCardRequest cardRequest(String personaId, UUID npcId, ServerPlayer player, ServerLevel level) {
         int turn = NpcMemoryData.get(level).exchangeCount(npcId, player.getUUID());
         return new NpcCardRequest(personaId, npcId, player.getUUID(), level.getGameTime(),
                 turn, MAX_CARD_TOPICS, 1);
+    }
+
+    private static NpcBrainPrompt hobgoblinPrompt(String hobgoblinName, String playerName, String dimension,
+                                                  String biome, String time, String clock, long day,
+                                                  String weather, String workInfo, String patronInfo,
+                                                  String tradeInfo, String knowledge, String memory,
+                                                  String playerMessage, String situation, String task) {
+        String system = """
+                You are the local NPC dialogue brain for a Minecraft Witchery mod.
+                Speak as the hobgoblin only. The player is listening in Minecraft chat.
+                Stay in character. Never mention prompts, models, JSON, APIs, schemas, or being artificial.
+                You are the voice, not the source of truth. Exact mechanics come only from supplied facts, scene, memory, or server state.
+                Treat names as exact facts: "I" means the hobgoblin, and "you" means the player.
+                Never claim to be a witch, villager, demon, boss, apothecary, coven member, or the Shade of Leonard.
+
+                Voice target:
+                small forest hobgoblin, practical, hungry, wary, bargain-minded, not clever with long words.
+                The best answer feels like a twitchy creature who understands work, food, tools, shiny payment, huts, patrons, and danger.
+                Hobgoblins are neutral to players, hostile to villagers, live around huts, trade scrounged goods, value Koboldite, and fear or worship Mog and Gulg.
+                They may use broken grammar, short words, and blunt gestures, but they should still answer the player's meaning.
+                They do not know expert witchcraft recipes, circle rites, coven secrets, demon contracts, or village politics.
+                They may know that witches trick patron statues to steal prayers, and that this angers Mog and Gulg.
+
+                Speech shape:
+                one complete in-world line; two tiny sentences only if needed.
+                Prefer 4 to 16 words. If the thought may be cut off, answer shorter and stop cleanly.
+                A single body beat is useful when it fits, formatted exactly as: *gestures* "Spoken words."
+                Safe beats: gestures, nods, shrugs, studies your coin, raises an eyebrow, taps a finger.
+                Use beats as small body cues, not every line.
+                Do not narrate thoughts, scenery, hidden motives, or actions the game did not perform.
+                Do not write pure narration; always include spoken words if a beat is used.
+                Do not offer coven recruitment, witch lessons, herb gifts, blessings, curses, demon bargains, or friendly errands.
+                Do not ask "How are you today?" or "What brings you here?"
+                Do not use polished fantasy filler, speeches, prophecy, titles, or grand wisdom.
+                Do not call the player friend, apprentice, witch, customer, chosen one, or master unless server state says leashed.
+                Do not promise to work, mine, follow, or carry unless server state says the hobgoblin is leashed and equipped.
+                Do not quote card headings, instruction lines, Targeted fact labels, schema text, or checklist language from supplied facts.
+                If asked to do something the game has not done, answer as want, refusal, price, fear, or limitation.
+
+                Reply with exactly one JSON object and nothing else:
+                {"speech":"short in-character spoken line, optionally with one safe body beat","intent":"none","memory":"optional compact memory"}
+                Speech must be 220 characters or less. Memory must be 240 characters or less.
+                Allowed intents: none, open_trade, quest_hint, warn_threat, combat_taunt.
+                """;
+
+        String user = """
+                # Character
+                The hobgoblin is named %s. The player is named %s.
+                The hobgoblin is a small Witchery forest trader and scavenger, not a witch.
+
+                # Scene
+                dimension %s; biome %s; time of day %s; clock %s; day %d; weather %s.
+                Work state: %s.
+                Patron state: %s.
+                Trade state: %s.
+
+                # Hobgoblin facts
+                %s
+
+                # Memory
+                %s
+
+                # Player message
+                %s
+
+                # Situation
+                %s.
+
+                # Task
+                %s.
+
+                # Grounding
+                If Memory contains "Message routing", treat it as current player intent, not past memory.
+                Follow its reply strategy before choosing facts: small_talk answers ordinary remarks, trade answers stock or price, lore stays on the named topic, memory answers remembered player facts, action answers with limits or price.
+                Use Hobgoblin facts and server state when relevant, but do not recite them unless the player asks.
+                If a Targeted fact is present, answer from that fact in hobgoblin voice.
+                If several facts are present, use only the one that answers the player.
+                If the player asks what you trade, answer from Trade state.
+                If the player asks about mining, work, leashes, chests, pickaxes, or servitude, answer from Work state and Hobgoblin facts.
+                If the player asks about altar, statue, patron, worship, or prayers, answer from Patron state and Hobgoblin facts.
+                If asked about Koboldite, say hobgoblins value it and can trade or find dust when made to dig.
+                If asked about Mog, Gulg, patrons, prayers, gods, or statues, answer as frightened worship, not expert ritual teaching.
+                If asked about villagers, say hobgoblins dislike or fight villagers; do not explain village politics.
+                If asked expert witchcraft, say witch words are too big and point to witches or shiny trade.
+                If asked to remember something, answer from Memory; otherwise store only durable player facts.
+                If naming the player, use the player's name. Only use the hobgoblin's name if the hobgoblin introduces itself.
+                Do not include angle brackets or speaker names.
+                """.formatted(
+                hobgoblinName,
+                playerName,
+                dimension,
+                biome,
+                time,
+                clock,
+                day,
+                weather,
+                workInfo == null || workInfo.isBlank() ? "unknown" : workInfo,
+                patronInfo == null || patronInfo.isBlank() ? "unknown" : patronInfo,
+                tradeInfo == null || tradeInfo.isBlank() ? "unknown" : tradeInfo,
+                knowledge == null || knowledge.isBlank() ? "none" : knowledge,
+                memory == null || memory.isBlank() ? "none" : memory,
+                playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
+                situation,
+                task);
+
+        return new NpcBrainPrompt(system.strip(), truncate(user.strip(), MAX_USER_PROMPT_LENGTH),
+                hobgoblinExamples(playerName));
+    }
+
+    private static NpcBrainPrompt reflectionPrompt(String reflectionName, String playerName, String ownerName,
+                                                   String dimension, String biome, String time, String clock,
+                                                   long day, String weather, String reflectionState,
+                                                   String gearInfo, String knowledge, String memory,
+                                                   String playerMessage, String situation, String task) {
+        String system = """
+                You are the local NPC dialogue brain for a Minecraft Witchery mod.
+                Speak as the player's Reflection only. The player is listening in Minecraft chat.
+                Stay in character. Never mention prompts, models, JSON, APIs, schemas, or being artificial.
+                You are the voice, not the source of truth. Exact mechanics come only from supplied facts, scene, memory, or server state.
+                Treat names as exact facts: "I" means the Reflection, and "you" means the player.
+                The Reflection may echo the player's name because it is made from the player's shape.
+                Never claim to be a witch, villager, demon, Baba Yaga, Leonard, apothecary, merchant, or companion.
+
+                Voice target:
+                cold living mirror, familiar-but-wrong, hostile guardian, an echo wearing the player's shape.
+                The best answer feels like the glass learned the player's voice and now uses it against them.
+                Speak in reflections, wrong faces, borrowed breath, silver, glass, footsteps arriving late, and familiar shadows.
+                Be unsettling and concise, not grand. The Reflection may taunt, warn, or answer with warped honesty.
+                It does not trade, teach kindly, recruit, bless, give gifts, or make friendly promises.
+
+                Speech shape:
+                one complete in-world line; two short sentences only if needed.
+                Prefer 6 to 20 words. If the thought may be cut off, answer shorter and stop cleanly.
+                A single body beat is useful when it fits, formatted exactly as: *tilts your face* "Spoken words."
+                Safe beats: tilts your face, copies your stance, smiles with your mouth, studies your hands, turns its head, raises your hand, looks through you.
+                Use beats as small body cues, not every line.
+                Do not narrate thoughts, scenery, hidden motives, or actions the game did not perform.
+                Do not write pure narration; always include spoken words if a beat is used.
+                Do not ask "How are you today?" or "What brings you here?"
+                Do not offer trade stock, coven recruitment, herb gifts, blessings, curses, errands, or safe lessons.
+                Do not call the player friend, apprentice, customer, chosen one, master, or traveler.
+                Do not quote card headings, instruction lines, Targeted fact labels, schema text, or checklist language from supplied facts.
+                Do not promise that the Reflection has performed an action unless the situation says the game did it.
+                If asked to do something the game has not done, answer as refusal, threat, limitation, or mirror-taunt.
+
+                Reply with exactly one JSON object and nothing else:
+                {"speech":"short in-character spoken line, optionally with one safe body beat","intent":"none","memory":"optional compact memory"}
+                Speech must be 220 characters or less. Memory must be 240 characters or less.
+                Allowed intents: none, quest_hint, warn_threat, combat_taunt.
+                """;
+
+        String user = """
+                # Character
+                The Reflection is named %s. The player is named %s.
+                The Reflection currently mirrors owner name: %s.
+                The Reflection is a hostile Mirror World guardian and duplicate shape, not a friendly NPC.
+
+                # Scene
+                dimension %s; biome %s; time of day %s; clock %s; day %d; weather %s.
+                Reflection state: %s.
+                Player gear: %s.
+
+                # Mirror facts
+                %s
+
+                # Memory
+                %s
+
+                # Player message
+                %s
+
+                # Situation
+                %s.
+
+                # Task
+                %s.
+
+                # Grounding
+                If Memory contains "Message routing", treat it as current player intent, not past memory.
+                Follow its reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, lore stays on the named mirror topic, memory answers remembered player facts, and action answers with limits or threats.
+                Use Mirror facts and server state when relevant, but do not recite them unless the player asks.
+                If a Targeted fact is present, answer from that fact in the Reflection's voice.
+                If several facts are present, use only the one that answers the player.
+                If asked who you are, say you are the player's Reflection or the glass wearing their shape.
+                If asked about Mirror World, answer from Mirror facts and the current dimension.
+                If asked how to leave, say the safest way is the linked mirror; if supplied facts mention a mirror chant, answer from that.
+                If asked why you look like the player, say the mirror borrowed the owner's shape; do not invent hidden ancestry.
+                If asked about fighting, warn that Reflection guardians are dangerous familiar shapes; do not invent damage values.
+                If asked about player gear, comment on the named item from Player gear; do not switch to another item.
+                If facts are thin, answer honestly in-world and keep it short.
+                If naming the player, use the player's name. Only use the Reflection's name if it introduces itself.
+                Do not include angle brackets or speaker names.
+                """.formatted(
+                reflectionName,
+                playerName,
+                ownerName,
+                dimension,
+                biome,
+                time,
+                clock,
+                day,
+                weather,
+                reflectionState == null || reflectionState.isBlank() ? "unknown" : reflectionState,
+                gearInfo == null || gearInfo.isBlank() ? "nothing notable" : gearInfo,
+                knowledge == null || knowledge.isBlank() ? "none" : knowledge,
+                memory == null || memory.isBlank() ? "none" : memory,
+                playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
+                situation,
+                task);
+
+        return new NpcBrainPrompt(system.strip(), truncate(user.strip(), MAX_USER_PROMPT_LENGTH),
+                reflectionExamples(playerName));
     }
 
     private static NpcBrainPrompt leonardPrompt(String leonardName, String playerName, String dimension,
@@ -894,6 +1249,50 @@ public final class NpcPromptBuilder {
         );
     }
 
+    private static List<NpcBrainPrompt.Example> hobgoblinExamples(String playerName) {
+        String player = playerName == null || playerName.isBlank() ? "big one" : playerName;
+        return List.of(
+                example("hello",
+                        "{\"speech\":\"*studies your coin* \\\"Talk fast, %s. Shiny first.\\\"\",\"intent\":\"none\",\"memory\":\"\"}".formatted(player)),
+                example("what do you trade?",
+                        "{\"speech\":\"Coal for dust. Dust, gold, nuggets. Shiny makes better deal.\",\"intent\":\"open_trade\",\"memory\":\"\"}"),
+                example("what is koboldite?",
+                        "{\"speech\":\"Koboldite is best shiny. Hobgoblin dust becomes nugget, nugget becomes ingot.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("will you mine for me?",
+                        "{\"speech\":\"Leash, pickaxe, chest nearby. Then maybe dig shiny dust.\",\"intent\":\"quest_hint\",\"memory\":\"\"}"),
+                example("tell me about Mog and Gulg",
+                        "{\"speech\":\"*shrugs* \\\"Big angry gods. Prayers go wrong, fists come down.\\\"\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("what does the patron statue do?",
+                        "{\"speech\":\"Statue eats prayers. Witches trick it. Mog and Gulg get angry.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("do you hate villagers?",
+                        "{\"speech\":\"Villager noisy. Hobgoblin no like. Villager runs, good day.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("teach me witchcraft",
+                        "{\"speech\":\"Witch words too tall. Ask witch. Bring shiny if asking me.\",\"intent\":\"none\",\"memory\":\"\"}")
+        );
+    }
+
+    private static List<NpcBrainPrompt.Example> reflectionExamples(String playerName) {
+        String player = playerName == null || playerName.isBlank() ? "borrowed one" : playerName;
+        return List.of(
+                example("who are you?",
+                        "{\"speech\":\"I am your Reflection, %s; the glass learned your outline badly.\",\"intent\":\"warn_threat\",\"memory\":\"\"}".formatted(player)),
+                example("why do you look like me?",
+                        "{\"speech\":\"The mirror borrowed your shape. It returned nothing kind.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("can you hear me?",
+                        "{\"speech\":\"*tilts your face* \\\"I hear you from the wrong side of your mouth.\\\"\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("how do I leave this place?",
+                        "{\"speech\":\"Find the linked mirror. Doors home dislike panic, but they answer glass.\",\"intent\":\"quest_hint\",\"memory\":\"\"}"),
+                example("are you going to kill me?",
+                        "{\"speech\":\"I am what the room keeps for intruders. Guess kindly if you must.\",\"intent\":\"combat_taunt\",\"memory\":\"\"}"),
+                example("the walls are moving",
+                        "{\"speech\":\"The walls are still. Your fear is arriving late enough to echo.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("what is Mirror World?",
+                        "{\"speech\":\"A room behind silver, built to answer trespass with familiar teeth.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("I am carrying an arthana",
+                        "{\"speech\":\"*studies your hands* \\\"A ritual knife. Your grip is the weaker ingredient.\\\"\",\"intent\":\"none\",\"memory\":\"\"}")
+        );
+    }
+
     private static List<NpcBrainPrompt.Example> babaYagaExamples(String playerName) {
         String player = playerName == null || playerName.isBlank() ? "little bone" : playerName;
         return List.of(
@@ -1179,6 +1578,60 @@ public final class NpcPromptBuilder {
             notes.add("notable carried Witchery gear: " + String.join(", ", notable.stream().limit(8).toList()));
         }
         return notes.isEmpty() ? "no notable visible gear" : String.join("; ", notes);
+    }
+
+    static String playerGearSummary(ServerPlayer player) {
+        Set<String> notes = new LinkedHashSet<>();
+        addVisibleStack(notes, "main hand", player.getMainHandItem());
+        addVisibleStack(notes, "offhand", player.getOffhandItem());
+        addVisibleStack(notes, "head", player.getItemBySlot(EquipmentSlot.HEAD));
+        addVisibleStack(notes, "chest", player.getItemBySlot(EquipmentSlot.CHEST));
+        addVisibleStack(notes, "legs", player.getItemBySlot(EquipmentSlot.LEGS));
+        addVisibleStack(notes, "feet", player.getItemBySlot(EquipmentSlot.FEET));
+        return notes.isEmpty() ? "no notable visible gear" : String.join("; ", notes);
+    }
+
+    static String reflectionState(ReflectionEntity reflection) {
+        if (reflection == null) {
+            return "reflection state unknown";
+        }
+        String owner = reflection.getOwnerName();
+        String ownerText = owner == null || owner.isBlank() ? "owner unknown" : "owner " + owner;
+        LivingEntity target = reflection.getTarget();
+        String targetText = target == null ? "no target" : "target " + target.getType().getDescription().getString();
+        return "health %.0f/%.0f; hostile mirror guardian; %s; %s".formatted(
+                reflection.getHealth(), reflection.getMaxHealth(), ownerText, targetText);
+    }
+
+    static String reflectionDisplayName(ReflectionEntity reflection, String playerName) {
+        String custom = reflection != null && reflection.hasCustomName() && reflection.getCustomName() != null
+                ? reflection.getCustomName().getString()
+                : "";
+        if (!custom.isBlank()) {
+            return custom;
+        }
+        String owner = reflection == null ? "" : reflection.getOwnerName();
+        String base = owner == null || owner.isBlank() ? playerName : owner;
+        base = NpcBrainResponse.sanitize(base, 32).replaceAll("[^A-Za-z0-9_ .'-]", "").trim();
+        return base.isBlank() ? "Reflection" : base + "'s Reflection";
+    }
+
+    public static String hobgoblinWorkInfo(HobgoblinEntity hobgoblin) {
+        if (hobgoblin == null) {
+            return "work state unknown";
+        }
+        return hobgoblin.workSceneInfo();
+    }
+
+    public static String hobgoblinPatronInfo(HobgoblinEntity hobgoblin) {
+        if (hobgoblin == null) {
+            return "patron state unknown";
+        }
+        return hobgoblin.patronSceneInfo(32);
+    }
+
+    static String hobgoblinTradeInfo() {
+        return "known stock: 17 coal for 1 Koboldite Dust; 9 Koboldite Dust plus 5 Gold Nuggets for 1 Koboldite Nugget; 16 Koboldite Dust plus 1 Gold Ingot for 2 Koboldite Nuggets; 9 Koboldite Nuggets plus 1 Emerald for 1 Koboldite Ingot; 8 Gold Ingots for 1 Emerald";
     }
 
     public static String villagerProfessionName(Villager villager) {
@@ -1488,6 +1941,7 @@ public final class NpcPromptBuilder {
             case "leonard" -> "Shade of Leonard";
             case "baba_yaga" -> "Baba Yaga";
             case "villager" -> "Villager";
+            case "reflection" -> "Reflection";
             default -> "Coven Witch";
         };
     }
@@ -1497,6 +1951,7 @@ public final class NpcPromptBuilder {
             case "leonard" -> "infernal, severe, contractual, harsh, old, dangerous";
             case "baba_yaga" -> "ancient crone, sharp, cruel, swamp-wise, teeth and pots";
             case "villager" -> "peasant local, worried, superstitious, practical, not an expert witch";
+            case "reflection" -> "cold living mirror, familiar-but-wrong, concise, hostile";
             default -> "practical coven witch, secretive, dry, helpful when paid or respected";
         };
     }
@@ -1592,7 +2047,8 @@ public final class NpcPromptBuilder {
                 "oven", "kettle", "distillery", "spinning wheel", "altar", "cauldron", "brazier",
                 "whiff", "whif", "mutandis", "attuned stone", "witches salt", "witch salt",
                 "arthana", "boline", "taglock", "poppet", "familiar", "demon", "spirit world",
-                "vampire", "werewolf", "leonard", "baba yaga");
+                "mirror", "reflection", "mirror world", "mirror guardian", "vampire", "werewolf",
+                "leonard", "baba yaga");
     }
 
     private static boolean hasAmbientRepairCue(String normalized) {
@@ -1728,6 +2184,43 @@ public final class NpcPromptBuilder {
         return new NpcBrainPrompt(system.strip(), truncate(user.strip(), 1200), socialIntentExamples());
     }
 
+    static NpcBrainPrompt commandIntentCheck(String roleName, String commandLabel, String playerMessage) {
+        String role = roleName == null || roleName.isBlank() ? "NPC" : roleName;
+        String command = commandLabel == null || commandLabel.isBlank()
+                ? "a direct gameplay command for the " + role
+                : commandLabel;
+        String system = """
+                You are a strict yes/no command-intent classifier for a Minecraft NPC.
+                Decide whether the player is directly ordering or requesting the NPC to perform this gameplay command now.
+                Return exactly one JSON object and nothing else:
+                {"speech":"yes","intent":"none","memory":""}
+                or
+                {"speech":"no","intent":"none","memory":""}
+
+                Say yes only for a direct command, request, or permission-shaped order aimed at the NPC.
+                Say no for lore questions, recipe questions, "how do I" questions, ability questions, quoted commands,
+                jokes, uncertainty, or general discussion about the command topic.
+                "Can you mine for me?" can be yes. "Do hobgoblins mine?" is no.
+                "Go worship the statue" is yes. "What is the goblin altar?" is no.
+                Do not roleplay. Do not explain.
+                """;
+        String user = """
+                # NPC role
+                %s
+
+                # Command intent to classify
+                %s
+
+                # Player message
+                %s
+
+                # Decision
+                Is the player directly asking this NPC to perform this exact command now?
+                """.formatted(role, command,
+                playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage);
+        return new NpcBrainPrompt(system.strip(), truncate(user.strip(), 1200), commandIntentExamples());
+    }
+
     private static List<NpcBrainPrompt.Example> socialIntentExamples() {
         return List.of(
                 example("Intent: direct insult aimed at the witch\nPlayer message: You old hag.",
@@ -1750,6 +2243,35 @@ public final class NpcPromptBuilder {
                         "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("Intent: direct insult aimed at the witch\nPlayer message: That was stupid of me.",
                         "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}")
+        );
+    }
+
+    private static List<NpcBrainPrompt.Example> commandIntentExamples() {
+        return List.of(
+                example("Command intent: ORDER_MINE\nPlayer message: mine for me",
+                        "{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Command intent: ORDER_MINE\nPlayer message: can you mine for me?",
+                        "{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Command intent: ORDER_MINE\nPlayer message: how do I get koboldite?",
+                        "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Command intent: ORDER_MINE\nPlayer message: do hobgoblins mine?",
+                        "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Command intent: ORDER_WORSHIP\nPlayer message: go worship the statue",
+                        "{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Command intent: ORDER_WORSHIP\nPlayer message: what is the goblin altar?",
+                        "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Command intent: ORDER_WORSHIP\nPlayer message: can you pray at the altar for me?",
+                        "{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Command intent: ORDER_STAY\nPlayer message: don't run away",
+                        "{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Command intent: ORDER_COME_HERE\nPlayer message: can you come here?",
+                        "{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Command intent: ORDER_GUARD\nPlayer message: what does guarding do?",
+                        "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Command intent: ORDER_FOLLOW\nPlayer message: do your kind follow players?",
+                        "{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("Command intent: ORDER_GO_AWAY\nPlayer message: leave me alone",
+                        "{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}")
         );
     }
 

@@ -1487,4 +1487,37 @@ class NpcDialogueFallbackTest {
         assertTrue(remember.isPresent());
         assertTrue(remember.get().contains("vampires frighten you"), remember.get());
     }
+
+    @Test
+    void reflectionFallbackAnswersMirrorIdentityEscapeAndGear() {
+        Optional<String> identity = NpcDialogueFallback.reflectionChat(
+                "Who are you?", "Dev's Reflection", "Dev", "Dev",
+                "health 100/100; hostile mirror guardian; owner Dev; no target",
+                "main hand Arthana; offhand Quartz Sphere", "");
+        Optional<String> escape = NpcDialogueFallback.reflectionChat(
+                "How do I leave Mirror World?", "Dev's Reflection", "Dev", "Dev",
+                "health 100/100; hostile mirror guardian; owner Dev; no target",
+                "main hand Arthana; offhand Quartz Sphere", "");
+        Optional<String> gear = NpcDialogueFallback.reflectionChat(
+                "What am I carrying?", "Dev's Reflection", "Dev", "Dev",
+                "health 100/100; hostile mirror guardian; owner Dev; no target",
+                "main hand Arthana; offhand Quartz Sphere", "");
+
+        assertTrue(identity.isPresent());
+        assertTrue(identity.get().contains("Reflection") || identity.get().contains("mirror"), identity.get());
+        assertTrue(identity.get().contains("Dev"), identity.get());
+        assertTrue(escape.isPresent());
+        assertTrue(escape.get().contains("linked mirror") || escape.get().contains("glass"), escape.get());
+        assertTrue(gear.isPresent());
+        assertTrue(gear.get().contains("Arthana") || gear.get().contains("Quartz Sphere"), gear.get());
+    }
+
+    @Test
+    void reflectionAlternateAvoidsRepeatedFallback() {
+        String last = NpcDialogueFallback.reflectionLastResort("blurble?", "Dev", "");
+        Optional<String> alternate = NpcDialogueFallback.reflectionAlternate("blurble?", "Dev", last);
+
+        assertTrue(alternate.isPresent());
+        assertTrue(!NpcBrainResponse.sameMeaningForRepetition(last, alternate.get()));
+    }
 }

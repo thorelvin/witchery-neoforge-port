@@ -2,7 +2,9 @@ package com.emoniph.witchery.ai;
 
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.entity.HobgoblinEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.entity.ReflectionEntity;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -35,6 +37,8 @@ public final class NpcBrainService {
     private static final int WARMUP_MAX_TOKENS = 24;
     private static final int SOCIAL_INTENT_MAX_TOKENS = 16;
     private static final int SOCIAL_INTENT_TIMEOUT_MILLIS = 2500;
+    private static final int COMMAND_INTENT_MAX_TOKENS = 16;
+    private static final int COMMAND_INTENT_TIMEOUT_MILLIS = 1800;
     private static final int MESSAGE_ANALYSIS_MAX_TOKENS = 96;
     private static final int MESSAGE_ANALYSIS_TIMEOUT_MILLIS = 2200;
     private static final int REPAIR_MAX_TOKENS = 96;
@@ -162,6 +166,78 @@ public final class NpcBrainService {
 
     public boolean requestVillagerChat(Villager villager, ServerPlayer player, String playerMessage) {
         return requestChat(NpcPersonas.VILLAGER, villager, player, playerMessage);
+    }
+
+    public boolean requestHobgoblinGreeting(HobgoblinEntity hobgoblin, ServerPlayer player, Component fallback) {
+        if (!WitcheryConfig.LLM_ENABLED.get()) {
+            return false;
+        }
+        HobgoblinPersona persona = NpcPersonas.HOBGOBLIN;
+        return requestPersonaResponse(persona, hobgoblin, player,
+                persona.greetingPrompt(hobgoblin, player, contextFor(persona, hobgoblin, player)),
+                "greet", "", fallback, true);
+    }
+
+    public boolean requestHobgoblinChat(HobgoblinEntity hobgoblin, ServerPlayer player, String playerMessage) {
+        return requestChat(NpcPersonas.HOBGOBLIN, hobgoblin, player, playerMessage);
+    }
+
+    public boolean requestReflectionGaze(ReflectionEntity reflection, ServerPlayer player, Component fallback) {
+        if (!WitcheryConfig.LLM_ENABLED.get()) {
+            return false;
+        }
+        ReflectionPersona persona = NpcPersonas.REFLECTION;
+        return requestPersonaResponse(persona, reflection, player,
+                NpcPromptBuilder.reflectionGaze(reflection, player, contextFor(persona, reflection, player)),
+                "gaze", "", fallback, true);
+    }
+
+    public boolean requestReflectionChat(ReflectionEntity reflection, ServerPlayer player, String playerMessage) {
+        return requestChat(NpcPersonas.REFLECTION, reflection, player, playerMessage);
+    }
+
+    public <E extends LivingEntity> boolean requestCommandIntent(NpcPersona<E> persona, E entity,
+                                                                  ServerPlayer player, String playerMessage,
+                                                                  NpcCommandKind command,
+                                                                  Runnable onAccepted, Runnable onRejected) {
+        if (!WitcheryConfig.LLM_ENABLED.get()) {
+            return false;
+        }
+        if (persona == null || entity == null || player == null || command == null
+                || !entity.isAlive() || !player.isAlive() || entity.level() != player.level()) {
+            return false;
+        }
+        int current = inFlight.incrementAndGet();
+        if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
+            inFlight.decrementAndGet();
+            rejected.incrementAndGet();
+            return false;
+        }
+
+        ServerLevel level = (ServerLevel) player.level();
+        LlmProvider provider;
+        int timeoutMillis = Math.max(250, Math.min(WitcheryConfig.LLM_TIMEOUT_MILLIS.get(),
+                COMMAND_INTENT_TIMEOUT_MILLIS));
+        try {
+            provider = providerFromConfig(timeoutMillis, COMMAND_INTENT_MAX_TOKENS, executor());
+        } catch (IllegalArgumentException ex) {
+            inFlight.decrementAndGet();
+            failure(ex);
+            return false;
+        }
+
+        persona.beginConversation(entity, player);
+        NpcBrainPrompt prompt = NpcPromptBuilder.commandIntentCheck(persona.roleName(),
+                command.intentLabel(), playerMessage);
+        provider.generate(prompt)
+                .orTimeout(timeoutMillis + 500L, TimeUnit.MILLISECONDS)
+                .whenComplete((response, error) -> {
+                    inFlight.decrementAndGet();
+                    MinecraftServer server = level.getServer();
+                    server.execute(() -> handleCommandIntent(level, persona, entity, player,
+                            response, error, onAccepted, onRejected));
+                });
+        return true;
     }
 
     public <E extends LivingEntity> boolean requestChat(NpcPersona<E> persona, E entity, ServerPlayer player,
@@ -708,6 +784,37 @@ public final class NpcBrainService {
         requestNormalChatAfterSocialIntent(level, persona, entity, player, playerMessage);
     }
 
+    private <E extends LivingEntity> void handleCommandIntent(ServerLevel level, NpcPersona<E> persona, E entity,
+                                                              ServerPlayer player, NpcBrainResponse response,
+                                                              Throwable error, Runnable onAccepted,
+                                                              Runnable onRejected) {
+        if (!player.isAlive() || player.level() != level
+                || !entity.isAlive() || entity.level() != level) {
+            return;
+        }
+        persona.completeConversation(entity, player);
+        if (error != null || response == null) {
+            failure(error);
+            runSafely(onRejected);
+            return;
+        }
+        if (commandIntentAccepted(response)) {
+            runSafely(onAccepted);
+        } else {
+            runSafely(onRejected);
+        }
+    }
+
+    static boolean commandIntentAccepted(NpcBrainResponse response) {
+        return socialIntentAccepted(response);
+    }
+
+    private static void runSafely(Runnable runnable) {
+        if (runnable != null) {
+            runnable.run();
+        }
+    }
+
     private <E extends LivingEntity> void handleMessageAnalysis(ServerLevel level, NpcPersona<E> persona,
                                                                ServerPlayer player, E entity, String playerMessage,
                                                                NpcBrainResponse response, Throwable error) {
@@ -902,6 +1009,13 @@ public final class NpcBrainService {
     private static SoundEvent soundForBeat(LivingEntity entity, String beat) {
         if (entity instanceof LeonardEntity) {
             return WitcherySoundEvents.ENTITY_LEONARD_SAY.get();
+        }
+        if (entity instanceof HobgoblinEntity) {
+            return switch (beat) {
+                case "nods", "studies your coin" -> SoundEvents.VILLAGER_YES;
+                case "shrugs", "raises an eyebrow" -> SoundEvents.VILLAGER_NO;
+                default -> SoundEvents.VILLAGER_AMBIENT;
+            };
         }
         if (entity instanceof Villager) {
             return switch (beat) {

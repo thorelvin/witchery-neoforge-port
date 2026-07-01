@@ -4,6 +4,7 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.ai.NpcBrainService;
 import com.emoniph.witchery.ai.NpcPersonas;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -13,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -28,6 +30,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.monster.spider.CaveSpider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion;
@@ -55,6 +58,22 @@ import java.util.Optional;
  * - Drops: witch ingredients, enchanted book, Baba's Hat (guaranteed)
  */
 public class BabaYagaEntity extends Monster implements RangedAttackMob {
+    public static final int FRIENDLY_VISIT_TICKS = 20 * 60 * 3;
+    public static final int FRIENDLY_GIFT_INTERVAL_TICKS = 100;
+    public static final int FRIENDLY_GIFT_LIMIT = 6;
+
+    private static final String FRIENDLY_ARRIVAL_LINE =
+            "Curiosity brought me, %s. Do not waste it.";
+    private static final String FRIENDLY_DEPARTURE_LINE =
+            "Enough. Keep your bargains clean; next time, curiosity may bring teeth.";
+    private static final String[] FRIENDLY_GIFT_LINES = {
+            "Take this. Even scraps remember old magic.",
+            "A little payment for interesting dreams.",
+            "Keep it close. Useful things have sharp edges.",
+            "There. The pot says you will need that.",
+            "Do not thank me yet.",
+            "Last gift, %s. Curiosity is not charity."
+    };
 
     // ── Potion self-drinking state ────────────────────────────────────────────
     private boolean isDrinking = false;
@@ -68,6 +87,8 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
 
     private long ticksSinceTeleport = 0L;
     @Nullable private String ownerName = null;
+    private int ownerVisitTicks = 0;
+    private int ownerGiftDrops = 0;
 
     private static final String[] WITCH_DROP_IDS = {
         "spectral_dust", "bat_wool", "toe_of_frog", "owlets_wing",
@@ -220,12 +241,22 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
 
         // Ownership mechanic
         if (ownerName != null && level() instanceof ServerLevel sl) {
-            Player owner = sl.getServer().getPlayerList().getPlayerByName(ownerName);
-            if (owner != null && distanceTo(owner) < 64 && tickCount % 100 == 0) {
-                dropRandomWitchIngredient(sl);
+            ownerVisitTicks++;
+            ServerPlayer owner = sl.getServer().getPlayerList().getPlayerByName(ownerName);
+            if (owner != null && getTarget() == owner) {
+                setTarget(null);
             }
-            if (tickCount > 600) {
-                level().broadcastEntityEvent(this, (byte) 15);
+            if (owner != null
+                    && distanceTo(owner) < 64
+                    && ownerGiftDrops < FRIENDLY_GIFT_LIMIT
+                    && ownerVisitTicks % FRIENDLY_GIFT_INTERVAL_TICKS == 0) {
+                dropFriendlyVisitGift(sl, owner);
+            }
+            if (ownerVisitTicks >= FRIENDLY_VISIT_TICKS) {
+                if (owner != null && distanceTo(owner) < 96) {
+                    sayToOwner(owner, FRIENDLY_DEPARTURE_LINE);
+                }
+                farewellEffects(sl);
                 discard();
             }
         }
@@ -381,21 +412,84 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
         spawnAtLocation(level, new ItemStack(WitcheryItems.BABAS_HAT.get()));
     }
 
-    private void dropRandomWitchIngredient(ServerLevel level) {
+    // ── Ownership ─────────────────────────────────────────────────────────────
+
+    private void dropFriendlyVisitGift(ServerLevel level, ServerPlayer owner) {
         String id = WITCH_DROP_IDS[random.nextInt(4)]; // first 4 are basic ingredients
         Item item = BuiltInRegistries.ITEM
                 .get(Identifier.fromNamespaceAndPath("witchery", id))
                 .map(net.minecraft.core.Holder.Reference::value)
                 .orElse(null);
-        if (item != null && item != Items.AIR && random.nextInt(3) > 0) {
-            spawnAtLocation(level, new ItemStack(item, 1 + random.nextInt(2)));
+        if (item == null || item == Items.AIR) {
+            return;
         }
-    }
 
-    // ── Ownership ─────────────────────────────────────────────────────────────
+        ItemStack stack = new ItemStack(item, 1 + random.nextInt(2));
+        ItemEntity gift = new ItemEntity(level, getX(), getY() + 0.7D, getZ(), stack);
+        gift.setDeltaMovement((random.nextDouble() - 0.5D) * 0.08D, 0.18D,
+                (random.nextDouble() - 0.5D) * 0.08D);
+        level.addFreshEntity(gift);
+
+        ownerGiftDrops++;
+        giftEffects(level);
+        sayFriendlyGift(owner);
+    }
 
     public void setOwner(String name) { this.ownerName = name; }
     @Nullable public String getOwnerName() { return ownerName; }
+
+    public int getOwnerVisitTicks() { return ownerVisitTicks; }
+    public int getOwnerGiftDrops() { return ownerGiftDrops; }
+
+    public void beginFriendlyVisit(ServerPlayer owner) {
+        setOwner(owner.getName().getString());
+        ownerVisitTicks = 0;
+        ownerGiftDrops = 0;
+        setTarget(null);
+        getNavigation().stop();
+        getLookControl().setLookAt(owner, 30.0F, 30.0F);
+        arrivalEffects((ServerLevel) owner.level());
+        sayToOwner(owner, FRIENDLY_ARRIVAL_LINE.formatted(owner.getName().getString()));
+    }
+
+    private void sayFriendlyGift(ServerPlayer owner) {
+        String line = FRIENDLY_GIFT_LINES[Math.min(ownerGiftDrops - 1, FRIENDLY_GIFT_LINES.length - 1)];
+        if (line.contains("%s")) {
+            line = line.formatted(owner.getName().getString());
+        }
+        sayToOwner(owner, line);
+    }
+
+    private void sayToOwner(ServerPlayer owner, String line) {
+        owner.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.BABA_YAGA, this, line), false);
+    }
+
+    private void arrivalEffects(ServerLevel level) {
+        level.sendParticles(ParticleTypes.WITCH, getX(), getY() + 1.0D, getZ(),
+                24, 0.45D, 0.7D, 0.45D, 0.05D);
+        level.sendParticles(ParticleTypes.PORTAL, getX(), getY() + 0.6D, getZ(),
+                32, 0.6D, 0.8D, 0.6D, 0.08D);
+        level.playSound(null, blockPosition(), SoundEvents.ILLUSIONER_MIRROR_MOVE,
+                SoundSource.HOSTILE, 0.8F, 0.8F);
+        playSound(SoundEvents.WITCH_AMBIENT, 0.9F, 0.75F + random.nextFloat() * 0.25F);
+    }
+
+    private void giftEffects(ServerLevel level) {
+        level.sendParticles(ParticleTypes.WITCH, getX(), getY() + 0.8D, getZ(),
+                12, 0.25D, 0.35D, 0.25D, 0.03D);
+        level.sendParticles(ParticleTypes.ENCHANT, getX(), getY() + 0.6D, getZ(),
+                8, 0.35D, 0.35D, 0.35D, 0.0D);
+        level.playSound(null, blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
+                SoundSource.NEUTRAL, 0.45F, 0.8F + random.nextFloat() * 0.25F);
+    }
+
+    private void farewellEffects(ServerLevel level) {
+        level.broadcastEntityEvent(this, (byte) 15);
+        level.sendParticles(ParticleTypes.PORTAL, getX(), getY() + 0.8D, getZ(),
+                48, 0.55D, 0.9D, 0.55D, 0.08D);
+        level.playSound(null, blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
+                SoundSource.HOSTILE, 0.9F, 0.8F);
+    }
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
@@ -458,6 +552,8 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
     public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putString("Owner", ownerName == null ? "" : ownerName);
+        tag.putInt("OwnerVisitTicks", ownerVisitTicks);
+        tag.putInt("OwnerGiftDrops", ownerGiftDrops);
     }
 
     @Override
@@ -465,5 +561,7 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
         super.readAdditionalSaveData(tag);
         String s = tag.getStringOr("Owner", "");
         if (!s.isEmpty()) ownerName = s;
+        ownerVisitTicks = tag.getIntOr("OwnerVisitTicks", 0);
+        ownerGiftDrops = tag.getIntOr("OwnerGiftDrops", 0);
     }
 }

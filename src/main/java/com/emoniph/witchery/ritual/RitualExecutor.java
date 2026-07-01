@@ -32,6 +32,8 @@ import com.emoniph.witchery.item.SpectralStoneItem;
 import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import com.emoniph.witchery.protection.WitcheryProtectionAction;
+import com.emoniph.witchery.protection.WitcheryProtectionService;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -112,6 +114,9 @@ public class RitualExecutor {
     private static final int VOID_BRAMBLE_NULL_RANGE_SQ = VOID_BRAMBLE_NULL_RANGE * VOID_BRAMBLE_NULL_RANGE;
     private static final int BLIGHT_HEART_RANDOM_RADIUS = 150;
     private static final int BLIGHT_RITE_POWER = 3000;
+    private static final int INFUSION_RITE_RADIUS = 4;
+    private static final int INFUSION_RITE_CHARGES = 200;
+    private static final float INFUSION_RITE_ORDEAL_DAMAGE = 100.0F;
     private static final double FAMILIAR_BIND_RADIUS = 7.0;
     private static final double BIND_SPECTRAL_STONE_RADIUS = 16.0;
     private static final ThreadLocal<ItemStack> PENDING_RITUAL_INGREDIENT = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
@@ -316,6 +321,36 @@ public class RitualExecutor {
     // instead of the if-chains below. Each migrated trigger is unique within its ring's dispatch, so
     // consulting definitions first yields exactly the rite the old ordered chain would have. Offerings
     // and altar power are still validated inside each effect via RitualTransaction.
+    private static boolean canRitualModify(Player player, ServerLevel level, BlockPos pos,
+                                           WitcheryProtectionAction action) {
+        return WitcheryProtectionService.canModifyBlock(player instanceof ServerPlayer sp ? sp : null,
+                level, pos, action);
+    }
+
+    private static boolean canRitualModify(ActiveRitual ritual, ServerLevel level, BlockPos pos,
+                                           WitcheryProtectionAction action) {
+        return WitcheryProtectionService.canModifyBlock(ritualOwner(level, ritual), level, pos, action);
+    }
+
+    private static ServerPlayer ritualOwner(ServerLevel level, ActiveRitual ritual) {
+        if (ritual == null || ritual.ownerName == null || ritual.ownerName.isBlank()) {
+            return null;
+        }
+        return level.getServer().getPlayerList().getPlayerByName(ritual.ownerName);
+    }
+
+    private static String ritualOwnerName(Player player) {
+        return player == null ? "" : player.getScoreboardName();
+    }
+
+    private static boolean ritualSetBlock(ServerLevel level, ActiveRitual ritual, BlockPos pos, BlockState state,
+                                          WitcheryProtectionAction action) {
+        if (!canRitualModify(ritual, level, pos, action)) {
+            return false;
+        }
+        return level.setBlock(pos, state, 3);
+    }
+
     @FunctionalInterface
     private interface FullRecipeAction {
         boolean activate(Player player, Level level, BlockPos center, List<ItemEntity> matchedItems);
@@ -1021,15 +1056,12 @@ public class RitualExecutor {
     // SMALL rites
     // ══════════════════════════════════════════════════════════════════════════
 
-    /** Rite of Infusion — applies a typed infusion to the player from a brew base. */
+    /** Rite of Infusion — applies a typed infusion to players standing in the source radius. */
     private static boolean riteOfInfusion(Player player, Level level, BlockPos center, InfusionType type) {
         if (!(player instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl)) return false;
 
-        int startupCost = type == InfusionType.LIGHT ? 2000
-                : (type == InfusionType.OVERWORLD || type == InfusionType.OTHERWHERE || type == InfusionType.INFERNAL)
-                ? 4000
-                : 0;
+        int startupCost = infusionStartupCost(type);
         if (startupCost > 0 && !consumeNearbyRitualAltarPower(sl, center, 16, startupCost)) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             sp.displayClientMessage(Component.translatable("witchery.ritual.infusion.no_power"), false);
@@ -1038,16 +1070,72 @@ public class RitualExecutor {
 
         String msgKey = infusionSuccessKey(type);
         SacrificeConsumer.runWhenDrained(sl, () -> {
-            WitcheryPlayerData data = WitcheryAttachments.get(sp);
-            data.setInfusionType(type);
-            data.setInfusionEnergy(200, 200);
-            com.emoniph.witchery.events.InfusionEvents.onInfusionGranted(sp, type);
-
-            PacketDistributor.sendToPlayer(sp, SyncPlayerDataPayload.from(sp, data));
-            success(player, level, center, msgKey, SoundEvents.BEACON_ACTIVATE, 1.2f, 1, 30);
-            WitcheryMod.LOGGER.info("Rite of Infusion ({}): {} is now infused.", type, sp.getName().getString());
+            List<ServerPlayer> targets = infusionTargets(sl, center, INFUSION_RITE_RADIUS);
+            boolean casterInfused = false;
+            for (ServerPlayer target : targets) {
+                if (!survivesInfusionRiteOrdeal(sl, target)) {
+                    WitcheryMod.LOGGER.info("Rite of Infusion ({}): {} failed the ordeal.",
+                            type, target.getName().getString());
+                    continue;
+                }
+                applyInfusionRiteResult(target, type);
+                if (target == sp) {
+                    casterInfused = true;
+                } else {
+                    target.displayClientMessage(Component.translatable(msgKey), false);
+                }
+                WitcheryMod.LOGGER.info("Rite of Infusion ({}): {} is now infused.",
+                        type, target.getName().getString());
+            }
+            success(player, level, center, casterInfused ? msgKey : null, SoundEvents.BEACON_ACTIVATE, 1.2f, 1, 30);
         });
         return true;
+    }
+
+    static int infusionStartupCost(InfusionType type) {
+        if (type == InfusionType.LIGHT) {
+            return 2000;
+        }
+        return type == InfusionType.OVERWORLD || type == InfusionType.OTHERWHERE || type == InfusionType.INFERNAL
+                ? 4000
+                : 0;
+    }
+
+    private static List<ServerPlayer> infusionTargets(ServerLevel level, BlockPos center, int radius) {
+        AABB bounds = new AABB(
+                center.getX() - radius, center.getY(), center.getZ() - radius,
+                center.getX() + radius, center.getY() + 1, center.getZ() + radius);
+        List<ServerPlayer> targets = new ArrayList<>();
+        for (ServerPlayer target : level.getEntitiesOfClass(ServerPlayer.class, bounds)) {
+            if (isInsideInfusionRiteRadius(target.position(), center, radius)) {
+                targets.add(target);
+            }
+        }
+        return targets;
+    }
+
+    static boolean isInsideInfusionRiteRadius(Vec3 position, BlockPos center, int radius) {
+        double dx = position.x - center.getX();
+        double dy = position.y - center.getY();
+        double dz = position.z - center.getZ();
+        return dx * dx + dy * dy + dz * dz <= radius * radius;
+    }
+
+    private static boolean survivesInfusionRiteOrdeal(ServerLevel level, ServerPlayer target) {
+        target.hurtServer(level, level.damageSources().magic(), INFUSION_RITE_ORDEAL_DAMAGE);
+        return shouldGrantInfusionAfterOrdeal(target.isAlive(), target.getHealth());
+    }
+
+    static boolean shouldGrantInfusionAfterOrdeal(boolean alive, float health) {
+        return alive && health > 0.1F;
+    }
+
+    private static void applyInfusionRiteResult(ServerPlayer target, InfusionType type) {
+        WitcheryPlayerData data = WitcheryAttachments.get(target);
+        data.setInfusionType(type);
+        data.setInfusionEnergy(INFUSION_RITE_CHARGES, INFUSION_RITE_CHARGES);
+        com.emoniph.witchery.events.InfusionEvents.onInfusionGranted(target, type);
+        PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
     }
 
     private static String infusionSuccessKey(InfusionType type) {
@@ -1914,7 +2002,8 @@ public class RitualExecutor {
     private static boolean riteOfMovingEarth(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (!queueActiveRitual(sl, ActiveRitualType.MOVING_EARTH, RitualCircleDetector.CircleSize.LARGE,
-                center, 1, 10, 60, 1, countNearbyCovenWitches(level, center), headingFromLook(player.getLookAngle()))) {
+                center, center, 1, 10, 60, 1, countNearbyCovenWitches(level, center),
+                0.0f, headingFromLook(player.getLookAngle()), List.of(), false, ritualOwnerName(player))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -1943,7 +2032,8 @@ public class RitualExecutor {
                 for (int dy = 0; dy > -5; dy--) {
                     BlockPos bp = new BlockPos(bx, center.getY() + dy, bz);
                     BlockState bs = sl.getBlockState(bp);
-                    if (!bs.isAir() && !bs.liquid() && bs.getDestroySpeed(sl, bp) >= 0) {
+                    if (!bs.isAir() && !bs.liquid() && bs.getDestroySpeed(sl, bp) >= 0
+                            && canRitualModify(player, sl, bp, WitcheryProtectionAction.BLOCK_BREAK)) {
                         sl.setBlock(bp, Blocks.AIR.defaultBlockState(), 3);
                         removed++;
                     }
@@ -2755,7 +2845,7 @@ public class RitualExecutor {
 
         level.levelEvent(2005, ritual.center.above(2), 0);
         level.levelEvent(2005, anchor.above(), 0);
-        growNaturePatch(level, anchor, 3);
+        growNaturePatch(level, ritual, anchor, 3);
         return true;
     }
 
@@ -2766,7 +2856,8 @@ public class RitualExecutor {
             return false;
         }
 
-        int transposed = transposeOreLayer(level, ritual.center, scanY, ritual.minRadius, ritual.covenSize >= 6);
+        int transposed = transposeOreLayer(level, ritual, ritual.center, scanY, ritual.minRadius,
+                ritual.covenSize >= 6);
         if (transposed > 0) {
             level.playSound(null, ritual.center, SoundEvents.ENDERMAN_TELEPORT, SoundSource.BLOCKS, 0.35f, 1.5f);
             level.sendParticles(ParticleTypes.PORTAL,
@@ -2795,7 +2886,7 @@ public class RitualExecutor {
         BlockPos carvePos = ritual.path.get(pathIndex);
         int width = ritual.minRadius + (ritual.covenSize > 2 ? 2 : 0) + (level.random.nextInt(3) == 0 ? 1 : 0);
         int depth = ritual.maxRadius - 2 + level.random.nextInt(5);
-        carveMovingEarthCircle(level, carvePos, width, depth);
+        carveMovingEarthCircle(level, ritual, carvePos, width, depth);
         if (carveStage == 1 || carveStage % 10 == 0) {
             spawnRingParticles(level, ritual.center, 3, 12);
         }
@@ -2816,7 +2907,7 @@ public class RitualExecutor {
         int airSpace = baseRadius * 2;
 
         for (int y = effectCenter.getY() + airSpace; y >= effectCenter.getY() - height; y--) {
-            raiseColumnLayer(level, effectCenter, y, effectiveRadius, y == effectCenter.getY() - 1);
+            raiseColumnLayer(level, ritual, effectCenter, y, effectiveRadius, y == effectCenter.getY() - 1);
         }
 
         liftRaiseColumnEntities(level, effectCenter, effectiveRadius, airSpace);
@@ -2839,11 +2930,13 @@ public class RitualExecutor {
             for (int yOffset = 1; yOffset <= ritual.stage; yOffset++) {
                 float layerRadius = radius - (height - ritual.stage - 1 + yOffset) * radius / (float) height;
                 int actualRadius = Math.max((int) Math.ceil(layerRadius), 1);
-                drawVolcanoFilledCircle(level, effectCenter, effectCenter.getY() + yOffset - 1, actualRadius, yOffset, true);
+                drawVolcanoFilledCircle(level, ritual, effectCenter, effectCenter.getY() + yOffset - 1,
+                        actualRadius, yOffset, true);
                 if (ritual.stage == height) {
                     int belowY = effectCenter.getY() - 1;
                     for (int reduce = 0; belowY > effectCenter.getY() - 5; reduce++, belowY--) {
-                        drawVolcanoFilledCircle(level, effectCenter, belowY, Math.max(radius - reduce, 2), yOffset, false);
+                        drawVolcanoFilledCircle(level, ritual, effectCenter, belowY, Math.max(radius - reduce, 2),
+                                yOffset, false);
                     }
                 }
                 liftVolcanoEntities(level, effectCenter, effectCenter.getY() + yOffset, actualRadius);
@@ -2852,24 +2945,32 @@ public class RitualExecutor {
         }
 
         if (ritual.stage >= height * 2) {
-            openVolcanoVent(level, effectCenter);
+            openVolcanoVent(level, ritual, effectCenter);
             return false;
         }
 
         if (ritual.stage == height * 2 - 1) {
-            level.setBlock(effectCenter.above(ritual.stage - height), Blocks.LAVA.defaultBlockState(), 3);
-            level.setBlock(effectCenter.above(), Blocks.LAVA.defaultBlockState(), 3);
+            ritualSetBlock(level, ritual, effectCenter.above(ritual.stage - height), Blocks.LAVA.defaultBlockState(),
+                    WitcheryProtectionAction.BLOCK_TRANSFORM);
+            ritualSetBlock(level, ritual, effectCenter.above(), Blocks.LAVA.defaultBlockState(),
+                    WitcheryProtectionAction.BLOCK_TRANSFORM);
             switch (level.random.nextInt(8)) {
-                case 0 -> level.setBlock(effectCenter.offset(1, height - 1, 0), Blocks.AIR.defaultBlockState(), 3);
-                case 1 -> level.setBlock(effectCenter.offset(0, height - 1, 1), Blocks.AIR.defaultBlockState(), 3);
-                case 2 -> level.setBlock(effectCenter.offset(-1, height - 1, 0), Blocks.AIR.defaultBlockState(), 3);
-                case 3 -> level.setBlock(effectCenter.offset(0, height - 1, -1), Blocks.AIR.defaultBlockState(), 3);
+                case 0 -> ritualSetBlock(level, ritual, effectCenter.offset(1, height - 1, 0),
+                        Blocks.AIR.defaultBlockState(), WitcheryProtectionAction.BLOCK_BREAK);
+                case 1 -> ritualSetBlock(level, ritual, effectCenter.offset(0, height - 1, 1),
+                        Blocks.AIR.defaultBlockState(), WitcheryProtectionAction.BLOCK_BREAK);
+                case 2 -> ritualSetBlock(level, ritual, effectCenter.offset(-1, height - 1, 0),
+                        Blocks.AIR.defaultBlockState(), WitcheryProtectionAction.BLOCK_BREAK);
+                case 3 -> ritualSetBlock(level, ritual, effectCenter.offset(0, height - 1, -1),
+                        Blocks.AIR.defaultBlockState(), WitcheryProtectionAction.BLOCK_BREAK);
                 default -> {
                 }
             }
         } else {
-            level.setBlock(effectCenter.above(), Blocks.SAND.defaultBlockState(), 3);
-            level.setBlock(effectCenter.above(ritual.stage - height), Blocks.LAVA.defaultBlockState(), 3);
+            ritualSetBlock(level, ritual, effectCenter.above(), Blocks.SAND.defaultBlockState(),
+                    WitcheryProtectionAction.BLOCK_TRANSFORM);
+            ritualSetBlock(level, ritual, effectCenter.above(ritual.stage - height), Blocks.LAVA.defaultBlockState(),
+                    WitcheryProtectionAction.BLOCK_TRANSFORM);
         }
 
         if (ritual.stage % 4 == 0) {
@@ -3733,23 +3834,27 @@ public class RitualExecutor {
         }
     }
 
-    private static void carveMovingEarthCircle(ServerLevel level, BlockPos center, int radius, int depth) {
+    private static void carveMovingEarthCircle(ServerLevel level, ActiveRitual ritual,
+                                               BlockPos center, int radius, int depth) {
         int radiusSq = radius * radius;
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dz = -radius; dz <= radius; dz++) {
                 if (dx * dx + dz * dz > radiusSq) {
                     continue;
                 }
-                carveMovingEarthColumn(level, center.offset(dx, 0, dz), depth);
+                carveMovingEarthColumn(level, ritual, center.offset(dx, 0, dz), depth);
             }
         }
     }
 
-    private static void carveMovingEarthColumn(ServerLevel level, BlockPos center, int depth) {
+    private static void carveMovingEarthColumn(ServerLevel level, ActiveRitual ritual, BlockPos center, int depth) {
         for (int offset = 0; offset < depth; offset++) {
             BlockPos pos = center.below(offset);
             BlockState state = level.getBlockState(pos);
             if (state.isAir() || state.liquid() || state.hasBlockEntity() || state.getDestroySpeed(level, pos) < 0.0f) {
+                continue;
+            }
+            if (!canRitualModify(ritual, level, pos, WitcheryProtectionAction.BLOCK_BREAK)) {
                 continue;
             }
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
@@ -4787,7 +4892,7 @@ public class RitualExecutor {
 
         if (!queueActiveRitual(sl, ActiveRitualType.RAISE_COLUMN, circleSize, center,
                 relocation.effectCenter(), baseRadius, height, height - 1, 5, covenSize, 0.0f, 0,
-                supplementalSacrifices)) {
+                supplementalSacrifices, false, ritualOwnerName(player))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -4867,7 +4972,8 @@ public class RitualExecutor {
             return transaction.reportNoPower(player);
         }
         if (!queueActiveRitual(sl, ActiveRitualType.VOLCANO, circleSize, center,
-                effectCenter, 8, 8, 0, 15, covenSize, 0.0f, 0, supplementalSacrifices)) {
+                effectCenter, 8, 8, 0, 15, covenSize, 0.0f, 0, supplementalSacrifices,
+                false, ritualOwnerName(player))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -4891,7 +4997,8 @@ public class RitualExecutor {
         int covenSize = countNearbyCovenWitches(level, center);
         int pulses = 30 + covenSize * 5;
         if (!queueActiveRitual(sl, ActiveRitualType.TRANSPOSE_ORES, RitualCircleDetector.CircleSize.LARGE,
-                center, 8, 0, pulses, 10, covenSize)) {
+                center, center, 8, 0, pulses, 10, covenSize, 0.0f, 0, List.of(),
+                false, ritualOwnerName(player))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -4934,7 +5041,8 @@ public class RitualExecutor {
                                              List<RitualOffering> offerings) {
         int covenSize = countNearbyCovenWitches(level, center);
         if (!queueActiveRitual(sl, ActiveRitualType.NATURES_POWER, RitualCircleDetector.CircleSize.MEDIUM,
-                center, 14, 8, 150, 20, covenSize)) {
+                center, center, 14, 8, 150, 20, covenSize, 0.0f, 0, List.of(),
+                false, ritualOwnerName(player))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -4950,7 +5058,8 @@ public class RitualExecutor {
         return true;
     }
 
-    private static void raiseColumnLayer(ServerLevel level, BlockPos center, int y, int radius, boolean topLayer) {
+    private static void raiseColumnLayer(ServerLevel level, ActiveRitual ritual,
+                                         BlockPos center, int y, int radius, boolean topLayer) {
         int radiusSq = radius * radius;
         int innerRadius = Math.max(radius - 1, 0);
         int innerRadiusSq = innerRadius * innerRadius;
@@ -4967,12 +5076,13 @@ public class RitualExecutor {
                     continue;
                 }
 
-                raiseColumnBlock(level, center.offset(dx, y - center.getY(), dz));
+                raiseColumnBlock(level, ritual, center.offset(dx, y - center.getY(), dz));
             }
         }
     }
 
-    private static int transposeOreLayer(ServerLevel level, BlockPos center, int y, int radius, boolean includeGold) {
+    private static int transposeOreLayer(ServerLevel level, ActiveRitual ritual,
+                                         BlockPos center, int y, int radius, boolean includeGold) {
         int transposed = 0;
         for (int x = center.getX() - radius; x <= center.getX() + radius; x++) {
             for (int z = center.getZ() - radius; z <= center.getZ() + radius; z++) {
@@ -4984,6 +5094,9 @@ public class RitualExecutor {
 
                 ItemStack output = new ItemStack(state.getBlock().asItem());
                 if (output.isEmpty()) {
+                    continue;
+                }
+                if (!canRitualModify(ritual, level, orePos, WitcheryProtectionAction.BLOCK_BREAK)) {
                     continue;
                 }
 
@@ -5028,24 +5141,25 @@ public class RitualExecutor {
         return level.getBlockState(pos.above()).isAir();
     }
 
-    private static void growNaturePatch(ServerLevel level, BlockPos center, int radius) {
+    private static void growNaturePatch(ServerLevel level, ActiveRitual ritual, BlockPos center, int radius) {
         int radiusSq = radius * radius;
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dz = -radius; dz <= radius; dz++) {
                 if (dx * dx + dz * dz > radiusSq) {
                     continue;
                 }
-                growNatureColumn(level, center.offset(dx, 0, dz));
+                growNatureColumn(level, ritual, center.offset(dx, 0, dz));
             }
         }
     }
 
-    private static void growNatureColumn(ServerLevel level, BlockPos groundPos) {
+    private static void growNatureColumn(ServerLevel level, ActiveRitual ritual, BlockPos groundPos) {
         BlockState state = level.getBlockState(groundPos);
         BlockPos abovePos = groundPos.above();
         BlockState aboveState = level.getBlockState(abovePos);
 
-        if (canNaturesPowerGreen(state)) {
+        if (canNaturesPowerGreen(state)
+                && canRitualModify(ritual, level, groundPos, WitcheryProtectionAction.BLOCK_TRANSFORM)) {
             if (hasAdjacentWater(level, groundPos) && level.random.nextDouble() < 0.7) {
                 level.setBlock(groundPos, Blocks.MYCELIUM.defaultBlockState(), 3);
             } else {
@@ -5055,13 +5169,14 @@ public class RitualExecutor {
         }
 
         if (aboveState.isAir() && level.random.nextInt(4) == 0) {
-            placeNaturesPowerPlant(level, abovePos);
+            placeNaturesPowerPlant(level, ritual, abovePos);
         }
 
         BlockState plantState = level.getBlockState(abovePos);
         if (plantState.getBlock() instanceof BonemealableBlock bonemealable
                 && bonemealable.isValidBonemealTarget(level, abovePos, plantState)
-                && bonemealable.isBonemealSuccess(level, level.random, abovePos, plantState)) {
+                && bonemealable.isBonemealSuccess(level, level.random, abovePos, plantState)
+                && canRitualModify(ritual, level, abovePos, WitcheryProtectionAction.BLOCK_TRANSFORM)) {
             bonemealable.performBonemeal(level, level.random, abovePos, plantState);
         }
     }
@@ -5088,7 +5203,7 @@ public class RitualExecutor {
         return false;
     }
 
-    private static void placeNaturesPowerPlant(ServerLevel level, BlockPos pos) {
+    private static void placeNaturesPowerPlant(ServerLevel level, ActiveRitual ritual, BlockPos pos) {
         BlockState plant = switch (level.random.nextInt(10)) {
             case 0 -> Blocks.SHORT_GRASS.defaultBlockState();
             case 1 -> Blocks.FERN.defaultBlockState();
@@ -5102,7 +5217,8 @@ public class RitualExecutor {
             default -> Blocks.TALL_GRASS.defaultBlockState();
         };
 
-        if (plant.canSurvive(level, pos)) {
+        if (plant.canSurvive(level, pos)
+                && canRitualModify(ritual, level, pos, WitcheryProtectionAction.BLOCK_PLACE)) {
             level.setBlock(pos, plant, 3);
         }
     }
@@ -5178,7 +5294,7 @@ public class RitualExecutor {
         return includeGold && (state.is(Blocks.GOLD_ORE) || state.is(Blocks.DEEPSLATE_GOLD_ORE));
     }
 
-    private static void raiseColumnBlock(ServerLevel level, BlockPos pos) {
+    private static void raiseColumnBlock(ServerLevel level, ActiveRitual ritual, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         if (!canRaiseColumnMove(level, pos, state)) {
             return;
@@ -5187,6 +5303,10 @@ public class RitualExecutor {
         BlockPos above = pos.above();
         BlockPos below = pos.below();
         if (!canRaiseColumnPass(level, above) || !canRaiseColumnPass(level, below)) {
+            return;
+        }
+        if (!canRitualModify(ritual, level, pos, WitcheryProtectionAction.BLOCK_TRANSFORM)
+                || !canRitualModify(ritual, level, above, WitcheryProtectionAction.BLOCK_TRANSFORM)) {
             return;
         }
 
@@ -5252,15 +5372,17 @@ public class RitualExecutor {
         return count >= requiredNeighbors;
     }
 
-    private static void drawVolcanoFilledCircle(ServerLevel level, BlockPos center, int y, int radius, int heightStage, boolean replaceBlocks) {
+    private static void drawVolcanoFilledCircle(ServerLevel level, ActiveRitual ritual,
+                                                BlockPos center, int y, int radius, int heightStage,
+                                                boolean replaceBlocks) {
         int x = radius;
         int z = 0;
         int radiusError = 1 - radius;
         while (x >= z) {
-            drawVolcanoLine(level, center, -x, x, z, y, radius, heightStage, replaceBlocks);
-            drawVolcanoLine(level, center, -z, z, x, y, radius, heightStage, replaceBlocks);
-            drawVolcanoLine(level, center, -x, x, -z, y, radius, heightStage, replaceBlocks);
-            drawVolcanoLine(level, center, -z, z, -x, y, radius, heightStage, replaceBlocks);
+            drawVolcanoLine(level, ritual, center, -x, x, z, y, radius, heightStage, replaceBlocks);
+            drawVolcanoLine(level, ritual, center, -z, z, x, y, radius, heightStage, replaceBlocks);
+            drawVolcanoLine(level, ritual, center, -x, x, -z, y, radius, heightStage, replaceBlocks);
+            drawVolcanoLine(level, ritual, center, -z, z, -x, y, radius, heightStage, replaceBlocks);
             z++;
             if (radiusError < 0) {
                 radiusError += 2 * z + 1;
@@ -5271,7 +5393,8 @@ public class RitualExecutor {
         }
     }
 
-    private static void drawVolcanoLine(ServerLevel level, BlockPos center, int startX, int endX, int zOffset, int y,
+    private static void drawVolcanoLine(ServerLevel level, ActiveRitual ritual, BlockPos center,
+                                        int startX, int endX, int zOffset, int y,
                                         int radius, int heightStage, boolean replaceBlocks) {
         int modStart = radius > 1 && level.random.nextInt(5) == 0 ? startX + 1 : startX;
         int modEnd = radius > 1 && level.random.nextInt(5) == 0 ? endX - 1 : endX;
@@ -5281,13 +5404,17 @@ public class RitualExecutor {
                 continue;
             }
             boolean lower = (xOffset == modStart || xOffset == modEnd || edgeZ) && heightStage < 3;
-            drawVolcanoPixel(level, center.offset(xOffset, y - center.getY(), zOffset), lower, replaceBlocks);
+            drawVolcanoPixel(level, ritual, center.offset(xOffset, y - center.getY(), zOffset), lower, replaceBlocks);
         }
     }
 
-    private static void drawVolcanoPixel(ServerLevel level, BlockPos pos, boolean lower, boolean replaceBlocks) {
+    private static void drawVolcanoPixel(ServerLevel level, ActiveRitual ritual,
+                                         BlockPos pos, boolean lower, boolean replaceBlocks) {
         BlockState state = level.getBlockState(pos);
         if (!canVolcanoReplace(level, pos, state, replaceBlocks)) {
+            return;
+        }
+        if (!canRitualModify(ritual, level, pos, WitcheryProtectionAction.BLOCK_TRANSFORM)) {
             return;
         }
         BlockState fillState = lower && level.random.nextInt(5) != 0
@@ -5325,7 +5452,7 @@ public class RitualExecutor {
         }
     }
 
-    private static void openVolcanoVent(ServerLevel level, BlockPos center) {
+    private static void openVolcanoVent(ServerLevel level, ActiveRitual ritual, BlockPos center) {
         for (int y = center.getY(); y > level.getMinY(); y--) {
             BlockPos pos = new BlockPos(center.getX(), y, center.getZ());
             BlockState state = level.getBlockState(pos);
@@ -5334,22 +5461,22 @@ public class RitualExecutor {
             }
             if (state.is(Blocks.LAVA)) {
                 while (y > level.getMinY() && level.getBlockState(new BlockPos(center.getX(), y, center.getZ())).is(Blocks.LAVA)) {
-                    clearVolcanoLava(level, new BlockPos(center.getX(), y, center.getZ()));
-                    clearVolcanoLava(level, new BlockPos(center.getX() + 1, y, center.getZ()));
-                    clearVolcanoLava(level, new BlockPos(center.getX() - 1, y, center.getZ()));
-                    clearVolcanoLava(level, new BlockPos(center.getX(), y, center.getZ() + 1));
-                    clearVolcanoLava(level, new BlockPos(center.getX(), y, center.getZ() - 1));
+                    clearVolcanoLava(level, ritual, new BlockPos(center.getX(), y, center.getZ()));
+                    clearVolcanoLava(level, ritual, new BlockPos(center.getX() + 1, y, center.getZ()));
+                    clearVolcanoLava(level, ritual, new BlockPos(center.getX() - 1, y, center.getZ()));
+                    clearVolcanoLava(level, ritual, new BlockPos(center.getX(), y, center.getZ() + 1));
+                    clearVolcanoLava(level, ritual, new BlockPos(center.getX(), y, center.getZ() - 1));
                     y--;
                 }
                 break;
             }
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+            ritualSetBlock(level, ritual, pos, Blocks.AIR.defaultBlockState(), WitcheryProtectionAction.BLOCK_BREAK);
         }
     }
 
-    private static void clearVolcanoLava(ServerLevel level, BlockPos pos) {
+    private static void clearVolcanoLava(ServerLevel level, ActiveRitual ritual, BlockPos pos) {
         if (level.getBlockState(pos).is(Blocks.LAVA)) {
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+            ritualSetBlock(level, ritual, pos, Blocks.AIR.defaultBlockState(), WitcheryProtectionAction.BLOCK_BREAK);
         }
     }
 

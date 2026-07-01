@@ -1,5 +1,9 @@
 package com.emoniph.witchery.effect;
 
+import com.emoniph.witchery.entity.IllusionEntity;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -7,19 +11,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
- * Insanity (Madness) — source {@code PotionInsanity} (1.7.10-0.24.1): an incurable curse that
- * preys on the mind, conjuring phantom monsters and unnerving sounds.
- *
- * <p><b>Port divergence:</b> the source spawned harmless <em>illusion</em> creepers/spiders/
- * zombies that vanish on contact. Those illusion entities are not yet ported, so this slice
- * approximates the madness with rolling Nausea plus the source's randomised eerie/explosion
- * cues played only to the victim. Wiring in true illusion mobs is a deferred follow-up; the
- * tick cadence, level-scaled odds, and high-level sound roll mirror the source.</p>
+ * Insanity (Madness) - source PotionInsanity: victim-only phantom monsters and unnerving sounds.
  */
 public class InsanityMobEffect extends MobEffect {
 
@@ -38,17 +33,26 @@ public class InsanityMobEffect extends MobEffect {
             return true;
         }
         int strength = Math.max(0, amplifier) + 1;
-        // Stand-in for the illusion-mob conjuring: a creeping nausea, more frequent at higher levels.
-        int hallucinationChance = strength > 2 ? 25 : (strength > 1 ? 30 : 35);
-        if (level.random.nextInt(hallucinationChance) == 0) {
-            player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 90, 0, false, false));
+        if (level.random.nextInt(hallucinationChance(strength)) == 0) {
+            if (!IllusionEntity.spawnRandomNear(level, player, strength) && strength >= 4) {
+                playHighLevelSound(level, player);
+            }
         } else if (strength >= 4 && level.random.nextInt(20) == 0) {
-            SoundEvent sound = level.random.nextInt(3) == 1
-                    ? SoundEvents.ENDERMAN_AMBIENT
-                    : SoundEvents.GENERIC_EXPLODE.value();
-            level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    sound, SoundSource.HOSTILE, 1.0F, 1.0F);
+            playHighLevelSound(level, player);
         }
         return true;
+    }
+
+    public static int hallucinationChance(int strength) {
+        return strength > 2 ? 25 : (strength > 1 ? 30 : 35);
+    }
+
+    private static void playHighLevelSound(ServerLevel level, ServerPlayer player) {
+        SoundEvent sound = level.random.nextInt(3) == 1
+                ? SoundEvents.ENDERMAN_AMBIENT
+                : SoundEvents.GENERIC_EXPLODE.value();
+        Holder<SoundEvent> holder = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound);
+        player.connection.send(new ClientboundSoundPacket(holder, SoundSource.HOSTILE,
+                player.getX(), player.getY(), player.getZ(), 1.0F, 1.0F, level.random.nextLong()));
     }
 }

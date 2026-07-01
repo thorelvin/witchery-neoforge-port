@@ -4,6 +4,7 @@ import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.blocks.entity.PlacedItemBlockEntity;
 import com.emoniph.witchery.blocks.PlacedItemBlock;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -26,6 +27,7 @@ final class AltarPlacedItemSupport {
 
         BlockPos above = clickedPos.above();
         if (!level.getBlockState(above).isAir()) return InteractionResult.PASS;
+        if (!WitcheryTerrainProtection.canPlace(ctx.getPlayer(), level, above)) return InteractionResult.FAIL;
 
         if (!level.isClientSide()) {
             Direction facing = ctx.getPlayer() != null ? ctx.getPlayer().getDirection() : Direction.SOUTH;

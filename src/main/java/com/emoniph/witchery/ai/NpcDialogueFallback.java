@@ -196,6 +196,71 @@ final class NpcDialogueFallback {
         return Optional.of(leonardAside(normalized, name, ""));
     }
 
+    static Optional<String> reflectionChat(String playerMessage, String reflectionName, String playerName,
+                                           String ownerName, String reflectionState, String gearInfo,
+                                           String memoryContext) {
+        String normalized = normalize(playerMessage);
+        if (normalized.isBlank()) {
+            return Optional.empty();
+        }
+
+        String name = safeName(playerName);
+        String owner = safeName(ownerName == null || ownerName.isBlank() ? playerName : ownerName);
+        String reflection = safeDisplayName(reflectionName, owner + "'s Reflection");
+        if (containsAny(normalized, "what should i call you", "what do i call you") || asksNpcName(normalized)) {
+            return Optional.of("Call me " + reflection + ", if you can bear your name in glass.");
+        }
+        if (containsAny(normalized, "who are you", "what are you", "are you me", "my reflection")) {
+            return Optional.of("I am your Reflection, " + name + "; the mirror kept your shape and spoiled the rest.");
+        }
+        if (asksPlayerName(normalized) || containsAny(normalized, "my name")) {
+            return Optional.of("Your name is " + name + ". The glass learned it before your courage did.");
+        }
+        if (containsAny(normalized, "can you hear me", "hear me", "do you hear me")) {
+            return Optional.of("*tilts your face* \"I hear you from the wrong side of your mouth.\"");
+        }
+        if (isGreeting(normalized)) {
+            return Optional.of("Hello, " + name + ". Your echo arrived with sharper teeth.");
+        }
+        if (containsAny(normalized, "goodbye", "farewell", "bye", "i am leaving", "i m leaving")) {
+            return Optional.of("Leave by the linked mirror, if it still likes your face.");
+        }
+        if (containsAny(normalized, "why do you look like me", "look like me", "my face", "my shape",
+                "wearing my face", "copy me", "copied me")) {
+            return Optional.of("The mirror borrowed " + owner + "'s shape. It returned nothing kind.");
+        }
+        if (containsAny(normalized, "how do i leave", "how to leave", "get out", "go home",
+                "send me home", "escape", "exit")) {
+            return Optional.of("Find the linked mirror. Doors home dislike panic, but they answer glass.");
+        }
+        if (containsAny(normalized, "mirror world", "inside mirror", "behind the mirror", "where am i",
+                "what is this place")) {
+            return Optional.of("Mirror World is a room behind silver, built to answer trespass with familiar teeth.");
+        }
+        if (containsAny(normalized, "mirror mirror", "fairest", "on the wall")) {
+            return Optional.of("The mirror says you are fairest here, " + name + "; I say fairness breaks easily.");
+        }
+        if (containsAny(normalized, "fight", "kill you", "hurt you", "attack you", "weakness",
+                "guardian", "dangerous")) {
+            return Optional.of("A Reflection is a familiar danger. Strike it, and the glass stops pretending.");
+        }
+        if (containsAny(normalized, "gear", "equipment", "holding", "wearing", "carry", "carrying",
+                "my items", "my item", "my armor", "my armour")) {
+            return Optional.of("I see what the glass can borrow: " + gearSceneFact(gearInfo) + ".");
+        }
+        if (containsAny(normalized, "health", "wounded", "target", "state")) {
+            return Optional.of("Read the glass plainly: " + phaseSceneFact(reflectionState) + ".");
+        }
+        if (asksMemory(normalized)) {
+            return Optional.of(memoryAnswer(memoryContext, name)
+                    .orElse("I remember your outline, " + name + ", and little mercy inside it."));
+        }
+        if (containsAny(normalized, "help", "teach", "advice", "what should i do")) {
+            return Optional.of("Do what living faces do: find the mirror home before I improve on you.");
+        }
+        return Optional.of(reflectionAside(normalized, name, ""));
+    }
+
     static Optional<String> babaYagaChat(String playerMessage, String babaName, String playerName,
                                          String bossInfo, String gearInfo, String memoryContext) {
         String normalized = normalize(playerMessage);
@@ -326,6 +391,81 @@ final class NpcDialogueFallback {
             return routed;
         }
         return Optional.of(babaYagaAside(normalized, name, ""));
+    }
+
+    static Optional<String> hobgoblinChat(String playerMessage, String hobgoblinName, String playerName,
+                                          String workInfo, String patronInfo, String memoryContext) {
+        String normalized = normalize(playerMessage);
+        if (normalized.isBlank()) {
+            return Optional.empty();
+        }
+
+        String name = safeName(playerName);
+        String hobgoblin = safeDisplayName(hobgoblinName, "Hobgoblin");
+        String work = NpcBrainResponse.sanitize(workInfo, 180);
+        String patron = NpcBrainResponse.sanitize(patronInfo, 180);
+        if (asksNpcName(normalized)) {
+            return Optional.of("Me " + hobgoblin + ". Good nose. Better pockets.");
+        }
+        if (asksPlayerName(normalized)) {
+            return Optional.of("You " + name + ". Name not shiny, but useful.");
+        }
+        if (containsAny(normalized, "goodbye", "farewell", "bye")) {
+            return Optional.of("Go then, " + name + ". Leave shiny. Take feet.");
+        }
+        if (isGreeting(normalized)) {
+            return Optional.of("*studies your coin* \"Speak quick, " + name + ". Shiny talks best.\"");
+        }
+        if (containsAny(normalized, "what do you trade", "what do you sell", "stock", "wares", "buy", "sell", "trade")) {
+            return Optional.of("Coal for dust; dust and gold for nuggets; nuggets and emerald for ingot.");
+        }
+        if (containsAny(normalized, "koboldite", "dust", "nugget", "ingot")) {
+            return Optional.of("Koboldite is best shiny. Hobgoblin dust becomes nugget, nugget becomes ingot.");
+        }
+        if (containsAny(normalized, "mine", "dig", "pickaxe", "leash", "work for me", "servant", "carry")) {
+            if (containsAny(normalized, "forced", "force", "leashed", "leash", "servant", "slave")) {
+                return Optional.of("*shrugs* \"Rope is rude. Pickaxe is ruder. Shiny pays little.\"");
+            }
+            String workLower = normalize(work);
+            if (containsAny(workLower, "being forced", "can dig")) {
+                return Optional.of("Leash is on. Pickaxe is ready. Hobgoblin digs and grumbles.");
+            }
+            if (containsAny(workLower, "leashed")) {
+                return Optional.of("Rope is on. Give pickaxe, put chest nearby, then shiny may appear.");
+            }
+            return Optional.of("Leash, pickaxe, chest. Then maybe hobgoblin finds shiny dust.");
+        }
+        if (containsAny(normalized, "patron", "statue", "worship", "prayer", "pray", "altar")) {
+            Optional<String> patronAnswer = hobgoblinPatronSceneFact(patron);
+            if (patronAnswer.isPresent()) {
+                return patronAnswer;
+            }
+            return Optional.of("Patron statue eats prayers. Witches trick it. Mog and Gulg get angry.");
+        }
+        if (containsAny(normalized, "mog", "gulg", "god", "gods")) {
+            return Optional.of("*shrugs* \"Mog and Gulg big. Angry. Prayers keep them looking away.\"");
+        }
+        if (containsAny(normalized, "boss", "appeared", "spawned", "angry patron", "angry god")) {
+            return Optional.of("*gestures* \"When Mog or Gulg comes, small feet run. Big trouble follows you.\"");
+        }
+        if (containsAny(normalized, "prank", "mischief", "mischievous", "trick me", "tricks")) {
+            return Optional.of("*taps a finger* \"Hobgoblin tricks small. Bootlaces, pockets, bad luck in socks.\"");
+        }
+        if (containsAny(normalized, "hut", "home", "where live", "where do you live")) {
+            return Optional.of("Forest hut. Small roof, bad smell, good hiding.");
+        }
+        if (containsAny(normalized, "villager", "villagers", "village")) {
+            return Optional.of("Villager noisy. Hobgoblin no like. Too many doors.");
+        }
+        if (containsAny(normalized, "witchcraft", "witchery", "rite", "ritual", "brew", "cauldron",
+                "circle", "coven", "demon")) {
+            return Optional.of("Witch words too tall. Ask witch. Hobgoblin knows shiny.");
+        }
+        if (asksMemory(normalized)) {
+            return Optional.of(memoryAnswer(memoryContext, name)
+                    .orElse("Hobgoblin remembers your name, " + name + ". And pockets."));
+        }
+        return Optional.of(hobgoblinAside(normalized, name, ""));
     }
 
     static Optional<String> villagerChat(String playerMessage, String villagerName, String playerName,
@@ -899,12 +1039,30 @@ final class NpcDialogueFallback {
         return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
     }
 
+    static String reflectionLastResort(String playerMessage, String playerName, String avoidSpeech) {
+        return reflectionAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+    }
+
+    static Optional<String> reflectionAlternate(String playerMessage, String playerName, String avoidSpeech) {
+        String line = reflectionAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
+    }
+
     static String babaYagaLastResort(String playerMessage, String playerName, String avoidSpeech) {
         return babaYagaAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
     }
 
     static Optional<String> babaYagaAlternate(String playerMessage, String playerName, String avoidSpeech) {
         String line = babaYagaAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
+    }
+
+    static String hobgoblinLastResort(String playerMessage, String playerName, String avoidSpeech) {
+        return hobgoblinAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+    }
+
+    static Optional<String> hobgoblinAlternate(String playerMessage, String playerName, String avoidSpeech) {
+        String line = hobgoblinAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
         return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
     }
 
@@ -1452,6 +1610,26 @@ final class NpcDialogueFallback {
         return "Ask again, " + playerName + "; this time bring a sharper question.";
     }
 
+    private static String reflectionAside(String normalized, String playerName, String avoidSpeech) {
+        String[] lines = {
+                "Your echo is late, " + playerName + ". I arrived in its place.",
+                "*copies your stance* \"Ask again. This side of the glass likes clean shapes.\"",
+                "The room heard you. It answered with your outline.",
+                "Your face looks braver from over here. That will not last.",
+                "*smiles with your mouth* \"The mirror keeps poor questions too.\"",
+                "Speak plainly, " + playerName + ". Reflections blur when words do.",
+                "The silver is listening. Try not to sound breakable."
+        };
+        int start = Math.floorMod(normalized.hashCode(), lines.length);
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[(start + i) % lines.length];
+            if (!NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
+                return line;
+            }
+        }
+        return "Ask again, " + playerName + "; the glass missed the useful part.";
+    }
+
     private static String babaYagaAside(String normalized, String playerName, String avoidSpeech) {
         String[] lines = {
                 "*sniffs* \"You brought words, " + playerName + ". I was hoping for bones.\"",
@@ -1468,6 +1646,51 @@ final class NpcDialogueFallback {
             }
         }
         return "Ask again, " + playerName + "; season the question with sense.";
+    }
+
+    private static String hobgoblinAside(String normalized, String playerName, String avoidSpeech) {
+        String[] lines = {
+                "*shrugs* \"Big words. Small ears. Try shiny words.\"",
+                "*gestures* \"Say trade, mine, koboldite, hut, Mog, or Gulg.\"",
+                "Hobgoblin hears noise. Pockets maybe louder?",
+                "*taps a finger* \"Question too slippery. Hold it still.\"",
+                "No bite in that talk, " + playerName + ". Try useful."
+        };
+        int start = Math.floorMod(normalized.hashCode(), lines.length);
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[(start + i) % lines.length];
+            if (!NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
+                return line;
+            }
+        }
+        return "Ask again, " + playerName + ". Small words. Shiny words.";
+    }
+
+    private static Optional<String> hobgoblinPatronSceneFact(String patronInfo) {
+        String cleaned = NpcBrainResponse.sanitize(patronInfo, 180);
+        String normalized = normalize(cleaned);
+        if (normalized.isBlank()) {
+            return Optional.empty();
+        }
+        if (normalized.contains("no goblin altar")) {
+            return Optional.of("*gestures* \"No stone god nearby. Prayers need stone ears.\"");
+        }
+        Matcher stored = Pattern.compile("stored prayers\\s+(\\d+)", Pattern.CASE_INSENSITIVE).matcher(cleaned);
+        Matcher distance = Pattern.compile("([0-9]+(?:\\.[0-9]+)?)\\s+blocks away", Pattern.CASE_INSENSITIVE)
+                .matcher(cleaned);
+        if (stored.find()) {
+            int prayers = Integer.parseInt(stored.group(1));
+            if (prayers <= 0) {
+                return Optional.of("Stone god is close, but hungry. No fresh prayers yet.");
+            }
+            String range = distance.find() ? " Close enough." : "";
+            return Optional.of("Stone god holds " + prayers + " fresh prayer" + (prayers == 1 ? "" : "s")
+                    + "." + range);
+        }
+        if (normalized.contains("nearby goblin altar")) {
+            return Optional.of("Stone god is close. Speak soft; Mog and Gulg hear.");
+        }
+        return Optional.empty();
     }
 
     private static String shortSceneFact(String text) {

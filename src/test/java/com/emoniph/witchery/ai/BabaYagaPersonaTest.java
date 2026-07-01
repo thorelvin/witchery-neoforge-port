@@ -1,13 +1,22 @@
 package com.emoniph.witchery.ai;
 
+import com.emoniph.witchery.entity.BabaYagaEntity;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BabaYagaPersonaTest {
+    @Test
+    void babaYagaFriendlyPredictionVisitTimingMatchesDesign() {
+        assertEquals(3600, BabaYagaEntity.FRIENDLY_VISIT_TICKS);
+        assertEquals(100, BabaYagaEntity.FRIENDLY_GIFT_INTERVAL_TICKS);
+        assertEquals(6, BabaYagaEntity.FRIENDLY_GIFT_LIMIT);
+    }
+
     @Test
     void babaYagaPromptSmokeIncludesBossVoiceAndFacts() {
         NpcBrainPrompt prompt = NpcPromptBuilder.babaYagaSmoke(

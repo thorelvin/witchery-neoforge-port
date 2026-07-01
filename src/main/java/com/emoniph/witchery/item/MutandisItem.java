@@ -3,12 +3,14 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryDimensions;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -55,11 +57,15 @@ public class MutandisItem extends Item {
         BlockPos mutationPos = normalizeMutationPos(clickedState, pos);
         BlockState state = level.getBlockState(mutationPos);
         Block block    = state.getBlock();
+        Player player = ctx.getPlayer();
 
         // ── Extremis special: Grass Block ↔ Dirt toggle ───────────────────────
         if (extremis && (block == Blocks.GRASS_BLOCK || block == Blocks.DIRT)) {
             Block swap = (block == Blocks.GRASS_BLOCK) ? Blocks.DIRT : Blocks.GRASS_BLOCK;
             if (level.random.nextBoolean()) {
+                if (!WitcheryTerrainProtection.canTransform(player, level, pos)) {
+                    return InteractionResult.FAIL;
+                }
                 level.setBlock(pos, swap.defaultBlockState(), 3);
             }
             spawnEffects(level, pos.above());
@@ -71,12 +77,16 @@ public class MutandisItem extends Item {
         if (extremis && block == Blocks.SAND) {
             Block above = level.getBlockState(pos.above()).getBlock();
             if (above == Blocks.WATER || above == Blocks.ICE) {
+                boolean changed = false;
                 if (level.random.nextBoolean()) {
-                    tryConvertToClay(level, pos);
-                    tryConvertToClay(level, pos.north());
-                    tryConvertToClay(level, pos.south());
-                    tryConvertToClay(level, pos.east());
-                    tryConvertToClay(level, pos.west());
+                    changed |= tryConvertToClay(level, pos, player);
+                    changed |= tryConvertToClay(level, pos.north(), player);
+                    changed |= tryConvertToClay(level, pos.south(), player);
+                    changed |= tryConvertToClay(level, pos.east(), player);
+                    changed |= tryConvertToClay(level, pos.west(), player);
+                }
+                if (!changed && !WitcheryTerrainProtection.canTransform(player, level, pos)) {
+                    return InteractionResult.FAIL;
                 }
                 spawnEffects(level, pos.above());
                 consumeItem(ctx);
@@ -95,7 +105,9 @@ public class MutandisItem extends Item {
         pool.removeIf(outcome -> {
             BlockState outcomeState = outcome.blockState();
             return outcomeState != null
-                    && (outcomeState.getBlock() == block || !canPlaceMutation(level, mutationPos, state, outcomeState));
+                    && (outcomeState.getBlock() == block
+                    || !canPlaceMutation(level, mutationPos, state, outcomeState)
+                    || !canModifyMutation(level, mutationPos, state, outcomeState, player));
         });
         if (pool.isEmpty()) return InteractionResult.PASS;
 
@@ -104,8 +116,14 @@ public class MutandisItem extends Item {
 
         if (chosen.blockState() != null) {
             BlockState chosenState = applyAge(chosen.blockState(), sourceAge);
+            if (!canModifyMutation(level, mutationPos, state, chosenState, player)) {
+                return InteractionResult.FAIL;
+            }
             placeMutation(level, mutationPos, state, chosenState);
         } else {
+            if (!canClearMutationSource(level, mutationPos, state, player)) {
+                return InteractionResult.FAIL;
+            }
             clearMutationSource(level, mutationPos, state);
             Block.popResource(level, mutationPos, new ItemStack(chosen.item()));
         }
@@ -218,6 +236,32 @@ public class MutandisItem extends Item {
         return true;
     }
 
+    private static boolean canModifyMutation(Level level, BlockPos pos, BlockState currentState, BlockState targetState,
+                                             Player player) {
+        if (!WitcheryTerrainProtection.canTransform(player, level, pos)) {
+            return false;
+        }
+        if (targetState.getBlock() instanceof DoublePlantBlock) {
+            BlockPos abovePos = pos.above();
+            BlockState aboveState = level.getBlockState(abovePos);
+            return isUpperHalfOf(aboveState, currentState.getBlock())
+                    ? WitcheryTerrainProtection.canTransform(player, level, abovePos)
+                    : WitcheryTerrainProtection.canPlace(player, level, abovePos);
+        }
+        if (currentState.getBlock() instanceof DoublePlantBlock) {
+            return WitcheryTerrainProtection.canBreak(player, level, pos.above());
+        }
+        return true;
+    }
+
+    private static boolean canClearMutationSource(Level level, BlockPos pos, BlockState currentState, Player player) {
+        if (!WitcheryTerrainProtection.canBreak(player, level, pos)) {
+            return false;
+        }
+        return !(currentState.getBlock() instanceof DoublePlantBlock)
+                || WitcheryTerrainProtection.canBreak(player, level, pos.above());
+    }
+
     private static void placeMutation(Level level, BlockPos pos, BlockState currentState, BlockState targetState) {
         if (!(targetState.getBlock() instanceof DoublePlantBlock) && currentState.getBlock() instanceof DoublePlantBlock) {
             clearUpperHalf(level, pos, currentState.getBlock());
@@ -251,13 +295,18 @@ public class MutandisItem extends Item {
 
     // ── Extremis clay conversion ──────────────────────────────────────────────
 
-    private static void tryConvertToClay(Level level, BlockPos pos) {
+    private static boolean tryConvertToClay(Level level, BlockPos pos, Player player) {
         BlockState bs = level.getBlockState(pos);
-        if (bs.getBlock() != Blocks.SAND) return;
+        if (bs.getBlock() != Blocks.SAND) return false;
         Block above = level.getBlockState(pos.above()).getBlock();
         if (above == Blocks.WATER || above == Blocks.ICE) {
+            if (!WitcheryTerrainProtection.canTransform(player, level, pos)) {
+                return false;
+            }
             level.setBlock(pos, Blocks.CLAY.defaultBlockState(), 3);
+            return true;
         }
+        return false;
     }
 
     // ── Effects ───────────────────────────────────────────────────────────────

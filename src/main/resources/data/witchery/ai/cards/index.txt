@@ -51,3 +51,4 @@ persona_hobgoblin.md
 persona_villager.md
 persona_bosses.md
 persona_atmosphere.md
+persona_reflection.md

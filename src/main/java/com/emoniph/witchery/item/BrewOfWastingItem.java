@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.ChalkCircleBlock;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -36,7 +37,7 @@ public class BrewOfWastingItem extends BrewItem {
         for (LivingEntity target : targets) {
             applyWasting(serverLevel, player, target);
         }
-        witherFragileBlocks(serverLevel, player.blockPosition());
+        witherFragileBlocks(serverLevel, player, player.blockPosition());
     }
 
     private static void applyWasting(ServerLevel level, Player center, LivingEntity target) {
@@ -65,7 +66,7 @@ public class BrewOfWastingItem extends BrewItem {
                 target.getBbWidth() * 0.35D, 0.02D);
     }
 
-    private static void witherFragileBlocks(ServerLevel level, BlockPos center) {
+    private static void witherFragileBlocks(ServerLevel level, Player player, BlockPos center) {
         int radiusSq = BLOCK_RADIUS * BLOCK_RADIUS;
         for (BlockPos pos : BlockPos.betweenClosed(center.offset(-BLOCK_RADIUS, -BLOCK_RADIUS, -BLOCK_RADIUS),
                 center.offset(BLOCK_RADIUS, BLOCK_RADIUS, BLOCK_RADIUS))) {
@@ -74,7 +75,9 @@ public class BrewOfWastingItem extends BrewItem {
             }
 
             BlockState state = level.getBlockState(pos);
-            if (isFragilePlantMaterial(state) && state.getDestroySpeed(level, pos) >= 0.0F) {
+            if (isFragilePlantMaterial(state)
+                    && state.getDestroySpeed(level, pos) >= 0.0F
+                    && WitcheryTerrainProtection.canBreak(player, level, pos)) {
                 level.destroyBlock(pos, false);
             }
         }

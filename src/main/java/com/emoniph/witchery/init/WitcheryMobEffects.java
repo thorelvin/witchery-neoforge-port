@@ -84,6 +84,9 @@ public final class WitcheryMobEffects {
     public static final DeferredHolder<MobEffect, MobEffect> FORTUNE =
             MOB_EFFECTS.register("fortune", () -> new FortuneMobEffect(0x5C3EBB));
 
+    public static final DeferredHolder<MobEffect, MobEffect> WORSHIP =
+            MOB_EFFECTS.register("worship", () -> new SimpleMobEffect(MobEffectCategory.BENEFICIAL, 0x7D3083));
+
     public static final DeferredHolder<MobEffect, MobEffect> SUN_ALLERGY =
             MOB_EFFECTS.register("sun_allergy", () -> new SunAllergyMobEffect(0x30A212));
 

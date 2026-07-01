@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -31,12 +32,12 @@ public class DemonicBloodItem extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        int converted = bloodifyNearbyWicker(level, clickedPos);
+        Player player = ctx.getPlayer();
+        int converted = bloodifyNearbyWicker(level, clickedPos, player);
         if (converted <= 0) {
             return InteractionResult.PASS;
         }
 
-        Player player = ctx.getPlayer();
         ItemStack stack = ctx.getItemInHand();
         if (player == null || !player.getAbilities().instabuild) {
             stack.shrink(1);
@@ -44,7 +45,7 @@ public class DemonicBloodItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    private static int bloodifyNearbyWicker(Level level, BlockPos center) {
+    private static int bloodifyNearbyWicker(Level level, BlockPos center, Player player) {
         int converted = 0;
         for (int y = center.getY() - 1; y <= center.getY() + 1 && converted < MAX_WICKER_CONVERSIONS; y++) {
             for (int x = center.getX() - 1; x <= center.getX() + 1 && converted < MAX_WICKER_CONVERSIONS; x++) {
@@ -52,6 +53,9 @@ public class DemonicBloodItem extends Item {
                     BlockPos pos = new BlockPos(x, y, z);
                     BlockState state = level.getBlockState(pos);
                     if (!isPlainWicker(state)) {
+                        continue;
+                    }
+                    if (!WitcheryTerrainProtection.canTransform(player, level, pos)) {
                         continue;
                     }
                     BlockState bloodied = WitcheryBlocks.BLOODIED_WICKER_BUNDLE.get().defaultBlockState()

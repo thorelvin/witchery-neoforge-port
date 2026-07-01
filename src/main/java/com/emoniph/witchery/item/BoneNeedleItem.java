@@ -4,6 +4,7 @@ import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
@@ -48,6 +49,9 @@ public class BoneNeedleItem extends Item {
         }
 
         if (state.is(Blocks.WHITE_WOOL) && data.getVampireLevel() >= MIN_VAMPIRE_LEVEL) {
+            if (!WitcheryTerrainProtection.canTransform(player, level, pos)) {
+                return InteractionResult.FAIL;
+            }
             boolean spentPower = false;
             if (!player.getAbilities().instabuild) {
                 if (!data.spendBloodPower(BLOOD_POWER_COST)) {

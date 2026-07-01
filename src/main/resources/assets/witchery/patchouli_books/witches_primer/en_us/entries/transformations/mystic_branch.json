@@ -6,7 +6,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "The Mystic Branch is the witch's focus for stolen creature force. In older tales it is described as a wand for tracing spells through the air, but in the live port its practical role is simpler and no less useful: it releases the creature power you have already stored within yourself."
+      "text": "The Mystic Branch is the witch's focus for traced workings and stolen creature force. Raise it, hold the channel, and sweep your gaze through old directional signs until the branch knows the shape."
     },
     {
       "type": "patchouli:spotlight",
@@ -16,7 +16,7 @@
     {
       "type": "patchouli:text",
       "title": "Current Use",
-      "text": "Use the branch while holding stored creature-power charges from altar sacrifice work. In the current port it spends one charge to release your bound power directly: swift speed, impossible leaps, healing force, enderman-like transposition, or bat-light levitation, depending on what power you carry.$(br2)The older air-glyph spellcasting and demonic branch-spell lore are not fully restored yet, so treat the branch as a creature-power focus first and a future spell instrument second."
+      "text": "Hold use to begin tracing. The HUD marks each up, down, left, and right stroke; release when the named sign appears to cast it, spending infused energy.$(br2)Some signs demand Demon-soul knowledge before they answer. Enhanced signs need Worship power: first strength permits level 2 signs, and stronger Worship permits level 3. Strong signs may also need time to cool."
     }
   ]
 }

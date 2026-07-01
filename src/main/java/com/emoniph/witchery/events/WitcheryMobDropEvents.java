@@ -51,7 +51,8 @@ public class WitcheryMobDropEvents {
     public static void onLivingDrops(LivingDropsEvent event) {
         // Summoned thralls (e.g. Brew of Raising undead) drop nothing — source EntityUtil.setNoDrops.
         if (event.getEntity().getPersistentData().getBooleanOr(
-                com.emoniph.witchery.brewing.Brews.SUMMONED_NO_DROPS_TAG, false)) {
+                com.emoniph.witchery.brewing.Brews.SUMMONED_NO_DROPS_TAG, false)
+                || event.getEntity().getPersistentData().getBooleanOr("WITCNoDrops", false)) {
             event.getDrops().clear();
             return;
         }

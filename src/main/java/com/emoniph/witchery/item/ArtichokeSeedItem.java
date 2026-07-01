@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -43,6 +44,9 @@ public class ArtichokeSeedItem extends Item {
             return InteractionResult.FAIL;
         }
         if (!level.getBlockState(placePos).canBeReplaced() || !cropState.canSurvive(level, placePos)) {
+            return InteractionResult.FAIL;
+        }
+        if (!WitcheryTerrainProtection.canPlace(player, level, placePos)) {
             return InteractionResult.FAIL;
         }
 

@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -43,6 +44,9 @@ public class BrewOfEndlessWaterItem extends Item {
             if (level.isClientSide()) {
                 return InteractionResult.SUCCESS;
             }
+            if (!WitcheryTerrainProtection.canTransform(ctx.getPlayer(), level, clickedPos)) {
+                return InteractionResult.FAIL;
+            }
             fillCauldron(level, clickedPos, clickedState);
             spendUse(ctx);
             playWaterEffect(level, clickedPos);
@@ -58,6 +62,12 @@ public class BrewOfEndlessWaterItem extends Item {
 
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
+        }
+        BlockState placeState = level.getBlockState(placePos);
+        if (!(placeState.isAir()
+                ? WitcheryTerrainProtection.canPlace(ctx.getPlayer(), level, placePos)
+                : WitcheryTerrainProtection.canTransform(ctx.getPlayer(), level, placePos))) {
+            return InteractionResult.FAIL;
         }
 
         level.setBlockAndUpdate(placePos, Blocks.WATER.defaultBlockState());

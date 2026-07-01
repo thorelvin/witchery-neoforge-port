@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.brewing.Brews;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -89,6 +90,7 @@ public class BrewOfBatsItem extends BrewItem {
                 continue;
             }
             bat.getPersistentData().putBoolean(NO_DROPS_TAG, true);
+            bat.getPersistentData().putBoolean(Brews.SUMMONED_NO_DROPS_TAG, true);
             bat.setPos(center.getX(), center.getY(), center.getZ());
             level.addFreshEntity(bat);
         }

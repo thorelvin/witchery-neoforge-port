@@ -980,6 +980,9 @@ public class WitcheryItems {
     public static final DeferredItem<SpawnEggItem> BABA_YAGA_SPAWN_EGG =
             ITEMS.register("baba_yaga_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.BABA_YAGA.get())));
+    public static final DeferredItem<GoodBabaYagaSpawnEggItem> GOOD_BABA_YAGA_SPAWN_EGG =
+            ITEMS.register("good_baba_yaga_spawn_egg", id ->
+                    new GoodBabaYagaSpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.BABA_YAGA.get())));
     public static final DeferredItem<SpawnEggItem> WOLFMAN_SPAWN_EGG =
             ITEMS.register("wolfman_spawn_egg", id ->
                     new SpawnEggItem(itemProps(id).spawnEgg(WitcheryEntities.WOLFMAN.get())));

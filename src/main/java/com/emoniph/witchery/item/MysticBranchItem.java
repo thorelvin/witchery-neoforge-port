@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.symbol.EffectRegistry;
 import com.emoniph.witchery.symbol.SymbolEffect;
@@ -97,7 +98,7 @@ public class MysticBranchItem extends Item {
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         int id = data.getPreparedSpellId();
-        int spellLevel = Math.max(1, data.getPreparedSpellLevel());
+        int spellLevel = effectiveSpellLevel(serverPlayer, data.getPreparedSpellLevel());
         data.clearPreparedSpell();
 
         SymbolEffect effect = id < 0 ? null : EffectRegistry.instance().getById(id);
@@ -112,12 +113,21 @@ public class MysticBranchItem extends Item {
             return true;
         }
 
+        WitcheryAttachments.LearnedSymbols learned = WitcheryAttachments.learned(player);
+
         // Demonic glyphs must be learned from a Demon soul before they will answer.
         String knowledge = effect.getKnowledgeKey();
-        if (!creative && knowledge != null
-                && !com.emoniph.witchery.init.WitcheryAttachments.learned(player).keys.contains(knowledge)) {
+        if (!creative && knowledge != null && !learned.keys.contains(knowledge)) {
             fail(serverLevel, serverPlayer, "witchery.infuse.branch.unknownknowledge");
             return true;
+        }
+
+        if (!creative && effect.getCooldownTicks() > 0) {
+            long remaining = learned.cooldownRemaining(cooldownKey(effect), serverLevel.getGameTime());
+            if (remaining > 0L) {
+                fail(serverLevel, serverPlayer, "witchery.infuse.branch.cooldown", formatCooldown(remaining));
+                return true;
+            }
         }
 
         int cost = effect.getChargeCost(spellLevel);
@@ -138,13 +148,43 @@ public class MysticBranchItem extends Item {
         return true;
     }
 
-    private static void fail(ServerLevel level, ServerPlayer player, String messageKey) {
-        player.displayClientMessage(Component.translatable(messageKey).withStyle(ChatFormatting.RED), true);
+    private static void fail(ServerLevel level, ServerPlayer player, String messageKey, Object... args) {
+        player.displayClientMessage(Component.translatable(messageKey, args).withStyle(ChatFormatting.RED), true);
         level.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(),
                 SoundSource.PLAYERS, 0.6F, 0.7F);
         level.sendParticles(ParticleTypes.SMOKE,
                 player.getX(), player.getEyeY() - 0.1D, player.getZ(),
                 8, 0.25D, 0.15D, 0.25D, 0.01D);
+    }
+
+    static String cooldownKey(SymbolEffect effect) {
+        String knowledge = effect.getKnowledgeKey();
+        return knowledge == null || knowledge.isBlank() ? effect.getNameKey() : knowledge;
+    }
+
+    static int effectiveSpellLevel(ServerPlayer player, int preparedLevel) {
+        var worship = player == null ? null : player.getEffect(WitcheryMobEffects.WORSHIP);
+        return effectiveSpellLevelForWorshipAmplifier(preparedLevel, worship == null ? -1 : worship.getAmplifier());
+    }
+
+    static int effectiveSpellLevelForWorshipAmplifier(int preparedLevel, int worshipAmplifier) {
+        int level = Math.max(1, preparedLevel);
+        if (level <= 1) {
+            return level;
+        }
+        // Source ItemMysticBranch only lets enhanced stroke sets cast above level 1 while the
+        // caster has Witchery's Worship potion. Amplifier 0 unlocks level 2; amplifier 1 unlocks level 3.
+        return worshipAmplifier >= 0 && level <= worshipAmplifier + 2 ? level : 1;
+    }
+
+    static String formatCooldown(long ticks) {
+        long seconds = Math.max(1L, (ticks + 19L) / 20L);
+        long minutes = seconds / 60L;
+        long remainingSeconds = seconds % 60L;
+        if (minutes > 0L) {
+            return remainingSeconds == 0L ? minutes + "m" : minutes + "m " + remainingSeconds + "s";
+        }
+        return seconds + "s";
     }
 
     private static void success(ServerLevel level, ServerPlayer player, SymbolEffect effect, int spellLevel) {

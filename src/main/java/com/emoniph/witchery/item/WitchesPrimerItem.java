@@ -3,6 +3,7 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.book.WitcheryBooks;
 import com.emoniph.witchery.blocks.entity.PlacedModonomiconBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -115,6 +116,9 @@ public class WitchesPrimerItem extends Item {
             return InteractionResult.FAIL;
         }
         if (!level.mayInteract(player, placePos) || !player.mayUseItemAt(placePos, context.getClickedFace(), stack)) {
+            return InteractionResult.FAIL;
+        }
+        if (!WitcheryTerrainProtection.canPlace(player, level, placePos)) {
             return InteractionResult.FAIL;
         }
         if (level.isClientSide()) {

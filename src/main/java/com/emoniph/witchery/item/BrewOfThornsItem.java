@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -56,7 +57,7 @@ public class BrewOfThornsItem extends BrewItem {
 
         Player player = context.getPlayer();
         int height = hasBrewMastery(player) ? 4 : 3;
-        if (!plantCactus(serverLevel, clickedPos, height)) {
+        if (!plantCactus(serverLevel, clickedPos, height, player)) {
             return InteractionResult.PASS;
         }
 
@@ -77,7 +78,7 @@ public class BrewOfThornsItem extends BrewItem {
         boolean planted = false;
         BlockPos center = target.blockPosition();
         for (BlockPos offset : ENTITY_COLUMN_OFFSETS) {
-            planted |= plantCactus(serverLevel, center.offset(offset), height);
+            planted |= plantCactus(serverLevel, center.offset(offset), height, player);
         }
         if (!planted) {
             return InteractionResult.PASS;
@@ -96,7 +97,7 @@ public class BrewOfThornsItem extends BrewItem {
         int height = hasBrewMastery(player) ? 4 : 3;
         BlockPos center = player.blockPosition();
         for (BlockPos offset : DRINK_FALLBACK_OFFSETS) {
-            plantCactus(serverLevel, center.offset(offset), height);
+            plantCactus(serverLevel, center.offset(offset), height, player);
         }
     }
 
@@ -109,6 +110,15 @@ public class BrewOfThornsItem extends BrewItem {
     }
 
     public static boolean plantCactus(ServerLevel level, BlockPos pos, int height, boolean feedback) {
+        return plantCactus(level, pos, height, null, feedback, false);
+    }
+
+    private static boolean plantCactus(ServerLevel level, BlockPos pos, int height, Player player) {
+        return plantCactus(level, pos, height, player, true, true);
+    }
+
+    private static boolean plantCactus(ServerLevel level, BlockPos pos, int height, Player player, boolean feedback,
+                                      boolean protect) {
         BlockPos ground = pos;
         if (!level.getBlockState(ground).isSolid()) {
             ground = ground.below();
@@ -124,6 +134,9 @@ public class BrewOfThornsItem extends BrewItem {
                 ground = ground.above();
             }
         } else {
+            if (protect && !WitcheryTerrainProtection.canTransform(player, level, ground)) {
+                return false;
+            }
             level.setBlock(ground, Blocks.SAND.defaultBlockState(), 3);
             if (feedback) {
                 level.sendParticles(ParticleTypes.POOF,
@@ -135,7 +148,7 @@ public class BrewOfThornsItem extends BrewItem {
         int placed = 0;
         for (int i = 1; i <= height && ground.getY() + i < level.getMaxY(); i++) {
             BlockPos cactusPos = ground.above(i);
-            if (!setCactusIfNotSolid(level, cactusPos, feedback)) {
+            if (!setCactusIfNotSolid(level, cactusPos, player, feedback, protect)) {
                 break;
             }
             placed++;
@@ -155,13 +168,19 @@ public class BrewOfThornsItem extends BrewItem {
                 && state.getDestroySpeed(level, pos) >= 0.0F);
     }
 
-    private static boolean setCactusIfNotSolid(ServerLevel level, BlockPos pos, boolean feedback) {
+    private static boolean setCactusIfNotSolid(ServerLevel level, BlockPos pos, Player player, boolean feedback,
+                                               boolean protect) {
         BlockState current = level.getBlockState(pos);
         BlockState cactus = Blocks.CACTUS.defaultBlockState();
         if (current.isSolid()
                 || current.liquid()
                 || current.hasBlockEntity()
                 || !cactus.canSurvive(level, pos)) {
+            return false;
+        }
+        if (protect && !(current.isAir()
+                ? WitcheryTerrainProtection.canPlace(player, level, pos)
+                : WitcheryTerrainProtection.canTransform(player, level, pos))) {
             return false;
         }
 

@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -42,7 +43,7 @@ public class BrewOfSubstitutionItem extends BrewItem {
         }
 
         Player player = context.getPlayer();
-        int replaced = substituteBlocks(serverLevel, context.getClickedPos(), hasBrewMastery(player));
+        int replaced = substituteBlocks(serverLevel, context.getClickedPos(), player, hasBrewMastery(player));
         if (replaced <= 0) {
             return InteractionResult.PASS;
         }
@@ -62,7 +63,7 @@ public class BrewOfSubstitutionItem extends BrewItem {
         return player != null && FamiliarHelper.hasActiveToadFamiliar(player);
     }
 
-    private static int substituteBlocks(ServerLevel level, BlockPos origin, boolean enhanced) {
+    private static int substituteBlocks(ServerLevel level, BlockPos origin, Player player, boolean enhanced) {
         BlockState referenceState = level.getBlockState(origin);
         Block referenceBlock = referenceState.getBlock();
         ItemStack displacedStack = new ItemStack(referenceBlock.asItem());
@@ -89,6 +90,9 @@ public class BrewOfSubstitutionItem extends BrewItem {
 
             BlockPos target = findReplaceableReference(level, scanPos, referenceBlock);
             if (target == null) {
+                continue;
+            }
+            if (!WitcheryTerrainProtection.canTransform(player, level, target)) {
                 continue;
             }
 
@@ -199,6 +203,9 @@ public class BrewOfSubstitutionItem extends BrewItem {
     }
 
     private static void shuffleFallback(Player player, Level level) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
         BlockPos center = player.blockPosition();
         int radius = 4;
 
@@ -208,7 +215,9 @@ public class BrewOfSubstitutionItem extends BrewItem {
                 for (int dz = -radius; dz <= radius; dz++) {
                     BlockPos pos = center.offset(dx, dy, dz);
                     BlockState state = level.getBlockState(pos);
-                    if (state.isSolid() && !state.hasBlockEntity()) {
+                    if (state.isSolid()
+                            && !state.hasBlockEntity()
+                            && WitcheryTerrainProtection.canTransform(player, serverLevel, pos)) {
                         solid.add(pos);
                     }
                 }

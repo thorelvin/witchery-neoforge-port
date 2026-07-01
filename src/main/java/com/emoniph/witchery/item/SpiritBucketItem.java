@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.SpiritLiquidBlock;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -52,6 +53,12 @@ public class SpiritBucketItem extends Item {
             return InteractionResult.FAIL;
         }
         if (!canPlaceAt(level, placePos)) {
+            return InteractionResult.FAIL;
+        }
+        BlockState existing = level.getBlockState(placePos);
+        if (!(existing.isAir()
+                ? WitcheryTerrainProtection.canPlace(player, level, placePos)
+                : WitcheryTerrainProtection.canTransform(player, level, placePos))) {
             return InteractionResult.FAIL;
         }
 

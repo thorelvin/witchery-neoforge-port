@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.item.MysticBranchItem;
 import com.emoniph.witchery.symbol.EffectRegistry;
 import com.emoniph.witchery.symbol.SymbolEffect;
 import com.emoniph.witchery.symbol.SymbolEffectProjectile;
@@ -9,13 +10,19 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * The flying orb launched by a {@link SymbolEffectProjectile} Mystic Branch spell. It resolves
@@ -29,6 +36,9 @@ public class SpellEffectEntity extends ThrowableProjectile {
     private static final EntityDataAccessor<Integer> DATA_COLOR =
             SynchedEntityData.defineId(SpellEffectEntity.class, EntityDataSerializers.INT);
     private static final int DEFAULT_COLOR = 0xB388E8;
+    static final int CAVE_INIMICUM_EFFECT_ID = 5;
+    private static final double DEFLECT_SPEED = 1.2D;
+    private static final int OWNER_COLLISION_GRACE_TICKS = 25;
 
     private int effectId = -1;
     private int effectLevel = 1;
@@ -48,8 +58,7 @@ public class SpellEffectEntity extends ThrowableProjectile {
                 this.lifeTime = projectile.getTimeToLive();
             }
             // colour 0 (e.g. Morsmordre's black) reads as invisible — fall back to the default tint.
-            int c = projectile.getColor();
-            this.entityData.set(DATA_COLOR, c == 0 ? DEFAULT_COLOR : (c & 0xFFFFFF));
+            setTrailColorFromEffect();
         }
         setNoGravity(!effect.fallsToEarth());
     }
@@ -62,6 +71,35 @@ public class SpellEffectEntity extends ThrowableProjectile {
         return entityData.get(DATA_COLOR);
     }
 
+    static boolean isDeflectableEffect(int effectId) {
+        return effectId != CAVE_INIMICUM_EFFECT_ID;
+    }
+
+    static Vec3 deflectedVelocity(Vec3 look) {
+        if (look == null || look.lengthSqr() < 1.0E-7D) {
+            return Vec3.ZERO;
+        }
+        return look.normalize().scale(DEFLECT_SPEED);
+    }
+
+    static boolean canHitOwnerAtAge(int ticksInAir) {
+        return ticksInAir >= OWNER_COLLISION_GRACE_TICKS;
+    }
+
+    static int colorForEffect(int effectId) {
+        SymbolEffect effect = EffectRegistry.instance().getById(effectId);
+        if (effect instanceof SymbolEffectProjectile projectile) {
+            // Color 0, such as Morsmordre's black, reads as invisible in dust particles.
+            int color = projectile.getColor();
+            return color == 0 ? DEFAULT_COLOR : (color & 0xFFFFFF);
+        }
+        return DEFAULT_COLOR;
+    }
+
+    private void setTrailColorFromEffect() {
+        entityData.set(DATA_COLOR, colorForEffect(effectId));
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_COLOR, DEFAULT_COLOR);
@@ -72,6 +110,14 @@ public class SpellEffectEntity extends ThrowableProjectile {
         return true; // so a player can swat it out of the air to deflect it
     }
 
+    @Override
+    protected boolean canHitEntity(Entity target) {
+        if (target == getOwner() && !canHitOwnerAtAge(tickCount)) {
+            return false;
+        }
+        return super.canHitEntity(target);
+    }
+
     /**
      * Deflect — a player who swings the Mystic Branch at the flying orb sends it back along their
      * own look direction, and it becomes theirs (it will now resolve on whatever they aim it at).
@@ -79,17 +125,16 @@ public class SpellEffectEntity extends ThrowableProjectile {
      * (effect 5) cannot be deflected.
      */
     @Override
-    public boolean hurtServer(ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
-        if (effectId != 5 && source.getEntity() instanceof net.minecraft.world.entity.player.Player player
-                && player.getMainHandItem().getItem() instanceof com.emoniph.witchery.item.MysticBranchItem) {
-            net.minecraft.world.phys.Vec3 look = player.getLookAngle();
-            setDeltaMovement(look.scale(1.2));
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        if (isDeflectableEffect(effectId) && source.getEntity() instanceof Player player
+                && player.getMainHandItem().getItem() instanceof MysticBranchItem) {
+            setDeltaMovement(deflectedVelocity(player.getLookAngle()));
             setOwner(player);
-            level.playSound(null, blockPosition(), net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME,
-                    net.minecraft.sounds.SoundSource.PLAYERS, 0.7F, 0.8F);
+            level.playSound(null, blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
+                    SoundSource.PLAYERS, 0.7F, 0.8F);
             return true;
         }
-        return super.hurtServer(level, source, amount);
+        return false;
     }
 
     @Override
@@ -141,5 +186,6 @@ public class SpellEffectEntity extends ThrowableProjectile {
         effectId = tag.getIntOr("EffectId", -1);
         effectLevel = tag.getIntOr("EffectLevel", 1);
         lifeTime = tag.getIntOr("LifeTime", 80);
+        setTrailColorFromEffect();
     }
 }

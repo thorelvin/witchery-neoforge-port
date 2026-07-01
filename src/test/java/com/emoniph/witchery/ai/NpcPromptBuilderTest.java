@@ -177,6 +177,20 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void reflectionSmokePromptIncludesMirrorPersonaCards() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.reflectionSmoke(
+                "Why do you look like me, and how do I leave?", "");
+        String system = prompt.systemPrompt().toLowerCase();
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(system.contains("player's reflection"), prompt.systemPrompt());
+        assertTrue(system.contains("familiar-but-wrong"), prompt.systemPrompt());
+        assertTrue(user.contains("hostile mirror world guardian"), user);
+        assertTrue(user.contains("targeted fact"), user);
+        assertTrue(user.contains("borrowed shape") || user.contains("linked mirror"), user);
+    }
+
+    @Test
     void cardRepairPromptUsesRelevantFactsAndBadDraft() {
         Optional<NpcBrainPrompt> prompt = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
                 "how do I use the kettle?", "Message routing: route=recipe;topic=kettle;remember=no",
@@ -285,6 +299,28 @@ class NpcPromptBuilderTest {
         assertTrue(prompt.examples().stream().anyMatch(example ->
                 example.userPrompt().contains("Can you fool the guards")
                         && example.assistantResponse().contains("\"speech\":\"no\"")));
+    }
+
+    @Test
+    void commandIntentPromptUsesStrictYesNoSchema() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.commandIntentCheck("hobgoblin",
+                "ORDER_MINE: the player is directly telling this hobgoblin to mine now",
+                "How do I get koboldite?");
+        String system = prompt.systemPrompt().toLowerCase();
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(system.contains("command-intent classifier"), prompt.systemPrompt());
+        assertTrue(system.contains("{\"speech\":\"yes\",\"intent\":\"none\",\"memory\":\"\"}"), prompt.systemPrompt());
+        assertTrue(system.contains("{\"speech\":\"no\",\"intent\":\"none\",\"memory\":\"\"}"), prompt.systemPrompt());
+        assertTrue(system.contains("do hobgoblins mine"), prompt.systemPrompt());
+        assertTrue(user.contains("order_mine"), prompt.userPrompt());
+        assertTrue(user.contains("how do i get koboldite"), prompt.userPrompt());
+        assertTrue(prompt.examples().stream().anyMatch(example ->
+                example.userPrompt().contains("how do I get koboldite")
+                        && example.assistantResponse().contains("\"speech\":\"no\"")));
+        assertTrue(prompt.examples().stream().anyMatch(example ->
+                example.userPrompt().contains("can you mine for me")
+                        && example.assistantResponse().contains("\"speech\":\"yes\"")));
     }
 
     @Test

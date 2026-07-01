@@ -22,6 +22,8 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import com.emoniph.witchery.protection.WitcheryProtectionAction;
+import com.emoniph.witchery.protection.WitcheryProtectionService;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -54,6 +56,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -171,14 +174,24 @@ public class WitchHandItem extends Item {
         }
 
         player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                net.minecraft.world.effect.MobEffects.INVISIBILITY, 40, 0, true, false));
-        AABB area = player.getBoundingBox().inflate(20.0D, 4.0D, 20.0D);
+                net.minecraft.world.effect.MobEffects.INVISIBILITY, LIGHT_BEND_INVISIBILITY_TICKS, 0, true, false));
+        AABB area = lightAggroDropArea(player.getX(), player.getY(), player.getZ());
         for (Mob mob : player.level().getEntitiesOfClass(Mob.class, area, mob -> mob.getTarget() == player)) {
-            mob.setTarget(null);
+            if (mob.distanceTo(player) <= 20.0F) {
+                mob.setTarget(null);
+            }
         }
         ((ServerLevel) player.level()).sendParticles(ParticleTypes.END_ROD,
                 player.getX(), player.getY() + 1.0D, player.getZ(),
                 8, 0.5D, 0.6D, 0.5D, 0.01D);
+    }
+
+    private static void stopSustainedLight(ServerPlayer player) {
+        player.removeEffect(net.minecraft.world.effect.MobEffects.INVISIBILITY);
+    }
+
+    static AABB lightAggroDropArea(double x, double y, double z) {
+        return new AABB(x - 20.0D, y, z - 20.0D, x + 20.0D, y + 2.0D, z + 20.0D);
     }
 
     /** Source InfusionOverworld channel (sneak): magnetise nearby metal items and smelt ores around. */
@@ -211,6 +224,9 @@ public class WitchHandItem extends Item {
             Item ingot = EarthItems.oreToIngot(level.getBlockState(scan));
             if (ingot != null) {
                 BlockPos pos = scan.immutable();
+                if (!canModifyTerrain(player, level, pos, WitcheryProtectionAction.BLOCK_TRANSFORM)) {
+                    continue;
+                }
                 level.setBlock(pos, Blocks.STONE.defaultBlockState(), 3);
                 Block.popResource(level, pos, new ItemStack(ingot));
                 energy -= 2;
@@ -285,7 +301,9 @@ public class WitchHandItem extends Item {
         // Sneak on an ore: smelt it to stone and drop two ingots.
         if (player.isShiftKeyDown()) {
             Item ingot = EarthItems.oreToIngot(level.getBlockState(pos));
-            if (ingot == null || !spendInfusionEnergy(player, data, 2)) {
+            if (ingot == null
+                    || !canModifyTerrain(player, level, pos, WitcheryProtectionAction.BLOCK_TRANSFORM)
+                    || !spendInfusionEnergy(player, data, 2)) {
                 fail(player);
                 return true;
             }
@@ -301,7 +319,8 @@ public class WitchHandItem extends Item {
         if (face != Direction.UP && face != Direction.DOWN
                 && EarthItems.isThrowableRock(level.getBlockState(pos))
                 && level.getBlockState(pos.relative(face)).isAir()) {
-            if (!spendInfusionEnergy(player, data, 3)) {
+            if (!canModifyTerrain(player, level, pos, WitcheryProtectionAction.BLOCK_BREAK)
+                    || !spendInfusionEnergy(player, data, 3)) {
                 fail(player);
                 return true;
             }
@@ -323,7 +342,7 @@ public class WitchHandItem extends Item {
                 fail(player);
                 return true;
             }
-            raiseColumn(level, pos, 6, 3);
+            raiseColumn(player, level, pos, 6, 3);
             feedback(player, ParticleTypes.POOF, SoundEvents.IRON_GOLEM_ATTACK);
             return true;
         }
@@ -371,7 +390,7 @@ public class WitchHandItem extends Item {
                 e -> e instanceof LivingEntity && e != player && e.isPickable(), range * range);
     }
 
-    private static void raiseColumn(ServerLevel level, BlockPos top, int depth, int rise) {
+    private static void raiseColumn(ServerPlayer player, ServerLevel level, BlockPos top, int depth, int rise) {
         for (int h = 0; h < depth; h++) {
             BlockPos from = top.below(h);
             BlockState moving = level.getBlockState(from);
@@ -381,6 +400,10 @@ public class WitchHandItem extends Item {
             BlockPos to = from.above(rise);
             BlockState dest = level.getBlockState(to);
             if (!dest.isAir() && !dest.canBeReplaced()) {
+                continue;
+            }
+            if (!canModifyTerrain(player, level, from, WitcheryProtectionAction.BLOCK_TRANSFORM)
+                    || !canModifyTerrain(player, level, to, WitcheryProtectionAction.BLOCK_TRANSFORM)) {
                 continue;
             }
             level.removeBlock(from, false);
@@ -393,7 +416,31 @@ public class WitchHandItem extends Item {
         }
     }
 
+    private static boolean canModifyTerrain(ServerPlayer player, ServerLevel level, BlockPos pos,
+                                            WitcheryProtectionAction action) {
+        return WitcheryProtectionService.canModifyBlock(player, level, pos, action);
+    }
+
     private static boolean releaseInfernal(ServerPlayer player, WitcheryPlayerData data) {
+        if (player.isShiftKeyDown()) {
+            HitResult hit = pickEntityOrBlock(player, 15.0D);
+            if (hit instanceof EntityHitResult
+                    || !(hit instanceof BlockHitResult blockHit)
+                    || blockHit.getType() == HitResult.Type.MISS) {
+                fail(player);
+                return true;
+            }
+            BlockPos destination = infernalCommandDestination(blockHit);
+            if (destination == null) {
+                return true;
+            }
+            int minions = commandEnslavedMinions(player, destination);
+            if (minions > 0) {
+                feedback(player, ParticleTypes.WITCH, SoundEvents.CHORUS_FRUIT_TELEPORT);
+            }
+            return true;
+        }
+
         CreaturePowerType power = CreaturePowerType.fromString(data.getCreaturePowerType());
         if (power == null || data.getCreaturePowerCharges() <= 0 || !spendInfusionEnergy(player, data, 1)) {
             fail(player);
@@ -408,14 +455,34 @@ public class WitchHandItem extends Item {
         return true;
     }
 
+    static BlockPos infernalCommandDestination(BlockHitResult hit) {
+        if (hit == null || hit.getType() == HitResult.Type.MISS || hit.getDirection() != Direction.UP) {
+            return null;
+        }
+        return hit.getBlockPos().above();
+    }
+
+    private static int commandEnslavedMinions(ServerPlayer player, BlockPos destination) {
+        int count = 0;
+        AABB area = player.getBoundingBox().inflate(50.0D, 15.0D, 50.0D);
+        for (Mob mob : player.level().getEntitiesOfClass(Mob.class, area, mob -> Enslaved.isEnslavedBy(mob, player))) {
+            mob.setTarget(null);
+            mob.getNavigation().stop();
+            mob.getNavigation().moveTo(destination.getX() + 0.5D, destination.getY(), destination.getZ() + 0.5D, 1.0D);
+            count++;
+        }
+        return count;
+    }
+
     // ── Light: barrier powers (source InfusionLight) ───────────────────────────
     private static final int BARRIER_TICKS = 200; // source BlockBarrier 200-tick life
+    static final int LIGHT_BEND_INVISIBILITY_TICKS = 30;
 
     /** Source onLeftClickEntity: hoist the target up and cage it in light-barrier. */
     private static boolean lightTarget(ServerPlayer player, WitcheryPlayerData data, LivingEntity target) {
         ServerLevel level = (ServerLevel) player.level();
         BlockPos dest = target.blockPosition().above(4);
-        if (!hasAirColumn(level, dest, 3)) {
+        if (!hasLightHoistSpace(level, dest)) {
             fail(player);
             return true;
         }
@@ -425,19 +492,30 @@ public class WitchHandItem extends Item {
         }
         target.fallDistance = 0.0F;
         target.teleportTo(dest.getX() + 0.5D, dest.getY(), dest.getZ() + 0.5D);
-        buildBarrierCage(level, dest, 3);
+        buildLightHoistCage(level, dest);
         lightFeedback(level, dest);
         return true;
     }
 
-    /** Source onPlayerStoppedUsing (sneaking, short channel): raise a barrier shield on the aimed surface. */
+    /** Source onPlayerStoppedUsing (sneaking, short channel): cage, shield, or sprout a light barrier. */
     private static boolean releaseLight(ServerPlayer player, WitcheryPlayerData data, int elapsed) {
+        stopSustainedLight(player);
         if (!player.isShiftKeyDown() || elapsed >= 20) {
             return false; // the long channel is the light-bend (sustainLight); only a quick sneak-release shields
         }
-        HitResult hit = player.pick(16.0D, 1.0F, false);
-        if (!(hit instanceof BlockHitResult blockHit) || blockHit.getType() == HitResult.Type.MISS
-                || blockHit.getDirection() != Direction.UP) {
+        HitResult hit = pickEntityOrBlock(player, 16.0D);
+        if (hit instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity target) {
+            if (!spendInfusionEnergy(player, data, 3)) {
+                fail(player);
+                return true;
+            }
+            ServerLevel level = (ServerLevel) player.level();
+            BlockPos center = target.blockPosition();
+            buildLightReleaseEntityCage(level, center);
+            lightFeedback(level, center);
+            return true;
+        }
+        if (!(hit instanceof BlockHitResult blockHit) || blockHit.getType() == HitResult.Type.MISS) {
             return false;
         }
         if (!spendInfusionEnergy(player, data, 3)) {
@@ -445,42 +523,155 @@ public class WitchHandItem extends Item {
             return true;
         }
         ServerLevel level = (ServerLevel) player.level();
-        BlockPos base = blockHit.getBlockPos().above();
-        buildBarrierShield(level, base, player);
-        lightFeedback(level, base);
+        if (blockHit.getDirection() == Direction.UP) {
+            BlockPos base = lightShieldBase(level, blockHit);
+            buildBarrierShield(level, base, player);
+            lightFeedback(level, base);
+        } else {
+            BlockPos last = buildBarrierLine(level, blockHit);
+            lightFeedback(level, last == null ? blockHit.getBlockPos() : last);
+        }
         return true;
     }
 
-    private static void placeBarrier(ServerLevel level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
-        if (state.isAir() || state.canBeReplaced() || state.is(WitcheryBlocks.BARRIER.get())) {
-            BarrierBlock.setBarrier(level, pos, BARRIER_TICKS, true);
-        }
+    private static HitResult pickEntityOrBlock(ServerPlayer player, double range) {
+        return pickEntityOrBlock(player, range, false);
     }
 
-    private static boolean hasAirColumn(ServerLevel level, BlockPos base, int height) {
-        for (int i = 0; i < height; i++) {
-            if (!level.getBlockState(base.above(i)).isAir()) {
+    private static HitResult pickEntityOrBlock(ServerPlayer player, double range, boolean includeFluids) {
+        HitResult blockHit = player.pick(range, 1.0F, includeFluids);
+        Vec3 eye = player.getEyePosition();
+        Vec3 reach = player.getViewVector(1.0F).scale(range);
+        double maxDistance = blockHit.getType() == HitResult.Type.MISS
+                ? range * range
+                : blockHit.getLocation().distanceToSqr(eye);
+        EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(player, eye, eye.add(reach),
+                player.getBoundingBox().expandTowards(reach).inflate(1.0D),
+                e -> e instanceof LivingEntity && e != player && e.isPickable(), maxDistance);
+        return entityHit == null ? blockHit : entityHit;
+    }
+
+    private static boolean placeBarrier(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (canPlaceLightBarrier(state)) {
+            BarrierBlock.setBarrier(level, pos, BARRIER_TICKS, true);
+            return level.getBlockState(pos).is(WitcheryBlocks.BARRIER.get());
+        }
+        return false;
+    }
+
+    private static boolean canPlaceLightBarrier(BlockState state) {
+        return state.isAir()
+                || state.canBeReplaced()
+                || !state.getFluidState().isEmpty()
+                || state.is(WitcheryBlocks.BARRIER.get());
+    }
+
+    private static boolean hasLightHoistSpace(ServerLevel level, BlockPos center) {
+        for (BlockPos pos : lightHoistClearancePositions(center)) {
+            if (!level.getBlockState(pos).isAir()) {
                 return false;
             }
         }
         return true;
     }
 
-    /** A 1×1 cell, {@code height} tall, walled on all sides with a floor and roof — the target inside. */
-    private static void buildBarrierCage(ServerLevel level, BlockPos center, int height) {
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                placeBarrier(level, center.offset(dx, -1, dz));
-                placeBarrier(level, center.offset(dx, height, dz));
-                if (dx == 0 && dz == 0) {
-                    continue; // leave the centre column open for the caged creature
-                }
-                for (int y = 0; y < height; y++) {
-                    placeBarrier(level, center.offset(dx, y, dz));
-                }
+    // Source clearance before hoisting: center plus four cardinal spaces for three body layers.
+    static Set<BlockPos> lightHoistClearancePositions(BlockPos center) {
+        Set<BlockPos> positions = new LinkedHashSet<>();
+        for (int y = 0; y < 3; y++) {
+            BlockPos layer = center.above(y);
+            positions.add(layer);
+            positions.add(layer.east());
+            positions.add(layer.south());
+            positions.add(layer.west());
+            positions.add(layer.north());
+        }
+        return positions;
+    }
+
+    private static void buildLightHoistCage(ServerLevel level, BlockPos center) {
+        for (BlockPos pos : lightHoistCagePositions(center)) {
+            placeBarrier(level, pos);
+        }
+    }
+
+    static Set<BlockPos> lightHoistCagePositions(BlockPos center) {
+        Set<BlockPos> positions = new LinkedHashSet<>();
+        addFilledCircle(positions, center.getX(), center.getZ(), center.getY() - 1, 2);
+        for (int y = center.getY(); y < center.getY() + 3; y++) {
+            addCircle(positions, center.getX(), center.getZ(), y, 2);
+        }
+        addFilledCircle(positions, center.getX(), center.getZ(), center.getY() + 3, 2);
+        return positions;
+    }
+
+    private static void buildLightReleaseEntityCage(ServerLevel level, BlockPos center) {
+        for (BlockPos pos : lightReleaseEntityCagePositions(center)) {
+            placeBarrier(level, pos);
+        }
+    }
+
+    static Set<BlockPos> lightReleaseEntityCagePositions(BlockPos center) {
+        Set<BlockPos> positions = new LinkedHashSet<>();
+        addFilledCircle(positions, center.getX(), center.getZ(), center.getY() - 1, 1);
+        for (int y = center.getY(); y < center.getY() + 3; y++) {
+            addCircle(positions, center.getX(), center.getZ(), y, 2);
+        }
+        addFilledCircle(positions, center.getX(), center.getZ(), center.getY() + 3, 2);
+        return positions;
+    }
+
+    private static void addCircle(Set<BlockPos> positions, int x0, int z0, int y, int radius) {
+        int x = radius;
+        int z = 0;
+        int radiusError = 1 - radius;
+        while (x >= z) {
+            addPixel(positions, x0 + x, y, z0 + z);
+            addPixel(positions, x0 + z, y, z0 + x);
+            addPixel(positions, x0 - x, y, z0 + z);
+            addPixel(positions, x0 - z, y, z0 + x);
+            addPixel(positions, x0 - x, y, z0 - z);
+            addPixel(positions, x0 - z, y, z0 - x);
+            addPixel(positions, x0 + x, y, z0 - z);
+            addPixel(positions, x0 + z, y, z0 - x);
+            z++;
+            if (radiusError < 0) {
+                radiusError += 2 * z + 1;
+            } else {
+                x--;
+                radiusError += 2 * (z - x + 1);
             }
         }
+    }
+
+    private static void addFilledCircle(Set<BlockPos> positions, int x0, int z0, int y, int radius) {
+        int x = radius;
+        int z = 0;
+        int radiusError = 1 - radius;
+        while (x >= z) {
+            addLine(positions, x0 - x, x0 + x, y, z0 + z);
+            addLine(positions, x0 - z, x0 + z, y, z0 + x);
+            addLine(positions, x0 - x, x0 + x, y, z0 - z);
+            addLine(positions, x0 - z, x0 + z, y, z0 - x);
+            z++;
+            if (radiusError < 0) {
+                radiusError += 2 * z + 1;
+            } else {
+                x--;
+                radiusError += 2 * (z - x + 1);
+            }
+        }
+    }
+
+    private static void addLine(Set<BlockPos> positions, int x1, int x2, int y, int z) {
+        for (int x = x1; x <= x2; x++) {
+            addPixel(positions, x, y, z);
+        }
+    }
+
+    private static void addPixel(Set<BlockPos> positions, int x, int y, int z) {
+        positions.add(new BlockPos(x, y, z));
     }
 
     /** A 3-wide, 3-tall barrier wall across the player's facing. */
@@ -492,6 +683,34 @@ public class WitchHandItem extends Item {
                 placeBarrier(level, column.above(y));
             }
         }
+    }
+
+    private static BlockPos lightShieldBase(ServerLevel level, BlockHitResult hit) {
+        BlockPos pos = hit.getBlockPos();
+        BlockState state = level.getBlockState(pos);
+        return state.getCollisionShape(level, pos).isEmpty() ? pos : pos.above();
+    }
+
+    private static BlockPos buildBarrierLine(ServerLevel level, BlockHitResult hit) {
+        BlockPos last = null;
+        for (BlockPos pos : lightBarrierLinePositions(hit.getBlockPos(), hit.getDirection())) {
+            if (!placeBarrier(level, pos)) {
+                break;
+            }
+            last = pos;
+        }
+        return last;
+    }
+
+    static Set<BlockPos> lightBarrierLinePositions(BlockPos hitPos, Direction face) {
+        Set<BlockPos> positions = new LinkedHashSet<>();
+        if (face == null || face == Direction.UP) {
+            return positions;
+        }
+        for (int i = 1; i < 16; i++) {
+            positions.add(hitPos.relative(face, i));
+        }
+        return positions;
     }
 
     private static void lightFeedback(ServerLevel level, BlockPos pos) {
@@ -748,7 +967,14 @@ public class WitchHandItem extends Item {
             fail(player);
             return false;
         }
-        HitResult hit = player.pick(range, 1.0F, true);
+        HitResult hit = pickEntityOrBlock(player, range, true);
+        Vec3 entityDestination = otherwhereEntityTeleportDestination(hit);
+        if (entityDestination != null) {
+            player.fallDistance = 0.0F;
+            player.teleportTo(entityDestination.x, entityDestination.y, entityDestination.z);
+            feedback(player, ParticleTypes.PORTAL, SoundEvents.ENDERMAN_TELEPORT);
+            return true;
+        }
         if (!(hit instanceof BlockHitResult blockHit)) {
             player.displayClientMessage(Component.translatable("item.witchery.witch_hand.cannotteleport")
                     .withStyle(ChatFormatting.RED), true);
@@ -766,6 +992,10 @@ public class WitchHandItem extends Item {
         player.teleportTo(landing.getX() + 0.5D, landing.getY(), landing.getZ() + 0.5D);
         feedback(player, ParticleTypes.PORTAL, SoundEvents.ENDERMAN_TELEPORT);
         return true;
+    }
+
+    static Vec3 otherwhereEntityTeleportDestination(HitResult hit) {
+        return hit != null && hit.getType() == HitResult.Type.ENTITY ? hit.getLocation() : null;
     }
 
     private static BlockPos findSafeLanding(ServerLevel level, BlockHitResult hit) {

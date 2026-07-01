@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import com.emoniph.witchery.ritual.RitualCircleDetector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -111,13 +112,13 @@ public class CircleTalismanItem extends Item {
         int large  = (data >> 6) & 7;
 
         // Pass 0: validate — check nothing solid occupies pattern positions
-        if (!validate(level, pos, small, medium, large)) {
+        if (!validate(level, pos, small, medium, large, player)) {
             playFail(level, pos, player);
             return InteractionResult.FAIL;
         }
 
         // Pass 1: place
-        place(level, pos, small, medium, large);
+        place(level, pos, small, medium, large, player);
 
         level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.6f, 0.9f);
         if (player != null)
@@ -161,7 +162,7 @@ public class CircleTalismanItem extends Item {
 
     // ── Validation ────────────────────────────────────────────────────────────
 
-    private boolean validate(Level level, BlockPos center, int small, int medium, int large) {
+    private boolean validate(Level level, BlockPos center, int small, int medium, int large, Player player) {
         for (int z = 0; z < PATTERN.length - 1; z++) {
             for (int x = 0; x < PATTERN[z].length; x++) {
                 int cell = PATTERN[PATTERN.length - 1 - z][x];
@@ -172,6 +173,9 @@ public class CircleTalismanItem extends Item {
 
                 if (cell == 4) {
                     // Center must already be CIRCLE or we skip it
+                    if (existing.isAir() && !WitcheryTerrainProtection.canPlace(player, level, worldPos)) {
+                        return false;
+                    }
                     continue;
                 }
 
@@ -182,6 +186,11 @@ public class CircleTalismanItem extends Item {
                 if (!existing.isAir() && !existing.canBeReplaced() && !existing.is(target)) {
                     return false;
                 }
+                if (!(existing.isAir()
+                        ? WitcheryTerrainProtection.canPlace(player, level, worldPos)
+                        : WitcheryTerrainProtection.canTransform(player, level, worldPos))) {
+                    return false;
+                }
             }
         }
         return true;
@@ -189,7 +198,7 @@ public class CircleTalismanItem extends Item {
 
     // ── Placement ────────────────────────────────────────────────────────────
 
-    private void place(Level level, BlockPos center, int small, int medium, int large) {
+    private void place(Level level, BlockPos center, int small, int medium, int large, Player player) {
         for (int z = 0; z < PATTERN.length - 1; z++) {
             for (int x = 0; x < PATTERN[z].length; x++) {
                 int cell = PATTERN[PATTERN.length - 1 - z][x];

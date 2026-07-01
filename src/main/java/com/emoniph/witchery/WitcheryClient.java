@@ -449,6 +449,7 @@ public class WitcheryClient {
                 com.emoniph.witchery.client.renderer.BloodCrucibleRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.OWL.get(),             OwlFamiliarRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.RAVEN.get(),           RavenRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.ATTACK_BAT.get(),      net.minecraft.client.renderer.entity.BatRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.FAMILIAR_CAT.get(),    CatFamiliarRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.SPECTRAL_FAMILIAR.get(), SpectralFamiliarRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.TOAD.get(),             ToadFamiliarRenderer::new);
@@ -501,6 +502,9 @@ public class WitcheryClient {
         event.registerEntityRenderer(WitcheryEntities.HELLHOUND.get(),        com.emoniph.witchery.client.renderer.HellhoundRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.MINDRAKE.get(),         com.emoniph.witchery.client.renderer.MindrakeRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.DARK_MARK.get(),        com.emoniph.witchery.client.renderer.DarkMarkRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.ILLUSION_CREEPER.get(), com.emoniph.witchery.client.renderer.IllusionRenderers.Creeper::new);
+        event.registerEntityRenderer(WitcheryEntities.ILLUSION_SPIDER.get(),  com.emoniph.witchery.client.renderer.IllusionRenderers.Spider::new);
+        event.registerEntityRenderer(WitcheryEntities.ILLUSION_ZOMBIE.get(),  com.emoniph.witchery.client.renderer.IllusionRenderers.Zombie::new);
         event.registerEntityRenderer(WitcheryEntities.WERE_VILLAGER.get(),   WereVillagerRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.VILLAGE_GUARD.get(),   VillageGuardRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.LEONARD.get(),         LeonardRenderer::new);

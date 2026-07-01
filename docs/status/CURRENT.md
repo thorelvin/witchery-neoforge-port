@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-06-25
+Last curated: 2026-07-01
 
 This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -45,6 +45,15 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Curse of Insanity now uses source-shaped hallucinations instead of the earlier
+  nausea stand-in: victim-only fake Creeper/Spider/Zombie entities spawn near
+  the cursed player, render only for that player, make private fake sounds, deal
+  no damage, drop nothing, and decay away. Needs in-game fear/frequency QA.
+- Hobgoblin labor has a deeper source-shaped pass: leashed hobgoblins with
+  pickaxes can be ordered by chat to mine, actively path to nearby natural
+  stone/earth/ore blocks, break them with feedback, wear their pickaxe, drop
+  normal resources, and roll Koboldite Dust into nearby chests or the world.
+  Patron worship state persists and still feeds prayers into the statue.
 - Flame Imp contracts now use the source-style bargain loop: signed ownership
   contract, 25-level taming cost, shiny-gift mood, target/self spell contracts,
   and the five source abilities.

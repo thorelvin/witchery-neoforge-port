@@ -5,6 +5,7 @@ import com.emoniph.witchery.blocks.entity.GrassperBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -64,31 +66,32 @@ public class MutatingSprigItem extends Item {
 
         BlockPos pos = ctx.getClickedPos();
         BlockState state = level.getBlockState(pos);
+        Player player = ctx.getPlayer();
 
-        if (tryCreateGrasspers(level, pos, state)
-                || tryCreateLeechChest(level, pos, state)) {
+        if (tryCreateGrasspers(level, pos, state, player)
+                || tryCreateLeechChest(level, pos, state, player)) {
             return finishUse(ctx, pos, false);
         }
 
-        if (tryCreateCritterSnare(level, pos, state)
-                || tryCreateFlyingMonkey(level, pos, state)
-                || tryCreateOwls(level, pos, state)
-                || tryCreateToads(level, pos, state)
-                || tryCreateParasyticLouse(level, pos, state)) {
+        if (tryCreateCritterSnare(level, pos, state, player)
+                || tryCreateFlyingMonkey(level, pos, state, player)
+                || tryCreateOwls(level, pos, state, player)
+                || tryCreateToads(level, pos, state, player)
+                || tryCreateParasyticLouse(level, pos, state, player)) {
             return finishUse(ctx, pos, false);
         }
 
-        if (tryCreateBloodRoses(level, pos, state)) {
+        if (tryCreateBloodRoses(level, pos, state, player)) {
             return finishUse(ctx, pos, false);
         }
 
-        if (tryCreateWildBramble(level, pos, state)
-                || tryCreateVoidBramble(level, pos, state)
-                || tryCreateWormwood(level, pos, state)) {
+        if (tryCreateWildBramble(level, pos, state, player)
+                || tryCreateVoidBramble(level, pos, state, player)
+                || tryCreateWormwood(level, pos, state, player)) {
             return finishUse(ctx, pos, false);
         }
 
-        if (tryMutate(level, pos, state)) {
+        if (tryMutate(level, pos, state, player)) {
             return finishUse(ctx, pos, false);
         }
         return InteractionResult.PASS;
@@ -106,29 +109,35 @@ public class MutatingSprigItem extends Item {
         return InteractionResult.CONSUME;
     }
 
-    private static boolean tryMutate(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryMutate(Level level, BlockPos pos, BlockState state, Player player) {
         if (state.is(Blocks.GRASS_BLOCK)) {
+            if (!WitcheryTerrainProtection.canTransform(player, level, pos)) {
+                return false;
+            }
             level.setBlock(pos, Blocks.MYCELIUM.defaultBlockState(), 3);
             spawnBasicMutationEffects(level, pos);
             return true;
         }
         if (state.is(Blocks.MYCELIUM)) {
+            if (!WitcheryTerrainProtection.canTransform(player, level, pos)) {
+                return false;
+            }
             level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
             spawnBasicMutationEffects(level, pos);
             return true;
         }
         if (state.is(Blocks.DIRT) && hasWaterAbove(level, pos)) {
-            setBlockToClay(level, pos);
-            setBlockToClay(level, pos.east());
-            setBlockToClay(level, pos.west());
-            setBlockToClay(level, pos.south());
-            setBlockToClay(level, pos.north());
+            setBlockToClay(level, pos, player);
+            setBlockToClay(level, pos.east(), player);
+            setBlockToClay(level, pos.west(), player);
+            setBlockToClay(level, pos.south(), player);
+            setBlockToClay(level, pos.north(), player);
             return true;
         }
         return false;
     }
 
-    private static boolean tryCreateGrasspers(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryCreateGrasspers(Level level, BlockPos pos, BlockState state, Player player) {
         if (!state.is(Blocks.CHEST)
                 || !state.hasProperty(ChestBlock.TYPE)
                 || state.getValue(ChestBlock.TYPE) != ChestType.SINGLE
@@ -143,6 +152,9 @@ public class MutatingSprigItem extends Item {
                 return false;
             }
         }
+        if (!canBreak(level, pos, player) || !canTransformHorizontal(level, pos, player)) {
+            return false;
+        }
 
         level.removeBlock(pos, false);
         for (Direction direction : Direction.Plane.HORIZONTAL) {
@@ -153,7 +165,7 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
-    private static boolean tryCreateLeechChest(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryCreateLeechChest(Level level, BlockPos pos, BlockState state, Player player) {
         if (!state.is(Blocks.TRAPPED_CHEST)
                 || !state.hasProperty(ChestBlock.TYPE)
                 || state.getValue(ChestBlock.TYPE) != ChestType.SINGLE
@@ -169,6 +181,11 @@ public class MutatingSprigItem extends Item {
                 return false;
             }
         }
+        if (!canBreak(level, pos, player)
+                || !canTransform(level, pos, player)
+                || !canBreakHorizontal(level, pos, player)) {
+            return false;
+        }
 
         BlockState resultState = WitcheryBlocks.LEECH_CHEST.get().defaultBlockState()
                 .setValue(com.emoniph.witchery.blocks.LeechChestBlock.FACING, state.getValue(ChestBlock.FACING));
@@ -181,7 +198,7 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
-    private static boolean tryCreateCritterSnare(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryCreateCritterSnare(Level level, BlockPos pos, BlockState state, Player player) {
         if (!state.is(Blocks.COBWEB) || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)) {
             return false;
         }
@@ -196,6 +213,9 @@ public class MutatingSprigItem extends Item {
                 return false;
             }
         }
+        if (!canBreak(level, pos, player) || !canTransformHorizontal(level, pos, player)) {
+            return false;
+        }
 
         spawnEntitySlimeMutationEffects(level, zombie, SoundEvents.ZOMBIE_DEATH);
         zombie.discard();
@@ -207,7 +227,7 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
-    private static boolean tryCreateFlyingMonkey(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryCreateFlyingMonkey(Level level, BlockPos pos, BlockState state, Player player) {
         if (!(level instanceof ServerLevel serverLevel)
                 || !state.is(Blocks.COBWEB)
                 || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)
@@ -223,6 +243,11 @@ public class MutatingSprigItem extends Item {
         Mob wolf = findNearbyCreature(level, pos, EntityType.WOLF);
         Mob owl = findNearbyCreature(level, pos, WitcheryEntities.OWL.get());
         if (wolf == null || owl == null) {
+            return false;
+        }
+        if (!canBreak(level, pos, player)
+                || !canBreakHorizontal(level, pos, player)
+                || !canTransformDiagonals(level, pos, player)) {
             return false;
         }
 
@@ -248,7 +273,7 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
-    private static boolean tryCreateOwls(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryCreateOwls(Level level, BlockPos pos, BlockState state, Player player) {
         if (!(level instanceof ServerLevel serverLevel)
                 || !state.is(Blocks.COBWEB)
                 || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)) {
@@ -264,8 +289,13 @@ public class MutatingSprigItem extends Item {
         if (wolf == null) {
             return false;
         }
+        if (!canBreak(level, pos, player)
+                || !canTransformDiagonals(level, pos, player)
+                || !canBreakAdjacentCritterSnares(level, pos, 1, player)) {
+            return false;
+        }
 
-        if (spawnFamiliarsFromAdjacentSnares(serverLevel, pos, 1, WitcheryEntities.OWL.get()) <= 0) {
+        if (spawnFamiliarsFromAdjacentSnares(serverLevel, pos, 1, WitcheryEntities.OWL.get(), player) <= 0) {
             return false;
         }
 
@@ -277,7 +307,7 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
-    private static boolean tryCreateToads(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryCreateToads(Level level, BlockPos pos, BlockState state, Player player) {
         if (!(level instanceof ServerLevel serverLevel)
                 || !state.is(Blocks.COBWEB)
                 || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)) {
@@ -293,8 +323,13 @@ public class MutatingSprigItem extends Item {
         if (ocelot == null) {
             return false;
         }
+        if (!canBreak(level, pos, player)
+                || !canTransformDiagonals(level, pos, player)
+                || !canBreakAdjacentCritterSnares(level, pos, 3, player)) {
+            return false;
+        }
 
-        if (spawnFamiliarsFromAdjacentSnares(serverLevel, pos, 3, WitcheryEntities.TOAD.get()) <= 0) {
+        if (spawnFamiliarsFromAdjacentSnares(serverLevel, pos, 3, WitcheryEntities.TOAD.get(), player) <= 0) {
             return false;
         }
 
@@ -306,7 +341,7 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
-    private static boolean tryCreateParasyticLouse(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryCreateParasyticLouse(Level level, BlockPos pos, BlockState state, Player player) {
         if (!(level instanceof ServerLevel serverLevel)
                 || !state.is(WitcheryBlocks.CRITTER_SNARE.get())
                 || !state.hasProperty(com.emoniph.witchery.blocks.CritterSnareBlock.CAUGHT)
@@ -325,6 +360,11 @@ public class MutatingSprigItem extends Item {
         if (louse == null) {
             return false;
         }
+        if (!canBreak(level, pos, player)
+                || !canBreakHorizontal(level, pos, player)
+                || !canTransformDiagonals(level, pos, player)) {
+            return false;
+        }
 
         clearHorizontalRing(level, pos);
         level.removeBlock(pos, false);
@@ -338,7 +378,7 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
-    private static boolean tryCreateBloodRoses(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryCreateBloodRoses(Level level, BlockPos pos, BlockState state, Player player) {
         if (!state.is(WitcheryBlocks.LEECH_CHEST.get())
                 || !level.getFluidState(pos.below()).isSourceOfType(Fluids.WATER)) {
             return false;
@@ -349,6 +389,9 @@ public class MutatingSprigItem extends Item {
                 return false;
             }
         }
+        if (!canBreak(level, pos, player) || !canTransformHorizontal(level, pos, player)) {
+            return false;
+        }
 
         level.removeBlock(pos, false);
         for (Direction direction : Direction.Plane.HORIZONTAL) {
@@ -358,12 +401,17 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
-    private static boolean tryCreateWildBramble(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryCreateWildBramble(Level level, BlockPos pos, BlockState state, Player player) {
         if (!state.is(Blocks.CACTUS) || !hasSpanishMossWaterRing(level, pos)) {
             return false;
         }
         if (countDiagonalGrasspersWith(level, pos, Items.BONE_MEAL.getDefaultInstance()) < 2
                 || countDiagonalGrasspersWith(level, pos, Items.BLAZE_POWDER.getDefaultInstance()) < 2) {
+            return false;
+        }
+        if (!canBreakHorizontal(level, pos, player)
+                || !canTransformDiagonals(level, pos, player)
+                || !canTransformVerticalColumn(level, pos, Blocks.CACTUS, 5, player)) {
             return false;
         }
 
@@ -374,11 +422,16 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
-    private static boolean tryCreateVoidBramble(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryCreateVoidBramble(Level level, BlockPos pos, BlockState state, Player player) {
         if (!state.is(Blocks.SUGAR_CANE) || !hasSpanishMossWaterRing(level, pos)) {
             return false;
         }
         if (countDiagonalGrasspersWith(level, pos, Items.ENDER_PEARL.getDefaultInstance()) < 4) {
+            return false;
+        }
+        if (!canBreakHorizontal(level, pos, player)
+                || !canTransformDiagonals(level, pos, player)
+                || !canTransformVerticalColumn(level, pos, Blocks.SUGAR_CANE, 16, player)) {
             return false;
         }
 
@@ -389,7 +442,7 @@ public class MutatingSprigItem extends Item {
         return true;
     }
 
-    private static boolean tryCreateWormwood(Level level, BlockPos pos, BlockState state) {
+    private static boolean tryCreateWormwood(Level level, BlockPos pos, BlockState state, Player player) {
         if (!state.is(Blocks.WHEAT)
                 || !state.hasProperty(BlockStateProperties.AGE_7)
                 || state.getValue(BlockStateProperties.AGE_7) < 7) {
@@ -408,10 +461,78 @@ public class MutatingSprigItem extends Item {
                 }
             }
         }
+        if (!canBreakHorizontal(level, pos, player) || !canTransform(level, pos, player)) {
+            return false;
+        }
 
         clearHorizontalRing(level, pos);
         level.setBlock(pos, WitcheryBlocks.WORMWOOD_PLANT.get().defaultBlockState(), 3);
         spawnSlimeMutationEffects(level, pos, 1.5D);
+        return true;
+    }
+
+    private static boolean canBreak(Level level, BlockPos pos, Player player) {
+        return WitcheryTerrainProtection.canBreak(player, level, pos);
+    }
+
+    private static boolean canTransform(Level level, BlockPos pos, Player player) {
+        return WitcheryTerrainProtection.canTransform(player, level, pos);
+    }
+
+    private static boolean canBreakHorizontal(Level level, BlockPos pos, Player player) {
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos target = pos.relative(direction);
+            if (!level.getBlockState(target).isAir() && !canBreak(level, target, player)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean canTransformHorizontal(Level level, BlockPos pos, Player player) {
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (!canTransform(level, pos.relative(direction), player)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean canTransformDiagonals(Level level, BlockPos pos, Player player) {
+        for (int xOffset : new int[] {-1, 1}) {
+            for (int zOffset : new int[] {-1, 1}) {
+                BlockPos target = pos.offset(xOffset, 0, zOffset);
+                if (level.getBlockState(target).is(WitcheryBlocks.GRASSPER.get())
+                        && !canTransform(level, target, player)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean canBreakAdjacentCritterSnares(Level level, BlockPos pos, int caughtType, Player player) {
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos snarePos = pos.relative(direction);
+            BlockState snareState = level.getBlockState(snarePos);
+            if (snareState.is(WitcheryBlocks.CRITTER_SNARE.get())
+                    && snareState.hasProperty(com.emoniph.witchery.blocks.CritterSnareBlock.CAUGHT)
+                    && snareState.getValue(com.emoniph.witchery.blocks.CritterSnareBlock.CAUGHT) == caughtType
+                    && !canBreak(level, snarePos, player)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean canTransformVerticalColumn(Level level, BlockPos pos, Block original, int maxHeight,
+                                                     Player player) {
+        for (int offset = maxHeight - 1; offset >= 0; offset--) {
+            BlockPos cursor = pos.above(offset);
+            if (level.getBlockState(cursor).is(original) && !canTransform(level, cursor, player)) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -526,7 +647,7 @@ public class MutatingSprigItem extends Item {
     }
 
     private static int spawnFamiliarsFromAdjacentSnares(ServerLevel level, BlockPos pos, int caughtType,
-                                                        EntityType<? extends Mob> familiarType) {
+                                                        EntityType<? extends Mob> familiarType, Player player) {
         int spawned = 0;
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos snarePos = pos.relative(direction);
@@ -539,6 +660,9 @@ public class MutatingSprigItem extends Item {
 
             Mob familiar = familiarType.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
             if (familiar == null) {
+                continue;
+            }
+            if (!canBreak(level, snarePos, player)) {
                 continue;
             }
 
@@ -584,8 +708,11 @@ public class MutatingSprigItem extends Item {
         }
     }
 
-    private static void setBlockToClay(Level level, BlockPos pos) {
+    private static void setBlockToClay(Level level, BlockPos pos, Player player) {
         if (!level.getBlockState(pos).is(Blocks.DIRT) || !hasWaterAbove(level, pos)) {
+            return;
+        }
+        if (!canTransform(level, pos, player)) {
             return;
         }
         level.setBlock(pos, Blocks.CLAY.defaultBlockState(), 3);

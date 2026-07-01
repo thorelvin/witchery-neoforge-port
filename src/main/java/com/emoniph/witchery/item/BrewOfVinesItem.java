@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -44,7 +45,7 @@ public class BrewOfVinesItem extends BrewItem {
         }
 
         Player player = context.getPlayer();
-        int placed = growVines(serverLevel, context.getClickedPos(), face, hasBrewMastery(player));
+        int placed = growVines(serverLevel, context.getClickedPos(), face, player, hasBrewMastery(player));
         if (placed <= 0) {
             return InteractionResult.PASS;
         }
@@ -67,7 +68,7 @@ public class BrewOfVinesItem extends BrewItem {
             for (int distance = 1; distance <= range; distance++) {
                 BlockPos support = center.relative(wallDirection, distance);
                 if (canSupportVine(serverLevel.getBlockState(support))
-                        && growVines(serverLevel, support, faceTowardPlayer, brewMastery) > 0) {
+                        && growVines(serverLevel, support, faceTowardPlayer, player, brewMastery) > 0) {
                     return;
                 }
             }
@@ -78,7 +79,7 @@ public class BrewOfVinesItem extends BrewItem {
         return player != null && FamiliarHelper.hasActiveToadFamiliar(player);
     }
 
-    private static int growVines(ServerLevel level, BlockPos clickedPos, Direction face, boolean enhanced) {
+    private static int growVines(ServerLevel level, BlockPos clickedPos, Direction face, Player player, boolean enhanced) {
         int placed = 0;
 
         BlockPos support = clickedPos;
@@ -90,7 +91,7 @@ public class BrewOfVinesItem extends BrewItem {
         while (support.getY() > level.getMinY()
                 && canTargetVine(level.getBlockState(support.relative(face)))
                 && canSupportVine(level.getBlockState(support))) {
-            if (placeVine(level, support, face)) {
+            if (placeVine(level, support, face, player)) {
                 placed++;
             }
 
@@ -117,7 +118,7 @@ public class BrewOfVinesItem extends BrewItem {
         while (support.getY() < level.getMaxY()
                 && canTargetVine(level.getBlockState(support.relative(face)))
                 && canSupportVine(level.getBlockState(support))) {
-            if (placeVine(level, support, face)) {
+            if (placeVine(level, support, face, player)) {
                 placed++;
             }
 
@@ -136,7 +137,7 @@ public class BrewOfVinesItem extends BrewItem {
         return placed;
     }
 
-    private static boolean placeVine(ServerLevel level, BlockPos support, Direction face) {
+    private static boolean placeVine(ServerLevel level, BlockPos support, Direction face, Player player) {
         BlockPos vinePos = support.relative(face);
         BlockState current = level.getBlockState(vinePos);
         if (!canTargetVine(current) || !canSupportVine(level.getBlockState(support))) {
@@ -151,6 +152,11 @@ public class BrewOfVinesItem extends BrewItem {
 
         vine = vine.setValue(side, true);
         if (!vine.canSurvive(level, vinePos)) {
+            return false;
+        }
+        if (!(current.isAir()
+                ? WitcheryTerrainProtection.canPlace(player, level, vinePos)
+                : WitcheryTerrainProtection.canTransform(player, level, vinePos))) {
             return false;
         }
 

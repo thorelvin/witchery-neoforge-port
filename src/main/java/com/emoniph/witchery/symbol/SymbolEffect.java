@@ -13,10 +13,11 @@ import net.minecraft.server.level.ServerPlayer;
  * com.emoniph.witchery.entity.SpellEffectEntity}.
  *
  * Port note: the original gated power above level 1 behind the Worship potion and gated
- * "unforgivable" curses behind the Beast infusion. The port has neither yet, so this slice
- * registers only the non-knowledge spells and lets the drawn stroke length pick the level
- * directly. {@link #hasValidInfusion} still requires any infusion (the night infusion rite
- * is what grants the branch).
+ * "unforgivable" curses behind the Beast infusion. The port has neither yet, so
+ * {@code MysticBranchItem} clamps enhanced stroke sets back to level 1 and unforgivable
+ * curses stay creative-only. {@link #hasValidInfusion} still requires any infusion, and
+ * branch cooldowns are enforced by {@code MysticBranchItem} using the player's learned-symbol
+ * attachment.
  */
 public abstract class SymbolEffect {
 

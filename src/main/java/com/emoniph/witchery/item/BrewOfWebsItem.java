@@ -1,5 +1,6 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 /** Brew of Webs - source-style compact cobweb burst in practical item form. */
 public class BrewOfWebsItem extends BrewItem {
@@ -42,7 +44,7 @@ public class BrewOfWebsItem extends BrewItem {
         }
 
         BlockPos center = blockImpactPosition(serverLevel, context.getClickedPos(), context.getClickedFace());
-        explodeWeb(serverLevel, center);
+        explodeWeb(serverLevel, center, context.getPlayer());
         consumeBrew(context.getPlayer(), context.getHand(), context.getItemInHand());
         return InteractionResult.SUCCESS;
     }
@@ -56,7 +58,7 @@ public class BrewOfWebsItem extends BrewItem {
             return InteractionResult.PASS;
         }
 
-        explodeWeb(serverLevel, target.blockPosition());
+        explodeWeb(serverLevel, target.blockPosition(), player);
         consumeBrew(player, hand, stack);
         return InteractionResult.CONSUME;
     }
@@ -64,7 +66,7 @@ public class BrewOfWebsItem extends BrewItem {
     @Override
     protected void applyEffect(Player player, Level level) {
         if (level instanceof ServerLevel serverLevel) {
-            explodeWeb(serverLevel, player.blockPosition());
+            explodeWeb(serverLevel, player.blockPosition(), player);
         }
     }
 
@@ -81,19 +83,34 @@ public class BrewOfWebsItem extends BrewItem {
     }
 
     public static void explodeWeb(ServerLevel level, BlockPos center, boolean feedback) {
+        explodeWeb(level, center, null, feedback, false);
+    }
+
+    private static void explodeWeb(ServerLevel level, BlockPos center, Player player) {
+        explodeWeb(level, center, player, true, true);
+    }
+
+    private static void explodeWeb(ServerLevel level, BlockPos center, @Nullable Player player, boolean feedback,
+                                   boolean protect) {
         for (BlockPos offset : WEB_OFFSETS) {
-            setWebIfNotSolid(level, center.offset(offset), feedback);
+            setWebIfNotSolid(level, center.offset(offset), player, feedback, protect);
         }
         if (feedback) {
             level.playSound(null, center, SoundEvents.SPIDER_AMBIENT, SoundSource.PLAYERS, 0.8F, 0.6F);
         }
     }
 
-    private static boolean setWebIfNotSolid(ServerLevel level, BlockPos pos, boolean feedback) {
+    private static boolean setWebIfNotSolid(ServerLevel level, BlockPos pos, @Nullable Player player, boolean feedback,
+                                            boolean protect) {
         BlockState state = level.getBlockState(pos);
         if (state.isSolid()
                 || state.liquid()
                 || state.hasBlockEntity()) {
+            return false;
+        }
+        if (protect && !(state.isAir()
+                ? WitcheryTerrainProtection.canPlace(player, level, pos)
+                : WitcheryTerrainProtection.canTransform(player, level, pos))) {
             return false;
         }
 

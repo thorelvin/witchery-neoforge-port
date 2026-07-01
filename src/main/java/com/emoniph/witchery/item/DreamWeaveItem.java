@@ -4,6 +4,7 @@ import com.emoniph.witchery.blocks.DreamCatcherBlock;
 import com.emoniph.witchery.blocks.DreamWeaveType;
 import com.emoniph.witchery.blocks.entity.DreamCatcherBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -43,6 +44,9 @@ public class DreamWeaveItem extends Item {
                 return InteractionResult.FAIL;
             }
             if (level.isClientSide()) return InteractionResult.SUCCESS;
+            if (!WitcheryTerrainProtection.canTransform(ctx.getPlayer(), level, ctx.getClickedPos())) {
+                return InteractionResult.FAIL;
+            }
             be.setWeave(weaveType);
             playWeaveEffects(level, ctx.getClickedPos(), true);
             if (ctx.getPlayer() != null && !ctx.getPlayer().isCreative())
@@ -62,6 +66,11 @@ public class DreamWeaveItem extends Item {
                 .setValue(DreamCatcherBlock.WEAVE, weaveType.id + 1);
         if (!level.getBlockState(placePos).canBeReplaced() || !placedState.canSurvive(level, placePos)) {
             fail(level, placePos, ctx.getPlayer(), "witchery.dream_weaver.no_wall");
+            return InteractionResult.FAIL;
+        }
+        if (!(level.getBlockState(placePos).isAir()
+                ? WitcheryTerrainProtection.canPlace(ctx.getPlayer(), level, placePos)
+                : WitcheryTerrainProtection.canTransform(ctx.getPlayer(), level, placePos))) {
             return InteractionResult.FAIL;
         }
         if (level.isClientSide()) {

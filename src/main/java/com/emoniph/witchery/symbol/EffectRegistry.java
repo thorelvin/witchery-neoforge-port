@@ -1,13 +1,20 @@
 package com.emoniph.witchery.symbol;
 
+import com.emoniph.witchery.blocks.BarrierBlock;
+import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.blocks.WitchCauldronBlock;
+import com.emoniph.witchery.blocks.entity.KettleBlockEntity;
 import com.emoniph.witchery.entity.DarkMarkEntity;
 import com.emoniph.witchery.entity.SpellEffectEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.util.Enslaved;
 import com.emoniph.witchery.world.TormentHelper;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -20,11 +27,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.AABB;
@@ -42,13 +52,14 @@ import java.util.Map;
  * Registry of Mystic Branch symbol spells, keyed by drawn stroke sequence and by id.
  *
  * Source parity: {@code com.emoniph.witchery.infusion.infusions.symbols.EffectRegistry}
- * (1.7.10-0.24.1). Stroke sequences below are copied verbatim from source; this first port
- * slice registers the non-knowledge, non-unforgivable spells (no persistent spellbook or
- * cooldown is required for those). The iconic projectile and instant spells are covered.
+ * (1.7.10-0.24.1). Stroke sequences below are copied verbatim from source; the port includes
+ * common utility signs, Demon-soul knowledge signs, creative-only forbidden curses, and
+ * Leonard's Urn release signs.
  */
 public final class EffectRegistry {
 
     private static final EffectRegistry INSTANCE = new EffectRegistry();
+    private static final int PROTEGO_BARRIER_TICKS = 200;
 
     private final Map<String, SymbolEffect> byStroke = new HashMap<>();
     private final Map<String, Integer> levelByStroke = new HashMap<>();
@@ -147,6 +158,132 @@ public final class EffectRegistry {
 
     private static BlockPos faceAdjacent(BlockHitResult bhr) {
         return bhr.getBlockPos().relative(bhr.getDirection());
+    }
+
+    static BlockPos flagrateGlyphPosition(BlockHitResult hit, boolean hitBlockIsGlyph) {
+        if (hitBlockIsGlyph) {
+            return hit.getBlockPos();
+        }
+        return hit.getDirection() == Direction.UP ? hit.getBlockPos().above() : null;
+    }
+
+    static List<BlockPos> aguamentiWaterOffsets(int effectLevel, boolean ultraWarm) {
+        if (ultraWarm) {
+            return effectLevel >= 3 ? List.of(BlockPos.ZERO) : List.of();
+        }
+        if (effectLevel <= 1) {
+            return List.of(BlockPos.ZERO);
+        }
+        return List.of(
+                BlockPos.ZERO,
+                BlockPos.ZERO.above(),
+                BlockPos.ZERO.below(),
+                BlockPos.ZERO.east(),
+                BlockPos.ZERO.west(),
+                BlockPos.ZERO.north(),
+                BlockPos.ZERO.south());
+    }
+
+    static List<BlockPos> protegoShieldPositions(BlockPos hitPos, Direction casterFacing, boolean hitBlockIsSolid) {
+        Direction side = casterFacing.getAxis().isHorizontal() ? casterFacing.getClockWise() : Direction.EAST;
+        BlockPos centerBase = hitPos.above(hitBlockIsSolid ? 1 : 0);
+        BlockPos leftBase = centerBase.relative(side);
+        BlockPos rightBase = centerBase.relative(side.getOpposite());
+        return List.of(
+                centerBase, centerBase.above(), centerBase.above(2),
+                leftBase, leftBase.above(), leftBase.above(2),
+                rightBase, rightBase.above(), rightBase.above(2));
+    }
+
+    private static void placeProtegoShield(ServerLevel level, ServerPlayer caster, BlockHitResult hit) {
+        BlockPos hitPos = hit.getBlockPos();
+        BlockState hitState = level.getBlockState(hitPos);
+        boolean solid = !hitState.getCollisionShape(level, hitPos).isEmpty();
+        for (BlockPos pos : protegoShieldPositions(hitPos, caster.getDirection(), solid)) {
+            BarrierBlock.setBarrier(level, pos, PROTEGO_BARRIER_TICKS, true, caster.getScoreboardName());
+        }
+    }
+
+    private static HitResult traceAny(ServerLevel level, ServerPlayer caster, double range) {
+        Vec3 start = caster.getEyePosition();
+        Vec3 reach = caster.getLookAngle().scale(range);
+        Vec3 end = start.add(reach);
+        BlockHitResult blockHit = level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE, caster));
+        double maxDistance = blockHit.getType() == HitResult.Type.MISS
+                ? range * range
+                : blockHit.getLocation().distanceToSqr(start);
+        EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(caster, start, end,
+                caster.getBoundingBox().expandTowards(reach).inflate(1.0D),
+                entity -> entity instanceof LivingEntity && entity != caster && entity.isPickable(), maxDistance);
+        return entityHit == null ? blockHit : entityHit;
+    }
+
+    private static void playBranchSnare(ServerLevel level, ServerPlayer caster) {
+        level.playSound(null, caster.blockPosition(), net.minecraft.sounds.SoundEvents.NOTE_BLOCK_SNARE.value(),
+                net.minecraft.sounds.SoundSource.PLAYERS, 0.6F, 0.7F);
+    }
+
+    private static boolean tryFillAguamentiTarget(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (state.getBlock() == WitcheryBlocks.KETTLE.get()
+                && level.getBlockEntity(pos) instanceof KettleBlockEntity kettle
+                && kettle.fillWater()) {
+            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.BUCKET_EMPTY,
+                    net.minecraft.sounds.SoundSource.BLOCKS, 0.7F, 1.15F);
+            return true;
+        }
+        if (state.getBlock() instanceof WitchCauldronBlock
+                && state.getValue(WitchCauldronBlock.LEVEL) < WitchCauldronBlock.MAX_FILL_LEVEL) {
+            level.setBlockAndUpdate(pos, state.setValue(WitchCauldronBlock.LEVEL, WitchCauldronBlock.MAX_FILL_LEVEL));
+            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.BUCKET_EMPTY,
+                    net.minecraft.sounds.SoundSource.BLOCKS, 0.7F, 1.15F);
+            return true;
+        }
+        if (state.is(Blocks.CAULDRON)) {
+            level.setBlockAndUpdate(pos, Blocks.WATER_CAULDRON.defaultBlockState()
+                    .setValue(LayeredCauldronBlock.LEVEL, 3));
+            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.BUCKET_EMPTY,
+                    net.minecraft.sounds.SoundSource.BLOCKS, 0.7F, 1.15F);
+            return true;
+        }
+        if (state.is(Blocks.WATER_CAULDRON) && state.getValue(LayeredCauldronBlock.LEVEL) < 3) {
+            level.setBlockAndUpdate(pos, state.setValue(LayeredCauldronBlock.LEVEL, 3));
+            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.BUCKET_EMPTY,
+                    net.minecraft.sounds.SoundSource.BLOCKS, 0.7F, 1.15F);
+            return true;
+        }
+        return false;
+    }
+
+    private static void placeAguamentiWater(ServerLevel level, BlockPos pos) {
+        if (level.getBlockState(pos).canBeReplaced()) {
+            level.setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
+        }
+    }
+
+    private static boolean placeFlagrateGlyph(ServerLevel level, BlockHitResult hit) {
+        BlockState hitState = level.getBlockState(hit.getBlockPos());
+        boolean hitGlyph = hitState.is(WitcheryBlocks.CIRCLE_GLYPH.get())
+                || hitState.is(WitcheryBlocks.CIRCLE_OTHERWHERE.get())
+                || hitState.is(WitcheryBlocks.CIRCLE_INFERNAL.get());
+        BlockPos pos = flagrateGlyphPosition(hit, hitGlyph);
+        if (pos == null) {
+            return false;
+        }
+        BlockState current = level.getBlockState(pos);
+        if (!hitGlyph && !current.canBeReplaced()) {
+            return false;
+        }
+        BlockState next = ChalkCircleBlock.withRandomGlyph(WitcheryBlocks.CIRCLE_INFERNAL.get().defaultBlockState(),
+                level.random);
+        if (!hitGlyph && !next.canSurvive(level, pos)) {
+            return false;
+        }
+        level.setBlock(pos, next, 3);
+        level.playSound(null, pos, net.minecraft.sounds.SoundEvents.SAND_PLACE,
+                net.minecraft.sounds.SoundSource.BLOCKS, 0.6F, 1.4F);
+        return true;
     }
 
     // ── Spells ───────────────────────────────────────────────────────────────
@@ -428,19 +565,29 @@ public final class EffectRegistry {
             new SymbolEffectProjectile(2, "witchery.pott.aguamenti") {
                 @Override
                 public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
-                    if (level.dimension() == net.minecraft.world.level.Level.NETHER && spell.getEffectLevel() < 3) {
-                        return; // only the strongest casting holds water in the Nether
+                    BlockPos center;
+                    if (hit instanceof BlockHitResult bhr) {
+                        if (tryFillAguamentiTarget(level, bhr.getBlockPos())) {
+                            return;
+                        }
+                        center = faceAdjacent(bhr);
+                    } else if (hit instanceof EntityHitResult ehr) {
+                        center = ehr.getEntity().blockPosition();
+                    } else {
+                        return;
                     }
-                    BlockPos pos = hit instanceof BlockHitResult bhr ? faceAdjacent(bhr)
-                            : (hit instanceof EntityHitResult ehr ? ehr.getEntity().blockPosition() : null);
-                    if (pos != null && level.getBlockState(pos).canBeReplaced()) {
-                        level.setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
+                    for (BlockPos offset : aguamentiWaterOffsets(spell.getEffectLevel(),
+                            level.dimension().equals(net.minecraft.world.level.Level.NETHER))) {
+                        placeAguamentiWater(level, center.offset(offset));
                     }
                 }
             }.setColor(0x4C7BFF).setSize(0.5F),
             new StrokeSet(1, 0, 0, 2, 2, 1),
+            new StrokeSet(1, 0, 0, 2, 2, 2, 1),
             new StrokeSet(2, 0, 0, 0, 2, 2, 1, 1),
-            new StrokeSet(3, 0, 0, 0, 0, 2, 2, 1, 1, 1));
+            new StrokeSet(2, 0, 0, 0, 2, 2, 2, 1, 1),
+            new StrokeSet(3, 0, 0, 0, 0, 2, 2, 1, 1, 1),
+            new StrokeSet(3, 0, 0, 0, 0, 2, 2, 2, 1, 1, 1));
 
     /** Alohomora — force a door open, even a locked Rowan door. */
     public static final SymbolEffect ALOHOMORA = instance().add(
@@ -456,7 +603,10 @@ public final class EffectRegistry {
                     }
                 }
             }.setColor(0x513726).setSize(0.5F),
-            new StrokeSet(1, 2, 0, 2, 2, 1));
+            new StrokeSet(1, 2, 0, 2, 2, 1),
+            new StrokeSet(1, 2, 0, 2, 2, 2, 1),
+            new StrokeSet(1, 2, 0, 0, 2, 2, 1, 1),
+            new StrokeSet(1, 2, 0, 0, 2, 2, 2, 1, 1));
 
     /** Defodio — dig out a soft block and drop it. */
     public static final SymbolEffect DEFODIO = instance().add(
@@ -479,7 +629,11 @@ public final class EffectRegistry {
                 }
             }.setColor(0x3D2A1C).setSize(2.5F),
             new StrokeSet(1, 0, 0, 3, 1),
+            new StrokeSet(1, 0, 0, 0, 3, 1, 1),
+            new StrokeSet(1, 0, 0, 3, 3, 1, 2),
             new StrokeSet(2, 0, 0, 0, 3, 3, 1, 1, 2),
+            new StrokeSet(2, 0, 0, 0, 0, 3, 3, 1, 1, 1, 2),
+            new StrokeSet(2, 0, 0, 0, 3, 3, 3, 1, 1, 2, 2),
             new StrokeSet(3, 0, 0, 0, 0, 3, 3, 3, 1, 1, 1, 2, 2));
 
     /** Ennervate — strip Slowness, Weakness and Nausea from the struck creature. */
@@ -545,6 +699,8 @@ public final class EffectRegistry {
                 }
             }.setColor(0x8A8A8A).setSize(2.0F),
             new StrokeSet(1, 0, 3, 0, 0, 2),
+            new StrokeSet(1, 0, 3, 0, 0, 0, 2),
+            new StrokeSet(1, 0, 3, 3, 0, 0, 2, 2),
             new StrokeSet(2, 0, 3, 3, 0, 0, 0, 2, 2),
             new StrokeSet(3, 0, 3, 3, 3, 0, 0, 0, 0, 2, 2, 2));
 
@@ -555,6 +711,8 @@ public final class EffectRegistry {
                 public void perform(ServerLevel level, ServerPlayer caster, int effectLevel) {
                     if (level.isRaining() || level.isThundering()) {
                         level.setWeatherParameters(6000, 0, false, false);
+                    } else {
+                        playBranchSnare(level, caster);
                     }
                 }
             },
@@ -581,7 +739,12 @@ public final class EffectRegistry {
                     });
                 }
             }.setColor(0xFFCB20).setSize(3.0F),
-            new StrokeSet(1, 3, 3, 0, 1, 1));
+            new StrokeSet(1, 3, 3, 0, 1, 1),
+            new StrokeSet(1, 3, 3, 0, 0, 1, 1, 1, 1),
+            new StrokeSet(1, 3, 3, 3, 0, 1, 1),
+            new StrokeSet(1, 3, 3, 3, 0, 0, 1, 1, 1, 1),
+            new StrokeSet(1, 3, 3, 3, 3, 0, 1, 1),
+            new StrokeSet(1, 3, 3, 3, 3, 0, 0, 1, 1, 1, 1));
 
     /** Carnosa Diem — bleed the caster to refill a little infusion power. */
     public static final SymbolEffect CARNOSA_DIEM = instance().add(
@@ -596,21 +759,40 @@ public final class EffectRegistry {
                             6, 0.3, 0.3, 0.3, 0.0);
                 }
             },
-            new StrokeSet(1, 2, 2, 0, 1, 1));
+            new StrokeSet(1, 2, 2, 0, 1, 1),
+            new StrokeSet(1, 2, 2, 0, 0, 1, 1, 1, 1),
+            new StrokeSet(1, 2, 2, 2, 0, 1, 1),
+            new StrokeSet(1, 2, 2, 2, 0, 0, 1, 1, 1, 1),
+            new StrokeSet(1, 2, 2, 2, 2, 0, 1, 1),
+            new StrokeSet(1, 2, 2, 2, 2, 0, 0, 1, 1, 1, 1));
 
-    /** Tormentum — cast the struck player into the Torment dimension (30-minute cooldown). */
+    /** Tormentum — cast players into Torment or unmake ordinary living mobs (30-minute cooldown). */
     public static final SymbolEffect TORMENTUM = instance().add(
             new SymbolEffectProjectile(42, "witchery.pott.tormentum", 25, true, true, "tormentum", 36000) {
                 @Override
                 public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
+                    final boolean[] affected = {false};
                     applyEntityEffect(level, caster, hit, spell.position(), 2.0, (l, c, t) -> {
                         if (t instanceof ServerPlayer victim) {
                             TormentHelper.sendToTorment(victim, 0);
+                            affected[0] = true;
+                        } else if (t instanceof Mob && isTormentumDestroyable(t)) {
+                            t.discard();
+                            affected[0] = true;
                         }
                     });
+                    if (affected[0] && caster instanceof ServerPlayer player && !player.getAbilities().instabuild) {
+                        WitcheryAttachments.learned(player)
+                                .setCooldownUntil(getKnowledgeKey(), level.getGameTime() + getCooldownTicks());
+                    }
                 }
             }.setColor(0x222222).setSize(4.0F),
-            new StrokeSet(1, 1, 1, 3, 2, 2));
+            new StrokeSet(1, 1, 1, 3, 2, 2),
+            new StrokeSet(1, 1, 1, 3, 3, 2, 2, 2, 2),
+            new StrokeSet(1, 1, 1, 1, 3, 2, 2),
+            new StrokeSet(1, 1, 1, 1, 3, 3, 2, 2, 2, 2),
+            new StrokeSet(1, 1, 1, 1, 1, 3, 2, 2),
+            new StrokeSet(1, 1, 1, 1, 1, 3, 3, 2, 2, 2, 2));
 
     // ── Unforgivable curses (Phase C) ────────────────────────────────────────
     // curse + no knowledge key → "unforgivable": castable only in creative until a Beast infusion
@@ -633,28 +815,19 @@ public final class EffectRegistry {
             new StrokeSet(2, 1, 3, 3, 1, 1, 1, 2, 2),
             new StrokeSet(3, 1, 3, 3, 3, 1, 1, 1, 1, 2, 2, 2));
 
-    /** Imperio — bend the struck creature's will, turning it on its nearest neighbour. */
+    /** Imperio - bind an eligible struck creature to the caster. */
     public static final SymbolEffect IMPERIO = instance().add(
             new SymbolEffectProjectile(20, "witchery.pott.imperio", 10, true, false, null, 0) {
                 @Override
                 public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
-                    if (caster == null || !(hit instanceof EntityHitResult ehr) || !(ehr.getEntity() instanceof Mob mob)) {
+                    if (!(caster instanceof Player player)
+                            || !(hit instanceof EntityHitResult ehr)
+                            || !(ehr.getEntity() instanceof Mob mob)) {
                         return;
                     }
-                    Mob nearest = null;
-                    double best = Double.MAX_VALUE;
-                    for (Mob other : level.getEntitiesOfClass(Mob.class, mob.getBoundingBox().inflate(12.0))) {
-                        if (other == mob || other == caster) {
-                            continue;
-                        }
-                        double d = other.distanceToSqr(mob);
-                        if (d < best) {
-                            best = d;
-                            nearest = other;
-                        }
-                    }
-                    if (nearest != null) {
-                        mob.setTarget(nearest);
+                    if (Enslaved.enslave(mob, player)) {
+                        level.playSound(null, mob.blockPosition(), net.minecraft.sounds.SoundEvents.ZOMBIE_INFECT,
+                                net.minecraft.sounds.SoundSource.PLAYERS, 0.7F, 1.2F);
                         level.sendParticles(ParticleTypes.WITCH, mob.getX(), mob.getEyeY(), mob.getZ(),
                                 12, 0.3, 0.3, 0.3, 0.05);
                     }
@@ -681,40 +854,46 @@ public final class EffectRegistry {
                     }
                 }
             }.setColor(0x33FF33).setSize(2.0F),
-            new StrokeSet(1, 1, 2, 2, 0, 0, 3, 3, 3, 3, 1, 1, 2));
+            new StrokeSet(1, 1, 1, 2, 2, 0, 0, 3, 3, 3, 3, 1, 1, 2));
 
     /**
      * Protego — a warding shield on the caster. The source raises a light-barrier block (which the
-     * port has no equivalent for), so this grants a short Resistance + Absorption ward instead.
+     * port now reuses for the old three-column shield shape; buffs and particles remain as feedback.
      */
     public static final SymbolEffect PROTEGO = instance().add(
             new SymbolEffect(31, "witchery.pott.protego") {
                 @Override
                 public void perform(ServerLevel level, ServerPlayer caster, int effectLevel) {
+                    HitResult hit = traceAny(level, caster, 4.0D);
+                    if (!(hit instanceof BlockHitResult bhr) || bhr.getType() != HitResult.Type.BLOCK) {
+                        playBranchSnare(level, caster);
+                        return;
+                    }
+                    placeProtegoShield(level, caster, bhr);
                     caster.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 200, 1, false, true));
                     caster.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 600, 1, false, true));
                     level.sendParticles(ParticleTypes.ENCHANT, caster.getX(), caster.getEyeY(), caster.getZ(),
                             24, 0.6, 0.6, 0.6, 0.5);
                 }
             },
-            new StrokeSet(1, 1, 1, 0, 0),
-            new StrokeSet(1, 1, 1, 1, 0, 0, 0));
+            new StrokeSet(1, 1, 1, 0),
+            new StrokeSet(1, 1, 1, 1, 0, 0),
+            new StrokeSet(1, 1, 1, 1, 1, 0, 0, 0));
 
-    /** Flagrate — trace an infernal glyph against the struck face. */
+    /** Flagrate - source-style short raytrace that draws an infernal glyph on a struck top face. */
     public static final SymbolEffect FLAGRATE = instance().add(
-            new SymbolEffectProjectile(16, "witchery.pott.flagrate", 1, false, false, null, 0) {
+            new SymbolEffect(16, "witchery.pott.flagrate", 1, false, false, null, 0) {
                 @Override
-                public void onCollision(ServerLevel level, LivingEntity caster, HitResult hit, SpellEffectEntity spell) {
-                    if (hit instanceof BlockHitResult bhr) {
-                        BlockPos pos = faceAdjacent(bhr);
-                        if (level.getBlockState(pos).canBeReplaced()
-                                && level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)) {
-                            level.setBlock(pos, WitcheryBlocks.CIRCLE_INFERNAL.get().defaultBlockState(), 3);
-                        }
+                public void perform(ServerLevel level, ServerPlayer caster, int effectLevel) {
+                    HitResult hit = traceAny(level, caster, 4.0D);
+                    if (hit instanceof BlockHitResult bhr && bhr.getType() == HitResult.Type.BLOCK) {
+                        placeFlagrateGlyph(level, bhr);
+                    } else {
+                        playBranchSnare(level, caster);
                     }
                 }
-            }.setColor(0xFF5520).setSize(1.0F),
-            new StrokeSet(1, 0, 2, 3, 0, 2));
+            },
+            new StrokeSet(1, 2, 0, 2, 3, 0, 2));
 
     /** Colloportus — seal a door: replace it with a Rowan door locked to you. */
     public static final SymbolEffect COLLOPORTUS = instance().add(
@@ -742,7 +921,10 @@ public final class EffectRegistry {
                     level.levelEvent(null, 1006, lower, 0); // door close sound
                 }
             }.setColor(0x513726).setSize(1.0F),
-            new StrokeSet(1, 3, 3, 1, 1, 2));
+            new StrokeSet(1, 3, 3, 1, 1, 2),
+            new StrokeSet(1, 3, 3, 1, 1, 1, 2),
+            new StrokeSet(1, 3, 3, 3, 1, 1, 2, 2),
+            new StrokeSet(1, 3, 3, 3, 1, 1, 2, 1, 2));
 
     // ── Leonard's Urn casts ──────────────────────────────────────────────────
     // Throw one of the four brews stored in a Leonard's Urn carried in your pack.
@@ -808,5 +990,27 @@ public final class EffectRegistry {
             return Blocks.STONE_BRICKS.defaultBlockState();
         }
         return null;
+    }
+
+    static boolean isTormentumDestroyable(LivingEntity entity) {
+        return entity instanceof Mob && !isTormentumProtectedType(entity.getType());
+    }
+
+    static boolean isTormentumProtectedType(EntityType<?> type) {
+        String id = BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
+        return switch (id) {
+            case "minecraft:ender_dragon",
+                 "minecraft:wither",
+                 "witchery:death",
+                 "witchery:lord_of_torment",
+                 "witchery:horned_huntsman",
+                 "witchery:goblin_gulg",
+                 "witchery:goblin_mog",
+                 "witchery:baba_yaga",
+                 "witchery:leonard",
+                 "witchery:lilith",
+                 "witchery:reflection" -> true;
+            default -> false;
+        };
     }
 }

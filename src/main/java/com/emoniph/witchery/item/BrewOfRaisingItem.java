@@ -1,5 +1,8 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.brewing.Brews;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
+import com.emoniph.witchery.util.Enslaved;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -19,9 +22,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /** Brew of Raising - source-style grave raising in practical item form. */
 public class BrewOfRaisingItem extends BrewItem {
-    private static final String SOURCE_ENSLAVER_TAG = "WITCEnslaverName";
-    private static final String PORT_ENSLAVER_UUID_TAG = "witchery_enslaver_uuid";
-
     public BrewOfRaisingItem(Properties properties) { super(properties); }
 
     @Override
@@ -101,7 +101,7 @@ public class BrewOfRaisingItem extends BrewItem {
 
     private static void raiseUndead(ServerLevel level, BlockPos floor, Player raiser) {
         BlockPos spawnPos = isSourceGraveFloor(level.getBlockState(floor)) ? floor : floor.above();
-        if (!clearForSpawn(level, spawnPos) || !clearForSpawn(level, spawnPos.above())) {
+        if (!clearForSpawn(level, spawnPos, raiser) || !clearForSpawn(level, spawnPos.above(), raiser)) {
             return;
         }
 
@@ -119,20 +119,22 @@ public class BrewOfRaisingItem extends BrewItem {
         undead.setXRot(0.0F);
         undead.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), EntitySpawnReason.TRIGGERED, null);
         undead.setPersistenceRequired();
+        undead.getPersistentData().putBoolean(Brews.SUMMONED_NO_DROPS_TAG, true);
         if (raiser != null) {
-            undead.getPersistentData().putString(SOURCE_ENSLAVER_TAG, raiser.getName().getString());
-            undead.getPersistentData().putString(PORT_ENSLAVER_UUID_TAG, raiser.getUUID().toString());
-            undead.setTarget(null);
+            Enslaved.enslave(undead, raiser);
         }
         level.addFreshEntity(undead);
     }
 
-    private static boolean clearForSpawn(ServerLevel level, BlockPos pos) {
+    private static boolean clearForSpawn(ServerLevel level, BlockPos pos, Player raiser) {
         BlockState state = level.getBlockState(pos);
         if (state.isAir()) {
             return true;
         }
         if (state.liquid() || state.hasBlockEntity() || state.getDestroySpeed(level, pos) < 0.0F) {
+            return false;
+        }
+        if (!WitcheryTerrainProtection.canBreak(raiser, level, pos)) {
             return false;
         }
         level.destroyBlock(pos, false);

@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.init.WitcheryDataComponents;
+import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -25,7 +26,8 @@ public class BrewOfFoamingItem extends BrewItem {
                 for (int dz = -radius; dz <= radius; dz++) {
                     if (dx * dx + dz * dz > radiusSq) continue;
                     BlockPos floor = center.offset(dx, 0, dz);
-                    if (level.getBlockState(floor).isAir()) {
+                    if (level.getBlockState(floor).isAir()
+                            && WitcheryTerrainProtection.canPlace(player, level, floor)) {
                         level.setBlockAndUpdate(floor, Blocks.COBWEB.defaultBlockState());
                     }
                 }
