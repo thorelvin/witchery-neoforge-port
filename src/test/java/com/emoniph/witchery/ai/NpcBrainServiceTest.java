@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -68,5 +69,21 @@ class NpcBrainServiceTest {
         assertFalse(cooldowns.containsKey("expired"));
         assertFalse(cooldowns.containsKey("boundary"));
         assertTrue(cooldowns.containsKey("future"));
+    }
+
+    @Test
+    void parsesExtraHeadersButIgnoresProtectedHeaders() {
+        var headers = NpcBrainService.parseExtraHeaders("""
+                X-Test: one
+                Authorization: Bearer nope
+                Content-Type: text/plain
+                X-Other: two; malformed
+                """);
+
+        assertEquals(2, headers.size());
+        assertEquals("one", headers.get("X-Test"));
+        assertEquals("two", headers.get("X-Other"));
+        assertFalse(headers.containsKey("Authorization"));
+        assertFalse(headers.containsKey("Content-Type"));
     }
 }

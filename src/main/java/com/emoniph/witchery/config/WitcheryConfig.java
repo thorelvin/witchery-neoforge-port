@@ -60,6 +60,9 @@ public class WitcheryConfig {
     public static final ModConfigSpec.IntValue LLM_KEEP_ALIVE_MINUTES;
     public static final ModConfigSpec.IntValue LLM_COOLDOWN_TICKS;
     public static final ModConfigSpec.BooleanValue LLM_ALLOW_LAN_ENDPOINT;
+    public static final ModConfigSpec.ConfigValue<String> LLM_API_KEY_ENV;
+    public static final ModConfigSpec.ConfigValue<String> LLM_EXTRA_HEADERS;
+    public static final ModConfigSpec.ConfigValue<String> LLM_RESPONSE_FORMAT;
 
     static {
         DEBUG = BUILDER
@@ -187,6 +190,15 @@ public class WitcheryConfig {
         LLM_ALLOW_LAN_ENDPOINT = BUILDER
                 .comment("Allow non-loopback LLM endpoints for a LAN sidecar machine. Default: false")
                 .define("allowLanEndpoint", false);
+        LLM_API_KEY_ENV = BUILDER
+                .comment("Environment variable containing a bearer API key for openai_compatible endpoints. Blank disables auth header. Default: blank")
+                .define("apiKeyEnv", "");
+        LLM_EXTRA_HEADERS = BUILDER
+                .comment("Extra openai_compatible HTTP headers as 'Header: value' lines separated by semicolons or newlines. Authorization and Content-Type are ignored here.")
+                .define("extraHeaders", "");
+        LLM_RESPONSE_FORMAT = BUILDER
+                .comment("openai_compatible response format: json_object, json_schema, or none. json_schema uses strict NPC JSON schema when the endpoint supports it. Default: json_object")
+                .define("responseFormat", "json_object");
         BUILDER.pop();
 
         SPEC = BUILDER.build();

@@ -50,6 +50,11 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- OpenAI-compatible NPC providers now support bearer-token auth via an
+  environment variable, optional extra metadata headers, configurable
+  `responseFormat` (`json_object`, `json_schema`, or `none`), and strict NPC
+  JSON-schema parsing when schema mode is enabled. README and the LLM NPC
+  experiment note document the new knobs.
 - Local AI NPC dialogue has moved from a Coven Witch-only experiment into a
   general persona framework. The current playtest path uses local Ollama/EVA by
   default, prewarms the model, loads compact markdown knowledge cards, keeps

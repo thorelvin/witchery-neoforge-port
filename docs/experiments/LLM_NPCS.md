@@ -31,9 +31,19 @@ maxTokens = 80
 keepAliveMinutes = 30
 cooldownTicks = 100
 allowLanEndpoint = false
+apiKeyEnv = ""
+extraHeaders = ""
+responseFormat = "json_object"
 ```
 
-Set `allowLanEndpoint = true` only when the model is running on a trusted LAN sidecar machine.
+Set `allowLanEndpoint = true` only when the model is running on a trusted LAN
+sidecar machine. For `provider = "openai_compatible"`, set `apiKeyEnv` to the
+name of an environment variable containing a bearer token when the endpoint
+needs one, for example `OPENAI_API_KEY`. `extraHeaders` accepts semicolon- or
+newline-separated `Header: value` entries for compatible servers that need
+non-auth metadata. `responseFormat = "json_schema"` sends the strict NPC
+response schema to endpoints/models that support structured outputs; keep
+`json_object` or use `none` for looser local-compatible servers.
 
 ## Commands
 

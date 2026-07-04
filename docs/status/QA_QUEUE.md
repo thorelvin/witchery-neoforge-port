@@ -33,6 +33,13 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - With `maxConcurrentRequests` above 1, have multiple players speak to separate
   AI NPCs at once and confirm requests can run in parallel without excess
   provider/client churn or long-session cooldown-map growth.
+- Set `provider = "openai_compatible"` against an endpoint that requires bearer
+  auth, set `apiKeyEnv` to an environment variable containing the token, and
+  confirm NPC chat succeeds without placing secrets in the config file.
+- Against an OpenAI-compatible endpoint/model that supports structured outputs,
+  set `responseFormat = "json_schema"` and confirm replies still parse into
+  `speech`, `intent`, and `memory`; against a looser local-compatible server,
+  set `responseFormat = "none"` if it rejects `response_format`.
 
 ### Hobgoblin Chat Commands
 

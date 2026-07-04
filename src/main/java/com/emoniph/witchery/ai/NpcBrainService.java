@@ -19,7 +19,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.villager.Villager;
 
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -1205,7 +1207,10 @@ public final class NpcBrainService {
                 timeoutMillis,
                 maxTokens,
                 WitcheryConfig.LLM_ALLOW_LAN_ENDPOINT.get(),
-                WitcheryConfig.LLM_KEEP_ALIVE_MINUTES.get());
+                WitcheryConfig.LLM_KEEP_ALIVE_MINUTES.get(),
+                WitcheryConfig.LLM_API_KEY_ENV.get(),
+                parseExtraHeaders(WitcheryConfig.LLM_EXTRA_HEADERS.get()),
+                WitcheryConfig.LLM_RESPONSE_FORMAT.get());
         LlmEndpointValidator.Validation validation = LlmEndpointValidator.validate(
                 config.endpoint(), config.allowLanEndpoint());
         if (!validation.allowed()) {
@@ -1265,7 +1270,36 @@ public final class NpcBrainService {
         return WitcheryConfig.LLM_PROVIDER.get().trim().toLowerCase(Locale.ROOT)
                 + "|" + WitcheryConfig.LLM_ENDPOINT.get().trim()
                 + "|" + WitcheryConfig.LLM_MODEL.get().trim()
-                + "|" + WitcheryConfig.LLM_KEEP_ALIVE_MINUTES.get();
+                + "|" + WitcheryConfig.LLM_KEEP_ALIVE_MINUTES.get()
+                + "|" + WitcheryConfig.LLM_API_KEY_ENV.get().trim()
+                + "|" + WitcheryConfig.LLM_EXTRA_HEADERS.get().trim()
+                + "|" + WitcheryConfig.LLM_RESPONSE_FORMAT.get().trim().toLowerCase(Locale.ROOT);
+    }
+
+    static Map<String, String> parseExtraHeaders(String rawHeaders) {
+        if (rawHeaders == null || rawHeaders.isBlank()) {
+            return Map.of();
+        }
+        Map<String, String> headers = new LinkedHashMap<>();
+        for (String line : rawHeaders.split("[;\\r\\n]+")) {
+            String trimmed = line.trim();
+            if (trimmed.isBlank()) {
+                continue;
+            }
+            int colon = trimmed.indexOf(':');
+            if (colon <= 0 || colon == trimmed.length() - 1) {
+                continue;
+            }
+            String name = trimmed.substring(0, colon).trim();
+            String value = trimmed.substring(colon + 1).trim();
+            if (name.isBlank() || value.isBlank()
+                    || name.equalsIgnoreCase("content-type")
+                    || name.equalsIgnoreCase("authorization")) {
+                continue;
+            }
+            headers.put(name, value);
+        }
+        return Map.copyOf(headers);
     }
 
     private void completeWarmup(String key, long elapsedMillis, Throwable error) {

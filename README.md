@@ -91,9 +91,17 @@ timeoutMillis = 3000
 maxConcurrentRequests = 1
 maxTokens = 80
 allowLanEndpoint = false
+apiKeyEnv = ""
+extraHeaders = ""
+responseFormat = "json_object"
 ```
 
-Set `enabled = false` to disable AI dialogue entirely. Keep `allowLanEndpoint = false` unless the model endpoint is on a trusted LAN machine.
+Set `enabled = false` to disable AI dialogue entirely. Keep `allowLanEndpoint = false`
+unless the model endpoint is on a trusted LAN machine. For
+`provider = "openai_compatible"`, `apiKeyEnv` can name a bearer-token environment
+variable, `extraHeaders` can pass non-auth metadata headers, and
+`responseFormat = "json_schema"` opts into strict structured output when the
+endpoint supports it.
 
 ## Not Done Yet
 
