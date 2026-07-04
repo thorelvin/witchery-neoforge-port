@@ -19,7 +19,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     private static final String RITE_OPTIONS_FOLLOWUP =
             "Known rites use circles, chalk, offerings, and altar power; ask for binding, summoning, storms, curses, or familiars.";
     private static final Pattern SPEECH_FIELD =
-            Pattern.compile("\"speech\"\\s*:\\s*\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("\"speech\"\\s*:\\s*\"((?:\\\\.|[^\"\\\\])*)\"", Pattern.CASE_INSENSITIVE);
     private static final Pattern QUOTED_SPEECH =
             Pattern.compile("[\"\\u201c]([^\"\\u201d]{2,220})[\"\\u201d]");
     private static final Pattern THIRD_PERSON_NARRATION =
@@ -119,17 +119,28 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 .replaceAll("(?is)^```(?:json)?\\s*", "")
                 .replaceAll("(?is)\\s*```$", "")
                 .trim();
-        Matcher speech = SPEECH_FIELD.matcher(cleaned);
-        if (speech.find()) {
-            return speech.group(1);
-        }
         if (cleaned.startsWith("{") && cleaned.endsWith("}")) {
             return "";
         }
-        return cleaned.replaceAll("(?i)^speech\\s*[:=]\\s*", "")
+        Matcher speech = SPEECH_FIELD.matcher(cleaned);
+        if (speech.find()) {
+            return unescapeJsonString(speech.group(1));
+        }
+        String plain = cleaned.replaceAll("(?i)^speech\\s*[:=]\\s*", "")
                 .replaceAll("(?i)^assistant\\s*[:=]\\s*", "")
-                .replaceAll("^\"|\"$", "")
                 .trim();
+        if (plain.length() >= 2 && plain.startsWith("\"") && plain.endsWith("\"")) {
+            return unescapeJsonString(plain.substring(1, plain.length() - 1)).trim();
+        }
+        return plain.replaceAll("^\"|\"$", "").trim();
+    }
+
+    private static String unescapeJsonString(String value) {
+        try {
+            return JsonParser.parseString("\"" + value + "\"").getAsString();
+        } catch (RuntimeException ex) {
+            return value;
+        }
     }
 
     public static Optional<String> polishSpeech(String rawSpeech, String npcName, String playerName,

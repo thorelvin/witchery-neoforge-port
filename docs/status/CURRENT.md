@@ -54,7 +54,9 @@ enough to read before starting work. Long historical deltas belong in
   environment variable, optional extra metadata headers, configurable
   `responseFormat` (`json_object`, `json_schema`, or `none`), and strict NPC
   JSON-schema parsing when schema mode is enabled. README and the LLM NPC
-  experiment note document the new knobs.
+  experiment note document the new knobs. The shared NPC response parser also
+  avoids regex salvage for object-shaped invalid JSON and unescapes quoted
+  fallback speech fragments cleanly.
 - Local AI NPC dialogue has moved from a Coven Witch-only experiment into a
   general persona framework. The current playtest path uses local Ollama/EVA by
   default, prewarms the model, loads compact markdown knowledge cards, keeps

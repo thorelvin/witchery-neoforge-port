@@ -23,6 +23,16 @@ class NpcBrainResponseTest {
     }
 
     @Test
+    void parsesEscapedQuotesInModelJson() {
+        Optional<NpcBrainResponse> response = NpcBrainResponse.parse("""
+                {"speech":"Mind the \\"bell\\" at the altar.","intent":"none","memory":""}
+                """);
+
+        assertTrue(response.isPresent());
+        assertEquals("Mind the \"bell\" at the altar.", response.get().speech());
+    }
+
+    @Test
     void extractsJsonFromCodeFenceNoise() {
         Optional<NpcBrainResponse> response = NpcBrainResponse.parse("""
                 ```json
@@ -48,6 +58,25 @@ class NpcBrainResponseTest {
         assertTrue(response.isPresent());
         assertEquals("The moon is awake, Dev.", response.get().speech());
         assertEquals(NpcIntent.NONE, response.get().intent());
+    }
+
+    @Test
+    void lenientParserRejectsObjectShapedInvalidJsonInsteadOfRegexSpeech() {
+        Optional<NpcBrainResponse> response = NpcBrainResponse.parseLenient("""
+                {"speech":"Mind the \\"bell\\" at the altar.","intent":"made_up","memory":""}
+                """);
+
+        assertFalse(response.isPresent());
+    }
+
+    @Test
+    void lenientParserUnescapesSpeechFieldFragments() {
+        Optional<NpcBrainResponse> response = NpcBrainResponse.parseLenient("""
+                speech: "Mind the \\"bell\\" at the altar."
+                """);
+
+        assertTrue(response.isPresent());
+        assertEquals("Mind the \"bell\" at the altar.", response.get().speech());
     }
 
     @Test
