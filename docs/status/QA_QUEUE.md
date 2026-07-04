@@ -26,6 +26,10 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Trigger a card-repair path in a non-plains or non-night scene. Repaired lines
   should be grounded with the live entity biome/time, not fake `Plains`/`night`
   assumptions.
+- With local LLM request logging enabled, ask low-risk recipe/lore/trade/small
+  talk lines and confirm they skip the separate message-analysis request; ask an
+  action-shaped line such as `can you open this?` and confirm it still uses the
+  analysis/classifier path.
 
 ### Hobgoblin Chat Commands
 

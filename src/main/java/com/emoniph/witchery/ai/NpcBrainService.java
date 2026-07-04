@@ -340,6 +340,15 @@ public final class NpcBrainService {
         if (isCoolingDown(entity.getUUID(), player.getUUID(), "chat", level.getGameTime())) {
             return false;
         }
+        NpcMessageAnalysis deterministic = NpcMessageAnalysis.deterministic(player.getName().getString(),
+                playerMessage);
+        if (useDeterministicChatAnalysis(deterministic)) {
+            if (deterministic.hasMemory()) {
+                NpcMemoryData.get(level).remember(entity.getUUID(), player.getUUID(),
+                        deterministic.memory(), level.getGameTime());
+            }
+            return requestPersonaChatWithAnalysisContext(persona, entity, player, playerMessage, deterministic);
+        }
         int current = inFlight.incrementAndGet();
         if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
             inFlight.decrementAndGet();
@@ -843,6 +852,10 @@ public final class NpcBrainService {
 
     static boolean commandIntentAccepted(NpcBrainResponse response) {
         return socialIntentAccepted(response);
+    }
+
+    static boolean useDeterministicChatAnalysis(NpcMessageAnalysis analysis) {
+        return analysis != null && analysis.route() != NpcDialogueRoute.ACTION;
     }
 
     private static void runSafely(Runnable runnable) {

@@ -23,4 +23,17 @@ class NpcBrainServiceTest {
         assertFalse(NpcBrainService.commandIntentAccepted(new NpcBrainResponse("no", NpcIntent.NONE, "")));
         assertFalse(NpcBrainService.commandIntentAccepted(null));
     }
+
+    @Test
+    void deterministicChatAnalysisSkipsOnlyLowRiskRoutes() {
+        assertTrue(NpcBrainService.useDeterministicChatAnalysis(
+                NpcMessageAnalysis.deterministic("Dev", "how do I use the kettle?")));
+        assertTrue(NpcBrainService.useDeterministicChatAnalysis(
+                NpcMessageAnalysis.deterministic("Dev", "hello there")));
+        assertTrue(NpcBrainService.useDeterministicChatAnalysis(
+                NpcMessageAnalysis.deterministic("Dev", "remember that I fear nightmares")));
+
+        assertFalse(NpcBrainService.useDeterministicChatAnalysis(
+                NpcMessageAnalysis.deterministic("Dev", "can you open this for me?")));
+    }
 }

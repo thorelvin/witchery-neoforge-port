@@ -60,7 +60,9 @@ enough to read before starting work. Long historical deltas belong in
   falling back to coven-witch wording. Repair prompts now use the entity's real
   biome/time context, async/direct command conversation cleanup has explicit
   completion/abort paths, and provider/config failures no longer spend the
-  request cooldown.
+  request cooldown. Low-risk normal chat now skips the separate model-backed
+  message-analysis call and uses deterministic routing context before the
+  persona response.
 - The protection facade is live for NPC command ownership and terrain-changing
   magic. It checks vanilla permissions and optional reflective adapters for
   Open Parties and Claims, FTB Chunks, and Common Protection API, with config
