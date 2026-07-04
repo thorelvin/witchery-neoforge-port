@@ -351,6 +351,12 @@ class NpcPromptBuilderTest {
                 example.userPrompt().contains("how do I get koboldite")
                         && example.assistantResponse().contains("\"speech\":\"no\"")));
         assertTrue(prompt.examples().stream().anyMatch(example ->
+                example.userPrompt().contains("can hobgoblins find koboldite")
+                        && example.assistantResponse().contains("\"speech\":\"no\"")));
+        assertTrue(prompt.examples().stream().anyMatch(example ->
+                example.userPrompt().contains("could a hobgoblin use the patron altar")
+                        && example.assistantResponse().contains("\"speech\":\"no\"")));
+        assertTrue(prompt.examples().stream().anyMatch(example ->
                 example.userPrompt().contains("can you mine for me")
                         && example.assistantResponse().contains("\"speech\":\"yes\"")));
     }
