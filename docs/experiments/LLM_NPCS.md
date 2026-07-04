@@ -29,6 +29,7 @@ prewarmTimeoutMillis = 30000
 maxConcurrentRequests = 1
 maxTokens = 80
 keepAliveMinutes = 30
+chatCooldownTicks = 20
 cooldownTicks = 100
 cancelHandledNpcChat = true
 allowLanEndpoint = false
@@ -42,11 +43,13 @@ playtesting. Release packs or servers without a managed model sidecar should set
 both to `false` so startup never tries to warm a missing model. Set
 `cancelHandledNpcChat = false` if explicit/private NPC-addressed chat should
 also remain visible as normal multiplayer chat. Ambient look-at routing still
-broadcasts player chat even when cancellation is enabled. Set
-`allowLanEndpoint = true` only when the model is running on a trusted LAN sidecar machine. For
-`provider = "openai_compatible"`, set `apiKeyEnv` to the name of an environment
-variable containing a bearer token when the endpoint needs one, for example
-`OPENAI_API_KEY`. `extraHeaders` accepts semicolon- or newline-separated
+broadcasts player chat even when cancellation is enabled. `chatCooldownTicks`
+controls ordinary NPC chat; `cooldownTicks` controls non-chat triggers such as
+greetings, gaze, and ambient reactions. Set
+`allowLanEndpoint = true` only when the model is running on a trusted LAN sidecar
+machine. For `provider = "openai_compatible"`, set `apiKeyEnv` to the name of an
+environment variable containing a bearer token when the endpoint needs one, for
+example `OPENAI_API_KEY`. `extraHeaders` accepts semicolon- or newline-separated
 `Header: value` entries for compatible servers that need non-auth metadata.
 `responseFormat = "json_schema"` sends the strict NPC response schema to
 endpoints/models that support structured outputs; keep `json_object` or use

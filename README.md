@@ -90,6 +90,8 @@ model = "witchery-eva-qwen2.5-1.5b-q4km-4k"
 timeoutMillis = 3000
 maxConcurrentRequests = 1
 maxTokens = 80
+chatCooldownTicks = 20
+cooldownTicks = 100
 cancelHandledNpcChat = true
 allowLanEndpoint = false
 apiKeyEnv = ""
@@ -102,8 +104,10 @@ Set `enabled = false` to disable AI dialogue entirely. The branch keeps
 or servers without a managed model sidecar should set both to `false`.
 `cancelHandledNpcChat = true` keeps explicit/private NPC-addressed messages out
 of normal multiplayer chat; ambient look-at routing still broadcasts. Keep
-`allowLanEndpoint = false` unless the model endpoint is on a trusted LAN machine.
-For `provider = "openai_compatible"`, `apiKeyEnv` can name a
+`chatCooldownTicks` lower than `cooldownTicks` if ordinary chat should recover
+faster than greetings, gaze, and ambient reactions. Keep
+`allowLanEndpoint = false` unless the model endpoint is on a trusted LAN machine. For
+`provider = "openai_compatible"`, `apiKeyEnv` can name a
 bearer-token environment variable, `extraHeaders` can pass non-auth metadata
 headers, and `responseFormat = "json_schema"` opts into strict structured output
 when the endpoint supports it.

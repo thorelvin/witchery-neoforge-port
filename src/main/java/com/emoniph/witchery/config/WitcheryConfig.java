@@ -58,6 +58,7 @@ public class WitcheryConfig {
     public static final ModConfigSpec.IntValue LLM_MAX_CONCURRENT_REQUESTS;
     public static final ModConfigSpec.IntValue LLM_MAX_TOKENS;
     public static final ModConfigSpec.IntValue LLM_KEEP_ALIVE_MINUTES;
+    public static final ModConfigSpec.IntValue LLM_CHAT_COOLDOWN_TICKS;
     public static final ModConfigSpec.IntValue LLM_COOLDOWN_TICKS;
     public static final ModConfigSpec.BooleanValue LLM_CANCEL_HANDLED_NPC_CHAT;
     public static final ModConfigSpec.BooleanValue LLM_ALLOW_LAN_ENDPOINT;
@@ -185,8 +186,11 @@ public class WitcheryConfig {
         LLM_KEEP_ALIVE_MINUTES = BUILDER
                 .comment("Ollama keep_alive duration after NPC requests, in minutes. Keeps prewarmed models resident. 0 uses provider default. Default: 30")
                 .defineInRange("keepAliveMinutes", 30, 0, 240);
+        LLM_CHAT_COOLDOWN_TICKS = BUILDER
+                .comment("Cooldown per NPC/player chat response trigger in ticks. Default: 20")
+                .defineInRange("chatCooldownTicks", 20, 20, 12000);
         LLM_COOLDOWN_TICKS = BUILDER
-                .comment("Cooldown per NPC/player dialogue trigger in ticks. Default: 100")
+                .comment("Cooldown per non-chat NPC/player dialogue trigger in ticks, including greetings, gaze, and ambient reactions. Default: 100")
                 .defineInRange("cooldownTicks", 100, 20, 12000);
         LLM_CANCEL_HANDLED_NPC_CHAT = BUILDER
                 .comment("Cancel normal player chat broadcast after an explicit/private nearby NPC chat or NPC command is accepted. Look-at ambient routing still broadcasts. Default: true")

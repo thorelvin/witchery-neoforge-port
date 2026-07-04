@@ -72,6 +72,13 @@ class NpcBrainServiceTest {
     }
 
     @Test
+    void chatCooldownUsesSeparateConfigBucket() {
+        assertEquals(20L, NpcBrainService.cooldownTicks("chat", 20L, 100L));
+        assertEquals(100L, NpcBrainService.cooldownTicks("greeting", 20L, 100L));
+        assertEquals(100L, NpcBrainService.cooldownTicks("ambient", 20L, 100L));
+    }
+
+    @Test
     void parsesExtraHeadersButIgnoresProtectedHeaders() {
         var headers = NpcBrainService.parseExtraHeaders("""
                 X-Test: one

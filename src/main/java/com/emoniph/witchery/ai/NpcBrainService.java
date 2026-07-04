@@ -37,7 +37,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public final class NpcBrainService {
     public static final NpcBrainService INSTANCE = new NpcBrainService();
-    private static final long CHAT_COOLDOWN_TICKS = 20L;
     private static final int WARMUP_MAX_TOKENS = 24;
     private static final int SOCIAL_INTENT_MAX_TOKENS = 16;
     private static final int SOCIAL_INTENT_TIMEOUT_MILLIS = 2500;
@@ -615,8 +614,12 @@ public final class NpcBrainService {
     }
 
     private static long cooldownTicks(String trigger) {
-        long configured = WitcheryConfig.LLM_COOLDOWN_TICKS.get();
-        return "chat".equals(trigger) ? Math.min(configured, CHAT_COOLDOWN_TICKS) : configured;
+        return cooldownTicks(trigger, WitcheryConfig.LLM_CHAT_COOLDOWN_TICKS.get(),
+                WitcheryConfig.LLM_COOLDOWN_TICKS.get());
+    }
+
+    static long cooldownTicks(String trigger, long chatCooldownTicks, long defaultCooldownTicks) {
+        return "chat".equals(trigger) ? chatCooldownTicks : defaultCooldownTicks;
     }
 
     private boolean isCoolingDown(UUID entityId, UUID playerId, String trigger, long now) {
