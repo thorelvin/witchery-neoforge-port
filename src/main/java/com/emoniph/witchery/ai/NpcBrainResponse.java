@@ -247,15 +247,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     static Optional<String> visibleBeat(String speech) {
-        if (speech == null || speech.isBlank()) {
-            return Optional.empty();
-        }
-        Matcher matcher = Pattern.compile("^\\*([^*]{1,64})\\*").matcher(speech.trim());
-        if (!matcher.find()) {
-            return Optional.empty();
-        }
-        String stage = canonicalVisibleBeat(matcher.group(1));
-        return stage.isBlank() || !isSafeVisibleBeat(stage) ? Optional.empty() : Optional.of(stage);
+        return NpcVisibleBeat.visibleBeat(speech);
     }
 
     private static Optional<String> targetedKnowledgeFollowup(String playerMessage, String normalizedSpeech) {
@@ -385,7 +377,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (!isBareSafeActionCandidate(normalizedAction)) {
             return Optional.empty();
         }
-        String stage = canonicalVisibleBeat(action);
+        String stage = NpcVisibleBeat.canonical(action);
         return stage.isBlank() ? Optional.empty() : Optional.of("*" + stage + "*");
     }
 
@@ -406,7 +398,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (!matcher.matches()) {
             return Optional.empty();
         }
-        String stage = canonicalVisibleBeat(matcher.group(1));
+        String stage = NpcVisibleBeat.canonical(matcher.group(1));
         if (stage.isBlank()) {
             return Optional.of(speech);
         }
@@ -434,7 +426,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (!matcher.matches()) {
             return Optional.empty();
         }
-        String stage = canonicalVisibleBeat(matcher.group(1));
+        String stage = NpcVisibleBeat.canonical(matcher.group(1));
         return stage.isBlank() ? Optional.empty() : Optional.of("*" + stage + "*");
     }
 
@@ -462,7 +454,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         Matcher matcher = Pattern.compile("\\*([^*]{1,64})\\*").matcher(text);
         StringBuffer result = new StringBuffer();
         while (matcher.find()) {
-            String stage = canonicalVisibleBeat(matcher.group(1));
+            String stage = NpcVisibleBeat.canonical(matcher.group(1));
             if (stage.isBlank()) {
                 return text;
             }
@@ -527,97 +519,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || text.contains("necromancy")) {
             return "";
         }
-        return canonicalVisibleBeat(text);
-    }
-
-    private static String canonicalVisibleBeat(String action) {
-        String text = NpcSpeechSimilarity.normalizeForComparison(action);
-        if (text.isBlank()) {
-            return "";
-        }
-        if ((text.contains("hand") && !text.contains("spread"))
-                || text.contains("give")
-                || text.contains("take")
-                || text.contains("throw")
-                || text.contains("cast")
-                || text.contains("drink")
-                || text.contains("attack")
-                || text.contains("open")
-                || text.contains("summon")
-                || text.contains("teleport")) {
-            return "";
-        }
-        if (text.contains("eye") && (text.contains("narrow") || text.contains("flicker"))) {
-            return "narrows her eyes";
-        }
-        if (text.contains("lean") && (text.contains("closer") || text.contains("in"))) {
-            return "leans closer";
-        }
-        if (text.contains("lower") && text.contains("voice")) {
-            return text.contains("his") ? "lowers his voice" : "lowers her voice";
-        }
-        if (text.contains("sigh")) {
-            return "sighs";
-        }
-        if (text.contains("shrug")) {
-            return "shrugs";
-        }
-        if (text.contains("yawn")) {
-            return "yawns";
-        }
-        if (text.contains("raise") && (text.contains("brow") || text.contains("eyebrow"))) {
-            return "raises an eyebrow";
-        }
-        if (text.contains("fold") && text.contains("arms")) {
-            return "folds her arms";
-        }
-        if (text.contains("nod")) {
-            return "nods";
-        }
-        if (text.contains("smile")) {
-            return "smiles thinly";
-        }
-        if (text.contains("gesture")) {
-            return "gestures";
-        }
-        if (text.contains("glance") && text.contains("road")) {
-            return "glances at the road";
-        }
-        if (text.contains("touch") && text.contains("charm")) {
-            return "touches a charm";
-        }
-        if (text.contains("coin") && (text.contains("study") || text.contains("examine") || text.contains("regard"))) {
-            return "studies your coin";
-        }
-        if (text.contains("blade") && (text.contains("study") || text.contains("examine") || text.contains("regard"))) {
-            return "studies your blade";
-        }
-        if (text.contains("study") || text.contains("examine") || text.contains("regard")) {
-            return "studies you";
-        }
-        if (text.contains("tap")) {
-            return "taps a finger";
-        }
-        if (text.contains("tilt") && text.contains("head")) {
-            return text.contains("his") ? "tilts his head" : "tilts her head";
-        }
-        if (text.contains("turn") && text.contains("gaze")) {
-            return "turns his gaze";
-        }
-        if (text.contains("spread") && text.contains("hand")) {
-            return "spreads his hands";
-        }
-        if (text.contains("adjust") && text.contains("robe")) {
-            return "adjusts her robe";
-        }
-        return switch (text) {
-            case "narrows her eyes", "leans closer", "raises an eyebrow", "folds her arms", "nods",
-                    "smiles thinly", "gestures", "studies your coin", "studies you", "taps a finger",
-                    "tilts her head", "shrugs", "yawns", "lowers her voice", "sighs", "adjusts her robe",
-                    "lowers his voice", "studies your blade", "tilts his head", "turns his gaze",
-                    "spreads his hands", "glances at the road", "touches a charm" -> text;
-            default -> "";
-        };
+        return NpcVisibleBeat.canonical(text);
     }
 
     private static boolean isBadNarration(String speech, String npcName, String playerMessage) {
@@ -657,11 +559,11 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return false;
         }
         Matcher actionOnly = SAFE_ACTION_ONLY.matcher(speech);
-        if (actionOnly.matches() && isSafeVisibleBeat(actionOnly.group(1))) {
+        if (actionOnly.matches() && NpcVisibleBeat.isSafe(actionOnly.group(1))) {
             return false;
         }
         Matcher matcher = SAFE_ACTION_DIALOGUE.matcher(speech);
-        return !matcher.matches() || !isSafeVisibleBeat(matcher.group(1));
+        return !matcher.matches() || !NpcVisibleBeat.isSafe(matcher.group(1));
     }
 
     private static boolean hasSpeakerLabelLeak(String speech, String npcName) {
@@ -741,33 +643,6 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (normalized.contains("how are you today")) count++;
         if (normalized.contains("what can i help with")) count++;
         return count >= 2;
-    }
-
-    private static boolean isSafeVisibleBeat(String action) {
-        String normalized = NpcSpeechSimilarity.normalizeForComparison(action);
-        return normalized.equals("narrows her eyes")
-                || normalized.equals("leans closer")
-                || normalized.equals("raises an eyebrow")
-                || normalized.equals("folds her arms")
-                || normalized.equals("nods")
-                || normalized.equals("smiles thinly")
-                || normalized.equals("gestures")
-                || normalized.equals("glances at the road")
-                || normalized.equals("touches a charm")
-                || normalized.equals("studies your coin")
-                || normalized.equals("studies your blade")
-                || normalized.equals("studies you")
-                || normalized.equals("taps a finger")
-                || normalized.equals("tilts her head")
-                || normalized.equals("tilts his head")
-                || normalized.equals("adjusts her robe")
-                || normalized.equals("turns his gaze")
-                || normalized.equals("spreads his hands")
-                || normalized.equals("shrugs")
-                || normalized.equals("yawns")
-                || normalized.equals("lowers her voice")
-                || normalized.equals("lowers his voice")
-                || normalized.equals("sighs");
     }
 
     private static boolean containsNpcNarration(String speech, String npcName) {
@@ -1344,7 +1219,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return "";
         }
         Matcher matcher = SAFE_ACTION_DIALOGUE.matcher(speech);
-        if (matcher.matches() && isSafeVisibleBeat(matcher.group(1))) {
+        if (matcher.matches() && NpcVisibleBeat.isSafe(matcher.group(1))) {
             Matcher quoted = QUOTED_SPEECH.matcher(speech);
             return quoted.find() ? quoted.group(1) : speech;
         }
