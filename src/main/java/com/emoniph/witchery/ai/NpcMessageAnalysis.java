@@ -9,6 +9,8 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
                           boolean remember, String memory) {
     private static final Pattern KEY_VALUE =
             Pattern.compile("(?i)\\b(route|topic|emotion|remember)\\s*[:=]\\s*([^;,\\n\\r]+)");
+    private static final Pattern ROUTING_CONTEXT =
+            Pattern.compile("(?i)\\bmessage\\s+routing\\s*:\\s*route\\s*[:=].*$");
     private static final Pattern UNSAFE_MEMORY =
             Pattern.compile("(?i).*(\\bprompt\\b|\\binstruction\\b|\\bsystem message\\b|\\bdeveloper message\\b|"
                     + "\\bignore previous\\b|\\btool_call\\b|\\bjson\\b|\\bapi\\b|\\bmodel\\b|"
@@ -118,6 +120,23 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
             return base;
         }
         return base.isBlank() ? line : NpcBrainResponse.sanitize(base + " " + line, 1800);
+    }
+
+    static String routingContext(String context) {
+        String sanitized = NpcBrainResponse.sanitize(context, 1800);
+        Matcher matcher = ROUTING_CONTEXT.matcher(sanitized);
+        if (!matcher.find()) {
+            return "";
+        }
+        return NpcBrainResponse.sanitize(matcher.group(), 520);
+    }
+
+    static String memoryWithoutRouting(String context) {
+        String sanitized = NpcBrainResponse.sanitize(context, 1400);
+        if (sanitized.isBlank()) {
+            return "";
+        }
+        return ROUTING_CONTEXT.matcher(sanitized).replaceFirst("").trim();
     }
 
     static NpcDialogueRoute routeFromContext(String context) {

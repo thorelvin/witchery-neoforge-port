@@ -45,6 +45,20 @@ public final class NpcPromptBuilder {
     private NpcPromptBuilder() {
     }
 
+    private static String memoryAndRoutingBlock(String memory) {
+        String remembered = NpcMessageAnalysis.memoryWithoutRouting(memory);
+        String routing = NpcMessageAnalysis.routingContext(memory);
+        return """
+                # Memory
+                %s
+
+                # Current routing
+                %s
+                """.formatted(
+                remembered.isBlank() ? "none" : remembered,
+                routing.isBlank() ? "none" : routing).strip();
+    }
+
     public static NpcBrainPrompt covenWitchGreeting(CovenWitchEntity witch, ServerPlayer player, String memory) {
         return covenWitch(witch, player, memory,
                 "the player right-clicked the witch and her trade screen is opening",
@@ -559,7 +573,6 @@ public final class NpcPromptBuilder {
                 # Hobgoblin facts
                 %s
 
-                # Memory
                 %s
 
                 # Player message
@@ -572,8 +585,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
-                If Memory contains "Message routing", treat it as current player intent, not past memory.
-                Follow its reply strategy before choosing facts: small_talk answers ordinary remarks, trade answers stock or price, lore stays on the named topic, memory answers remembered player facts, action answers with limits or price.
+                Current routing is current player intent, not past memory.
+                Follow Current routing's reply strategy before choosing facts: small_talk answers ordinary remarks, trade answers stock or price, lore stays on the named topic, memory answers remembered player facts, action answers with limits or price.
                 Use Hobgoblin facts and server state when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in hobgoblin voice.
                 If several facts are present, use only the one that answers the player.
@@ -600,7 +613,7 @@ public final class NpcPromptBuilder {
                 patronInfo == null || patronInfo.isBlank() ? "unknown" : patronInfo,
                 tradeInfo == null || tradeInfo.isBlank() ? "unknown" : tradeInfo,
                 knowledge == null || knowledge.isBlank() ? "none" : knowledge,
-                memory == null || memory.isBlank() ? "none" : memory,
+                memoryAndRoutingBlock(memory),
                 playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
                 situation,
                 task);
@@ -665,7 +678,6 @@ public final class NpcPromptBuilder {
                 # Mirror facts
                 %s
 
-                # Memory
                 %s
 
                 # Player message
@@ -678,8 +690,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
-                If Memory contains "Message routing", treat it as current player intent, not past memory.
-                Follow its reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, lore stays on the named mirror topic, memory answers remembered player facts, and action answers with limits or threats.
+                Current routing is current player intent, not past memory.
+                Follow Current routing's reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, lore stays on the named mirror topic, memory answers remembered player facts, and action answers with limits or threats.
                 Use Mirror facts and server state when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in the Reflection's voice.
                 If several facts are present, use only the one that answers the player.
@@ -705,7 +717,7 @@ public final class NpcPromptBuilder {
                 reflectionState == null || reflectionState.isBlank() ? "unknown" : reflectionState,
                 gearInfo == null || gearInfo.isBlank() ? "nothing notable" : gearInfo,
                 knowledge == null || knowledge.isBlank() ? "none" : knowledge,
-                memory == null || memory.isBlank() ? "none" : memory,
+                memoryAndRoutingBlock(memory),
                 playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
                 situation,
                 task);
@@ -780,7 +792,6 @@ public final class NpcPromptBuilder {
                 # Witchery facts
                 %s
 
-                # Memory
                 %s
 
                 # Player message
@@ -793,8 +804,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
-                If Memory contains "Message routing", treat it as current player intent, not past memory.
-                Follow its reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, and action answers with limits or prices.
+                Current routing is current player intent, not past memory.
+                Follow Current routing's reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, and action answers with limits or prices.
                 Use Witchery facts and server state when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in Leonard's voice.
                 If a Targeted fact lists exact ingredients, you may name those ingredients exactly and briefly.
@@ -830,7 +841,7 @@ public final class NpcPromptBuilder {
                 covenInfo,
                 gearInfo,
                 knowledge == null || knowledge.isBlank() ? "none" : knowledge,
-                memory == null || memory.isBlank() ? "none" : memory,
+                memoryAndRoutingBlock(memory),
                 playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
                 situation,
                 task);
@@ -900,7 +911,6 @@ public final class NpcPromptBuilder {
                 # Witchery village facts
                 %s
 
-                # Memory
                 %s
 
                 # Player message
@@ -913,8 +923,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
-                If Memory contains "Message routing", treat it as current player intent, not past memory.
-                Follow its reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, social answers tone, and action answers with limits or safe next steps.
+                Current routing is current player intent, not past memory.
+                Follow Current routing's reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, social answers tone, and action answers with limits or safe next steps.
                 Use Village state for questions about size, safety, golems, walls, raids, guards, vampires, werewolves, witches, or nearby trouble.
                 If the player asks about this villager's job, answer from Profession and Job card.
                 If the player asks about trade, speak from the profession; do not invent exact stock unless the job card or facts name it.
@@ -945,7 +955,7 @@ public final class NpcPromptBuilder {
                 villageInfo == null || villageInfo.isBlank() ? "no nearby village facts" : villageInfo,
                 jobCard == null || jobCard.isBlank() ? "No special job card; answer as a cautious local." : jobCard,
                 knowledge == null || knowledge.isBlank() ? "none" : knowledge,
-                memory == null || memory.isBlank() ? "none" : memory,
+                memoryAndRoutingBlock(memory),
                 playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
                 situation,
                 task);
@@ -1015,7 +1025,6 @@ public final class NpcPromptBuilder {
                 # Witchery facts
                 %s
 
-                # Memory
                 %s
 
                 # Player message
@@ -1028,8 +1037,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
-                If Memory contains "Message routing", treat it as current player intent, not past memory.
-                Follow its reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, and action answers with limits or threats.
+                Current routing is current player intent, not past memory.
+                Follow Current routing's reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, and action answers with limits or threats.
                 Use Witchery facts and server state when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in Baba Yaga's voice.
                 If several facts are present, use only the one that answers the player.
@@ -1059,7 +1068,7 @@ public final class NpcPromptBuilder {
                 bossInfo,
                 gearInfo,
                 knowledge == null || knowledge.isBlank() ? "none" : knowledge,
-                memory == null || memory.isBlank() ? "none" : memory,
+                memoryAndRoutingBlock(memory),
                 playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
                 situation,
                 task);
@@ -1120,7 +1129,6 @@ public final class NpcPromptBuilder {
                 # Witchery facts
                 %s
 
-                # Memory
                 %s
 
                 # Player message
@@ -1133,8 +1141,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
-                If Memory contains "Message routing", treat it as current player intent, not past memory.
-                Follow its reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, social answers tone, and action answers with limits or safe next steps.
+                Current routing is current player intent, not past memory.
+                Follow Current routing's reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, social answers tone, and action answers with limits or safe next steps.
                 Use Witchery facts when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in the witch's voice.
                 If a Targeted fact lists exact recipe ingredients, you may name those ingredients exactly and briefly.
@@ -1176,7 +1184,7 @@ public final class NpcPromptBuilder {
                 weather,
                 threat,
                 knowledge.isBlank() ? "none" : knowledge,
-                memory == null || memory.isBlank() ? "none" : memory,
+                memoryAndRoutingBlock(memory),
                 playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
                 situation,
                 task);
@@ -1922,7 +1930,6 @@ public final class NpcPromptBuilder {
                 # Supplied facts
                 %s
 
-                # Memory
                 %s
 
                 # Bad draft to avoid
@@ -1942,7 +1949,7 @@ public final class NpcPromptBuilder {
                 sceneTime,
                 playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
                 knowledge,
-                memory == null || memory.isBlank() ? "none" : memory,
+                memoryAndRoutingBlock(memory),
                 rejectedSpeech == null || rejectedSpeech.isBlank() ? "none" : rejectedSpeech);
         return Optional.of(new NpcBrainPrompt(system.strip(), truncate(user.strip(), 1800),
                 repairExamples(player)));

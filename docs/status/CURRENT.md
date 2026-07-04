@@ -56,7 +56,9 @@ enough to read before starting work. Long historical deltas belong in
   JSON-schema parsing when schema mode is enabled. README and the LLM NPC
   experiment note document the new knobs. The shared NPC response parser also
   avoids regex salvage for object-shaped invalid JSON and unescapes quoted
-  fallback speech fragments cleanly.
+  fallback speech fragments cleanly. Prompt construction now renders durable
+  memory and current message routing as separate sections instead of mixing
+  routing instructions into the memory block.
 - Local AI NPC dialogue has moved from a Coven Witch-only experiment into a
   general persona framework. The current playtest path uses local Ollama/EVA by
   default, prewarms the model, loads compact markdown knowledge cards, keeps

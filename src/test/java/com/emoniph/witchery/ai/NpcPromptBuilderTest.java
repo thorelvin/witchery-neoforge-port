@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NpcPromptBuilderTest {
@@ -386,11 +387,16 @@ class NpcPromptBuilderTest {
         NpcBrainPrompt leonard = NpcPromptBuilder.leonardSmoke("Why call everything a debt?", memory);
         NpcBrainPrompt villager = NpcPromptBuilder.villagerSmoke("Why is everyone worried?", memory);
 
-        assertTrue(witch.userPrompt().contains("treat it as current player intent"), witch.userPrompt());
+        assertTrue(witch.userPrompt().contains("# Current routing"), witch.userPrompt());
+        assertTrue(witch.userPrompt().contains("Current routing is current player intent"), witch.userPrompt());
+        assertTrue(witch.userPrompt().contains("Message routing: route=small_talk"), witch.userPrompt());
+        assertFalse(witch.userPrompt().contains("# Memory\nMessage routing"), witch.userPrompt());
         assertTrue(witch.userPrompt().contains("atmosphere answers scene or behavior cues"), witch.userPrompt());
-        assertTrue(leonard.userPrompt().contains("treat it as current player intent"), leonard.userPrompt());
+        assertTrue(leonard.userPrompt().contains("# Current routing"), leonard.userPrompt());
+        assertTrue(leonard.userPrompt().contains("Current routing is current player intent"), leonard.userPrompt());
         assertTrue(leonard.userPrompt().contains("atmosphere answers scene or behavior cues"), leonard.userPrompt());
-        assertTrue(villager.userPrompt().contains("treat it as current player intent"), villager.userPrompt());
+        assertTrue(villager.userPrompt().contains("# Current routing"), villager.userPrompt());
+        assertTrue(villager.userPrompt().contains("Current routing is current player intent"), villager.userPrompt());
         assertTrue(villager.userPrompt().contains("atmosphere answers scene or behavior cues"), villager.userPrompt());
     }
 

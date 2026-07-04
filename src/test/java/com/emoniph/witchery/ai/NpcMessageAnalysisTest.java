@@ -118,6 +118,21 @@ class NpcMessageAnalysisTest {
     }
 
     @Test
+    void splitsRoutingContextFromDurableMemoryContext() {
+        NpcMessageAnalysis analysis = NpcMessageAnalysis.deterministic("Dev",
+                "I want to start a coven someday.");
+        String context = NpcMessageAnalysis.appendContext("Entity memory: witch is Lilith Poe; player is Dev.",
+                analysis);
+
+        assertEquals("Entity memory: witch is Lilith Poe; player is Dev.",
+                NpcMessageAnalysis.memoryWithoutRouting(context));
+        assertTrue(NpcMessageAnalysis.routingContext(context).startsWith("Message routing: route=lore"),
+                NpcMessageAnalysis.routingContext(context));
+        assertTrue(NpcMessageAnalysis.routingContext(context).contains("Dev wants to start a coven someday"),
+                NpcMessageAnalysis.routingContext(context));
+    }
+
+    @Test
     void extractsRouteFromContextLineForDownstreamGates() {
         String context = "Entity memory: witch is Lilith Poe; player is Dev. "
                 + "Message routing: route=recipe; topic=whiff_of_magic; reply strategy=answer exact known ingredient.";
