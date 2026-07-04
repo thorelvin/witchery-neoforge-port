@@ -18,6 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OpenAiCompatibleLlmProviderTest {
     @Test
+    void defaultResponseFormatUsesStrictNpcSchema() {
+        LlmProviderConfig config = new LlmProviderConfig("http://127.0.0.1:9999", "test-model",
+                1000, 80, false);
+        OpenAiCompatibleLlmProvider provider = new OpenAiCompatibleLlmProvider(config, Runnable::run,
+                LlmHttpClients.clientFor(1000));
+
+        assertEquals(LlmProviderConfig.DEFAULT_RESPONSE_FORMAT, config.responseFormat());
+        assertEquals("json_schema", provider.responseFormat().get("type").getAsString());
+    }
+
+    @Test
     void jsonSchemaResponseFormatUsesStrictNpcSchema() {
         OpenAiCompatibleLlmProvider provider = provider("json_schema");
 
@@ -42,6 +53,19 @@ class OpenAiCompatibleLlmProviderTest {
     @Test
     void responseFormatCanBeDisabledForLooseCompatibleServers() {
         assertNull(provider("none").responseFormat());
+    }
+
+    @Test
+    void responseFormatCanUseJsonObjectForLooseCompatibleServers() {
+        JsonObject responseFormat = provider("json_object").responseFormat();
+
+        assertNotNull(responseFormat);
+        assertEquals("json_object", responseFormat.get("type").getAsString());
+    }
+
+    @Test
+    void blankResponseFormatFallsBackToStrictDefault() {
+        assertEquals("json_schema", provider("").responseFormat().get("type").getAsString());
     }
 
     @Test

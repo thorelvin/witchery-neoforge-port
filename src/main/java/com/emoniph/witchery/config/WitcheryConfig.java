@@ -205,8 +205,8 @@ public class WitcheryConfig {
                 .comment("Extra openai_compatible HTTP headers as 'Header: value' lines separated by semicolons or newlines. Authorization and Content-Type are ignored here.")
                 .define("extraHeaders", "");
         LLM_RESPONSE_FORMAT = BUILDER
-                .comment("openai_compatible response format: json_object, json_schema, or none. json_schema uses strict NPC JSON schema when the endpoint supports it. Default: json_object")
-                .define("responseFormat", "json_object");
+                .comment("openai_compatible response format: json_schema, json_object, or none. json_schema uses strict NPC JSON schema when the endpoint supports it. Set json_object or none for looser local servers. Default: json_schema")
+                .define("responseFormat", "json_schema");
         BUILDER.pop();
 
         SPEC = BUILDER.build();

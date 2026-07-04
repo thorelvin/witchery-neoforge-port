@@ -6,20 +6,25 @@ public record LlmProviderConfig(String endpoint, String model, int timeoutMillis
                                 boolean allowLanEndpoint, int keepAliveMinutes,
                                 String apiKeyEnv, Map<String, String> extraHeaders,
                                 String responseFormat) {
+    public static final String DEFAULT_RESPONSE_FORMAT = "json_schema";
+
     public LlmProviderConfig {
         apiKeyEnv = apiKeyEnv == null ? "" : apiKeyEnv.trim();
         extraHeaders = extraHeaders == null ? Map.of() : Map.copyOf(extraHeaders);
-        responseFormat = responseFormat == null ? "" : responseFormat.trim();
+        responseFormat = responseFormat == null || responseFormat.isBlank()
+                ? DEFAULT_RESPONSE_FORMAT
+                : responseFormat.trim();
     }
 
     public LlmProviderConfig(String endpoint, String model, int timeoutMillis, int maxTokens,
                              boolean allowLanEndpoint, int keepAliveMinutes) {
         this(endpoint, model, timeoutMillis, maxTokens, allowLanEndpoint, keepAliveMinutes, "", Map.of(),
-                "json_object");
+                DEFAULT_RESPONSE_FORMAT);
     }
 
     public LlmProviderConfig(String endpoint, String model, int timeoutMillis, int maxTokens,
                              boolean allowLanEndpoint) {
-        this(endpoint, model, timeoutMillis, maxTokens, allowLanEndpoint, 30, "", Map.of(), "json_object");
+        this(endpoint, model, timeoutMillis, maxTokens, allowLanEndpoint, 30, "", Map.of(),
+                DEFAULT_RESPONSE_FORMAT);
     }
 }
