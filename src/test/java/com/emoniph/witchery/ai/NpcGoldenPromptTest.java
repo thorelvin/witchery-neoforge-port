@@ -52,11 +52,28 @@ class NpcGoldenPromptTest {
                                 "Purified Milk", "Whiff of Magic"),
                         List.of("small forest hobgoblin", "apothecary card")),
                 new GoldenPrompt(
+                        "coven_witch_greeting",
+                        NpcPromptBuilder.covenWitchSmoke("hello", ""),
+                        List.of("Speak as the witch only", "practical, secretive"),
+                        List.of("The witch is named Lilith Poe", "biome Plains", "time of day night",
+                                "clock 22:30", "the player spoke near the witch in chat"),
+                        List.of("small forest hobgoblin", "apothecary card", "Boss state")),
+                new GoldenPrompt(
                         "hobgoblin_chat_trade",
                         NpcPromptBuilder.hobgoblinSmoke("what do you trade?", ""),
                         List.of("Speak as the hobgoblin only", "small forest hobgoblin"),
                         List.of("The hobgoblin is named Hobgoblin", "Trade state", "Koboldite",
                                 "nearby goblin altar"),
+                        List.of("practical coven witch", "apothecary card")),
+                new GoldenPrompt(
+                        "hobgoblin_repair",
+                        NpcPromptBuilder.cardRepair("hobgoblin", "", "Dev",
+                                "how do I get koboldite dust?",
+                                "Message routing: route=lore; topic=koboldite; reply strategy=answer exact known route.",
+                                "I know fumes.", "Forest", "day").orElseThrow(),
+                        List.of("repair one Minecraft Witchery NPC line", "supplied in-world facts"),
+                        List.of("Hobgoblin is speaking to Dev", "small greedy hobgoblin", "Scene: Forest, day",
+                                "Koboldite", "Bad draft to avoid"),
                         List.of("practical coven witch", "apothecary card")),
                 new GoldenPrompt(
                         "leonard_chat_lore",
