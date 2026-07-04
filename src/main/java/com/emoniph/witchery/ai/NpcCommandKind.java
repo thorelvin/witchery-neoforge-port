@@ -24,11 +24,16 @@ public enum NpcCommandKind {
     }
 
     public static Optional<NpcCommandKind> candidate(String message) {
+        Optional<NpcCommandKind> direct = directCommandCandidate(message);
+        return direct.isPresent() ? direct : ambiguousCommandCandidate(message);
+    }
+
+    public static Optional<NpcCommandKind> directCommandCandidate(String message) {
         String normalized = normalize(message);
-        if (matchesMine(normalized)) {
+        if (matchesDirectMine(normalized)) {
             return Optional.of(MINE);
         }
-        if (matchesWorship(normalized)) {
+        if (matchesDirectWorship(normalized)) {
             return Optional.of(WORSHIP);
         }
         if (matchesComeHere(normalized)) {
@@ -48,6 +53,17 @@ public enum NpcCommandKind {
         }
         if (matchesStay(normalized)) {
             return Optional.of(STAY);
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<NpcCommandKind> ambiguousCommandCandidate(String message) {
+        String normalized = normalize(message);
+        if (matchesAmbiguousMine(normalized)) {
+            return Optional.of(MINE);
+        }
+        if (matchesAmbiguousWorship(normalized)) {
+            return Optional.of(WORSHIP);
         }
         return Optional.empty();
     }
@@ -157,6 +173,10 @@ public enum NpcCommandKind {
     }
 
     private static boolean matchesMine(String normalized) {
+        return matchesDirectMine(normalized) || matchesAmbiguousMine(normalized);
+    }
+
+    private static boolean matchesDirectMine(String normalized) {
         return normalized.matches("^(mine|dig|work)\\b.*")
                 || normalized.matches(".*\\b(can|could|would|will)\\s+you\\s+(mine|dig|work)\\b.*")
                 || normalized.contains("go mine")
@@ -164,11 +184,21 @@ public enum NpcCommandKind {
                 || normalized.contains("start digging")
                 || normalized.contains("mine for me")
                 || normalized.contains("dig for me")
-                || normalized.contains("find koboldite")
+                || normalized.contains("go find koboldite")
+                || normalized.contains("find koboldite for me")
+                || normalized.contains("get koboldite for me");
+    }
+
+    private static boolean matchesAmbiguousMine(String normalized) {
+        return normalized.contains("find koboldite")
                 || normalized.contains("get koboldite");
     }
 
     private static boolean matchesWorship(String normalized) {
+        return matchesDirectWorship(normalized) || matchesAmbiguousWorship(normalized);
+    }
+
+    private static boolean matchesDirectWorship(String normalized) {
         return normalized.matches("^(worship|pray)\\b.*")
                 || normalized.matches(".*\\b(can|could|would|will)\\s+you\\s+(worship|pray)\\b.*")
                 || normalized.contains("go worship")
@@ -177,10 +207,13 @@ public enum NpcCommandKind {
                 || normalized.contains("worship statue")
                 || normalized.contains("worship the statue")
                 || normalized.contains("worship patron")
-                || normalized.contains("goblin altar")
-                || normalized.contains("patron altar")
                 || normalized.contains("pray to mog")
                 || normalized.contains("pray to gulg");
+    }
+
+    private static boolean matchesAmbiguousWorship(String normalized) {
+        return normalized.contains("goblin altar")
+                || normalized.contains("patron altar");
     }
 
     private static boolean matchesStay(String normalized) {

@@ -23,6 +23,21 @@ class NpcCommandKindTest {
     }
 
     @Test
+    void separatesDirectCommandsFromAmbiguousLoreNouns() {
+        assertEquals(Optional.of(NpcCommandKind.MINE), NpcCommandKind.directCommandCandidate("mine for me"));
+        assertEquals(Optional.of(NpcCommandKind.WORSHIP),
+                NpcCommandKind.directCommandCandidate("can you pray at the altar?"));
+        assertEquals(Optional.of(NpcCommandKind.STAY), NpcCommandKind.directCommandCandidate("don't run away"));
+
+        assertEquals(Optional.empty(), NpcCommandKind.directCommandCandidate("what is the goblin altar?"));
+        assertEquals(Optional.of(NpcCommandKind.WORSHIP),
+                NpcCommandKind.ambiguousCommandCandidate("what is the goblin altar?"));
+        assertEquals(Optional.empty(), NpcCommandKind.directCommandCandidate("can hobgoblins find koboldite?"));
+        assertEquals(Optional.of(NpcCommandKind.MINE),
+                NpcCommandKind.ambiguousCommandCandidate("can hobgoblins find koboldite?"));
+    }
+
+    @Test
     void plainDirectDoesNotAcceptQuestionShapedCommands() {
         assertTrue(NpcCommandKind.MINE.matchesCandidate("can you mine for me?"));
         assertFalse(NpcCommandKind.isClearlyQuestion("can you mine for me?"));

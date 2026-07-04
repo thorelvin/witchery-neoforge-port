@@ -500,14 +500,26 @@ public final class NpcBrainEvents {
     }
 
     private static boolean handleNpcCommand(ServerLevel level, ChatTarget target, ServerPlayer player, String message) {
-        Optional<NpcCommandKind> command = NpcCommandKind.candidate(message);
-        if (command.isEmpty()) {
-            return false;
+        Optional<NpcCommandKind> directCommand = NpcCommandKind.directCommandCandidate(message);
+        if (directCommand.isPresent()) {
+            return handleDirectNpcCommand(level, target, player, message, directCommand.get());
         }
         if (NpcCommandKind.isClearlyQuestion(message)) {
             return false;
         }
-        NpcCommandKind kind = command.get();
+        Optional<NpcCommandKind> ambiguousCommand = NpcCommandKind.ambiguousCommandCandidate(message);
+        if (ambiguousCommand.isEmpty()) {
+            return false;
+        }
+        NpcCommandKind kind = ambiguousCommand.get();
+        if (!supportsCommand(target, kind)) {
+            return false;
+        }
+        return requestNpcCommandIntent(level, target, player, message, kind);
+    }
+
+    private static boolean handleDirectNpcCommand(ServerLevel level, ChatTarget target, ServerPlayer player,
+                                                  String message, NpcCommandKind kind) {
         if (!supportsCommand(target, kind)) {
             return false;
         }
