@@ -3538,6 +3538,38 @@ class NpcBrainResponseTest {
     }
 
     @Test
+    void validationReportsPromptLeakReason() {
+        NpcBrainResponse.SpeechValidation validation = NpcBrainResponse.validateSpeech(
+                "Witchery knowledge: secret card text.",
+                "Lilith Poe", "Dev", "hi", "", "22:30");
+
+        assertFalse(validation.accepted());
+        assertEquals(NpcBrainResponse.RejectionReason.PROMPT_LEAK, validation.reason());
+    }
+
+    @Test
+    void validationReportsPlayerEchoReason() {
+        NpcBrainResponse.SpeechValidation validation = NpcBrainResponse.validateSpeech(
+                "how are you?",
+                "Lilith Poe", "Dev", "how are you?", "", "22:30");
+
+        assertFalse(validation.accepted());
+        assertEquals(NpcBrainResponse.RejectionReason.PLAYER_ECHO, validation.reason());
+    }
+
+    @Test
+    void validationCarriesAcceptedSpeech() {
+        NpcBrainResponse.SpeechValidation validation = NpcBrainResponse.validateSpeech(
+                "*nods thoughtfully* Witches' salt is for warding, cleansing, and keeping hostile magic away.",
+                "Lilith Poe", "Dev", "what is witches salt for?", "", "22:30");
+
+        assertTrue(validation.accepted());
+        assertEquals(NpcBrainResponse.RejectionReason.NONE, validation.reason());
+        assertEquals("*nods* \"Witches' salt is for warding, cleansing, and keeping hostile magic away.\"",
+                validation.speech());
+    }
+
+    @Test
     void clampsLongSpeech() {
         String longSpeech = "a".repeat(400);
         Optional<NpcBrainResponse> response = NpcBrainResponse.parse("""

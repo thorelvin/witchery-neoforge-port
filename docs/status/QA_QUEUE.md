@@ -40,6 +40,9 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   set `responseFormat = "json_schema"` and confirm replies still parse into
   `speech`, `intent`, and `memory`; against a looser local-compatible server,
   set `responseFormat = "none"` if it rejects `response_format`.
+- Trigger a rejected AI reply, such as a prompt-leak answer, player-echo line,
+  repeated NPC line, or busy gate, then run `/witchery ai status` and confirm
+  `recentRejections` names the rejection reason clearly.
 
 ### Hobgoblin Chat Commands
 

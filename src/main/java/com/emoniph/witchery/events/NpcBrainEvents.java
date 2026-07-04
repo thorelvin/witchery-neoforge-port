@@ -1041,7 +1041,10 @@ public final class NpcBrainEvents {
         return player.getLookAngle().normalize().dot(offset.normalize()) > 0.82 && player.hasLineOfSight(witch);
     }
 
-    private static String normalize(String text) {
+    static String normalize(String text) {
+        if (text == null || text.isBlank()) {
+            return "";
+        }
         return text.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_ ]+", " ").replaceAll("\\s+", " ").trim();
     }
 

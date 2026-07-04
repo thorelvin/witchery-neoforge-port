@@ -61,6 +61,34 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         memory = sanitize(memory, MAX_MEMORY_LENGTH);
     }
 
+    public enum RejectionReason {
+        NONE,
+        BLANK,
+        PROMPT_LEAK,
+        PLAYER_ECHO,
+        UNSAFE_ACTION_BEAT,
+        MISSED_CONTEXT,
+        REPEATED_NPC_LINE,
+        CLIPPED_SENTENCE,
+        WRONG_PERSONA,
+        BAD_NARRATION,
+        LOW_VALUE_FRAGMENT
+    }
+
+    public record SpeechValidation(boolean accepted, String speech, RejectionReason reason) {
+        Optional<String> acceptedSpeech() {
+            return accepted ? Optional.of(speech) : Optional.empty();
+        }
+
+        static SpeechValidation accepted(String speech) {
+            return new SpeechValidation(true, speech, RejectionReason.NONE);
+        }
+
+        static SpeechValidation rejected(RejectionReason reason) {
+            return new SpeechValidation(false, "", reason == null ? RejectionReason.BAD_NARRATION : reason);
+        }
+    }
+
     public static Optional<NpcBrainResponse> parse(String raw) {
         if (raw == null || raw.isBlank()) {
             return Optional.empty();
@@ -156,34 +184,50 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     public static Optional<String> polishSpeech(String rawSpeech, String npcName, String playerName,
                                                 String playerMessage, String memoryContext,
                                                 String expectedClock) {
-        return polishSpeech(rawSpeech, npcName, playerName, playerMessage, memoryContext, expectedClock, true);
+        return validateSpeech(rawSpeech, npcName, playerName, playerMessage, memoryContext, expectedClock)
+                .acceptedSpeech();
     }
 
     public static Optional<String> polishSpeechAfterFallback(String rawSpeech, String npcName, String playerName,
                                                              String playerMessage, String memoryContext,
                                                              String expectedClock) {
-        return polishSpeech(rawSpeech, npcName, playerName, playerMessage, memoryContext, expectedClock, false);
+        return validateSpeechAfterFallback(rawSpeech, npcName, playerName, playerMessage, memoryContext, expectedClock)
+                .acceptedSpeech();
     }
 
     public static Optional<String> polishSpeechOrGroundedFollowup(String rawSpeech, String npcName, String playerName,
                                                                   String playerMessage, String memoryContext,
                                                                   String expectedClock) {
-        Optional<String> polished = polishSpeech(rawSpeech, npcName, playerName, playerMessage, memoryContext, expectedClock, true);
-        if (polished.isPresent()) {
-            return polished;
+        SpeechValidation polished = validateSpeech(rawSpeech, npcName, playerName, playerMessage, memoryContext,
+                expectedClock);
+        if (polished.accepted()) {
+            return Optional.of(polished.speech());
         }
-        Optional<String> relaxed = polishSpeech(rawSpeech, npcName, playerName, playerMessage, memoryContext, expectedClock, false);
-        if (relaxed.isPresent()
-                && canKeepRawWithGroundedFollowup(relaxed.get(), playerMessage, npcName)
-                && supportFollowup(playerMessage, relaxed.get()).isPresent()) {
-            return relaxed;
+        SpeechValidation relaxed = validateSpeechAfterFallback(rawSpeech, npcName, playerName, playerMessage,
+                memoryContext, expectedClock);
+        if (relaxed.accepted()
+                && canKeepRawWithGroundedFollowup(relaxed.speech(), playerMessage, npcName)
+                && supportFollowup(playerMessage, relaxed.speech()).isPresent()) {
+            return Optional.of(relaxed.speech());
         }
         return Optional.empty();
     }
 
-    private static Optional<String> polishSpeech(String rawSpeech, String npcName, String playerName,
-                                                 String playerMessage, String memoryContext,
-                                                 String expectedClock, boolean requireAskedContext) {
+    public static SpeechValidation validateSpeech(String rawSpeech, String npcName, String playerName,
+                                                  String playerMessage, String memoryContext,
+                                                  String expectedClock) {
+        return validateSpeech(rawSpeech, npcName, playerName, playerMessage, memoryContext, expectedClock, true);
+    }
+
+    public static SpeechValidation validateSpeechAfterFallback(String rawSpeech, String npcName, String playerName,
+                                                               String playerMessage, String memoryContext,
+                                                               String expectedClock) {
+        return validateSpeech(rawSpeech, npcName, playerName, playerMessage, memoryContext, expectedClock, false);
+    }
+
+    private static SpeechValidation validateSpeech(String rawSpeech, String npcName, String playerName,
+                                                   String playerMessage, String memoryContext,
+                                                   String expectedClock, boolean requireAskedContext) {
         String cleaned = sanitize(rawSpeech, MAX_SPEECH_LENGTH)
                 .replaceAll("^<[^>]{1,48}>\\s*", "")
                 .trim();
@@ -198,17 +242,53 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         cleaned = cleaned.replaceAll("\\s+", " ").trim();
         cleaned = trimTrailingClippedSentence(cleaned);
         cleaned = finishShortTrailingComma(cleaned);
-        if (cleaned.isBlank()
-                || isClippedSpeech(cleaned)
-                || isBadNarration(cleaned, npcName, playerMessage)
-                || startsWithPlayerSpeakerPrefix(cleaned, playerName)
-                || isLowValueFragment(cleaned)
-                || (requireAskedContext && missesAskedContext(cleaned, npcName, playerMessage, playerName, memoryContext, expectedClock))
-                || (!requireAskedContext && missesHardAskedContext(cleaned, npcName, playerMessage, playerName, memoryContext, expectedClock))
-                || echoesPlayer(cleaned, playerMessage)) {
-            return Optional.empty();
+        RejectionReason reason = rejectionReason(cleaned, npcName, playerName, playerMessage, memoryContext,
+                expectedClock, requireAskedContext);
+        if (reason != RejectionReason.NONE) {
+            return SpeechValidation.rejected(reason);
         }
-        return Optional.of(sanitize(cleaned, MAX_SPEECH_LENGTH));
+        return SpeechValidation.accepted(sanitize(cleaned, MAX_SPEECH_LENGTH));
+    }
+
+    private static RejectionReason rejectionReason(String cleaned, String npcName, String playerName,
+                                                   String playerMessage, String memoryContext,
+                                                   String expectedClock, boolean requireAskedContext) {
+        if (cleaned.isBlank()) {
+            return RejectionReason.BLANK;
+        }
+        if (isClippedSpeech(cleaned)) {
+            return RejectionReason.CLIPPED_SENTENCE;
+        }
+        if (PROMPT_LEAK.matcher(cleaned).matches()) {
+            return RejectionReason.PROMPT_LEAK;
+        }
+        if (hasUnsafeAsterisk(cleaned)) {
+            return RejectionReason.UNSAFE_ACTION_BEAT;
+        }
+        if (PLAYER_ROLE_CONFUSION.matcher(cleaned).matches()
+                || PLAYER_SWORN_CONFUSION.matcher(cleaned).matches()
+                || NPC_IDENTITY_DENIAL.matcher(cleaned).matches()
+                || hasRoleConfusion(cleaned, npcName)
+                || unwantedSelfIntroduction(cleaned, npcName, playerMessage)
+                || startsWithPlayerSpeakerPrefix(cleaned, playerName)) {
+            return RejectionReason.WRONG_PERSONA;
+        }
+        if (isBadNarration(cleaned, npcName, playerMessage)) {
+            return RejectionReason.BAD_NARRATION;
+        }
+        if (echoesPlayer(cleaned, playerMessage)) {
+            return RejectionReason.PLAYER_ECHO;
+        }
+        if (isLowValueFragment(cleaned)) {
+            return RejectionReason.LOW_VALUE_FRAGMENT;
+        }
+        if ((requireAskedContext && missesAskedContext(cleaned, npcName, playerMessage, playerName, memoryContext,
+                expectedClock))
+                || (!requireAskedContext && missesHardAskedContext(cleaned, npcName, playerMessage, playerName,
+                memoryContext, expectedClock))) {
+            return RejectionReason.MISSED_CONTEXT;
+        }
+        return RejectionReason.NONE;
     }
 
     public static Optional<String> supportFollowup(String playerMessage, String speech) {

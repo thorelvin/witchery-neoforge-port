@@ -19,6 +19,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.villager.Villager;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -47,10 +49,12 @@ public final class NpcBrainService {
     private static final int REPAIR_TIMEOUT_MILLIS = 2600;
     private static final int SPEECH_TEXT_COLOR = 0xFFFFFF;
     private static final int COOLDOWN_PRUNE_SIZE = 256;
+    private static final int MAX_RECENT_REJECTIONS = 6;
 
     private final Object executorLock = new Object();
     private final Object warmupExecutorLock = new Object();
     private final Object warmupLock = new Object();
+    private final Object rejectionLock = new Object();
     private final AtomicInteger inFlight = new AtomicInteger();
     private final AtomicLong successes = new AtomicLong();
     private final AtomicLong failures = new AtomicLong();
@@ -58,6 +62,7 @@ public final class NpcBrainService {
     private final AtomicLong warmups = new AtomicLong();
     private final ConcurrentHashMap<String, Long> cooldownUntil = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Long> socialCooldownUntil = new ConcurrentHashMap<>();
+    private final Deque<String> recentRejections = new ArrayDeque<>();
     private volatile ExecutorService executor;
     private volatile ExecutorService warmupExecutor;
     private volatile int executorParallelism;
@@ -214,7 +219,7 @@ public final class NpcBrainService {
         int current = inFlight.incrementAndGet();
         if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
             inFlight.decrementAndGet();
-            rejected.incrementAndGet();
+            reject("command_intent:busy");
             return false;
         }
 
@@ -302,7 +307,7 @@ public final class NpcBrainService {
         int current = inFlight.incrementAndGet();
         if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
             inFlight.decrementAndGet();
-            rejected.incrementAndGet();
+            reject("social_intent:busy");
             return false;
         }
 
@@ -356,7 +361,7 @@ public final class NpcBrainService {
         int current = inFlight.incrementAndGet();
         if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
             inFlight.decrementAndGet();
-            rejected.incrementAndGet();
+            reject("message_analysis:busy");
             return false;
         }
 
@@ -423,7 +428,7 @@ public final class NpcBrainService {
         int current = inFlight.incrementAndGet();
         if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
             inFlight.decrementAndGet();
-            rejected.incrementAndGet();
+            reject("persona_response:busy");
             return false;
         }
 
@@ -463,7 +468,7 @@ public final class NpcBrainService {
         int current = inFlight.incrementAndGet();
         if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
             inFlight.decrementAndGet();
-            rejected.incrementAndGet();
+            reject("probe:busy");
             source.sendFailure(Component.literal("[AI] Busy; try again in a moment."));
             return 0;
         }
@@ -502,12 +507,42 @@ public final class NpcBrainService {
                 + ", ok=" + successes.get()
                 + ", failed=" + failures.get()
                 + ", rejected=" + rejected.get()
+                + rejectionStatus()
                 + (lastError.isBlank() ? "" : ", lastError=" + lastError);
+    }
+
+    private void reject(String reason) {
+        rejected.incrementAndGet();
+        rememberRejection(reason);
+    }
+
+    void rememberRejection(String reason) {
+        String cleaned = NpcBrainResponse.sanitize(reason, 140);
+        if (cleaned.isBlank()) {
+            cleaned = "unknown";
+        }
+        synchronized (rejectionLock) {
+            recentRejections.addLast(cleaned);
+            while (recentRejections.size() > MAX_RECENT_REJECTIONS) {
+                recentRejections.removeFirst();
+            }
+        }
+    }
+
+    private String rejectionStatus() {
+        synchronized (rejectionLock) {
+            return recentRejections.isEmpty()
+                    ? ""
+                    : ", recentRejections=" + String.join(" | ", recentRejections);
+        }
     }
 
     public void reload() {
         cooldownUntil.clear();
         socialCooldownUntil.clear();
+        synchronized (rejectionLock) {
+            recentRejections.clear();
+        }
         LlmHttpClients.clear();
         resetWarmup();
         lastError = "";
@@ -635,7 +670,7 @@ public final class NpcBrainService {
             return;
         }
         if (!persona.allowsIntent(response.intent(), entity, player)) {
-            rejected.incrementAndGet();
+            reject("persona_response:intent_denied:" + response.intent().id());
             if (showFallback && fallback != null) {
                 player.displayClientMessage(fallback, false);
             } else if (!showFallback) {
@@ -659,7 +694,8 @@ public final class NpcBrainService {
                 }
                 return;
             }
-            rejected.incrementAndGet();
+            reject("persona_response:validation:" + validationReason(persona, entity, player, playerMessage,
+                    response.speech(), memoryContext, level));
             if (!showFallback && requestPersonaRepair(level, persona, entityId, player, entity, playerMessage,
                     response.speech(), memoryContext, rememberExchange)) {
                 return;
@@ -676,7 +712,7 @@ public final class NpcBrainService {
         if (NpcBrainResponse.sameMeaningForRepetition(polishedSpeech.get(), lastNpcSpeech)
                 || memoryData.repeatsRecentNpcSpeech(entityId, player.getUUID(), polishedSpeech.get())
                 || memoryData.repeatsRecentPlayerSpeech(entityId, player.getUUID(), polishedSpeech.get())) {
-            rejected.incrementAndGet();
+            reject("persona_response:repeated_npc_line");
             if (!showFallback && requestPersonaRepair(level, persona, entityId, player, entity, playerMessage,
                     polishedSpeech.get(), memoryContext, rememberExchange)) {
                 return;
@@ -730,7 +766,7 @@ public final class NpcBrainService {
         int current = inFlight.incrementAndGet();
         if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
             inFlight.decrementAndGet();
-            rejected.incrementAndGet();
+            reject("repair:busy");
             return false;
         }
 
@@ -756,6 +792,29 @@ public final class NpcBrainService {
         return true;
     }
 
+    private <E extends LivingEntity> String validationReason(NpcPersona<E> persona, E entity, ServerPlayer player,
+                                                             String playerMessage, String rawSpeech,
+                                                             String memoryContext, ServerLevel level) {
+        String npcName = persona.displayName(entity);
+        String playerName = player.getName().getString();
+        String clock = NpcPromptBuilder.clockTime(level.getDayTime());
+        NpcBrainResponse.SpeechValidation strict = NpcBrainResponse.validateSpeech(rawSpeech, npcName, playerName,
+                playerMessage, memoryContext, clock);
+        if (!strict.accepted()) {
+            return reasonId(strict.reason());
+        }
+        NpcBrainResponse.SpeechValidation relaxed = NpcBrainResponse.validateSpeechAfterFallback(rawSpeech, npcName,
+                playerName, playerMessage, memoryContext, clock);
+        if (!relaxed.accepted()) {
+            return reasonId(relaxed.reason());
+        }
+        return "persona_polish_empty";
+    }
+
+    private static String reasonId(NpcBrainResponse.RejectionReason reason) {
+        return reason == null ? "unknown" : reason.name().toLowerCase(Locale.ROOT);
+    }
+
     private <E extends LivingEntity> void handlePersonaRepairResponse(ServerLevel level, NpcPersona<E> persona,
                                                                       UUID entityId, ServerPlayer player, E entity,
                                                                       String playerMessage, String memoryContext,
@@ -777,7 +836,7 @@ public final class NpcBrainService {
             return;
         }
         if (!persona.allowsIntent(response.intent(), entity, player)) {
-            rejected.incrementAndGet();
+            reject("repair:intent_denied:" + response.intent().id());
             tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage, memoryContext);
             return;
         }
@@ -787,11 +846,16 @@ public final class NpcBrainService {
                         NpcPromptBuilder.clockTime(level.getDayTime())));
         NpcMemoryData memoryData = NpcMemoryData.get(level);
         String lastNpcSpeech = memoryData.getLastNpcSpeech(entityId, player.getUUID());
-        if (polishedSpeech.isEmpty()
-                || NpcBrainResponse.sameMeaningForRepetition(polishedSpeech.get(), lastNpcSpeech)
+        if (polishedSpeech.isEmpty()) {
+            reject("repair:validation:" + validationReason(persona, entity, player, playerMessage,
+                    response.speech(), memoryContext, level));
+            tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage, memoryContext);
+            return;
+        }
+        if (NpcBrainResponse.sameMeaningForRepetition(polishedSpeech.get(), lastNpcSpeech)
                 || memoryData.repeatsRecentNpcSpeech(entityId, player.getUUID(), polishedSpeech.get())
                 || memoryData.repeatsRecentPlayerSpeech(entityId, player.getUUID(), polishedSpeech.get())) {
-            rejected.incrementAndGet();
+            reject("repair:repeated_npc_line");
             tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage, memoryContext);
             return;
         }

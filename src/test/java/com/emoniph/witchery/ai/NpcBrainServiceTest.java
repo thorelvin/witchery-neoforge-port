@@ -86,4 +86,18 @@ class NpcBrainServiceTest {
         assertFalse(headers.containsKey("Authorization"));
         assertFalse(headers.containsKey("Content-Type"));
     }
+
+    @Test
+    void statusLineIncludesAndReloadClearsRecentRejections() {
+        NpcBrainService service = NpcBrainService.INSTANCE;
+        service.reload();
+
+        service.rememberRejection("persona_response:validation:prompt_leak");
+
+        assertTrue(service.statusLine().contains("recentRejections=persona_response:validation:prompt_leak"));
+
+        service.reload();
+
+        assertFalse(service.statusLine().contains("recentRejections="));
+    }
 }
