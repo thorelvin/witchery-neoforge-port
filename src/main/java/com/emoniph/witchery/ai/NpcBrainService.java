@@ -9,7 +9,6 @@ import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -236,14 +235,9 @@ public final class NpcBrainService {
         persona.beginConversation(entity, player);
         NpcBrainPrompt prompt = NpcPromptBuilder.commandIntentCheck(persona.roleName(),
                 command.intentLabel(), playerMessage);
-        provider.generate(prompt)
-                .orTimeout(timeoutMillis + 500L, TimeUnit.MILLISECONDS)
-                .whenComplete((response, error) -> {
-                    releaseRequestSlot();
-                    MinecraftServer server = level.getServer();
-                    server.execute(() -> handleCommandIntent(level, persona, entity, player,
-                            response, error, onAccepted, onRejected));
-                });
+        AiRequestRunner.run(level.getServer(), provider, prompt, timeoutMillis, this::releaseRequestSlot,
+                (response, error) -> handleCommandIntent(level, persona, entity, player,
+                        response, error, onAccepted, onRejected));
         return true;
     }
 
@@ -320,14 +314,9 @@ public final class NpcBrainService {
 
         persona.beginConversation(entity, player);
         NpcBrainPrompt prompt = NpcPromptBuilder.socialIntentCheck(persona.roleName(), action, playerMessage);
-        provider.generate(prompt)
-                .orTimeout(timeoutMillis + 500L, TimeUnit.MILLISECONDS)
-                .whenComplete((response, error) -> {
-                    releaseRequestSlot();
-                    MinecraftServer server = level.getServer();
-                    server.execute(() -> handleSocialIntentClassification(level, persona, player, entity,
-                            playerMessage, action, response, error));
-                });
+        AiRequestRunner.run(level.getServer(), provider, prompt, timeoutMillis, this::releaseRequestSlot,
+                (response, error) -> handleSocialIntentClassification(level, persona, player, entity,
+                        playerMessage, action, response, error));
         return true;
     }
 
@@ -371,14 +360,9 @@ public final class NpcBrainService {
         persona.beginConversation(entity, player);
         NpcBrainPrompt prompt = NpcPromptBuilder.messageAnalysis(persona.roleName(),
                 player.getName().getString(), playerMessage);
-        provider.generate(prompt)
-                .orTimeout(timeoutMillis + 500L, TimeUnit.MILLISECONDS)
-                .whenComplete((response, error) -> {
-                    releaseRequestSlot();
-                    MinecraftServer server = level.getServer();
-                    server.execute(() -> handleMessageAnalysis(level, persona, player, entity,
-                            playerMessage, response, error));
-                });
+        AiRequestRunner.run(level.getServer(), provider, prompt, timeoutMillis, this::releaseRequestSlot,
+                (response, error) -> handleMessageAnalysis(level, persona, player, entity,
+                        playerMessage, response, error));
         return true;
     }
 
@@ -433,15 +417,11 @@ public final class NpcBrainService {
         cooldownUntil.put(cooldownKey, now + cooldownTicks(trigger));
         maybePruneExpiredCooldowns(cooldownUntil, now);
         persona.beginConversation(entity, player);
-        provider.generate(prompt)
-                .orTimeout(WitcheryConfig.LLM_TIMEOUT_MILLIS.get() + 500L, TimeUnit.MILLISECONDS)
-                .whenComplete((response, error) -> {
-                    releaseRequestSlot();
-                    MinecraftServer server = level.getServer();
-                    server.execute(() -> handlePersonaResponse(level, persona, entity.getUUID(), player, entity,
-                            playerMessage, fallback, showFallback, rememberExchange, memoryContextOverride,
-                            response, error));
-                });
+        AiRequestRunner.run(level.getServer(), provider, prompt, WitcheryConfig.LLM_TIMEOUT_MILLIS.get(),
+                this::releaseRequestSlot,
+                (response, error) -> handlePersonaResponse(level, persona, entity.getUUID(), player, entity,
+                        playerMessage, fallback, showFallback, rememberExchange, memoryContextOverride,
+                        response, error));
         return true;
     }
 
@@ -459,21 +439,16 @@ public final class NpcBrainService {
             return 0;
         }
         source.sendSuccess(() -> Component.literal("[AI] Probe queued for " + WitcheryConfig.LLM_MODEL.get() + "."), false);
-        MinecraftServer server = source.getServer();
-        provider.generate(NpcPromptBuilder.probe(promptText))
-                .orTimeout(WitcheryConfig.LLM_TIMEOUT_MILLIS.get() + 500L, TimeUnit.MILLISECONDS)
-                .whenComplete((response, error) -> {
-                    releaseRequestSlot();
-                    server.execute(() -> {
-                        if (error != null || response == null) {
-                            failure(error);
-                            source.sendFailure(Component.literal("[AI] Probe failed: " + shortError(error)));
-                            return;
-                        }
-                        successes.incrementAndGet();
-                        source.sendSuccess(() -> Component.literal("[AI] " + response.speech()
-                                + " (intent=" + response.intent().id() + ")"), false);
-                    });
+        AiRequestRunner.run(source.getServer(), provider, NpcPromptBuilder.probe(promptText),
+                WitcheryConfig.LLM_TIMEOUT_MILLIS.get(), this::releaseRequestSlot, (response, error) -> {
+                    if (error != null || response == null) {
+                        failure(error);
+                        source.sendFailure(Component.literal("[AI] Probe failed: " + shortError(error)));
+                        return;
+                    }
+                    successes.incrementAndGet();
+                    source.sendSuccess(() -> Component.literal("[AI] " + response.speech()
+                            + " (intent=" + response.intent().id() + ")"), false);
                 });
         return 1;
     }
@@ -785,14 +760,9 @@ public final class NpcBrainService {
         }
 
         persona.beginConversation(entity, player);
-        provider.generate(prompt.get())
-                .orTimeout(REPAIR_TIMEOUT_MILLIS + 500L, TimeUnit.MILLISECONDS)
-                .whenComplete((response, error) -> {
-                    releaseRequestSlot();
-                    MinecraftServer server = level.getServer();
-                    server.execute(() -> handlePersonaRepairResponse(level, persona, entityId, player, entity,
-                            playerMessage, memoryContext, rememberExchange, response, error));
-                });
+        AiRequestRunner.run(level.getServer(), provider, prompt.get(), REPAIR_TIMEOUT_MILLIS, this::releaseRequestSlot,
+                (response, error) -> handlePersonaRepairResponse(level, persona, entityId, player, entity,
+                        playerMessage, memoryContext, rememberExchange, response, error));
         return true;
     }
 
