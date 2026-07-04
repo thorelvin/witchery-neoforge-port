@@ -874,28 +874,30 @@ public final class NpcBrainService {
                                                                            Throwable error) {
         boolean conversationHandled = false;
         try {
-        if (!player.isAlive() || player.level() != level) {
-            return;
-        }
-        if (!entity.isAlive() || entity.level() != level) {
-            return;
-        }
-        if (error != null || response == null) {
-            failure(error);
-            requestNormalChatAfterSocialIntent(level, persona, entity, player, playerMessage);
-            conversationHandled = true;
-            return;
-        }
-        if (socialIntentAccepted(response)) {
-            if (persona.handleSocialAction(entity, player, playerMessage, action,
-                    socialContext(level, persona, entity, player, playerMessage))) {
-                persona.completeConversation(entity, player);
-                conversationHandled = true;
+            if (!player.isAlive() || player.level() != level) {
                 return;
             }
-        }
-        requestNormalChatAfterSocialIntent(level, persona, entity, player, playerMessage);
-        conversationHandled = true;
+            if (!entity.isAlive() || entity.level() != level) {
+                return;
+            }
+            if (error != null || response == null) {
+                failure(error);
+                persona.completeConversation(entity, player);
+                conversationHandled = true;
+                requestNormalChatAfterSocialIntent(level, persona, entity, player, playerMessage);
+                return;
+            }
+            if (socialIntentAccepted(response)) {
+                if (persona.handleSocialAction(entity, player, playerMessage, action,
+                        socialContext(level, persona, entity, player, playerMessage))) {
+                    persona.completeConversation(entity, player);
+                    conversationHandled = true;
+                    return;
+                }
+            }
+            persona.completeConversation(entity, player);
+            conversationHandled = true;
+            requestNormalChatAfterSocialIntent(level, persona, entity, player, playerMessage);
         } finally {
             if (!conversationHandled) {
                 persona.abortConversation(entity, player);
@@ -909,22 +911,22 @@ public final class NpcBrainService {
                                                               Runnable onRejected) {
         boolean conversationHandled = false;
         try {
-        if (!player.isAlive() || player.level() != level
-                || !entity.isAlive() || entity.level() != level) {
-            return;
-        }
-        persona.completeConversation(entity, player);
-        conversationHandled = true;
-        if (error != null || response == null) {
-            failure(error);
-            runSafely(onRejected);
-            return;
-        }
-        if (commandIntentAccepted(response)) {
-            runSafely(onAccepted);
-        } else {
-            runSafely(onRejected);
-        }
+            if (!player.isAlive() || player.level() != level
+                    || !entity.isAlive() || entity.level() != level) {
+                return;
+            }
+            persona.completeConversation(entity, player);
+            conversationHandled = true;
+            if (error != null || response == null) {
+                failure(error);
+                runSafely(onRejected);
+                return;
+            }
+            if (commandIntentAccepted(response)) {
+                runSafely(onAccepted);
+            } else {
+                runSafely(onRejected);
+            }
         } finally {
             if (!conversationHandled) {
                 persona.abortConversation(entity, player);
@@ -951,26 +953,27 @@ public final class NpcBrainService {
                                                                NpcBrainResponse response, Throwable error) {
         boolean conversationHandled = false;
         try {
-        if (!player.isAlive() || player.level() != level) {
-            return;
-        }
-        if (!entity.isAlive() || entity.level() != level) {
-            return;
-        }
-        NpcMessageAnalysis analysis = error == null && response != null
-                ? NpcMessageAnalysis.fromResponse(response, player.getName().getString(), playerMessage)
-                : NpcMessageAnalysis.deterministic(player.getName().getString(), playerMessage);
-        if (analysis.hasMemory()) {
-            NpcMemoryData.get(level).remember(entity.getUUID(), player.getUUID(),
-                    analysis.memory(), level.getGameTime());
-        }
-        boolean queued = requestPersonaChatWithAnalysisContext(persona, entity, player, playerMessage, analysis);
-        if (!queued) {
+            if (!player.isAlive() || player.level() != level) {
+                return;
+            }
+            if (!entity.isAlive() || entity.level() != level) {
+                return;
+            }
+            NpcMessageAnalysis analysis = error == null && response != null
+                    ? NpcMessageAnalysis.fromResponse(response, player.getName().getString(), playerMessage)
+                    : NpcMessageAnalysis.deterministic(player.getName().getString(), playerMessage);
+            if (analysis.hasMemory()) {
+                NpcMemoryData.get(level).remember(entity.getUUID(), player.getUUID(),
+                        analysis.memory(), level.getGameTime());
+            }
+            String analysisContext = NpcMessageAnalysis.appendContext(contextFor(persona, entity, player), analysis);
             persona.completeConversation(entity, player);
-            tryDisplayPersonaFallback(level, persona, entity.getUUID(), player, entity, playerMessage,
-                    NpcMessageAnalysis.appendContext(contextFor(persona, entity, player), analysis));
-        }
-        conversationHandled = true;
+            conversationHandled = true;
+            boolean queued = requestPersonaChatWithAnalysisContext(persona, entity, player, playerMessage, analysis);
+            if (!queued) {
+                tryDisplayPersonaFallback(level, persona, entity.getUUID(), player, entity, playerMessage,
+                        analysisContext);
+            }
         } finally {
             if (!conversationHandled) {
                 persona.abortConversation(entity, player);
@@ -983,7 +986,6 @@ public final class NpcBrainService {
                                                                             String playerMessage) {
         boolean queued = requestPersonaChatWithAnalysis(persona, entity, player, playerMessage);
         if (!queued) {
-            persona.completeConversation(entity, player);
             tryDisplayPersonaFallback(level, persona, entity.getUUID(), player, entity, playerMessage, "");
         }
     }
