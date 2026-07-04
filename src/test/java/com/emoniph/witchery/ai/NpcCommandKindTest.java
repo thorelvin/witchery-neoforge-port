@@ -25,6 +25,7 @@ class NpcCommandKindTest {
     @Test
     void plainDirectDoesNotAcceptQuestionShapedCommands() {
         assertTrue(NpcCommandKind.MINE.matchesCandidate("can you mine for me?"));
+        assertFalse(NpcCommandKind.isClearlyQuestion("can you mine for me?"));
         assertFalse(NpcCommandKind.MINE.isPlainDirect("can you mine for me?"));
         assertFalse(NpcCommandKind.WORSHIP.isPlainDirect("could you pray at the altar?"));
         assertTrue(NpcCommandKind.isClearlyQuestion("how do I get koboldite?"));
@@ -36,6 +37,18 @@ class NpcCommandKindTest {
         assertEquals(Optional.of(NpcCommandKind.WORSHIP), NpcCommandKind.candidate("what is the goblin altar?"));
         assertTrue(NpcCommandKind.isClearlyQuestion("what is the goblin altar?"));
         assertFalse(NpcCommandKind.WORSHIP.isPlainDirect("what is the goblin altar?"));
+    }
+
+    @Test
+    void modalLoreQuestionsDoNotLookLikeDirectOrders() {
+        assertEquals(Optional.of(NpcCommandKind.MINE), NpcCommandKind.candidate("can hobgoblins find koboldite?"));
+        assertTrue(NpcCommandKind.isClearlyQuestion("can hobgoblins find koboldite?"));
+        assertFalse(NpcCommandKind.MINE.isPlainDirect("can hobgoblins find koboldite?"));
+
+        assertEquals(Optional.of(NpcCommandKind.WORSHIP),
+                NpcCommandKind.candidate("could a hobgoblin use the patron altar?"));
+        assertTrue(NpcCommandKind.isClearlyQuestion("could a hobgoblin use the patron altar?"));
+        assertFalse(NpcCommandKind.WORSHIP.isPlainDirect("could a hobgoblin use the patron altar?"));
     }
 
     @Test

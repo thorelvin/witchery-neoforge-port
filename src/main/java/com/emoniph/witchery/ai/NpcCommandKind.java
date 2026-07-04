@@ -135,6 +135,7 @@ public enum NpcCommandKind {
         String normalized = normalize(message);
         return normalized.matches("^(what|where|when|why|who|which|how)\\b.*")
                 || normalized.matches("^(do|does|did)\\s+\\w+\\s+.*")
+                || normalized.matches("^(can|could|would|will|should)\\s+(?!you\\b)\\w+\\b.*")
                 || normalized.matches("^(tell me|explain|teach me|show me)\\b.*");
     }
 

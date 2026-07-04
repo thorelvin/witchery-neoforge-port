@@ -71,7 +71,8 @@ enough to read before starting work. Long historical deltas belong in
   per-entity/player memory, uses LLM checks for routing/social/command intent
   where useful, and still treats code/fallbacks as the source of authority.
   Command-keyword knowledge questions now route to dialogue before command
-  permission denial, and card repair keeps hobgoblin role/voice instead of
+  permission denial, including modal lore questions such as whether hobgoblins
+  can find koboldite, and card repair keeps hobgoblin role/voice instead of
   falling back to coven-witch wording. Repair prompts now use the entity's real
   biome/time context, async/direct command conversation cleanup has explicit
   completion/abort paths, and provider/config failures no longer spend the

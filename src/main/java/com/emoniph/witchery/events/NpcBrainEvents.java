@@ -495,15 +495,20 @@ public final class NpcBrainEvents {
         if (!supportsCommand(target, kind)) {
             return false;
         }
-        if (!WitcheryProtectionService.canCommandNpc(player, target.entity(), kind)) {
-            denyNpcCommand(level, target, player, message);
-            return true;
-        }
         if (kind.isPlainDirect(message)) {
-            executeNpcCommand(level, target, player, message, kind);
+            executeNpcCommandIfPermitted(level, target, player, message, kind);
             return true;
         }
         return requestNpcCommandIntent(level, target, player, message, kind);
+    }
+
+    private static void executeNpcCommandIfPermitted(ServerLevel level, ChatTarget target, ServerPlayer player,
+                                                     String message, NpcCommandKind kind) {
+        if (!WitcheryProtectionService.canCommandNpc(player, target.entity(), kind)) {
+            denyNpcCommand(level, target, player, message);
+            return;
+        }
+        executeNpcCommand(level, target, player, message, kind);
     }
 
     private static boolean supportsCommand(ChatTarget target, NpcCommandKind kind) {
@@ -556,7 +561,7 @@ public final class NpcBrainEvents {
                     player,
                     message,
                     kind,
-                    () -> executeNpcCommand(level, target, player, message, kind),
+                    () -> executeNpcCommandIfPermitted(level, target, player, message, kind),
                     () -> requestChatAfterRejectedCommand(level, target, player, message));
             case HOBGOBLIN -> target.entity() instanceof HobgoblinEntity hobgoblin
                     && NpcBrainService.INSTANCE.requestCommandIntent(
@@ -565,7 +570,7 @@ public final class NpcBrainEvents {
                     player,
                     message,
                     kind,
-                    () -> executeNpcCommand(level, target, player, message, kind),
+                    () -> executeNpcCommandIfPermitted(level, target, player, message, kind),
                     () -> requestChatAfterRejectedCommand(level, target, player, message));
             case LEONARD, BABA_YAGA, VILLAGER, REFLECTION -> false;
         };

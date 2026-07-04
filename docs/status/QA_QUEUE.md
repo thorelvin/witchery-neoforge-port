@@ -54,8 +54,8 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   pickaxe, `worship` with no patron statue, or an impossible `come here` path;
   then confirm a different player can still claim it with a successful command.
 - Ask command-keyword knowledge questions such as `what is the goblin altar?`
-  and `how do I get koboldite dust?`; they should answer as dialogue, not rope
-  denial or command execution.
+  `how do I get koboldite dust?`, and `can hobgoblins find koboldite?`; they
+  should answer as dialogue, not rope denial or command execution.
 - While following, confirm it tracks the command holder instead of resuming its
   normal player-avoidance or villager-hunting behavior.
 - While guarding, have a hostile mob attack the command holder and confirm the
