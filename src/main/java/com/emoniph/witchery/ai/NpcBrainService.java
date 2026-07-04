@@ -216,10 +216,7 @@ public final class NpcBrainService {
                 || !entity.isAlive() || !player.isAlive() || entity.level() != player.level()) {
             return false;
         }
-        int current = inFlight.incrementAndGet();
-        if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
-            inFlight.decrementAndGet();
-            reject("command_intent:busy");
+        if (!tryAcquireRequestSlot("command_intent:busy")) {
             return false;
         }
 
@@ -230,7 +227,7 @@ public final class NpcBrainService {
         try {
             provider = providerFromConfig(timeoutMillis, COMMAND_INTENT_MAX_TOKENS, executor());
         } catch (IllegalArgumentException ex) {
-            inFlight.decrementAndGet();
+            releaseRequestSlot();
             failure(ex);
             return false;
         }
@@ -241,7 +238,7 @@ public final class NpcBrainService {
         provider.generate(prompt)
                 .orTimeout(timeoutMillis + 500L, TimeUnit.MILLISECONDS)
                 .whenComplete((response, error) -> {
-                    inFlight.decrementAndGet();
+                    releaseRequestSlot();
                     MinecraftServer server = level.getServer();
                     server.execute(() -> handleCommandIntent(level, persona, entity, player,
                             response, error, onAccepted, onRejected));
@@ -304,10 +301,7 @@ public final class NpcBrainService {
         if (!entity.isAlive() || entity.level() != player.level()) {
             return false;
         }
-        int current = inFlight.incrementAndGet();
-        if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
-            inFlight.decrementAndGet();
-            reject("social_intent:busy");
+        if (!tryAcquireRequestSlot("social_intent:busy")) {
             return false;
         }
 
@@ -318,7 +312,7 @@ public final class NpcBrainService {
         try {
             provider = providerFromConfig(timeoutMillis, SOCIAL_INTENT_MAX_TOKENS, executor());
         } catch (IllegalArgumentException ex) {
-            inFlight.decrementAndGet();
+            releaseRequestSlot();
             failure(ex);
             return false;
         }
@@ -328,7 +322,7 @@ public final class NpcBrainService {
         provider.generate(prompt)
                 .orTimeout(timeoutMillis + 500L, TimeUnit.MILLISECONDS)
                 .whenComplete((response, error) -> {
-                    inFlight.decrementAndGet();
+                    releaseRequestSlot();
                     MinecraftServer server = level.getServer();
                     server.execute(() -> handleSocialIntentClassification(level, persona, player, entity,
                             playerMessage, action, response, error));
@@ -358,10 +352,7 @@ public final class NpcBrainService {
             }
             return requestPersonaChatWithAnalysisContext(persona, entity, player, playerMessage, deterministic);
         }
-        int current = inFlight.incrementAndGet();
-        if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
-            inFlight.decrementAndGet();
-            reject("message_analysis:busy");
+        if (!tryAcquireRequestSlot("message_analysis:busy")) {
             return false;
         }
 
@@ -371,7 +362,7 @@ public final class NpcBrainService {
         try {
             provider = providerFromConfig(timeoutMillis, MESSAGE_ANALYSIS_MAX_TOKENS, executor());
         } catch (IllegalArgumentException ex) {
-            inFlight.decrementAndGet();
+            releaseRequestSlot();
             failure(ex);
             return false;
         }
@@ -382,7 +373,7 @@ public final class NpcBrainService {
         provider.generate(prompt)
                 .orTimeout(timeoutMillis + 500L, TimeUnit.MILLISECONDS)
                 .whenComplete((response, error) -> {
-                    inFlight.decrementAndGet();
+                    releaseRequestSlot();
                     MinecraftServer server = level.getServer();
                     server.execute(() -> handleMessageAnalysis(level, persona, player, entity,
                             playerMessage, response, error));
@@ -425,10 +416,7 @@ public final class NpcBrainService {
         if (isCoolingDown(cooldownKey, now)) {
             return false;
         }
-        int current = inFlight.incrementAndGet();
-        if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
-            inFlight.decrementAndGet();
-            reject("persona_response:busy");
+        if (!tryAcquireRequestSlot("persona_response:busy")) {
             return false;
         }
 
@@ -436,7 +424,7 @@ public final class NpcBrainService {
         try {
             provider = providerFromConfig();
         } catch (IllegalArgumentException ex) {
-            inFlight.decrementAndGet();
+            releaseRequestSlot();
             failure(ex);
             return false;
         }
@@ -447,7 +435,7 @@ public final class NpcBrainService {
         provider.generate(prompt)
                 .orTimeout(WitcheryConfig.LLM_TIMEOUT_MILLIS.get() + 500L, TimeUnit.MILLISECONDS)
                 .whenComplete((response, error) -> {
-                    inFlight.decrementAndGet();
+                    releaseRequestSlot();
                     MinecraftServer server = level.getServer();
                     server.execute(() -> handlePersonaResponse(level, persona, entity.getUUID(), player, entity,
                             playerMessage, fallback, showFallback, rememberExchange, memoryContextOverride,
@@ -465,10 +453,7 @@ public final class NpcBrainService {
             source.sendFailure(Component.literal("[AI] " + ex.getMessage()));
             return 0;
         }
-        int current = inFlight.incrementAndGet();
-        if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
-            inFlight.decrementAndGet();
-            reject("probe:busy");
+        if (!tryAcquireRequestSlot("probe:busy")) {
             source.sendFailure(Component.literal("[AI] Busy; try again in a moment."));
             return 0;
         }
@@ -477,7 +462,7 @@ public final class NpcBrainService {
         provider.generate(NpcPromptBuilder.probe(promptText))
                 .orTimeout(WitcheryConfig.LLM_TIMEOUT_MILLIS.get() + 500L, TimeUnit.MILLISECONDS)
                 .whenComplete((response, error) -> {
-                    inFlight.decrementAndGet();
+                    releaseRequestSlot();
                     server.execute(() -> {
                         if (error != null || response == null) {
                             failure(error);
@@ -514,6 +499,20 @@ public final class NpcBrainService {
     private void reject(String reason) {
         rejected.incrementAndGet();
         rememberRejection(reason);
+    }
+
+    private boolean tryAcquireRequestSlot(String busyReason) {
+        int current = inFlight.incrementAndGet();
+        if (current <= WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
+            return true;
+        }
+        releaseRequestSlot();
+        reject(busyReason);
+        return false;
+    }
+
+    private void releaseRequestSlot() {
+        inFlight.decrementAndGet();
     }
 
     void rememberRejection(String reason) {
@@ -763,10 +762,7 @@ public final class NpcBrainService {
         if (prompt.isEmpty()) {
             return false;
         }
-        int current = inFlight.incrementAndGet();
-        if (current > WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
-            inFlight.decrementAndGet();
-            reject("repair:busy");
+        if (!tryAcquireRequestSlot("repair:busy")) {
             return false;
         }
 
@@ -775,7 +771,7 @@ public final class NpcBrainService {
             provider = providerFromConfig(REPAIR_TIMEOUT_MILLIS,
                     Math.min(REPAIR_MAX_TOKENS, WitcheryConfig.LLM_MAX_TOKENS.get()), executor());
         } catch (IllegalArgumentException ex) {
-            inFlight.decrementAndGet();
+            releaseRequestSlot();
             failure(ex);
             return false;
         }
@@ -784,7 +780,7 @@ public final class NpcBrainService {
         provider.generate(prompt.get())
                 .orTimeout(REPAIR_TIMEOUT_MILLIS + 500L, TimeUnit.MILLISECONDS)
                 .whenComplete((response, error) -> {
-                    inFlight.decrementAndGet();
+                    releaseRequestSlot();
                     MinecraftServer server = level.getServer();
                     server.execute(() -> handlePersonaRepairResponse(level, persona, entityId, player, entity,
                             playerMessage, memoryContext, rememberExchange, response, error));
