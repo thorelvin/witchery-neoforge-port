@@ -54,12 +54,13 @@ enough to read before starting work. Long historical deltas belong in
   environment variable, optional extra metadata headers, configurable
   `responseFormat` (`json_object`, `json_schema`, or `none`), and strict NPC
   JSON-schema parsing when schema mode is enabled. README and the LLM NPC
-  experiment note document the new knobs. The shared NPC response parser also
-  avoids regex salvage for object-shaped invalid JSON and unescapes quoted
-  fallback speech fragments cleanly. Prompt construction now renders durable
-  memory and current message routing as separate sections instead of mixing
-  routing instructions into the memory block. `/witchery ai status` and
-  `/witchery ai knowledge` now expose knowledge-card diagnostics: loaded section
+  experiment note document the new knobs, plus the release-pack guidance to
+  disable AI/prewarm unless a model sidecar is intentionally managed. The shared
+  NPC response parser also avoids regex salvage for object-shaped invalid JSON
+  and unescapes quoted fallback speech fragments cleanly. Prompt construction
+  now renders durable memory and current message routing as separate sections
+  instead of mixing routing instructions into the memory block. `/witchery ai status`
+  and `/witchery ai knowledge` now expose knowledge-card diagnostics: loaded section
   and card counts, targeted-note count, last retrieval reason, and last sources.
   AI status also keeps a short rolling trail of recent rejection labels, so
   validation misses, repeated lines, busy gates, and intent denials are visible

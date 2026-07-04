@@ -155,10 +155,10 @@ public class WitcheryConfig {
 
         BUILDER.push("llm");
         LLM_ENABLED = BUILDER
-                .comment("Enable experimental local NPC LLM dialogue. Default: true. RUN_MINECRAFT.bat asks before downloading local AI files.")
+                .comment("Enable experimental local NPC LLM dialogue. Playtest default: true. Release/server packs can set false unless they intentionally provide a model sidecar. RUN_MINECRAFT.bat asks before downloading local AI files.")
                 .define("enabled", true);
         LLM_PREWARM_ENABLED = BUILDER
-                .comment("Send one invisible startup request so the local model is loaded before the first player chat. Default: true")
+                .comment("Send one invisible startup request so the local model is loaded before the first player chat. Playtest default: true. Set false for release/server packs without a guaranteed model sidecar.")
                 .define("prewarmEnabled", true);
         LLM_PROVIDER = BUILDER
                 .comment("Local LLM provider: ollama or openai_compatible. Default: ollama")

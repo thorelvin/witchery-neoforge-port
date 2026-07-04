@@ -36,14 +36,17 @@ extraHeaders = ""
 responseFormat = "json_object"
 ```
 
-Set `allowLanEndpoint = true` only when the model is running on a trusted LAN
-sidecar machine. For `provider = "openai_compatible"`, set `apiKeyEnv` to the
-name of an environment variable containing a bearer token when the endpoint
-needs one, for example `OPENAI_API_KEY`. `extraHeaders` accepts semicolon- or
-newline-separated `Header: value` entries for compatible servers that need
-non-auth metadata. `responseFormat = "json_schema"` sends the strict NPC
-response schema to endpoints/models that support structured outputs; keep
-`json_object` or use `none` for looser local-compatible servers.
+The branch keeps `enabled = true` and `prewarmEnabled = true` for local
+playtesting. Release packs or servers without a managed model sidecar should set
+both to `false` so startup never tries to warm a missing model. Set
+`allowLanEndpoint = true` only when the model is running on a trusted LAN sidecar
+machine. For `provider = "openai_compatible"`, set `apiKeyEnv` to the name of an
+environment variable containing a bearer token when the endpoint needs one, for
+example `OPENAI_API_KEY`. `extraHeaders` accepts semicolon- or newline-separated
+`Header: value` entries for compatible servers that need non-auth metadata.
+`responseFormat = "json_schema"` sends the strict NPC response schema to
+endpoints/models that support structured outputs; keep `json_object` or use
+`none` for looser local-compatible servers.
 
 ## Commands
 
