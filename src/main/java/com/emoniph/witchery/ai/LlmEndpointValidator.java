@@ -45,16 +45,29 @@ public final class LlmEndpointValidator {
     }
 
     public static URI appendPath(String endpoint, String suffix) {
-        String base = endpoint.trim();
         String normalizedSuffix = suffix.startsWith("/") ? suffix : "/" + suffix;
-        URI uri = URI.create(base);
+        URI uri = URI.create(endpoint.trim());
         String path = uri.getPath();
-        if (path != null && path.endsWith(normalizedSuffix)) {
-            return uri;
+        String nextPath;
+        if (path == null || path.isBlank() || path.equals("/")) {
+            nextPath = normalizedSuffix;
+        } else if (path.endsWith(normalizedSuffix)) {
+            nextPath = path;
+        } else {
+            nextPath = trimTrailingSlash(path) + normalizedSuffix;
         }
-        while (base.endsWith("/")) {
-            base = base.substring(0, base.length() - 1);
+        try {
+            return new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), nextPath, null, null);
+        } catch (URISyntaxException ex) {
+            throw new IllegalArgumentException("Endpoint path could not be appended.", ex);
         }
-        return URI.create(base + normalizedSuffix);
+    }
+
+    private static String trimTrailingSlash(String path) {
+        String trimmed = path;
+        while (trimmed.endsWith("/") && trimmed.length() > 1) {
+            trimmed = trimmed.substring(0, trimmed.length() - 1);
+        }
+        return trimmed;
     }
 }

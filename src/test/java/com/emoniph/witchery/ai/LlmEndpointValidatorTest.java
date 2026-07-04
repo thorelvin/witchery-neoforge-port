@@ -33,4 +33,18 @@ class LlmEndpointValidatorTest {
         assertEquals("http://127.0.0.1:11434/api/chat",
                 LlmEndpointValidator.appendPath("http://127.0.0.1:11434/api/chat", "/api/chat").toString());
     }
+
+    @Test
+    void appendsProviderPathByUriComponents() {
+        assertEquals("http://user@127.0.0.1:11434/proxy/api/chat",
+                LlmEndpointValidator.appendPath("http://user@127.0.0.1:11434/proxy", "/api/chat").toString());
+        assertEquals("http://127.0.0.1:11434/proxy/api/chat",
+                LlmEndpointValidator.appendPath("http://127.0.0.1:11434/proxy/", "api/chat").toString());
+        assertEquals("http://127.0.0.1:11434/api/chat",
+                LlmEndpointValidator.appendPath("http://127.0.0.1:11434/api/chat?old=true#fragment",
+                        "/api/chat").toString());
+        assertEquals("http://127.0.0.1:11434/api/chat",
+                LlmEndpointValidator.appendPath("http://127.0.0.1:11434/?old=true#fragment",
+                        "/api/chat").toString());
+    }
 }
