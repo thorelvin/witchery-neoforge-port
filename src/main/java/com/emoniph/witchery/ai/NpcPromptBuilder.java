@@ -52,7 +52,7 @@ public final class NpcPromptBuilder {
                 # Memory
                 %s
 
-                # Current routing
+                # Message analysis
                 %s
                 """.formatted(
                 remembered.isBlank() ? "none" : remembered,
@@ -585,8 +585,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
-                Current routing is current player intent, not past memory.
-                Follow Current routing's reply strategy before choosing facts: small_talk answers ordinary remarks, trade answers stock or price, lore stays on the named topic, memory answers remembered player facts, action answers with limits or price.
+                Message analysis is current player intent, not past memory.
+                Follow Message analysis reply strategy before choosing facts: small_talk answers ordinary remarks, trade answers stock or price, lore stays on the named topic, memory answers remembered player facts, action answers with limits or price.
                 Use Hobgoblin facts and server state when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in hobgoblin voice.
                 If several facts are present, use only the one that answers the player.
@@ -690,8 +690,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
-                Current routing is current player intent, not past memory.
-                Follow Current routing's reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, lore stays on the named mirror topic, memory answers remembered player facts, and action answers with limits or threats.
+                Message analysis is current player intent, not past memory.
+                Follow Message analysis reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, lore stays on the named mirror topic, memory answers remembered player facts, and action answers with limits or threats.
                 Use Mirror facts and server state when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in the Reflection's voice.
                 If several facts are present, use only the one that answers the player.
@@ -804,8 +804,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
-                Current routing is current player intent, not past memory.
-                Follow Current routing's reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, and action answers with limits or prices.
+                Message analysis is current player intent, not past memory.
+                Follow Message analysis reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, and action answers with limits or prices.
                 Use Witchery facts and server state when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in Leonard's voice.
                 If a Targeted fact lists exact ingredients, you may name those ingredients exactly and briefly.
@@ -923,8 +923,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
-                Current routing is current player intent, not past memory.
-                Follow Current routing's reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, social answers tone, and action answers with limits or safe next steps.
+                Message analysis is current player intent, not past memory.
+                Follow Message analysis reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, social answers tone, and action answers with limits or safe next steps.
                 Use Village state for questions about size, safety, golems, walls, raids, guards, vampires, werewolves, witches, or nearby trouble.
                 If the player asks about this villager's job, answer from Profession and Job card.
                 If the player asks about trade, speak from the profession; do not invent exact stock unless the job card or facts name it.
@@ -1037,8 +1037,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
-                Current routing is current player intent, not past memory.
-                Follow Current routing's reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, and action answers with limits or threats.
+                Message analysis is current player intent, not past memory.
+                Follow Message analysis reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, and action answers with limits or threats.
                 Use Witchery facts and server state when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in Baba Yaga's voice.
                 If several facts are present, use only the one that answers the player.
@@ -1141,8 +1141,8 @@ public final class NpcPromptBuilder {
                 %s.
 
                 # Grounding
-                Current routing is current player intent, not past memory.
-                Follow Current routing's reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, social answers tone, and action answers with limits or safe next steps.
+                Message analysis is current player intent, not past memory.
+                Follow Message analysis reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, recipe/rite answers exact mechanics, lore stays on the named topic, memory answers remembered player facts, social answers tone, and action answers with limits or safe next steps.
                 Use Witchery facts when relevant, but do not recite them unless the player asks.
                 If a Targeted fact is present, answer from that fact in the witch's voice.
                 If a Targeted fact lists exact recipe ingredients, you may name those ingredients exactly and briefly.

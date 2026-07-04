@@ -393,16 +393,16 @@ class NpcPromptBuilderTest {
         NpcBrainPrompt leonard = NpcPromptBuilder.leonardSmoke("Why call everything a debt?", memory);
         NpcBrainPrompt villager = NpcPromptBuilder.villagerSmoke("Why is everyone worried?", memory);
 
-        assertTrue(witch.userPrompt().contains("# Current routing"), witch.userPrompt());
-        assertTrue(witch.userPrompt().contains("Current routing is current player intent"), witch.userPrompt());
+        assertTrue(witch.userPrompt().contains("# Message analysis"), witch.userPrompt());
+        assertTrue(witch.userPrompt().contains("Message analysis is current player intent"), witch.userPrompt());
         assertTrue(witch.userPrompt().contains("Message routing: route=small_talk"), witch.userPrompt());
         assertFalse(witch.userPrompt().contains("# Memory\nMessage routing"), witch.userPrompt());
         assertTrue(witch.userPrompt().contains("atmosphere answers scene or behavior cues"), witch.userPrompt());
-        assertTrue(leonard.userPrompt().contains("# Current routing"), leonard.userPrompt());
-        assertTrue(leonard.userPrompt().contains("Current routing is current player intent"), leonard.userPrompt());
+        assertTrue(leonard.userPrompt().contains("# Message analysis"), leonard.userPrompt());
+        assertTrue(leonard.userPrompt().contains("Message analysis is current player intent"), leonard.userPrompt());
         assertTrue(leonard.userPrompt().contains("atmosphere answers scene or behavior cues"), leonard.userPrompt());
-        assertTrue(villager.userPrompt().contains("# Current routing"), villager.userPrompt());
-        assertTrue(villager.userPrompt().contains("Current routing is current player intent"), villager.userPrompt());
+        assertTrue(villager.userPrompt().contains("# Message analysis"), villager.userPrompt());
+        assertTrue(villager.userPrompt().contains("Message analysis is current player intent"), villager.userPrompt());
         assertTrue(villager.userPrompt().contains("atmosphere answers scene or behavior cues"), villager.userPrompt());
     }
 
