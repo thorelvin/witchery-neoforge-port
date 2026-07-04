@@ -4359,24 +4359,6 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     public static String sanitize(String raw, int maxLength) {
-        if (raw == null) {
-            return "";
-        }
-        String cleaned = raw.replace("\\n", " ")
-                .replace("\\r", " ")
-                .replace("\\t", " ")
-                .replace('\n', ' ')
-                .replace('\r', ' ')
-                .replace('\t', ' ')
-                .replaceAll("\\s+", " ")
-                .trim();
-        cleaned = cleaned.replaceAll("\"{2,}$", "\"");
-        if (cleaned.length() <= maxLength) {
-            return cleaned;
-        }
-        if (maxLength <= 3) {
-            return cleaned.substring(0, maxLength);
-        }
-        return cleaned.substring(0, maxLength - 3).stripTrailing() + "...";
+        return NpcTextSanitizer.sanitize(raw, maxLength);
     }
 }
