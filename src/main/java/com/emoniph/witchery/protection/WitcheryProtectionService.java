@@ -115,16 +115,17 @@ public final class WitcheryProtectionService {
         return current == null ? WitcheryProtectionAdapter.Decision.PASS : current;
     }
 
-    private static WitcheryProtectionAdapter.Decision safeCanModifyBlock(WitcheryProtectionAdapter adapter,
-                                                                        @Nullable ServerPlayer actor,
-                                                                        ServerLevel level,
-                                                                        BlockPos pos,
-                                                                        WitcheryProtectionAction action) {
+    static WitcheryProtectionAdapter.Decision safeCanModifyBlock(WitcheryProtectionAdapter adapter,
+                                                                 @Nullable ServerPlayer actor,
+                                                                 ServerLevel level,
+                                                                 BlockPos pos,
+                                                                 WitcheryProtectionAction action) {
         try {
             return adapter.canModifyBlock(actor, level, pos, action);
         } catch (RuntimeException ex) {
-            WitcheryMod.LOGGER.warn("Witchery protection adapter '{}' failed; ignoring this check", adapter.id(), ex);
-            return WitcheryProtectionAdapter.Decision.PASS;
+            WitcheryMod.LOGGER.warn("Witchery protection adapter '{}' failed; denying this protected action",
+                    adapter.id(), ex);
+            return WitcheryProtectionAdapter.Decision.DENY;
         }
     }
 

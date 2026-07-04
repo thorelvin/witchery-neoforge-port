@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 
 final class CommonProtectionApiAdapter extends ReflectiveProtectionAdapter {
     private Object unknownProfile;
+    private Class<?> unknownProfileParameterType;
     private Method canBreakBlock;
     private Method canPlaceBlock;
     private Method canInteractBlock;
@@ -24,14 +25,10 @@ final class CommonProtectionApiAdapter extends ReflectiveProtectionAdapter {
     @Override
     protected boolean initialize() throws ReflectiveOperationException {
         Class<?> commonProtection = loadClass("eu.pb4.common.protection.api.CommonProtection");
-        unknownProfile = unknownProfile(commonProtection);
-        Class<?> profileClass = unknownProfile.getClass();
-        canBreakBlock = method(commonProtection, "canBreakBlock",
-                Level.class, BlockPos.class, profileClass, Player.class);
-        canPlaceBlock = method(commonProtection, "canPlaceBlock",
-                Level.class, BlockPos.class, profileClass, Player.class);
-        canInteractBlock = method(commonProtection, "canInteractBlock",
-                Level.class, BlockPos.class, profileClass, Player.class);
+        unknownProfile = loadUnknownProfile(commonProtection);
+        canBreakBlock = protectionMethod(commonProtection, "canBreakBlock");
+        canPlaceBlock = protectionMethod(commonProtection, "canPlaceBlock");
+        canInteractBlock = protectionMethod(commonProtection, "canInteractBlock");
         return true;
     }
 
@@ -64,16 +61,57 @@ final class CommonProtectionApiAdapter extends ReflectiveProtectionAdapter {
         return fromAllowedResult(invokeBoolean(method, null, level, pos, unknownProfile, actor));
     }
 
-    private static Object unknownProfile(Class<?> commonProtection) throws ReflectiveOperationException {
+    private Object loadUnknownProfile(Class<?> commonProtection) throws ReflectiveOperationException {
         try {
             Field field = commonProtection.getField("UNKNOWN");
             field.setAccessible(true);
+            unknownProfileParameterType = field.getType();
             return field.get(null);
         } catch (NoSuchFieldException ignored) {
             Class<?> provider = loadClass("eu.pb4.common.protection.api.ProtectionProvider");
             Field field = provider.getField("UNKNOWN");
             field.setAccessible(true);
+            unknownProfileParameterType = field.getType();
             return field.get(null);
         }
+    }
+
+    private Method protectionMethod(Class<?> commonProtection, String name) throws NoSuchMethodException {
+        NoSuchMethodException firstMiss = null;
+        if (unknownProfileParameterType != null) {
+            try {
+                return method(commonProtection, name, Level.class, BlockPos.class,
+                        unknownProfileParameterType, Player.class);
+            } catch (NoSuchMethodException ex) {
+                firstMiss = ex;
+            }
+        }
+        Class<?> runtimeType = unknownProfile.getClass();
+        if (runtimeType != unknownProfileParameterType) {
+            try {
+                return method(commonProtection, name, Level.class, BlockPos.class, runtimeType, Player.class);
+            } catch (NoSuchMethodException ex) {
+                if (firstMiss == null) {
+                    firstMiss = ex;
+                }
+            }
+        }
+        for (Method candidate : commonProtection.getMethods()) {
+            Class<?>[] parameterTypes = candidate.getParameterTypes();
+            if (!candidate.getName().equals(name) || parameterTypes.length != 4) {
+                continue;
+            }
+            if (parameterTypes[0].isAssignableFrom(ServerLevel.class)
+                    && parameterTypes[1].isAssignableFrom(BlockPos.class)
+                    && parameterTypes[2].isInstance(unknownProfile)
+                    && parameterTypes[3].isAssignableFrom(ServerPlayer.class)) {
+                candidate.setAccessible(true);
+                return candidate;
+            }
+        }
+        if (firstMiss != null) {
+            throw firstMiss;
+        }
+        throw new NoSuchMethodException(name);
     }
 }

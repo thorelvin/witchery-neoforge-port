@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-07-01
+Last curated: 2026-07-04
 
 This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -59,7 +59,9 @@ enough to read before starting work. Long historical deltas belong in
   magic. It checks vanilla permissions and optional reflective adapters for
   Open Parties and Claims, FTB Chunks, and Common Protection API, with config
   modes for broad terrain effects (`skip`) and destructive core effects
-  (`fail`).
+  (`fail`). Adapter exceptions now fail closed for protected actions, and the
+  Common Protection API bridge tolerates the known `UNKNOWN` profile signature
+  drift.
 - Curse of Insanity now uses source-shaped hallucinations instead of the earlier
   nausea stand-in: victim-only fake Creeper/Spider/Zombie entities spawn near
   the cursed player, render only for that player, make private fake sounds, deal
@@ -69,6 +71,8 @@ enough to read before starting work. Long historical deltas belong in
   stone/earth/ore blocks, break them with feedback, wear their pickaxe, drop
   normal resources, and roll Koboldite Dust into nearby chests or the world.
   Patron worship state persists and still feeds prayers into the statue.
+  Follow and guard chat orders now have real movement behavior; guard watches
+  for threats attacking the command holder instead of just acknowledging text.
 - Flame Imp contracts now use the source-style bargain loop: signed ownership
   contract, 25-level taming cost, shiny-gift mood, target/self spell contracts,
   and the five source abilities.

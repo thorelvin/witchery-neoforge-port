@@ -511,7 +511,9 @@ public final class NpcBrainEvents {
                     || kind == NpcCommandKind.STAY
                     || kind == NpcCommandKind.STOP
                     || kind == NpcCommandKind.COME_HERE
-                    || kind == NpcCommandKind.GO_AWAY;
+                    || kind == NpcCommandKind.GO_AWAY
+                    || kind == NpcCommandKind.FOLLOW
+                    || kind == NpcCommandKind.GUARD;
             case LEONARD, BABA_YAGA, VILLAGER, REFLECTION -> false;
         };
     }
@@ -640,7 +642,12 @@ public final class NpcBrainEvents {
                         ? "*backs off* \"Away, away. Good?\""
                         : "*shrugs* \"No path away. World too cramped.\"";
             }
-            case FOLLOW, GUARD -> "";
+            case FOLLOW -> hobgoblin.commandFollow(player)
+                    ? "*huffs* \"Following. Rope or no rope, feet listen for now.\""
+                    : "*sniffs* \"Can't follow what isn't here.\"";
+            case GUARD -> hobgoblin.commandGuard(player)
+                    ? "*bares teeth* \"Guarding. Bad things get bit first.\""
+                    : "*sniffs* \"Can't guard smoke. Stand close.\"";
         };
         if (!speech.isBlank()) {
             sayHobgoblin(level, hobgoblin, player, message, speech);

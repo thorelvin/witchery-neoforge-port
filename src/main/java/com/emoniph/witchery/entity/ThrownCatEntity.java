@@ -150,6 +150,10 @@ public class ThrownCatEntity extends PathfinderMob {
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
         String owner = tag.getStringOr("Owner", "");
-        ownerUuid = owner.isEmpty() ? null : UUID.fromString(owner);
+        try {
+            ownerUuid = owner.isEmpty() ? null : UUID.fromString(owner);
+        } catch (IllegalArgumentException ignored) {
+            ownerUuid = null;
+        }
     }
 }

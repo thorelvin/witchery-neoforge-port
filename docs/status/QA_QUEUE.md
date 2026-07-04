@@ -1,6 +1,6 @@
 # QA Queue
 
-Last curated: 2026-06-25
+Last curated: 2026-07-04
 
 This is the active in-game QA queue. It replaces scattered new QA notes in
 the archived parity/fixes/ritual QA notes under `docs/archive/status/` and small
@@ -14,6 +14,20 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Prefer commands and item IDs where possible.
 
 ## Active Focus
+
+### Hobgoblin Chat Commands
+
+- Leash a Hobgoblin, give it a pickaxe, then use chat orders for `mine`,
+  `worship`, `stop`, `follow me`, and `guard me`.
+- Confirm only the leash owner/admin can command it once ownership is claimed;
+  other players should get the rope-owner refusal.
+- While following, confirm it tracks the command holder instead of resuming its
+  normal player-avoidance or villager-hunting behavior.
+- While guarding, have a hostile mob attack the command holder and confirm the
+  Hobgoblin targets that threat, then returns to holding near the player after
+  combat.
+- Confirm `stop` clears mining, worship, follow, guard, and current combat
+  orders without clearing the claimed command owner.
 
 ### Flame Imp Contracts
 

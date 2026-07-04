@@ -31,6 +31,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -85,6 +86,8 @@ public class HobgoblinEntity extends AbstractVillager {
     private static final long WORSHIP_PASSIVE_TICKS = 30L * 20L;
     private static final long WORSHIP_PRAYER_INTERVAL_TICKS = 5L * 20L;
     private static final long MINING_COMMAND_TICKS = 90L * 20L;
+    private static final long FOLLOW_COMMAND_TICKS = 120L * 20L;
+    private static final long GUARD_COMMAND_TICKS = 180L * 20L;
     private static final long MINING_COMMENT_INTERVAL_TICKS = 18L * 20L;
     private static final double NEARBY_SPEECH_RANGE = 10.0D;
     private static final String TAG_WORK_STATE = "WorkState";
@@ -118,6 +121,8 @@ public class HobgoblinEntity extends AbstractVillager {
     private long nextWorshipPrayerAt;
     private long nextMiningCommentAt;
     private long miningUntil;
+    private long followUntil;
+    private long guardUntil;
     @Nullable
     private BlockPos mineTarget;
     @Nullable
@@ -157,24 +162,40 @@ public class HobgoblinEntity extends AbstractVillager {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PlayerAttentionGoal());
-        this.goalSelector.addGoal(2, new HobgoblinWorshipGoal());
-        this.goalSelector.addGoal(3, new HobgoblinMiningGoal());
-        this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Player.class, 8f, 0.6, 0.6) {
+        this.goalSelector.addGoal(2, new HobgoblinFollowGoal());
+        this.goalSelector.addGoal(3, new HobgoblinGuardGoal());
+        this.goalSelector.addGoal(4, new HobgoblinWorshipGoal());
+        this.goalSelector.addGoal(5, new HobgoblinMiningGoal());
+        this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Player.class, 8f, 0.6, 0.6) {
             @Override
             public boolean canUse() {
-                return activeAttentionPlayer() == null && activeWorshipTarget() == null && !isWorking() && super.canUse();
+                return activeAttentionPlayer() == null && activeWorshipTarget() == null
+                        && activeFollowPlayer() == null && activeGuardPlayer() == null
+                        && !isWorking() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return activeAttentionPlayer() == null && activeWorshipTarget() == null && !isWorking() && super.canContinueToUse();
+                return activeAttentionPlayer() == null && activeWorshipTarget() == null
+                        && activeFollowPlayer() == null && activeGuardPlayer() == null
+                        && !isWorking() && super.canContinueToUse();
             }
         });
-        this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 0.8, true));
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6));
-        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8f));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Villager.class, true));
+        this.goalSelector.addGoal(7, new MeleeAttackGoal(this, 0.8, true));
+        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.6));
+        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 8f));
+        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Villager.class, true) {
+            @Override
+            public boolean canUse() {
+                return activeFollowPlayer() == null && activeGuardPlayer() == null && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return activeFollowPlayer() == null && activeGuardPlayer() == null && super.canContinueToUse();
+            }
+        });
     }
 
     public void beginPlayerConversation(Player player) {
@@ -328,6 +349,8 @@ public class HobgoblinEntity extends AbstractVillager {
             return false;
         }
         claimCommandOwner(player);
+        clearMovementOrders();
+        setTarget(null);
         miningUntil = level().getGameTime() + MINING_COMMAND_TICKS;
         mineTarget = null;
         clearWorshipTarget();
@@ -352,6 +375,8 @@ public class HobgoblinEntity extends AbstractVillager {
         String leash = isLeashed() ? "leashed" : "free";
         String state = isWorshipping() ? "worshipping a goblin patron"
                 : isWorking() ? "actively mining nearby stone and earth"
+                : activeGuardPlayer() != null ? "guarding near the command holder"
+                : activeFollowPlayer() != null ? "following the command holder"
                 : hasActiveMiningOrder() ? "ordered to mine, searching for a safe block"
                 : "idle";
         String mining = canMineKoboldite()
@@ -366,6 +391,8 @@ public class HobgoblinEntity extends AbstractVillager {
             return false;
         }
         claimCommandOwner(player);
+        clearMovementOrders();
+        setTarget(null);
         startWorship(patron.get(), WORSHIP_COMMAND_TICKS, player == null ? null : player.getUUID());
         if (player != null) {
             faceAttentionPlayer(player);
@@ -377,13 +404,51 @@ public class HobgoblinEntity extends AbstractVillager {
         claimCommandOwner(player);
         miningUntil = 0L;
         mineTarget = null;
+        clearMovementOrders();
         clearWorshipTarget();
         setWorkingState(0);
         commandPlayer = player == null ? null : player.getUUID();
+        setTarget(null);
         getNavigation().stop();
         if (player != null) {
             faceAttentionPlayer(player);
         }
+    }
+
+    public boolean commandFollow(Player player) {
+        if (player == null || !player.isAlive() || player.level() != level()) {
+            return false;
+        }
+        claimCommandOwner(player);
+        miningUntil = 0L;
+        mineTarget = null;
+        clearWorshipTarget();
+        guardUntil = 0L;
+        followUntil = level().getGameTime() + FOLLOW_COMMAND_TICKS;
+        commandPlayer = player.getUUID();
+        setWorkingState(0);
+        setTarget(null);
+        clearAttention();
+        faceAttentionPlayer(player);
+        return true;
+    }
+
+    public boolean commandGuard(Player player) {
+        if (player == null || !player.isAlive() || player.level() != level()) {
+            return false;
+        }
+        claimCommandOwner(player);
+        miningUntil = 0L;
+        mineTarget = null;
+        clearWorshipTarget();
+        followUntil = 0L;
+        guardUntil = level().getGameTime() + GUARD_COMMAND_TICKS;
+        commandPlayer = player.getUUID();
+        setWorkingState(0);
+        setTarget(null);
+        clearAttention();
+        faceAttentionPlayer(player);
+        return true;
     }
 
     public Optional<BlockPos> nearestPatronStatue(int radius) {
@@ -427,6 +492,7 @@ public class HobgoblinEntity extends AbstractVillager {
     }
 
     private void startWorship(BlockPos patron, long ticks, @Nullable UUID commander) {
+        clearMovementOrders();
         worshipTarget = patron.immutable();
         worshipUntil = level().getGameTime() + ticks;
         nextWorshipPrayerAt = 0L;
@@ -446,6 +512,73 @@ public class HobgoblinEntity extends AbstractVillager {
         if (isWorshipping()) {
             setWorkingState(0);
         }
+    }
+
+    private void clearMovementOrders() {
+        followUntil = 0L;
+        guardUntil = 0L;
+    }
+
+    @Nullable
+    private LivingEntity findGuardThreat(Player player) {
+        LivingEntity attacker = player.getLastHurtByMob();
+        if (isValidGuardThreat(player, attacker)) {
+            return attacker;
+        }
+        AABB range = player.getBoundingBox().inflate(10.0D, 4.0D, 10.0D);
+        List<Mob> threats = level().getEntitiesOfClass(Mob.class, range,
+                mob -> mob != this && mob.isAlive() && mob.getTarget() == player && isValidGuardThreat(player, mob));
+        if (threats.isEmpty()) {
+            return null;
+        }
+        threats.sort(java.util.Comparator.comparingDouble(this::distanceToSqr));
+        return threats.getFirst();
+    }
+
+    private boolean isValidGuardThreat(Player player, @Nullable LivingEntity target) {
+        return target != null
+                && target.isAlive()
+                && target != this
+                && target != player
+                && target.level() == level()
+                && distanceToSqr(target) <= 144.0D
+                && canAttack(target);
+    }
+
+    @Nullable
+    private Player activeFollowPlayer() {
+        if (followUntil <= 0L) {
+            return null;
+        }
+        if (level().getGameTime() > followUntil) {
+            followUntil = 0L;
+            return null;
+        }
+        return activeCommandPlayer();
+    }
+
+    @Nullable
+    private Player activeGuardPlayer() {
+        if (guardUntil <= 0L) {
+            return null;
+        }
+        if (level().getGameTime() > guardUntil) {
+            guardUntil = 0L;
+            return null;
+        }
+        return activeCommandPlayer();
+    }
+
+    @Nullable
+    private Player activeCommandPlayer() {
+        if (commandPlayer == null) {
+            return null;
+        }
+        Player player = level().getPlayerByUUID(commandPlayer);
+        if (player == null || !player.isAlive() || player.level() != level()) {
+            return null;
+        }
+        return player;
     }
 
     private Optional<BlockPos> findNearestPatron(int radius) {
@@ -737,6 +870,83 @@ public class HobgoblinEntity extends AbstractVillager {
             }
             stopMovingForAttention();
             faceAttentionPlayer(player);
+        }
+    }
+
+    private final class HobgoblinFollowGoal extends Goal {
+        HobgoblinFollowGoal() {
+            setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            return !isTrading() && getTarget() == null && activeAttentionPlayer() == null
+                    && activeWorshipTarget() == null && activeFollowPlayer() != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return !isTrading() && getTarget() == null && activeAttentionPlayer() == null
+                    && activeWorshipTarget() == null && activeFollowPlayer() != null;
+        }
+
+        @Override
+        public void tick() {
+            Player player = activeFollowPlayer();
+            if (player == null) {
+                return;
+            }
+            getLookControl().setLookAt(player, 30.0F, 30.0F);
+            if (distanceToSqr(player) > 16.0D) {
+                getNavigation().moveTo(player, 0.85D);
+            } else {
+                getNavigation().stop();
+            }
+        }
+    }
+
+    private final class HobgoblinGuardGoal extends Goal {
+        HobgoblinGuardGoal() {
+            setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            return !isTrading() && getTarget() == null && activeAttentionPlayer() == null
+                    && activeWorshipTarget() == null && activeGuardPlayer() != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return !isTrading() && getTarget() == null && activeAttentionPlayer() == null
+                    && activeWorshipTarget() == null && activeGuardPlayer() != null;
+        }
+
+        @Override
+        public void tick() {
+            Player player = activeGuardPlayer();
+            if (player == null) {
+                return;
+            }
+            LivingEntity threat = findGuardThreat(player);
+            if (threat != null) {
+                setTarget(threat);
+                getNavigation().stop();
+                return;
+            }
+            getLookControl().setLookAt(player, 30.0F, 30.0F);
+            double distance = distanceToSqr(player);
+            if (distance > 36.0D) {
+                getNavigation().moveTo(player, 0.75D);
+            } else if (distance < 4.0D) {
+                Vec3 away = position().subtract(player.position());
+                if (away.lengthSqr() > 1.0E-4D) {
+                    Vec3 target = position().add(away.normalize().scale(2.0D));
+                    getNavigation().moveTo(target.x, target.y, target.z, 0.6D);
+                }
+            } else {
+                getNavigation().stop();
+            }
         }
     }
 

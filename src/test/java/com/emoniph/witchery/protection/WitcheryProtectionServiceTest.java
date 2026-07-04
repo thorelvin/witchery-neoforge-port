@@ -33,4 +33,37 @@ class WitcheryProtectionServiceTest {
         assertDoesNotThrow(() -> new FtbChunksProtectionAdapter().isAvailable());
         assertDoesNotThrow(() -> new CommonProtectionApiAdapter().isAvailable());
     }
+
+    @Test
+    void adapterFailureDeniesProtectedAction() {
+        WitcheryProtectionAdapter.Decision decision = WitcheryProtectionService.safeCanModifyBlock(
+                new FailingProtectionAdapter(),
+                null,
+                null,
+                null,
+                WitcheryProtectionAction.BLOCK_BREAK
+        );
+
+        assertEquals(WitcheryProtectionAdapter.Decision.DENY, decision);
+    }
+
+    private static final class FailingProtectionAdapter implements WitcheryProtectionAdapter {
+        @Override
+        public String id() {
+            return "failing-test";
+        }
+
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public Decision canModifyBlock(net.minecraft.server.level.ServerPlayer actor,
+                                       net.minecraft.server.level.ServerLevel level,
+                                       net.minecraft.core.BlockPos pos,
+                                       WitcheryProtectionAction action) {
+            throw new IllegalStateException("boom");
+        }
+    }
 }

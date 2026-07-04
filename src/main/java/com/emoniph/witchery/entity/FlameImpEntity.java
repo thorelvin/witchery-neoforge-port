@@ -383,7 +383,11 @@ public class FlameImpEntity extends Monster {
     public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
         super.readAdditionalSaveData(tag);
         String ownerStr = tag.getStringOr("OwnerUUID", "");
-        ownerUuid = ownerStr.isEmpty() ? null : java.util.UUID.fromString(ownerStr);
+        try {
+            ownerUuid = ownerStr.isEmpty() ? null : java.util.UUID.fromString(ownerStr);
+        } catch (IllegalArgumentException ignored) {
+            ownerUuid = null;
+        }
         affection     = tag.getIntOr("Affection", 0);
         secretsShared = tag.getIntOr("SecretsShared", 0);
         lastGiftTime  = tag.getLongOr("LastGiftTime", 0L);

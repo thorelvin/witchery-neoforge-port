@@ -162,7 +162,11 @@ public class BansheeEntity extends Monster {
     public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
         super.readAdditionalSaveData(tag);
         String ownerStr = tag.getStringOr("OwnerUUID", "");
-        ownerUuid = ownerStr.isEmpty() ? null : UUID.fromString(ownerStr);
+        try {
+            ownerUuid = ownerStr.isEmpty() ? null : UUID.fromString(ownerStr);
+        } catch (IllegalArgumentException ignored) {
+            ownerUuid = null;
+        }
     }
 
     @Override protected SoundEvent getAmbientSound() { return SoundEvents.PHANTOM_AMBIENT; }
