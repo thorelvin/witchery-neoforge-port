@@ -212,8 +212,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     public static Optional<String> supportFollowup(String playerMessage, String speech) {
-        String player = normalizeForComparison(playerMessage);
-        String normalizedSpeech = normalizeForComparison(speech);
+        String player = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (asksNpcEarnings(player)) {
             return Optional.empty();
         }
@@ -259,7 +259,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static Optional<String> targetedKnowledgeFollowup(String playerMessage, String normalizedSpeech) {
-        String player = normalizeForComparison(playerMessage);
+        String player = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
         boolean wantsSalt = player.contains("witches salt") || player.contains("witch salt");
         boolean wantsArthana = player.contains("arthana");
         boolean wantsAltar = player.contains("altar") || player.contains("chalice");
@@ -381,7 +381,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (action.equals(cleaned)) {
             return Optional.empty();
         }
-        String normalizedAction = normalizeForComparison(action);
+        String normalizedAction = NpcSpeechSimilarity.normalizeForComparison(action);
         if (!isBareSafeActionCandidate(normalizedAction)) {
             return Optional.empty();
         }
@@ -515,7 +515,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static String stageDirection(String prefix, String npcName) {
-        String text = normalizeForComparison(stripNarrationSpeakerPrefix(prefix, npcName));
+        String text = NpcSpeechSimilarity.normalizeForComparison(stripNarrationSpeakerPrefix(prefix, npcName));
         if (text.isBlank()
                 || text.contains("sun")
                 || text.contains("moon")
@@ -531,7 +531,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static String canonicalVisibleBeat(String action) {
-        String text = normalizeForComparison(action);
+        String text = NpcSpeechSimilarity.normalizeForComparison(action);
         if (text.isBlank()) {
             return "";
         }
@@ -679,36 +679,36 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean repeatsPaymentLineForNonTrade(String speech, String playerMessage) {
-        String normalizedPlayer = playerMessage == null ? "" : normalizeForComparison(playerMessage);
+        String normalizedPlayer = playerMessage == null ? "" : NpcSpeechSimilarity.normalizeForComparison(playerMessage);
         if (asksTrade(normalizedPlayer) || asksParroting(normalizedPlayer)) {
             return false;
         }
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.contains("spend it wisely")
                 || normalized.contains("wares answer need")
                 || normalized.contains("answer need not noise");
     }
 
     private static boolean unpromptedTradeStockForNonTrade(String speech, String playerMessage) {
-        String normalizedPlayer = playerMessage == null ? "" : normalizeForComparison(playerMessage);
+        String normalizedPlayer = playerMessage == null ? "" : NpcSpeechSimilarity.normalizeForComparison(playerMessage);
         if (asksTrade(normalizedPlayer) || asksKnowledge(normalizedPlayer)) {
             return false;
         }
-        return tradeStockTerms(normalizeForComparison(speech)) >= 3;
+        return tradeStockTerms(NpcSpeechSimilarity.normalizeForComparison(speech)) >= 3;
     }
 
     private static boolean wrongEarningsPerspective(String speech, String playerMessage) {
-        if (!asksNpcEarnings(normalizeForComparison(playerMessage))) {
+        if (!asksNpcEarnings(NpcSpeechSimilarity.normalizeForComparison(playerMessage))) {
             return false;
         }
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.startsWith("you earn")
                 || normalized.contains("you earn a lot")
                 || normalized.contains("your trades earn");
     }
 
     private static boolean isPlaceholderSpeech(String speech) {
-        String normalized = normalizeForComparison(spokenWithoutAction(speech));
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(spokenWithoutAction(speech));
         return normalized.equals("spoken words")
                 || normalized.equals("spoken word")
                 || normalized.equals("speech")
@@ -717,7 +717,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean hasRoleConfusion(String speech, String npcName) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         boolean deniesRole = Pattern.compile("\\bi\\s+(?:am|m)\\s+not\\s+(?:a\\s+|an\\s+|the\\s+)?(?:full\\s+)?[a-z ]{0,24}\\b(?:witch|coven|merchant)\\b")
                 .matcher(normalized)
                 .find();
@@ -727,14 +727,14 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (npcName == null || npcName.isBlank()) {
             return false;
         }
-        String firstName = normalizeForComparison(npcName);
+        String firstName = NpcSpeechSimilarity.normalizeForComparison(npcName);
         firstName = firstName.contains(" ") ? firstName.substring(0, firstName.indexOf(' ')) : firstName;
         return normalized.contains(firstName + " is not")
                 && (normalized.contains("witch") || normalized.contains("coven") || normalized.contains("merchant"));
     }
 
     private static boolean isCannedFiller(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         int count = 0;
         if (normalized.contains("what brings you here")) count++;
         if (normalized.contains("making quite a commotion")) count++;
@@ -744,7 +744,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean isSafeVisibleBeat(String action) {
-        String normalized = normalizeForComparison(action);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(action);
         return normalized.equals("narrows her eyes")
                 || normalized.equals("leans closer")
                 || normalized.equals("raises an eyebrow")
@@ -787,8 +787,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (npcName == null || npcName.isBlank() || speech == null || speech.isBlank()) {
             return false;
         }
-        String normalizedSpeech = normalizeForComparison(speech);
-        String normalizedName = normalizeForComparison(npcName);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
+        String normalizedName = NpcSpeechSimilarity.normalizeForComparison(npcName);
         boolean selfIntro = normalizedSpeech.contains("i am " + normalizedName)
                 || normalizedSpeech.contains("i m " + normalizedName)
                 || (!normalizedName.isBlank()
@@ -798,7 +798,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (!selfIntro) {
             return false;
         }
-        String player = normalizeForComparison(playerMessage);
+        String player = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
         if (asksCovenPath(player)
                 || containsAnyTerm(player, "what are you doing", "what you doing", "what are you up to")) {
             return true;
@@ -812,10 +812,10 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean unwarrantedPlayerPossession(String speech, String playerMessage) {
-        if (asksTrade(normalizeForComparison(playerMessage))) {
+        if (asksTrade(NpcSpeechSimilarity.normalizeForComparison(playerMessage))) {
             return false;
         }
-        String normalizedSpeech = normalizeForComparison(speech);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (normalizedSpeech.startsWith("you have my attention")) {
             return false;
         }
@@ -826,10 +826,10 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean throwsParrotingComplaintBack(String speech, String playerMessage) {
-        if (!asksParroting(normalizeForComparison(playerMessage))) {
+        if (!asksParroting(NpcSpeechSimilarity.normalizeForComparison(playerMessage))) {
             return false;
         }
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.contains("you re just parroting")
                 || normalized.contains("you are just parroting")
                 || normalized.contains("aren t you")
@@ -840,8 +840,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (speech == null || speech.isBlank() || npcName == null || npcName.isBlank()) {
             return false;
         }
-        String normalized = normalizeForComparison(speech);
-        String name = normalizeForComparison(npcName);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
+        String name = NpcSpeechSimilarity.normalizeForComparison(npcName);
         String firstName = name.contains(" ") ? name.substring(0, name.indexOf(' ')) : name;
         return normalized.startsWith("hello " + firstName)
                 || normalized.startsWith("hello " + name)
@@ -855,14 +855,14 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (speech == null || speech.isBlank() || npcName == null || npcName.isBlank()) {
             return false;
         }
-        String normalized = normalizeForComparison(spokenWithoutAction(speech));
-        String name = normalizeForComparison(npcName);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(spokenWithoutAction(speech));
+        String name = NpcSpeechSimilarity.normalizeForComparison(npcName);
         String firstName = name.contains(" ") ? name.substring(0, name.indexOf(' ')) : name;
         return normalized.equals(name) || normalized.equals(firstName);
     }
 
     private static boolean asksIdentity(String playerMessage) {
-        String normalized = normalizeForComparison(playerMessage);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
         if (containsAnyTerm(normalized, "what are you doing", "what you doing", "what are you up to",
                 "what are you selling", "what are you trading")) {
             return false;
@@ -890,11 +890,11 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersPlayerName(String speech, String playerName) {
-        String normalizedName = normalizeForComparison(playerName);
+        String normalizedName = NpcSpeechSimilarity.normalizeForComparison(playerName);
         if (normalizedName.isBlank()) {
             return false;
         }
-        return normalizeForComparison(speech).contains(normalizedName);
+        return NpcSpeechSimilarity.normalizeForComparison(speech).contains(normalizedName);
     }
 
     private static boolean startsWithPlayerSpeakerPrefix(String speech, String playerName) {
@@ -906,8 +906,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersIdentity(String speech, String npcName, String normalizedPlayerMessage) {
-        String normalizedSpeech = normalizeForComparison(speech);
-        String normalizedName = normalizeForComparison(npcName);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
+        String normalizedName = NpcSpeechSimilarity.normalizeForComparison(npcName);
         String firstName = normalizedName.contains(" ") ? normalizedName.substring(0, normalizedName.indexOf(' ')) : normalizedName;
         boolean asksForName = containsAnyTerm(normalizedPlayerMessage, "what should i call you",
                 "what are you called", "your name");
@@ -924,12 +924,12 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersHutOrDoorSafety(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return containsAnyTerm(normalized, "salt", "ward", "threshold", "door", "light", "hearth");
     }
 
     private static boolean answersMixingWarning(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return containsAnyTerm(normalized, "recipe page", "recipe book", "opened recipe",
                 "opened page", "page your primer", "book shows", "do not free mix",
                 "don t free mix", "do not guess", "don t guess", "label the bottle", "exact page");
@@ -952,7 +952,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersUnsafeReveal(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.contains("stay shut")
                 || normalized.contains("eyes narrowing")
                 || normalized.contains("narrows her eyes")
@@ -976,7 +976,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (missesHardAskedContext(speech, npcName, playerMessage, playerName, memoryContext, expectedClock)) {
             return true;
         }
-        String player = normalizeForComparison(playerMessage);
+        String player = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
         if (asksRememberRequest(player)) {
             return false;
         }
@@ -984,7 +984,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return true;
         }
         if (asksSpiritWorld(player)) {
-            String normalizedSpeech = normalizeForComparison(speech);
+            String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
             if (!looksLikeSpiritWorldAnswer(normalizedSpeech)) {
                 return !isThinKnowledgeResponse(normalizedSpeech);
             }
@@ -1004,7 +1004,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     private static boolean missesHardAskedContext(String speech, String npcName, String playerMessage, String playerName,
                                                   String memoryContext,
                                                   String expectedClock) {
-        String player = normalizeForComparison(playerMessage);
+        String player = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
         if (!asksGreeting(player) && isStandaloneGreeting(speech)) {
             return true;
         }
@@ -1026,7 +1026,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (asksIdentity(playerMessage) && !answersIdentity(speech, npcName, player)) {
             return true;
         }
-        String normalizedSpeech = normalizeForComparison(speech);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (isAmbientCue(player) && !answersAmbientCue(speech, normalizedSpeech, player)) {
             return true;
         }
@@ -1070,7 +1070,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return true;
         }
         if (asksMemory(player)
-                && !containsAnyTerm(normalizeForComparison(speech), "remember", "you have", "you like",
+                && !containsAnyTerm(NpcSpeechSimilarity.normalizeForComparison(speech), "remember", "you have", "you like",
                 "you are", "know your name", "not given me much", "not told me much")) {
             return true;
         }
@@ -1099,7 +1099,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
             return true;
         }
         if (asksDemonTrust(player)
-                && !looksLikeDemonAnswer(normalizeForComparison(speech))
+                && !looksLikeDemonAnswer(NpcSpeechSimilarity.normalizeForComparison(speech))
                 && !answersDemonTrustWithPronoun(speech)) {
             return true;
         }
@@ -1127,8 +1127,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
 
     private static boolean missesRelationshipMemory(String speech, String normalizedPlayerMessage,
                                                     String memoryContext) {
-        String normalizedSpeech = normalizeForComparison(speech);
-        String normalizedMemory = normalizeForComparison(memoryContext);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
+        String normalizedMemory = NpcSpeechSimilarity.normalizeForComparison(memoryContext);
         if (containsAnyTerm(normalizedPlayerMessage, "did you bless me", "am i blessed", "your blessing",
                 "you blessed me", "the luck", "that blessing", "blessing do anything")
                 && normalizedMemory.contains("blessed with luck")
@@ -1214,14 +1214,14 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean hasUsefulSupportFollowup(String playerMessage, String speech) {
-        String normalizedSpeech = normalizeForComparison(speech);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
         return supportFollowup(playerMessage, speech)
-                .filter(followup -> !normalizeForComparison(followup).equals(normalizedSpeech))
+                .filter(followup -> !NpcSpeechSimilarity.normalizeForComparison(followup).equals(normalizedSpeech))
                 .isPresent();
     }
 
     private static boolean isSupportableKnowledgeMiss(String normalizedPlayerMessage, String speech) {
-        String normalizedSpeech = normalizeForComparison(speech);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (normalizedSpeech.isBlank()
                 || refusesKnowledge(speech)
                 || isVagueKnowledgeAnswer(speech)
@@ -1324,7 +1324,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersGreeting(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.contains("hello")
                 || normalized.contains("hi ")
                 || normalized.startsWith("hi")
@@ -1335,7 +1335,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean isStandaloneGreeting(String speech) {
-        String normalized = normalizeForComparison(spokenWithoutAction(speech));
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(spokenWithoutAction(speech));
         return normalized.matches("(hello( there)?|hi|hey|greetings|well met|good day|good evening)( again)?( dev| traveler)?");
     }
 
@@ -1370,7 +1370,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersTradePrompt(String speech, String normalizedPlayerMessage) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (normalized.contains("arthana")
                 || normalized.contains("rare herb")
                 || normalized.contains(" gold")
@@ -1507,7 +1507,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean looksLikeTimeAnswer(String speech, String expectedClock) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (normalized.contains("moonshade")
                 || normalized.contains("coin")
                 || normalized.contains("ware")
@@ -1549,8 +1549,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersMemoryQuestion(String speech, String memoryContext) {
-        String normalizedSpeech = normalizeForComparison(speech);
-        String normalizedMemory = normalizeForComparison(memoryContext);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
+        String normalizedMemory = NpcSpeechSimilarity.normalizeForComparison(memoryContext);
         if (normalizedSpeech.contains("rare and precious")
                 || normalizedSpeech.contains("full moon")
                 || normalizedSpeech.contains("only grows")
@@ -1671,7 +1671,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean looksLikePlaceAnswer(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.contains("we are in")
                 || normalized.contains("you are in")
                 || normalized.contains("plains")
@@ -1692,7 +1692,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersFollowRequest(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (normalized.equals("i m here") || normalized.equals("i am here") || normalized.equals("here")) {
             return false;
         }
@@ -1721,7 +1721,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersNpcEarnings(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (normalized.startsWith("you ")
                 || normalized.contains(" you earn")
                 || normalized.contains("your trades")) {
@@ -1742,7 +1742,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean refusesKnowledge(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.contains("i can t help")
                 || normalized.contains("i cant help")
                 || normalized.contains("can t help")
@@ -1757,7 +1757,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean isVagueKnowledgeAnswer(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.contains("various magical purposes")
                 || normalized.contains("many magical purposes")
                 || normalized.contains("many things")
@@ -1782,8 +1782,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean isBlandNonAnswer(String speech, String playerMessage) {
-        String normalizedSpeech = normalizeForComparison(spokenWithoutAction(speech));
-        String normalizedPlayer = normalizeForComparison(playerMessage);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(spokenWithoutAction(speech));
+        String normalizedPlayer = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
         if (isBareStrongKeywordFragment(normalizedSpeech)
                 && !allowsShortKeywordFragment(normalizedPlayer, normalizedSpeech)) {
             return true;
@@ -2248,7 +2248,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersAmbientCue(String speech, String normalizedSpeech, String normalizedPlayerMessage) {
-        String spoken = normalizeForComparison(spokenWithoutAction(speech));
+        String spoken = NpcSpeechSimilarity.normalizeForComparison(spokenWithoutAction(speech));
         if (spoken.isBlank() || SAFE_ACTION_ONLY.matcher(speech == null ? "" : speech.trim()).matches()) {
             return false;
         }
@@ -2286,8 +2286,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean isUnsupportedGeneralAdvice(String speech, String playerMessage) {
-        String normalizedSpeech = normalizeForComparison(speech);
-        String normalizedPlayer = normalizeForComparison(playerMessage);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
+        String normalizedPlayer = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
         if ((normalizedPlayer.contains("lost") || normalizedPlayer.contains("what should i do"))
                 && (normalizedSpeech.contains("try my mandrake")
                     || normalizedSpeech.contains("mandrake")
@@ -2304,8 +2304,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean promisesUnsupportedAction(String speech, String playerMessage) {
-        String normalizedSpeech = normalizeForComparison(spokenWithoutAction(speech));
-        String normalizedPlayer = normalizeForComparison(playerMessage);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(spokenWithoutAction(speech));
+        String normalizedPlayer = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
         if (!asksForDirectAction(normalizedPlayer)) {
             return false;
         }
@@ -2362,7 +2362,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersApology(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (normalized.startsWith("i m sorry")
                 || normalized.startsWith("i am sorry")
                 || normalized.contains("i m sorry")
@@ -2386,7 +2386,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersSelfDirectedRegret(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (normalized.startsWith("you re welcome")
                 || normalized.startsWith("you are welcome")
                 || normalized.contains("i m not used to")
@@ -2399,7 +2399,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean isOffTopicGreetingAnswer(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (!containsAnyTerm(normalized, "taglock", "nightmare", "whiff", "mandrake", "belladonna",
                 "curse", "cursed", "demon", "spirit world", "sleeping brew", "distillery", "poppet")) {
             return false;
@@ -2427,7 +2427,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 "how do i get back")) {
             return false;
         }
-        String memory = normalizeForComparison(memoryContext);
+        String memory = NpcSpeechSimilarity.normalizeForComparison(memoryContext);
         return memory.contains("spirit world")
                 || memory.contains("sleeping brew")
                 || memory.contains("nightmare")
@@ -2435,7 +2435,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersSpiritReturnFollowup(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.contains("return")
                 || normalized.contains("path")
                 || normalized.contains("wake")
@@ -2450,7 +2450,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersDemonTrustWithPronoun(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return containsAnyTerm(normalized, "trust", "bargain", "word", "deal")
                 && containsAnyTerm(normalized, "them", "they", "their");
     }
@@ -2461,7 +2461,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersRoadAdvice(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return containsAnyTerm(normalized, "salt", "coin", "road", "boots", "door", "shadow",
                 "voices", "name", "dawn", "powder", "bread", "enemies");
     }
@@ -2472,7 +2472,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersCurseActionRequest(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return containsAnyTerm(normalized, "not for bruised pride", "wards first", "collect interest",
                 "not by chatter", "cannot", "can t", "will not", "won t", "learn wards", "no");
     }
@@ -2481,13 +2481,13 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (containsAnyTerm(normalizedPlayerMessage, "whisper", "whispers", "well")) {
             return true;
         }
-        String memory = normalizeForComparison(memoryContext);
+        String memory = NpcSpeechSimilarity.normalizeForComparison(memoryContext);
         return containsAnyTerm(normalizedPlayerMessage, "could it be spirits", "is it spirits", "could they be spirits")
                 && containsAnyTerm(memory, "whisper", "whispers", "well", "spirit", "spirits");
     }
 
     private static boolean answersWellOrSpiritPossibility(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (containsAnyTerm(normalized, "no worries", "don t worry", "don't worry")) {
             return false;
         }
@@ -2514,7 +2514,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean isCoinCleaningAdvice(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.contains("coin worth cleaning")
                 || normalized.contains("clean it and come back")
                 || normalized.contains("coin clean enough");
@@ -2539,7 +2539,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean reversesApprenticeRole(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.contains("i could be your apprentice")
                 || normalized.contains("i can be your apprentice")
                 || normalized.contains("i will be your apprentice")
@@ -2547,8 +2547,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean canKeepRawWithGroundedFollowup(String speech, String playerMessage, String npcName) {
-        String normalizedPlayer = normalizeForComparison(playerMessage);
-        String normalizedSpeech = normalizeForComparison(speech);
+        String normalizedPlayer = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (normalizedSpeech.isBlank()
                 || isBlandNonAnswer(speech, playerMessage)
                 || promisesUnsupportedAction(speech, playerMessage)
@@ -2606,8 +2606,8 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (npcName == null || npcName.isBlank()) {
             return false;
         }
-        String normalizedSpeech = normalizeForComparison(speech);
-        String normalizedName = normalizeForComparison(npcName);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
+        String normalizedName = NpcSpeechSimilarity.normalizeForComparison(npcName);
         return normalizedSpeech.startsWith("i am " + normalizedName)
                     || normalizedSpeech.startsWith("i m " + normalizedName);
     }
@@ -2618,7 +2618,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean containsUnsupportedLoreClaim(String speech, String normalizedPlayerMessage) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (normalized.contains("belladonna is edible")
                 || normalized.contains("ingested belladonna")
                 || normalized.contains("drink it")
@@ -3046,7 +3046,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean containsUnsupportedExactMechanic(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.matches(".*\\b\\d+\\s*(litre|litres|liter|liters|hour|hours|minute|minutes|second|seconds|gold|silver|emerald|emeralds|coin|coins)\\b.*")
                 || normalized.matches(".*\\b\\d+\\s*(block|blocks|tile|tiles)\\b.*")
                 || normalized.matches(".*\\b\\d+\\s+(?:\\d+\\s+)?(bottle|bottles|foot|feet|meter|meters|metre|metres)\\b.*")
@@ -3062,7 +3062,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean missesKnowledgeSubject(String speech, String normalizedPlayerMessage) {
-        String normalizedSpeech = normalizeForComparison(speech);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (asksKnownExactRecipeQuestion(normalizedPlayerMessage)
                 && looksLikeKnownExactRecipeAnswer(normalizedSpeech, normalizedPlayerMessage)) {
             return false;
@@ -4123,7 +4123,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersRememberRequest(String speech, String normalizedPlayerMessage) {
-        String normalizedSpeech = normalizeForComparison(speech);
+        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
         boolean acknowledges = normalizedSpeech.contains("remember")
                 || normalizedSpeech.contains("keep that")
                 || normalizedSpeech.contains("noted")
@@ -4152,7 +4152,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersRumor(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         return normalized.contains("rumor")
                 || normalized.contains("rumour")
                 || normalized.contains("whisper")
@@ -4195,7 +4195,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     private static boolean answersParrotingComplaint(String speech) {
-        String normalized = normalizeForComparison(speech);
+        String normalized = NpcSpeechSimilarity.normalizeForComparison(speech);
         if (normalized.contains("you re just parroting")
                 || normalized.contains("you are just parroting")
                 || normalized.contains("aren t you")
@@ -4319,43 +4319,24 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         if (playerMessage == null || playerMessage.isBlank()) {
             return false;
         }
-        String a = normalizeForComparison(speech);
-        String b = normalizeForComparison(playerMessage);
+        String a = NpcSpeechSimilarity.normalizeForComparison(speech);
+        String b = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
         if (a.isBlank() || b.isBlank()) {
             return false;
         }
         if (asksRememberRequest(b) && a.contains("remember")) {
             return false;
         }
-        String speechFingerprint = contentFingerprint(a);
-        String playerFingerprint = contentFingerprint(b);
+        String speechFingerprint = NpcSpeechSimilarity.contentFingerprint(a);
+        String playerFingerprint = NpcSpeechSimilarity.contentFingerprint(b);
         return a.equals(b)
                 || (!speechFingerprint.isBlank() && speechFingerprint.equals(playerFingerprint))
                 || a.startsWith(b + " ")
                 || (speech.endsWith("?") && (a.startsWith(b) || b.startsWith(a)));
     }
 
-    private static String normalizeForComparison(String text) {
-        return text.toLowerCase(Locale.ROOT)
-                .replaceAll("[^a-z0-9 ]+", " ")
-                .replaceAll("\\s+", " ")
-                .trim();
-    }
-
     static boolean sameMeaningForRepetition(String first, String second) {
-        String a = normalizeForComparison(first);
-        String b = normalizeForComparison(second);
-        if (a.isBlank() || b.isBlank()) {
-            return false;
-        }
-        return a.equals(b) || contentFingerprint(a).equals(contentFingerprint(b));
-    }
-
-    private static String contentFingerprint(String normalized) {
-        return normalized
-                .replaceAll("\\b(a|an|the|please|just|really|very|quite)\\b", " ")
-                .replaceAll("\\s+", " ")
-                .trim();
+        return NpcSpeechSimilarity.sameMeaningForRepetition(first, second);
     }
 
     public static String sanitize(String raw, int maxLength) {
