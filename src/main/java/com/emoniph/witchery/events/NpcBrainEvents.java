@@ -72,6 +72,7 @@ public final class NpcBrainEvents {
     private static final long WITCH_IDLE_COOLDOWN_TICKS = 20L * 120L;
     private static final int WITCH_IDLE_TRIGGER_TICKS = 20 * 25;
     private static final int WITCH_DARKNESS_CURSE_TICKS = 20 * 45;
+    private static final int COOLDOWN_PRUNE_SIZE = 256;
     private static final ConcurrentHashMap<String, Long> LEONARD_GAZE_COOLDOWNS = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, Long> REFLECTION_GAZE_COOLDOWNS = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, Long> MIRROR_WORLD_AMBIENT_COOLDOWNS = new ConcurrentHashMap<>();
@@ -186,11 +187,13 @@ public final class NpcBrainEvents {
         }
         long now = level.getGameTime();
         String key = leonard.getUUID() + ":" + player.getUUID() + ":gaze";
+        maybePruneExpiredCooldowns(LEONARD_GAZE_COOLDOWNS, now);
         Long blockedUntil = LEONARD_GAZE_COOLDOWNS.get(key);
         if (blockedUntil != null && blockedUntil > now) {
             return;
         }
         LEONARD_GAZE_COOLDOWNS.put(key, now + LEONARD_GAZE_COOLDOWN_TICKS);
+        maybePruneExpiredCooldowns(LEONARD_GAZE_COOLDOWNS, now);
         Component fallback = NpcBrainService.speechComponent(NpcPersonas.LEONARD, leonard,
                 "You look at the bargain, and the bargain looks back.");
         NpcBrainService.INSTANCE.requestLeonardGaze(leonard, player, fallback);
@@ -762,11 +765,13 @@ public final class NpcBrainEvents {
         }
         long now = level.getGameTime();
         String key = reflection.getUUID() + ":" + player.getUUID() + ":gaze";
+        maybePruneExpiredCooldowns(REFLECTION_GAZE_COOLDOWNS, now);
         Long blockedUntil = REFLECTION_GAZE_COOLDOWNS.get(key);
         if (blockedUntil != null && blockedUntil > now) {
             return;
         }
         REFLECTION_GAZE_COOLDOWNS.put(key, now + REFLECTION_GAZE_COOLDOWN_TICKS);
+        maybePruneExpiredCooldowns(REFLECTION_GAZE_COOLDOWNS, now);
         Component fallback = NpcBrainService.speechComponent(NpcPersonas.REFLECTION, reflection,
                 "Your echo arrived early, " + player.getName().getString() + ".");
         NpcBrainService.INSTANCE.requestReflectionGaze(reflection, player, fallback);
@@ -793,6 +798,7 @@ public final class NpcBrainEvents {
         }
         long now = level.getGameTime();
         String key = player.getUUID() + ":mirror_world";
+        maybePruneExpiredCooldowns(MIRROR_WORLD_AMBIENT_COOLDOWNS, now);
         Long blockedUntil = MIRROR_WORLD_AMBIENT_COOLDOWNS.get(key);
         if (blockedUntil != null && blockedUntil > now) {
             return;
@@ -801,6 +807,7 @@ public final class NpcBrainEvents {
             return;
         }
         MIRROR_WORLD_AMBIENT_COOLDOWNS.put(key, now + MIRROR_WORLD_AMBIENT_COOLDOWN_TICKS);
+        maybePruneExpiredCooldowns(MIRROR_WORLD_AMBIENT_COOLDOWNS, now);
         String speech = mirrorAmbientLine(player);
         mirrorSpeech(level, player, speech);
     }
@@ -1167,16 +1174,24 @@ public final class NpcBrainEvents {
         return main.is(WitcheryItems.WITCHES_PRIMER.get()) || offhand.is(WitcheryItems.WITCHES_PRIMER.get());
     }
 
+    private static void maybePruneExpiredCooldowns(ConcurrentHashMap<String, Long> map, long now) {
+        if (map != null && map.size() >= COOLDOWN_PRUNE_SIZE) {
+            map.entrySet().removeIf(entry -> entry.getValue() <= now);
+        }
+    }
+
     private static void dispatchWitchAmbient(ServerLevel level, CovenWitchEntity witch, ServerPlayer player,
                                              String cue, String fallbackSpeech, long cooldownTicks) {
         long now = level.getGameTime();
         String topic = normalize(cue);
         String key = witch.getUUID() + ":" + player.getUUID() + ":" + topic;
+        maybePruneExpiredCooldowns(WITCH_AMBIENT_COOLDOWNS, now);
         Long blockedUntil = WITCH_AMBIENT_COOLDOWNS.get(key);
         if (blockedUntil != null && blockedUntil > now) {
             return;
         }
         WITCH_AMBIENT_COOLDOWNS.put(key, now + cooldownTicks);
+        maybePruneExpiredCooldowns(WITCH_AMBIENT_COOLDOWNS, now);
         Component fallback = speechComponent(witch, fallbackSpeech);
         if (!NpcBrainService.INSTANCE.requestCovenAmbient(witch, player, cue, fallback)) {
             witch.nudgePlayerAttention(player);

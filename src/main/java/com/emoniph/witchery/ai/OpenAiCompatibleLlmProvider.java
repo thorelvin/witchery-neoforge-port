@@ -21,11 +21,13 @@ public final class OpenAiCompatibleLlmProvider implements LlmProvider {
     private final HttpClient client;
 
     public OpenAiCompatibleLlmProvider(LlmProviderConfig config, Executor executor) {
+        this(config, executor, LlmHttpClients.clientFor(config.timeoutMillis()));
+    }
+
+    OpenAiCompatibleLlmProvider(LlmProviderConfig config, Executor executor, HttpClient client) {
         this.config = config;
         this.executor = executor;
-        this.client = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofMillis(config.timeoutMillis()))
-                .build();
+        this.client = client == null ? LlmHttpClients.clientFor(config.timeoutMillis()) : client;
     }
 
     @Override

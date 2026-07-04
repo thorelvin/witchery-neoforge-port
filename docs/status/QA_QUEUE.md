@@ -30,6 +30,9 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   talk lines and confirm they skip the separate message-analysis request; ask an
   action-shaped line such as `can you open this?` and confirm it still uses the
   analysis/classifier path.
+- With `maxConcurrentRequests` above 1, have multiple players speak to separate
+  AI NPCs at once and confirm requests can run in parallel without excess
+  provider/client churn or long-session cooldown-map growth.
 
 ### Hobgoblin Chat Commands
 

@@ -44,6 +44,7 @@ public final class NpcBrainService {
     private static final int REPAIR_MAX_TOKENS = 96;
     private static final int REPAIR_TIMEOUT_MILLIS = 2600;
     private static final int SPEECH_TEXT_COLOR = 0xFFFFFF;
+    private static final int COOLDOWN_PRUNE_SIZE = 256;
 
     private final Object executorLock = new Object();
     private final Object warmupExecutorLock = new Object();
@@ -57,6 +58,7 @@ public final class NpcBrainService {
     private final ConcurrentHashMap<String, Long> socialCooldownUntil = new ConcurrentHashMap<>();
     private volatile ExecutorService executor;
     private volatile ExecutorService warmupExecutor;
+    private volatile int executorParallelism;
     private volatile String warmedConfigKey = "";
     private volatile boolean warmupInFlight;
     private volatile long lastWarmupMillis = -1L;
@@ -433,6 +435,7 @@ public final class NpcBrainService {
         }
 
         cooldownUntil.put(cooldownKey, now + cooldownTicks(trigger));
+        maybePruneExpiredCooldowns(cooldownUntil, now);
         persona.beginConversation(entity, player);
         provider.generate(prompt)
                 .orTimeout(WitcheryConfig.LLM_TIMEOUT_MILLIS.get() + 500L, TimeUnit.MILLISECONDS)
@@ -503,6 +506,7 @@ public final class NpcBrainService {
     public void reload() {
         cooldownUntil.clear();
         socialCooldownUntil.clear();
+        LlmHttpClients.clear();
         resetWarmup();
         lastError = "";
     }
@@ -513,6 +517,7 @@ public final class NpcBrainService {
                 executor.shutdownNow();
                 executor = null;
             }
+            executorParallelism = 0;
         }
         synchronized (warmupExecutorLock) {
             if (warmupExecutor != null) {
@@ -521,6 +526,7 @@ public final class NpcBrainService {
             }
         }
         inFlight.set(0);
+        LlmHttpClients.clear();
         resetWarmup();
     }
 
@@ -582,8 +588,22 @@ public final class NpcBrainService {
     }
 
     private boolean isCoolingDown(String cooldownKey, long now) {
+        maybePruneExpiredCooldowns(cooldownUntil, now);
         Long blockedUntil = cooldownUntil.get(cooldownKey);
         return blockedUntil != null && blockedUntil > now;
+    }
+
+    static void pruneExpiredCooldowns(ConcurrentHashMap<String, Long> map, long now) {
+        if (map == null || map.isEmpty()) {
+            return;
+        }
+        map.entrySet().removeIf(entry -> entry.getValue() <= now);
+    }
+
+    private static void maybePruneExpiredCooldowns(ConcurrentHashMap<String, Long> map, long now) {
+        if (map != null && map.size() >= COOLDOWN_PRUNE_SIZE) {
+            pruneExpiredCooldowns(map, now);
+        }
     }
 
     private <E extends LivingEntity> void handlePersonaResponse(ServerLevel level, NpcPersona<E> persona, UUID entityId,
@@ -1154,11 +1174,13 @@ public final class NpcBrainService {
                                        String action, long ticks) {
         String key = entity.getUUID() + ":" + player.getUUID() + ":" + action;
         long now = level.getGameTime();
+        maybePruneExpiredCooldowns(socialCooldownUntil, now);
         Long blockedUntil = socialCooldownUntil.get(key);
         if (blockedUntil != null && blockedUntil > now) {
             return false;
         }
         socialCooldownUntil.put(key, now + ticks);
+        maybePruneExpiredCooldowns(socialCooldownUntil, now);
         return true;
     }
 
@@ -1201,15 +1223,23 @@ public final class NpcBrainService {
 
     private ExecutorService executor() {
         synchronized (executorLock) {
+            int parallelism = Math.max(1, WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get());
+            if (executor != null && !executor.isShutdown() && executorParallelism != parallelism) {
+                executor.shutdownNow();
+                executor = null;
+                executorParallelism = 0;
+            }
             if (executor == null || executor.isShutdown()) {
-                executor = Executors.newSingleThreadExecutor(new ThreadFactory() {
+                AtomicInteger worker = new AtomicInteger();
+                executor = Executors.newFixedThreadPool(parallelism, new ThreadFactory() {
                     @Override
                     public Thread newThread(Runnable runnable) {
-                        Thread thread = new Thread(runnable, "Witchery NPC LLM");
+                        Thread thread = new Thread(runnable, "Witchery NPC LLM-" + worker.incrementAndGet());
                         thread.setDaemon(true);
                         return thread;
                     }
                 });
+                executorParallelism = parallelism;
             }
             return executor;
         }

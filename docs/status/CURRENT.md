@@ -62,7 +62,9 @@ enough to read before starting work. Long historical deltas belong in
   completion/abort paths, and provider/config failures no longer spend the
   request cooldown. Low-risk normal chat now skips the separate model-backed
   message-analysis call and uses deterministic routing context before the
-  persona response.
+  persona response. Provider HTTP clients are reused by timeout bucket, request
+  executor parallelism now follows the configured concurrency limit, and AI
+  cooldown maps prune expired entries during long sessions.
 - The protection facade is live for NPC command ownership and terrain-changing
   magic. It checks vanilla permissions and optional reflective adapters for
   Open Parties and Claims, FTB Chunks, and Common Protection API, with config
