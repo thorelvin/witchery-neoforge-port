@@ -6,6 +6,7 @@ import com.emoniph.witchery.ai.NpcCommandKind;
 import com.emoniph.witchery.ai.NpcPersonas;
 import com.emoniph.witchery.blocks.LeechChestBlock;
 import com.emoniph.witchery.blocks.MirrorBlock;
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.entity.BabaYagaEntity;
 import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.entity.HobgoblinEntity;
@@ -100,11 +101,14 @@ public final class NpcBrainEvents {
             return;
         }
         if (handleNpcCommand(level, target, player, message)) {
+            cancelHandledNpcChat(event, target);
             return;
         }
-        if (!requestTargetChat(target, player, message)) {
-            nudgeTarget(target, player);
+        if (requestTargetChat(target, player, message)) {
+            cancelHandledNpcChat(event, target);
+            return;
         }
+        nudgeTarget(target, player);
     }
 
     @SubscribeEvent
@@ -295,7 +299,7 @@ public final class NpcBrainEvents {
                 || explicitlyNamesReflection(message);
         for (CovenWitchEntity witch : witches) {
             if (isNamedAddress(witch, message)) {
-                candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, witch, player.distanceToSqr(witch)));
+                candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, witch, player.distanceToSqr(witch), true));
             }
         }
         if (otherPersonaNamed) {
@@ -305,11 +309,11 @@ public final class NpcBrainEvents {
         double distance = player.distanceToSqr(nearest);
         if (distance <= CASUAL_CHAT_RANGE * CASUAL_CHAT_RANGE
                 && (isCasualAddress(message) || isShortFollowUp(message))) {
-            candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, nearest, distance));
+            candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, nearest, distance, true));
             return;
         }
         if (distance <= CHAT_RANGE * CHAT_RANGE && isLookingAt(player, nearest) && isConversational(message)) {
-            candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, nearest, distance));
+            candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, nearest, distance, false));
         }
     }
 
@@ -326,7 +330,7 @@ public final class NpcBrainEvents {
                 || explicitlyNamesReflection(message);
         for (LeonardEntity shade : shades) {
             if (isNamedLeonardAddress(shade, message)) {
-                candidates.add(new ChatTarget(ChatPersona.LEONARD, shade, player.distanceToSqr(shade)));
+                candidates.add(new ChatTarget(ChatPersona.LEONARD, shade, player.distanceToSqr(shade), true));
             }
         }
         if (otherPersonaNamed) {
@@ -337,7 +341,8 @@ public final class NpcBrainEvents {
         if (distance <= LEONARD_CASUAL_CHAT_RANGE * LEONARD_CASUAL_CHAT_RANGE
                 && isLookingAt(player, nearest)
                 && isConversational(message)) {
-            candidates.add(new ChatTarget(ChatPersona.LEONARD, nearest, distance));
+            boolean privateAddress = isCasualAddress(message) || isShortFollowUp(message);
+            candidates.add(new ChatTarget(ChatPersona.LEONARD, nearest, distance, privateAddress));
         }
     }
 
@@ -354,7 +359,7 @@ public final class NpcBrainEvents {
                 || explicitlyNamesReflection(message);
         for (BabaYagaEntity crone : crones) {
             if (isNamedBabaYagaAddress(crone, message)) {
-                candidates.add(new ChatTarget(ChatPersona.BABA_YAGA, crone, player.distanceToSqr(crone)));
+                candidates.add(new ChatTarget(ChatPersona.BABA_YAGA, crone, player.distanceToSqr(crone), true));
             }
         }
         if (otherPersonaNamed) {
@@ -365,7 +370,8 @@ public final class NpcBrainEvents {
         if (distance <= BABA_YAGA_CASUAL_CHAT_RANGE * BABA_YAGA_CASUAL_CHAT_RANGE
                 && isLookingAt(player, nearest)
                 && isConversational(message)) {
-            candidates.add(new ChatTarget(ChatPersona.BABA_YAGA, nearest, distance));
+            boolean privateAddress = isCasualAddress(message) || isShortFollowUp(message);
+            candidates.add(new ChatTarget(ChatPersona.BABA_YAGA, nearest, distance, privateAddress));
         }
     }
 
@@ -382,7 +388,7 @@ public final class NpcBrainEvents {
                 || explicitlyNamesReflection(message);
         for (Villager villager : villagers) {
             if (isNamedVillagerAddress(villager, message)) {
-                candidates.add(new ChatTarget(ChatPersona.VILLAGER, villager, player.distanceToSqr(villager)));
+                candidates.add(new ChatTarget(ChatPersona.VILLAGER, villager, player.distanceToSqr(villager), true));
             }
         }
         if (otherPersonaNamed) {
@@ -392,12 +398,12 @@ public final class NpcBrainEvents {
         double distance = player.distanceToSqr(nearest);
         if (distance <= VILLAGER_CASUAL_CHAT_RANGE * VILLAGER_CASUAL_CHAT_RANGE
                 && (isCasualAddress(message) || isShortFollowUp(message))) {
-            candidates.add(new ChatTarget(ChatPersona.VILLAGER, nearest, distance));
+            candidates.add(new ChatTarget(ChatPersona.VILLAGER, nearest, distance, true));
             return;
         }
         if (distance <= VILLAGER_CHAT_RANGE * VILLAGER_CHAT_RANGE && isLookingAt(player, nearest)
                 && isConversational(message)) {
-            candidates.add(new ChatTarget(ChatPersona.VILLAGER, nearest, distance));
+            candidates.add(new ChatTarget(ChatPersona.VILLAGER, nearest, distance, false));
         }
     }
 
@@ -414,7 +420,7 @@ public final class NpcBrainEvents {
                 || explicitlyNamesReflection(message);
         for (HobgoblinEntity hobgoblin : hobgoblins) {
             if (isNamedHobgoblinAddress(hobgoblin, message)) {
-                candidates.add(new ChatTarget(ChatPersona.HOBGOBLIN, hobgoblin, player.distanceToSqr(hobgoblin)));
+                candidates.add(new ChatTarget(ChatPersona.HOBGOBLIN, hobgoblin, player.distanceToSqr(hobgoblin), true));
             }
         }
         if (otherPersonaNamed) {
@@ -424,12 +430,12 @@ public final class NpcBrainEvents {
         double distance = player.distanceToSqr(nearest);
         if (distance <= HOBGOBLIN_CASUAL_CHAT_RANGE * HOBGOBLIN_CASUAL_CHAT_RANGE
                 && (isCasualAddress(message) || isShortFollowUp(message))) {
-            candidates.add(new ChatTarget(ChatPersona.HOBGOBLIN, nearest, distance));
+            candidates.add(new ChatTarget(ChatPersona.HOBGOBLIN, nearest, distance, true));
             return;
         }
         if (distance <= HOBGOBLIN_CHAT_RANGE * HOBGOBLIN_CHAT_RANGE && isLookingAt(player, nearest)
                 && isConversational(message)) {
-            candidates.add(new ChatTarget(ChatPersona.HOBGOBLIN, nearest, distance));
+            candidates.add(new ChatTarget(ChatPersona.HOBGOBLIN, nearest, distance, false));
         }
     }
 
@@ -446,7 +452,7 @@ public final class NpcBrainEvents {
                 || explicitlyNamesHobgoblin(message);
         for (ReflectionEntity reflection : reflections) {
             if (isNamedReflectionAddress(reflection, message)) {
-                candidates.add(new ChatTarget(ChatPersona.REFLECTION, reflection, player.distanceToSqr(reflection)));
+                candidates.add(new ChatTarget(ChatPersona.REFLECTION, reflection, player.distanceToSqr(reflection), true));
             }
         }
         if (otherPersonaNamed) {
@@ -457,12 +463,12 @@ public final class NpcBrainEvents {
         if (distance <= REFLECTION_CASUAL_CHAT_RANGE * REFLECTION_CASUAL_CHAT_RANGE
                 && isLookingAt(player, nearest)
                 && (isCasualAddress(message) || isShortFollowUp(message) || WitcheryDimensions.isMirrorWorld(level))) {
-            candidates.add(new ChatTarget(ChatPersona.REFLECTION, nearest, distance));
+            candidates.add(new ChatTarget(ChatPersona.REFLECTION, nearest, distance, true));
             return;
         }
         if (distance <= REFLECTION_CHAT_RANGE * REFLECTION_CHAT_RANGE && isLookingAt(player, nearest)
                 && isConversational(message)) {
-            candidates.add(new ChatTarget(ChatPersona.REFLECTION, nearest, distance));
+            candidates.add(new ChatTarget(ChatPersona.REFLECTION, nearest, distance, false));
         }
     }
 
@@ -481,6 +487,16 @@ public final class NpcBrainEvents {
             case REFLECTION -> target.entity() instanceof ReflectionEntity reflection
                     && NpcBrainService.INSTANCE.requestReflectionChat(reflection, player, message);
         };
+    }
+
+    private static void cancelHandledNpcChat(ServerChatEvent event, ChatTarget target) {
+        if (shouldCancelHandledNpcChat(WitcheryConfig.LLM_CANCEL_HANDLED_NPC_CHAT.get(), target.cancelPlayerChat())) {
+            event.setCanceled(true);
+        }
+    }
+
+    static boolean shouldCancelHandledNpcChat(boolean cancelHandledNpcChat, boolean privateAddress) {
+        return cancelHandledNpcChat && privateAddress;
     }
 
     private static boolean handleNpcCommand(ServerLevel level, ChatTarget target, ServerPlayer player, String message) {
@@ -1230,6 +1246,6 @@ public final class NpcBrainEvents {
         REFLECTION
     }
 
-    private record ChatTarget(ChatPersona kind, LivingEntity entity, double distanceSqr) {
+    private record ChatTarget(ChatPersona kind, LivingEntity entity, double distanceSqr, boolean cancelPlayerChat) {
     }
 }

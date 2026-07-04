@@ -59,6 +59,7 @@ public class WitcheryConfig {
     public static final ModConfigSpec.IntValue LLM_MAX_TOKENS;
     public static final ModConfigSpec.IntValue LLM_KEEP_ALIVE_MINUTES;
     public static final ModConfigSpec.IntValue LLM_COOLDOWN_TICKS;
+    public static final ModConfigSpec.BooleanValue LLM_CANCEL_HANDLED_NPC_CHAT;
     public static final ModConfigSpec.BooleanValue LLM_ALLOW_LAN_ENDPOINT;
     public static final ModConfigSpec.ConfigValue<String> LLM_API_KEY_ENV;
     public static final ModConfigSpec.ConfigValue<String> LLM_EXTRA_HEADERS;
@@ -187,6 +188,9 @@ public class WitcheryConfig {
         LLM_COOLDOWN_TICKS = BUILDER
                 .comment("Cooldown per NPC/player dialogue trigger in ticks. Default: 100")
                 .defineInRange("cooldownTicks", 100, 20, 12000);
+        LLM_CANCEL_HANDLED_NPC_CHAT = BUILDER
+                .comment("Cancel normal player chat broadcast after an explicit/private nearby NPC chat or NPC command is accepted. Look-at ambient routing still broadcasts. Default: true")
+                .define("cancelHandledNpcChat", true);
         LLM_ALLOW_LAN_ENDPOINT = BUILDER
                 .comment("Allow non-loopback LLM endpoints for a LAN sidecar machine. Default: false")
                 .define("allowLanEndpoint", false);
