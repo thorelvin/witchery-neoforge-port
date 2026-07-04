@@ -546,6 +546,7 @@ public class WitcheryCommands {
 
     private static int aiStatus(CommandSourceStack src) {
         src.sendSuccess(() -> Component.literal(NpcBrainService.INSTANCE.statusLine()), false);
+        src.sendSuccess(() -> Component.literal("[AI] Knowledge " + NpcKnowledgeBase.diagnosticsLine()), false);
         return 1;
     }
 
@@ -596,6 +597,7 @@ public class WitcheryCommands {
     private static int aiKnowledge(CommandSourceStack src, String query) {
         String context = NpcKnowledgeBase.relevantContext(query, "", "");
         sendAiText(src, "[AI] Knowledge for \"" + query + "\":", context);
+        src.sendSuccess(() -> Component.literal("[AI] Knowledge " + NpcKnowledgeBase.diagnosticsLine()), false);
         return context.isBlank() ? 0 : 1;
     }
 

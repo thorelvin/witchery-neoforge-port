@@ -58,7 +58,9 @@ enough to read before starting work. Long historical deltas belong in
   avoids regex salvage for object-shaped invalid JSON and unescapes quoted
   fallback speech fragments cleanly. Prompt construction now renders durable
   memory and current message routing as separate sections instead of mixing
-  routing instructions into the memory block.
+  routing instructions into the memory block. `/witchery ai status` and
+  `/witchery ai knowledge` now expose knowledge-card diagnostics: loaded section
+  and card counts, targeted-note count, last retrieval reason, and last sources.
 - Local AI NPC dialogue has moved from a Coven Witch-only experiment into a
   general persona framework. The current playtest path uses local Ollama/EVA by
   default, prewarms the model, loads compact markdown knowledge cards, keeps

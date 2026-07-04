@@ -26,9 +26,12 @@ public final class NpcKnowledgeBase {
     private static final int MAX_CONTEXT_LENGTH = 1400;
     private static final int MAX_RELEVANT_SECTIONS = 3;
     private static final int MAX_TARGETED_NOTES = 6;
+    private static final List<String> CARD_PATHS = cardIndexPaths();
     private static final String MARKDOWN = loadMarkdown();
     private static final List<Section> SECTIONS = loadSections(MARKDOWN);
     private static final List<TargetedNote> TARGETED_NOTES = loadTargetedNotes();
+    private static volatile KnowledgeDiagnostics lastDiagnostics =
+            new KnowledgeDiagnostics(0, 0, 0, "none", "none");
 
     private NpcKnowledgeBase() {
     }
@@ -42,11 +45,13 @@ public final class NpcKnowledgeBase {
         NpcCardRequest request = cardRequest == null ? NpcCardRequest.any() : cardRequest;
         String normalized = normalize(playerMessage);
         if (isFavoriteHerbQuestion(normalized)) {
+            rememberDiagnostics("skipped:favorite_herb", "none");
             return "";
         }
         List<TargetedMatch> selectedNotes = selectedTargetedMatches(normalized, request);
         boolean personaCue = !NpcCardRequest.ANY_PERSONA.equals(request.personaId()) && !selectedNotes.isEmpty();
         if (!looksLikeKnowledgeQuestion(playerMessage) && !containsKnowledgeCue(normalized) && !personaCue) {
+            rememberDiagnostics("skipped:no_knowledge_cue", "none");
             return "";
         }
         Set<String> terms = terms((playerMessage == null ? "" : playerMessage) + " " + biome + " " + timeOfDay);
@@ -61,11 +66,14 @@ public final class NpcKnowledgeBase {
                 scored.add(new SectionScore(section, score));
             }
         }
-        scored.stream()
+        List<SectionScore> selectedSections = scored.stream()
                 .sorted(Comparator.comparingInt(SectionScore::score).reversed())
                 .limit(MAX_RELEVANT_SECTIONS)
-                .forEach(result -> appendSection(context, result.section()));
+                .toList();
+        selectedSections.forEach(result -> appendSection(context, result.section()));
         String text = context.toString().trim();
+        rememberDiagnostics(knowledgeReason(selectedNotes, selectedSections, text),
+                knowledgeSources(selectedNotes, selectedSections));
         return text.isBlank() ? "" : NpcBrainResponse.sanitize(text, MAX_CONTEXT_LENGTH);
     }
 
@@ -96,6 +104,27 @@ public final class NpcKnowledgeBase {
         return SECTIONS;
     }
 
+    public static String diagnosticsLine() {
+        KnowledgeDiagnostics diagnostics = diagnostics();
+        return "sectionsLoaded=" + diagnostics.sectionsLoaded()
+                + ", cardsLoaded=" + diagnostics.cardsLoaded()
+                + ", targetedNotesLoaded=" + diagnostics.targetedNotesLoaded()
+                + ", lastKnowledgeReason=" + diagnostics.lastReason()
+                + ", lastCards=" + diagnostics.lastCards();
+    }
+
+    static KnowledgeDiagnostics diagnostics() {
+        KnowledgeDiagnostics previous = lastDiagnostics;
+        return new KnowledgeDiagnostics(SECTIONS.size(), CARD_PATHS.size(), TARGETED_NOTES.size(),
+                previous.lastReason(), previous.lastCards());
+    }
+
+    private static void rememberDiagnostics(String reason, String cards) {
+        lastDiagnostics = new KnowledgeDiagnostics(SECTIONS.size(), CARD_PATHS.size(), TARGETED_NOTES.size(),
+                NpcBrainResponse.sanitize(reason, 120),
+                NpcBrainResponse.sanitize(cards, 180));
+    }
+
     private static void appendSection(StringBuilder context, Section section) {
         appendText(context, section.title() + ": " + section.body());
     }
@@ -105,6 +134,49 @@ public final class NpcKnowledgeBase {
             context.append('\n');
         }
         context.append(text);
+    }
+
+    private static String knowledgeReason(List<TargetedMatch> selectedNotes, List<SectionScore> selectedSections,
+                                          String context) {
+        if (!selectedNotes.isEmpty()) {
+            return "targeted_match:" + joinedTopics(selectedNotes);
+        }
+        if (!selectedSections.isEmpty()) {
+            return "section_match:" + selectedSections.stream()
+                    .map(match -> normalizeTopic(match.section().title()))
+                    .distinct()
+                    .limit(3)
+                    .reduce((left, right) -> left + "," + right)
+                    .orElse("unknown");
+        }
+        return context.isBlank() ? "no_match" : "context";
+    }
+
+    private static String knowledgeSources(List<TargetedMatch> selectedNotes, List<SectionScore> selectedSections) {
+        LinkedHashSet<String> names = new LinkedHashSet<>();
+        for (TargetedMatch match : selectedNotes) {
+            String source = match.note().sourceAlias().isBlank() ? match.note().topic() : match.note().sourceAlias();
+            if (!source.isBlank()) {
+                names.add(normalizeTopic(source));
+            }
+        }
+        for (SectionScore match : selectedSections) {
+            names.add(normalizeTopic(match.section().title()));
+        }
+        if (names.isEmpty()) {
+            return "none";
+        }
+        return String.join(",", names.stream().limit(6).toList());
+    }
+
+    private static String joinedTopics(List<TargetedMatch> selectedNotes) {
+        return selectedNotes.stream()
+                .map(match -> match.note().topic())
+                .filter(topic -> !topic.isBlank())
+                .distinct()
+                .limit(4)
+                .reduce((left, right) -> left + "," + right)
+                .orElse("unknown");
     }
 
     private static int score(Section section, Set<String> terms) {
@@ -488,7 +560,7 @@ public final class NpcKnowledgeBase {
 
     private static List<TargetedNote> loadTargetedNotes() {
         List<TargetedNote> notes = new ArrayList<>(parseTargetedNotes(loadResource(RESOURCE), ""));
-        for (String cardPath : cardIndexPaths()) {
+        for (String cardPath : CARD_PATHS) {
             String resource = cardPath.startsWith("/") ? cardPath : CARD_RESOURCE_DIR + cardPath;
             notes.addAll(parseTargetedNotes(loadResource(resource), sourceAlias(cardPath)));
         }
@@ -498,7 +570,7 @@ public final class NpcKnowledgeBase {
     private static String loadMarkdown() {
         StringBuilder markdown = new StringBuilder();
         appendMarkdown(markdown, loadResource(RESOURCE));
-        for (String line : cardIndexPaths()) {
+        for (String line : CARD_PATHS) {
             String resource = line.startsWith("/") ? line : CARD_RESOURCE_DIR + line;
             appendMarkdown(markdown, loadResource(resource));
         }
@@ -672,6 +744,10 @@ public final class NpcKnowledgeBase {
         String searchText() {
             return (title + " " + body).toLowerCase(Locale.ROOT);
         }
+    }
+
+    record KnowledgeDiagnostics(int sectionsLoaded, int cardsLoaded, int targetedNotesLoaded,
+                                String lastReason, String lastCards) {
     }
 
     private record SectionScore(Section section, int score) {

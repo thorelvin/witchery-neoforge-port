@@ -47,6 +47,20 @@ class NpcKnowledgeBaseTest {
     }
 
     @Test
+    void diagnosticsReportLoadedCardsAndLastLookupReason() {
+        String context = NpcKnowledgeBase.relevantContext("what is witches salt for?", "Forest", "night");
+
+        assertTrue(!context.isBlank());
+        String diagnostics = NpcKnowledgeBase.diagnosticsLine();
+        assertTrue(diagnostics.matches(".*sectionsLoaded=[1-9][0-9]*.*"), diagnostics);
+        assertTrue(diagnostics.matches(".*cardsLoaded=[1-9][0-9]*.*"), diagnostics);
+        assertTrue(diagnostics.matches(".*targetedNotesLoaded=[1-9][0-9]*.*"), diagnostics);
+        assertTrue(diagnostics.contains("lastKnowledgeReason=targeted_match:")
+                || diagnostics.contains("lastKnowledgeReason=section_match:"), diagnostics);
+        assertTrue(diagnostics.contains("lastCards="), diagnostics);
+    }
+
+    @Test
     void retrievesCardByTagsWhenTriggerWordsAreAbsent() {
         String context = NpcKnowledgeBase.relevantContext(
                 "which mystic branch shadow vessel handles brew focus?", "Plains", "night",
