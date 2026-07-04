@@ -193,7 +193,7 @@ final class NpcDialogueFallback {
         if (routed.isPresent()) {
             return routed;
         }
-        return Optional.of(leonardAside(normalized, name, ""));
+        return Optional.of(NpcFallbackAsides.leonard(normalized, name, ""));
     }
 
     static Optional<String> reflectionChat(String playerMessage, String reflectionName, String playerName,
@@ -258,7 +258,7 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "help", "teach", "advice", "what should i do")) {
             return Optional.of("Do what living faces do: find the mirror home before I improve on you.");
         }
-        return Optional.of(reflectionAside(normalized, name, ""));
+        return Optional.of(NpcFallbackAsides.reflection(normalized, name, ""));
     }
 
     static Optional<String> babaYagaChat(String playerMessage, String babaName, String playerName,
@@ -390,7 +390,7 @@ final class NpcDialogueFallback {
         if (routed.isPresent()) {
             return routed;
         }
-        return Optional.of(babaYagaAside(normalized, name, ""));
+        return Optional.of(NpcFallbackAsides.babaYaga(normalized, name, ""));
     }
 
     static Optional<String> hobgoblinChat(String playerMessage, String hobgoblinName, String playerName,
@@ -465,7 +465,7 @@ final class NpcDialogueFallback {
             return Optional.of(memoryAnswer(memoryContext, name)
                     .orElse("Hobgoblin remembers your name, " + name + ". And pockets."));
         }
-        return Optional.of(hobgoblinAside(normalized, name, ""));
+        return Optional.of(NpcFallbackAsides.hobgoblin(normalized, name, ""));
     }
 
     static Optional<String> villagerChat(String playerMessage, String villagerName, String playerName,
@@ -647,7 +647,7 @@ final class NpcDialogueFallback {
         if (routed.isPresent()) {
             return routed;
         }
-        return Optional.of(villagerAside(normalized, name, ""));
+        return Optional.of(NpcFallbackAsides.villager(normalized, name, ""));
     }
 
     static Optional<String> covenChat(String playerMessage, String witchName, String playerName,
@@ -986,19 +986,19 @@ final class NpcDialogueFallback {
         }
         if (containsAny(normalized, "biome", "where are we", "where am i", "where is this", "what place")) {
             return Optional.of(scenePlace(biome, timeOfDay)
-                    .orElse(oldWitchAside(normalized, name)));
+                    .orElse(NpcFallbackAsides.oldWitch(normalized, name)));
         }
         Optional<String> routed = covenRoutedFallback(playerMessage, normalized, name, biome, timeOfDay, memoryContext);
         if (routed.isPresent()) {
             return routed;
         }
         if (containsAny(normalized, "night", "moon")) {
-            return Optional.of(oldWitchAside(normalized, name));
+            return Optional.of(NpcFallbackAsides.oldWitch(normalized, name));
         }
         if (containsAny(normalized, "help", "advice", "what should i do", "what do i do")) {
-            return Optional.of(oldWitchAside(normalized, name));
+            return Optional.of(NpcFallbackAsides.oldWitch(normalized, name));
         }
-        return Optional.of(oldWitchAside(normalized, name));
+        return Optional.of(NpcFallbackAsides.oldWitch(normalized, name));
     }
 
     static String lastResortAside(String playerMessage, String playerName) {
@@ -1012,7 +1012,7 @@ final class NpcDialogueFallback {
         if (specific.isPresent()) {
             return specific.get();
         }
-        return oldWitchAside(normalized.isBlank() ? "mumble" : normalized, name, avoidSpeech);
+        return NpcFallbackAsides.oldWitch(normalized.isBlank() ? "mumble" : normalized, name, avoidSpeech);
     }
 
     static Optional<String> alternateForRepeatedFallback(String playerMessage, String playerName, String avoidSpeech) {
@@ -1027,47 +1027,47 @@ final class NpcDialogueFallback {
         if (isSpecificAnswerPrompt(normalized)) {
             return Optional.empty();
         }
-        return Optional.of(oldWitchAside(normalized, safeName(playerName), avoidSpeech));
+        return Optional.of(NpcFallbackAsides.oldWitch(normalized, safeName(playerName), avoidSpeech));
     }
 
     static String leonardLastResort(String playerMessage, String playerName, String avoidSpeech) {
-        return leonardAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        return NpcFallbackAsides.leonard(normalize(playerMessage), safeName(playerName), avoidSpeech);
     }
 
     static Optional<String> leonardAlternate(String playerMessage, String playerName, String avoidSpeech) {
-        String line = leonardAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        String line = NpcFallbackAsides.leonard(normalize(playerMessage), safeName(playerName), avoidSpeech);
         return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
     }
 
     static String reflectionLastResort(String playerMessage, String playerName, String avoidSpeech) {
-        return reflectionAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        return NpcFallbackAsides.reflection(normalize(playerMessage), safeName(playerName), avoidSpeech);
     }
 
     static Optional<String> reflectionAlternate(String playerMessage, String playerName, String avoidSpeech) {
-        String line = reflectionAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        String line = NpcFallbackAsides.reflection(normalize(playerMessage), safeName(playerName), avoidSpeech);
         return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
     }
 
     static String babaYagaLastResort(String playerMessage, String playerName, String avoidSpeech) {
-        return babaYagaAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        return NpcFallbackAsides.babaYaga(normalize(playerMessage), safeName(playerName), avoidSpeech);
     }
 
     static Optional<String> babaYagaAlternate(String playerMessage, String playerName, String avoidSpeech) {
-        String line = babaYagaAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        String line = NpcFallbackAsides.babaYaga(normalize(playerMessage), safeName(playerName), avoidSpeech);
         return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
     }
 
     static String hobgoblinLastResort(String playerMessage, String playerName, String avoidSpeech) {
-        return hobgoblinAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        return NpcFallbackAsides.hobgoblin(normalize(playerMessage), safeName(playerName), avoidSpeech);
     }
 
     static Optional<String> hobgoblinAlternate(String playerMessage, String playerName, String avoidSpeech) {
-        String line = hobgoblinAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        String line = NpcFallbackAsides.hobgoblin(normalize(playerMessage), safeName(playerName), avoidSpeech);
         return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
     }
 
     static String villagerLastResort(String playerMessage, String playerName, String avoidSpeech) {
-        return villagerAside(normalize(playerMessage), safeName(playerName), avoidSpeech);
+        return NpcFallbackAsides.villager(normalize(playerMessage), safeName(playerName), avoidSpeech);
     }
 
     static Optional<String> villagerAlternate(String playerMessage, String playerName, String avoidSpeech) {
@@ -1077,7 +1077,7 @@ final class NpcDialogueFallback {
         if (specific.isPresent()) {
             return specific;
         }
-        String line = villagerAside(normalized, name, avoidSpeech);
+        String line = NpcFallbackAsides.villager(normalized, name, avoidSpeech);
         return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
     }
 
@@ -1484,7 +1484,7 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "rain", "weather", "storm", "crows", "harvest")) {
             return "Weather talks in wet hems, restless crows, and herbs that refuse to dry.";
         }
-        return rotatingLine(normalized, new String[] {
+        return NpcFallbackAsides.rotatingLine(normalized, new String[] {
                 "Loitering is a craft too, " + playerName + "; most do it poorly.",
                 "If you are staying, stop breathing on the jars.",
                 "Hut rules are simple: hands visible, questions sharper than elbows.",
@@ -1505,7 +1505,7 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "silence", "shadow", "night")) {
             return "Silence is not empty. It is deciding what your courage costs.";
         }
-        return rotatingLine(normalized, new String[] {
+        return NpcFallbackAsides.rotatingLine(normalized, new String[] {
                 "Even the air measures you, " + playerName + ". Try not to come up short.",
                 "Your omens are small, but small debts still collect.",
                 "The altar hears your mood. I hear the price under it.",
@@ -1529,7 +1529,7 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "manners", "not weapons", "voice low", "listen")) {
             return "Manners are a thin knife, " + playerName + ". Hold them steady.";
         }
-        return rotatingLine(normalized, new String[] {
+        return NpcFallbackAsides.rotatingLine(normalized, new String[] {
                 "The forest has kinder old women. It did not send you to one.",
                 "Old pots remember careless mouths, " + playerName + ".",
                 "*sniffs* \"You brought words, " + playerName + ". I was hoping for bones.\"",
@@ -1554,116 +1554,12 @@ final class NpcDialogueFallback {
         if (containsAny(normalized, "silence", "night", "something moved", "lantern", "threshold")) {
             return "Bread in your pocket, door at your back, and no wandering after the bell.";
         }
-        return rotatingLine(normalized, new String[] {
+        return NpcFallbackAsides.rotatingLine(normalized, new String[] {
                 "My gran said odd signs travel in threes. I stop counting at two.",
                 "Keep near the road, " + playerName + ", but not where the road can choose for you.",
                 "Villages survive by making small fears useful.",
                 "If the bell knows before we do, we still call that wisdom."
         });
-    }
-
-    private static String rotatingLine(String normalized, String[] lines) {
-        if (lines.length == 0) {
-            return "";
-        }
-        return lines[Math.floorMod(normalized.hashCode(), lines.length)];
-    }
-
-    private static String villagerAside(String normalized, String playerName, String avoidSpeech) {
-        String[] lines = {
-                "Keep your voice low, " + playerName + "; walls have ears when witches visit.",
-                "Ask at the bell if you want panic. Ask me if you want gossip.",
-                "Road dust, bad moon, strange visitor. Villages learn to count all three.",
-                "If you mean trouble, stand where the golem can see you.",
-                "Close doors at dusk. It is boring advice because it works.",
-                "Salt by the threshold, bread in your pocket, and no promises after sunset.",
-                "*shrugs* \"I have heard worse questions from better-dressed fools.\"",
-                "*touches a charm* \"My gran said odd questions come before odd weather.\"",
-                "Good witches leave cures and fair trades. Bad ones leave bottles with your name in them.",
-                "Harvest first, heroics later. Empty bellies make poor guards."
-        };
-        int start = Math.floorMod(normalized.hashCode(), lines.length);
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[(start + i) % lines.length];
-            if (!NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
-                return line;
-            }
-        }
-        return "Ask again, " + playerName + "; make it useful this time.";
-    }
-
-    private static String leonardAside(String normalized, String playerName, String avoidSpeech) {
-        String[] lines = {
-                "Speak plainly, " + playerName + ". Even debts tire of weak mouths.",
-                "Careful. Not every silence is empty; some are measuring you.",
-                "Your courage has a smell. I have not decided whether it is rot or ripeness.",
-                "A thin question. Bring a sharper one before I lose patience.",
-                "The crossroads heard you. It found you small."
-        };
-        int start = Math.floorMod(normalized.hashCode(), lines.length);
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[(start + i) % lines.length];
-            if (!NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
-                return line;
-            }
-        }
-        return "Ask again, " + playerName + "; this time bring a sharper question.";
-    }
-
-    private static String reflectionAside(String normalized, String playerName, String avoidSpeech) {
-        String[] lines = {
-                "Your echo is late, " + playerName + ". I arrived in its place.",
-                "*copies your stance* \"Ask again. This side of the glass likes clean shapes.\"",
-                "The room heard you. It answered with your outline.",
-                "Your face looks braver from over here. That will not last.",
-                "*smiles with your mouth* \"The mirror keeps poor questions too.\"",
-                "Speak plainly, " + playerName + ". Reflections blur when words do.",
-                "The silver is listening. Try not to sound breakable."
-        };
-        int start = Math.floorMod(normalized.hashCode(), lines.length);
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[(start + i) % lines.length];
-            if (!NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
-                return line;
-            }
-        }
-        return "Ask again, " + playerName + "; the glass missed the useful part.";
-    }
-
-    private static String babaYagaAside(String normalized, String playerName, String avoidSpeech) {
-        String[] lines = {
-                "*sniffs* \"You brought words, " + playerName + ". I was hoping for bones.\"",
-                "Careful, " + playerName + ". Old pots remember careless mouths.",
-                "Manners first. Then perhaps I do not put you in the thin soup.",
-                "*taps her broom* \"Ask with teeth, or hush before mine answer.\"",
-                "The forest has kinder old women. It did not send you to one."
-        };
-        int start = Math.floorMod(normalized.hashCode(), lines.length);
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[(start + i) % lines.length];
-            if (!NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
-                return line;
-            }
-        }
-        return "Ask again, " + playerName + "; season the question with sense.";
-    }
-
-    private static String hobgoblinAside(String normalized, String playerName, String avoidSpeech) {
-        String[] lines = {
-                "*shrugs* \"Big words. Small ears. Try shiny words.\"",
-                "*gestures* \"Say trade, mine, koboldite, hut, Mog, or Gulg.\"",
-                "Hobgoblin hears noise. Pockets maybe louder?",
-                "*taps a finger* \"Question too slippery. Hold it still.\"",
-                "No bite in that talk, " + playerName + ". Try useful."
-        };
-        int start = Math.floorMod(normalized.hashCode(), lines.length);
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[(start + i) % lines.length];
-            if (!NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
-                return line;
-            }
-        }
-        return "Ask again, " + playerName + ". Small words. Shiny words.";
     }
 
     private static Optional<String> hobgoblinPatronSceneFact(String patronInfo) {
@@ -2455,39 +2351,6 @@ final class NpcDialogueFallback {
             answer.append(stock[(start + i) % stock.length]);
         }
         return answer.append("; right-click if you mean business.").toString();
-    }
-
-    private static String oldWitchAside(String normalized, String playerName) {
-        return oldWitchAside(normalized, playerName, "");
-    }
-
-    private static String oldWitchAside(String normalized, String playerName, String avoidSpeech) {
-        String[] lines = {
-                "*leans closer* \"Speak louder, " + playerName + "; these old ears hear spirits better than mumbling.\"",
-                "May your boots miss graves and your pockets find honest coin.",
-                "The kettle says three bubbles and a cracked moon; make of that what you can.",
-                "*shrugs* \"A crow once told me the same thing, or maybe it was a turnip.\"",
-                "Mind your shadow after midnight; it learns bad habits.",
-                "If the moon answers first, pretend you did not hear it.",
-                "*narrows her eyes* \"Never trust a quiet jar; silence ferments.\"",
-                "Ash at the hearth, jars in a row, and questions where I can see them.",
-                "A good omen arrives late and complains about the road.",
-                "If you mean trouble, stand downwind so I can smell it coming.",
-                "Some questions need rainwater. Some need teeth.",
-                "Keep one pocket for coin and one for consequences.",
-                "The old paths open for patience, not stomping.",
-                "*yawns* \"I have seen braver faces on boiled cabbage, but yours may yet improve.\"",
-                "Ask again with fewer elbows in the sentence."
-        };
-        int start = Math.floorMod(normalized.hashCode(), lines.length);
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[(start + i) % lines.length];
-            if (avoidSpeech == null || avoidSpeech.isBlank()
-                    || !NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech)) {
-                return line;
-            }
-        }
-        return lines[start];
     }
 
     private static String teachingAnswer(String normalized, String playerName) {
