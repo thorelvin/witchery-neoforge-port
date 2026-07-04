@@ -1108,42 +1108,42 @@ final class NpcDialogueFallback {
 
     private static Optional<String> leonardRoutedFallback(String normalized, String playerName,
                                                           String memoryContext) {
-        if (!hasMessageRouting(memoryContext)) {
+        if (!NpcMessageAnalysis.hasRoutingContext(memoryContext)) {
             return Optional.empty();
         }
-        if (analysisTopic(memoryContext, "leonard_summoning")
-                || (analysisRoute(memoryContext, "recipe")
+        if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "leonard_summoning")
+                || (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "recipe")
                     && containsAny(normalized, "order", "again", "calling", "summon", "after"))) {
             return Optional.of("Nether Wart, Tear of the Goddess, Diamond Vapour, Diamond, Nether Star; then hat, cauldron, and ten thousand altar power.");
         }
-        if (analysisTopic(memoryContext, "mortal_coil")) {
+        if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "mortal_coil")) {
             return Optional.of("Mortal Coil is my withering mark on attackers; survive the debt or end the fight quickly.");
         }
-        if (analysisTopic(memoryContext, "green_soul")) {
+        if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "green_soul")) {
             return Optional.of("Green souls take steel; break them before they lend me their shield.");
         }
-        if (analysisTopic(memoryContext, "red_soul")) {
+        if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "red_soul")) {
             return Optional.of("Red souls fear fire and blast. Burn them or break them with explosions before you waste steel.");
         }
-        if (analysisTopic(memoryContext, "black_soul")) {
+        if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "black_soul")) {
             return Optional.of("Black souls yield to magic and potions. Bring witchcraft, not swagger.");
         }
-        if (analysisTopic(memoryContext, "lost_souls")) {
+        if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "lost_souls")) {
             return Optional.of("Break the souls first. Green takes steel, red fears fire and blast, black yields to magic and potions.");
         }
-        if (analysisTopic(memoryContext, "demonbane")) {
+        if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "demonbane")) {
             return Optional.of("Demonbane bites deepest when I am already wounded. Bring it late, not proudly early.");
         }
-        if (analysisRoute(memoryContext, "atmosphere")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "atmosphere")) {
             return Optional.of(leonardAtmosphereAnswer(normalized, playerName));
         }
-        if (analysisTone(memoryContext, "fear")) {
+        if (NpcMessageAnalysis.routingMatchesTone(memoryContext, "fear")) {
             return Optional.of("Fear is the one honest scout you brought, " + playerName + ". Listen, but do not let it hold the blade.");
         }
-        if (analysisTone(memoryContext, "confusion")) {
+        if (NpcMessageAnalysis.routingMatchesTone(memoryContext, "confusion")) {
             return Optional.of("Name one debt at a time, " + playerName + "; altar, souls, urn, or blade.");
         }
-        if (analysisRoute(memoryContext, "action")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "action")) {
             return Optional.of("I do not perform wishes. Bring a price, a threat, or a sharper question.");
         }
         return Optional.empty();
@@ -1151,41 +1151,41 @@ final class NpcDialogueFallback {
 
     private static Optional<String> babaYagaRoutedFallback(String normalized, String playerName,
                                                            String memoryContext) {
-        if (!hasMessageRouting(memoryContext)) {
+        if (!NpcMessageAnalysis.hasRoutingContext(memoryContext)) {
             return Optional.empty();
         }
-        if (analysisRoute(memoryContext, "trade")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "trade")) {
             return Optional.of("Trade? No. I take manners, mistakes, and sometimes the rest of you.");
         }
-        if (analysisRoute(memoryContext, "atmosphere")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "atmosphere")) {
             return Optional.of(babaYagaAtmosphereAnswer(normalized, playerName));
         }
-        if (analysisRoute(memoryContext, "lore")) {
-            if (analysisTopic(memoryContext, "baba_yaga_folklore")
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "lore")) {
+            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "baba_yaga_folklore")
                     || containsAny(normalized, "hut", "chicken legs", "forest", "skull", "teeth",
                     "mortar", "pestle", "broom")) {
                 return Optional.of("My old stories have chicken-legged huts, skull-lamps, mortar, pestle, broom, and teeth enough for liars.");
             }
-            if (analysisTopic(memoryContext, "baba_yaga_combat")
+            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "baba_yaga_combat")
                     || containsAny(normalized, "fight", "weakness", "wood", "bolt", "thorns")) {
                 return Optional.of("Wood and nullifying bolts bite where proud steel pays thorns; my potions punish the rest.");
             }
-            if (analysisTopic(memoryContext, "baba_yaga_potions")
+            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "baba_yaga_potions")
                     || containsAny(normalized, "potion", "brew", "throw")) {
                 return Optional.of("Poison, blindness, slowness, weakness, wither; little bottles for loud feet.");
             }
-            if (analysisTopic(memoryContext, "baba_yaga_spiders")
+            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "baba_yaga_spiders")
                     || containsAny(normalized, "spider", "animal", "pet", "undead")) {
                 return Optional.of("Send dead things or wild pets at me, and spiders may crawl home wearing their mistake.");
             }
         }
-        if (analysisTone(memoryContext, "fear")) {
+        if (NpcMessageAnalysis.routingMatchesTone(memoryContext, "fear")) {
             return Optional.of("Good. Fear keeps the meat awake, " + playerName + ".");
         }
-        if (analysisTone(memoryContext, "confusion")) {
+        if (NpcMessageAnalysis.routingMatchesTone(memoryContext, "confusion")) {
             return Optional.of("Ask with teeth: potions, thorns, wood, bolts, spiders, or my old road.");
         }
-        if (analysisRoute(memoryContext, "action")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "action")) {
             return Optional.of("I do not perform little wishes. Bring manners, danger, or a better question.");
         }
         return Optional.empty();
@@ -1194,46 +1194,46 @@ final class NpcDialogueFallback {
     private static Optional<String> villagerRoutedFallback(String normalized, String playerName,
                                                            String profession, String villageInfo,
                                                            String memoryContext) {
-        if (!hasMessageRouting(memoryContext)) {
+        if (!NpcMessageAnalysis.hasRoutingContext(memoryContext)) {
             return Optional.empty();
         }
-        if (analysisRoute(memoryContext, "trade")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "trade")) {
             return Optional.of(villagerTradeAnswer(profession));
         }
-        if (analysisRoute(memoryContext, "atmosphere")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "atmosphere")) {
             return Optional.of(villagerAtmosphereAnswer(normalized, playerName, profession));
         }
-        if (analysisRoute(memoryContext, "lore")) {
-            if (analysisTopic(memoryContext, "village") || containsAny(normalized, "village", "safe", "walls")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "lore")) {
+            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "village") || containsAny(normalized, "village", "safe", "walls")) {
                 return Optional.of("From here I know this much: " + villageFactSummary(villageInfo)
                         + ". The bell knows the rest.");
             }
-            if (analysisTopic(memoryContext, "villager_weather") || asksVillagerWeather(normalized)) {
+            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "villager_weather") || asksVillagerWeather(normalized)) {
                 return Optional.of(villagerWeatherAnswer(normalized, playerName));
             }
-            if (analysisTopic(memoryContext, "villager_harvest") || asksVillagerHarvest(normalized)) {
+            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "villager_harvest") || asksVillagerHarvest(normalized)) {
                 return Optional.of(villagerHarvestAnswer(normalized, playerName, profession));
             }
-            if (analysisTopic(memoryContext, "villager_witch_morality") || asksGoodBadWitches(normalized)) {
+            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "villager_witch_morality") || asksGoodBadWitches(normalized)) {
                 return Optional.of("Good witches mend and trade fair; bad ones hide taglocks and threats. I watch deeds, not hats.");
             }
-            if (analysisTopic(memoryContext, "villager_witch_respect") || asksWitchDebtOrRespect(normalized)) {
+            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "villager_witch_respect") || asksWitchDebtOrRespect(normalized)) {
                 return Optional.of("Some witches are owed respect. Not comfort, mind you; respect, paid with wary eyes.");
             }
-            if (analysisTopic(memoryContext, "villager_demons") || asksDemonVillagerOpinion(normalized)) {
+            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "villager_demons") || asksDemonVillagerOpinion(normalized)) {
                 return Optional.of("Demons mean doors shut, bells loud, and no bargaining. Let witches who know binding earn their respect.");
             }
-            if (analysisTopic(memoryContext, "witch") || analysisTopic(memoryContext, "curse")) {
+            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "witch") || NpcMessageAnalysis.routingMatchesTopic(memoryContext, "curse")) {
                 return Optional.of("Witch trouble starts small: missing hair, odd bottles, neighbors whispering too softly.");
             }
         }
-        if (analysisTone(memoryContext, "fear")) {
+        if (NpcMessageAnalysis.routingMatchesTone(memoryContext, "fear")) {
             return Optional.of("Fear keeps villagers alive, " + playerName + ". Doors first, questions second.");
         }
-        if (analysisTone(memoryContext, "confusion")) {
+        if (NpcMessageAnalysis.routingMatchesTone(memoryContext, "confusion")) {
             return Optional.of("Ask me plainly: village, golem, walls, raid, trade, or night trouble.");
         }
-        if (analysisRoute(memoryContext, "action")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "action")) {
             return Optional.of("I can warn, trade, or point at trouble. I cannot make the village brave by talking.");
         }
         return Optional.empty();
@@ -1242,31 +1242,31 @@ final class NpcDialogueFallback {
     private static Optional<String> covenRoutedFallback(String playerMessage, String normalized,
                                                         String playerName, String biome, String timeOfDay,
                                                         String memoryContext) {
-        if (!hasMessageRouting(memoryContext)) {
+        if (!NpcMessageAnalysis.hasRoutingContext(memoryContext)) {
             return Optional.empty();
         }
-        if (analysisRoute(memoryContext, "trade")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "trade")) {
             return Optional.of(tradeStockAnswer(normalized));
         }
-        if (analysisRoute(memoryContext, "recipe")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "recipe")) {
             Optional<String> answer = routedRecipeAnswer(playerMessage, biome, timeOfDay, memoryContext);
             if (answer.isPresent()) {
                 return answer;
             }
         }
-        if (analysisRoute(memoryContext, "atmosphere")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "atmosphere")) {
             return Optional.of(covenAtmosphereAnswer(normalized, playerName));
         }
-        if (analysisTone(memoryContext, "fear")) {
+        if (NpcMessageAnalysis.routingMatchesTone(memoryContext, "fear")) {
             return Optional.of("Fear is useful, " + playerName + "; it keeps fingers attached. Name the danger and I will name the ward.");
         }
-        if (analysisTone(memoryContext, "confusion")) {
+        if (NpcMessageAnalysis.routingMatchesTone(memoryContext, "confusion")) {
             return Optional.of("One question at a time, " + playerName + ": brew, rite, spirit, trade, or trouble?");
         }
-        if (analysisRoute(memoryContext, "social")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "social")) {
             return Optional.of("Tongue heard, " + playerName + ". Now spend it on a real question.");
         }
-        if (analysisRoute(memoryContext, "action")) {
+        if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "action")) {
             return Optional.of("Some requests need hands, not wishes. Tell me what you want done and what you can pay.");
         }
         return Optional.empty();
@@ -1275,15 +1275,15 @@ final class NpcDialogueFallback {
     private static Optional<String> routedRecipeAnswer(String playerMessage, String biome, String timeOfDay,
                                                        String memoryContext) {
         String question = "";
-        if (analysisTopic(memoryContext, "whiff_of_magic")) {
+        if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "whiff_of_magic")) {
             question = "how do I make whiff of magic";
-        } else if (analysisTopic(memoryContext, "mutandis")) {
+        } else if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "mutandis")) {
             question = "how do I make mutandis";
-        } else if (analysisTopic(memoryContext, "attuned_stone")) {
+        } else if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "attuned_stone")) {
             question = "how do I make attuned stone";
-        } else if (analysisTopic(memoryContext, "brew_of_sleeping")) {
+        } else if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "brew_of_sleeping")) {
             question = "how do I make brew of sleeping";
-        } else if (analysisTopic(memoryContext, "brew_of_revealing")) {
+        } else if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "brew_of_revealing")) {
             question = "how do I make brew of revealing";
         } else {
             question = playerMessage;
@@ -2744,28 +2744,6 @@ final class NpcDialogueFallback {
             }
         }
         return false;
-    }
-
-    private static boolean hasMessageRouting(String memoryContext) {
-        return normalize(memoryContext).contains("message routing route");
-    }
-
-    private static boolean analysisRoute(String memoryContext, String route) {
-        String normalized = normalize(memoryContext);
-        String expected = normalize(route).replace("_", " ");
-        return normalized.contains("message routing route " + expected);
-    }
-
-    private static boolean analysisTopic(String memoryContext, String topic) {
-        String normalized = normalize(memoryContext);
-        String expected = normalize(topic).replace("_", " ");
-        return normalized.contains("topic " + expected);
-    }
-
-    private static boolean analysisTone(String memoryContext, String tone) {
-        String normalized = normalize(memoryContext);
-        String expected = normalize(tone).replace("_", " ");
-        return normalized.contains("player tone " + expected);
     }
 
     private static boolean containsWord(String text, String word) {

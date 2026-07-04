@@ -151,6 +151,28 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
         return NpcDialogueRoute.parse(matcher.group(1));
     }
 
+    static boolean hasRoutingContext(String context) {
+        return normalizeRoutingComparison(context).contains("message routing route");
+    }
+
+    static boolean routingMatchesRoute(String context, String route) {
+        String normalized = normalizeRoutingComparison(context);
+        String expected = normalizeRoutingComparison(route);
+        return normalized.contains("message routing route " + expected);
+    }
+
+    static boolean routingMatchesTopic(String context, String topic) {
+        String normalized = normalizeRoutingComparison(context);
+        String expected = normalizeRoutingComparison(topic);
+        return normalized.contains("topic " + expected);
+    }
+
+    static boolean routingMatchesTone(String context, String tone) {
+        String normalized = normalizeRoutingComparison(context);
+        String expected = normalizeRoutingComparison(tone);
+        return normalized.contains("player tone " + expected);
+    }
+
     boolean hasMemory() {
         return remember && !memory.isBlank();
     }
@@ -451,6 +473,14 @@ record NpcMessageAnalysis(NpcDialogueRoute route, String topic, NpcEmotionHint e
                 .toLowerCase(Locale.ROOT)
                 .replace('’', '\'')
                 .replaceAll("[^a-z0-9_'? ]+", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+    }
+
+    private static String normalizeRoutingComparison(String value) {
+        return NpcBrainResponse.sanitize(value, 1800)
+                .toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9' ]+", " ")
                 .replaceAll("\\s+", " ")
                 .trim();
     }

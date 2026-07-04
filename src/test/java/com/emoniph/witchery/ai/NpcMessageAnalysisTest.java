@@ -142,6 +142,20 @@ class NpcMessageAnalysisTest {
     }
 
     @Test
+    void routingContextMatchersHandleLegacyUnderscoreTopics() {
+        String context = "Entity memory: witch is Lilith Poe; player is Dev. "
+                + "Message routing: route=small_talk; topic=whiff_of_magic; player tone=fear; "
+                + "reply strategy=answer the player's actual small talk.";
+
+        assertTrue(NpcMessageAnalysis.hasRoutingContext(context));
+        assertTrue(NpcMessageAnalysis.routingMatchesRoute(context, "small_talk"));
+        assertTrue(NpcMessageAnalysis.routingMatchesTopic(context, "whiff_of_magic"));
+        assertTrue(NpcMessageAnalysis.routingMatchesTone(context, "fear"));
+        assertFalse(NpcMessageAnalysis.routingMatchesRoute(context, "recipe"));
+        assertFalse(NpcMessageAnalysis.hasRoutingContext("Entity memory only."));
+    }
+
+    @Test
     void doesNotRouteCovenAsOvenRecipe() {
         NpcMessageAnalysis analysis = NpcMessageAnalysis.deterministic("Dev",
                 "Where can I recruit a coven?");
