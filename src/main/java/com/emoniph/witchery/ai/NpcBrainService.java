@@ -49,6 +49,7 @@ public final class NpcBrainService {
     private static final int SPEECH_TEXT_COLOR = 0xFFFFFF;
     private static final int COOLDOWN_PRUNE_SIZE = 256;
     private static final int MAX_RECENT_REJECTIONS = 6;
+    private static final int MAX_PROVIDER_CACHE_ENTRIES = 16;
 
     private final Object executorLock = new Object();
     private final Object warmupExecutorLock = new Object();
@@ -61,6 +62,7 @@ public final class NpcBrainService {
     private final AtomicLong warmups = new AtomicLong();
     private final ConcurrentHashMap<String, Long> cooldownUntil = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Long> socialCooldownUntil = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ProviderCacheKey, LlmProvider> providerCache = new ConcurrentHashMap<>();
     private final Deque<String> recentRejections = new ArrayDeque<>();
     private volatile ExecutorService executor;
     private volatile ExecutorService warmupExecutor;
@@ -487,6 +489,7 @@ public final class NpcBrainService {
                 + ", endpointValid=" + validation.allowed()
                 + ", inFlight=" + inFlight.get()
                 + ", warmup=" + warmupStatus()
+                + ", providerCache=" + providerCache.size()
                 + ", warmups=" + warmups.get()
                 + ", ok=" + successes.get()
                 + ", failed=" + failures.get()
@@ -542,6 +545,7 @@ public final class NpcBrainService {
             recentRejections.clear();
         }
         LlmHttpClients.clear();
+        clearProviderCache();
         resetWarmup();
         lastError = "";
     }
@@ -562,6 +566,7 @@ public final class NpcBrainService {
         }
         inFlight.set(0);
         LlmHttpClients.clear();
+        clearProviderCache();
         resetWarmup();
     }
 
@@ -1282,6 +1287,18 @@ public final class NpcBrainService {
             throw new IllegalArgumentException(validation.message());
         }
         String provider = WitcheryConfig.LLM_PROVIDER.get().trim().toLowerCase(Locale.ROOT);
+        ProviderCacheKey cacheKey = new ProviderCacheKey(provider, config, System.identityHashCode(requestExecutor));
+        LlmProvider cached = providerCache.get(cacheKey);
+        if (cached != null) {
+            return cached;
+        }
+        if (providerCache.size() >= MAX_PROVIDER_CACHE_ENTRIES) {
+            clearProviderCache();
+        }
+        return providerCache.computeIfAbsent(cacheKey, ignored -> createProvider(provider, config, requestExecutor));
+    }
+
+    private LlmProvider createProvider(String provider, LlmProviderConfig config, ExecutorService requestExecutor) {
         if (provider.equals("openai_compatible") || provider.equals("openai-compatible")) {
             return new OpenAiCompatibleLlmProvider(config, requestExecutor);
         }
@@ -1291,6 +1308,10 @@ public final class NpcBrainService {
         return new OllamaLlmProvider(config, requestExecutor);
     }
 
+    private void clearProviderCache() {
+        providerCache.clear();
+    }
+
     private ExecutorService executor() {
         synchronized (executorLock) {
             int parallelism = Math.max(1, WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get());
@@ -1298,8 +1319,10 @@ public final class NpcBrainService {
                 executor.shutdownNow();
                 executor = null;
                 executorParallelism = 0;
+                clearProviderCache();
             }
             if (executor == null || executor.isShutdown()) {
+                clearProviderCache();
                 AtomicInteger worker = new AtomicInteger();
                 executor = Executors.newFixedThreadPool(parallelism, new ThreadFactory() {
                     @Override
@@ -1318,6 +1341,7 @@ public final class NpcBrainService {
     private ExecutorService warmupExecutor() {
         synchronized (warmupExecutorLock) {
             if (warmupExecutor == null || warmupExecutor.isShutdown()) {
+                clearProviderCache();
                 warmupExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
                     @Override
                     public Thread newThread(Runnable runnable) {
@@ -1339,6 +1363,9 @@ public final class NpcBrainService {
                 + "|" + WitcheryConfig.LLM_API_KEY_ENV.get().trim()
                 + "|" + WitcheryConfig.LLM_EXTRA_HEADERS.get().trim()
                 + "|" + WitcheryConfig.LLM_RESPONSE_FORMAT.get().trim().toLowerCase(Locale.ROOT);
+    }
+
+    private record ProviderCacheKey(String provider, LlmProviderConfig config, int executorIdentity) {
     }
 
     static Map<String, String> parseExtraHeaders(String rawHeaders) {

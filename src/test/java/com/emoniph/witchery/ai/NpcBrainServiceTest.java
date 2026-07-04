@@ -102,6 +102,7 @@ class NpcBrainServiceTest {
         service.rememberRejection("persona_response:validation:prompt_leak");
 
         assertTrue(service.statusLine().contains("recentRejections=persona_response:validation:prompt_leak"));
+        assertTrue(service.statusLine().contains("providerCache=0"));
 
         service.reload();
 
