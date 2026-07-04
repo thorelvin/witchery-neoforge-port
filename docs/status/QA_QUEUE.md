@@ -21,6 +21,12 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   `worship`, `stop`, `follow me`, and `guard me`.
 - Confirm only the leash owner/admin can command it once ownership is claimed;
   other players should get the rope-owner refusal.
+- Before ownership is claimed, trigger failure cases such as `mine` with no
+  pickaxe, `worship` with no patron statue, or an impossible `come here` path;
+  then confirm a different player can still claim it with a successful command.
+- Ask command-keyword knowledge questions such as `what is the goblin altar?`
+  and `how do I get koboldite dust?`; they should answer as dialogue, not rope
+  denial or command execution.
 - While following, confirm it tracks the command holder instead of resuming its
   normal player-avoidance or villager-hunting behavior.
 - While guarding, have a hostile mob attack the command holder and confirm the

@@ -32,6 +32,13 @@ class NpcCommandKindTest {
     }
 
     @Test
+    void worshipKeywordsCanStillBeClearlyKnowledgeQuestions() {
+        assertEquals(Optional.of(NpcCommandKind.WORSHIP), NpcCommandKind.candidate("what is the goblin altar?"));
+        assertTrue(NpcCommandKind.isClearlyQuestion("what is the goblin altar?"));
+        assertFalse(NpcCommandKind.WORSHIP.isPlainDirect("what is the goblin altar?"));
+    }
+
+    @Test
     void plainDirectAcceptsShortOrders() {
         assertTrue(NpcCommandKind.MINE.isPlainDirect("please go mine"));
         assertTrue(NpcCommandKind.WORSHIP.isPlainDirect("go worship the statue"));

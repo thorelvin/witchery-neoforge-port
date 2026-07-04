@@ -485,6 +485,9 @@ public final class NpcBrainEvents {
         if (command.isEmpty()) {
             return false;
         }
+        if (NpcCommandKind.isClearlyQuestion(message)) {
+            return false;
+        }
         NpcCommandKind kind = command.get();
         if (!supportsCommand(target, kind)) {
             return false;
@@ -496,9 +499,6 @@ public final class NpcBrainEvents {
         if (kind.isPlainDirect(message)) {
             executeNpcCommand(level, target, player, message, kind);
             return true;
-        }
-        if (NpcCommandKind.isClearlyQuestion(message)) {
-            return false;
         }
         return requestNpcCommandIntent(level, target, player, message, kind);
     }
@@ -615,11 +615,11 @@ public final class NpcBrainEvents {
 
     private static void executeHobgoblinCommand(ServerLevel level, HobgoblinEntity hobgoblin,
                                                 ServerPlayer player, String message, NpcCommandKind kind) {
-        hobgoblin.claimCommandOwner(player);
         String speech = switch (kind) {
             case MINE -> executeHobgoblinMineCommand(hobgoblin, player);
             case WORSHIP -> executeHobgoblinWorshipCommand(hobgoblin, player);
             case STAY -> {
+                hobgoblin.claimCommandOwner(player);
                 hobgoblin.beginPlayerConversation(player);
                 yield "*squints* \"Feet stay. For now.\"";
             }
@@ -631,6 +631,9 @@ public final class NpcBrainEvents {
             case COME_HERE -> {
                 hobgoblin.getLookControl().setLookAt(player, 30.0F, 30.0F);
                 boolean moving = hobgoblin.getNavigation().moveTo(player, 0.85D);
+                if (moving) {
+                    hobgoblin.claimCommandOwner(player);
+                }
                 yield moving
                         ? "Coming, coming. Big feet wait."
                         : "*sniffs* \"Path says no. Move closer.\"";
@@ -638,6 +641,9 @@ public final class NpcBrainEvents {
             case GO_AWAY -> {
                 hobgoblin.getLookControl().setLookAt(player, 30.0F, 30.0F);
                 boolean moving = moveHobgoblinAwayFromPlayer(hobgoblin, player);
+                if (moving) {
+                    hobgoblin.claimCommandOwner(player);
+                }
                 yield moving
                         ? "*backs off* \"Away, away. Good?\""
                         : "*shrugs* \"No path away. World too cramped.\"";

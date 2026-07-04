@@ -211,6 +211,22 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void cardRepairPromptKeepsHobgoblinPersona() {
+        Optional<NpcBrainPrompt> prompt = NpcPromptBuilder.cardRepair("hobgoblin", "", "Dev",
+                "how do I get koboldite dust?",
+                "Message routing: route=lore; topic=koboldite; reply strategy=answer exact known route.",
+                "I know fumes.");
+
+        assertTrue(prompt.isPresent());
+        String user = prompt.get().userPrompt().toLowerCase();
+
+        assertTrue(user.contains("hobgoblin is speaking to dev"), prompt.get().userPrompt());
+        assertTrue(user.contains("small greedy hobgoblin"), prompt.get().userPrompt());
+        assertTrue(user.contains("koboldite"), prompt.get().userPrompt());
+        assertTrue(!user.contains("practical coven witch"), prompt.get().userPrompt());
+    }
+
+    @Test
     void cardRepairPromptSkipsSmallTalkWithoutFacts() {
         Optional<NpcBrainPrompt> prompt = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
                 "hello there", "", "Welcome to the Witchery world.");

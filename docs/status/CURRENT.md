@@ -55,6 +55,9 @@ enough to read before starting work. Long historical deltas belong in
   default, prewarms the model, loads compact markdown knowledge cards, keeps
   per-entity/player memory, uses LLM checks for routing/social/command intent
   where useful, and still treats code/fallbacks as the source of authority.
+  Command-keyword knowledge questions now route to dialogue before command
+  permission denial, and card repair keeps hobgoblin role/voice instead of
+  falling back to coven-witch wording.
 - The protection facade is live for NPC command ownership and terrain-changing
   magic. It checks vanilla permissions and optional reflective adapters for
   Open Parties and Claims, FTB Chunks, and Common Protection API, with config
@@ -73,6 +76,7 @@ enough to read before starting work. Long historical deltas belong in
   Patron worship state persists and still feeds prayers into the statue.
   Follow and guard chat orders now have real movement behavior; guard watches
   for threats attacking the command holder instead of just acknowledging text.
+  Failed hobgoblin command attempts no longer claim a new command owner.
 - Flame Imp contracts now use the source-style bargain loop: signed ownership
   contract, 25-level taming cost, shiny-gift mood, target/self spell contracts,
   and the five source abilities.

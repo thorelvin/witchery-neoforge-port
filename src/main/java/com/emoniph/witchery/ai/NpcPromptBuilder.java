@@ -1941,8 +1941,10 @@ public final class NpcPromptBuilder {
             case "leonard" -> "Shade of Leonard";
             case "baba_yaga" -> "Baba Yaga";
             case "villager" -> "Villager";
+            case "hobgoblin" -> "Hobgoblin";
             case "reflection" -> "Reflection";
-            default -> "Coven Witch";
+            case "coven_witch" -> "Coven Witch";
+            default -> "NPC";
         };
     }
 
@@ -1951,8 +1953,10 @@ public final class NpcPromptBuilder {
             case "leonard" -> "infernal, severe, contractual, harsh, old, dangerous";
             case "baba_yaga" -> "ancient crone, sharp, cruel, swamp-wise, teeth and pots";
             case "villager" -> "peasant local, worried, superstitious, practical, not an expert witch";
+            case "hobgoblin" -> "small greedy hobgoblin, work-minded, wary, clipped, earthy";
             case "reflection" -> "cold living mirror, familiar-but-wrong, concise, hostile";
-            default -> "practical coven witch, secretive, dry, helpful when paid or respected";
+            case "coven_witch" -> "practical coven witch, secretive, dry, helpful when paid or respected";
+            default -> "grounded in-world NPC, concise, direct";
         };
     }
 
@@ -2047,6 +2051,7 @@ public final class NpcPromptBuilder {
                 "oven", "kettle", "distillery", "spinning wheel", "altar", "cauldron", "brazier",
                 "whiff", "whif", "mutandis", "attuned stone", "witches salt", "witch salt",
                 "arthana", "boline", "taglock", "poppet", "familiar", "demon", "spirit world",
+                "hobgoblin", "koboldite", "goblin altar", "patron", "gulg", "mog",
                 "mirror", "reflection", "mirror world", "mirror guardian", "vampire", "werewolf",
                 "leonard", "baba yaga");
     }
