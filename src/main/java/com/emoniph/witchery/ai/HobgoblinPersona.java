@@ -56,6 +56,11 @@ public final class HobgoblinPersona implements NpcPersona<HobgoblinEntity> {
     }
 
     @Override
+    public void abortConversation(HobgoblinEntity entity, ServerPlayer player) {
+        entity.abortPlayerConversation();
+    }
+
+    @Override
     public void nudgeAttention(HobgoblinEntity entity, ServerPlayer player) {
         entity.nudgePlayerAttention(player);
     }

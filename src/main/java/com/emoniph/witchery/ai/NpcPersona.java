@@ -33,6 +33,9 @@ public interface NpcPersona<E extends LivingEntity> {
     default void completeConversation(E entity, ServerPlayer player) {
     }
 
+    default void abortConversation(E entity, ServerPlayer player) {
+    }
+
     default void nudgeAttention(E entity, ServerPlayer player) {
     }
 

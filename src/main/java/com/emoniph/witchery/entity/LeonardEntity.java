@@ -254,6 +254,10 @@ public class LeonardEntity extends Monster implements RangedAttackMob {
         holdPlayerAttention(player, ATTENTION_AFTER_REPLY_TICKS, false);
     }
 
+    public void abortPlayerConversation() {
+        clearAttention();
+    }
+
     public void nudgePlayerAttention(Player player) {
         holdPlayerAttention(player, ATTENTION_BRIEF_TICKS, true);
         if (level() instanceof ServerLevel serverLevel) {

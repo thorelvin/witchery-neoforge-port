@@ -611,6 +611,7 @@ public final class NpcBrainEvents {
         player.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, witch, speech),
                 false);
         NpcBrainService.INSTANCE.rememberCovenExchange(witch, player, message, speech);
+        witch.completePlayerConversation(player);
     }
 
     private static void executeHobgoblinCommand(ServerLevel level, HobgoblinEntity hobgoblin,
@@ -657,6 +658,7 @@ public final class NpcBrainEvents {
         };
         if (!speech.isBlank()) {
             sayHobgoblin(level, hobgoblin, player, message, speech);
+            hobgoblin.completePlayerConversation(player);
         }
     }
 

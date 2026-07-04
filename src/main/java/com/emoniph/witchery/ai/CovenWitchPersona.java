@@ -60,6 +60,11 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
     }
 
     @Override
+    public void abortConversation(CovenWitchEntity entity, ServerPlayer player) {
+        entity.abortPlayerConversation();
+    }
+
+    @Override
     public void nudgeAttention(CovenWitchEntity entity, ServerPlayer player) {
         entity.nudgePlayerAttention(player);
     }

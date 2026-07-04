@@ -414,7 +414,6 @@ public final class NpcBrainService {
             return false;
         }
 
-        cooldownUntil.put(cooldownKey, now + cooldownTicks(trigger));
         LlmProvider provider;
         try {
             provider = providerFromConfig();
@@ -424,6 +423,7 @@ public final class NpcBrainService {
             return false;
         }
 
+        cooldownUntil.put(cooldownKey, now + cooldownTicks(trigger));
         persona.beginConversation(entity, player);
         provider.generate(prompt)
                 .orTimeout(WitcheryConfig.LLM_TIMEOUT_MILLIS.get() + 500L, TimeUnit.MILLISECONDS)
@@ -583,6 +583,8 @@ public final class NpcBrainService {
                                                                 boolean rememberExchange,
                                                                 String memoryContextOverride,
                                                                 NpcBrainResponse response, Throwable error) {
+        boolean conversationHandled = false;
+        try {
         if (!player.isAlive() || player.level() != level) {
             return;
         }
@@ -590,6 +592,7 @@ public final class NpcBrainService {
             return;
         }
         persona.completeConversation(entity, player);
+        conversationHandled = true;
         if (error != null || response == null) {
             failure(error);
             if (showFallback && fallback != null) {
@@ -661,6 +664,11 @@ public final class NpcBrainService {
         if (!response.memory().isBlank()) {
             NpcMemoryData.get(level).remember(entityId, player.getUUID(), response.memory(), level.getGameTime());
         }
+        } finally {
+            if (!conversationHandled) {
+                persona.abortConversation(entity, player);
+            }
+        }
     }
 
     private <E extends LivingEntity> boolean requestPersonaRepair(ServerLevel level, NpcPersona<E> persona,
@@ -682,7 +690,9 @@ public final class NpcBrainService {
                 player.getName().getString(),
                 playerMessage,
                 memoryContext,
-                rejectedSpeech);
+                rejectedSpeech,
+                NpcPromptBuilder.biomeName(level, entity.blockPosition()),
+                NpcPromptBuilder.timeName(level.getDayTime()));
         if (prompt.isEmpty()) {
             return false;
         }
@@ -720,6 +730,8 @@ public final class NpcBrainService {
                                                                       String playerMessage, String memoryContext,
                                                                       boolean rememberExchange,
                                                                       NpcBrainResponse response, Throwable error) {
+        boolean conversationHandled = false;
+        try {
         if (!player.isAlive() || player.level() != level) {
             return;
         }
@@ -727,6 +739,7 @@ public final class NpcBrainService {
             return;
         }
         persona.completeConversation(entity, player);
+        conversationHandled = true;
         if (error != null || response == null) {
             failure(error);
             tryDisplayPersonaFallback(level, persona, entityId, player, entity, playerMessage, memoryContext);
@@ -755,6 +768,11 @@ public final class NpcBrainService {
         if (!response.memory().isBlank()) {
             NpcMemoryData.get(level).remember(entityId, player.getUUID(), response.memory(), level.getGameTime());
         }
+        } finally {
+            if (!conversationHandled) {
+                persona.abortConversation(entity, player);
+            }
+        }
     }
 
     private <E extends LivingEntity> void handleSocialIntentClassification(ServerLevel level, NpcPersona<E> persona,
@@ -763,6 +781,8 @@ public final class NpcBrainService {
                                                                            NpcSocialAction action,
                                                                            NpcBrainResponse response,
                                                                            Throwable error) {
+        boolean conversationHandled = false;
+        try {
         if (!player.isAlive() || player.level() != level) {
             return;
         }
@@ -772,27 +792,38 @@ public final class NpcBrainService {
         if (error != null || response == null) {
             failure(error);
             requestNormalChatAfterSocialIntent(level, persona, entity, player, playerMessage);
+            conversationHandled = true;
             return;
         }
         if (socialIntentAccepted(response)) {
             if (persona.handleSocialAction(entity, player, playerMessage, action,
                     socialContext(level, persona, entity, player, playerMessage))) {
                 persona.completeConversation(entity, player);
+                conversationHandled = true;
                 return;
             }
         }
         requestNormalChatAfterSocialIntent(level, persona, entity, player, playerMessage);
+        conversationHandled = true;
+        } finally {
+            if (!conversationHandled) {
+                persona.abortConversation(entity, player);
+            }
+        }
     }
 
     private <E extends LivingEntity> void handleCommandIntent(ServerLevel level, NpcPersona<E> persona, E entity,
                                                               ServerPlayer player, NpcBrainResponse response,
                                                               Throwable error, Runnable onAccepted,
                                                               Runnable onRejected) {
+        boolean conversationHandled = false;
+        try {
         if (!player.isAlive() || player.level() != level
                 || !entity.isAlive() || entity.level() != level) {
             return;
         }
         persona.completeConversation(entity, player);
+        conversationHandled = true;
         if (error != null || response == null) {
             failure(error);
             runSafely(onRejected);
@@ -802,6 +833,11 @@ public final class NpcBrainService {
             runSafely(onAccepted);
         } else {
             runSafely(onRejected);
+        }
+        } finally {
+            if (!conversationHandled) {
+                persona.abortConversation(entity, player);
+            }
         }
     }
 
@@ -818,6 +854,8 @@ public final class NpcBrainService {
     private <E extends LivingEntity> void handleMessageAnalysis(ServerLevel level, NpcPersona<E> persona,
                                                                ServerPlayer player, E entity, String playerMessage,
                                                                NpcBrainResponse response, Throwable error) {
+        boolean conversationHandled = false;
+        try {
         if (!player.isAlive() || player.level() != level) {
             return;
         }
@@ -836,6 +874,12 @@ public final class NpcBrainService {
             persona.completeConversation(entity, player);
             tryDisplayPersonaFallback(level, persona, entity.getUUID(), player, entity, playerMessage,
                     NpcMessageAnalysis.appendContext(contextFor(persona, entity, player), analysis));
+        }
+        conversationHandled = true;
+        } finally {
+            if (!conversationHandled) {
+                persona.abortConversation(entity, player);
+            }
         }
     }
 

@@ -227,6 +227,21 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void cardRepairPromptUsesProvidedSceneInsteadOfFakeDefaults() {
+        Optional<NpcBrainPrompt> prompt = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
+                "how do I use the kettle?",
+                "Message routing: route=recipe; topic=kettle; reply strategy=answer exact known ingredient.",
+                "Hello again, Dev.",
+                "Swamp", "day");
+
+        assertTrue(prompt.isPresent());
+        String user = prompt.get().userPrompt().toLowerCase();
+
+        assertTrue(user.contains("scene: swamp, day"), prompt.get().userPrompt());
+        assertTrue(!user.contains("scene: plains, night"), prompt.get().userPrompt());
+    }
+
+    @Test
     void cardRepairPromptSkipsSmallTalkWithoutFacts() {
         Optional<NpcBrainPrompt> prompt = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
                 "hello there", "", "Welcome to the Witchery world.");

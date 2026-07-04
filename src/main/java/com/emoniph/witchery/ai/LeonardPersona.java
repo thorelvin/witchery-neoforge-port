@@ -49,6 +49,11 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
     }
 
     @Override
+    public void abortConversation(LeonardEntity entity, ServerPlayer player) {
+        entity.abortPlayerConversation();
+    }
+
+    @Override
     public void nudgeAttention(LeonardEntity entity, ServerPlayer player) {
         entity.nudgePlayerAttention(player);
     }

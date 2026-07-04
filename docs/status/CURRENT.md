@@ -57,7 +57,10 @@ enough to read before starting work. Long historical deltas belong in
   where useful, and still treats code/fallbacks as the source of authority.
   Command-keyword knowledge questions now route to dialogue before command
   permission denial, and card repair keeps hobgoblin role/voice instead of
-  falling back to coven-witch wording.
+  falling back to coven-witch wording. Repair prompts now use the entity's real
+  biome/time context, async/direct command conversation cleanup has explicit
+  completion/abort paths, and provider/config failures no longer spend the
+  request cooldown.
 - The protection facade is live for NPC command ownership and terrain-changing
   magic. It checks vanilla permissions and optional reflective adapters for
   Open Parties and Claims, FTB Chunks, and Common Protection API, with config

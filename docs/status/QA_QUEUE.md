@@ -15,6 +15,18 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 ## Active Focus
 
+### AI NPC Runtime
+
+- Set an invalid local LLM provider or endpoint, talk to a nearby AI NPC, then
+  fix the config and retry immediately. The failed provider/config attempt
+  should not consume the player/NPC request cooldown.
+- During a pending AI reply, move far away, change dimension, disconnect, kill
+  the NPC, or unload it. When the async handler resolves, the NPC should not
+  stay stuck in pending conversation attention.
+- Trigger a card-repair path in a non-plains or non-night scene. Repaired lines
+  should be grounded with the live entity biome/time, not fake `Plains`/`night`
+  assumptions.
+
 ### Hobgoblin Chat Commands
 
 - Leash a Hobgoblin, give it a pickaxe, then use chat orders for `mine`,

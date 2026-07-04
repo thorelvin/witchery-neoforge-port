@@ -239,6 +239,10 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         holdPlayerAttention(player, ATTENTION_AFTER_REPLY_TICKS, false);
     }
 
+    public void abortPlayerConversation() {
+        clearAttention();
+    }
+
     public void nudgePlayerAttention(Player player) {
         holdPlayerAttention(player, ATTENTION_BRIEF_TICKS, true);
     }

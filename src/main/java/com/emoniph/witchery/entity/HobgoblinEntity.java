@@ -206,6 +206,10 @@ public class HobgoblinEntity extends AbstractVillager {
         holdPlayerAttention(player, ATTENTION_AFTER_REPLY_TICKS, false);
     }
 
+    public void abortPlayerConversation() {
+        clearAttention();
+    }
+
     public void nudgePlayerAttention(Player player) {
         holdPlayerAttention(player, ATTENTION_BRIEF_TICKS, true);
     }

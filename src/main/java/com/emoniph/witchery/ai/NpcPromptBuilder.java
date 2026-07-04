@@ -1876,11 +1876,20 @@ public final class NpcPromptBuilder {
 
     static Optional<NpcBrainPrompt> cardRepair(String personaId, String npcName, String playerName,
                                               String playerMessage, String memory, String rejectedSpeech) {
+        return cardRepair(personaId, npcName, playerName, playerMessage, memory, rejectedSpeech,
+                "unknown biome", "unknown time");
+    }
+
+    static Optional<NpcBrainPrompt> cardRepair(String personaId, String npcName, String playerName,
+                                              String playerMessage, String memory, String rejectedSpeech,
+                                              String biome, String timeOfDay) {
         if (!shouldRepairWithCards(playerMessage, memory)) {
             return Optional.empty();
         }
         String persona = NpcCardRequest.normalizePersona(personaId);
-        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, "Plains", "night",
+        String sceneBiome = biome == null || biome.isBlank() ? "unknown biome" : biome;
+        String sceneTime = timeOfDay == null || timeOfDay.isBlank() ? "unknown time" : timeOfDay;
+        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, sceneBiome, sceneTime,
                 NpcCardRequest.persona(persona));
         if (knowledge.isBlank()) {
             return Optional.empty();
@@ -1905,6 +1914,7 @@ public final class NpcPromptBuilder {
                 # NPC
                 %s is speaking to %s.
                 Voice: %s
+                Scene: %s, %s
 
                 # Player message
                 %s
@@ -1928,6 +1938,8 @@ public final class NpcPromptBuilder {
                 roleName,
                 player,
                 repairVoice(persona),
+                sceneBiome,
+                sceneTime,
                 playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
                 knowledge,
                 memory == null || memory.isBlank() ? "none" : memory,
