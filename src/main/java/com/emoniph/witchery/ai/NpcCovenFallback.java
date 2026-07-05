@@ -11,6 +11,12 @@ final class NpcCovenFallback {
     static Optional<String> chat(String playerMessage, String witchName, String playerName,
                                  String biome, String timeOfDay, String clock, long day,
                                  String memoryContext) {
+        return chat(playerMessage, witchName, playerName, biome, timeOfDay, clock, day, memoryContext, false);
+    }
+
+    static Optional<String> chat(String playerMessage, String witchName, String playerName,
+                                 String biome, String timeOfDay, String clock, long day,
+                                 String memoryContext, boolean recruitedByPlayer) {
         String normalized = normalize(playerMessage);
         if (normalized.isBlank()) {
             return Optional.empty();
@@ -18,6 +24,12 @@ final class NpcCovenFallback {
 
         String name = safeName(playerName);
         String witch = safeDisplayName(witchName, "Witch");
+        if (recruitedByPlayer) {
+            Optional<String> sworn = swornCovenAnswer(normalized, witch, name);
+            if (sworn.isPresent()) {
+                return sworn;
+            }
+        }
         if (asksNpcName(normalized)) {
             return Optional.of("I am " + witch + ".");
         }
@@ -175,6 +187,10 @@ final class NpcCovenFallback {
         if (containsAny(normalized, "bless", "blessing")) {
             return Optional.of("May dawn find you with dry powder, warm bread, and enemies who trip first.");
         }
+        if (containsAny(normalized, "will you protect me", "protect me", "fight with me", "fight beside me",
+                "stand with me")) {
+            return Optional.of("I sell tools, not my shadow; earn an oath before asking me to stand in yours.");
+        }
         if (asksFollowRequest(normalized)) {
             return Optional.of("These old knees do not follow folk home, " + name + "; they barely follow me.");
         }
@@ -228,6 +244,9 @@ final class NpcCovenFallback {
         }
         if (containsAny(normalized, "careful apprentice", "apprentice")) {
             return Optional.of("A careful apprentice labels jars, counts offerings twice, and never mistakes a whisper for permission.");
+        }
+        if (asksWitchCovenDifference(normalized)) {
+            return Optional.of("A witch may be rumor, healer, hag, or hazard. A Coven Witch is named by bargain and trial.");
         }
         if (asksCovenRecruiting(normalized)) {
             return Optional.of("Find a wandering coven witch, bring a bound familiar, and be ready for her trial. A coven is earned, not collected.");
@@ -357,5 +376,52 @@ final class NpcCovenFallback {
             return Optional.of(NpcFallbackAsides.oldWitch(normalized, name));
         }
         return Optional.of(NpcFallbackAsides.oldWitch(normalized, name));
+    }
+
+    private static Optional<String> swornCovenAnswer(String normalized, String witch, String playerName) {
+        if (asksNpcName(normalized)) {
+            return Optional.of("I am " + witch + ", sworn to your coven and still nobody's tame thing.");
+        }
+        if (addressesWitchByName(normalized, witch)) {
+            return Optional.of("I'm here, " + playerName + "; speak, and we'll mind it together.");
+        }
+        if (isGreeting(normalized)) {
+            return Optional.of("There you are, " + playerName + ". The coven feels steadier with you near.");
+        }
+        if (containsAny(normalized, "how are you", "how do you fare", "are you well")) {
+            return Optional.of("Well enough, coven-kin; my brews are warm and my throwing arm is ready.");
+        }
+        if (containsAny(normalized, "thank you", "thanks", "good work", "well done")) {
+            return Optional.of("Keep thanks for the road, " + playerName + "; I walk it with you now.");
+        }
+        if (asksTradeDetails(normalized) || mentionsCoinOnly(normalized)
+                || containsAny(normalized, "coin", "coins", "emerald", "emeralds", "trade", "wares", "buy", "sell")) {
+            return Optional.of("For you, coven-kin? Fumes, taglocks, herbs, brews, and salt; clean coin still matters.");
+        }
+        if (asksFollowRequest(normalized)) {
+            return Optional.of("Use the bond plainly and I will keep pace; coven feet do not stray far.");
+        }
+        if (asksCovenRecruiting(normalized) || containsAny(normalized, "my coven", "our coven",
+                "you joined", "you are sworn", "sworn to me", "covenmate", "coven kin", "coven-kin")) {
+            return Optional.of("I am already in your circle, " + playerName + "; keep it worthy of us both.");
+        }
+        if (containsAny(normalized, "will you protect me", "protect me", "fight with me", "fight beside me",
+                "stand with me")) {
+            return Optional.of("If danger bares teeth at you, it finds my brew bottle beside yours.");
+        }
+        if (asksWitchCovenDifference(normalized)) {
+            return Optional.of("A witch is rumor until named. A Coven Witch is a bargain; a sworn one is bloodless kin.");
+        }
+        return Optional.empty();
+    }
+
+    private static boolean asksWitchCovenDifference(String normalized) {
+        if (containsAny(normalized, "coven witch", "ordinary witch", "wild witch", "hostile witch",
+                "village witch", "vanilla witch")) {
+            return true;
+        }
+        return containsAny(normalized, "witches and coven", "witch and coven", "witches versus coven",
+                "witch versus coven", "difference between witches", "different from witches",
+                "same as witches", "all witches", "what are witches");
     }
 }

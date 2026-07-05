@@ -26,6 +26,30 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
+    void swornCovenFallbackUsesWarmerCovenmateLines() {
+        Optional<String> free = NpcDialogueFallback.covenChat(
+                "hello", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L, "", false);
+        Optional<String> sworn = NpcDialogueFallback.covenChat(
+                "hello", "Lilith Poe", "Dev", "Plains", "night", "22:30", 1L, "", true);
+        Optional<String> difference = NpcDialogueFallback.covenChat(
+                "what is the difference between witches and coven witches?", "Lilith Poe", "Dev",
+                "Plains", "night", "22:30", 1L, "", true);
+        Optional<String> salt = NpcDialogueFallback.covenChat(
+                "what is witches salt for?", "Lilith Poe", "Dev",
+                "Plains", "night", "22:30", 1L, "", true);
+
+        assertTrue(free.isPresent());
+        assertEquals("Hello, Dev.", free.get());
+        assertTrue(sworn.isPresent());
+        assertTrue(sworn.get().contains("coven"), sworn.get());
+        assertTrue(difference.isPresent());
+        assertTrue(difference.get().contains("Coven Witch"), difference.get());
+        assertTrue(difference.get().contains("sworn"), difference.get());
+        assertTrue(salt.isPresent());
+        assertTrue(salt.get().contains("ward") || salt.get().contains("protective"), salt.get());
+    }
+
+    @Test
     void separatesDirectInsultsFromAmbiguousInsultWords() {
         assertTrue(NpcDialogueFallback.isInsult("you old hag"));
         assertTrue(NpcDialogueFallback.isInsult("you fool"));

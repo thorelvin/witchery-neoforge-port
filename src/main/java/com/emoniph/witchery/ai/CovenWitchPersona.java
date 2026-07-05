@@ -100,7 +100,8 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
                 NpcPromptBuilder.timeName(level.getDayTime()),
                 NpcPromptBuilder.clockTime(level.getDayTime()),
                 level.getDayTime() / 24000L,
-                memoryContext);
+                memoryContext,
+                entity.isRecruitedBy(player));
     }
 
     @Override
@@ -192,12 +193,18 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
     @Override
     public String lastResortFallback(CovenWitchEntity entity, ServerPlayer player, String playerMessage,
                                      String avoidSpeech) {
+        if (entity.isRecruitedBy(player)) {
+            return NpcDialogueFallback.swornCovenLastResort(playerMessage, player.getName().getString(), avoidSpeech);
+        }
         return NpcDialogueFallback.lastResortAside(playerMessage, player.getName().getString(), avoidSpeech);
     }
 
     @Override
     public Optional<String> alternateForRepeatedFallback(CovenWitchEntity entity, ServerPlayer player,
                                                          String playerMessage, String avoidSpeech) {
+        if (entity.isRecruitedBy(player)) {
+            return NpcDialogueFallback.swornCovenAlternate(playerMessage, player.getName().getString(), avoidSpeech);
+        }
         return NpcDialogueFallback.alternateForRepeatedFallback(playerMessage, player.getName().getString(),
                 avoidSpeech);
     }

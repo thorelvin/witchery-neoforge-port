@@ -44,6 +44,21 @@ final class NpcFallbackAsides {
         return lines[start];
     }
 
+    static String swornCovenWitch(String normalized, String playerName, String avoidSpeech) {
+        String[] lines = {
+                "Ask cleanly, coven-kin; I am listening with both ears and one bad omen.",
+                "Your circle has my name in it, " + playerName + ". Spend the bond wisely.",
+                "*lowers her voice* \"Nearer, then. Coven business dislikes loose air.\"",
+                "I stand with you, but I still prefer questions with bones in them.",
+                "The road may bite. Good. It can learn our teeth too.",
+                "Speak, " + playerName + "; if trouble answers, I have bottles enough.",
+                "A sworn witch is not tame, only loyal where loyalty was earned.",
+                "Our coven hears you. Try the useful part again."
+        };
+        return firstNonRepeated(lines, normalized, avoidSpeech,
+                "Ask again, " + playerName + "; coven ears are patient, not endless.");
+    }
+
     static String villager(String normalized, String playerName, String avoidSpeech) {
         String[] lines = {
                 "Keep your voice low, " + playerName + "; walls have ears when witches visit.",

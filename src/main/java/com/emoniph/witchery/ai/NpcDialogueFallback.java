@@ -76,8 +76,15 @@ final class NpcDialogueFallback {
     static Optional<String> covenChat(String playerMessage, String witchName, String playerName,
                                       String biome, String timeOfDay, String clock, long day,
                                       String memoryContext) {
+        return covenChat(playerMessage, witchName, playerName, biome, timeOfDay, clock, day, memoryContext,
+                false);
+    }
+
+    static Optional<String> covenChat(String playerMessage, String witchName, String playerName,
+                                      String biome, String timeOfDay, String clock, long day,
+                                      String memoryContext, boolean recruitedByPlayer) {
         return NpcCovenFallback.chat(playerMessage, witchName, playerName, biome, timeOfDay, clock, day,
-                memoryContext);
+                memoryContext, recruitedByPlayer);
     }
 
     static String lastResortAside(String playerMessage, String playerName) {
@@ -107,6 +114,19 @@ final class NpcDialogueFallback {
             return Optional.empty();
         }
         return Optional.of(NpcFallbackAsides.oldWitch(normalized, safeName(playerName), avoidSpeech));
+    }
+
+    static String swornCovenLastResort(String playerMessage, String playerName, String avoidSpeech) {
+        return NpcFallbackAsides.swornCovenWitch(normalize(playerMessage), safeName(playerName), avoidSpeech);
+    }
+
+    static Optional<String> swornCovenAlternate(String playerMessage, String playerName, String avoidSpeech) {
+        String normalized = normalize(playerMessage);
+        if (normalized.isBlank()) {
+            return Optional.empty();
+        }
+        String line = NpcFallbackAsides.swornCovenWitch(normalized, safeName(playerName), avoidSpeech);
+        return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
     }
 
     static String leonardLastResort(String playerMessage, String playerName, String avoidSpeech) {

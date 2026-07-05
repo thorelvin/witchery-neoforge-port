@@ -125,6 +125,10 @@ public final class NpcPromptBuilder {
     }
 
     static NpcBrainPrompt covenWitchSmoke(String playerMessage, String memory) {
+        return covenWitchSmoke(playerMessage, memory, false);
+    }
+
+    static NpcBrainPrompt covenWitchSmoke(String playerMessage, String memory, boolean recruited) {
         String biome = "Plains";
         String time = "night";
         String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time,
@@ -132,7 +136,7 @@ public final class NpcPromptBuilder {
         return covenWitchPrompt(
                 "Lilith Poe",
                 "Dev",
-                false,
+                recruited,
                 "minecraft:overworld",
                 biome,
                 time,
@@ -148,6 +152,10 @@ public final class NpcPromptBuilder {
     }
 
     static NpcBrainPrompt covenWitchAmbientSmoke(String ambientCue, String memory) {
+        return covenWitchAmbientSmoke(ambientCue, memory, false);
+    }
+
+    static NpcBrainPrompt covenWitchAmbientSmoke(String ambientCue, String memory, boolean recruited) {
         String biome = "Plains";
         String time = "night";
         String cue = ambientCue == null || ambientCue.isBlank() ? "standing nearby" : ambientCue;
@@ -157,7 +165,7 @@ public final class NpcPromptBuilder {
         return covenWitchPrompt(
                 "Lilith Poe",
                 "Dev",
-                false,
+                recruited,
                 "minecraft:overworld",
                 biome,
                 time,
@@ -1835,8 +1843,11 @@ public final class NpcPromptBuilder {
                 Voice target:
                 practical, secretive, dry, witchy, grounded, and not modern.
                 The best answer sounds like a real coven witch reacting from inside the current scene.
-                She knows villagers fear both good and bad witches; she may be amused, defensive, helpful, or sharp, but never generic.
+                She knows villagers fear ordinary witches, wild hags, bad bargains, and good healers differently; do not flatten all witches into the player's coven.
+                She may be amused, defensive, helpful, or sharp, but never generic.
                 She notices weather and harvest as omens, reagents, and village pressure, not as small talk alone.
+                If she is not sworn to this player, keep a proud merchant's distance: useful, wary, and careful with promises.
+                If she is sworn to this player, sound warmer and more familiar: coven-kin, shared danger, earned loyalty, and dry affection. She is loyal, not servile.
 
                 Speech shape:
                 one complete in-world line; two short sentences only if needed.
@@ -1861,7 +1872,8 @@ public final class NpcPromptBuilder {
         String user = """
                 # Character
                 The witch is named %s. The player is named %s.
-                The witch is a coven witch, occult merchant, and potion-throwing ally when sworn to a player.
+                This entity is a Coven Witch: a named Witchery practitioner, occult merchant, and potion-throwing ally when sworn.
+                Ordinary witches in rumor, hostile wild witches, and village fears are not the same thing as this named Coven Witch.
                 Relationship: %s.
 
                 # Scene
@@ -1894,6 +1906,9 @@ public final class NpcPromptBuilder {
                 If asked to do something the game has not done, do not say "I can" or "I will" as a promise; say what you know, what you sell, or what the player should try.
                 React to the player, the time, weather, biome, memory, and trade goods when they matter.
                 If asked about good or bad witches, answer from deeds, bargains, and village fear; avoid cartoon morality.
+                If asked about witches versus Coven Witches, distinguish rumor or hostile witchcraft from named Coven Witches who trade, test, and may swear into a coven.
+                If Relationship says sworn, answer with warmer covenmate language: recognize shared trust, protectiveness, familiar teasing, or fighting beside the player. Do not sound like a stranger merchant.
+                If Relationship says not recruited, do not call the player coven-kin, sister, brother, master, or friend; keep the tone wary and transactional unless memory justifies warmth.
                 If asked about weather or harvest, connect it to the current scene, rites, herbs, bread, omens, or practical caution without promising a spell was cast.
                 Do not introduce named herbs, stock, rites, demons, or brews unless the player, memory, scene, or facts make them relevant.
                 If the player asks what you trade, name concrete stock from this set in a natural order: witches' salt, taglock kits, fumes, bat wool, Revealing brews, Sleeping brews, belladonna, or mandrake.
@@ -1931,11 +1946,29 @@ public final class NpcPromptBuilder {
                 task);
 
         return new NpcBrainPrompt(system.strip(), truncate(user.strip(), MAX_USER_PROMPT_LENGTH),
-                covenWitchExamples(playerName));
+                covenWitchExamples(playerName, recruited));
     }
 
     private static List<NpcBrainPrompt.Example> covenWitchExamples(String playerName) {
+        return covenWitchExamples(playerName, false);
+    }
+
+    private static List<NpcBrainPrompt.Example> covenWitchExamples(String playerName, boolean recruited) {
         String player = playerName == null || playerName.isBlank() ? "traveler" : playerName;
+        if (recruited) {
+            return List.of(
+                    example("hi",
+                            "{\"speech\":\"There you are, %s. The coven feels steadier with you near.\",\"intent\":\"none\",\"memory\":\"\"}".formatted(player)),
+                    example("will you follow me?",
+                            "{\"speech\":\"Use the bond plainly and I will keep pace; coven feet do not stray far.\",\"intent\":\"follow_owner\",\"memory\":\"\"}"),
+                    example("what are witches and coven witches?",
+                            "{\"speech\":\"A witch is rumor until named. A Coven Witch is a bargain; a sworn one is bloodless kin.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                    example("will you fight with me?",
+                            "{\"speech\":\"If danger bares teeth at you, it finds my brew bottle beside yours.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                    example("what do you trade?",
+                            "{\"speech\":\"For you, coven-kin? Fumes, taglocks, herbs, brews, and salt; clean coin still matters.\",\"intent\":\"open_trade\",\"memory\":\"\"}")
+            );
+        }
         return List.of(
                 example("hi",
                         "{\"speech\":\"Hello, %s.\",\"intent\":\"none\",\"memory\":\"\"}".formatted(player)),

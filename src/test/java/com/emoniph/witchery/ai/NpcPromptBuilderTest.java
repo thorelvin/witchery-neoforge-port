@@ -169,6 +169,23 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void swornCovenPromptUsesWarmerRelationshipWithoutConfusingAllWitches() {
+        NpcBrainPrompt free = NpcPromptBuilder.covenWitchSmoke("hello", "", false);
+        NpcBrainPrompt sworn = NpcPromptBuilder.covenWitchSmoke("hello", "", true);
+        String freeUser = free.userPrompt().toLowerCase();
+        String swornUser = sworn.userPrompt().toLowerCase();
+
+        assertTrue(freeUser.contains("not recruited by this player"), free.userPrompt());
+        assertTrue(swornUser.contains("this witch is sworn to the player"), sworn.userPrompt());
+        assertTrue(swornUser.contains("ordinary witches in rumor"), sworn.userPrompt());
+        assertTrue(swornUser.contains("warmer covenmate language"), sworn.userPrompt());
+        assertTrue(sworn.systemPrompt().contains("follow_owner"), sworn.systemPrompt());
+        assertTrue(!free.systemPrompt().contains("follow_owner"), free.systemPrompt());
+        assertTrue(sworn.examples().stream()
+                .anyMatch(example -> example.assistantResponse().contains("coven feels steadier")));
+    }
+
+    @Test
     void warmupPromptUsesInvisibleReadyJson() {
         NpcBrainPrompt prompt = NpcPromptBuilder.warmup();
 
