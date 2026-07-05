@@ -113,7 +113,9 @@ public final class NpcKnowledgeBase {
 
     static List<String> selectedTargetedTopics(String playerMessage, NpcCardRequest request) {
         NpcCardRequest cardRequest = request == null ? NpcCardRequest.any() : request;
+        int targetedLimit = Math.min(MAX_TARGETED_NOTES, cardRequest.maxTopics() * cardRequest.maxFactsPerTopic());
         return selectedTargetedMatches(normalize(playerMessage), cardRequest).stream()
+                .limit(targetedLimit)
                 .map(match -> match.note().topic())
                 .toList();
     }
