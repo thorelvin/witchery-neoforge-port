@@ -3383,6 +3383,15 @@ class NpcBrainResponseTest {
     }
 
     @Test
+    void polishRejectsGameAllowanceMetaLine() {
+        Optional<String> speech = NpcBrainResponse.polishSpeech(
+                "I will not offer any assistance beyond what the game allows.",
+                "Shade of Leonard", "Dev", "Are you neutral until I strike you?");
+
+        assertTrue(speech.isEmpty());
+    }
+
+    @Test
     void polishRejectsAdminPowerClaim() {
         Optional<String> speech = NpcBrainResponse.polishSpeech(
                 "I'd say I'm an admin. That's just how I am.",

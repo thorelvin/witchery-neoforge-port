@@ -63,11 +63,16 @@ final class NpcFallbackAsides {
 
     static String leonard(String normalized, String playerName, String avoidSpeech) {
         String[] lines = {
-                "Speak plainly, " + playerName + ". Even debts tire of weak mouths.",
+                "Speak plainly, " + playerName + ". I do not reward soft questions.",
                 "Careful. Not every silence is empty; some are measuring you.",
                 "Your courage has a smell. I have not decided whether it is rot or ripeness.",
                 "A thin question. Bring a sharper one before I lose patience.",
-                "The crossroads heard you. It found you small."
+                "The crossroads heard you. It found you small.",
+                "Keep your blade quiet and your question sharper.",
+                "Old thresholds do not open for muttering.",
+                "I hear you. Whether that helps you is another matter.",
+                "Do not mistake my silence for mercy.",
+                "Your nerve moves faster than your sense."
         };
         return firstNonRepeated(lines, normalized, avoidSpeech,
                 "Ask again, " + playerName + "; this time bring a sharper question.");

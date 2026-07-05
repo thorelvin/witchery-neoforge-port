@@ -333,7 +333,7 @@ final class NpcDialogueFallback {
             return Optional.of("Fear is the one honest scout you brought, " + playerName + ". Listen, but do not let it hold the blade.");
         }
         if (NpcMessageAnalysis.routingMatchesTone(memoryContext, "confusion")) {
-            return Optional.of("Name one debt at a time, " + playerName + "; altar, souls, urn, or blade.");
+            return Optional.of("Name one matter at a time, " + playerName + "; altar, souls, urn, or blade.");
         }
         if (NpcMessageAnalysis.routingMatchesRoute(memoryContext, "action")) {
             return Optional.of("I do not perform wishes. Bring a price, a threat, or a sharper question.");
@@ -686,7 +686,7 @@ final class NpcDialogueFallback {
 
     private static String leonardAtmosphereAnswer(String normalized, String playerName) {
         if (containsAny(normalized, "rain", "weather", "mud")) {
-            return "Rain counts debts better than priests, " + playerName + "; every drop finds what is owed.";
+            return "Rain makes brave words heavier, " + playerName + ". Choose which ones you can carry.";
         }
         if (containsAny(normalized, "road", "crossroad", "threshold", "door")) {
             return "Thresholds remember who crossed clean and who crawled back priced.";
@@ -699,9 +699,9 @@ final class NpcDialogueFallback {
         }
         return NpcFallbackAsides.rotatingLine(normalized, new String[] {
                 "Even the air measures you, " + playerName + ". Try not to come up short.",
-                "Your omens are small, but small debts still collect.",
+                "Your omens are small. Small omens still bite.",
                 "The altar hears your mood. I hear the price under it.",
-                "Name the weather if you must; debt hears the price under it."
+                "Name the weather if you must; the threshold hears the tremor under it."
         });
     }
 

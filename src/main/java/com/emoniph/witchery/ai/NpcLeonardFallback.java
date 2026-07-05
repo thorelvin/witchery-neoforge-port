@@ -32,22 +32,22 @@ final class NpcLeonardFallback {
         String name = safeName(playerName);
         String leonard = safeDisplayName(leonardName, "Shade of Leonard");
         if (containsAny(normalized, "what should i call you", "what do i call you")) {
-            return Optional.of("Call me " + leonard + ", if your tongue can carry the debt.");
+            return Optional.of("Call me " + leonard + ", if your tongue can carry the name.");
         }
         if (asksNpcName(normalized)) {
-            return Optional.of("I am " + leonard + ", the debt your cauldron dragged into shape.");
+            return Optional.of("I am " + leonard + ", the shadow your cauldron dragged into shape.");
         }
         if (asksPlayerName(normalized)) {
             return Optional.of("Your name is " + name + ". Names are the first coin of every bargain.");
         }
         if (containsAny(normalized, "can you hear me", "hear me", "do you hear me")) {
-            return Optional.of("I hear you, " + name + ". Speak carefully; debts have good ears.");
+            return Optional.of("I hear you, " + name + ". Speak carefully; old things have good ears.");
         }
         if (containsAny(normalized, "good night", "goodbye", "farewell", "bye")) {
-            return Optional.of("Go, then. Keep your blood unspent and your debts behind you.");
+            return Optional.of("Go, then. Keep your blood unspent and your shadow behind you.");
         }
         if (isGreeting(normalized)) {
-            return Optional.of("You stand before a debt wearing a shape, " + name + ". Speak carefully.");
+            return Optional.of("You stand before an old shadow wearing a shape, " + name + ". Speak carefully.");
         }
         if (containsAny(normalized, "demon or a goat", "demon or goat", "are you a demon", "are you goat")) {
             return Optional.of("Demon enough to collect the debt, goat-horned enough to remind you where the sabbath keeps its doors.");
@@ -145,11 +145,6 @@ final class NpcLeonardFallback {
         if (containsAny(normalized, "bargain", "deal", "contract", "price", "debt")) {
             return Optional.of("A bargain is not a wish, " + name + ". Bring a real price, not a story.");
         }
-        if (containsAny(normalized, "strike you", "hit you", "attack you", "hurt you",
-                "touch you with steel", "touch you with blade", "touch you with my blade",
-                "touch you with my steel")) {
-            return Optional.of("Strike me and the debt becomes combat; Mortal Coil may mark attackers who mistake courage for payment.");
-        }
         if (containsAny(normalized, "how do i kill you", "how can i kill you", "how to kill you",
                 "how do i beat you", "weakness", "defeat you")) {
             return Optional.of("Strike by your own hand, break the souls when they rise, and save Demonbane for the wounded hour.");
@@ -161,11 +156,17 @@ final class NpcLeonardFallback {
         if (containsAny(normalized, "should i fight", "fight you tonight", "fight tonight")) {
             return Optional.of("Only if you mean to pay in blood. I am neutral until struck.");
         }
-        if (containsAny(normalized, "neutral until struck", "until struck")) {
+        if (containsAny(normalized, "neutral until struck", "until struck",
+                "neutral until i strike", "until i strike")) {
             return Optional.of("Yes. I am neutral until struck; spill blood, and the debt becomes combat.");
         }
+        if (containsAny(normalized, "strike you", "hit you", "attack you", "hurt you",
+                "touch you with steel", "touch you with blade", "touch you with my blade",
+                "touch you with my steel")) {
+            return Optional.of("Strike me and combat begins; Mortal Coil may mark attackers who mistake courage for payment.");
+        }
         if (containsAny(normalized, "bow", "arrow", "arrows", "projectile")) {
-            return Optional.of("A bow is distance pretending to be courage. My debt answers your own hand.");
+            return Optional.of("A bow is distance pretending to be courage. The old rule answers your own hand.");
         }
         if (containsAny(normalized, "walk away", "leave now", "go away now", "if i leave")) {
             return Optional.of("Walk away while your hand is clean. The debt waits better than flesh does.");

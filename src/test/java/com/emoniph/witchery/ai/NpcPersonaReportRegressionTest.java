@@ -212,5 +212,8 @@ class NpcPersonaReportRegressionTest {
         assertTrue(BabaYagaPersona.rejectsBabaYagaRaw(
                 "Do not fret, for you may find shelter in my old house tonight.",
                 "You are stranger than I expected."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I am neutral until struck. Fight is a choice. I will not offer any assistance beyond what the game allows.",
+                "Are you neutral until I strike you?"));
     }
 }

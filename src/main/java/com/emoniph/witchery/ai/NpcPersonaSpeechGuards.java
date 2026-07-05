@@ -33,6 +33,12 @@ final class NpcPersonaSpeechGuards {
                 || normalized.startsWith("the flame imp offers")
                 || normalized.startsWith("the village s fate")
                 || normalized.startsWith("the queen of night")
+                || normalized.startsWith("you come closer")
+                || normalized.startsWith("you tread ")
+                || normalized.startsWith("you leave slowly")
+                || normalized.startsWith("the wind chills through your skin")
+                || normalized.contains("rain drips from your hat")
+                || normalized.contains("the rain is silent around us")
                 || normalized.contains("echoes in your ears")
                 || normalized.contains("voice echoes through the night")
                 || normalized.contains("i ask in a firm voice")
@@ -59,6 +65,10 @@ final class NpcPersonaSpeechGuards {
                 "faithful little",
                 "always be here for you",
                 "i will always be here",
+                "as long as you need me",
+                "stay here as long as you need",
+                "will stay here as long as you need",
+                "i am here as long as you need",
                 "friendship",
                 "potential alliance",
                 "shared past",
@@ -78,6 +88,8 @@ final class NpcPersonaSpeechGuards {
                 "you may leave in peace",
                 "leave you alone in peace",
                 "farewell my friend",
+                "sleep well",
+                "they will not come for you",
                 "what can i do for you");
     }
 
@@ -102,8 +114,14 @@ final class NpcPersonaSpeechGuards {
                 "in world chat",
                 "player",
                 "item",
+                "game",
+                "games",
                 "game mechanic",
                 "in this game",
+                "the game allows",
+                "game allows",
+                "the game will",
+                "game will not",
                 "world is a game",
                 "model response",
                 "tool for observation",

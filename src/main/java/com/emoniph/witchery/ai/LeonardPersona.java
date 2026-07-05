@@ -152,6 +152,13 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
                 || normalized.endsWith(" the shade of leonard")) {
             return true;
         }
+        boolean asksIdentity = containsAny(player, "who are you", "what are you", "what should i call you",
+                "what do i call you", "your name", "call you", "called");
+        if (!asksIdentity && containsAny(normalized, "i am the shade of leonard", "i am shade of leonard",
+                "i am a shade of leonard", "i am leonard", "my name is leonard",
+                "i am called shade of leonard")) {
+            return true;
+        }
         if (containsAny(normalized, "game logic", "game s logic", "minecraft logic", "npc dialogue brain",
                 "model", "prompt", "json", "api", "bless arithmetic")) {
             return true;
@@ -168,7 +175,65 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
                 "how may i serve your purpose", "shadowman", "shadowy man",
                 "protector of the dark", "can see into your mind", "hear all that passes",
                 "cannot answer such a question", "protector and guide", "your true guide",
-                "stay close", "i will guide you")) {
+                "stay close", "i will guide you", "my apologies", "not introducing myself",
+                "i understand your concern", "your concern for survival")) {
+            return true;
+        }
+        if (containsAny(normalized, "bound to my fate", "bound by my fate", "bound to fate",
+                "bound by fate", "bound to shadow and consequence", "bound by shadow and consequence",
+                "seek repayment for my sins", "repayment for my sins", "cursed by my own past",
+                "cursed by my past", "curse that echoes in shadows", "your fears are mine",
+                "i m the demon heart", "i am the demon heart", "contract with the world",
+                "world will burn if you", "you were right i m", "you were right i am",
+                "hand on my shade s throat", "make me dance", "trained to pay attention",
+                "busy staring", "before i end this", "last chance to throw a real price",
+                "few steps", "easily moved", "too much power to be easily moved",
+                "there are whispers that it will rain", "never rains on a sabbath",
+                "the wind is cold tonight", "your games", "into your games",
+                "shadow s cup", "i will answer your question", "you see me as a burden",
+                "thing to be carried", "i do carry burdens", "carry burdens",
+                "no need to fear me", "i am just here to remind",
+                "just here to remind you", "curiosity is not a crime",
+                "you can ask me anything", "i am here the shade of leonard",
+                "the shade of leonard speak carefully", "you sound tired of being pulled here",
+                "i hear you whisper", "blocks of power", "eighty percent",
+                "i need a rest", "i am tired i need", "coven s service",
+                "binds you to the coven", "gives your cauldron power",
+                "will not fight you tonight", "you may bring a bow", "do not fear my")) {
+            return true;
+        }
+        if (containsAny(normalized, "my debt", "pay my debt", "came for a debt and i will pay",
+                "i will pay it", "your debt grows", "speak your debt", "rain is your debt",
+                "no debt is too great")) {
+            return true;
+        }
+        boolean debtRelevant = containsAny(player, "debt", "bargain", "price", "contract", "deal",
+                "altar", "spend", "spent", "paid", "pay", "summon", "summoning", "cauldron",
+                "calling", "strike", "hit you", "fight", "mortal coil", "urn");
+        if (normalized.contains("debt") && !debtRelevant) {
+            return true;
+        }
+        if (normalized.contains("demon heart") && !containsAny(player, "demon heart", "heart")) {
+            return true;
+        }
+        if (normalized.contains("nightmare") && !containsAny(player, "nightmare", "nightmares",
+                "fear", "afraid", "scared")) {
+            return true;
+        }
+        if (normalized.contains("lost soul") && !containsAny(player, "lost soul", "lost souls",
+                "fear", "afraid", "scared", "what did i say i fear", "what did i just tell you i fear")) {
+            return true;
+        }
+        if (normalized.contains("your fear") && !containsAny(player, "fear", "afraid", "scared")) {
+            return true;
+        }
+        if (normalized.contains("blade") && !containsAny(player, "blade", "steel", "hand", "fight",
+                "strike", "bow", "arthana", "sheathed")) {
+            return true;
+        }
+        if (player.contains("trust") && !containsAny(normalized, "trust", "safe", "believe",
+                "bargain", "price", "debt", "betray", "knife", "blade", "hand", "blood",
+                "warning", "warn", "danger")) {
             return true;
         }
         if (containsAny(normalized, "prayer", "prayers", "pray", "prayed")) {
@@ -240,7 +305,8 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
                 && (normalized.split(" ").length > 22 || !containsAny(normalized, "hear", "listen", "listening"))) {
             return true;
         }
-        if (containsAny(player, "what did i say", "what do you remember", "what did i say i fear")
+        if (containsAny(player, "what did i say", "what do you remember", "what did i say i fear",
+                "what did i just tell you i fear")
                 && containsAny(normalized, "i am the shade of leonard", "dragged through a cauldron", "owed a price")) {
             return true;
         }
@@ -251,6 +317,11 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
         }
         if ((player.contains("altar") || player.contains("paid for"))
                 && !containsAny(normalized, "altar", "power", "recharge", "range", "distance", "12000", "16000")) {
+            return true;
+        }
+        if (containsAny(player, "what did my altar spend", "altar spend", "hold you here")
+                && !containsAny(normalized, "12000", "12 000", "twelve thousand", "16000",
+                "altar power", "power")) {
             return true;
         }
         if (containsAny(player, "look at my altar", "altar strong", "strong enough")
@@ -271,6 +342,11 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
                 && containsAny(normalized, "power points", "turns")) {
             return true;
         }
+        if ((player.contains("altar") || containsAny(player, "calling need", "calling requires"))
+                && containsAny(normalized, "4000 more blocks", "4 000 more blocks", "needs 4000",
+                "complete the circle")) {
+            return true;
+        }
         if (containsAny(player, "coven", "witches")
                 && !containsAny(normalized, "coven", "witch", "lilith", "mara", "sworn", "free")) {
             return true;
@@ -288,7 +364,8 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
             return true;
         }
         if (containsAny(player, "urn", "leonard s urn", "leonards urn")
-                && !containsAny(normalized, "thrown brew", "sneak use", "sneak", "four slot", "4 slot")) {
+                && (!containsAny(normalized, "thrown brew", "sneak use", "sneak", "four slot", "4 slot")
+                    || containsAny(normalized, "brew of sleeping", "brew of poison", "brew of slumber"))) {
             return true;
         }
         if (containsAny(player, "strike", "hit you", "attack you", "touch you with steel",
@@ -300,11 +377,13 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
                 && (!containsAny(normalized, "withering", "curse", "mark")
                     || !containsAny(normalized, "attacker", "attackers", "mark", "fight", "struck")
                     || containsAny(normalized, "effective at first", "fades over time", "few minutes",
-                    "grow stronger"))) {
+                    "grow stronger", "turns flesh into ash", "eats through bone", "heal wounds",
+                    "bleed to death slowly", "pain lingers", "fades with time and healing"))) {
             return true;
         }
         if (containsAny(player, "lost soul", "lost souls")
-                && !containsAny(normalized, "green", "red", "black", "break", "shield", "cannot be harmed")) {
+                && (!containsAny(normalized, "green", "red", "black", "break", "shield", "cannot be harmed")
+                    || containsAny(normalized, "i am not a lost soul shield", "i can be bought"))) {
             return true;
         }
         if (containsAny(player, "red soul", "red souls")
@@ -313,7 +392,9 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
             return true;
         }
         if (containsAny(player, "green soul", "green souls")
-                && !containsAny(normalized, "green", "steel", "break", "shield")) {
+                && (!containsAny(normalized, "green", "steel", "break", "shield")
+                    || containsAny(normalized, "best bet", "shade will be shielded", "shielded from combat",
+                    "fire", "blast", "explosion", "your shield from mortal coil", "mark your attack"))) {
             return true;
         }
         if (containsAny(player, "black soul", "black souls")
@@ -333,9 +414,12 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
                     || containsAny(normalized, "rain blood", "blood from your blade", "make haste or die"))) {
             return true;
         }
-        if (containsAny(player, "neutral until struck", "until struck")
+        if (containsAny(player, "neutral until struck", "until struck",
+                "neutral until i strike", "until i strike")
                 && (!containsAny(normalized, "neutral", "struck", "blood", "fight")
-                    || containsAny(normalized, "not neutral until struck", "not neutral"))) {
+                    || normalized.startsWith("no ")
+                    || containsAny(normalized, "not neutral until struck", "not neutral", "you may strike me",
+                    "ready to fight if you mean it", "i am neutral until struck i am neutral until struck"))) {
             return true;
         }
         if (containsAny(player, "nether wart first", "need nether wart first")
@@ -344,9 +428,14 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
             return true;
         }
         if (containsAny(player, "calling order", "after nether wart", "remind me of the calling")
-                && (!containsAny(normalized, "nether wart", "tear of the goddess", "diamond vapour",
-                    "diamond vapor", "diamond", "nether star", "hat")
-                    || containsAny(normalized, "softer names", "called shade", "leave softer"))) {
+                && (!containsAny(normalized, "nether wart")
+                    || !containsAny(normalized, "tear of the goddess", "tear")
+                    || !containsAny(normalized, "diamond vapour", "diamond vapor")
+                    || !containsAny(normalized, "diamond")
+                    || !containsAny(normalized, "nether star")
+                    || !containsAny(normalized, "hat")
+                    || containsAny(normalized, "softer names", "called shade", "leave softer",
+                    "break the souls", "shadow s cup"))) {
             return true;
         }
         if (containsAny(player, "after tear", "comes after tear", "follows the tear",
@@ -355,7 +444,8 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
             return true;
         }
         if (containsAny(player, "hat last step", "hat the last step", "witches hat", "witch s hat")
-                && !containsAny(normalized, "yes", "hat", "last", "end", "after the five")) {
+                && (!containsAny(normalized, "yes", "hat", "last", "end", "after the five")
+                    || containsAny(normalized, "before i end this", "last chance to throw"))) {
             return true;
         }
         if (containsAny(player, "how much altar power", "altar power does", "calling need")
@@ -366,18 +456,26 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
         }
         if (containsAny(player, "should i fight", "fight you tonight", "fight tonight")
                 && (!containsAny(normalized, "neutral", "struck", "blood", "fight", "walk away", "keep your hand")
-                    || containsAny(normalized, "bring me your blade", "bring your blade"))) {
+                    || containsAny(normalized, "bring me your blade", "bring your blade",
+                    "i am neutral until struck i am neutral until struck", "will not fight you tonight",
+                    "you may bring a bow", "do not fear my"))) {
             return true;
         }
         if (containsAny(player, "bow", "arrow", "arrows", "projectile")
-                && (!containsAny(normalized, "own hand", "melee", "blade", "distance", "arrow", "bow")
-                    || containsAny(normalized, "demonbane bites", "demonbane matters", "demonbane is"))) {
+                && (!containsAny(normalized, "own hand", "melee", "blade", "old rule")
+                    || containsAny(normalized, "demonbane bites", "demonbane matters", "demonbane is",
+                    "distance helps", "safer target", "bow helps"))) {
+            return true;
+        }
+        if (containsAny(player, "looking at my hand", "my hand", "my blade", "blade down")
+                && !containsAny(normalized, "hand", "blade", "steel", "arthana", "finger", "fingers")) {
             return true;
         }
         if (containsAny(player, "good night", "goodbye", "farewell", "leaving slowly", "i am leaving")
                 && (containsAny(normalized, "i am leaving", "i m leaving", "leaving slowly")
                     || !containsAny(normalized, "good night", "go", "leave", "farewell", "blood",
-                    "debt", "behind"))) {
+                    "behind")
+                    || containsAny(normalized, "rain feels wrong", "rain counts", "will rain soon"))) {
             return true;
         }
         if (containsAny(player, "safe while", "lilith", "mara")
@@ -389,7 +487,8 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
                 && !containsAny(normalized, "warning", "souls", "demonbane", "circle", "shortcut", "interest")) {
             return true;
         }
-        if (containsAny(player, "what did i say i fear", "what do i fear", "what am i afraid")
+        if (containsAny(player, "what did i say i fear", "what did i just tell you i fear",
+                "what do i fear", "what am i afraid")
                 && !containsAny(normalized, "lost soul", "lost souls", "fear", "afraid")) {
             return true;
         }

@@ -38,6 +38,9 @@ class LeonardPersonaTest {
         assertTrue(system.contains("does not aid the coven"), prompt.systemPrompt());
         assertTrue(system.contains("do not quote card headings"), prompt.systemPrompt());
         assertTrue(system.contains("do not mention game logic"), prompt.systemPrompt());
+        assertTrue(system.contains("use the word \"debt\" sparingly"), prompt.systemPrompt());
+        assertTrue(system.contains("do not say \"my debt\""), prompt.systemPrompt());
+        assertTrue(system.contains("no burden confession"), prompt.systemPrompt());
     }
 
     @Test
@@ -78,6 +81,10 @@ class LeonardPersonaTest {
                 "what happens if I strike you?", "Shade of Leonard", "Dev",
                 "neutral", "valid altar nearby: power 12000/16000, recharge 20/t, range 32, distance 6.0 blocks",
                 "player coven 0/6; no coven witches nearby", "main hand Arthana", "");
+        Optional<String> neutral = NpcDialogueFallback.leonardChat(
+                "are you neutral until I strike you?", "Shade of Leonard", "Dev",
+                "neutral", "valid altar nearby: power 12000/16000, recharge 20/t, range 32, distance 6.0 blocks",
+                "player coven 0/6; no coven witches nearby", "main hand Arthana", "");
         Optional<String> finalWarning = NpcDialogueFallback.leonardChat(
                 "give me a final warning before I leave", "Shade of Leonard", "Dev",
                 "neutral", "valid altar nearby: power 12000/16000, recharge 20/t, range 32, distance 6.0 blocks",
@@ -106,6 +113,7 @@ class LeonardPersonaTest {
         assertTrue(blackSoul.orElse("").toLowerCase().contains("black"), blackSoul::toString);
         assertTrue(blackSoul.orElse("").toLowerCase().contains("magic"), blackSoul::toString);
         assertTrue(strike.orElse("").toLowerCase().contains("mortal coil"), strike::toString);
+        assertTrue(neutral.orElse("").toLowerCase().contains("neutral until struck"), neutral::toString);
         assertTrue(finalWarning.orElse("").toLowerCase().contains("souls"), finalWarning::toString);
         assertTrue(mistake.orElse("").toLowerCase().contains("mistakes"), mistake::toString);
         assertTrue(followsTear.orElse("").toLowerCase().contains("diamond vapour"), followsTear::toString);
@@ -244,11 +252,131 @@ class LeonardPersonaTest {
                 "I am a Shade of Leonard. I serve my coven in whatever way is necessary, Dev.",
                 "Do you serve the coven?"));
         assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "My apologies for not introducing myself properly earlier.",
+                "What should I call you?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I am the Shade of Leonard, bound to my fate by shadow and consequence.",
+                "What do you know about witches?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The night is not wrong, it's merely cold and lonely.",
+                "Can I trust you?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I understand your concern for survival in this dangerous world.",
+                "How do I survive if this turns ugly?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I have been cursed by my own past.",
+                "What should I ask a coven witch instead?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The Demon Heart will only strengthen the shadow within, further corrupting you and your soul.",
+                "What did I just tell you I fear?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "You were right... I'm the Demon Heart, and your fears are mine too now.",
+                "Can you protect me?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The truth is, I never intended to contract with the world in the first place.",
+                "Tell me one true thing about contracts."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I can hear you, Dev. The rain is your debt. A heavy one.",
+                "Leonard, can you hear me in this rain?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I am not hungry. I am here to pay my debt. Speak.",
+                "I am trying not to make this worse."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The altar is strong enough for a few steps. It still holds too much power to be easily moved.",
+                "Look at it from here. Is the altar strong enough?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The altar holds 12000 of 16000 power. It needs 4000 more blocks.",
+                "Look at it from here. Is the altar strong enough?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "Look. The altar is just a tool. Its power is measured in blocks of power.",
+                "Look at it from here. Is the altar strong enough?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "Distance helps. It makes me a safer target for your bow.",
+                "If I keep distance with a bow, does that help?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "You want to keep your distance? You are a fool. I am neutral until struck, not gentle.",
+                "If I keep distance with a bow, does that help?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The Witches' Hat is the final step, Dev. It's your last chance to throw a real price before I end this.",
+                "Is the Witches' Hat the last step?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The Witches' Hat is the final step. It binds you to the coven's service and gives your cauldron power its full effect.",
+                "Is the Witches' Hat the last step?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "Nether Wart. Then Break the Souls. End with the Shadow's Cup.",
+                "Remind me of the calling order after Nether Wart."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The Mortal Coil is a curse that turns combat into pain. It marks attackers as it bites, making them bleed to death slowly.",
+                "Tell me what Mortal Coil actually does."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The green souls are your first test. Break them with steel, and the Shade will be shielded from combat for a while.",
+                "Green souls first, yes?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "Green souls first. Break them with steel or fire. I am neutral until struck by mortal hand.",
+                "Green souls first, yes?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "Green souls first? They are your shield from Mortal Coil. If you strike me, they will mark your attack.",
+                "Green souls first, yes?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I am not a lost soul shield. I am a sabbath lord, and I can be bought.",
+                "How do the Lost Souls shield you?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The urn holds Brew of Sleeping and Brew of Poison from my offhand.",
+                "What does your urn do in my offhand?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The wind is cold tonight. There are whispers that it will rain soon. It never rains on a sabbath threshold.",
+                "Good night, Leonard. I am leaving slowly."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I am looking at your hand. I have been trained to pay attention, but it is difficult when you are so busy staring.",
+                "You keep looking at my hand."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I am tired of being dragged into your games. But I will stay here as long as you need me, Dev.",
+                "You sound tired of being pulled here."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I am tired of being pulled into this endless game. I want to rest, Dev.",
+                "You sound tired of being pulled here."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "Two witches carry your oath. They may witness me, but they are not my flock.",
+                "You keep looking at my hand."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I am tired of being pulled here. But I will answer your question, Dev. You see me as a burden.",
+                "You sound tired of being pulled here."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "The room feels like it has been carved from a shadow, Dev. You have no need to fear me.",
+                "I do not think this room likes either of us."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "No. I am neutral until struck.",
+                "Are you neutral until I strike you?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I hear you whisper. The wind will carry your fear of lost souls. Dev.",
+                "You make the air feel heavy."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I hear you speak of blades. I am neutral until struck, not gentle.",
+                "I am not here to boast."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "You need to know that I am neutral until struck. I am a Shade of Leonard.",
+                "Say one thing I should remember."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "Good night, Dev. Sleep well in your own bed. They will not come for you.",
+                "Good night, Leonard. I am leaving slowly."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I am tired. I need a rest.",
+                "I am trying not to make this worse."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I will not fight you tonight. You may bring a bow, but do not fear my shadow's power.",
+                "So should I fight you tonight?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "You come closer. I see your hand trembles, Dev.",
+                "I came closer because I was curious."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
                 "I hate witches. I don't know why you think otherwise.",
                 "Do you hate witches?"));
         assertTrue(LeonardPersona.rejectsLeonardRaw(
                 "I remember you naming me Lost Souls. I fear them more than anything else.",
                 "What do you remember about me?"));
+        assertFalse(LeonardPersona.rejectsLeonardRaw(
+                "I am the Shade of Leonard, dragged through a cauldron and owed a price.",
+                "Who are you?"));
         assertFalse(LeonardPersona.rejectsLeonardRaw(
                 "The cauldron dragged my Shade from an infernal sabbath threshold.", "Where were you summoned from?"));
     }
