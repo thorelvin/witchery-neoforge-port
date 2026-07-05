@@ -8,6 +8,7 @@ These cards teach plants as living craft: where they come from, how they bite, a
 - [triggers: snowbell seeds|where get snowbell|where find snowbell|where do i get snowbell|how do i get snowbell|grow snowbell|icy needle] Targeted fact: Snowbell grows from Snowbell Seeds found in tall grass; mature plants yield snowballs and sometimes Icy Needles.
 - [triggers: wolfsbane seeds|where get wolfsbane|where find wolfsbane|where do i get wolfsbane|how do i get wolfsbane|grow wolfsbane|wolf flower] Targeted fact: Wolfsbane grows from Wolfsbane Seeds; it matters for werewolf work, wolf traps, and keeping beast-shapes honest.
 - [triggers: water artichoke|water artichoke seeds|grow artichoke|where get artichoke|where do i get artichoke|how do i get water artichoke] Targeted fact: Water Artichoke grows on still water from Water Artichoke Seeds; it gives globes for paste, brews, poppets, and Treefyd Seeds.
+- [triggers: plant near altar|plant near my altar|what should i plant near altar|what should i plant near my altar|altar plants|plants near altar|herbs near altar] [topic: altar_garden] Targeted fact: Near an altar, grow useful witch herbs such as belladonna and mandrake, and keep varied nearby nature for altar strength; treat dangerous herbs as ingredients, not food.
 
 ## Witch Trees
 - [triggers: rowan sapling|where get rowan|where find rowan|where do i get rowan|how do i get rowan saplings|grow rowan|rowan tree] Targeted fact: Rowan Saplings come from using Mutandis on small plants; cook one in a Witch's Oven with a Clay Jar for Whiff of Magic and Wood Ash.
