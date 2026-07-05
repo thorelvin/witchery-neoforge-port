@@ -142,6 +142,45 @@ class NpcKnowledgeBaseTest {
     }
 
     @Test
+    void bossPersonaRequestRetrievesBossSpecificCards() {
+        String context = NpcKnowledgeBase.relevantContext(
+                "Death and Binky are watching; how do I survive?",
+                "Plains", "night",
+                NpcCardRequest.persona("boss"));
+        String lower = context.toLowerCase(Locale.ROOT);
+
+        assertTrue(lower.contains("targeted fact"), context);
+        assertTrue(lower.contains("death"), context);
+        assertTrue(lower.contains("binky") || lower.contains("staring"), context);
+    }
+
+    @Test
+    void demonPersonaRequestRetrievesBargainAndCharmCards() {
+        String context = NpcKnowledgeBase.relevantContext(
+                "Does my Devil's Tongue Charm make this demon bargain safe?",
+                "Basalt Deltas", "night",
+                NpcCardRequest.persona("demon"));
+        String lower = context.toLowerCase(Locale.ROOT);
+
+        assertTrue(lower.contains("targeted fact"), context);
+        assertTrue(lower.contains("devil") || lower.contains("charm"), context);
+        assertTrue(lower.contains("bargain") || lower.contains("safety"), context);
+    }
+
+    @Test
+    void flameImpPersonaRequestRetrievesContractAndGiftCards() {
+        String context = NpcKnowledgeBase.relevantContext(
+                "Will a shiny gift help before a Demonic Contract?",
+                "Nether Wastes", "night",
+                NpcCardRequest.persona("flame_imp"));
+        String lower = context.toLowerCase(Locale.ROOT);
+
+        assertTrue(lower.contains("targeted fact"), context);
+        assertTrue(lower.contains("flame imp") || lower.contains("imp"), context);
+        assertTrue(lower.contains("shiny") || lower.contains("contract"), context);
+    }
+
+    @Test
     void personaCardRequestRotatesVariantsByConversationTurn() {
         UUID npc = new UUID(11L, 12L);
         UUID player = new UUID(21L, 22L);

@@ -192,6 +192,51 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void bossSmokePromptIncludesBossStateAndPersonaCards() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.bossSmoke(
+                "Death, what happens if I stare at Binky?", "");
+        String system = prompt.systemPrompt().toLowerCase();
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(system.contains("speak as this witchery boss only"), prompt.systemPrompt());
+        assertTrue(system.contains("death"), prompt.systemPrompt());
+        assertTrue(user.contains("boss kind: death"), prompt.userPrompt());
+        assertTrue(user.contains("boss state"), prompt.userPrompt());
+        assertTrue(user.contains("targeted fact"), prompt.userPrompt());
+        assertTrue(user.contains("binky") || user.contains("staring"), prompt.userPrompt());
+    }
+
+    @Test
+    void demonSmokePromptIncludesDemonStateAndPersonaCards() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.demonSmoke(
+                "Does my Devil's Tongue Charm make this bargain safe?", "");
+        String system = prompt.systemPrompt().toLowerCase();
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(system.contains("speak as the demon only"), prompt.systemPrompt());
+        assertTrue(system.contains("proud infernal demon"), prompt.systemPrompt());
+        assertTrue(user.contains("demon state"), prompt.userPrompt());
+        assertTrue(user.contains("devil's tongue charm") || user.contains("devil"), prompt.userPrompt());
+        assertTrue(user.contains("targeted fact"), prompt.userPrompt());
+        assertTrue(user.contains("bargain") || user.contains("charm"), prompt.userPrompt());
+    }
+
+    @Test
+    void flameImpSmokePromptIncludesImpStateAndPersonaCards() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.flameImpSmoke(
+                "Will a shiny gift help before a Demonic Contract?", "");
+        String system = prompt.systemPrompt().toLowerCase();
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(system.contains("speak as the flame imp only"), prompt.systemPrompt());
+        assertTrue(system.contains("contract-bound"), prompt.systemPrompt());
+        assertTrue(user.contains("flame imp state"), prompt.userPrompt());
+        assertTrue(user.contains("affection"), prompt.userPrompt());
+        assertTrue(user.contains("targeted fact"), prompt.userPrompt());
+        assertTrue(user.contains("shiny") || user.contains("contract"), prompt.userPrompt());
+    }
+
+    @Test
     void cardRepairPromptUsesRelevantFactsAndBadDraft() {
         Optional<NpcBrainPrompt> prompt = NpcPromptBuilder.cardRepair("coven_witch", "Lilith Poe", "Dev",
                 "how do I use the kettle?", "Message routing: route=recipe;topic=kettle;remember=no",
@@ -225,6 +270,37 @@ class NpcPromptBuilderTest {
         assertTrue(user.contains("small greedy hobgoblin"), prompt.get().userPrompt());
         assertTrue(user.contains("koboldite"), prompt.get().userPrompt());
         assertTrue(!user.contains("practical coven witch"), prompt.get().userPrompt());
+    }
+
+    @Test
+    void cardRepairPromptKeepsNewPersonaVoices() {
+        Optional<NpcBrainPrompt> boss = NpcPromptBuilder.cardRepair("boss", "", "Dev",
+                "how do I survive Death and Binky?",
+                "Message routing: route=lore; topic=boss_death; reply strategy=answer exact known route.",
+                "I sell coal.");
+        Optional<NpcBrainPrompt> demon = NpcPromptBuilder.cardRepair("demon", "", "Dev",
+                "what does my Devil's Tongue Charm do?",
+                "Message routing: route=lore; topic=demon_charm; reply strategy=answer exact known route.",
+                "Ask a villager.");
+        Optional<NpcBrainPrompt> imp = NpcPromptBuilder.cardRepair("flame_imp", "", "Dev",
+                "will shiny gifts help a Flame Imp?",
+                "Message routing: route=lore; topic=imp_gifts; reply strategy=answer exact known route.",
+                "The witch trades herbs.");
+
+        assertTrue(boss.isPresent());
+        assertTrue(boss.get().userPrompt().toLowerCase().contains("witchery boss is speaking to dev"),
+                boss.get().userPrompt());
+        assertTrue(boss.get().userPrompt().toLowerCase().contains("binky"), boss.get().userPrompt());
+
+        assertTrue(demon.isPresent());
+        assertTrue(demon.get().userPrompt().toLowerCase().contains("demon is speaking to dev"),
+                demon.get().userPrompt());
+        assertTrue(demon.get().userPrompt().toLowerCase().contains("devil"), demon.get().userPrompt());
+
+        assertTrue(imp.isPresent());
+        assertTrue(imp.get().userPrompt().toLowerCase().contains("flame imp is speaking to dev"),
+                imp.get().userPrompt());
+        assertTrue(imp.get().userPrompt().toLowerCase().contains("shiny"), imp.get().userPrompt());
     }
 
     @Test
@@ -472,8 +548,11 @@ class NpcPromptBuilderTest {
 
     @Test
     void personasDeclareDistinctChatColors() {
+        assertEquals(0xCC3355, NpcPersonas.BOSS.chatColorRgb());
         assertEquals(0xFF55FF, NpcPersonas.COVEN_WITCH.chatColorRgb());
         assertEquals(0xFF5555, NpcPersonas.LEONARD.chatColorRgb());
+        assertEquals(0xDD3300, NpcPersonas.DEMON.chatColorRgb());
+        assertEquals(0xFF6600, NpcPersonas.FLAME_IMP.chatColorRgb());
         assertEquals(0xFFAA00, NpcPersonas.VILLAGER.chatColorRgb());
 
         Component line = NpcBrainService.speechComponent("Marta", NpcPersonas.VILLAGER.chatColorRgb(),

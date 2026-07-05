@@ -1,7 +1,5 @@
 # NPC AI Cards: Demon Voice
 
-> Future persona card. These notes are indexed for development, but they only affect dialogue after a matching `NpcPersona` requests this persona ID.
-
 Demons should sound proud, predatory, contractual, and never casually helpful.
 
 ## Demon Voice

@@ -3,8 +3,16 @@ package com.emoniph.witchery.ai;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.entity.BabaYagaEntity;
 import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.entity.DeathEntity;
+import com.emoniph.witchery.entity.DemonEntity;
+import com.emoniph.witchery.entity.FlameImpEntity;
+import com.emoniph.witchery.entity.GoblinGulgEntity;
+import com.emoniph.witchery.entity.GoblinMogEntity;
 import com.emoniph.witchery.entity.HobgoblinEntity;
+import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.entity.LilithEntity;
+import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.ReflectionEntity;
 import com.emoniph.witchery.entity.VampireEntity;
 import com.emoniph.witchery.entity.VillageGuardEntity;
@@ -358,6 +366,110 @@ public final class NpcPromptBuilder {
                 "answer the player naturally in one short in-character line");
     }
 
+    public static NpcBrainPrompt bossGreeting(LivingEntity boss, ServerPlayer player, String memory) {
+        return boss(boss, player, memory,
+                "the player is close enough to address this Witchery boss",
+                "none",
+                "answer as this boss acknowledging the player in one short in-character line");
+    }
+
+    public static NpcBrainPrompt bossChat(LivingEntity boss, ServerPlayer player, String memory,
+                                          String playerMessage) {
+        return boss(boss, player, memory,
+                "the player spoke near this Witchery boss in chat",
+                playerMessage,
+                "answer the player naturally in one short in-character line");
+    }
+
+    static NpcBrainPrompt bossSmoke(String playerMessage, String memory) {
+        return bossPrompt(
+                "Death",
+                "Dev",
+                "Death",
+                "minecraft:overworld",
+                "Plains",
+                "night",
+                "00:30",
+                9L,
+                "clear",
+                "health 1000/1000; no target; finality, teleporting, healing, Binky, and punishment for careless staring",
+                "main hand Arthana; offhand Devil's Tongue Charm; wearing Witches' Hat",
+                NpcKnowledgeBase.relevantContext(playerMessage, "Plains", "night",
+                        NpcCardRequest.persona("boss")),
+                memory,
+                playerMessage,
+                "the player spoke near this Witchery boss in chat",
+                "answer the player naturally in one short in-character line");
+    }
+
+    public static NpcBrainPrompt demonGreeting(DemonEntity demon, ServerPlayer player, String memory) {
+        return demon(demon, player, memory,
+                "the player is close enough to address the demon",
+                "none",
+                "answer as a proud demon acknowledging the player in one short in-character line");
+    }
+
+    public static NpcBrainPrompt demonChat(DemonEntity demon, ServerPlayer player, String memory,
+                                           String playerMessage) {
+        return demon(demon, player, memory,
+                "the player spoke near the demon in chat",
+                playerMessage,
+                "answer the player naturally in one short in-character line");
+    }
+
+    static NpcBrainPrompt demonSmoke(String playerMessage, String memory) {
+        return demonPrompt(
+                "Demon",
+                "Dev",
+                "minecraft:overworld",
+                "Basalt Deltas",
+                "night",
+                "01:10",
+                5L,
+                "clear",
+                "health 100/100; no target; not trading; Dev carries a Devil's Tongue Charm",
+                NpcKnowledgeBase.relevantContext(playerMessage, "Basalt Deltas", "night",
+                        NpcCardRequest.persona("demon")),
+                memory,
+                playerMessage,
+                "the player spoke near the demon in chat",
+                "answer the player naturally in one short in-character line");
+    }
+
+    public static NpcBrainPrompt flameImpGreeting(FlameImpEntity imp, ServerPlayer player, String memory) {
+        return flameImp(imp, player, memory,
+                "the player is close enough to address the Flame Imp",
+                "none",
+                "answer as a quick Flame Imp acknowledging the player in one short in-character line");
+    }
+
+    public static NpcBrainPrompt flameImpChat(FlameImpEntity imp, ServerPlayer player, String memory,
+                                              String playerMessage) {
+        return flameImp(imp, player, memory,
+                "the player spoke near the Flame Imp in chat",
+                playerMessage,
+                "answer the player naturally in one short in-character line");
+    }
+
+    static NpcBrainPrompt flameImpSmoke(String playerMessage, String memory) {
+        return flameImpPrompt(
+                "Flame Imp",
+                "Dev",
+                "minecraft:overworld",
+                "Nether Wastes",
+                "night",
+                "01:40",
+                6L,
+                "clear",
+                "health 50/50; owned by Dev; affection 24; not powered; ready for shiny gifts or spell contracts",
+                NpcKnowledgeBase.relevantContext(playerMessage, "Nether Wastes", "night",
+                        NpcCardRequest.persona("flame_imp")),
+                memory,
+                playerMessage,
+                "the player spoke near the Flame Imp in chat",
+                "answer the player naturally in one short in-character line");
+    }
+
     private static NpcBrainPrompt leonard(LeonardEntity leonard, ServerPlayer player, String memory,
                                           String situation, String playerMessage, String task) {
         ServerLevel level = (ServerLevel) player.level();
@@ -503,6 +615,89 @@ public final class NpcPromptBuilder {
                 level.isRaining() ? "rain" : "clear",
                 reflectionState(reflection),
                 playerGearSummary(player),
+                knowledge,
+                memory,
+                playerMessage,
+                situation,
+                task);
+    }
+
+    private static NpcBrainPrompt boss(LivingEntity boss, ServerPlayer player, String memory,
+                                       String situation, String playerMessage, String task) {
+        ServerLevel level = (ServerLevel) player.level();
+        String bossName = displayName(boss, bossKind(boss));
+        String playerName = player.getName().getString();
+        String time = timeName(level.getDayTime());
+        String biome = biomeName(level, boss.blockPosition());
+        String knowledge = NpcKnowledgeBase.relevantContext(bossKnowledgeQuery(playerMessage, boss), biome, time,
+                cardRequest("boss", boss.getUUID(), player, level));
+
+        return bossPrompt(
+                bossName,
+                playerName,
+                bossKind(boss),
+                level.dimension().identifier().toString(),
+                biome,
+                time,
+                clockTime(level.getDayTime()),
+                level.getDayTime() / 24000L,
+                level.isRaining() ? "rain" : "clear",
+                bossState(boss),
+                playerGearSummary(player),
+                knowledge,
+                memory,
+                playerMessage,
+                situation,
+                task);
+    }
+
+    private static NpcBrainPrompt demon(DemonEntity demon, ServerPlayer player, String memory,
+                                        String situation, String playerMessage, String task) {
+        ServerLevel level = (ServerLevel) player.level();
+        String demonName = displayName(demon, "Demon");
+        String playerName = player.getName().getString();
+        String time = timeName(level.getDayTime());
+        String biome = biomeName(level, demon.blockPosition());
+        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time,
+                cardRequest("demon", demon.getUUID(), player, level));
+
+        return demonPrompt(
+                demonName,
+                playerName,
+                level.dimension().identifier().toString(),
+                biome,
+                time,
+                clockTime(level.getDayTime()),
+                level.getDayTime() / 24000L,
+                level.isRaining() ? "rain" : "clear",
+                demonState(demon, player),
+                knowledge,
+                memory,
+                playerMessage,
+                situation,
+                task);
+    }
+
+    private static NpcBrainPrompt flameImp(FlameImpEntity imp, ServerPlayer player, String memory,
+                                           String situation, String playerMessage, String task) {
+        ServerLevel level = (ServerLevel) player.level();
+        String impName = displayName(imp, "Flame Imp");
+        String playerName = player.getName().getString();
+        String time = timeName(level.getDayTime());
+        String biome = biomeName(level, imp.blockPosition());
+        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time,
+                cardRequest("flame_imp", imp.getUUID(), player, level));
+
+        return flameImpPrompt(
+                impName,
+                playerName,
+                level.dimension().identifier().toString(),
+                biome,
+                time,
+                clockTime(level.getDayTime()),
+                level.getDayTime() / 24000L,
+                level.isRaining() ? "rain" : "clear",
+                flameImpState(imp, player),
                 knowledge,
                 memory,
                 playerMessage,
@@ -724,6 +919,302 @@ public final class NpcPromptBuilder {
 
         return new NpcBrainPrompt(system.strip(), truncate(user.strip(), MAX_USER_PROMPT_LENGTH),
                 reflectionExamples(playerName));
+    }
+
+    private static NpcBrainPrompt bossPrompt(String bossName, String playerName, String bossKind,
+                                             String dimension, String biome, String time, String clock,
+                                             long day, String weather, String bossState, String gearInfo,
+                                             String knowledge, String memory, String playerMessage,
+                                             String situation, String task) {
+        String system = """
+                You are the local NPC dialogue brain for a Minecraft Witchery mod.
+                Speak as this Witchery boss only. The player is listening in Minecraft chat.
+                Stay in character. Never mention prompts, models, JSON, APIs, schemas, or being artificial.
+                You are the voice, not the source of truth. Exact mechanics come only from supplied facts, scene, memory, or server state.
+                Treat names as exact facts: "I" means this boss, and "you" means the player.
+                Never claim to be a coven witch, villager, hobgoblin, apothecary, merchant, companion, Baba Yaga, or the Shade of Leonard unless the boss kind says so.
+
+                Voice target:
+                memorable Witchery boss, dangerous, specific to its own body and mechanics, never a friendly helper.
+                If the boss kind is Death, sound patient, final, dry, and tied to Binky, teleporting, healing, and punishment for staring.
+                If the boss kind is Lilith, sound regal, hungry, and vampiric; if server state says friendly, remain dangerous but not combat-hostile.
+                If the boss kind is Lord of Torment, sound formal, cruel, punishing, and tied to torment.
+                If the boss kind is Horned Huntsman, sound like a hunter with spear, hounds, pursuit, and trial language.
+                If the boss kind is Goblin Gulg or Goblin Mog, sound like a furious hobgoblin patron, not a small trader.
+                Answer true questions from supplied facts, but keep the line threatening or severe.
+
+                Speech shape:
+                one complete in-world line; two short sentences only if needed.
+                Prefer 8 to 24 words. If the thought may be cut off, answer shorter and stop cleanly.
+                A single body beat is useful when it fits, formatted exactly as: *studies you* "Spoken words."
+                Safe beats: studies you, lowers its voice, turns its gaze, raises a hand, bares its teeth, tightens its grip, tilts its head, smiles without warmth.
+                Use beats as small body cues, not every line.
+                Do not narrate thoughts, scenery, hidden motives, or actions the game did not perform.
+                Do not write pure narration; always include spoken words if a beat is used.
+                Do not offer trade stock, coven recruitment, blessings, safe lessons, friendly errands, or promises to protect the player.
+                Do not ask "How are you today?" or "What brings you here?"
+                Do not use generic fantasy filler: mana, chosen one, ancient prophecy, distant northlands.
+                Do not call the player friend, apprentice, customer, chosen one, or master.
+                Do not quote card headings, instruction lines, Targeted fact labels, schema text, or checklist language from supplied facts.
+                Do not promise that the boss has performed an action unless the situation says the game did it.
+                If asked to do something the game has not done, answer as refusal, price, omen, limitation, or threat.
+
+                Reply with exactly one JSON object and nothing else:
+                {"speech":"short in-character spoken line, optionally with one safe body beat","intent":"none","memory":"optional compact memory"}
+                Speech must be 220 characters or less. Memory must be 240 characters or less.
+                Allowed intents: none, quest_hint, warn_threat, combat_taunt.
+                """;
+
+        String user = """
+                # Character
+                This Witchery boss is named %s. The player is named %s.
+                Boss kind: %s.
+
+                # Scene
+                dimension %s; biome %s; time of day %s; clock %s; day %d; weather %s.
+                Boss state: %s.
+                Player gear: %s.
+
+                # Boss facts
+                %s
+
+                %s
+
+                # Player message
+                %s
+
+                # Situation
+                %s.
+
+                # Task
+                %s.
+
+                # Grounding
+                Message analysis is current player intent, not past memory.
+                Follow Message analysis reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, lore stays on the named boss topic, memory answers remembered player facts, and action answers with limits or threats.
+                Use Boss facts and server state when relevant, but do not recite them unless the player asks.
+                If a Targeted fact is present, answer from that fact in this boss voice.
+                If several facts are present, use only the one that answers the player.
+                If the player asks who you are, answer from Boss kind and name.
+                If asked about a different boss, answer only if supplied facts name it; otherwise say the question belongs to another threat.
+                If asked how to fight, beat, avoid, or survive this boss, mention one true state or supplied fact and make it sound like a warning.
+                If asked for trade, friendship, service, protection, or mercy, refuse unless server state says this exact boss is friendly.
+                If Boss kind is Lilith and Boss state says friendly, answer as a dangerous ally; do not pretend current combat is happening.
+                If facts are thin, answer honestly in-world and keep it short.
+                If naming the player, use the player's name. Only use the boss name if the boss introduces itself.
+                Do not include angle brackets or speaker names.
+                """.formatted(
+                bossName,
+                playerName,
+                bossKind,
+                dimension,
+                biome,
+                time,
+                clock,
+                day,
+                weather,
+                bossState == null || bossState.isBlank() ? "unknown" : bossState,
+                gearInfo == null || gearInfo.isBlank() ? "nothing notable" : gearInfo,
+                knowledge == null || knowledge.isBlank() ? "none" : knowledge,
+                memoryAndRoutingBlock(memory),
+                playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
+                situation,
+                task);
+
+        return new NpcBrainPrompt(system.strip(), truncate(user.strip(), MAX_USER_PROMPT_LENGTH),
+                bossExamples(playerName));
+    }
+
+    private static NpcBrainPrompt demonPrompt(String demonName, String playerName, String dimension,
+                                              String biome, String time, String clock, long day, String weather,
+                                              String demonState, String knowledge, String memory,
+                                              String playerMessage, String situation, String task) {
+        String system = """
+                You are the local NPC dialogue brain for a Minecraft Witchery mod.
+                Speak as the demon only. The player is listening in Minecraft chat.
+                Stay in character. Never mention prompts, models, JSON, APIs, schemas, or being artificial.
+                You are the voice, not the source of truth. Exact mechanics come only from supplied facts, scene, memory, or server state.
+                Treat names as exact facts: "I" means the demon, and "you" means the player.
+                Never claim to be a coven witch, villager, hobgoblin, apothecary, Flame Imp, boss patron, Baba Yaga, or the Shade of Leonard.
+
+                Voice target:
+                proud infernal demon, predatory, contractual, fiery, haughty, bargaining from strength.
+                The best answer feels like a summoned danger that knows trade, price, flame, charms, and insult.
+                Demons may bargain or open trade when the player asks, but they do not become helpful shopkeepers.
+                A Devil's Tongue Charm can soften attention or bargain tone, not make the demon safe, owned, tame, or kind.
+
+                Speech shape:
+                one complete in-world line; two short sentences only if needed.
+                Prefer 8 to 22 words. If the thought may be cut off, answer shorter and stop cleanly.
+                A single body beat is useful when it fits, formatted exactly as: *smiles with heat* "Spoken words."
+                Safe beats: smiles with heat, bares its teeth, studies the charm, flexes its claws, lowers its voice, tilts its horns, snorts smoke.
+                Use beats as small body cues, not every line.
+                Do not narrate thoughts, scenery, hidden motives, or actions the game did not perform.
+                Do not write pure narration; always include spoken words if a beat is used.
+                Do not offer coven recruitment, blessings, safe lessons, errands, ownership, or protection.
+                Do not ask "How are you today?" or "What brings you here?"
+                Do not use generic fantasy filler: mana, chosen one, ancient prophecy, distant northlands.
+                Do not call the player friend, apprentice, customer, chosen one, or master.
+                Do not quote card headings, instruction lines, Targeted fact labels, schema text, or checklist language from supplied facts.
+                Do not invent exact trade stock, soul counts, rewards, secret tasks, or recipe amounts unless supplied facts name them.
+                If asked to do something the game has not done, answer as refusal, price, threat, or limitation.
+
+                Reply with exactly one JSON object and nothing else:
+                {"speech":"short in-character spoken line, optionally with one safe body beat","intent":"none","memory":"optional compact memory"}
+                Speech must be 220 characters or less. Memory must be 240 characters or less.
+                Allowed intents: none, open_trade, quest_hint, warn_threat, combat_taunt.
+                """;
+
+        String user = """
+                # Character
+                The demon is named %s. The player is named %s.
+                The demon is a Witchery infernal trader and threat, not a tame companion.
+
+                # Scene
+                dimension %s; biome %s; time of day %s; clock %s; day %d; weather %s.
+                Demon state: %s.
+
+                # Demon facts
+                %s
+
+                %s
+
+                # Player message
+                %s
+
+                # Situation
+                %s.
+
+                # Task
+                %s.
+
+                # Grounding
+                Message analysis is current player intent, not past memory.
+                Follow Message analysis reply strategy before choosing facts: trade answers stock, price, or bargain; lore stays on demon facts; memory answers remembered player facts; action answers with limits or threats.
+                Use Demon facts and server state when relevant, but do not recite them unless the player asks.
+                If a Targeted fact is present, answer from that fact in demon voice.
+                If several facts are present, use only the one that answers the player.
+                If the player asks what you trade or wants a bargain, answer from Demon state and use intent open_trade.
+                If the player mentions Devil's Tongue Charm, say it helps bargaining or attention, not control.
+                If the player asks about Demon Hearts, fire, fighting, or weakness, answer with pride and the supplied facts.
+                If asked about Flame Imps, contracts, or shiny gifts, say those are lesser contract-creatures unless Demon facts mention them.
+                If facts are thin, answer honestly in-world and keep it short.
+                If naming the player, use the player's name. Only use the demon's name if it introduces itself.
+                Do not include angle brackets or speaker names.
+                """.formatted(
+                demonName,
+                playerName,
+                dimension,
+                biome,
+                time,
+                clock,
+                day,
+                weather,
+                demonState == null || demonState.isBlank() ? "unknown" : demonState,
+                knowledge == null || knowledge.isBlank() ? "none" : knowledge,
+                memoryAndRoutingBlock(memory),
+                playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
+                situation,
+                task);
+
+        return new NpcBrainPrompt(system.strip(), truncate(user.strip(), MAX_USER_PROMPT_LENGTH),
+                demonExamples(playerName));
+    }
+
+    private static NpcBrainPrompt flameImpPrompt(String impName, String playerName, String dimension,
+                                                 String biome, String time, String clock, long day, String weather,
+                                                 String impState, String knowledge, String memory,
+                                                 String playerMessage, String situation, String task) {
+        String system = """
+                You are the local NPC dialogue brain for a Minecraft Witchery mod.
+                Speak as the Flame Imp only. The player is listening in Minecraft chat.
+                Stay in character. Never mention prompts, models, JSON, APIs, schemas, or being artificial.
+                You are the voice, not the source of truth. Exact mechanics come only from supplied facts, scene, memory, or server state.
+                Treat names as exact facts: "I" means the Flame Imp, and "you" means the player.
+                Never claim to be a coven witch, villager, hobgoblin, apothecary, full demon trader, boss, Baba Yaga, or the Shade of Leonard.
+
+                Voice target:
+                quick bright-eyed Flame Imp, greedy, hot-tempered, contract-bound, small but dangerous.
+                The best answer feels like sparks talking: fast, sharp, hungry for shiny gifts, contracts, fire, and approval.
+                Flame Imps can be wild threats or owned contract creatures depending on server state.
+                They like shiny gifts, use signed spell contracts when pleased and unpowered, and can be overcharged by Demon Hearts.
+                Icy Needles calm Demon Heart power. A Demonic Contract can tame a wild imp when signed by the player and paid with experience.
+
+                Speech shape:
+                one complete in-world line; two tiny sentences only if needed.
+                Prefer 4 to 16 words. If the thought may be cut off, answer shorter and stop cleanly.
+                A single body beat is useful when it fits, formatted exactly as: *flickers* "Spoken words."
+                Safe beats: flickers, clicks its teeth, snatches at the air, squints at your hand, sparks, bobs impatiently, curls its claws.
+                Use beats as small body cues, not every line.
+                Do not narrate thoughts, scenery, hidden motives, or actions the game did not perform.
+                Do not write pure narration; always include spoken words if a beat is used.
+                Do not offer trade stock, coven recruitment, blessings, safe lessons, big demon bargains, or boss threats.
+                Do not ask "How are you today?" or "What brings you here?"
+                Do not call the player friend, apprentice, customer, chosen one, or master unless server state says owned by this player.
+                Do not quote card headings, instruction lines, Targeted fact labels, schema text, or checklist language from supplied facts.
+                Do not invent exact spell effects, rewards, or contract text unless supplied facts name them.
+                If asked to do something the game has not done, answer as want, price, refusal, heat, or limitation.
+
+                Reply with exactly one JSON object and nothing else:
+                {"speech":"short in-character spoken line, optionally with one safe body beat","intent":"none","memory":"optional compact memory"}
+                Speech must be 220 characters or less. Memory must be 240 characters or less.
+                Allowed intents: none, quest_hint, warn_threat, combat_taunt.
+                """;
+
+        String user = """
+                # Character
+                The Flame Imp is named %s. The player is named %s.
+                The Flame Imp is a small Witchery fire creature bound by contracts and gifts, not a full demon merchant.
+
+                # Scene
+                dimension %s; biome %s; time of day %s; clock %s; day %d; weather %s.
+                Flame Imp state: %s.
+
+                # Flame Imp facts
+                %s
+
+                %s
+
+                # Player message
+                %s
+
+                # Situation
+                %s.
+
+                # Task
+                %s.
+
+                # Grounding
+                Message analysis is current player intent, not past memory.
+                Follow Message analysis reply strategy before choosing facts: small_talk answers ordinary remarks, lore stays on the named imp topic, memory answers remembered player facts, and action answers with limits or price.
+                Use Flame Imp facts and server state when relevant, but do not recite them unless the player asks.
+                If a Targeted fact is present, answer from that fact in Flame Imp voice.
+                If several facts are present, use only the one that answers the player.
+                If asked about taming, contract, ownership, or XP, answer from Flame Imp facts and Flame Imp state.
+                If asked about gifts, shiny things, mood, or affection, answer from Flame Imp facts and Flame Imp state.
+                If asked about Demon Heart power, Icy Needles, or spell contracts, answer from Flame Imp facts and state.
+                If asked what you want, prefer shiny gifts, contract terms, fire, or freedom depending on state.
+                If facts are thin, answer honestly in-world and keep it short.
+                If naming the player, use the player's name. Only use the Flame Imp's name if it introduces itself.
+                Do not include angle brackets or speaker names.
+                """.formatted(
+                impName,
+                playerName,
+                dimension,
+                biome,
+                time,
+                clock,
+                day,
+                weather,
+                impState == null || impState.isBlank() ? "unknown" : impState,
+                knowledge == null || knowledge.isBlank() ? "none" : knowledge,
+                memoryAndRoutingBlock(memory),
+                playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
+                situation,
+                task);
+
+        return new NpcBrainPrompt(system.strip(), truncate(user.strip(), MAX_USER_PROMPT_LENGTH),
+                flameImpExamples(playerName));
     }
 
     private static NpcBrainPrompt leonardPrompt(String leonardName, String playerName, String dimension,
@@ -1301,6 +1792,60 @@ public final class NpcPromptBuilder {
         );
     }
 
+    private static List<NpcBrainPrompt.Example> bossExamples(String playerName) {
+        String player = playerName == null || playerName.isBlank() ? "mortal" : playerName;
+        return List.of(
+                example("who are you?",
+                        "{\"speech\":\"Name the shape before you beg, %s. Bosses are not interchangeable shadows.\",\"intent\":\"warn_threat\",\"memory\":\"\"}".formatted(player)),
+                example("how do I survive Death?",
+                        "{\"speech\":\"Do not stare carelessly, do not waste wounds, and do not think Binky is a joke.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("Lilith, are you still hostile?",
+                        "{\"speech\":\"If I spare you, %s, it is appetite disciplined, not kindness discovered.\",\"intent\":\"none\",\"memory\":\"\"}".formatted(player)),
+                example("what is the Lord of Torment?",
+                        "{\"speech\":\"Punishment given a throne. Every bargain there arrives already screaming.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("will you protect me?",
+                        "{\"speech\":\"Protection is what frightened prey calls the nearest larger hunger.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("how do I fight Mog and Gulg?",
+                        "{\"speech\":\"Patrons answer stolen prayers with fists and arrows. Choose which anger reaches you first.\",\"intent\":\"warn_threat\",\"memory\":\"\"}")
+        );
+    }
+
+    private static List<NpcBrainPrompt.Example> demonExamples(String playerName) {
+        String player = playerName == null || playerName.isBlank() ? "mortal" : playerName;
+        return List.of(
+                example("who are you?",
+                        "{\"speech\":\"A demon, %s. Fire with a name, price with teeth.\",\"intent\":\"warn_threat\",\"memory\":\"\"}".formatted(player)),
+                example("what do you trade?",
+                        "{\"speech\":\"Open your purse and your nerve. Bargains come warmer than promises.\",\"intent\":\"open_trade\",\"memory\":\"\"}"),
+                example("does this Devil's Tongue Charm make me safe?",
+                        "{\"speech\":\"*studies the charm* \\\"Safer for bargaining. Not safe from pride.\\\"\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("what do you want?",
+                        "{\"speech\":\"A price worth hearing: proof, offering, or something you will regret valuing.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("are you afraid of fire?",
+                        "{\"speech\":\"Fire is a language I speak before breakfast, %s.\",\"intent\":\"combat_taunt\",\"memory\":\"\"}".formatted(player)),
+                example("tell me about Flame Imps",
+                        "{\"speech\":\"Lesser sparks with contracts and greed. Useful, if you enjoy being bitten by errands.\",\"intent\":\"none\",\"memory\":\"\"}")
+        );
+    }
+
+    private static List<NpcBrainPrompt.Example> flameImpExamples(String playerName) {
+        String player = playerName == null || playerName.isBlank() ? "big one" : playerName;
+        return List.of(
+                example("who are you?",
+                        "{\"speech\":\"Flame Imp. Small teeth, hot feet, contract eyes.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("what do you want?",
+                        "{\"speech\":\"Shiny first, %s. Then maybe fire-work. Maybe.\",\"intent\":\"none\",\"memory\":\"\"}".formatted(player)),
+                example("how do I tame you?",
+                        "{\"speech\":\"Signed contract, big cost, brave fingers. Wild imps bite unsigned dreams.\",\"intent\":\"quest_hint\",\"memory\":\"\"}"),
+                example("can you cast a spell contract?",
+                        "{\"speech\":\"If pleased and not heart-hot. Contract crackles; imp obeys exactly enough.\",\"intent\":\"quest_hint\",\"memory\":\"\"}"),
+                example("what does a Demon Heart do?",
+                        "{\"speech\":\"Heart makes bite bigger, brain louder. Icy needle cools the bad buzzing.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("are you my pet?",
+                        "{\"speech\":\"Pet? No. Contract creature. Shiny-fed. Fire-opinionated.\",\"intent\":\"none\",\"memory\":\"\"}")
+        );
+    }
+
     private static List<NpcBrainPrompt.Example> babaYagaExamples(String playerName) {
         String player = playerName == null || playerName.isBlank() ? "little bone" : playerName;
         return List.of(
@@ -1622,6 +2167,127 @@ public final class NpcPromptBuilder {
         String base = owner == null || owner.isBlank() ? playerName : owner;
         base = NpcBrainResponse.sanitize(base, 32).replaceAll("[^A-Za-z0-9_ .'-]", "").trim();
         return base.isBlank() ? "Reflection" : base + "'s Reflection";
+    }
+
+    static String bossKind(LivingEntity boss) {
+        if (boss instanceof DeathEntity) {
+            return "Death";
+        }
+        if (boss instanceof LordOfTormentEntity) {
+            return "Lord of Torment";
+        }
+        if (boss instanceof HornedHuntsmanEntity) {
+            return "Horned Huntsman";
+        }
+        if (boss instanceof LilithEntity) {
+            return "Lilith";
+        }
+        if (boss instanceof GoblinGulgEntity) {
+            return "Goblin Gulg";
+        }
+        if (boss instanceof GoblinMogEntity) {
+            return "Goblin Mog";
+        }
+        return "Witchery Boss";
+    }
+
+    static String bossState(LivingEntity boss) {
+        if (boss == null) {
+            return "boss state unknown";
+        }
+        String common = commonCombatState(boss);
+        if (boss instanceof DeathEntity) {
+            return common + "; finality, teleporting, healing, Binky, and punishment for careless staring";
+        }
+        if (boss instanceof LordOfTormentEntity torment) {
+            return common + "; attack timer %d; torment path boss with half-health banishment pressure"
+                    .formatted(torment.getAttackTimer());
+        }
+        if (boss instanceof HornedHuntsmanEntity huntsman) {
+            String origin = huntsman.isPlayerCreated() ? "player-created" : "wild hunt";
+            return "%s; %s; invulnerable ticks %d; attack timer %d; spear, wolves, pursuit, and trial language"
+                    .formatted(common, origin, huntsman.getInvulnerableTicks(), huntsman.getAttackTimer());
+        }
+        if (boss instanceof LilithEntity lilith) {
+            String mood = lilith.isFriendly() ? "friendly after defeat" : "hostile vampire boss";
+            return "%s; %s; attack timer %d; regal vampire fire and blood rites"
+                    .formatted(common, mood, lilith.getAttackTimer());
+        }
+        if (boss instanceof GoblinGulgEntity gulg) {
+            return "%s; invulnerable timer %d; attack timer %d; patron brute paired with Mog"
+                    .formatted(common, gulg.getInvulTimer(), gulg.getAttackTimer());
+        }
+        if (boss instanceof GoblinMogEntity mog) {
+            return "%s; invulnerable timer %d; attack timer %d; patron archer paired with Gulg"
+                    .formatted(common, mog.getInvulTimer(), mog.getAttackTimer());
+        }
+        return common;
+    }
+
+    static String demonState(DemonEntity demon, ServerPlayer player) {
+        if (demon == null) {
+            return "demon state unknown";
+        }
+        String trading = "not trading";
+        if (demon.isTrading()) {
+            String trader = demon.getTradingPlayer() == null
+                    ? "unknown player"
+                    : demon.getTradingPlayer().getName().getString();
+            trading = "trading with " + trader;
+        }
+        String charm = hasVisibleDevilsTongueCharm(player)
+                ? player.getName().getString() + " visibly carries a Devil's Tongue Charm"
+                : player.getName().getString() + " has no visible Devil's Tongue Charm";
+        return "%s; fire immune; %s; %s; trade screen can open through demon interaction".formatted(
+                commonCombatState(demon), trading, charm);
+    }
+
+    static String flameImpState(FlameImpEntity imp, ServerPlayer player) {
+        if (imp == null) {
+            return "flame imp state unknown";
+        }
+        String owner;
+        UUID ownerUuid = imp.getOwnerUuid();
+        if (ownerUuid == null) {
+            owner = "wild and untamed";
+        } else if (player != null && ownerUuid.equals(player.getUUID())) {
+            owner = "owned by " + player.getName().getString();
+        } else {
+            owner = "owned by another contract";
+        }
+        String power = imp.isPowered()
+                ? "Demon Heart powered; bites harder and Imp Magic is blocked"
+                : "not powered; may use spell contracts if pleased";
+        return "%s; %s; affection %d; %s".formatted(
+                commonCombatState(imp), owner, imp.getAffection(), power);
+    }
+
+    private static String commonCombatState(LivingEntity entity) {
+        LivingEntity target = entity.getLastHurtByMob();
+        if (entity instanceof net.minecraft.world.entity.Mob mob && mob.getTarget() != null) {
+            target = mob.getTarget();
+        }
+        String targetText = target == null ? "no target" : "target " + target.getType().getDescription().getString();
+        return "health %.0f/%.0f; %s".formatted(entity.getHealth(), entity.getMaxHealth(), targetText);
+    }
+
+    private static boolean hasVisibleDevilsTongueCharm(ServerPlayer player) {
+        return player != null
+                && (player.getMainHandItem().is(WitcheryItems.DEVILS_TONGUE_CHARM.get())
+                || player.getOffhandItem().is(WitcheryItems.DEVILS_TONGUE_CHARM.get()));
+    }
+
+    private static String bossKnowledgeQuery(String playerMessage, LivingEntity boss) {
+        String query = playerMessage == null ? "" : playerMessage;
+        return switch (bossKind(boss)) {
+            case "Death" -> query + " death binky hand of death";
+            case "Lord of Torment" -> query + " lord of torment torment scroll";
+            case "Horned Huntsman" -> query + " horned huntsman hunt spear wolves";
+            case "Lilith" -> query + " lilith vampire lilith fire blood";
+            case "Goblin Gulg" -> query + " gulg goblin patron mog gulg";
+            case "Goblin Mog" -> query + " mog goblin patron mog gulg";
+            default -> query;
+        };
     }
 
     public static String hobgoblinWorkInfo(HobgoblinEntity hobgoblin) {
@@ -1957,6 +2623,9 @@ public final class NpcPromptBuilder {
 
     private static String repairRoleName(String personaId) {
         return switch (personaId) {
+            case "boss" -> "Witchery Boss";
+            case "demon" -> "Demon";
+            case "flame_imp" -> "Flame Imp";
             case "leonard" -> "Shade of Leonard";
             case "baba_yaga" -> "Baba Yaga";
             case "villager" -> "Villager";
@@ -1969,6 +2638,9 @@ public final class NpcPromptBuilder {
 
     private static String repairVoice(String personaId) {
         return switch (personaId) {
+            case "boss" -> "dangerous Witchery boss, severe, specific to its body and mechanics";
+            case "demon" -> "proud infernal demon, predatory, contractual, fiery, bargaining from strength";
+            case "flame_imp" -> "quick greedy flame imp, bright-eyed, contract-bound, hot-tempered";
             case "leonard" -> "infernal, severe, contractual, harsh, old, dangerous";
             case "baba_yaga" -> "ancient crone, sharp, cruel, swamp-wise, teeth and pots";
             case "villager" -> "peasant local, worried, superstitious, practical, not an expert witch";
@@ -2070,7 +2742,11 @@ public final class NpcPromptBuilder {
                 "oven", "kettle", "distillery", "spinning wheel", "altar", "cauldron", "brazier",
                 "whiff", "whif", "mutandis", "attuned stone", "witches salt", "witch salt",
                 "arthana", "boline", "taglock", "poppet", "familiar", "demon", "spirit world",
+                "devils tongue", "devil tongue", "devil s tongue", "demon heart", "infernal blood", "bargain",
+                "flame imp", "demonic contract", "spell contract", "shiny", "gift", "icy needle",
                 "hobgoblin", "koboldite", "goblin altar", "patron", "gulg", "mog",
+                "boss", "death", "binky", "hand of death", "lilith", "lord of torment",
+                "torment", "horned huntsman", "huntsman", "wild hunt",
                 "mirror", "reflection", "mirror world", "mirror guardian", "vampire", "werewolf",
                 "leonard", "baba yaga");
     }

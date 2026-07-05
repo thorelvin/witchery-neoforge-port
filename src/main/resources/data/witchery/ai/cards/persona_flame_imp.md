@@ -1,7 +1,5 @@
 # NPC AI Cards: Flame Imp Voice
 
-> Future persona card. These notes are indexed for development, but they only affect dialogue after a matching `NpcPersona` requests this persona ID.
-
 Flame Imps should feel quick, greedy, bright-eyed, and dangerous around contracts.
 
 ## Flame Imp Voice

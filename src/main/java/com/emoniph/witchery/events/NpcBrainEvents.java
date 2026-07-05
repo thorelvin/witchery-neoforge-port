@@ -9,6 +9,8 @@ import com.emoniph.witchery.blocks.MirrorBlock;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.entity.BabaYagaEntity;
 import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.entity.DemonEntity;
+import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.HobgoblinEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.ReflectionEntity;
@@ -27,6 +29,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.ChestBlock;
@@ -265,12 +268,17 @@ public final class NpcBrainEvents {
 
     private static boolean requestTargetChat(ChatTarget target, ServerPlayer player, String message) {
         return switch (target.kind()) {
+            case BOSS -> NpcBrainService.INSTANCE.requestBossChat(target.entity(), player, message);
             case COVEN_WITCH -> target.entity() instanceof CovenWitchEntity witch
                     && NpcBrainService.INSTANCE.requestCovenChat(witch, player, message);
             case LEONARD -> target.entity() instanceof LeonardEntity leonard
                     && NpcBrainService.INSTANCE.requestLeonardChat(leonard, player, message);
             case BABA_YAGA -> target.entity() instanceof BabaYagaEntity baba
                     && NpcBrainService.INSTANCE.requestBabaYagaChat(baba, player, message);
+            case DEMON -> target.entity() instanceof DemonEntity demon
+                    && NpcBrainService.INSTANCE.requestDemonChat(demon, player, message);
+            case FLAME_IMP -> target.entity() instanceof FlameImpEntity imp
+                    && NpcBrainService.INSTANCE.requestFlameImpChat(imp, player, message);
             case VILLAGER -> target.entity() instanceof Villager villager
                     && NpcBrainService.INSTANCE.requestVillagerChat(villager, player, message);
             case HOBGOBLIN -> target.entity() instanceof HobgoblinEntity hobgoblin
@@ -341,7 +349,7 @@ public final class NpcBrainEvents {
                     || kind == NpcCommandKind.GO_AWAY
                     || kind == NpcCommandKind.FOLLOW
                     || kind == NpcCommandKind.GUARD;
-            case LEONARD, BABA_YAGA, VILLAGER, REFLECTION -> false;
+            case BOSS, LEONARD, BABA_YAGA, DEMON, FLAME_IMP, VILLAGER, REFLECTION -> false;
         };
     }
 
@@ -366,7 +374,7 @@ public final class NpcBrainEvents {
                     sayHobgoblin(level, hobgoblin, player, message, speech);
                 }
             }
-            case LEONARD, BABA_YAGA, VILLAGER, REFLECTION -> nudgeTarget(target, player);
+            case BOSS, LEONARD, BABA_YAGA, DEMON, FLAME_IMP, VILLAGER, REFLECTION -> nudgeTarget(target, player);
         }
     }
 
@@ -391,7 +399,7 @@ public final class NpcBrainEvents {
                     kind,
                     () -> executeNpcCommandIfPermitted(level, target, player, message, kind),
                     () -> requestChatAfterRejectedCommand(level, target, player, message));
-            case LEONARD, BABA_YAGA, VILLAGER, REFLECTION -> false;
+            case BOSS, LEONARD, BABA_YAGA, DEMON, FLAME_IMP, VILLAGER, REFLECTION -> false;
         };
     }
 
@@ -421,7 +429,7 @@ public final class NpcBrainEvents {
                     executeHobgoblinCommand(level, hobgoblin, player, message, kind);
                 }
             }
-            case LEONARD, BABA_YAGA, VILLAGER, REFLECTION -> {
+            case BOSS, LEONARD, BABA_YAGA, DEMON, FLAME_IMP, VILLAGER, REFLECTION -> {
             }
         }
     }
@@ -552,6 +560,7 @@ public final class NpcBrainEvents {
 
     private static void nudgeTarget(ChatTarget target, ServerPlayer player) {
         switch (target.kind()) {
+            case BOSS -> nudgeLivingTarget(target.entity(), player);
             case COVEN_WITCH -> {
                 if (target.entity() instanceof CovenWitchEntity witch) {
                     witch.nudgePlayerAttention(player);
@@ -566,6 +575,18 @@ public final class NpcBrainEvents {
                 if (target.entity() instanceof BabaYagaEntity baba) {
                     baba.getNavigation().stop();
                     baba.getLookControl().setLookAt(player, 30.0F, 30.0F);
+                }
+            }
+            case DEMON -> {
+                if (target.entity() instanceof DemonEntity demon) {
+                    demon.getNavigation().stop();
+                    demon.getLookControl().setLookAt(player, 30.0F, 30.0F);
+                }
+            }
+            case FLAME_IMP -> {
+                if (target.entity() instanceof FlameImpEntity imp) {
+                    imp.getNavigation().stop();
+                    imp.getLookControl().setLookAt(player, 30.0F, 30.0F);
                 }
             }
             case VILLAGER -> {
@@ -584,6 +605,13 @@ public final class NpcBrainEvents {
                     reflection.getLookControl().setLookAt(player, 30.0F, 30.0F);
                 }
             }
+        }
+    }
+
+    private static void nudgeLivingTarget(net.minecraft.world.entity.LivingEntity entity, ServerPlayer player) {
+        if (entity instanceof Mob mob) {
+            mob.getNavigation().stop();
+            mob.getLookControl().setLookAt(player, 30.0F, 30.0F);
         }
     }
 

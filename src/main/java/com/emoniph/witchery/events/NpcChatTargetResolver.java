@@ -4,8 +4,16 @@ import com.emoniph.witchery.ai.NpcCommandKind;
 import com.emoniph.witchery.ai.NpcPromptBuilder;
 import com.emoniph.witchery.entity.BabaYagaEntity;
 import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.entity.DeathEntity;
+import com.emoniph.witchery.entity.DemonEntity;
+import com.emoniph.witchery.entity.FlameImpEntity;
+import com.emoniph.witchery.entity.GoblinGulgEntity;
+import com.emoniph.witchery.entity.GoblinMogEntity;
 import com.emoniph.witchery.entity.HobgoblinEntity;
+import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.entity.LilithEntity;
+import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.ReflectionEntity;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import net.minecraft.server.level.ServerLevel;
@@ -27,6 +35,12 @@ final class NpcChatTargetResolver {
     private static final double LEONARD_CASUAL_CHAT_RANGE = 8.0;
     private static final double BABA_YAGA_CHAT_RANGE = 12.0;
     private static final double BABA_YAGA_CASUAL_CHAT_RANGE = 8.0;
+    private static final double BOSS_CHAT_RANGE = 14.0;
+    private static final double BOSS_CASUAL_CHAT_RANGE = 8.0;
+    private static final double DEMON_CHAT_RANGE = 12.0;
+    private static final double DEMON_CASUAL_CHAT_RANGE = 7.0;
+    private static final double FLAME_IMP_CHAT_RANGE = 10.0;
+    private static final double FLAME_IMP_CASUAL_CHAT_RANGE = 6.0;
     private static final double VILLAGER_CHAT_RANGE = 10.0;
     private static final double VILLAGER_CASUAL_CHAT_RANGE = 5.0;
     private static final double HOBGOBLIN_CHAT_RANGE = 10.0;
@@ -45,6 +59,38 @@ final class NpcChatTargetResolver {
                     BABA_YAGA_CHAT_RANGE, 6.0, BABA_YAGA_CASUAL_CHAT_RANGE,
                     NpcChatTargetResolver::isNamedBabaYagaAddress,
                     CasualRouting.LOOKING_CLOSE_CONVERSATIONAL),
+            new PersonaTargetRule<>(ChatPersona.BOSS, DeathEntity.class,
+                    BOSS_CHAT_RANGE, 7.0, BOSS_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedDeathAddress,
+                    CasualRouting.LOOKING_CLOSE_CONVERSATIONAL),
+            new PersonaTargetRule<>(ChatPersona.BOSS, LordOfTormentEntity.class,
+                    BOSS_CHAT_RANGE, 7.0, BOSS_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedLordOfTormentAddress,
+                    CasualRouting.LOOKING_CLOSE_CONVERSATIONAL),
+            new PersonaTargetRule<>(ChatPersona.BOSS, HornedHuntsmanEntity.class,
+                    BOSS_CHAT_RANGE, 7.0, BOSS_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedHornedHuntsmanAddress,
+                    CasualRouting.LOOKING_CLOSE_CONVERSATIONAL),
+            new PersonaTargetRule<>(ChatPersona.BOSS, LilithEntity.class,
+                    BOSS_CHAT_RANGE, 7.0, BOSS_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedLilithAddress,
+                    CasualRouting.LOOKING_CLOSE_CONVERSATIONAL),
+            new PersonaTargetRule<>(ChatPersona.BOSS, GoblinGulgEntity.class,
+                    BOSS_CHAT_RANGE, 7.0, BOSS_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedGulgAddress,
+                    CasualRouting.LOOKING_CLOSE_CONVERSATIONAL),
+            new PersonaTargetRule<>(ChatPersona.BOSS, GoblinMogEntity.class,
+                    BOSS_CHAT_RANGE, 7.0, BOSS_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedMogAddress,
+                    CasualRouting.LOOKING_CLOSE_CONVERSATIONAL),
+            new PersonaTargetRule<>(ChatPersona.DEMON, DemonEntity.class,
+                    DEMON_CHAT_RANGE, 6.0, DEMON_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedDemonAddress,
+                    CasualRouting.LOOKING_CLOSE_CONVERSATIONAL),
+            new PersonaTargetRule<>(ChatPersona.FLAME_IMP, FlameImpEntity.class,
+                    FLAME_IMP_CHAT_RANGE, 4.0, FLAME_IMP_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedFlameImpAddress,
+                    CasualRouting.CLOSE_PRIVATE_THEN_LOOKING_PUBLIC),
             new PersonaTargetRule<>(ChatPersona.VILLAGER, Villager.class,
                     VILLAGER_CHAT_RANGE, 4.0, VILLAGER_CASUAL_CHAT_RANGE,
                     NpcChatTargetResolver::isNamedVillagerAddress,
@@ -153,6 +199,15 @@ final class NpcChatTargetResolver {
         return value * value;
     }
 
+    private static boolean containsAny(String text, String... needles) {
+        for (String needle : needles) {
+            if (text.contains(needle)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static EnumSet<ChatPersona> explicitlyNamedPersonas(String message) {
         EnumSet<ChatPersona> personas = EnumSet.noneOf(ChatPersona.class);
         if (explicitlyNamesWitch(message)) {
@@ -163,6 +218,15 @@ final class NpcChatTargetResolver {
         }
         if (explicitlyNamesBabaYaga(message)) {
             personas.add(ChatPersona.BABA_YAGA);
+        }
+        if (explicitlyNamesBoss(message)) {
+            personas.add(ChatPersona.BOSS);
+        }
+        if (explicitlyNamesDemon(message)) {
+            personas.add(ChatPersona.DEMON);
+        }
+        if (explicitlyNamesFlameImp(message)) {
+            personas.add(ChatPersona.FLAME_IMP);
         }
         if (explicitlyNamesVillager(message)) {
             personas.add(ChatPersona.VILLAGER);
@@ -200,6 +264,70 @@ final class NpcChatTargetResolver {
         return matchesCustomName(baba, normalized);
     }
 
+    private static boolean isNamedDeathAddress(DeathEntity death, String message) {
+        String normalized = normalize(message);
+        if (containsAny(normalized, "death", "binky", "hand of death", "summon death", "boss")) {
+            return true;
+        }
+        return matchesCustomName(death, normalized);
+    }
+
+    private static boolean isNamedLordOfTormentAddress(LordOfTormentEntity boss, String message) {
+        String normalized = normalize(message);
+        if (containsAny(normalized, "lord of torment", "torment", "torment scroll", "boss")) {
+            return true;
+        }
+        return matchesCustomName(boss, normalized);
+    }
+
+    private static boolean isNamedHornedHuntsmanAddress(HornedHuntsmanEntity boss, String message) {
+        String normalized = normalize(message);
+        if (containsAny(normalized, "horned huntsman", "huntsman", "horned hunter", "wild hunt", "boss")) {
+            return true;
+        }
+        return matchesCustomName(boss, normalized);
+    }
+
+    private static boolean isNamedLilithAddress(LilithEntity lilith, String message) {
+        String normalized = normalize(message);
+        if (containsAny(normalized, "lilith", "vampire lilith", "blood queen", "boss")) {
+            return true;
+        }
+        return matchesCustomName(lilith, normalized);
+    }
+
+    private static boolean isNamedGulgAddress(GoblinGulgEntity gulg, String message) {
+        String normalized = normalize(message);
+        if (containsAny(normalized, "gulg", "goblin gulg", "gulg boss", "boss")) {
+            return true;
+        }
+        return matchesCustomName(gulg, normalized);
+    }
+
+    private static boolean isNamedMogAddress(GoblinMogEntity mog, String message) {
+        String normalized = normalize(message);
+        if (containsAny(normalized, "mog", "goblin mog", "mog boss", "boss")) {
+            return true;
+        }
+        return matchesCustomName(mog, normalized);
+    }
+
+    private static boolean isNamedDemonAddress(DemonEntity demon, String message) {
+        String normalized = normalize(message);
+        if (explicitlyNamesDemon(message)) {
+            return true;
+        }
+        return matchesCustomName(demon, normalized);
+    }
+
+    private static boolean isNamedFlameImpAddress(FlameImpEntity imp, String message) {
+        String normalized = normalize(message);
+        if (explicitlyNamesFlameImp(message)) {
+            return true;
+        }
+        return matchesCustomName(imp, normalized);
+    }
+
     private static boolean isNamedVillagerAddress(Villager villager, String message) {
         String normalized = normalize(message);
         if (normalized.contains("villager")) {
@@ -218,8 +346,6 @@ final class NpcChatTargetResolver {
                 || normalized.contains("koboldite")
                 || normalized.contains("patron")
                 || normalized.contains("goblin altar")
-                || normalized.contains("mog")
-                || normalized.contains("gulg")
                 || NpcCommandKind.MINE.matchesCandidate(normalized)
                 || NpcCommandKind.WORSHIP.matchesCandidate(normalized)) {
             return true;
@@ -278,6 +404,35 @@ final class NpcChatTargetResolver {
         return normalized.contains("baba yaga") || normalized.contains("baba") || normalized.contains("yaga");
     }
 
+    private static boolean explicitlyNamesBoss(String message) {
+        String normalized = normalize(message);
+        return containsAny(normalized,
+                "death", "binky", "hand of death", "summon death",
+                "lord of torment", "torment scroll",
+                "horned huntsman", "huntsman", "horned hunter", "wild hunt",
+                "lilith", "vampire lilith",
+                "goblin gulg", "goblin mog", "gulg", "mog",
+                "boss");
+    }
+
+    private static boolean explicitlyNamesDemon(String message) {
+        String normalized = normalize(message);
+        if (explicitlyNamesFlameImp(message)) {
+            return false;
+        }
+        return containsAny(normalized,
+                "demon", "summoned demon", "devil", "devils tongue", "devil s tongue",
+                "devil's tongue", "infernal blood", "demon heart", "demon bargain");
+    }
+
+    private static boolean explicitlyNamesFlameImp(String message) {
+        String normalized = normalize(message);
+        return containsAny(normalized,
+                "flame imp", "little demon", "demonic contract", "spell contract",
+                "imp magic", "please an imp", "shiny gift", "shiny gifts")
+                || normalized.matches(".*(^|\\s)imp($|\\s).*");
+    }
+
     private static boolean explicitlyNamesVillager(String message) {
         String normalized = normalize(message);
         return normalized.contains("villager")
@@ -305,8 +460,6 @@ final class NpcChatTargetResolver {
                 || normalized.contains("koboldite")
                 || normalized.contains("patron")
                 || normalized.contains("goblin altar")
-                || normalized.contains("mog")
-                || normalized.contains("gulg")
                 || NpcCommandKind.MINE.matchesCandidate(normalized)
                 || NpcCommandKind.WORSHIP.matchesCandidate(normalized);
     }

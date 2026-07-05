@@ -51,6 +51,22 @@ final class NpcDialogueFallback {
                 memoryContext);
     }
 
+    static Optional<String> bossChat(String playerMessage, String bossName, String playerName,
+                                     String bossKind, String bossInfo, String gearInfo, String memoryContext) {
+        return Optional.of(bossLine(normalize(playerMessage), safeName(playerName),
+                safeDisplayName(bossKind, "Witchery Boss"), bossInfo));
+    }
+
+    static Optional<String> demonChat(String playerMessage, String demonName, String playerName,
+                                      String demonInfo, String memoryContext) {
+        return Optional.of(demonLine(normalize(playerMessage), safeName(playerName), demonInfo));
+    }
+
+    static Optional<String> flameImpChat(String playerMessage, String impName, String playerName,
+                                         String impInfo, String memoryContext) {
+        return Optional.of(flameImpLine(normalize(playerMessage), safeName(playerName), impInfo));
+    }
+
     static Optional<String> covenChat(String playerMessage, String witchName, String playerName,
                                       String biome, String timeOfDay, String clock, long day,
                                       String memoryContext) {
@@ -136,6 +152,125 @@ final class NpcDialogueFallback {
         }
         String line = NpcFallbackAsides.villager(normalized, name, avoidSpeech);
         return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
+    }
+
+    static String bossLastResort(String playerMessage, String playerName, String bossKind, String bossInfo,
+                                 String avoidSpeech) {
+        return bossLine(normalize(playerMessage), safeName(playerName), safeDisplayName(bossKind, "Witchery Boss"),
+                bossInfo);
+    }
+
+    static Optional<String> bossAlternate(String playerMessage, String playerName, String bossKind,
+                                          String bossInfo, String avoidSpeech) {
+        String line = bossLastResort(playerMessage, playerName, bossKind, bossInfo, avoidSpeech);
+        return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
+    }
+
+    static String demonLastResort(String playerMessage, String playerName, String demonInfo, String avoidSpeech) {
+        return demonLine(normalize(playerMessage), safeName(playerName), demonInfo);
+    }
+
+    static Optional<String> demonAlternate(String playerMessage, String playerName, String demonInfo,
+                                           String avoidSpeech) {
+        String line = demonLastResort(playerMessage, playerName, demonInfo, avoidSpeech);
+        return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
+    }
+
+    static String flameImpLastResort(String playerMessage, String playerName, String impInfo, String avoidSpeech) {
+        return flameImpLine(normalize(playerMessage), safeName(playerName), impInfo);
+    }
+
+    static Optional<String> flameImpAlternate(String playerMessage, String playerName, String impInfo,
+                                              String avoidSpeech) {
+        String line = flameImpLastResort(playerMessage, playerName, impInfo, avoidSpeech);
+        return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
+    }
+
+    private static String bossLine(String normalized, String playerName, String bossKind, String bossInfo) {
+        String kind = normalize(bossKind);
+        String info = normalize(bossInfo);
+        if (containsAny(normalized, "death", "binky", "stare", "hand of death")
+                || containsAny(kind, "death") || containsAny(info, "binky", "staring")) {
+            return "Stare carelessly and even your courage learns to kneel, " + playerName + ".";
+        }
+        if (containsAny(normalized, "lilith", "vampire", "blood")
+                || containsAny(kind, "lilith") || containsAny(info, "vampire")) {
+            return "Blood buys attention; fire buys respect. Do not confuse either with mercy.";
+        }
+        if (containsAny(normalized, "torment", "lord of torment", "scroll")
+                || containsAny(kind, "torment") || containsAny(info, "torment")) {
+            return "Torment is not a place you visit, " + playerName + ". It is a sentence.";
+        }
+        if (containsAny(normalized, "huntsman", "hunt", "horned", "spear", "wolf", "wolves")
+                || containsAny(kind, "huntsman") || containsAny(info, "wolves", "spear")) {
+            return "Run if you must. Hunts remember the shape of panic.";
+        }
+        if (containsAny(normalized, "mog", "gulg", "goblin", "patron", "statue")
+                || containsAny(kind, "mog", "gulg") || containsAny(info, "patron")) {
+            return "Patron prayers rise hot; stolen worship comes back with fists and arrows.";
+        }
+        if (containsAny(normalized, "fight", "beat", "kill", "weakness", "survive")) {
+            return "Bring a sharper question than survival. Bosses answer vague courage with graves.";
+        }
+        if (containsAny(normalized, "trade", "deal", "protect", "friend", "help me", "serve")) {
+            return "I am not your merchant, shield, or servant. Ask like prey that learned manners.";
+        }
+        if (isGreeting(normalized)) {
+            return "You found the larger shadow, " + playerName + ". Speak before it moves.";
+        }
+        return "Name the danger properly, " + playerName + ", and it may answer before it bites.";
+    }
+
+    private static String demonLine(String normalized, String playerName, String demonInfo) {
+        String info = normalize(demonInfo);
+        if (containsAny(normalized, "trade", "buy", "sell", "stock", "wares", "bargain", "deal", "price",
+                "what do you want")) {
+            return "Bring coin, courage, or a price worth smelling. Then we bargain.";
+        }
+        if (containsAny(normalized, "devil", "tongue", "charm") || containsAny(info, "devil s tongue")) {
+            return "That charm sweetens the air, " + playerName + ". It does not muzzle me.";
+        }
+        if (containsAny(normalized, "demon heart", "heart", "drop")) {
+            return "Demon Hearts are not gifts. They are what remains when pride loses its body.";
+        }
+        if (containsAny(normalized, "fire", "burn", "flame", "afraid")) {
+            return "Fire is my native tongue. Try another insult.";
+        }
+        if (containsAny(normalized, "contract", "flame imp", "imp", "demonic contract")) {
+            return "Imps scratch at contracts. Demons decide what the ink costs.";
+        }
+        if (containsAny(normalized, "fight", "beat", "kill", "weakness", "safe")) {
+            return "Safer is not safe. Stand close and learn the difference.";
+        }
+        if (isGreeting(normalized)) {
+            return "*smiles with heat* \"You brought breath, " + playerName + ". Spend it carefully.\"";
+        }
+        return "Ask for a bargain, a threat, or silence. I sell none of them cheaply.";
+    }
+
+    private static String flameImpLine(String normalized, String playerName, String impInfo) {
+        String info = normalize(impInfo);
+        if (containsAny(normalized, "shiny", "gift", "please", "what do you want")) {
+            return "Shiny first, " + playerName + ". Nice shiny makes nicer fire.";
+        }
+        if (containsAny(normalized, "tame", "contract", "demonic contract", "own", "owner", "pet")) {
+            return "Signed contract, paid cost, brave fingers. Wild imp is not pet.";
+        }
+        if (containsAny(normalized, "spell", "magic", "cast", "spell contract")) {
+            return (containsAny(info, "demon heart powered", "heart hot") && !containsAny(info, "not powered"))
+                    ? "Heart-hot now. Spell paper waits until the buzzing cools."
+                    : "Pleased imp reads hot paper. Bad contract still burns fingers.";
+        }
+        if (containsAny(normalized, "demon heart", "powered", "power", "icy needle", "calm")) {
+            return "Heart makes bite bigger. Icy needle makes sparks behave.";
+        }
+        if (containsAny(normalized, "fight", "bite", "kill", "wild", "safe")) {
+            return "Small fire still burns. Wild teeth do not read manners.";
+        }
+        if (isGreeting(normalized)) {
+            return "*flickers* \"Big one talks. Shiny next?\"";
+        }
+        return "Say contract, shiny, or fire. Slow words go cold.";
     }
 
     private static Optional<String> villagerSpecificAlternate(String normalized, String playerName, String avoidSpeech) {

@@ -2,6 +2,8 @@ package com.emoniph.witchery.ai;
 
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.entity.CovenWitchEntity;
+import com.emoniph.witchery.entity.DemonEntity;
+import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.HobgoblinEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.ReflectionEntity;
@@ -171,6 +173,18 @@ public final class NpcBrainService {
     public boolean requestBabaYagaChat(com.emoniph.witchery.entity.BabaYagaEntity baba, ServerPlayer player,
                                        String playerMessage) {
         return requestChat(NpcPersonas.BABA_YAGA, baba, player, playerMessage);
+    }
+
+    public boolean requestBossChat(LivingEntity boss, ServerPlayer player, String playerMessage) {
+        return requestChat(NpcPersonas.BOSS, boss, player, playerMessage);
+    }
+
+    public boolean requestDemonChat(DemonEntity demon, ServerPlayer player, String playerMessage) {
+        return requestChat(NpcPersonas.DEMON, demon, player, playerMessage);
+    }
+
+    public boolean requestFlameImpChat(FlameImpEntity imp, ServerPlayer player, String playerMessage) {
+        return requestChat(NpcPersonas.FLAME_IMP, imp, player, playerMessage);
     }
 
     public boolean requestVillagerChat(Villager villager, ServerPlayer player, String playerMessage) {
