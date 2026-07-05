@@ -446,18 +446,18 @@ public final class NpcBrainEvents {
 
     private static void executeHobgoblinCommand(ServerLevel level, HobgoblinEntity hobgoblin,
                                                 ServerPlayer player, String message, NpcCommandKind kind) {
-        String speech = switch (kind) {
+        HobgoblinCommandResult result = switch (kind) {
             case MINE -> executeHobgoblinMineCommand(hobgoblin, player);
             case WORSHIP -> executeHobgoblinWorshipCommand(hobgoblin, player);
             case STAY -> {
                 hobgoblin.claimCommandOwner(player);
                 hobgoblin.beginPlayerConversation(player);
-                yield "*squints* \"Feet stay. For now.\"";
+                yield new HobgoblinCommandResult(true, "*squints* \"Feet stay. For now.\"");
             }
             case STOP -> {
                 hobgoblin.commandStopWork(player);
                 hobgoblin.beginPlayerConversation(player);
-                yield "*grumbles* \"Stopping. Work stops. Prayer stops. Happy?\"";
+                yield new HobgoblinCommandResult(true, "*grumbles* \"Stopping. Work stops. Prayer stops. Happy?\"");
             }
             case COME_HERE -> {
                 hobgoblin.getLookControl().setLookAt(player, 30.0F, 30.0F);
@@ -465,9 +465,9 @@ public final class NpcBrainEvents {
                 if (moving) {
                     hobgoblin.claimCommandOwner(player);
                 }
-                yield moving
+                yield new HobgoblinCommandResult(moving, moving
                         ? "Coming, coming. Big feet wait."
-                        : "*sniffs* \"Path says no. Move closer.\"";
+                        : "*sniffs* \"Path says no. Move closer.\"");
             }
             case GO_AWAY -> {
                 hobgoblin.getLookControl().setLookAt(player, 30.0F, 30.0F);
@@ -475,44 +475,61 @@ public final class NpcBrainEvents {
                 if (moving) {
                     hobgoblin.claimCommandOwner(player);
                 }
-                yield moving
+                yield new HobgoblinCommandResult(moving, moving
                         ? "*backs off* \"Away, away. Good?\""
-                        : "*shrugs* \"No path away. World too cramped.\"";
+                        : "*shrugs* \"No path away. World too cramped.\"");
             }
             case FOLLOW -> hobgoblin.commandFollow(player)
-                    ? "*huffs* \"Following. Rope or no rope, feet listen for now.\""
-                    : "*sniffs* \"Can't follow what isn't here.\"";
+                    ? new HobgoblinCommandResult(true, "*huffs* \"Following. Rope or no rope, feet listen for now.\"")
+                    : new HobgoblinCommandResult(false, "*sniffs* \"Can't follow what isn't here.\"");
             case GUARD -> hobgoblin.commandGuard(player)
-                    ? "*bares teeth* \"Guarding. Bad things get bit first.\""
-                    : "*sniffs* \"Can't guard smoke. Stand close.\"";
+                    ? new HobgoblinCommandResult(true, "*bares teeth* \"Guarding. Bad things get bit first.\"")
+                    : new HobgoblinCommandResult(false, "*sniffs* \"Can't guard smoke. Stand close.\"");
         };
-        if (!speech.isBlank()) {
+        if (!result.speech().isBlank()) {
             try {
-                sayHobgoblin(level, hobgoblin, player, message, speech);
+                sayHobgoblin(level, hobgoblin, player, message, result.speech());
             } finally {
                 hobgoblin.completePlayerConversation(player);
             }
         }
     }
 
-    private static String executeHobgoblinMineCommand(HobgoblinEntity hobgoblin, ServerPlayer player) {
-        if (!hobgoblin.isLeashed()) {
-            return "*shrugs* \"No rope, no work. Hobgoblin feet choose elsewhere.\"";
-        }
-        if (!hobgoblin.hasMiningPickaxe()) {
-            return "*gestures* \"Give pickaxe first. Then work, work.\"";
-        }
-        if (hobgoblin.commandMine(player)) {
-            return "Work, work... rope bossy, shiny maybe.";
-        }
-        return "*sniffs* \"No good stone here. Move feet, move rope.\"";
+    private static HobgoblinCommandResult executeHobgoblinMineCommand(HobgoblinEntity hobgoblin,
+                                                                      ServerPlayer player) {
+        boolean leashed = hobgoblin.isLeashed();
+        boolean hasPickaxe = hobgoblin.hasMiningPickaxe();
+        boolean started = leashed && hasPickaxe && hobgoblin.commandMine(player);
+        return hobgoblinMineResult(leashed, hasPickaxe, started);
     }
 
-    private static String executeHobgoblinWorshipCommand(HobgoblinEntity hobgoblin, ServerPlayer player) {
-        if (hobgoblin.commandWorship(player)) {
-            return "*nods* \"Patron sees. Small prayers go up.\"";
+    static HobgoblinCommandResult hobgoblinMineResult(boolean leashed, boolean hasPickaxe, boolean started) {
+        if (!leashed) {
+            return new HobgoblinCommandResult(false,
+                    "*shrugs* \"No rope, no work. Hobgoblin feet choose elsewhere.\"");
         }
-        return "*gestures* \"No goblin altar nearby. Put stone god close.\"";
+        if (!hasPickaxe) {
+            return new HobgoblinCommandResult(false, "*gestures* \"Give pickaxe first. Then work, work.\"");
+        }
+        if (started) {
+            return new HobgoblinCommandResult(true, "Work, work... rope bossy, shiny maybe.");
+        }
+        return new HobgoblinCommandResult(false, "*sniffs* \"No good stone here. Move feet, move rope.\"");
+    }
+
+    private static HobgoblinCommandResult executeHobgoblinWorshipCommand(HobgoblinEntity hobgoblin,
+                                                                         ServerPlayer player) {
+        return hobgoblinWorshipResult(hobgoblin.commandWorship(player));
+    }
+
+    static HobgoblinCommandResult hobgoblinWorshipResult(boolean started) {
+        return started
+                ? new HobgoblinCommandResult(true, "*nods* \"Patron sees. Small prayers go up.\"")
+                : new HobgoblinCommandResult(false,
+                "*gestures* \"No goblin altar nearby. Put stone god close.\"");
+    }
+
+    record HobgoblinCommandResult(boolean accepted, String speech) {
     }
 
     private static boolean moveHobgoblinAwayFromPlayer(HobgoblinEntity hobgoblin, ServerPlayer player) {

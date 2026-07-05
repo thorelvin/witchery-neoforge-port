@@ -24,4 +24,25 @@ class NpcBrainEventsTest {
         assertFalse(NpcBrainEvents.shouldCancelHandledNpcChat(false, true));
         assertFalse(NpcBrainEvents.shouldCancelHandledNpcChat(true, false));
     }
+
+    @Test
+    void failedHobgoblinMineCommandsAreNotAccepted() {
+        NpcBrainEvents.HobgoblinCommandResult noLeash =
+                NpcBrainEvents.hobgoblinMineResult(false, true, false);
+        NpcBrainEvents.HobgoblinCommandResult noPickaxe =
+                NpcBrainEvents.hobgoblinMineResult(true, false, false);
+        NpcBrainEvents.HobgoblinCommandResult noTarget =
+                NpcBrainEvents.hobgoblinMineResult(true, true, false);
+
+        assertFalse(noLeash.accepted());
+        assertFalse(noPickaxe.accepted());
+        assertFalse(noTarget.accepted());
+        assertTrue(NpcBrainEvents.hobgoblinMineResult(true, true, true).accepted());
+    }
+
+    @Test
+    void failedHobgoblinWorshipCommandIsNotAccepted() {
+        assertFalse(NpcBrainEvents.hobgoblinWorshipResult(false).accepted());
+        assertTrue(NpcBrainEvents.hobgoblinWorshipResult(true).accepted());
+    }
 }
