@@ -16,6 +16,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,207 +33,147 @@ final class NpcChatTargetResolver {
     private static final double HOBGOBLIN_CASUAL_CHAT_RANGE = 6.0;
     private static final double REFLECTION_CHAT_RANGE = 12.0;
     private static final double REFLECTION_CASUAL_CHAT_RANGE = 8.0;
+    private static final List<PersonaTargetRule<? extends LivingEntity>> TARGET_RULES = List.of(
+            new PersonaTargetRule<>(ChatPersona.COVEN_WITCH, CovenWitchEntity.class,
+                    CHAT_RANGE, 4.0, CASUAL_CHAT_RANGE, NpcChatTargetResolver::isNamedAddress,
+                    CasualRouting.CLOSE_PRIVATE_THEN_LOOKING_PUBLIC),
+            new PersonaTargetRule<>(ChatPersona.LEONARD, LeonardEntity.class,
+                    LEONARD_CHAT_RANGE, 6.0, LEONARD_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedLeonardAddress,
+                    CasualRouting.LOOKING_CLOSE_CONVERSATIONAL),
+            new PersonaTargetRule<>(ChatPersona.BABA_YAGA, BabaYagaEntity.class,
+                    BABA_YAGA_CHAT_RANGE, 6.0, BABA_YAGA_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedBabaYagaAddress,
+                    CasualRouting.LOOKING_CLOSE_CONVERSATIONAL),
+            new PersonaTargetRule<>(ChatPersona.VILLAGER, Villager.class,
+                    VILLAGER_CHAT_RANGE, 4.0, VILLAGER_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedVillagerAddress,
+                    CasualRouting.CLOSE_PRIVATE_THEN_LOOKING_PUBLIC),
+            new PersonaTargetRule<>(ChatPersona.HOBGOBLIN, HobgoblinEntity.class,
+                    HOBGOBLIN_CHAT_RANGE, 4.0, HOBGOBLIN_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedHobgoblinAddress,
+                    CasualRouting.CLOSE_PRIVATE_THEN_LOOKING_PUBLIC),
+            new PersonaTargetRule<>(ChatPersona.REFLECTION, ReflectionEntity.class,
+                    REFLECTION_CHAT_RANGE, 6.0, REFLECTION_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedReflectionAddress,
+                    CasualRouting.REFLECTION)
+    );
 
     private NpcChatTargetResolver() {
     }
 
     static ChatTarget findNearest(ServerLevel level, ServerPlayer player, String message) {
         List<ChatTarget> candidates = new ArrayList<>();
-        addCovenChatCandidates(level, player, message, candidates);
-        addLeonardChatCandidates(level, player, message, candidates);
-        addBabaYagaChatCandidates(level, player, message, candidates);
-        addVillagerChatCandidates(level, player, message, candidates);
-        addHobgoblinChatCandidates(level, player, message, candidates);
-        addReflectionChatCandidates(level, player, message, candidates);
+        EnumSet<ChatPersona> namedPersonas = explicitlyNamedPersonas(message);
+        for (PersonaTargetRule<? extends LivingEntity> rule : TARGET_RULES) {
+            addRuleCandidates(level, player, message, namedPersonas, rule, candidates);
+        }
         return candidates.stream()
                 .min(Comparator.comparingDouble(ChatTarget::distanceSqr))
                 .orElse(null);
     }
 
-    private static void addCovenChatCandidates(ServerLevel level, ServerPlayer player, String message,
-                                               List<ChatTarget> candidates) {
-        List<CovenWitchEntity> witches = level.getEntitiesOfClass(
-                CovenWitchEntity.class, player.getBoundingBox().inflate(CHAT_RANGE, 4.0, CHAT_RANGE));
-        if (witches.isEmpty()) {
+    private static <E extends LivingEntity> void addRuleCandidates(ServerLevel level, ServerPlayer player,
+                                                                   String message,
+                                                                   EnumSet<ChatPersona> namedPersonas,
+                                                                   PersonaTargetRule<E> rule,
+                                                                   List<ChatTarget> candidates) {
+        List<E> entities = level.getEntitiesOfClass(rule.entityClass(),
+                player.getBoundingBox().inflate(rule.chatRange(), rule.verticalRange(), rule.chatRange()));
+        if (entities.isEmpty()) {
             return;
         }
-        witches.sort(Comparator.comparingDouble(player::distanceToSqr));
-        boolean otherPersonaNamed = explicitlyNamesLeonard(message) || explicitlyNamesBabaYaga(message)
-                || explicitlyNamesVillager(message) || explicitlyNamesHobgoblin(message)
-                || explicitlyNamesReflection(message);
-        for (CovenWitchEntity witch : witches) {
-            if (isNamedAddress(witch, message)) {
-                candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, witch, player.distanceToSqr(witch), true));
+        entities.sort(Comparator.comparingDouble(player::distanceToSqr));
+        for (E entity : entities) {
+            if (rule.namedAddress().matches(entity, message)) {
+                candidates.add(new ChatTarget(rule.kind(), entity, player.distanceToSqr(entity), true));
             }
         }
-        if (otherPersonaNamed) {
+        if (namesOtherPersona(namedPersonas, rule.kind())) {
             return;
         }
-        CovenWitchEntity nearest = witches.getFirst();
+        E nearest = entities.getFirst();
         double distance = player.distanceToSqr(nearest);
-        if (distance <= CASUAL_CHAT_RANGE * CASUAL_CHAT_RANGE
-                && (isCasualAddress(message) || isShortFollowUp(message))) {
-            candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, nearest, distance, true));
-            return;
-        }
-        if (distance <= CHAT_RANGE * CHAT_RANGE && isLookingAt(player, nearest) && isConversational(message)) {
-            candidates.add(new ChatTarget(ChatPersona.COVEN_WITCH, nearest, distance, false));
+        addCasualCandidate(level, player, message, rule, nearest, distance, candidates);
+    }
+
+    private static <E extends LivingEntity> void addCasualCandidate(ServerLevel level, ServerPlayer player,
+                                                                    String message, PersonaTargetRule<E> rule,
+                                                                    E nearest, double distance,
+                                                                    List<ChatTarget> candidates) {
+        switch (rule.casualRouting()) {
+            case CLOSE_PRIVATE_THEN_LOOKING_PUBLIC -> {
+                if (distance <= squared(rule.casualRange())
+                        && (isCasualAddress(message) || isShortFollowUp(message))) {
+                    candidates.add(new ChatTarget(rule.kind(), nearest, distance, true));
+                    return;
+                }
+                if (distance <= squared(rule.chatRange())
+                        && isLookingAt(player, nearest)
+                        && isConversational(message)) {
+                    candidates.add(new ChatTarget(rule.kind(), nearest, distance, false));
+                }
+            }
+            case LOOKING_CLOSE_CONVERSATIONAL -> {
+                if (distance <= squared(rule.casualRange())
+                        && isLookingAt(player, nearest)
+                        && isConversational(message)) {
+                    boolean privateAddress = isCasualAddress(message) || isShortFollowUp(message);
+                    candidates.add(new ChatTarget(rule.kind(), nearest, distance, privateAddress));
+                }
+            }
+            case REFLECTION -> {
+                if (distance <= squared(rule.casualRange())
+                        && isLookingAt(player, nearest)
+                        && (isCasualAddress(message)
+                        || isShortFollowUp(message)
+                        || WitcheryDimensions.isMirrorWorld(level))) {
+                    candidates.add(new ChatTarget(rule.kind(), nearest, distance, true));
+                    return;
+                }
+                if (distance <= squared(rule.chatRange())
+                        && isLookingAt(player, nearest)
+                        && isConversational(message)) {
+                    candidates.add(new ChatTarget(rule.kind(), nearest, distance, false));
+                }
+            }
         }
     }
 
-    private static void addLeonardChatCandidates(ServerLevel level, ServerPlayer player, String message,
-                                                 List<ChatTarget> candidates) {
-        List<LeonardEntity> shades = level.getEntitiesOfClass(
-                LeonardEntity.class, player.getBoundingBox().inflate(LEONARD_CHAT_RANGE, 6.0, LEONARD_CHAT_RANGE));
-        if (shades.isEmpty()) {
-            return;
-        }
-        shades.sort(Comparator.comparingDouble(player::distanceToSqr));
-        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesBabaYaga(message)
-                || explicitlyNamesVillager(message) || explicitlyNamesHobgoblin(message)
-                || explicitlyNamesReflection(message);
-        for (LeonardEntity shade : shades) {
-            if (isNamedLeonardAddress(shade, message)) {
-                candidates.add(new ChatTarget(ChatPersona.LEONARD, shade, player.distanceToSqr(shade), true));
+    private static boolean namesOtherPersona(EnumSet<ChatPersona> namedPersonas, ChatPersona kind) {
+        for (ChatPersona named : namedPersonas) {
+            if (named != kind) {
+                return true;
             }
         }
-        if (otherPersonaNamed) {
-            return;
-        }
-        LeonardEntity nearest = shades.getFirst();
-        double distance = player.distanceToSqr(nearest);
-        if (distance <= LEONARD_CASUAL_CHAT_RANGE * LEONARD_CASUAL_CHAT_RANGE
-                && isLookingAt(player, nearest)
-                && isConversational(message)) {
-            boolean privateAddress = isCasualAddress(message) || isShortFollowUp(message);
-            candidates.add(new ChatTarget(ChatPersona.LEONARD, nearest, distance, privateAddress));
-        }
+        return false;
     }
 
-    private static void addBabaYagaChatCandidates(ServerLevel level, ServerPlayer player, String message,
-                                                  List<ChatTarget> candidates) {
-        List<BabaYagaEntity> crones = level.getEntitiesOfClass(
-                BabaYagaEntity.class, player.getBoundingBox().inflate(BABA_YAGA_CHAT_RANGE, 6.0, BABA_YAGA_CHAT_RANGE));
-        if (crones.isEmpty()) {
-            return;
-        }
-        crones.sort(Comparator.comparingDouble(player::distanceToSqr));
-        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesLeonard(message)
-                || explicitlyNamesVillager(message) || explicitlyNamesHobgoblin(message)
-                || explicitlyNamesReflection(message);
-        for (BabaYagaEntity crone : crones) {
-            if (isNamedBabaYagaAddress(crone, message)) {
-                candidates.add(new ChatTarget(ChatPersona.BABA_YAGA, crone, player.distanceToSqr(crone), true));
-            }
-        }
-        if (otherPersonaNamed) {
-            return;
-        }
-        BabaYagaEntity nearest = crones.getFirst();
-        double distance = player.distanceToSqr(nearest);
-        if (distance <= BABA_YAGA_CASUAL_CHAT_RANGE * BABA_YAGA_CASUAL_CHAT_RANGE
-                && isLookingAt(player, nearest)
-                && isConversational(message)) {
-            boolean privateAddress = isCasualAddress(message) || isShortFollowUp(message);
-            candidates.add(new ChatTarget(ChatPersona.BABA_YAGA, nearest, distance, privateAddress));
-        }
+    private static double squared(double value) {
+        return value * value;
     }
 
-    private static void addVillagerChatCandidates(ServerLevel level, ServerPlayer player, String message,
-                                                  List<ChatTarget> candidates) {
-        List<Villager> villagers = level.getEntitiesOfClass(
-                Villager.class, player.getBoundingBox().inflate(VILLAGER_CHAT_RANGE, 4.0, VILLAGER_CHAT_RANGE));
-        if (villagers.isEmpty()) {
-            return;
+    private static EnumSet<ChatPersona> explicitlyNamedPersonas(String message) {
+        EnumSet<ChatPersona> personas = EnumSet.noneOf(ChatPersona.class);
+        if (explicitlyNamesWitch(message)) {
+            personas.add(ChatPersona.COVEN_WITCH);
         }
-        villagers.sort(Comparator.comparingDouble(player::distanceToSqr));
-        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesLeonard(message)
-                || explicitlyNamesBabaYaga(message) || explicitlyNamesHobgoblin(message)
-                || explicitlyNamesReflection(message);
-        for (Villager villager : villagers) {
-            if (isNamedVillagerAddress(villager, message)) {
-                candidates.add(new ChatTarget(ChatPersona.VILLAGER, villager, player.distanceToSqr(villager), true));
-            }
+        if (explicitlyNamesLeonard(message)) {
+            personas.add(ChatPersona.LEONARD);
         }
-        if (otherPersonaNamed) {
-            return;
+        if (explicitlyNamesBabaYaga(message)) {
+            personas.add(ChatPersona.BABA_YAGA);
         }
-        Villager nearest = villagers.getFirst();
-        double distance = player.distanceToSqr(nearest);
-        if (distance <= VILLAGER_CASUAL_CHAT_RANGE * VILLAGER_CASUAL_CHAT_RANGE
-                && (isCasualAddress(message) || isShortFollowUp(message))) {
-            candidates.add(new ChatTarget(ChatPersona.VILLAGER, nearest, distance, true));
-            return;
+        if (explicitlyNamesVillager(message)) {
+            personas.add(ChatPersona.VILLAGER);
         }
-        if (distance <= VILLAGER_CHAT_RANGE * VILLAGER_CHAT_RANGE && isLookingAt(player, nearest)
-                && isConversational(message)) {
-            candidates.add(new ChatTarget(ChatPersona.VILLAGER, nearest, distance, false));
+        if (explicitlyNamesHobgoblin(message)) {
+            personas.add(ChatPersona.HOBGOBLIN);
         }
-    }
-
-    private static void addHobgoblinChatCandidates(ServerLevel level, ServerPlayer player, String message,
-                                                   List<ChatTarget> candidates) {
-        List<HobgoblinEntity> hobgoblins = level.getEntitiesOfClass(
-                HobgoblinEntity.class, player.getBoundingBox().inflate(HOBGOBLIN_CHAT_RANGE, 4.0, HOBGOBLIN_CHAT_RANGE));
-        if (hobgoblins.isEmpty()) {
-            return;
+        if (explicitlyNamesReflection(message)) {
+            personas.add(ChatPersona.REFLECTION);
         }
-        hobgoblins.sort(Comparator.comparingDouble(player::distanceToSqr));
-        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesLeonard(message)
-                || explicitlyNamesBabaYaga(message) || explicitlyNamesVillager(message)
-                || explicitlyNamesReflection(message);
-        for (HobgoblinEntity hobgoblin : hobgoblins) {
-            if (isNamedHobgoblinAddress(hobgoblin, message)) {
-                candidates.add(new ChatTarget(ChatPersona.HOBGOBLIN, hobgoblin, player.distanceToSqr(hobgoblin), true));
-            }
-        }
-        if (otherPersonaNamed) {
-            return;
-        }
-        HobgoblinEntity nearest = hobgoblins.getFirst();
-        double distance = player.distanceToSqr(nearest);
-        if (distance <= HOBGOBLIN_CASUAL_CHAT_RANGE * HOBGOBLIN_CASUAL_CHAT_RANGE
-                && (isCasualAddress(message) || isShortFollowUp(message))) {
-            candidates.add(new ChatTarget(ChatPersona.HOBGOBLIN, nearest, distance, true));
-            return;
-        }
-        if (distance <= HOBGOBLIN_CHAT_RANGE * HOBGOBLIN_CHAT_RANGE && isLookingAt(player, nearest)
-                && isConversational(message)) {
-            candidates.add(new ChatTarget(ChatPersona.HOBGOBLIN, nearest, distance, false));
-        }
-    }
-
-    private static void addReflectionChatCandidates(ServerLevel level, ServerPlayer player, String message,
-                                                    List<ChatTarget> candidates) {
-        List<ReflectionEntity> reflections = level.getEntitiesOfClass(
-                ReflectionEntity.class, player.getBoundingBox().inflate(REFLECTION_CHAT_RANGE, 6.0, REFLECTION_CHAT_RANGE));
-        if (reflections.isEmpty()) {
-            return;
-        }
-        reflections.sort(Comparator.comparingDouble(player::distanceToSqr));
-        boolean otherPersonaNamed = explicitlyNamesWitch(message) || explicitlyNamesLeonard(message)
-                || explicitlyNamesBabaYaga(message) || explicitlyNamesVillager(message)
-                || explicitlyNamesHobgoblin(message);
-        for (ReflectionEntity reflection : reflections) {
-            if (isNamedReflectionAddress(reflection, message)) {
-                candidates.add(new ChatTarget(ChatPersona.REFLECTION, reflection, player.distanceToSqr(reflection), true));
-            }
-        }
-        if (otherPersonaNamed) {
-            return;
-        }
-        ReflectionEntity nearest = reflections.getFirst();
-        double distance = player.distanceToSqr(nearest);
-        if (distance <= REFLECTION_CASUAL_CHAT_RANGE * REFLECTION_CASUAL_CHAT_RANGE
-                && isLookingAt(player, nearest)
-                && (isCasualAddress(message) || isShortFollowUp(message) || WitcheryDimensions.isMirrorWorld(level))) {
-            candidates.add(new ChatTarget(ChatPersona.REFLECTION, nearest, distance, true));
-            return;
-        }
-        if (distance <= REFLECTION_CHAT_RANGE * REFLECTION_CHAT_RANGE && isLookingAt(player, nearest)
-                && isConversational(message)) {
-            candidates.add(new ChatTarget(ChatPersona.REFLECTION, nearest, distance, false));
-        }
+        return personas;
     }
 
     private static boolean isNamedAddress(CovenWitchEntity witch, String message) {
@@ -240,16 +181,7 @@ final class NpcChatTargetResolver {
         if (normalized.contains("witch")) {
             return true;
         }
-        String name = witch.hasCustomName() ? witch.getCustomName().getString() : "";
-        if (name.isBlank()) {
-            return false;
-        }
-        String normalizedName = normalize(name);
-        if (normalized.contains(normalizedName)) {
-            return true;
-        }
-        String first = normalizedName.split("\\s+")[0];
-        return first.length() >= 3 && normalized.contains(first);
+        return matchesCustomName(witch, normalized);
     }
 
     private static boolean isNamedLeonardAddress(LeonardEntity leonard, String message) {
@@ -257,16 +189,7 @@ final class NpcChatTargetResolver {
         if (normalized.contains("leonard") || normalized.contains("shade")) {
             return true;
         }
-        String name = leonard.hasCustomName() ? leonard.getCustomName().getString() : "";
-        if (name.isBlank()) {
-            return false;
-        }
-        String normalizedName = normalize(name);
-        if (normalized.contains(normalizedName)) {
-            return true;
-        }
-        String first = normalizedName.split("\\s+")[0];
-        return first.length() >= 3 && normalized.contains(first);
+        return matchesCustomName(leonard, normalized);
     }
 
     private static boolean isNamedBabaYagaAddress(BabaYagaEntity baba, String message) {
@@ -274,18 +197,7 @@ final class NpcChatTargetResolver {
         if (normalized.contains("baba yaga") || normalized.contains("baba") || normalized.contains("yaga")) {
             return true;
         }
-        String name = baba.hasCustomName() && baba.getCustomName() != null
-                ? baba.getCustomName().getString()
-                : "";
-        if (name.isBlank()) {
-            return false;
-        }
-        String normalizedName = normalize(name);
-        if (normalized.contains(normalizedName)) {
-            return true;
-        }
-        String first = normalizedName.split("\\s+")[0];
-        return first.length() >= 3 && normalized.contains(first);
+        return matchesCustomName(baba, normalized);
     }
 
     private static boolean isNamedVillagerAddress(Villager villager, String message) {
@@ -293,18 +205,8 @@ final class NpcChatTargetResolver {
         if (normalized.contains("villager")) {
             return true;
         }
-        String name = villager.hasCustomName() && villager.getCustomName() != null
-                ? villager.getCustomName().getString()
-                : "";
-        if (!name.isBlank()) {
-            String normalizedName = normalize(name);
-            if (normalized.contains(normalizedName)) {
-                return true;
-            }
-            String first = normalizedName.split("\\s+")[0];
-            if (first.length() >= 3 && normalized.contains(first)) {
-                return true;
-            }
+        if (matchesCustomName(villager, normalized)) {
+            return true;
         }
         String profession = NpcPromptBuilder.villagerProfessionName(villager);
         return !profession.isBlank() && normalized.contains(normalize(profession));
@@ -322,18 +224,7 @@ final class NpcChatTargetResolver {
                 || NpcCommandKind.WORSHIP.matchesCandidate(normalized)) {
             return true;
         }
-        String name = hobgoblin.hasCustomName() && hobgoblin.getCustomName() != null
-                ? hobgoblin.getCustomName().getString()
-                : "";
-        if (name.isBlank()) {
-            return false;
-        }
-        String normalizedName = normalize(name);
-        if (normalized.contains(normalizedName)) {
-            return true;
-        }
-        String first = normalizedName.split("\\s+")[0];
-        return first.length() >= 3 && normalized.contains(first);
+        return matchesCustomName(hobgoblin, normalized);
     }
 
     private static boolean isNamedReflectionAddress(ReflectionEntity reflection, String message) {
@@ -350,18 +241,25 @@ final class NpcChatTargetResolver {
                 return true;
             }
         }
-        String name = reflection.hasCustomName() && reflection.getCustomName() != null
-                ? reflection.getCustomName().getString()
+        return matchesCustomName(reflection, normalized);
+    }
+
+    private static boolean matchesCustomName(LivingEntity entity, String normalizedMessage) {
+        String name = entity.hasCustomName() && entity.getCustomName() != null
+                ? entity.getCustomName().getString()
                 : "";
         if (name.isBlank()) {
             return false;
         }
         String normalizedName = normalize(name);
-        if (normalized.contains(normalizedName)) {
+        if (normalizedName.isBlank()) {
+            return false;
+        }
+        if (normalizedMessage.contains(normalizedName)) {
             return true;
         }
         String first = normalizedName.split("\\s+")[0];
-        return first.length() >= 3 && normalized.contains(first);
+        return first.length() >= 3 && normalizedMessage.contains(first);
     }
 
     private static boolean explicitlyNamesWitch(String message) {
@@ -457,5 +355,26 @@ final class NpcChatTargetResolver {
             return "";
         }
         return text.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_ ]+", " ").replaceAll("\\s+", " ").trim();
+    }
+
+    private enum CasualRouting {
+        CLOSE_PRIVATE_THEN_LOOKING_PUBLIC,
+        LOOKING_CLOSE_CONVERSATIONAL,
+        REFLECTION
+    }
+
+    @FunctionalInterface
+    private interface NamedAddress<E extends LivingEntity> {
+        boolean matches(E entity, String message);
+    }
+
+    private record PersonaTargetRule<E extends LivingEntity>(
+            ChatPersona kind,
+            Class<E> entityClass,
+            double chatRange,
+            double verticalRange,
+            double casualRange,
+            NamedAddress<E> namedAddress,
+            CasualRouting casualRouting) {
     }
 }
