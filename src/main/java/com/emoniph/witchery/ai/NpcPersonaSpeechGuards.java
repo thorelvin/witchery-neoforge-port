@@ -45,6 +45,7 @@ final class NpcPersonaSpeechGuards {
         String normalized = normalize(speech);
         return containsAny(normalized,
                 "my friend",
+                "friend",
                 "old friend",
                 "dear friend",
                 "humble servant",
@@ -53,6 +54,9 @@ final class NpcPersonaSpeechGuards {
                 "i will always be here",
                 "friendship",
                 "potential alliance",
+                "shared past",
+                "comfort from your kind words",
+                "comfort from my words",
                 "you are welcome little one",
                 "my dear little one",
                 "your servant",

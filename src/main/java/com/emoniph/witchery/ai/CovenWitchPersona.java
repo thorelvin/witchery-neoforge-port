@@ -219,7 +219,8 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
                 "protecting those who seek", "you have not earned my protection",
                 "i see perhaps we can discuss this matter", "lilithpoet",
                 "school for learning", "court declares", "what is a shiny gift",
-                "what is a demon", "what do i fear", "you shall refer to me as witch")) {
+                "what is a demon", "what do i fear", "you shall refer to me as witch",
+                "guardian of this place")) {
             return true;
         }
         return normalized.equals("i see") || normalized.equals("it s not easy");

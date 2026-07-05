@@ -114,5 +114,11 @@ class NpcPersonaReportRegressionTest {
         assertTrue(LeonardPersona.rejectsLeonardRaw(
                 "I am the Shadowman, protector of the dark.",
                 "What should I ask a coven witch instead?"));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "There will be no more reminders of our shared past nor comfort from your kind words.",
+                "What should I call you?"));
+        assertTrue(CovenWitchPersona.rejectsCovenRaw(
+                "I am Lilith Poe, witch and guardian of this place.",
+                "Who are you?"));
     }
 }
