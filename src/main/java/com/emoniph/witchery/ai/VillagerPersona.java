@@ -160,7 +160,16 @@ public final class VillagerPersona implements NpcPersona<Villager> {
                 || normalized.contains("i ll ring the bell")
                 || normalized.contains("i will ring the bell")
                 || normalized.contains("you can hide behind me")
-                || normalized.contains("hide behind me");
+                || normalized.contains("hide behind me")
+                || NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
+                || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)
+                || normalized.contains("you see the village")
+                || normalized.contains("the wizard dev")
+                || normalized.contains("village s fate")
+                || normalized.contains("your actions echo")
+                || normalized.contains("crafting potions")
+                || normalized.contains("i have some herbs that might aid your healing");
     }
 
     static boolean rejectsVillagerRawForMessage(String speech, String playerMessage) {
@@ -311,6 +320,11 @@ public final class VillagerPersona implements NpcPersona<Villager> {
         }
         if (containsAny(message, "goodbye", "farewell", "bye", "sleep here", "sleep tonight")
                 && containsAny(answer, "hide behind me", "i ll look out for you", "i will look out for you")) {
+            return true;
+        }
+        if (containsAny(message, "protect", "safe", "trust")
+                && (NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)
+                || containsAny(answer, "i must warn them", "i would never betray"))) {
             return true;
         }
         if (containsAny(message, "ring the bell", "if i ring", "when i ring")

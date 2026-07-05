@@ -189,9 +189,19 @@ public final class HobgoblinPersona implements NpcPersona<HobgoblinEntity> {
                 "targeted fact", "npc dialogue brain", "server state")) {
             return true;
         }
+        if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
+                || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)
+                || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)) {
+            return true;
+        }
         if (containsAny(normalized, "i am a witch", "i m a witch", "coven witch",
                 "shade of leonard", "i am leonard", "baba yaga", "apothecary",
                 "villager here", "i am a villager", "good witch")) {
+            return true;
+        }
+        if (containsAny(normalized, "you can t give out that much", "since you asked so nicely",
+                "poor hobgoblin like me")) {
             return true;
         }
         if (containsAny(normalized, "my coven", "my cauldron", "i brew", "i can brew",

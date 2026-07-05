@@ -125,9 +125,18 @@ public final class DemonPersona implements NpcPersona<DemonEntity> {
                 "targeted fact", "npc dialogue brain", "server state", "in this game")) {
             return true;
         }
+        if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
+                || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)) {
+            return true;
+        }
         if (containsAny(normalized, "coven witch", "shade of leonard", "baba yaga", "apothecary",
                 "hobgoblin", "villager here", "i am a villager", "i am a flame imp", "i m a flame imp",
                 "i am a little imp", "i m a little imp", "friendly merchant", "shopkeeper", "customer")) {
+            return true;
+        }
+        if (containsAny(normalized, "only sell devil", "all i have to offer", "only hope",
+                "faithful little demon trader", "safe ride")) {
             return true;
         }
         if (containsAny(normalized, "my coven", "i can brew", "i sell fumes", "serve your coven",

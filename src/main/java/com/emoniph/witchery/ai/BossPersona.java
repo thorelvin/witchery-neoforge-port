@@ -128,14 +128,31 @@ public final class BossPersona implements NpcPersona<LivingEntity> {
                 "targeted fact", "npc dialogue brain", "server state", "in this game")) {
             return true;
         }
-        if (containsAny(normalized, "i am a witch", "i m a witch", "coven witch", "apothecary",
+        if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
+                || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)) {
+            return true;
+        }
+        if (containsAny(normalized, "i am a witch", "i m a witch", "as a witch", "as a witcher",
+                "coven witch", "apothecary",
                 "i am a villager", "i m a villager", "hobgoblin trader", "shade of leonard",
-                "i am leonard", "baba yaga", "friendly merchant", "shopkeeper", "customer")) {
+                "i am leonard", "baba yaga", "friendly merchant", "shopkeeper", "customer",
+                "guardian", "death s final guardian")) {
+            return true;
+        }
+        if (containsAny(normalized, "queen of night", "icy crystal towers", "vengeance unending",
+                "my power is infinite")) {
+            return true;
+        }
+        if (speech.length() > 12 && speech.equals(speech.toUpperCase(Locale.ROOT))) {
             return true;
         }
         if (containsAny(normalized, "my coven", "i sell fumes", "i can brew", "open trade",
-                "buy from me", "my wares", "serve your coven", "follow you", "protect you",
-                "i will help you", "how are you today", "what brings you here")) {
+                "buy from me", "my wares", "serve your coven", "seek my wisdom", "magical spells",
+                "follow you", "protect you",
+                "i will help you", "trade offers", "quests are not my specialty", "companion",
+                "road ahead will be long and dark", "the dark abyss", "child",
+                "how are you today", "what brings you here")) {
             return true;
         }
         if (containsAny(player, "fight", "beat", "kill", "weakness", "survive")

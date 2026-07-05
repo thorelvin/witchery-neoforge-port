@@ -156,9 +156,17 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
                 "model", "prompt", "json", "api", "bless arithmetic")) {
             return true;
         }
+        if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
+                || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)
+                || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)) {
+            return true;
+        }
         if (containsAny(normalized, "i am dev", "i m dev", "i have summoned me",
                 "i have summoned my shade", "you speak to him", "speaking to him",
-                "how may i serve your purpose")) {
+                "how may i serve your purpose", "shadowman", "shadowy man",
+                "protector of the dark", "can see into your mind", "hear all that passes",
+                "cannot answer such a question")) {
             return true;
         }
         if (containsAny(normalized, "prayer", "prayers", "pray", "prayed")) {
@@ -195,6 +203,9 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
             return true;
         }
         if (containsAny(normalized, "friendly merchant", "shopkeeper", "customer", "my friend")) {
+            return true;
+        }
+        if (containsAny(normalized, "please state your business", "what do you need", "please help us")) {
             return true;
         }
         if (containsAny(normalized, "do not fear me", "you have no choice", "willing to bargain when your blade is bleeding")) {

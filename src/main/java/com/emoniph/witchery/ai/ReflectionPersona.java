@@ -132,9 +132,19 @@ public final class ReflectionPersona implements NpcPersona<ReflectionEntity> {
                 "targeted fact", "npc dialogue brain", "server state", "in minecraft chat")) {
             return true;
         }
+        if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
+                || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)
+                || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)) {
+            return true;
+        }
         if (containsAny(normalized, "i am a witch", "coven witch", "shade of leonard", "i am leonard",
                 "baba yaga", "i am a villager", "apothecary", "merchant", "shopkeeper",
                 "i trade", "my wares", "coin", "customer", "friend", "my friend")) {
+            return true;
+        }
+        if (containsAny(normalized, "shared past", "offer some insight", "witness of your past",
+                "i shall refer to myself", "old friend", "my reflection")) {
             return true;
         }
         if (containsAny(normalized, "how are you today", "what brings you here", "welcome traveler",

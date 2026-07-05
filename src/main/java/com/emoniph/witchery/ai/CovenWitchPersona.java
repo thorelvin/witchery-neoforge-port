@@ -152,8 +152,12 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
     @Override
     public Optional<String> polishRaw(String rawSpeech, CovenWitchEntity entity, ServerPlayer player,
                                       String playerMessage, String memoryContext, String expectedClock) {
-        return NpcBrainResponse.polishSpeechOrGroundedFollowup(rawSpeech, displayName(entity),
+        Optional<String> polished = NpcBrainResponse.polishSpeechOrGroundedFollowup(rawSpeech, displayName(entity),
                 player.getName().getString(), playerMessage, memoryContext, expectedClock);
+        if (polished.isEmpty() || rejectsCovenRaw(polished.get(), playerMessage)) {
+            return Optional.empty();
+        }
+        return polished;
     }
 
     @Override
@@ -196,6 +200,29 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
                                                          String playerMessage, String avoidSpeech) {
         return NpcDialogueFallback.alternateForRepeatedFallback(playerMessage, player.getName().getString(),
                 avoidSpeech);
+    }
+
+    static boolean rejectsCovenRaw(String speech, String playerMessage) {
+        String normalized = normalizeSocial(speech);
+        if (normalized.isBlank()) {
+            return true;
+        }
+        if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
+                || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)
+                || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)) {
+            return true;
+        }
+        if (containsAny(normalized, "steps around dev", "circling slowly", "we ve got protection",
+                "small personal nature", "if your intent were", "what is it",
+                "protection of those", "teach and protect", "my protection yet",
+                "protecting those who seek", "you have not earned my protection",
+                "i see perhaps we can discuss this matter", "lilithpoet",
+                "school for learning", "court declares", "what is a shiny gift",
+                "what is a demon", "what do i fear", "you shall refer to me as witch")) {
+            return true;
+        }
+        return normalized.equals("i see") || normalized.equals("it s not easy");
     }
 
     private static void handlePraise(CovenWitchEntity witch, ServerPlayer player,
@@ -261,5 +288,14 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
                 .replaceAll("[^a-z0-9' ]+", " ")
                 .replaceAll("\\s+", " ")
                 .trim();
+    }
+
+    private static boolean containsAny(String text, String... needles) {
+        for (String needle : needles) {
+            if (text.contains(needle)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

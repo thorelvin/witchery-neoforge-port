@@ -125,9 +125,19 @@ public final class FlameImpPersona implements NpcPersona<FlameImpEntity> {
                 "targeted fact", "npc dialogue brain", "server state", "in this game")) {
             return true;
         }
+        if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
+                || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)) {
+            return true;
+        }
         if (containsAny(normalized, "coven witch", "shade of leonard", "baba yaga", "apothecary",
                 "hobgoblin trader", "villager here", "i am a villager", "shopkeeper",
                 "full demon", "demon merchant", "boss")) {
+            return true;
+        }
+        if (containsAny(normalized, "lord grimorius", "serve lord", "commands me to be here",
+                "guide your mind into slumber", "keep your warmth close", "ready to serve",
+                "serve and satisfy", "sole purpose is to provide")) {
             return true;
         }
         if (containsAny(normalized, "my coven", "i can brew", "i sell fumes", "open trade",

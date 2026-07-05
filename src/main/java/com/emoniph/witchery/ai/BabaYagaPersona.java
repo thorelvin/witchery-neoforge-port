@@ -123,6 +123,12 @@ public final class BabaYagaPersona implements NpcPersona<BabaYagaEntity> {
                 "game mechanic")) {
             return true;
         }
+        if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
+                || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)
+                || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)) {
+            return true;
+        }
         if (containsAny(normalized, "what brings you here", "how are you today",
                 "do you seek", "you have a question", "you ask a question",
                 "i answer honestly", "i see you have")
@@ -161,6 +167,10 @@ public final class BabaYagaPersona implements NpcPersona<BabaYagaEntity> {
         if (containsAny(normalized, "i am not baba", "i am not yaga", "not baba yaga",
                 "i am the shade", "shade of leonard", "i am leonard", "i am a villager",
                 "i am an apothecary", "i am your friend", "my friend", "dear friend")) {
+            return true;
+        }
+        if (!containsAny(player, "fear", "afraid", "dark")
+                && containsAny(normalized, "i fear the dark", "i fear the night")) {
             return true;
         }
         if (containsAny(normalized, "open trade", "trade screen", "customer", "shopkeeper",
