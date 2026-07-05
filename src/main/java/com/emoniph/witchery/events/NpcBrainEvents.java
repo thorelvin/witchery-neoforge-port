@@ -435,10 +435,13 @@ public final class NpcBrainEvents {
         String speech = kind == NpcCommandKind.STOP
                 ? "I'll stop a moment, " + player.getName().getString() + "."
                 : "I'll stay a moment, " + player.getName().getString() + ".";
-        player.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, witch, speech),
-                false);
-        NpcBrainService.INSTANCE.rememberCovenExchange(witch, player, message, speech);
-        witch.completePlayerConversation(player);
+        try {
+            player.displayClientMessage(NpcBrainService.speechComponent(NpcPersonas.COVEN_WITCH, witch, speech),
+                    false);
+            NpcBrainService.INSTANCE.rememberCovenExchange(witch, player, message, speech);
+        } finally {
+            witch.completePlayerConversation(player);
+        }
     }
 
     private static void executeHobgoblinCommand(ServerLevel level, HobgoblinEntity hobgoblin,
@@ -484,8 +487,11 @@ public final class NpcBrainEvents {
                     : "*sniffs* \"Can't guard smoke. Stand close.\"";
         };
         if (!speech.isBlank()) {
-            sayHobgoblin(level, hobgoblin, player, message, speech);
-            hobgoblin.completePlayerConversation(player);
+            try {
+                sayHobgoblin(level, hobgoblin, player, message, speech);
+            } finally {
+                hobgoblin.completePlayerConversation(player);
+            }
         }
     }
 
