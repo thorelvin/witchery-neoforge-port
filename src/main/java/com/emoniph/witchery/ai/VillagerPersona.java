@@ -283,11 +283,16 @@ public final class VillagerPersona implements NpcPersona<Villager> {
                     || containsAny(answer, "crows are weather", "gossip with wings"))) {
             return true;
         }
-        if (containsAny(message, "food stores", "hungry", "hunger", "famine")
+        if (containsAny(message, "food stores", "hungry", "hunger", "famine", "food", "dinner", "supper",
+                "meal", "stew", "cellar", "barrel", "barrels", "grain", "granary", "pantry",
+                "smokehouse", "salt", "pickles", "stored food", "winter stores")
                 && containsAny(answer, "keep the door open", "road knows no fear")) {
             return true;
         }
-        if (containsAny(message, "harvest", "crops", "field", "fields", "clear sky", "omens", "bad harvest")
+        if (containsAny(message, "harvest", "crops", "field", "fields", "clear sky", "omens",
+                "bad harvest", "food stores", "hungry", "hunger", "famine", "food", "dinner",
+                "supper", "meal", "stew", "cellar", "barrel", "barrels", "grain", "granary",
+                "pantry", "smokehouse", "salt", "pickles", "stored food", "winter stores")
                 && (containsAny(answer, "road is a witch s path", "road knows no fear",
                 "keep the bell silent", "can t go there yet", "w  ", "lead you where you don t want",
                 "moonlight turns them into wolves", "not all wolves turn", "coughs and colds",
@@ -295,7 +300,9 @@ public final class VillagerPersona implements NpcPersona<Villager> {
                 "bell jingles", "wind whistles", "rain drops")
                     || !containsAny(answer, "harvest", "crop", "crops", "field", "fields", "bread",
                     "soil", "seed", "seeds", "food", "stores", "hunger", "hungry", "mud", "roots",
-                    "crows", "milk", "omen", "omens", "fence", "fences"))) {
+                    "crows", "milk", "omen", "omens", "fence", "fences", "dinner", "supper",
+                    "meal", "stew", "cellar", "barrel", "barrels", "grain", "granary", "pantry",
+                    "smokehouse", "salt", "pickles", "winter"))) {
             return true;
         }
         if (containsAny(message, "sleep here", "sleep tonight", "stay here tonight", "safe to sleep")

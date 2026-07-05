@@ -192,6 +192,18 @@ public final class NpcBrainService {
         return requestChat(NpcPersonas.VILLAGER, villager, player, playerMessage);
     }
 
+    public boolean requestVillagerAmbient(Villager villager, ServerPlayer player, String ambientCue,
+                                          Component fallback) {
+        if (!WitcheryConfig.LLM_ENABLED.get()) {
+            return false;
+        }
+        VillagerPersona persona = NpcPersonas.VILLAGER;
+        String cue = NpcBrainResponse.sanitize(ambientCue == null ? "" : ambientCue, 180);
+        return requestPersonaResponse(persona, villager, player,
+                NpcPromptBuilder.villagerAmbient(villager, player, contextFor(persona, villager, player), cue),
+                "ambient", "[ambient] " + cue, fallback, true, false);
+    }
+
     public boolean requestVillageGuardGreeting(VillageGuardEntity guard, ServerPlayer player, Component fallback) {
         if (!WitcheryConfig.LLM_ENABLED.get()) {
             return false;
@@ -204,6 +216,18 @@ public final class NpcBrainService {
 
     public boolean requestVillageGuardChat(VillageGuardEntity guard, ServerPlayer player, String playerMessage) {
         return requestChat(NpcPersonas.VILLAGE_GUARD, guard, player, playerMessage);
+    }
+
+    public boolean requestVillageGuardAmbient(VillageGuardEntity guard, ServerPlayer player, String ambientCue,
+                                              Component fallback) {
+        if (!WitcheryConfig.LLM_ENABLED.get()) {
+            return false;
+        }
+        VillageGuardPersona persona = NpcPersonas.VILLAGE_GUARD;
+        String cue = NpcBrainResponse.sanitize(ambientCue == null ? "" : ambientCue, 180);
+        return requestPersonaResponse(persona, guard, player,
+                NpcPromptBuilder.villageGuardAmbient(guard, player, contextFor(persona, guard, player), cue),
+                "ambient", "[ambient] " + cue, fallback, true, false);
     }
 
     public boolean requestHobgoblinGreeting(HobgoblinEntity hobgoblin, ServerPlayer player, Component fallback) {

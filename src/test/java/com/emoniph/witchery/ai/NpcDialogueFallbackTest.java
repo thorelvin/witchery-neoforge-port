@@ -1442,6 +1442,22 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
+    void villagerFallbackAnswersDinnerAndFoodStores() {
+        String info = "nearby villagers 8; iron golems 1; village guards 2; beds 10; doors 7; walls/fences 42; raid none; threats: vampires 0, werewolves 0, witches 0, raiders 0";
+
+        Optional<String> dinner = NpcDialogueFallback.villagerChat(
+                "What is for supper, and are the stores holding?", "Marta", "Dev", "farmer", info, "");
+        Optional<String> cellar = NpcDialogueFallback.villagerChat(
+                "How are the grain barrels and cellar?", "Marta", "Dev", "butcher", info, "");
+
+        assertTrue(dinner.isPresent());
+        assertTrue(dinner.get().contains("Supper") || dinner.get().contains("bowls"), dinner.get());
+        assertTrue(cellar.isPresent());
+        assertTrue(cellar.get().contains("grain") || cellar.get().contains("barrels")
+                || cellar.get().contains("salted"), cellar.get());
+    }
+
+    @Test
     void villagerFallbackUsesRouterContext() {
         String info = "nearby villagers 4; iron golems 0; village guards 0; beds 3; doors 2; walls/fences 0; raid none; threats: vampires 0, werewolves 0, witches 0, raiders 0";
         String context = "Message routing: route=lore; topic=village; player tone=fear; reply strategy=answer current village safety.";

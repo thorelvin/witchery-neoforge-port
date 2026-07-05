@@ -32,6 +32,8 @@ transformations_practical.md
 infusions_powers.md
 trade_social.md
 ambient_witch_awareness.md
+ambient_villager_awareness.md
+ambient_village_guard_awareness.md
 tools_altar.md
 special_tools_compasses.md
 herbology_mutations.md

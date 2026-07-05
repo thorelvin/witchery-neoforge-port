@@ -70,11 +70,11 @@ final class NpcVillagerFallback {
         if (containsAny(normalized, "live in this village", "do you live here", "live here")) {
             return Optional.of("I live here, trade here, and worry here. That is village life in three knots.");
         }
-        if (asksVillagerWeather(normalized)) {
-            return Optional.of(villagerWeatherAnswer(normalized, name));
-        }
         if (asksVillagerHarvest(normalized)) {
             return Optional.of(villagerHarvestAnswer(normalized, name, job));
+        }
+        if (asksVillagerWeather(normalized)) {
+            return Optional.of(villagerWeatherAnswer(normalized, name));
         }
         if (containsAny(normalized, "what do you do", "your job", "profession", "work here", "who are you")) {
             return Optional.of(villagerJobAnswer(job));

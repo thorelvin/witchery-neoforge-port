@@ -5,11 +5,18 @@ import com.emoniph.witchery.ai.NpcPersonas;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntityTags;
+import com.mojang.serialization.Dynamic;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -27,10 +34,15 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.monster.Witch;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.villager.VillagerData;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
+import net.minecraft.world.entity.npc.villager.VillagerType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
@@ -49,6 +61,8 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
     private static final int MAX_BLOOD = 500;
     private static final int LOW_BLOOD = 250;
     private static final int MESMERISE_SLOWNESS_AMPLIFIER = 4;
+    private static final String ORIGIN_PERSISTENT_DATA_TAG = "witchery_origin_villager_persistent_data";
+    private static final String ORIGIN_OFFERS_TAG = "witchery_origin_villager_offers";
 
     // ── Quote pools ───────────────────────────────────────────────────────────
 
@@ -110,6 +124,13 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
 
     @Nullable private LivingEntity prevTarget;
     private int shoutCooldown = 0;
+    private boolean playerAppointedGuard = false;
+    private String originVillagerType = "";
+    private String originVillagerProfession = "";
+    private int originVillagerLevel = VillagerData.MIN_VILLAGER_LEVEL;
+    private int originVillagerXp = 0;
+    private String originVillagerName = "";
+    private boolean originVillagerNameVisible = false;
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
@@ -157,6 +178,54 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
     public void setGuardType(int type) { entityData.set(GUARD_TYPE, Math.floorMod(type, 2)); }
     public int getBlood() { return entityData.get(BLOOD_LEVEL); }
     public void setBlood(int blood) { entityData.set(BLOOD_LEVEL, Math.clamp(blood, 0, MAX_BLOOD)); }
+
+    public boolean hasVillagerOrigin() {
+        return playerAppointedGuard && !originVillagerProfession.isBlank();
+    }
+
+    public void captureVillagerOrigin(Villager villager) {
+        if (villager == null) {
+            return;
+        }
+        playerAppointedGuard = true;
+        originVillagerType = villager.getVillagerData().type().unwrapKey()
+                .map(key -> key.identifier().toString())
+                .orElse("");
+        originVillagerProfession = villager.getVillagerData().profession().unwrapKey()
+                .map(key -> key.identifier().toString())
+                .orElse("");
+        originVillagerLevel = clampVillagerLevel(villager.getVillagerData().level());
+        originVillagerXp = Math.max(0, villager.getVillagerXp());
+        Component customName = villager.getCustomName();
+        originVillagerName = customName == null ? "" : customName.getString();
+        originVillagerNameVisible = villager.isCustomNameVisible();
+        copyPersistentData(villager.getPersistentData(), getPersistentData(), ORIGIN_PERSISTENT_DATA_TAG);
+        saveOriginOffers(villager.getOffers());
+    }
+
+    public void restoreVillagerOrigin(Villager villager) {
+        if (villager == null || !hasVillagerOrigin()) {
+            return;
+        }
+        VillagerData data = villager.getVillagerData();
+        ResourceKey<VillagerType> typeKey = villagerTypeKey(originVillagerType);
+        if (typeKey != null) {
+            data = data.withType(villager.level().registryAccess(), typeKey);
+        }
+        ResourceKey<VillagerProfession> professionKey = villagerProfessionKey(originVillagerProfession);
+        if (professionKey != null) {
+            data = data.withProfession(villager.level().registryAccess(), professionKey);
+        }
+        data = data.withLevel(clampVillagerLevel(originVillagerLevel));
+        villager.setVillagerData(data);
+        villager.setVillagerXp(Math.max(0, originVillagerXp));
+        if (!originVillagerName.isBlank()) {
+            villager.setCustomName(Component.literal(originVillagerName));
+            villager.setCustomNameVisible(originVillagerNameVisible);
+        }
+        restorePersistentData(villager.getPersistentData());
+        restoreOriginOffers(villager);
+    }
 
     public int takeBlood(int quantity, LivingEntity attacker) {
         MobEffectInstance slowness = getEffect(MobEffects.SLOWNESS);
@@ -313,6 +382,87 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
         return pool[random.nextInt(pool.length)];
     }
 
+    private void saveOriginOffers(MerchantOffers offers) {
+        getPersistentData().remove(ORIGIN_OFFERS_TAG);
+        if (offers == null || offers.isEmpty()) {
+            return;
+        }
+        MerchantOffers.CODEC.encodeStart(NbtOps.INSTANCE, offers)
+                .result()
+                .ifPresent(tag -> getPersistentData().put(ORIGIN_OFFERS_TAG, tag));
+    }
+
+    private void restoreOriginOffers(Villager villager) {
+        if (!getPersistentData().contains(ORIGIN_OFFERS_TAG)) {
+            return;
+        }
+        Tag stored = getPersistentData().get(ORIGIN_OFFERS_TAG);
+        if (stored == null) {
+            return;
+        }
+        MerchantOffers.CODEC.parse(new Dynamic<>(NbtOps.INSTANCE, stored))
+                .result()
+                .ifPresent(villager::setOffers);
+    }
+
+    private static void copyPersistentData(CompoundTag source, CompoundTag target, String targetKey) {
+        target.remove(targetKey);
+        if (source == null || source.isEmpty()) {
+            return;
+        }
+        CompoundTag copy = new CompoundTag();
+        for (String key : source.keySet()) {
+            Tag value = source.get(key);
+            if (value != null) {
+                copy.put(key, value.copy());
+            }
+        }
+        if (!copy.isEmpty()) {
+            target.put(targetKey, copy);
+        }
+    }
+
+    private void restorePersistentData(CompoundTag target) {
+        if (target == null || !getPersistentData().contains(ORIGIN_PERSISTENT_DATA_TAG)) {
+            return;
+        }
+        CompoundTag stored = getPersistentData().getCompoundOrEmpty(ORIGIN_PERSISTENT_DATA_TAG);
+        for (String key : stored.keySet()) {
+            Tag value = stored.get(key);
+            if (value != null) {
+                target.put(key, value.copy());
+            }
+        }
+    }
+
+    @Nullable
+    private static ResourceKey<VillagerType> villagerTypeKey(String id) {
+        Identifier identifier = parseIdentifier(id);
+        return identifier == null ? null : ResourceKey.create(Registries.VILLAGER_TYPE, identifier);
+    }
+
+    @Nullable
+    private static ResourceKey<VillagerProfession> villagerProfessionKey(String id) {
+        Identifier identifier = parseIdentifier(id);
+        return identifier == null ? null : ResourceKey.create(Registries.VILLAGER_PROFESSION, identifier);
+    }
+
+    @Nullable
+    private static Identifier parseIdentifier(String id) {
+        if (id == null || id.isBlank()) {
+            return null;
+        }
+        try {
+            return Identifier.parse(id);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
+    }
+
+    private static int clampVillagerLevel(int level) {
+        return Math.max(VillagerData.MIN_VILLAGER_LEVEL, Math.min(VillagerData.MAX_VILLAGER_LEVEL, level));
+    }
+
     // ── Greet on right-click ──────────────────────────────────────────────────
 
     @Override
@@ -368,6 +518,15 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
         super.addAdditionalSaveData(tag);
         tag.putInt("GuardType", getGuardType());
         tag.putInt("BloodLevel", getBlood());
+        tag.putBoolean("PlayerAppointedGuard", playerAppointedGuard);
+        if (playerAppointedGuard) {
+            tag.putString("OriginVillagerType", originVillagerType);
+            tag.putString("OriginVillagerProfession", originVillagerProfession);
+            tag.putInt("OriginVillagerLevel", originVillagerLevel);
+            tag.putInt("OriginVillagerXp", originVillagerXp);
+            tag.putString("OriginVillagerName", originVillagerName);
+            tag.putBoolean("OriginVillagerNameVisible", originVillagerNameVisible);
+        }
     }
 
     @Override
@@ -375,5 +534,12 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
         super.readAdditionalSaveData(tag);
         setGuardType(tag.getIntOr("GuardType", 0));
         setBlood(tag.getIntOr("BloodLevel", MAX_BLOOD));
+        playerAppointedGuard = tag.getBooleanOr("PlayerAppointedGuard", false);
+        originVillagerType = tag.getStringOr("OriginVillagerType", "");
+        originVillagerProfession = tag.getStringOr("OriginVillagerProfession", "");
+        originVillagerLevel = clampVillagerLevel(tag.getIntOr("OriginVillagerLevel", VillagerData.MIN_VILLAGER_LEVEL));
+        originVillagerXp = Math.max(0, tag.getIntOr("OriginVillagerXp", 0));
+        originVillagerName = tag.getStringOr("OriginVillagerName", "");
+        originVillagerNameVisible = tag.getBooleanOr("OriginVillagerNameVisible", false);
     }
 }

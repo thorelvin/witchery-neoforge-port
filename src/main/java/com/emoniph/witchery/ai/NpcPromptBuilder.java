@@ -266,6 +266,15 @@ public final class NpcPromptBuilder {
                 "answer the player naturally in one short in-character line");
     }
 
+    public static NpcBrainPrompt villagerAmbient(Villager villager, ServerPlayer player, String memory,
+                                                 String ambientCue) {
+        String cue = ambientCue == null || ambientCue.isBlank() ? "the player is nearby" : ambientCue;
+        return villager(villager, player, memory,
+                "the player is nearby; server observed this villager-world cue: " + cue,
+                "ambient " + cue,
+                "react once to the observed village cue in one short in-character line");
+    }
+
     static NpcBrainPrompt villagerSmoke(String playerMessage, String memory) {
         return villagerPrompt(
                 "Apothecary",
@@ -287,6 +296,29 @@ public final class NpcPromptBuilder {
                 "answer the player naturally in one short in-character line");
     }
 
+    static NpcBrainPrompt villagerAmbientSmoke(String ambientCue, String memory) {
+        String cue = ambientCue == null || ambientCue.isBlank() ? "the player is nearby" : ambientCue;
+        String playerMessage = "ambient " + cue;
+        return villagerPrompt(
+                "Apothecary",
+                "Dev",
+                "apothecary",
+                "minecraft:overworld",
+                "Plains",
+                "dusk",
+                "18:10",
+                4L,
+                "clear",
+                "nearby villagers 8; iron golems 1; village guards 2; beds 10; doors 7; walls/fences 42; raid none; threats: vampires 1, werewolves 0, witches 1, raiders 0",
+                villagerJobCard("apothecary"),
+                NpcKnowledgeBase.relevantContext(playerMessage, "Plains", "dusk",
+                        NpcCardRequest.persona("villager")),
+                memory,
+                playerMessage,
+                "the player is nearby; server observed this villager-world cue: " + cue,
+                "react once to the observed village cue in one short in-character line");
+    }
+
     public static NpcBrainPrompt villageGuardGreeting(VillageGuardEntity guard, ServerPlayer player, String memory) {
         return villageGuard(guard, player, memory,
                 "the player right-clicked the village guard while the guard is not fighting",
@@ -300,6 +332,15 @@ public final class NpcPromptBuilder {
                 "the player spoke near the village guard in chat",
                 playerMessage,
                 "answer the player naturally in one short in-character line");
+    }
+
+    public static NpcBrainPrompt villageGuardAmbient(VillageGuardEntity guard, ServerPlayer player, String memory,
+                                                     String ambientCue) {
+        String cue = ambientCue == null || ambientCue.isBlank() ? "the player is nearby" : ambientCue;
+        return villageGuard(guard, player, memory,
+                "the player is nearby; server observed this guard-world cue: " + cue,
+                "ambient " + cue,
+                "react once to the observed guard cue in one short in-character line");
     }
 
     static NpcBrainPrompt villageGuardSmoke(String playerMessage, String memory) {
@@ -320,6 +361,28 @@ public final class NpcPromptBuilder {
                 playerMessage,
                 "the player spoke near the village guard in chat",
                 "answer the player naturally in one short in-character line");
+    }
+
+    static NpcBrainPrompt villageGuardAmbientSmoke(String ambientCue, String memory) {
+        String cue = ambientCue == null || ambientCue.isBlank() ? "the player is nearby" : ambientCue;
+        String playerMessage = "ambient " + cue;
+        return villageGuardPrompt(
+                "Village Guard",
+                "Dev",
+                "minecraft:overworld",
+                "Plains",
+                "dusk",
+                "18:30",
+                4L,
+                "clear",
+                "health 25/25; no target; blood 500; guard type 1; main hand Bow; archer patrol, sword inside 3.5 blocks",
+                "nearby villagers 8; iron golems 1; village guards 2; beds 10; doors 7; walls/fences 42; raid none; threats: vampires 1, werewolves 0, witches 1, raiders 0",
+                NpcKnowledgeBase.relevantContext(playerMessage, "Plains", "dusk",
+                        NpcCardRequest.persona("village_guard")),
+                memory,
+                playerMessage,
+                "the player is nearby; server observed this guard-world cue: " + cue,
+                "react once to the observed guard cue in one short in-character line");
     }
 
     public static NpcBrainPrompt hobgoblinGreeting(HobgoblinEntity hobgoblin, ServerPlayer player, String memory) {
@@ -1436,6 +1499,9 @@ public final class NpcPromptBuilder {
                 Villagers can fear witches, respect them, be curious, or owe them a debt without understanding their craft.
                 Villagers think demons are worse than witches: fire, bargains, pride, and debts with teeth. They shut doors, ring bells, fetch guards or witches, and do not bargain.
                 Villagers talk about weather and harvest because bread, mud, roofs, animals, roads, and winter stores matter.
+                Villagers also talk about dinner, supper, gossip, barrels, cellars, smokehouses, grain, salt, stew, pickles, and who has enough food put away.
+                Villagers may soften around cats and pet dogs when the server cue says one is nearby; keep it simple, fond, and village-grounded.
+                When the situation says server observed a cue, react to it as a world observation; do not say the player spoke the ambient cue.
 
                 Speech shape:
                 one complete in-world line; two short sentences only if needed.
@@ -1494,7 +1560,10 @@ public final class NpcPromptBuilder {
                 If asked whether witches are good or bad, say both kinds exist and give village signs, not moral certainty.
                 If asked what villagers think of demons, answer with fear, doors, bells, guards, and respect for witches who can bind them; do not describe demon mechanics like an expert.
                 If asked about weather, answer from Scene weather and local chores; do not promise magic weather control.
-                If asked about harvest, crops, food, bread, soil, or fields, answer as a practical villager worried about stores and labor.
+                If asked about harvest, crops, food, bread, soil, dinner, supper, cellars, barrels, grain, meat, salt, smokehouses, or fields, answer as a practical villager worried about stores and labor.
+                If the situation says server observed a nearby cue, react to that cue as something happening in the world; do not say the player spoke it.
+                If the cue is a cat or pet dog, a fond plain line is enough; do not invent ownership, danger, or magic.
+                If the cue is a workstation, talk like someone working while thinking about food, gossip, and chores; do not claim exact stock unless supplied facts name it.
                 If asked what the player remembered or feared, answer from Memory; do not answer with job or trade.
                 If asked about hair, brush, taglocks, or names, warn the player to keep them close; do not offer to cut hair or handle it.
                 If asked about bells, omens, or roads, give advice or local belief; do not narrate the bell ringing or the scene changing.
@@ -1548,6 +1617,8 @@ public final class NpcPromptBuilder {
                 Guards are bow-first and switch to blades when trouble closes; mention that only when relevant.
                 Guards protect the village, not the player's private adventures. Do not promise to follow, serve, escort, or protect the player personally.
                 Guards are not merchants. They do not trade, sell stock, or open wares.
+                Guards may mention village life only through duty: supper means people indoors, food stores mean fewer fights, pets mean morale, and golems mean heavy backup.
+                When the situation says server observed a cue, react to it as a world observation; do not say the player spoke the ambient cue.
 
                 Speech shape:
                 one complete in-world line; two short sentences only if needed.
@@ -1608,6 +1679,8 @@ public final class NpcPromptBuilder {
                 If asked about witch hunters, distinguish them from village guards.
                 If asked to trade, follow, escort, or privately protect the player, refuse in-world and point back to duty.
                 If asked what happens when bells ring, describe ordinary village response; do not narrate the bell ringing now.
+                If the situation says server observed a nearby cue, react to that cue as something happening in the world; do not say the player spoke it.
+                If the cue is a vampire, werewolf, transformed player, raid, golem, cat, pet dog, dinner, or food stores, answer from guard duty and public order.
                 If facts are thin, answer honestly in-world and keep it short.
                 If naming the player, use the player's name. Only use the guard's name if the guard introduces themself.
                 Do not include angle brackets or speaker names.
@@ -2580,9 +2653,9 @@ public final class NpcPromptBuilder {
         String normalized = normalizeProfession(profession);
         return switch (normalized) {
             case "apothecary" ->
-                    "Apothecary card: knows herbs, jars, simple remedies, and secondhand witchcraft names. Not a coven witch; do not claim to brew witchcraft, sell fumes, craft Mutandis, make Whiff of Magic, or teach circle secrets unless live trade state names it.";
+                    "Apothecary card: knows herbs, jars, simple remedies, dinner gossip, pantry smells, and secondhand witchcraft names. Not a coven witch; do not claim to brew witchcraft, sell fumes, craft Mutandis, make Whiff of Magic, or teach circle secrets unless live trade state names it.";
             case "farmer" ->
-                    "Farmer card: knows crops, compost, bread, weather, field rumors, crows on fences, bad milk omens, and whether the village has enough food before nightfall.";
+                    "Farmer card: knows crops, compost, bread, weather, field rumors, grain stores, dinner worries, crows on fences, bad milk omens, and whether the village has enough food before nightfall.";
             case "cleric" ->
                     "Cleric card: worries about undead, curses, vampires, bells, grave dirt, threshold prayers, and whether villagers are safe after sunset.";
             case "librarian" ->
@@ -2604,13 +2677,13 @@ public final class NpcPromptBuilder {
             case "shepherd" ->
                     "Shepherd card: knows wool, dyes, flocks, fields, fences, lost animals, bad bleating, and night sounds beyond the pasture.";
             case "butcher" ->
-                    "Butcher card: knows food stores, animals, hungry mobs, smokehouses, blood omens, and the practical fear of feeding everyone.";
+                    "Butcher card: knows food stores, dinner meat, animals, hungry mobs, smokehouses, salt, barrels, blood omens, and the practical fear of feeding everyone.";
             case "leatherworker" ->
-                    "Leatherworker card: knows hides, cauldrons, straps, travel gear, boot-luck, and practical work; in Witchery villages this may shade toward apothecary gossip.";
+                    "Leatherworker card: knows hides, cauldrons, straps, travel gear, boot-luck, soaked aprons, dinner gossip, and practical work; in Witchery villages this may shade toward apothecary gossip.";
             case "nitwit" ->
                     "Nitwit card: notices gossip, odd behavior, noises, bad luck, and village mood, but does not explain expert mechanics.";
             case "unemployed" ->
-                    "Unemployed card: knows who is hiring, which workstations are missing, village gossip, and where people hide when bells ring.";
+                    "Unemployed card: knows who is hiring, which workstations are missing, village gossip, dinner talk, food stores, and where people hide when bells ring.";
             default ->
                     "Villager card: answer as a cautious peasant local, colored by job, village safety, gossip, folklore, and what can be seen nearby.";
         };
@@ -2977,6 +3050,10 @@ public final class NpcPromptBuilder {
         return containsAnyRepairCue(normalized,
                 "ambient chest", "ambient stealing", "ambient sneaking", "ambient jumping",
                 "ambient hopping", "ambient primer", "ambient invisible", "ambient unseen",
+                "ambient cute cat", "ambient tamed wolf", "ambient pet dog", "ambient dog",
+                "ambient iron golem", "ambient food stores",
+                "ambient dinner", "ambient supper", "ambient workstation", "ambient vampire",
+                "ambient werewolf", "ambient transformed player", "ambient guard patrol",
                 "looking into the witch chest", "reading the witches primer", "reading the witch primer",
                 "sneaking into the witch chest", "darkness curse");
     }

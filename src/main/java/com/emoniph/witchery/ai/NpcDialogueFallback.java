@@ -415,11 +415,11 @@ final class NpcDialogueFallback {
                 return Optional.of("From here I know this much: " + villageFactSummary(villageInfo)
                         + ". The bell knows the rest.");
             }
-            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "villager_weather") || asksVillagerWeather(normalized)) {
-                return Optional.of(villagerWeatherAnswer(normalized, playerName));
-            }
             if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "villager_harvest") || asksVillagerHarvest(normalized)) {
                 return Optional.of(villagerHarvestAnswer(normalized, playerName, profession));
+            }
+            if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "villager_weather") || asksVillagerWeather(normalized)) {
+                return Optional.of(villagerWeatherAnswer(normalized, playerName));
             }
             if (NpcMessageAnalysis.routingMatchesTopic(memoryContext, "villager_witch_morality") || asksGoodBadWitches(normalized)) {
                 return Optional.of("Good witches mend and trade fair; bad ones hide taglocks and threats. I watch deeds, not hats.");
@@ -607,7 +607,10 @@ final class NpcDialogueFallback {
 
     static boolean asksVillagerHarvest(String normalized) {
         return containsAny(normalized, "harvest", "crops", "crop", "field", "fields", "planting",
-                "wheat", "bread", "food stores", "hungry", "hunger", "famine", "soil", "seed", "seeds");
+                "wheat", "bread", "food stores", "hungry", "hunger", "famine", "soil", "seed", "seeds",
+                "food", "dinner", "supper", "meal", "meals", "stew", "cellar", "barrel", "barrels",
+                "grain", "granary", "pantry", "smokehouse", "salt", "pickles", "stored food",
+                "stores", "winter stores");
     }
 
     static String villagerWeatherAnswer(String normalized, String playerName) {
@@ -627,7 +630,14 @@ final class NpcDialogueFallback {
     }
 
     static String villagerHarvestAnswer(String normalized, String playerName, String profession) {
-        if (containsAny(normalized, "famine", "hungry", "hunger", "food stores")) {
+        if (containsAny(normalized, "dinner", "supper", "meal", "meals", "stew")) {
+            return "Supper keeps gossip friendly. Empty bowls make every shadow sound hungry.";
+        }
+        if (containsAny(normalized, "cellar", "barrel", "barrels", "grain", "granary", "pantry",
+                "smokehouse", "salt", "pickles", "stored food", "stores", "winter stores")) {
+            return "Dry grain, salted meat, full barrels: that is how villages outlast bad roads and worse moons.";
+        }
+        if (containsAny(normalized, "famine", "hungry", "hunger", "food stores", "food")) {
             return "Hungry villages grow sharp tongues. Count bread first, then count monsters.";
         }
         if (containsAny(normalized, "rain", "mud", "soil")) {
@@ -746,11 +756,13 @@ final class NpcDialogueFallback {
     }
 
     private static String villagerAtmosphereAnswer(String normalized, String playerName, String profession) {
+        if (containsAny(normalized, "harvest", "field", "fields", "crop", "crops", "bread", "hungry",
+                "hunger", "food", "food stores", "dinner", "supper", "stew", "cellar", "barrel",
+                "barrels", "grain", "pantry", "smokehouse", "salt", "stores")) {
+            return villagerHarvestAnswer(normalized, playerName, profession);
+        }
         if (containsAny(normalized, "rain", "weather", "storm", "mud", "boots", "road")) {
             return villagerWeatherAnswer(normalized, playerName);
-        }
-        if (containsAny(normalized, "harvest", "field", "fields", "crop", "crops", "bread", "hungry", "hunger")) {
-            return villagerHarvestAnswer(normalized, playerName, profession);
         }
         if (containsAny(normalized, "demon", "demons")) {
             return "Demons mean doors shut, bells loud, and no bargains. Let witches handle binding.";

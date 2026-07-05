@@ -564,6 +564,31 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void villagerAmbientPromptIncludesVillageLifeAndPetCards() {
+        NpcBrainPrompt dinner = NpcPromptBuilder.villagerAmbientSmoke(
+                "talking about dinner, gossip, and food stores before nightfall", "");
+        String dinnerUser = dinner.userPrompt().toLowerCase();
+        String dinnerPrompt = (dinner.systemPrompt() + "\n" + dinner.userPrompt()).toLowerCase();
+
+        assertTrue(dinnerUser.contains("server observed"), dinner.userPrompt());
+        assertTrue(dinnerUser.contains("dinner") || dinnerUser.contains("supper"), dinner.userPrompt());
+        assertTrue(dinnerUser.contains("barrels") || dinnerUser.contains("grain"), dinner.userPrompt());
+        assertTrue(dinnerPrompt.contains("do not say the player spoke the ambient cue"), dinnerPrompt);
+
+        NpcBrainPrompt cat = NpcPromptBuilder.villagerAmbientSmoke("cute cat near the villager", "");
+        String catUser = cat.userPrompt().toLowerCase();
+
+        assertTrue(catUser.contains("cute kitty") || catUser.contains("cat"), cat.userPrompt());
+        assertTrue(catUser.contains("do not invent ownership") || catUser.contains("fond"), cat.userPrompt());
+
+        NpcBrainPrompt dog = NpcPromptBuilder.villagerAmbientSmoke("pet dog near the villager", "");
+        String dogUser = dog.userPrompt().toLowerCase();
+
+        assertTrue(dogUser.contains("pet dog") || dogUser.contains("good dog"), dog.userPrompt());
+        assertTrue(!dogUser.contains("fine wolf"), dog.userPrompt());
+    }
+
+    @Test
     void villageGuardSmokePromptUsesGuardVoiceAndVillageFacts() {
         NpcBrainPrompt prompt = NpcPromptBuilder.villageGuardSmoke(
                 "Village guard, any vampires near the gate?", "");
@@ -581,6 +606,20 @@ class NpcPromptBuilderTest {
         assertTrue(user.contains("vampires 1"), prompt.userPrompt());
         assertTrue(user.contains("targeted fact"), prompt.userPrompt());
         assertTrue(user.contains("transformed") || user.contains("village threats"), prompt.userPrompt());
+    }
+
+    @Test
+    void villageGuardAmbientPromptIncludesObservedThreatCards() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.villageGuardAmbientSmoke(
+                "transformed player looks like a vampire near the village", "");
+        String user = prompt.userPrompt().toLowerCase();
+        String combined = (prompt.systemPrompt() + "\n" + prompt.userPrompt()).toLowerCase();
+
+        assertTrue(user.contains("server observed"), prompt.userPrompt());
+        assertTrue(user.contains("vampire-looking") || user.contains("vampire"), prompt.userPrompt());
+        assertTrue(user.contains("public defense") || combined.contains("public defense")
+                || combined.contains("guard duty"), combined);
+        assertTrue(combined.contains("do not say the player spoke the ambient cue"), combined);
     }
 
     @Test

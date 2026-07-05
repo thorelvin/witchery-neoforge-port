@@ -153,7 +153,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <p class="subtitle">A Complete Guide to the Craft of Witchery Rewoven</p>
   <p class="divider">· · · ✦ · · ·</p>
   <p class="edition">Witchery Rewoven — NeoForge 1.21.11 Edition</p>
-  <p class="version">Version 13 — Twelfth Edition — NPC voices, goblin labor, and guarded workings</p>
+  <p class="version">Version 14 — Thirteenth Edition — Village voices, boss bargains, and watchful roads</p>
 </div>
 
 <div class="callout callout-tip" style="margin-bottom:2.5rem;">
@@ -168,13 +168,13 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <li>The Witch's Cauldron has answered its last withholdings: creeping <strong>liquid</strong> brews and drifting <strong>gas</strong>, the brew bucket, casting straight from the pot over <a href="#ch9b">Tongue of Dog</a> with optional <strong>Bound Waystone</strong> targeting, the <strong>Gas Mask</strong> that turns aside foul fumes, and the <strong>Brew of Disease</strong> with the Purified-Milk cure that lifts it.</li>
   <li>A new and uncanny companion: the <strong><a href="#ch7">Creaking familiar</a></strong> of the pale groves, bound by the Rite of the Creakening — still and watchful, moving only when no eye is on it.</li>
   <li>The <a href="#ch23">Crystal Ball</a> truly scries now: hold a Taglock Kit, a Bound Waystone, or a <strong>Blooded Waystone</strong> and the ball bears your sight out for a sustained minute — a real vision that follows a soul or hovers above a waystone's place, spending altar power as it holds. Dropped bound and Blooded Waystones also <a href="#ch18">transpose</a> the living and loose things near them out of an Otherwhere circle.</li>
-  <li>Some old mouths have learned to answer back. If local NPC voices are enabled, witches, villagers, hobgoblins, Leonard, Baba Yaga, demons, imps, and stranger reflections may answer nearby speech in their own manner. Their words may guide, warn, gossip, or mock, but the real bargains are still trades, rites, items, and server rules.</li>
+  <li>Some old mouths have learned to answer back. If local NPC voices are enabled, witches, villagers, village guards, hobgoblins, Leonard, Baba Yaga, Death and other bosses, demons, imps, and stranger reflections may answer nearby speech in their own manner. Their words may guide, warn, gossip, or mock, but the real bargains are still trades, rites, items, and server rules.</li>
   <li>The earlier printing's additions remain: the <a href="#ch13">spectral coven</a> raised from five remembered tales; the early chapters reordered so the <a href="#ch1">Oven</a> precedes <a href="#ch2">Seeds and Mutandis</a>; the truer <a href="#ch23">Crystal Ball</a> prophecies; the <a href="#ch31">Hellhound and Mindrake</a>; the <a href="#ch12b">Morsmordre</a> glyph; the <a href="#ch34">Specialist Gear</a> chapter; <a href="#ch35">Worldgen &amp; Structures</a>; and the fuller <a href="#appD">Item ID</a> and <a href="#appF">reference-book</a> tables.</li>
 </ul>
 </div>
 
 <div class="callout callout-tip" style="margin-bottom:2.5rem;">
-<strong>Speaking with the folk of Witchery</strong> — on worlds with local NPC voices enabled, nearby speech may be answered by the creature you are looking at or addressing. This is a voice layer, not a loophole: a witch cannot chat an item into your pocket, Leonard cannot be flattered into service, and a villager does not suddenly know circle craft. Ask plainly, listen for clues, then use the real machines, trades, rites, and commands the world provides.
+<strong>Speaking with the folk of Witchery</strong> — on worlds with local NPC voices enabled, nearby speech may be answered by the creature you are looking at or addressing. This is a voice layer, not a loophole: a witch cannot chat an item into your pocket, Leonard cannot be flattered into service, and a villager does not suddenly know circle craft. Villagers, village guards, and witches may also notice the world around them: vampires and werewolves draw fear or warning, iron golems earn civic pride, workstations and supper stores invite homely gossip, and cats or pet dogs may win a fond stare and a small kindness. Ask plainly, listen for clues, then use the real machines, trades, rites, and commands the world provides.
 </div>
 
 <!-- TABLE OF CONTENTS -->
@@ -2116,7 +2116,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Vampire <code>vampire</code></td><td>Moderate</td><td>Hostile</td><td>Hostile vampire mob. Weak to silver and sunlight. See <a href="#ch16">Ch 16</a>.</td></tr>
   <tr><td>Wolfman <code>wolfman</code></td><td>High</td><td>Hostile</td><td>The bestial werewolf form as a standalone creature. Weak to silver.</td></tr>
   <tr><td>Were Villager <code>were_villager</code></td><td>Moderate</td><td>Hostile at night</td><td>A villager that turns under the moon; renders on the vanilla villager body.</td></tr>
-  <tr><td>Village Guard <code>village_guard</code></td><td>Moderate</td><td>Defensive</td><td>Patrols Witchery <a href="#village-walls">village walls</a> and gatehouse perches. Absent from abandoned villages.</td></tr>
+  <tr><td>Village Guard <code>village_guard</code></td><td>Moderate</td><td>Defensive</td><td>Patrols Witchery <a href="#village-walls">village walls</a> and gatehouse perches. Absent from abandoned villages. Adult villagers may be appointed to the watch with a Bell, then dismissed again if they were player-appointed.</td></tr>
   <tr><td>Parasytic Louse <code>parasytic_louse</code></td><td>Very low</td><td>Hostile</td><td>A tiny pest; its essence powers the <a href="#biting-belt">Biting Belt</a>.</td></tr>
   <tr><td>Egassy <code>egassy</code></td><td>Low</td><td>Passive (flavor)</td><td>A wandering oddball who shouts at passers-by and, when slain, scatters basic Witchery herbs.</td></tr>
 </table>
@@ -2157,7 +2157,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 
 <div class="callout callout-tip">Broad effects usually skip protected blocks. Destructive core effects may fail instead. Server config decides the exact temper, but the rule is simple: another witch's claimed ground should not become sand, vines, ice, or ash just because your bottle was clever.</div>
 
-<p>NPC commands are guarded too. Recruited witches and working hobgoblins should answer their owner or an authorized player, not every passing voice with a shovel and a poor idea.</p>
+<p>NPC commands are guarded too. Recruited witches and working hobgoblins should answer their owner or an authorized player, not every passing voice with a shovel and a poor idea. Village-guard appointment is likewise a real interaction, not a chat trick: sneak-use a Bell on an adult villager to appoint a guard, or on a player-appointed guard to return them to village life when the roads are calm.</p>
 
 <h3>The Attacker's Toolkit</h3>
 
@@ -2346,7 +2346,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 
 <h4 id="village-walls">Walls, Gatehouses, and Guards</h4>
 <p>A village that has lived near the craft long enough learns to wall itself. Stone rises around the streets, following the lie of the land as faithfully as a hem follows a hip — sinking to meet the water, grading itself a gentle approach up to a hilltop gate, shouldering aside whatever trees stood in the line. Where the roads run out to meet it the wall opens into a gatehouse, and over each opening sits a guarded perch; on a living village, a pair of lanterns hangs from the outer faces to light the way home.</p>
-<p>Those walls are walked by <strong>Village Guards</strong>, spaced along the rampart and standing watch at the gates. But take note of one thing, pupil: a village given over to the dead — the green, shuffling kind — is a village past saving. Its walls and gatehouses still stand, but no guard patrols them and no lantern burns. Quiet stone is not always safe stone.</p>
+<p>Those walls are walked by <strong>Village Guards</strong>, spaced along the rampart and standing watch at the gates. A living village may also raise a watchman by your hand: sneak-use a Bell on an adult villager to appoint them, preserving their old village life so far as the world allows, then sneak-use a Bell on that appointed guard to dismiss them back again. But take note of one thing, pupil: a village given over to the dead — the green, shuffling kind — is a village past saving. Its walls and gatehouses still stand, but no guard patrols them and no lantern burns. Quiet stone is not always safe stone.</p>
 <div class="callout callout-tip">Walls usually appear on their own as you explore near a village. The operator commands <code>/witchery goto village_&lt;type&gt;</code> and <code>/witchery walls</code> can locate a village and force-build its walls; <code>/witchery walls reset</code> clears the "already walled" flag if you want to rebuild.</div>
 
 <h3 id="stone-circle">The Stone Circle</h3>
@@ -2854,7 +2854,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <div class="callout callout-tip">If a chapter refuses to open, you have simply not yet earned its book. For testing, <code>/witchery guide unlock [all|&lt;book&gt;]</code> opens chapters and <code>/witchery guide reset</code> shuts them again. The <strong>Witches' Brews</strong> Cauldron Book (<span class="item">witchery:cauldron_book</span>) and <strong>Immortals' Observations</strong> stand apart from the chain as guides of their own. Where a recipe has not yet reached the Primer, JEI covers the machines and this Book of Shadows covers the rest.</div>
 
 <div class="page-footer">
-  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 13 &nbsp;·&nbsp; Twelfth Edition &nbsp;·&nbsp; ☽ ✦ ☾
+  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 14 &nbsp;·&nbsp; Thirteenth Edition &nbsp;·&nbsp; ☽ ✦ ☾
 </div>
 
 </body>
