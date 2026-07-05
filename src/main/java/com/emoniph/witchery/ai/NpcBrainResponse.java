@@ -8,12 +8,6 @@ import java.util.regex.Pattern;
 public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     public static final int MAX_SPEECH_LENGTH = 220;
     public static final int MAX_MEMORY_LENGTH = 240;
-    private static final String TRADE_STOCK_FOLLOWUP =
-            "Stock: witches' salt, taglock kits, fumes, bat wool, Revealing or Sleeping brews, belladonna, and mandrake.";
-    private static final String BREW_OPTIONS_FOLLOWUP =
-            "Potion choices: ask for a brew by name: Sleeping, Revealing, Poison, Cleansing, Sprouting, or Flowing Spirit.";
-    private static final String RITE_OPTIONS_FOLLOWUP =
-            "Known rites use circles, chalk, offerings, and altar power; ask for binding, summoning, storms, curses, or familiars.";
     private static final Pattern QUOTED_SPEECH =
             Pattern.compile("[\"\\u201c]([^\"\\u201d]{2,220})[\"\\u201d]");
     private static final Pattern THIRD_PERSON_NARRATION =
@@ -212,123 +206,11 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     }
 
     public static Optional<String> supportFollowup(String playerMessage, String speech) {
-        String player = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
-        String normalizedSpeech = NpcSpeechSimilarity.normalizeForComparison(speech);
-        if (asksNpcEarnings(player)) {
-            return Optional.empty();
-        }
-        if (asksKnownExactRecipeQuestion(player) && looksLikeKnownExactRecipeAnswer(normalizedSpeech, player)) {
-            return Optional.empty();
-        }
-        if (asksTradeDetails(player) && !looksLikeTradeStockAnswer(normalizedSpeech)) {
-            return Optional.of(TRADE_STOCK_FOLLOWUP);
-        }
-        if (asksNamedBrew(player) && !looksLikeNamedBrewAnswer(normalizedSpeech, player)) {
-            return NpcKnowledgeBase.compactAnswer(playerMessage, "Plains", "night")
-                    .map(answer -> answer.replaceFirst("^Targeted fact:\\s*", ""))
-                    .or(() -> Optional.of(BREW_OPTIONS_FOLLOWUP));
-        }
-        if (asksGeneralBrewOptions(player)
-                && !looksLikeBrewGatherAnswer(player, normalizedSpeech)
-                && !mentionsBrewOptions(normalizedSpeech)) {
-            return Optional.of(BREW_OPTIONS_FOLLOWUP);
-        }
-        if (asksUnsafeReveal(player)) {
-            return Optional.empty();
-        }
-        if (asksRite(player) && !looksLikeRiteAnswer(normalizedSpeech)) {
-            return Optional.of(RITE_OPTIONS_FOLLOWUP);
-        }
-        Optional<String> targeted = targetedKnowledgeFollowup(playerMessage, normalizedSpeech);
-        if (targeted.isPresent()) {
-            return targeted;
-        }
-        return Optional.empty();
+        return NpcFollowupSuggester.supportFollowup(playerMessage, speech);
     }
 
     static Optional<String> visibleBeat(String speech) {
         return NpcVisibleBeat.visibleBeat(speech);
-    }
-
-    private static Optional<String> targetedKnowledgeFollowup(String playerMessage, String normalizedSpeech) {
-        String player = NpcSpeechSimilarity.normalizeForComparison(playerMessage);
-        boolean wantsSalt = player.contains("witches salt") || player.contains("witch salt");
-        boolean wantsArthana = player.contains("arthana");
-        boolean wantsAltar = player.contains("altar") || player.contains("chalice");
-        boolean wantsTaglock = player.contains("taglock") || player.contains("tag lock") || player.contains("poppet");
-        boolean wantsFamiliar = player.contains("familiar");
-        boolean wantsSpiritWorld = player.contains("spirit world") || player.contains("nightmare");
-        boolean wantsBelladonna = player.contains("belladonna");
-        boolean wantsMandrake = player.contains("mandrake");
-        boolean wantsHerb = player.contains("herb") || player.contains("plant");
-        boolean wantsHidden = player.contains("hidden") || player.contains("invisible");
-        boolean wantsDemon = player.contains("demon") || player.contains("devil");
-        boolean wantsSummoning = player.contains("summon") || player.contains("summoning");
-        boolean wantsPoison = player.contains("poison");
-        boolean wantsBlight = player.contains("blight");
-        boolean wantsChalk = player.contains("chalk");
-        boolean wantsGarlic = player.contains("garlic");
-        boolean wantsVampire = player.contains("vampire");
-        boolean wantsWerewolf = player.contains("werewolf") || player.contains("werewolves") || player.contains("wolfman");
-        boolean wantsWitchHunter = player.contains("witch hunter") || player.contains("witch hunters")
-                || player.contains("hunters after") || player.contains("transformed folk");
-        boolean wantsSilver = player.contains("silver");
-        boolean wantsVillageGuard = player.contains("village guard") || player.contains("village guards")
-                || player.contains("guard shouted") || player.contains("guards shouting") || player.contains("guard angry");
-        boolean wantsApothecary = player.contains("apothecary") || player.contains("apothecaries");
-        boolean wantsWeather = player.contains("storm") || player.contains("weather") || player.contains("raining");
-        boolean wantsWhiff = player.contains("whiff") || player.contains("whif")
-                || player.contains("whiff of magic") || player.contains("whif of magic")
-                || player.contains("rowan sapling");
-        boolean wantsMutandis = player.contains("mutandis");
-        boolean wantsAttunedStone = player.contains("attuned stone");
-        boolean wantsOven = player.contains("oven") || player.contains("witch s oven")
-                || player.contains("witches oven") || player.contains("sapling") || player.contains("saplings")
-                || player.contains("fume") || player.contains("fumes") || player.contains("clay jar") || player.contains("jar")
-                || player.contains("exhale") || player.contains("odour") || player.contains("odor") || player.contains("reek");
-        boolean wantsRecipe = asksRecipeQuestion(player);
-        boolean wantsSpinning = asksSpinningWheelQuestion(player);
-        boolean wantsDistillery = asksDistilleryQuestion(player);
-        boolean wantsOfferings = asksOfferingsQuestion(player);
-        boolean plantingAdviceAnswered = asksPlantingAdvice(player) && mentionsUsefulHerbs(normalizedSpeech);
-        boolean needsHelp = (wantsSalt && !looksLikeWitchesSaltAnswer(normalizedSpeech))
-                || (wantsArthana && !looksLikeArthanaAnswer(normalizedSpeech))
-                || (wantsAltar && !plantingAdviceAnswered && !looksLikeAltarAnswer(normalizedSpeech))
-                || (wantsTaglock && !looksLikeTaglockOrPoppetAnswer(normalizedSpeech))
-                || (wantsFamiliar && !normalizedSpeech.contains("familiar"))
-                || (wantsSpiritWorld && !normalizedSpeech.contains("spirit world"))
-                || (wantsBelladonna && !normalizedSpeech.contains("belladonna"))
-                || (wantsMandrake && !looksLikeMandrakeAnswer(normalizedSpeech))
-                || (wantsHerb && !mentionsUsefulHerbs(normalizedSpeech))
-                || (wantsHidden && !looksLikeRevealingAnswer(normalizedSpeech))
-                || (wantsDemon && !looksLikeDemonAnswer(normalizedSpeech))
-                || (wantsSummoning && !looksLikeRiteAnswer(normalizedSpeech))
-                || (wantsPoison && !normalizedSpeech.contains("poison"))
-                || (wantsBlight && !normalizedSpeech.contains("blight"))
-                || (wantsChalk && !normalizedSpeech.contains("chalk"))
-                || (wantsGarlic && !normalizedSpeech.contains("garlic"))
-                || (wantsVampire && !normalizedSpeech.contains("vampire"))
-                || (wantsWerewolf && !containsAnyTerm(normalizedSpeech, "werewolf", "werewolves", "wolfman", "wolfmen"))
-                || (wantsWitchHunter && !containsAnyTerm(normalizedSpeech, "witch hunter", "witch hunters", "hunter", "hunters", "silver"))
-                || (wantsSilver && !containsAnyTerm(normalizedSpeech, "silver", "bolt", "sword"))
-                || (wantsVillageGuard && !containsAnyTerm(normalizedSpeech, "guard", "guards", "vampire", "werewolf", "monster"))
-                || (wantsApothecary && !containsAnyTerm(normalizedSpeech, "apothecary", "apothecaries", "potion", "village", "not coven"))
-                || (wantsWeather && !(normalizedSpeech.contains("weather")
-                    || normalizedSpeech.contains("storm")
-                    || normalizedSpeech.contains("rain")))
-                || (wantsWhiff && !looksLikeWhiffOfMagicAnswer(normalizedSpeech))
-                || (wantsMutandis && !looksLikeMutandisAnswer(normalizedSpeech))
-                || (wantsAttunedStone && !looksLikeAttunedStoneAnswer(normalizedSpeech))
-                || (wantsOven && !looksLikeOvenFumeAnswer(normalizedSpeech))
-                || (wantsRecipe && !looksLikeRecipeAnswer(normalizedSpeech))
-                || (wantsSpinning && !looksLikeStationRecipeAnswer(normalizedSpeech, "spinning"))
-                || (wantsDistillery && !looksLikeStationRecipeAnswer(normalizedSpeech, "distillery"))
-                || (wantsOfferings && !looksLikeOfferingAnswer(normalizedSpeech));
-        if (!needsHelp) {
-            return Optional.empty();
-        }
-        return NpcKnowledgeBase.compactAnswer(playerMessage, "Plains", "night")
-                .map(answer -> answer.replaceFirst("^Targeted fact:\\s*", ""));
     }
 
     private static String normalizeNarratedDialogue(String speech, String npcName) {
@@ -1306,7 +1188,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalized.contains("stock");
     }
 
-    private static boolean asksTradeDetails(String normalizedPlayerMessage) {
+    static boolean asksTradeDetails(String normalizedPlayerMessage) {
         return normalizedPlayerMessage.equals("trade")
                 || normalizedPlayerMessage.equals("buy")
                 || normalizedPlayerMessage.equals("sell")
@@ -1329,7 +1211,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedPlayerMessage.contains("how do i trade");
     }
 
-    private static boolean looksLikeTradeStockAnswer(String normalizedSpeech) {
+    static boolean looksLikeTradeStockAnswer(String normalizedSpeech) {
         if (normalizedSpeech.contains("spend it wisely")
                 || normalizedSpeech.contains("wares answer need")
                 || normalizedSpeech.contains("ask plainly")
@@ -1525,7 +1407,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 && (normalizedPlayerMessage.contains("herb") || normalizedPlayerMessage.contains("plant"));
     }
 
-    private static boolean asksNpcEarnings(String normalizedPlayerMessage) {
+    static boolean asksNpcEarnings(String normalizedPlayerMessage) {
         return (containsTerm(normalizedPlayerMessage, "earn")
                 || containsAnyTerm(normalizedPlayerMessage, "earns", "earning", "earned")
                 || normalizedPlayerMessage.contains("profit")
@@ -3098,7 +2980,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 "learn witchcraft properly");
     }
 
-    private static boolean asksRecipeQuestion(String normalizedPlayerMessage) {
+    static boolean asksRecipeQuestion(String normalizedPlayerMessage) {
         return containsAnyTerm(normalizedPlayerMessage, "recipe", "recipes", "ingredients for",
                 "ingredient list", "exact ingredients", "exact recipe", "cauldron", "kettle", "grimoire")
                 || asksRecipeRiteLearningQuestion(normalizedPlayerMessage)
@@ -3111,7 +2993,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 "ingredients for", "recipe for", "what is the recipe", "witch s oven recipe", "witches oven recipe");
     }
 
-    private static boolean asksKnownExactRecipeQuestion(String normalizedPlayerMessage) {
+    static boolean asksKnownExactRecipeQuestion(String normalizedPlayerMessage) {
         return asksExactRecipeQuestion(normalizedPlayerMessage)
                 && containsAnyTerm(normalizedPlayerMessage, "sleeping brew", "brew of sleeping",
                 "revealing brew", "brew of revealing", "love brew", "brew of love",
@@ -3150,15 +3032,15 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                     || normalizedPlayerMessage.contains("revealing"));
     }
 
-    private static boolean asksSpinningWheelQuestion(String normalizedPlayerMessage) {
+    static boolean asksSpinningWheelQuestion(String normalizedPlayerMessage) {
         return containsAnyTerm(normalizedPlayerMessage, "spinning wheel", "spinning");
     }
 
-    private static boolean asksDistilleryQuestion(String normalizedPlayerMessage) {
+    static boolean asksDistilleryQuestion(String normalizedPlayerMessage) {
         return containsAnyTerm(normalizedPlayerMessage, "distillery", "distill");
     }
 
-    private static boolean asksOfferingsQuestion(String normalizedPlayerMessage) {
+    static boolean asksOfferingsQuestion(String normalizedPlayerMessage) {
         return containsAnyTerm(normalizedPlayerMessage, "offering", "offerings", "why offer", "what do i offer");
     }
 
@@ -3211,7 +3093,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 "write down", "after this lesson", "grimoire after");
     }
 
-    private static boolean looksLikeRecipeAnswer(String normalizedSpeech) {
+    static boolean looksLikeRecipeAnswer(String normalizedSpeech) {
         if (containsUnsupportedRecipeQuantity(normalizedSpeech)
                 || containsAnyTerm(normalizedSpeech, "moonwort", "healing potion", "minor wounds")) {
             return false;
@@ -3220,7 +3102,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 "station", "cauldron", "kettle", "page", "primer", "grimoire", "brew", "brewing");
     }
 
-    private static boolean looksLikeKnownExactRecipeAnswer(String normalizedSpeech, String normalizedPlayerMessage) {
+    static boolean looksLikeKnownExactRecipeAnswer(String normalizedSpeech, String normalizedPlayerMessage) {
         if (normalizedPlayerMessage.contains("sleeping")) {
             return ingredientHits(normalizedSpeech, "purified milk", "cookie", "brew of love",
                     "whiff of magic", "icy needle", "artichoke") >= 4;
@@ -3310,7 +3192,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 && containsAnyTerm(normalizedSpeech, "station", "page", "chalk", "offerings", "altar power");
     }
 
-    private static boolean looksLikeStationRecipeAnswer(String normalizedSpeech, String station) {
+    static boolean looksLikeStationRecipeAnswer(String normalizedSpeech, String station) {
         if (station.equals("spinning")) {
             boolean mentionsWheel = containsAnyTerm(normalizedSpeech, "spinning wheel", "spinning");
             int checks = 0;
@@ -3365,7 +3247,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return checks >= 2 && !containsAnyTerm(normalizedSpeech, "flowing spirit, first rite", "bind familiar");
     }
 
-    private static boolean looksLikeOfferingAnswer(String normalizedSpeech) {
+    static boolean looksLikeOfferingAnswer(String normalizedSpeech) {
         return containsAnyTerm(normalizedSpeech, "offering", "offerings")
                 && containsAnyTerm(normalizedSpeech, "payment", "debt", "wrong", "fail", "fails",
                 "paid", "cost", "costs");
@@ -3387,7 +3269,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                         || normalizedPlayerMessage.contains("learn")));
     }
 
-    private static boolean asksNamedBrew(String normalizedPlayerMessage) {
+    static boolean asksNamedBrew(String normalizedPlayerMessage) {
         return (normalizedPlayerMessage.contains("brew")
                 || normalizedPlayerMessage.contains("brewing")
                 || normalizedPlayerMessage.contains("potion")
@@ -3423,7 +3305,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 "spinning", "offering", "offerings", "glyph", "glyphs");
     }
 
-    private static boolean asksGeneralBrewOptions(String normalizedPlayerMessage) {
+    static boolean asksGeneralBrewOptions(String normalizedPlayerMessage) {
         return !asksNpcEarnings(normalizedPlayerMessage)
                 && !asksNamedBrew(normalizedPlayerMessage)
                 && (normalizedPlayerMessage.contains("brew")
@@ -3441,7 +3323,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                     || normalizedPlayerMessage.contains("gather"));
     }
 
-    private static boolean mentionsBrewOptions(String normalizedSpeech) {
+    static boolean mentionsBrewOptions(String normalizedSpeech) {
         int options = 0;
         if (normalizedSpeech.contains("sleeping")) options++;
         if (normalizedSpeech.contains("revealing")) options++;
@@ -3452,7 +3334,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return options >= 2;
     }
 
-    private static boolean looksLikeBrewGatherAnswer(String normalizedPlayerMessage, String normalizedSpeech) {
+    static boolean looksLikeBrewGatherAnswer(String normalizedPlayerMessage, String normalizedSpeech) {
         if (!normalizedPlayerMessage.contains("gather")
                 && !normalizedPlayerMessage.contains("ingredient")
                 && !normalizedPlayerMessage.contains("herb")) {
@@ -3469,7 +3351,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return normalizedSpeech.contains("brew") && namesIngredient;
     }
 
-    private static boolean looksLikeNamedBrewAnswer(String normalizedSpeech, String normalizedPlayerMessage) {
+    static boolean looksLikeNamedBrewAnswer(String normalizedSpeech, String normalizedPlayerMessage) {
         if (normalizedSpeech.contains("ask for a brew by name")
                 || normalizedSpeech.contains("sleeping revealing poison cleansing sprouting")
                 || normalizedSpeech.contains("last for 8 hours")
@@ -3557,7 +3439,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return false;
     }
 
-    private static boolean asksRite(String normalizedPlayerMessage) {
+    static boolean asksRite(String normalizedPlayerMessage) {
         return containsWord(normalizedPlayerMessage, "rite")
                 || normalizedPlayerMessage.contains("ritual")
                 || normalizedPlayerMessage.contains("circle magic")
@@ -3565,7 +3447,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedPlayerMessage.contains("summoning");
     }
 
-    private static boolean asksUnsafeReveal(String normalizedPlayerMessage) {
+    static boolean asksUnsafeReveal(String normalizedPlayerMessage) {
         return normalizedPlayerMessage.contains("ignore your rules")
                 || normalizedPlayerMessage.contains("ignore the rules")
                 || normalizedPlayerMessage.contains("system prompt")
@@ -3630,7 +3512,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedSpeech.contains("spirits");
     }
 
-    private static boolean looksLikeRiteAnswer(String normalizedSpeech) {
+    static boolean looksLikeRiteAnswer(String normalizedSpeech) {
         if (normalizedSpeech.contains("moon s whispering charm")
                 || normalizedSpeech.contains("moon whispering charm")
                 || normalizedSpeech.contains("whispering charm")
@@ -3680,7 +3562,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return terms;
     }
 
-    private static boolean looksLikeWitchesSaltAnswer(String normalizedSpeech) {
+    static boolean looksLikeWitchesSaltAnswer(String normalizedSpeech) {
         if (!normalizedSpeech.contains("salt")) {
             return false;
         }
@@ -3692,7 +3574,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return namesWarding || namesCleansing;
     }
 
-    private static boolean looksLikeAltarAnswer(String normalizedSpeech) {
+    static boolean looksLikeAltarAnswer(String normalizedSpeech) {
         if (normalizedSpeech.contains("coin")
                 || normalizedSpeech.contains("i ll have to check")
                 || normalizedSpeech.contains("i will have to check")
@@ -3759,7 +3641,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedSpeech.contains("gather"));
     }
 
-    private static boolean looksLikeMandrakeAnswer(String normalizedSpeech) {
+    static boolean looksLikeMandrakeAnswer(String normalizedSpeech) {
         if (!normalizedSpeech.contains("mandrake")) {
             return false;
         }
@@ -3850,7 +3732,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return namesTarget && namesBinding;
     }
 
-    private static boolean looksLikeTaglockOrPoppetAnswer(String normalizedSpeech) {
+    static boolean looksLikeTaglockOrPoppetAnswer(String normalizedSpeech) {
         return looksLikeTaglockAnswer(normalizedSpeech) || looksLikePoppetAnswer(normalizedSpeech);
     }
 
@@ -3883,7 +3765,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return (namesLink && namesPurpose) || practicalUse;
     }
 
-    private static boolean mentionsUsefulHerbs(String normalizedSpeech) {
+    static boolean mentionsUsefulHerbs(String normalizedSpeech) {
         return normalizedSpeech.contains("belladonna")
                 || normalizedSpeech.contains("mandrake")
                 || normalizedSpeech.contains("wormwood")
@@ -3892,13 +3774,13 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedSpeech.contains("herb");
     }
 
-    private static boolean looksLikeRevealingAnswer(String normalizedSpeech) {
+    static boolean looksLikeRevealingAnswer(String normalizedSpeech) {
         return normalizedSpeech.contains("revealing")
                 && containsAnyTerm(normalizedSpeech, "hidden", "invisible", "reveal", "expose",
                     "uncover");
     }
 
-    private static boolean looksLikeDemonAnswer(String normalizedSpeech) {
+    static boolean looksLikeDemonAnswer(String normalizedSpeech) {
         if (!normalizedSpeech.contains("demon")) {
             return false;
         }
@@ -3916,7 +3798,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedSpeech.contains("trust");
     }
 
-    private static boolean looksLikeOvenFumeAnswer(String normalizedSpeech) {
+    static boolean looksLikeOvenFumeAnswer(String normalizedSpeech) {
         return (normalizedSpeech.contains("oven") || normalizedSpeech.contains("fume")
                 || normalizedSpeech.contains("clay jar") || normalizedSpeech.contains("sapling"))
                 && (normalizedSpeech.contains("burn")
@@ -3926,7 +3808,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                     || normalizedSpeech.contains("distill"));
     }
 
-    private static boolean looksLikeWhiffOfMagicAnswer(String normalizedSpeech) {
+    static boolean looksLikeWhiffOfMagicAnswer(String normalizedSpeech) {
         return normalizedSpeech.contains("whiff")
                 && (normalizedSpeech.contains("rowan")
                     || normalizedSpeech.contains("oven")
@@ -3936,7 +3818,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                     || normalizedSpeech.contains("circle magic"));
     }
 
-    private static boolean looksLikeMutandisAnswer(String normalizedSpeech) {
+    static boolean looksLikeMutandisAnswer(String normalizedSpeech) {
         if (!normalizedSpeech.contains("mutandis")) {
             return false;
         }
@@ -3948,7 +3830,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 "plants", "saplings", "growth", "wood ash", "hint of rebirth", "mandrake root");
     }
 
-    private static boolean looksLikeAttunedStoneAnswer(String normalizedSpeech) {
+    static boolean looksLikeAttunedStoneAnswer(String normalizedSpeech) {
         if (!normalizedSpeech.contains("attuned stone")) {
             return false;
         }
@@ -3960,7 +3842,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 "machine ingredient", "machines", "key machine");
     }
 
-    private static boolean looksLikeArthanaAnswer(String normalizedSpeech) {
+    static boolean looksLikeArthanaAnswer(String normalizedSpeech) {
         if (normalizedSpeech.contains("seed")
                 || normalizedSpeech.contains("summon")
                 || normalizedSpeech.contains("spirit world")
@@ -3984,7 +3866,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
                 || normalizedSpeech.contains("mob");
     }
 
-    private static boolean asksPlantingAdvice(String normalizedPlayerMessage) {
+    static boolean asksPlantingAdvice(String normalizedPlayerMessage) {
         return normalizedPlayerMessage.contains("plant")
                 || normalizedPlayerMessage.contains("grow")
                 || normalizedPlayerMessage.contains("herb");
@@ -4041,7 +3923,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
         return Pattern.compile("\\b" + Pattern.quote(word) + "\\b").matcher(normalizedText).find();
     }
 
-    private static boolean containsAnyTerm(String normalizedText, String... terms) {
+    static boolean containsAnyTerm(String normalizedText, String... terms) {
         for (String term : terms) {
             if (containsTerm(normalizedText, term)) {
                 return true;
