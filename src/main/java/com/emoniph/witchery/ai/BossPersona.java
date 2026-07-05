@@ -129,6 +129,7 @@ public final class BossPersona implements NpcPersona<LivingEntity> {
             return true;
         }
         if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsOutOfWorldMeta(speech)
                 || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
                 || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)) {
             return true;
@@ -151,7 +152,10 @@ public final class BossPersona implements NpcPersona<LivingEntity> {
                 "buy from me", "my wares", "serve your coven", "seek my wisdom", "magical spells",
                 "follow you", "protect you",
                 "i will help you", "trade offers", "quests are not my specialty", "companion",
-                "road ahead will be long and dark", "the dark abyss", "child",
+                "road ahead will be long and dark", "the dark abyss", "child", "undying lands",
+                "lord of the undying", "ancient teachings", "experiences in the afterlife",
+                "final cold ancient", "never helpful", "embodiment of fate",
+                "other gods", "you once were a witch",
                 "how are you today", "what brings you here")) {
             return true;
         }

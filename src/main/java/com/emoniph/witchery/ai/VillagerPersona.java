@@ -162,6 +162,7 @@ public final class VillagerPersona implements NpcPersona<Villager> {
                 || normalized.contains("you can hide behind me")
                 || normalized.contains("hide behind me")
                 || NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsOutOfWorldMeta(speech)
                 || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
                 || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)
                 || normalized.contains("you see the village")
@@ -169,7 +170,9 @@ public final class VillagerPersona implements NpcPersona<Villager> {
                 || normalized.contains("village s fate")
                 || normalized.contains("your actions echo")
                 || normalized.contains("crafting potions")
-                || normalized.contains("i have some herbs that might aid your healing");
+                || normalized.contains("i have some herbs that might aid your healing")
+                || normalized.contains("ademonheartisagiftfromthedevilhimself")
+                || normalized.contains("realmoraleboostinggift");
     }
 
     static boolean rejectsVillagerRawForMessage(String speech, String playerMessage) {
@@ -184,7 +187,7 @@ public final class VillagerPersona implements NpcPersona<Villager> {
             return true;
         }
         if (containsAny(answer, "apothecary card", "targeted fact", "player s coven", "players coven",
-                "calls out from her window")) {
+                "calls out from her window") || NpcPersonaSpeechGuards.rejectsOutOfWorldMeta(speech)) {
             return true;
         }
         if (containsAny(answer, "i ll ring the bell", "i will ring the bell", "hide behind me",

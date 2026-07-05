@@ -157,6 +157,7 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
             return true;
         }
         if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsOutOfWorldMeta(speech)
                 || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
                 || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)
                 || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)) {
@@ -166,7 +167,8 @@ public final class LeonardPersona implements NpcPersona<LeonardEntity> {
                 "i have summoned my shade", "you speak to him", "speaking to him",
                 "how may i serve your purpose", "shadowman", "shadowy man",
                 "protector of the dark", "can see into your mind", "hear all that passes",
-                "cannot answer such a question")) {
+                "cannot answer such a question", "protector and guide", "your true guide",
+                "stay close", "i will guide you")) {
             return true;
         }
         if (containsAny(normalized, "prayer", "prayers", "pray", "prayed")) {

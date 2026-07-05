@@ -126,6 +126,7 @@ public final class DemonPersona implements NpcPersona<DemonEntity> {
             return true;
         }
         if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsOutOfWorldMeta(speech)
                 || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
                 || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)) {
             return true;
@@ -136,7 +137,13 @@ public final class DemonPersona implements NpcPersona<DemonEntity> {
             return true;
         }
         if (containsAny(normalized, "only sell devil", "all i have to offer", "only hope",
-                "faithful little demon trader", "safe ride")) {
+                "faithful little demon trader", "safe ride", "speak like the air is rent",
+                "speak like the air is rented", "demon of inferno", "demon of night",
+                "demon of fire", "hellfire", "the one who seeks destruction",
+                "mephistopheles", "embodiment of all that is evil", "demon of discord",
+                "demonic one", "seek your counsel", "ask for your guidance",
+                "you re welcome demon", "will be your guide", "demon guiding you",
+                "guiding you is infernal", "never betray your trust", "honor my vow")) {
             return true;
         }
         if (containsAny(normalized, "my coven", "i can brew", "i sell fumes", "serve your coven",

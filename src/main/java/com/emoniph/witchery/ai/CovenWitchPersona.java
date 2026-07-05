@@ -208,6 +208,7 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
             return true;
         }
         if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsOutOfWorldMeta(speech)
                 || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
                 || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)
                 || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)) {
@@ -220,7 +221,10 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
                 "i see perhaps we can discuss this matter", "lilithpoet",
                 "school for learning", "court declares", "what is a shiny gift",
                 "what is a demon", "what do i fear", "you shall refer to me as witch",
-                "guardian of this place")) {
+                "guardian of this place", "guide you to your destiny", "called by my title",
+                "prefer to be called by my title", "demon hearts are rare valuable gems",
+                "power and prestige", "not common enough", "witch s knowledge is as precious",
+                "lilithpoe", "coven of shadows", "do what is asked of me")) {
             return true;
         }
         return normalized.equals("i see") || normalized.equals("it s not easy");

@@ -190,6 +190,7 @@ public final class HobgoblinPersona implements NpcPersona<HobgoblinEntity> {
             return true;
         }
         if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsOutOfWorldMeta(speech)
                 || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
                 || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)
                 || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)) {
@@ -201,7 +202,7 @@ public final class HobgoblinPersona implements NpcPersona<HobgoblinEntity> {
             return true;
         }
         if (containsAny(normalized, "you can t give out that much", "since you asked so nicely",
-                "poor hobgoblin like me")) {
+                "poor hobgoblin like me", "name yourself", "not so different from me")) {
             return true;
         }
         if (containsAny(normalized, "my coven", "my cauldron", "i brew", "i can brew",

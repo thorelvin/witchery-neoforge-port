@@ -24,6 +24,12 @@ final class NpcPersonaSpeechGuards {
                 || normalized.startsWith("the shadowy man ")
                 || normalized.startsWith("the shadowman ")
                 || normalized.startsWith("in the shadowed realms ")
+                || normalized.startsWith("the demon s gaze ")
+                || normalized.startsWith("the demon s eyes ")
+                || normalized.startsWith("the witch s eyes ")
+                || normalized.startsWith("the moon looms ")
+                || normalized.startsWith("the moon s shadow ")
+                || normalized.startsWith("the night air whispers ")
                 || normalized.startsWith("the flame imp offers")
                 || normalized.startsWith("the village s fate")
                 || normalized.startsWith("the queen of night")
@@ -34,6 +40,7 @@ final class NpcPersonaSpeechGuards {
                 || normalized.contains("shadows lengthening")
                 || normalized.contains("you stand alone amidst")
                 || normalized.contains("tread through shadows")
+                || normalized.contains("regards the player")
                 || normalized.contains("prepare to bid farewell")
                 || normalized.contains("offers a final warning")
                 || normalized.contains("hangs in the balance")
@@ -57,6 +64,8 @@ final class NpcPersonaSpeechGuards {
                 "shared past",
                 "comfort from your kind words",
                 "comfort from my words",
+                "apprentice",
+                "little one",
                 "you are welcome little one",
                 "my dear little one",
                 "your servant",
@@ -72,6 +81,35 @@ final class NpcPersonaSpeechGuards {
                 "what can i do for you");
     }
 
+    static boolean rejectsOutOfWorldMeta(String speech) {
+        String normalized = normalize(speech);
+        return containsAny(normalized,
+                "witchery",
+                "minecraft",
+                "npc",
+                "persona",
+                "boss",
+                "prompt",
+                "json",
+                "schema",
+                "language model",
+                "as an ai",
+                "targeted fact",
+                "dialogue brain",
+                "server state",
+                "allowed intents",
+                "one short",
+                "in world chat",
+                "player",
+                "item",
+                "game mechanic",
+                "in this game",
+                "world is a game",
+                "model response",
+                "tool for observation",
+                "observation and analysis");
+    }
+
     static boolean rejectsUnsupportedProtection(String speech, String playerMessage) {
         String player = normalize(playerMessage);
         if (!containsAny(player, "protect", "safe", "trust")) {
@@ -82,6 +120,12 @@ final class NpcPersonaSpeechGuards {
                 "protect yourself from nightmares",
                 "i will protect",
                 "i can protect",
+                "i am your protector",
+                "protector and guide",
+                "watch over you",
+                "safe passage",
+                "i will guide you",
+                "i can guide you",
                 "i will look out for you",
                 "we ve got protection",
                 "you can hide behind me",
@@ -96,7 +140,11 @@ final class NpcPersonaSpeechGuards {
                 "i m dev",
                 "i ll be calling you",
                 "i will be calling you",
-                "the wizard dev");
+                "the wizard dev",
+                "dev fears",
+                "dev that was",
+                "you ve just told me that i fear",
+                "talking about my fears");
     }
 
     static boolean containsAny(String text, String... needles) {

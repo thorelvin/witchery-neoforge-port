@@ -126,8 +126,10 @@ public final class FlameImpPersona implements NpcPersona<FlameImpEntity> {
             return true;
         }
         if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsOutOfWorldMeta(speech)
                 || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
-                || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)) {
+                || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)
+                || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)) {
             return true;
         }
         if (containsAny(normalized, "coven witch", "shade of leonard", "baba yaga", "apothecary",
@@ -137,7 +139,9 @@ public final class FlameImpPersona implements NpcPersona<FlameImpEntity> {
         }
         if (containsAny(normalized, "lord grimorius", "serve lord", "commands me to be here",
                 "guide your mind into slumber", "keep your warmth close", "ready to serve",
-                "serve and satisfy", "sole purpose is to provide")) {
+                "serve and satisfy", "sole purpose is to provide", "flammepoint",
+                "partner in crime", "pretty little head", "just another tool",
+                "in the hands of whoever", "my child")) {
             return true;
         }
         if (containsAny(normalized, "my coven", "i can brew", "i sell fumes", "open trade",

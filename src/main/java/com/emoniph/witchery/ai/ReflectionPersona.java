@@ -133,6 +133,7 @@ public final class ReflectionPersona implements NpcPersona<ReflectionEntity> {
             return true;
         }
         if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsOutOfWorldMeta(speech)
                 || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
                 || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)
                 || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)) {
@@ -144,7 +145,10 @@ public final class ReflectionPersona implements NpcPersona<ReflectionEntity> {
             return true;
         }
         if (containsAny(normalized, "shared past", "offer some insight", "witness of your past",
-                "i shall refer to myself", "old friend", "my reflection")) {
+                "i shall refer to myself", "old friend", "my reflection",
+                "analyze every aspect", "observation and analysis", "tool for observation",
+                "coven is a pack", "game is rigged", "trust this glass",
+                "night air whispers", "gentle caress from the moon")) {
             return true;
         }
         if (containsAny(normalized, "how are you today", "what brings you here", "welcome traveler",

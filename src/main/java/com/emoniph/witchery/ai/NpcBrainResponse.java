@@ -31,7 +31,7 @@ public record NpcBrainResponse(String speech, NpcIntent intent, String memory) {
     private static final Pattern NPC_IDENTITY_DENIAL =
             Pattern.compile("(?i).*(\\bi\\s+(am|'m)\\s+not\\s+a\\s+(coven\\s+)?witch\\b|\\bi\\s+can'?t\\s+help\\s+you\\s+with\\b).*");
     private static final Pattern PROMPT_LEAK =
-            Pattern.compile("(?i).*(\\bwitchery\\s+knowledge\\s*:|\\bentity/player\\s+memory\\s+file\\s*:|\\bnpc_name\\s*:|\\bplayer_name\\s*:|\\bplayer\\s+chat\\s+message\\s*:|\\bprivate\\s+witchery\\s+reference\\s+notes\\s*:|\\bknown\\s+memory\\s+for\\b|\\bscene\\s+facts\\s+for\\s+private\\s+use\\s*:|\\bthe\\s+player\\s+said\\s*:|\\btargeted\\s+fact\\s*:|\\bif\\s+the\\s+player\\s+(?:is|asks|has|wants)\\b|\\bwitch\\s*=|\\bplayer\\s*=|\\btool_call\\b|<\\s*/?\\s*[a-z][a-z0-9_-]*\\b|<\\?|\\?>).*");
+            Pattern.compile("(?i).*(\\bwitchery\\s+knowledge\\s*:|\\bwitchery\\s+(boss|villager|npc|persona|dialogue|world)\\b|\\bminecraft\\s+witchery\\b|\\bentity/player\\s+memory\\s+file\\s*:|\\bnpc_name\\s*:|\\bplayer_name\\s*:|\\bplayer\\s+chat\\s+message\\s*:|\\bprivate\\s+witchery\\s+reference\\s+notes\\s*:|\\bknown\\s+memory\\s+for\\b|\\bscene\\s+facts\\s+for\\s+private\\s+use\\s*:|\\bthe\\s+player\\s+said\\s*:|\\btargeted\\s+fact\\s*:|\\bif\\s+the\\s+player\\s+(?:is|asks|has|wants)\\b|\\bwitch\\s*=|\\bplayer\\s*=|\\btool_call\\b|<\\s*/?\\s*[a-z][a-z0-9_-]*\\b|<\\?|\\?>).*");
     private static final Pattern CLOCK_ANSWER =
             Pattern.compile("(?i).*\\b\\d{1,2}:\\d{2}\\b.*");
     private static final Pattern CANNED_FILLER =

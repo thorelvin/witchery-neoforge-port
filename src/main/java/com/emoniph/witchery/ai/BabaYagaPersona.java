@@ -124,6 +124,7 @@ public final class BabaYagaPersona implements NpcPersona<BabaYagaEntity> {
             return true;
         }
         if (NpcPersonaSpeechGuards.rejectsNarrationOnly(speech)
+                || NpcPersonaSpeechGuards.rejectsOutOfWorldMeta(speech)
                 || NpcPersonaSpeechGuards.rejectsSoftCompanion(speech)
                 || NpcPersonaSpeechGuards.rejectsUnsupportedProtection(speech, playerMessage)
                 || NpcPersonaSpeechGuards.rejectsPlayerSpeakerInversion(speech)) {
@@ -137,7 +138,11 @@ public final class BabaYagaPersona implements NpcPersona<BabaYagaEntity> {
             return true;
         }
         if (containsAny(normalized, "i am a helper", "i help people who want to be strong",
-                "you ask a question i answer honestly")) {
+                "you ask a question i answer honestly", "name means", "in russian",
+                "great grandmother", "protect this land", "duty to attend all who come",
+                "time of need", "mephistopheles", "you need my help", "i seek knowledge about your past",
+                "i have trade goods", "dark prophecy", "find shelter in my old house",
+                "chosen by fate", "land far far away")) {
             return true;
         }
         if (!containsAny(player, "hear", "listen", "voice")

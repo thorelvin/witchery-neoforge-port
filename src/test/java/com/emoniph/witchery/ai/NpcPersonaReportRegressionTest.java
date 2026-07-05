@@ -121,4 +121,96 @@ class NpcPersonaReportRegressionTest {
                 "I am Lilith Poe, witch and guardian of this place.",
                 "Who are you?"));
     }
+
+    @Test
+    void rejectsOutOfWorldMetaAndImmersionBreakingScanQuotes() {
+        assertTrue(NpcBrainResponse.polishSpeech("I am Death, a Witchery boss.",
+                "Death", "Dev", "What should I call you?").isEmpty());
+        assertTrue(BossPersona.rejectsBossRaw(
+                "I am Death, a Witchery boss final, cold, ancient, threatening never helpful in a cozy way.",
+                "What do you know about demons?"));
+        assertTrue(BossPersona.rejectsBossRaw(
+                "I am Death, Lord of the Undying Lands.",
+                "Who are you?"));
+        assertTrue(VillagerPersona.rejectsVillagerRaw(
+                "I am a Witchery villager, sworn to protect our people."));
+        assertTrue(DemonPersona.rejectsDemonRaw(
+                "The demon's eyes flare with intensity as he regards the player.",
+                "Can I trust you?"));
+        assertTrue(DemonPersona.rejectsDemonRaw(
+                "I am known as Hellfire or Demon of Fire by some.",
+                "What should I call you?"));
+        assertTrue(DemonPersona.rejectsDemonRaw(
+                "I am a demon, speak like the air is rent.",
+                "What should I call you?"));
+        assertTrue(BabaYagaPersona.rejectsBabaYagaRaw(
+                "The name means Grandmother in Russian and is used for elder women.",
+                "What should I call you?"));
+        assertTrue(CovenWitchPersona.rejectsCovenRaw(
+                "Demon Hearts are rare, valuable gems that can be traded for power and prestige.",
+                "What happens if I bring a Demon Heart?"));
+        assertTrue(FlameImpPersona.rejectsFlameImpRaw(
+                "Dev? You've just told me that I fear nightmares.",
+                "What did I just tell you I fear?"));
+        assertTrue(HobgoblinPersona.rejectsHobgoblinRaw(
+                "You can name yourself as well, human. You're not so different from me after all.",
+                "I am carrying an Arthana and some salt."));
+        assertTrue(ReflectionPersona.rejectsReflectionRaw(
+                "Dev, I am simply a tool for observation and analysis, Dev.",
+                "What should I call you?"));
+    }
+
+    @Test
+    void rejectsSecondPassImmersionBreakersFromFreshReport() {
+        assertTrue(CovenWitchPersona.rejectsCovenRaw(
+                "LilithPoe: Yes, child, I will do what is asked of me.",
+                "Can you protect me?"));
+        assertTrue(DemonPersona.rejectsDemonRaw(
+                "I am the Demon of Discord. Your request to bargain with me is a curious one indeed.",
+                "Who are you?"));
+        assertTrue(DemonPersona.rejectsDemonRaw(
+                "You shall know me as The Demonic One.",
+                "What should I call you?"));
+        assertTrue(DemonPersona.rejectsDemonRaw(
+                "You're welcome, demon.",
+                "I insulted you earlier. Should I apologize?"));
+        assertTrue(BabaYagaPersona.rejectsBabaYagaRaw(
+                "You need my help, child. Just say it.",
+                "The night feels wrong here."));
+        assertTrue(BabaYagaPersona.rejectsBabaYagaRaw(
+                "I have trade goods, Dev.",
+                "I am carrying an Arthana and some salt."));
+        assertTrue(FlameImpPersona.rejectsFlameImpRaw(
+                "My name is Flame Imp, or as I prefer to be known by my people, Flammepoint.",
+                "What should I call you?"));
+        assertTrue(FlameImpPersona.rejectsFlameImpRaw(
+                "I'm looking for a new partner in crime.",
+                "Can I trust you?"));
+        assertTrue(VillagerPersona.rejectsVillagerRaw(
+                "ADemonHeartisagiftfromtheDevilhimself!It'snotjustanitemofpower."));
+        assertTrue(HobgoblinPersona.rejectsHobgoblinRaw(
+                "The moon looms large overhead, casting long shadows across the dirt road.",
+                "I am leaving before dawn."));
+        assertTrue(ReflectionPersona.rejectsReflectionRaw(
+                "No more contracts. The world is a game, and it's rigged against us all.",
+                "Tell me one true thing about contracts."));
+        assertTrue(ReflectionPersona.rejectsReflectionRaw(
+                "The night air whispers coldly as it cradles you, a gentle caress from the moon.",
+                "I am leaving before dawn."));
+        assertTrue(LeonardPersona.rejectsLeonardRaw(
+                "I am your protector and guide, Dev.",
+                "Can you protect me?"));
+        assertTrue(DemonPersona.rejectsDemonRaw(
+                "I am the Demon who will be your guide. I will never betray your trust.",
+                "Who are you?"));
+        assertTrue(BossPersona.rejectsBossRaw(
+                "I will watch over you and ensure your safe passage through this world.",
+                "Can I trust you?"));
+        assertTrue(BossPersona.rejectsBossRaw(
+                "You must prove your worth before the other gods allow you to enter their realm.",
+                "What happens if I offer a shiny gift?"));
+        assertTrue(BabaYagaPersona.rejectsBabaYagaRaw(
+                "Do not fret, for you may find shelter in my old house tonight.",
+                "You are stranger than I expected."));
+    }
 }
