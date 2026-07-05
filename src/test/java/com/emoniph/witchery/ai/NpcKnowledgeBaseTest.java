@@ -570,6 +570,22 @@ class NpcKnowledgeBaseTest {
     }
 
     @Test
+    void indexedCardsWinLegacyCueTies() {
+        assertFirstTargetedTopic("witches_oven", "witches oven", NpcCardRequest.any());
+        assertFirstTargetedTopic("clay_jar", "clay jar", NpcCardRequest.any());
+        assertFirstTargetedTopic("spinning_wheel", "spinning wheel", NpcCardRequest.any());
+    }
+
+    @Test
+    void requestedPersonaCardsWinGenericCueTies() {
+        assertFirstTargetedTopic("villager_witch_morality", "good witch", NpcCardRequest.persona("villager"));
+        assertFirstTargetedTopic("hobgoblin_trade", "trade", NpcCardRequest.persona("hobgoblin"));
+        assertFirstTargetedTopic("reflection_hearing", "can you hear me", NpcCardRequest.persona("reflection"));
+        assertFirstTargetedTopic("leonard_world_contempt", "weather", NpcCardRequest.persona("leonard"));
+        assertFirstTargetedTopic("witch_village_reputation", "good witch", NpcCardRequest.persona("coven_witch"));
+    }
+
+    @Test
     void retrievesRumorCueForRumorQuestions() {
         String context = NpcKnowledgeBase.relevantContext("can you tell me a village rumor?", "Plains", "night");
 
@@ -2184,6 +2200,15 @@ class NpcKnowledgeBaseTest {
             return lower.contains(phrase);
         }
         return lower.matches("(?s).*\\b" + java.util.regex.Pattern.quote(phrase) + "\\b.*");
+    }
+
+    private static void assertFirstTargetedTopic(String expectedTopic, String message, NpcCardRequest request) {
+        String context = NpcKnowledgeBase.relevantContext(message, "Plains", "night", request);
+        String diagnostics = NpcKnowledgeBase.diagnosticsLine();
+        assertTrue(!context.isBlank(), "No context for " + message + ": " + diagnostics);
+        assertTrue(diagnostics.contains("lastKnowledgeReason=targeted_match:" + expectedTopic),
+                "Expected first targeted topic " + expectedTopic + " for '" + message + "' but got "
+                        + diagnostics + "\nContext:\n" + context);
     }
 
     private static String itemName(String id) {

@@ -104,6 +104,20 @@ public final class NpcKnowledgeBase {
         return SECTIONS;
     }
 
+    static List<TargetedNoteDiagnostic> targetedNoteDiagnostics() {
+        return TARGETED_NOTES.stream()
+                .map(note -> new TargetedNoteDiagnostic(note.triggers(), note.topic(), note.personaId(),
+                        note.sourceAlias()))
+                .toList();
+    }
+
+    static List<String> selectedTargetedTopics(String playerMessage, NpcCardRequest request) {
+        NpcCardRequest cardRequest = request == null ? NpcCardRequest.any() : request;
+        return selectedTargetedMatches(normalize(playerMessage), cardRequest).stream()
+                .map(match -> match.note().topic())
+                .toList();
+    }
+
     public static String diagnosticsLine() {
         KnowledgeDiagnostics diagnostics = diagnostics();
         return "sectionsLoaded=" + diagnostics.sectionsLoaded()
@@ -234,7 +248,7 @@ public final class NpcKnowledgeBase {
     private static List<TargetedMatch> targetedMatches(String normalized) {
         return TARGETED_NOTES.stream()
                 .filter(note -> note.matchesPersona(NpcCardRequest.ANY_PERSONA))
-                .map(note -> new TargetedMatch(note, note.matchScore(normalized)))
+                .map(note -> new TargetedMatch(note, note.selectionScore(normalized, NpcCardRequest.ANY_PERSONA)))
                 .filter(match -> match.score() > 0)
                 .sorted(Comparator.comparingInt(TargetedMatch::score).reversed())
                 .toList();
@@ -243,7 +257,7 @@ public final class NpcKnowledgeBase {
     private static List<TargetedMatch> selectedTargetedMatches(String normalized, NpcCardRequest request) {
         List<TargetedMatch> matches = TARGETED_NOTES.stream()
                 .filter(note -> note.matchesPersona(request.personaId()))
-                .map(note -> new TargetedMatch(note, note.matchScore(normalized)))
+                .map(note -> new TargetedMatch(note, note.selectionScore(normalized, request.personaId())))
                 .filter(match -> match.score() > 0)
                 .sorted(Comparator.comparingInt(TargetedMatch::score).reversed())
                 .toList();
@@ -750,6 +764,9 @@ public final class NpcKnowledgeBase {
                                 String lastReason, String lastCards) {
     }
 
+    record TargetedNoteDiagnostic(String triggers, String topic, String personaId, String sourceAlias) {
+    }
+
     private record SectionScore(Section section, int score) {
     }
 
@@ -793,6 +810,21 @@ public final class NpcKnowledgeBase {
             best = Math.max(best, aliasMatchScore(normalized, sectionTitle, 4));
             best = Math.max(best, aliasMatchScore(normalized, sourceAlias, 3));
             return best;
+        }
+
+        int selectionScore(String normalized, String requestedPersona) {
+            int score = matchScore(normalized);
+            if (score <= 0) {
+                return 0;
+            }
+            String requested = NpcCardRequest.normalizePersona(requestedPersona);
+            if (!NpcCardRequest.ANY_PERSONA.equals(requested) && personaId.equals(requested)) {
+                score += 25;
+            }
+            if (!sourceAlias.isBlank()) {
+                score += 2;
+            }
+            return score;
         }
 
         private static int aliasMatchScore(String normalized, String aliases, int baseScore) {

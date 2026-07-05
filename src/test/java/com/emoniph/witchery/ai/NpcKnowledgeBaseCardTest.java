@@ -24,8 +24,8 @@ class NpcKnowledgeBaseCardTest {
     private static final Pattern METADATA = Pattern.compile("\\[([a-zA-Z0-9_]+):\\s*([^\\]]+)]");
     private static final Set<String> KNOWN_METADATA = Set.of("triggers", "topic", "persona", "weight", "unlock", "tags");
     private static final Set<String> ACTIVE_PERSONAS = Set.of("any", "coven_witch", "leonard", "baba_yaga",
-            "hobgoblin", "reflection");
-    private static final Set<String> FUTURE_PERSONAS = Set.of("boss", "demon", "flame_imp", "villager");
+            "hobgoblin", "reflection", "villager");
+    private static final Set<String> FUTURE_PERSONAS = Set.of("boss", "demon", "flame_imp");
     private static final List<String> STALE_PHRASES = List.of(
             "spends the stored brew",
             "Brew of Bodega",
@@ -59,6 +59,29 @@ class NpcKnowledgeBaseCardTest {
                                 + MAX_TARGETED_LINE_LENGTH + "): " + line);
                 assertKnownMetadata(line, path, lineNumber);
                 assertNoStalePhrases(line, path, lineNumber);
+            }
+        }
+    }
+
+    @Test
+    void activePersonaTargetedFactsAreReachableFromTheirTriggers() {
+        for (NpcKnowledgeBase.TargetedNoteDiagnostic note : NpcKnowledgeBase.targetedNoteDiagnostics()) {
+            if (!ACTIVE_PERSONAS.contains(note.personaId())) {
+                continue;
+            }
+            NpcCardRequest request = NpcCardRequest.ANY_PERSONA.equals(note.personaId())
+                    ? NpcCardRequest.any()
+                    : NpcCardRequest.persona(note.personaId());
+            for (String trigger : note.triggers().split("\\|")) {
+                String cleaned = trigger.strip();
+                if (cleaned.isBlank()) {
+                    continue;
+                }
+                List<String> selectedTopics = NpcKnowledgeBase.selectedTargetedTopics(cleaned, request);
+                assertTrue(selectedTopics.contains(note.topic()),
+                        "Trigger cannot reach its own topic for persona " + note.personaId()
+                                + ": trigger='" + cleaned + "', topic=" + note.topic()
+                                + ", selected=" + selectedTopics + ", source=" + note.sourceAlias());
             }
         }
     }
