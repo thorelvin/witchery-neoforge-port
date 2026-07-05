@@ -7,6 +7,7 @@ import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.HobgoblinEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.ReflectionEntity;
+import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -189,6 +190,20 @@ public final class NpcBrainService {
 
     public boolean requestVillagerChat(Villager villager, ServerPlayer player, String playerMessage) {
         return requestChat(NpcPersonas.VILLAGER, villager, player, playerMessage);
+    }
+
+    public boolean requestVillageGuardGreeting(VillageGuardEntity guard, ServerPlayer player, Component fallback) {
+        if (!WitcheryConfig.LLM_ENABLED.get()) {
+            return false;
+        }
+        VillageGuardPersona persona = NpcPersonas.VILLAGE_GUARD;
+        return requestPersonaResponse(persona, guard, player,
+                persona.greetingPrompt(guard, player, contextFor(persona, guard, player)),
+                "greet", "", fallback, true);
+    }
+
+    public boolean requestVillageGuardChat(VillageGuardEntity guard, ServerPlayer player, String playerMessage) {
+        return requestChat(NpcPersonas.VILLAGE_GUARD, guard, player, playerMessage);
     }
 
     public boolean requestHobgoblinGreeting(HobgoblinEntity hobgoblin, ServerPlayer player, Component fallback) {
@@ -1146,6 +1161,13 @@ public final class NpcBrainService {
         if (entity instanceof HobgoblinEntity) {
             return switch (beat) {
                 case "nods", "studies your coin" -> SoundEvents.VILLAGER_YES;
+                case "shrugs", "raises an eyebrow" -> SoundEvents.VILLAGER_NO;
+                default -> SoundEvents.VILLAGER_AMBIENT;
+            };
+        }
+        if (entity instanceof VillageGuardEntity) {
+            return switch (beat) {
+                case "nods" -> SoundEvents.VILLAGER_YES;
                 case "shrugs", "raises an eyebrow" -> SoundEvents.VILLAGER_NO;
                 default -> SoundEvents.VILLAGER_AMBIENT;
             };

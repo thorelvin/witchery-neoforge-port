@@ -14,6 +14,7 @@ import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.HobgoblinEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.ReflectionEntity;
+import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryItems;
@@ -281,6 +282,8 @@ public final class NpcBrainEvents {
                     && NpcBrainService.INSTANCE.requestFlameImpChat(imp, player, message);
             case VILLAGER -> target.entity() instanceof Villager villager
                     && NpcBrainService.INSTANCE.requestVillagerChat(villager, player, message);
+            case VILLAGE_GUARD -> target.entity() instanceof VillageGuardEntity guard
+                    && NpcBrainService.INSTANCE.requestVillageGuardChat(guard, player, message);
             case HOBGOBLIN -> target.entity() instanceof HobgoblinEntity hobgoblin
                     && NpcBrainService.INSTANCE.requestHobgoblinChat(hobgoblin, player, message);
             case REFLECTION -> target.entity() instanceof ReflectionEntity reflection
@@ -349,7 +352,7 @@ public final class NpcBrainEvents {
                     || kind == NpcCommandKind.GO_AWAY
                     || kind == NpcCommandKind.FOLLOW
                     || kind == NpcCommandKind.GUARD;
-            case BOSS, LEONARD, BABA_YAGA, DEMON, FLAME_IMP, VILLAGER, REFLECTION -> false;
+            case BOSS, LEONARD, BABA_YAGA, DEMON, FLAME_IMP, VILLAGER, VILLAGE_GUARD, REFLECTION -> false;
         };
     }
 
@@ -374,7 +377,8 @@ public final class NpcBrainEvents {
                     sayHobgoblin(level, hobgoblin, player, message, speech);
                 }
             }
-            case BOSS, LEONARD, BABA_YAGA, DEMON, FLAME_IMP, VILLAGER, REFLECTION -> nudgeTarget(target, player);
+            case BOSS, LEONARD, BABA_YAGA, DEMON, FLAME_IMP, VILLAGER, VILLAGE_GUARD, REFLECTION ->
+                    nudgeTarget(target, player);
         }
     }
 
@@ -399,7 +403,7 @@ public final class NpcBrainEvents {
                     kind,
                     () -> executeNpcCommandIfPermitted(level, target, player, message, kind),
                     () -> requestChatAfterRejectedCommand(level, target, player, message));
-            case BOSS, LEONARD, BABA_YAGA, DEMON, FLAME_IMP, VILLAGER, REFLECTION -> false;
+            case BOSS, LEONARD, BABA_YAGA, DEMON, FLAME_IMP, VILLAGER, VILLAGE_GUARD, REFLECTION -> false;
         };
     }
 
@@ -593,6 +597,12 @@ public final class NpcBrainEvents {
                 if (target.entity() instanceof Villager villager) {
                     villager.getNavigation().stop();
                     villager.getLookControl().setLookAt(player, 30.0F, 30.0F);
+                }
+            }
+            case VILLAGE_GUARD -> {
+                if (target.entity() instanceof VillageGuardEntity guard) {
+                    guard.getNavigation().stop();
+                    guard.getLookControl().setLookAt(player, 30.0F, 30.0F);
                 }
             }
             case HOBGOBLIN -> {

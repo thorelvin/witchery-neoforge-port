@@ -1,5 +1,7 @@
 package com.emoniph.witchery.entity;
 
+import com.emoniph.witchery.ai.NpcBrainService;
+import com.emoniph.witchery.ai.NpcPersonas;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntityTags;
@@ -319,7 +321,18 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
         if (hand == net.minecraft.world.InteractionHand.MAIN_HAND
                 && !level().isClientSide()
                 && getTarget() == null) {
-            shout(pick(Q_GREET), 100);
+            if (shoutCooldown > 0) {
+                return net.minecraft.world.InteractionResult.SUCCESS;
+            }
+            String key = pick(Q_GREET);
+            shoutCooldown = 100;
+            Component fallback = NpcBrainService.speechComponent(NpcPersonas.VILLAGE_GUARD, this,
+                    Component.translatable(key));
+            boolean queued = player instanceof ServerPlayer serverPlayer
+                    && NpcBrainService.INSTANCE.requestVillageGuardGreeting(this, serverPlayer, fallback);
+            if (!queued) {
+                player.displayClientMessage(fallback, false);
+            }
         }
         return net.minecraft.world.InteractionResult.SUCCESS;
     }

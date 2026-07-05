@@ -8,6 +8,7 @@ public final class NpcPersonas {
     public static final DemonPersona DEMON = DemonPersona.INSTANCE;
     public static final FlameImpPersona FLAME_IMP = FlameImpPersona.INSTANCE;
     public static final VillagerPersona VILLAGER = VillagerPersona.INSTANCE;
+    public static final VillageGuardPersona VILLAGE_GUARD = VillageGuardPersona.INSTANCE;
     public static final HobgoblinPersona HOBGOBLIN = HobgoblinPersona.INSTANCE;
     public static final ReflectionPersona REFLECTION = ReflectionPersona.INSTANCE;
 

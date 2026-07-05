@@ -24,7 +24,7 @@ class NpcKnowledgeBaseCardTest {
     private static final Pattern METADATA = Pattern.compile("\\[([a-zA-Z0-9_]+):\\s*([^\\]]+)]");
     private static final Set<String> KNOWN_METADATA = Set.of("triggers", "topic", "persona", "weight", "unlock", "tags");
     private static final Set<String> ACTIVE_PERSONAS = Set.of("any", "boss", "coven_witch", "leonard", "baba_yaga",
-            "demon", "flame_imp", "hobgoblin", "reflection", "villager");
+            "demon", "flame_imp", "hobgoblin", "reflection", "villager", "village_guard");
     private static final Set<String> FUTURE_PERSONAS = Set.of();
     private static final List<String> STALE_PHRASES = List.of(
             "spends the stored brew",

@@ -51,6 +51,12 @@ final class NpcDialogueFallback {
                 memoryContext);
     }
 
+    static Optional<String> villageGuardChat(String playerMessage, String guardName, String playerName,
+                                             String guardState, String villageInfo, String memoryContext) {
+        return NpcVillageGuardFallback.chat(playerMessage, guardName, playerName, guardState, villageInfo,
+                memoryContext);
+    }
+
     static Optional<String> bossChat(String playerMessage, String bossName, String playerName,
                                      String bossKind, String bossInfo, String gearInfo, String memoryContext) {
         return Optional.of(bossLine(normalize(playerMessage), safeName(playerName),
@@ -151,6 +157,15 @@ final class NpcDialogueFallback {
             return specific;
         }
         String line = NpcFallbackAsides.villager(normalized, name, avoidSpeech);
+        return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
+    }
+
+    static String villageGuardLastResort(String playerMessage, String playerName, String avoidSpeech) {
+        return NpcFallbackAsides.villageGuard(normalize(playerMessage), safeName(playerName), avoidSpeech);
+    }
+
+    static Optional<String> villageGuardAlternate(String playerMessage, String playerName, String avoidSpeech) {
+        String line = villageGuardLastResort(playerMessage, playerName, avoidSpeech);
         return NpcBrainResponse.sameMeaningForRepetition(line, avoidSpeech) ? Optional.empty() : Optional.of(line);
     }
 

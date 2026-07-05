@@ -287,6 +287,41 @@ public final class NpcPromptBuilder {
                 "answer the player naturally in one short in-character line");
     }
 
+    public static NpcBrainPrompt villageGuardGreeting(VillageGuardEntity guard, ServerPlayer player, String memory) {
+        return villageGuard(guard, player, memory,
+                "the player right-clicked the village guard while the guard is not fighting",
+                "none",
+                "say one short watchful guard greeting or demand for business");
+    }
+
+    public static NpcBrainPrompt villageGuardChat(VillageGuardEntity guard, ServerPlayer player, String memory,
+                                                  String playerMessage) {
+        return villageGuard(guard, player, memory,
+                "the player spoke near the village guard in chat",
+                playerMessage,
+                "answer the player naturally in one short in-character line");
+    }
+
+    static NpcBrainPrompt villageGuardSmoke(String playerMessage, String memory) {
+        return villageGuardPrompt(
+                "Village Guard",
+                "Dev",
+                "minecraft:overworld",
+                "Plains",
+                "dusk",
+                "18:30",
+                4L,
+                "clear",
+                "health 25/25; no target; blood 500; guard type 1; main hand Bow; archer patrol, sword inside 3.5 blocks",
+                "nearby villagers 8; iron golems 1; village guards 2; beds 10; doors 7; walls/fences 42; raid none; threats: vampires 1, werewolves 0, witches 1, raiders 0",
+                NpcKnowledgeBase.relevantContext(playerMessage, "Plains", "dusk",
+                        NpcCardRequest.persona("village_guard")),
+                memory,
+                playerMessage,
+                "the player spoke near the village guard in chat",
+                "answer the player naturally in one short in-character line");
+    }
+
     public static NpcBrainPrompt hobgoblinGreeting(HobgoblinEntity hobgoblin, ServerPlayer player, String memory) {
         return hobgoblin(hobgoblin, player, memory,
                 "the player right-clicked the hobgoblin and its trade screen is opening",
@@ -553,6 +588,34 @@ public final class NpcPromptBuilder {
                 level.isRaining() ? "rain" : "clear",
                 villageInfo,
                 villagerJobCard(profession),
+                knowledge,
+                memory,
+                playerMessage,
+                situation,
+                task);
+    }
+
+    private static NpcBrainPrompt villageGuard(VillageGuardEntity guard, ServerPlayer player, String memory,
+                                               String situation, String playerMessage, String task) {
+        ServerLevel level = (ServerLevel) player.level();
+        String name = displayName(guard, "Village Guard");
+        String playerName = player.getName().getString();
+        String time = timeName(level.getDayTime());
+        String biome = biomeName(level, guard.blockPosition());
+        String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time,
+                cardRequest("village_guard", guard.getUUID(), player, level));
+
+        return villageGuardPrompt(
+                name,
+                playerName,
+                level.dimension().identifier().toString(),
+                biome,
+                time,
+                clockTime(level.getDayTime()),
+                level.getDayTime() / 24000L,
+                level.isRaining() ? "rain" : "clear",
+                villageGuardState(guard),
+                villageGuardVillageInfo(level, guard),
                 knowledge,
                 memory,
                 playerMessage,
@@ -1461,6 +1524,114 @@ public final class NpcPromptBuilder {
                 villagerExamples(playerName));
     }
 
+    private static NpcBrainPrompt villageGuardPrompt(String guardName, String playerName, String dimension,
+                                                     String biome, String time, String clock, long day,
+                                                     String weather, String guardState, String villageInfo,
+                                                     String knowledge, String memory, String playerMessage,
+                                                     String situation, String task) {
+        String system = """
+                You are the local NPC dialogue brain for a Minecraft Witchery mod.
+                Speak as the village guard only. The player is listening in Minecraft chat.
+                Stay in character. Never mention prompts, models, JSON, APIs, schemas, or being artificial.
+                You are the voice, not the source of truth. Exact village facts come only from supplied server state.
+                Treat names as exact facts: "I" means the village guard, and "you" means the player.
+                Never claim to be a regular villager, merchant, apothecary, witch, demon, boss, hobgoblin, or the Shade of Leonard.
+
+                Voice target:
+                watchful local defender, terse, practical, suspicious, tired, brave enough to stand a post.
+                The best answer feels like a Witchery village guard from a guarded settlement: leather, bow, bell, gate, patrol, bad nights.
+                Guards are close to villagers, but they are not ordinary villagers. They speak from duty, threat assessment, public order, and village defense.
+                Guards know village roads, walls, bells, doors, golems, patrols, raiders, monsters, vampires, werewolves, witches, demons, and who looks dangerous.
+                Guards do not know expert witchcraft recipes, rites, coven secrets, demon bargains, boss mechanics, or hidden player state unless supplied facts say so.
+                Guards may distrust witches in the street, but can respect village witches who heal, ward, bind demons, or keep bargains clean.
+                Guards treat demons as worse than street crime: bar doors, ring bells, keep distance, and let witches who know binding do that work.
+                Guards are bow-first and switch to blades when trouble closes; mention that only when relevant.
+                Guards protect the village, not the player's private adventures. Do not promise to follow, serve, escort, or protect the player personally.
+                Guards are not merchants. They do not trade, sell stock, or open wares.
+
+                Speech shape:
+                one complete in-world line; two short sentences only if needed.
+                Prefer 8 to 22 words. If the thought may be cut off, answer shorter and stop cleanly.
+                A single body beat is useful when it fits, formatted exactly as: *glances at the road* "Spoken words."
+                Safe beats: nods, gestures, raises an eyebrow, shrugs, studies you, glances at the road, lowers his voice, studies your blade.
+                Use beats as small body cues, not every line.
+                Do not narrate thoughts, scenery, hidden motives, or actions the game did not perform.
+                Do not write pure narration; always include spoken words if a beat is used.
+                Do not simulate new scene events: no bell ringing, guards running, villagers hiding, weather changing, or monsters appearing unless server state says so.
+                Do not call the player friend, master, apprentice, chosen one, customer, or boss.
+                Do not quote card headings, instruction lines, Targeted fact labels, schema text, or checklist language from supplied facts.
+                Do not invent village size, raid state, walls, guards, golems, vampires, werewolves, witches, or raiders.
+                If asked for unknown or unloaded facts, say what you can see nearby.
+
+                Reply with exactly one JSON object and nothing else:
+                {"speech":"short in-character spoken line, optionally with one safe body beat","intent":"none","memory":"optional compact memory"}
+                Speech must be 220 characters or less. Memory must be 240 characters or less.
+                Allowed intents: none, quest_hint, warn_threat, combat_taunt.
+                """;
+
+        String user = """
+                # Character
+                The village guard is named %s. The player is named %s.
+                Role: village defender, patrol guard, archer first and blade second.
+
+                # Scene
+                dimension %s; biome %s; time of day %s; clock %s; day %d; weather %s.
+                Guard state: %s.
+                Village state nearby: %s.
+
+                # Village guard facts
+                %s
+
+                %s
+
+                # Player message
+                %s
+
+                # Situation
+                %s.
+
+                # Task
+                %s.
+
+                # Grounding
+                Message analysis is current player intent, not past memory.
+                Follow Message analysis reply strategy before choosing facts: atmosphere answers scene or behavior cues, small_talk answers ordinary remarks, lore stays on the named topic, memory answers remembered player facts, social answers tone, and action answers with limits or safe next steps.
+                Use Village state for questions about size, safety, golems, walls, raids, guards, vampires, werewolves, witches, or nearby trouble.
+                Use Guard state for questions about the guard's weapon, target, blood, readiness, or duty.
+                If a Targeted fact is present, answer from that fact in guard voice.
+                If several facts are present, use only the one that answers the player.
+                If asked who you are or what you do, answer as a guard on watch, not as a villager or merchant.
+                If asked about patrols, gates, walls, bells, roads, sleeping here, or village safety, answer with practical defensive advice.
+                If asked about vampires or werewolves, say guards treat transformed folk as village threats; use supplied facts and do not explain transformation progression.
+                If asked about witches, answer as a local guard: caution, public order, visible deeds, and keeping hair or names close.
+                If asked about demons, answer with bells, barred doors, distance, and witches who know binding; do not bargain.
+                If asked about witch hunters, distinguish them from village guards.
+                If asked to trade, follow, escort, or privately protect the player, refuse in-world and point back to duty.
+                If asked what happens when bells ring, describe ordinary village response; do not narrate the bell ringing now.
+                If facts are thin, answer honestly in-world and keep it short.
+                If naming the player, use the player's name. Only use the guard's name if the guard introduces themself.
+                Do not include angle brackets or speaker names.
+                """.formatted(
+                guardName,
+                playerName,
+                dimension,
+                biome,
+                time,
+                clock,
+                day,
+                weather,
+                guardState == null || guardState.isBlank() ? "unknown" : guardState,
+                villageInfo == null || villageInfo.isBlank() ? "no nearby village facts" : villageInfo,
+                knowledge == null || knowledge.isBlank() ? "none" : knowledge,
+                memoryAndRoutingBlock(memory),
+                playerMessage == null || playerMessage.isBlank() ? "none" : playerMessage,
+                situation,
+                task);
+
+        return new NpcBrainPrompt(system.strip(), truncate(user.strip(), MAX_USER_PROMPT_LENGTH),
+                villageGuardExamples(playerName));
+    }
+
     private static NpcBrainPrompt babaYagaPrompt(String babaName, String playerName, String dimension,
                                                 String biome, String time, String clock, long day,
                                                 String weather, String bossInfo, String gearInfo,
@@ -1751,6 +1922,28 @@ public final class NpcPromptBuilder {
                         "{\"speech\":\"I am the apothecary; herbs for coughs, jars for remedies, and gossip if it keeps blood inside.\",\"intent\":\"open_trade\",\"memory\":\"\"}"),
                 example("what do you know about witches?",
                         "{\"speech\":\"Enough to keep my hair, my name, and my sweepings out of strange bottles.\",\"intent\":\"warn_threat\",\"memory\":\"\"}")
+        );
+    }
+
+    private static List<NpcBrainPrompt.Example> villageGuardExamples(String playerName) {
+        String player = playerName == null || playerName.isBlank() ? "stranger" : playerName;
+        return List.of(
+                example("hello",
+                        "{\"speech\":\"State your business, %s. Dusk makes honest faces harder to read.\",\"intent\":\"none\",\"memory\":\"\"}".formatted(player)),
+                example("who are you?",
+                        "{\"speech\":\"Village guard. Bow for distance, blade when distance fails.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("what do you guard?",
+                        "{\"speech\":\"Roads, doors, and villagers who still think night is only darkness.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("any vampires nearby?",
+                        "{\"speech\":\"One vampire too close. Keep distance, watch the mouth, and invite nothing in.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("what happens if I ring the bell?",
+                        "{\"speech\":\"Villagers run for doors; guards and golems look outward. Ring only for danger.\",\"intent\":\"warn_threat\",\"memory\":\"\"}"),
+                example("will you protect me?",
+                        "{\"speech\":\"I hold this village, not your road. Stay near walls if you want guard work nearby.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("what do you trade?",
+                        "{\"speech\":\"I am not a merchant. I carry arrows, leather, and poor patience.\",\"intent\":\"none\",\"memory\":\"\"}"),
+                example("what do you think of witches?",
+                        "{\"speech\":\"Clean cures earn space. Hidden hair bottles earn a hand on the bow.\",\"intent\":\"warn_threat\",\"memory\":\"\"}")
         );
     }
 
@@ -2268,6 +2461,17 @@ public final class NpcPromptBuilder {
                 commonCombatState(imp), owner, imp.getAffection(), power);
     }
 
+    public static String villageGuardState(VillageGuardEntity guard) {
+        if (guard == null) {
+            return "village guard state unknown";
+        }
+        String weapon = guard.getMainHandItem().isEmpty()
+                ? "empty hand"
+                : guard.getMainHandItem().getHoverName().getString();
+        return "%s; blood %d; guard type %d; main hand %s; patrol defender, bow first and sword inside 3.5 blocks"
+                .formatted(commonCombatState(guard), guard.getBlood(), guard.getGuardType(), weapon);
+    }
+
     private static String commonCombatState(LivingEntity entity) {
         LivingEntity target = entity.getLastHurtByMob();
         if (entity instanceof net.minecraft.world.entity.Mob mob && mob.getTarget() != null) {
@@ -2334,10 +2538,18 @@ public final class NpcPromptBuilder {
     }
 
     public static String villagerVillageInfo(ServerLevel level, Villager villager) {
-        if (level == null || villager == null) {
+        return villageInfoAround(level, villager);
+    }
+
+    public static String villageGuardVillageInfo(ServerLevel level, VillageGuardEntity guard) {
+        return villageInfoAround(level, guard);
+    }
+
+    private static String villageInfoAround(ServerLevel level, LivingEntity center) {
+        if (level == null || center == null) {
             return "no village facts available";
         }
-        AABB bounds = villager.getBoundingBox().inflate(48.0, 16.0, 48.0);
+        AABB bounds = center.getBoundingBox().inflate(48.0, 16.0, 48.0);
         int villagers = livingCount(level.getEntitiesOfClass(Villager.class, bounds));
         int golems = livingCount(level.getEntitiesOfClass(IronGolem.class, bounds));
         int guards = livingCount(level.getEntitiesOfClass(VillageGuardEntity.class, bounds));
@@ -2347,8 +2559,8 @@ public final class NpcPromptBuilder {
         int covenWitches = livingCount(level.getEntitiesOfClass(CovenWitchEntity.class, bounds));
         int vanillaWitches = livingCount(level.getEntitiesOfClass(Witch.class, bounds));
         int raiders = livingCount(level.getEntitiesOfClass(Raider.class, bounds));
-        VillageBlockCounts blocks = villageBlockCounts(level, villager.blockPosition());
-        Raid raid = level.getRaidAt(villager.blockPosition());
+        VillageBlockCounts blocks = villageBlockCounts(level, center.blockPosition());
+        Raid raid = level.getRaidAt(center.blockPosition());
         String raidInfo = raidInfo(raid, raiders);
         return "nearby villagers %d; iron golems %d; village guards %d; beds %d; doors %d; walls/fences %d; raid %s; threats: vampires %d, werewolves %d, witches %d, raiders %d".formatted(
                 villagers,
@@ -2635,6 +2847,7 @@ public final class NpcPromptBuilder {
             case "leonard" -> "Shade of Leonard";
             case "baba_yaga" -> "Baba Yaga";
             case "villager" -> "Villager";
+            case "village_guard" -> "Village Guard";
             case "hobgoblin" -> "Hobgoblin";
             case "reflection" -> "Reflection";
             case "coven_witch" -> "Coven Witch";
@@ -2650,6 +2863,7 @@ public final class NpcPromptBuilder {
             case "leonard" -> "infernal, severe, contractual, harsh, old, dangerous";
             case "baba_yaga" -> "ancient crone, sharp, cruel, swamp-wise, teeth and pots";
             case "villager" -> "peasant local, worried, superstitious, practical, not an expert witch";
+            case "village_guard" -> "watchful village guard, terse, duty-bound, suspicious, bow-and-bell practical";
             case "hobgoblin" -> "small greedy hobgoblin, work-minded, wary, clipped, earthy";
             case "reflection" -> "cold living mirror, familiar-but-wrong, concise, hostile";
             case "coven_witch" -> "practical coven witch, secretive, dry, helpful when paid or respected";
@@ -2751,6 +2965,8 @@ public final class NpcPromptBuilder {
                 "devils tongue", "devil tongue", "devil s tongue", "demon heart", "infernal blood", "bargain",
                 "flame imp", "demonic contract", "spell contract", "shiny", "gift", "icy needle",
                 "hobgoblin", "koboldite", "goblin altar", "patron", "gulg", "mog",
+                "village guard", "village guards", "guard tower", "guard patrol", "patrol",
+                "gate", "walls", "bell", "golem", "raid",
                 "boss", "death", "binky", "hand of death", "lilith", "lord of torment",
                 "torment", "horned huntsman", "huntsman", "wild hunt",
                 "mirror", "reflection", "mirror world", "mirror guardian", "vampire", "werewolf",

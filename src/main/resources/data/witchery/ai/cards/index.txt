@@ -49,6 +49,7 @@ persona_flame_imp.md
 persona_demon.md
 persona_hobgoblin.md
 persona_villager.md
+persona_village_guard.md
 persona_bosses.md
 persona_atmosphere.md
 persona_reflection.md

@@ -15,6 +15,7 @@ import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.LilithEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.ReflectionEntity;
+import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,6 +44,8 @@ final class NpcChatTargetResolver {
     private static final double FLAME_IMP_CASUAL_CHAT_RANGE = 6.0;
     private static final double VILLAGER_CHAT_RANGE = 10.0;
     private static final double VILLAGER_CASUAL_CHAT_RANGE = 5.0;
+    private static final double VILLAGE_GUARD_CHAT_RANGE = 12.0;
+    private static final double VILLAGE_GUARD_CASUAL_CHAT_RANGE = 7.0;
     private static final double HOBGOBLIN_CHAT_RANGE = 10.0;
     private static final double HOBGOBLIN_CASUAL_CHAT_RANGE = 6.0;
     private static final double REFLECTION_CHAT_RANGE = 12.0;
@@ -94,6 +97,10 @@ final class NpcChatTargetResolver {
             new PersonaTargetRule<>(ChatPersona.VILLAGER, Villager.class,
                     VILLAGER_CHAT_RANGE, 4.0, VILLAGER_CASUAL_CHAT_RANGE,
                     NpcChatTargetResolver::isNamedVillagerAddress,
+                    CasualRouting.CLOSE_PRIVATE_THEN_LOOKING_PUBLIC),
+            new PersonaTargetRule<>(ChatPersona.VILLAGE_GUARD, VillageGuardEntity.class,
+                    VILLAGE_GUARD_CHAT_RANGE, 5.0, VILLAGE_GUARD_CASUAL_CHAT_RANGE,
+                    NpcChatTargetResolver::isNamedVillageGuardAddress,
                     CasualRouting.CLOSE_PRIVATE_THEN_LOOKING_PUBLIC),
             new PersonaTargetRule<>(ChatPersona.HOBGOBLIN, HobgoblinEntity.class,
                     HOBGOBLIN_CHAT_RANGE, 4.0, HOBGOBLIN_CASUAL_CHAT_RANGE,
@@ -231,6 +238,9 @@ final class NpcChatTargetResolver {
         if (explicitlyNamesVillager(message)) {
             personas.add(ChatPersona.VILLAGER);
         }
+        if (explicitlyNamesVillageGuard(message)) {
+            personas.add(ChatPersona.VILLAGE_GUARD);
+        }
         if (explicitlyNamesHobgoblin(message)) {
             personas.add(ChatPersona.HOBGOBLIN);
         }
@@ -338,6 +348,14 @@ final class NpcChatTargetResolver {
         }
         String profession = NpcPromptBuilder.villagerProfessionName(villager);
         return !profession.isBlank() && normalized.contains(normalize(profession));
+    }
+
+    private static boolean isNamedVillageGuardAddress(VillageGuardEntity guard, String message) {
+        String normalized = normalize(message);
+        if (explicitlyNamesVillageGuard(message)) {
+            return true;
+        }
+        return matchesCustomName(guard, normalized);
     }
 
     private static boolean isNamedHobgoblinAddress(HobgoblinEntity hobgoblin, String message) {
@@ -452,6 +470,17 @@ final class NpcChatTargetResolver {
                 || normalized.contains("butcher")
                 || normalized.contains("leatherworker")
                 || normalized.contains("nitwit");
+    }
+
+    private static boolean explicitlyNamesVillageGuard(String message) {
+        String normalized = normalize(message);
+        return containsAny(normalized,
+                "village guard", "village guards", "town guard", "town guards",
+                "guard tower", "guard post", "guard patrol", "patrol guard",
+                "any guards", "guards nearby", "guard nearby",
+                "guard shouted", "guards shouted", "guard shouting", "guards shouting",
+                "hey guard", "hello guard", "hail guard", "guard state your business",
+                "guard what is your business", "guard what do you watch");
     }
 
     private static boolean explicitlyNamesHobgoblin(String message) {

@@ -10,6 +10,7 @@ enum ChatPersona {
     DEMON,
     FLAME_IMP,
     VILLAGER,
+    VILLAGE_GUARD,
     HOBGOBLIN,
     REFLECTION
 }

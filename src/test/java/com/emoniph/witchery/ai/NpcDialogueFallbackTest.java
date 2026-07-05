@@ -1455,6 +1455,34 @@ class NpcDialogueFallbackTest {
     }
 
     @Test
+    void villageGuardFallbackAnswersFromGuardDutyAndVillageState() {
+        String info = "nearby villagers 8; iron golems 1; village guards 2; beds 10; doors 7; walls/fences 42; raid none; threats: vampires 1, werewolves 0, witches 1, raiders 0";
+        String state = "health 25/25; no target; blood 500; main hand Bow";
+
+        Optional<String> duty = NpcDialogueFallback.villageGuardChat(
+                "What do you guard?", "Village Guard", "Dev", state, info, "");
+        Optional<String> guards = NpcDialogueFallback.villageGuardChat(
+                "Any guards nearby?", "Village Guard", "Dev", state, info, "");
+        Optional<String> vampire = NpcDialogueFallback.villageGuardChat(
+                "Any vampires near the gate?", "Village Guard", "Dev", state, info, "");
+        Optional<String> trade = NpcDialogueFallback.villageGuardChat(
+                "What do you trade?", "Village Guard", "Dev", state, info, "");
+        Optional<String> bell = NpcDialogueFallback.villageGuardChat(
+                "If I ring the bell, what happens?", "Village Guard", "Dev", state, info, "");
+
+        assertTrue(duty.isPresent());
+        assertTrue(duty.get().contains("Roads") || duty.get().contains("guard"), duty.get());
+        assertTrue(guards.isPresent());
+        assertTrue(guards.get().contains("Two guards") || guards.get().contains("two guards"), guards.get());
+        assertTrue(vampire.isPresent());
+        assertTrue(vampire.get().contains("one vampire"), vampire.get());
+        assertTrue(trade.isPresent());
+        assertTrue(trade.get().contains("not a merchant"), trade.get());
+        assertTrue(bell.isPresent());
+        assertTrue(bell.get().contains("Villagers run for doors"), bell.get());
+    }
+
+    @Test
     void villagerFallbackLimitsWitchcraftAndActionClaims() {
         String info = "nearby villagers 8; iron golems 1; village guards 2; beds 10; doors 7; walls/fences 42; raid none; threats: vampires 1, werewolves 0, witches 1, raiders 0";
 

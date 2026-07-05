@@ -273,6 +273,23 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void cardRepairPromptKeepsVillageGuardPersona() {
+        Optional<NpcBrainPrompt> prompt = NpcPromptBuilder.cardRepair("village_guard", "", "Dev",
+                "what do village guards do about vampires?",
+                "Message routing: route=lore; topic=guard_vampires; reply strategy=answer exact known route.",
+                "I am a villager and I sell herbs.");
+
+        assertTrue(prompt.isPresent());
+        String user = prompt.get().userPrompt().toLowerCase();
+
+        assertTrue(user.contains("village guard is speaking to dev"), prompt.get().userPrompt());
+        assertTrue(user.contains("watchful village guard"), prompt.get().userPrompt());
+        assertTrue(user.contains("vampire") || user.contains("vampires"), prompt.get().userPrompt());
+        assertTrue(!user.contains("practical coven witch"), prompt.get().userPrompt());
+        assertTrue(!user.contains("peasant local"), prompt.get().userPrompt());
+    }
+
+    @Test
     void cardRepairPromptKeepsNewPersonaVoices() {
         Optional<NpcBrainPrompt> boss = NpcPromptBuilder.cardRepair("boss", "", "Dev",
                 "how do I survive Death and Binky?",
@@ -547,6 +564,26 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void villageGuardSmokePromptUsesGuardVoiceAndVillageFacts() {
+        NpcBrainPrompt prompt = NpcPromptBuilder.villageGuardSmoke(
+                "Village guard, any vampires near the gate?", "");
+        String system = prompt.systemPrompt().toLowerCase();
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(system.contains("speak as the village guard only"), prompt.systemPrompt());
+        assertTrue(system.contains("not ordinary villagers"), prompt.systemPrompt());
+        assertTrue(system.contains("bow-first") || system.contains("bow first"), prompt.systemPrompt());
+        assertTrue(system.contains("not merchants") || system.contains("not a merchant"), prompt.systemPrompt());
+        assertTrue(user.contains("guard state"), prompt.userPrompt());
+        assertTrue(user.contains("village state nearby"), prompt.userPrompt());
+        assertTrue(user.contains("village guards 2"), prompt.userPrompt());
+        assertTrue(user.contains("walls/fences 42"), prompt.userPrompt());
+        assertTrue(user.contains("vampires 1"), prompt.userPrompt());
+        assertTrue(user.contains("targeted fact"), prompt.userPrompt());
+        assertTrue(user.contains("transformed") || user.contains("village threats"), prompt.userPrompt());
+    }
+
+    @Test
     void personasDeclareDistinctChatColors() {
         assertEquals(0xCC3355, NpcPersonas.BOSS.chatColorRgb());
         assertEquals(0xFF55FF, NpcPersonas.COVEN_WITCH.chatColorRgb());
@@ -554,6 +591,7 @@ class NpcPromptBuilderTest {
         assertEquals(0xDD3300, NpcPersonas.DEMON.chatColorRgb());
         assertEquals(0xFF6600, NpcPersonas.FLAME_IMP.chatColorRgb());
         assertEquals(0xFFAA00, NpcPersonas.VILLAGER.chatColorRgb());
+        assertEquals(0xE6B84A, NpcPersonas.VILLAGE_GUARD.chatColorRgb());
 
         Component line = NpcBrainService.speechComponent("Marta", NpcPersonas.VILLAGER.chatColorRgb(),
                 "Mind the road.");

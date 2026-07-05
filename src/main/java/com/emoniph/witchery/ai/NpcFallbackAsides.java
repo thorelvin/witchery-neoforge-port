@@ -61,6 +61,21 @@ final class NpcFallbackAsides {
                 "Ask again, " + playerName + "; make it useful this time.");
     }
 
+    static String villageGuard(String normalized, String playerName, String avoidSpeech) {
+        String[] lines = {
+                "State it plainly, " + playerName + ". The road is loud enough without riddles.",
+                "If it has teeth, curses, or too-sweet manners, keep it outside the gate.",
+                "Bow first, blade second, bell always. That is village wisdom with bruises.",
+                "Stand where I can see your hands and ask again.",
+                "Walls buy time. Doors buy breath. Guards spend both.",
+                "Quiet nights are the ones I count twice.",
+                "If you mean trouble, say so before trouble says it for you.",
+                "Village guard, not fortune teller. Name the threat."
+        };
+        return firstNonRepeated(lines, normalized, avoidSpeech,
+                "Ask again, " + playerName + "; use words fit for a watch post.");
+    }
+
     static String leonard(String normalized, String playerName, String avoidSpeech) {
         String[] lines = {
                 "Speak plainly, " + playerName + ". I do not reward soft questions.",

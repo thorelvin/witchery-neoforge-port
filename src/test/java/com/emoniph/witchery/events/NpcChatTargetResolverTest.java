@@ -36,6 +36,17 @@ class NpcChatTargetResolverTest {
         assertFalse(gulg.contains(ChatPersona.HOBGOBLIN), gulg.toString());
     }
 
+    @Test
+    void villageGuardNamesGuardNotRegularVillager() {
+        EnumSet<ChatPersona> guard = namedPersonas("Village guard, state your business.");
+        EnumSet<ChatPersona> nearby = namedPersonas("Any guards nearby?");
+
+        assertTrue(guard.contains(ChatPersona.VILLAGE_GUARD), guard.toString());
+        assertFalse(guard.contains(ChatPersona.VILLAGER), guard.toString());
+        assertTrue(nearby.contains(ChatPersona.VILLAGE_GUARD), nearby.toString());
+        assertFalse(nearby.contains(ChatPersona.HOBGOBLIN), nearby.toString());
+    }
+
     @SuppressWarnings("unchecked")
     private static EnumSet<ChatPersona> namedPersonas(String message) {
         try {
