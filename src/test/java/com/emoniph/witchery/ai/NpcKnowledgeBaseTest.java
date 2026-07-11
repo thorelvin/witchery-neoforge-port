@@ -622,6 +622,143 @@ class NpcKnowledgeBaseTest {
         assertFirstTargetedTopic("reflection_hearing", "can you hear me", NpcCardRequest.persona("reflection"));
         assertFirstTargetedTopic("leonard_world_contempt", "weather", NpcCardRequest.persona("leonard"));
         assertFirstTargetedTopic("witch_village_reputation", "good witch", NpcCardRequest.persona("coven_witch"));
+        assertFirstTargetedTopic("guard_survival_basics", "guard survival advice",
+                NpcCardRequest.persona("village_guard"));
+        assertFirstTargetedTopic("boss_death", "Death and Binky", NpcCardRequest.persona("boss"));
+        assertFirstTargetedTopic("demon_bargain", "bargain", NpcCardRequest.persona("demon"));
+        assertFirstTargetedTopic("imp_gifts", "shiny gifts", NpcCardRequest.persona("flame_imp"));
+        assertFirstTargetedTopic("baba_yaga_combat", "wooden weapon",
+                NpcCardRequest.persona("baba_yaga"));
+    }
+
+    @Test
+    void personaAccessMatrixDowngradesVillagerNetherMechanics() {
+        String context = NpcKnowledgeBase.relevantContext("how do I make a nether portal?", "Plains", "day",
+                NpcCardRequest.persona("villager")).toLowerCase(Locale.ROOT);
+
+        assertTrue(context.contains("rumor/referral boundary"), context);
+        assertTrue(!context.contains("vertical obsidian frame"), context);
+        assertTrue(!context.contains("4 by 5"), context);
+        assertTrue(!context.contains("flint and steel"), context);
+    }
+
+    @Test
+    void personaAccessMatrixAllowsApothecaryHerbNamesButBlocksGuard() {
+        String apothecary = NpcKnowledgeBase.relevantContext("belladonna latin", "Plains", "day",
+                NpcCardRequest.specialist("villager", "apothecary"));
+        assertTrue(apothecary.contains("Atropa"), apothecary);
+
+        String guard = NpcKnowledgeBase.relevantContext("belladonna latin", "Plains", "day",
+                NpcCardRequest.persona("village_guard"));
+        String lowerGuard = guard.toLowerCase(Locale.ROOT);
+        assertTrue(!lowerGuard.contains("atropa"), guard);
+        assertTrue(NpcKnowledgeBase.diagnosticsLine().contains("herb latin names=N"),
+                NpcKnowledgeBase.diagnosticsLine());
+    }
+
+    @Test
+    void villagerSpecialistsRefineScopedKnowledgeLanes() {
+        String ordinaryCoordinates = NpcKnowledgeBase.relevantContext("coordinates", "Plains", "day",
+                NpcCardRequest.persona("villager")).toLowerCase(Locale.ROOT);
+        assertTrue(ordinaryCoordinates.contains("scoped knowledge boundary"), ordinaryCoordinates);
+
+        String cartographer = NpcKnowledgeBase.relevantContext("coordinates", "Plains", "day",
+                NpcCardRequest.specialist("villager", "cartographer")).toLowerCase(Locale.ROOT);
+        assertTrue(cartographer.contains("coordinates are x"), cartographer);
+        assertTrue("S".equals(NpcKnowledgeBase.accessCodeForDiagnostics(
+                NpcCardRequest.persona("villager"), "vanilla_maps_coordinates_commands_deep.md")));
+        assertTrue("E".equals(NpcKnowledgeBase.accessCodeForDiagnostics(
+                NpcCardRequest.specialist("villager", "cartographer"),
+                "vanilla_maps_coordinates_commands_deep.md")));
+
+        String librarian = NpcKnowledgeBase.relevantContext("mending enchantment", "Plains", "day",
+                NpcCardRequest.specialist("villager", "librarian")).toLowerCase(Locale.ROOT);
+        assertTrue(librarian.contains("mending uses collected experience"), librarian);
+        assertTrue("E".equals(NpcKnowledgeBase.accessCodeForDiagnostics(
+                NpcCardRequest.specialist("villager", "librarian"),
+                "vanilla_enchanting_repair_brewing.md")));
+
+        String cleric = NpcKnowledgeBase.relevantContext("weakness potion", "Plains", "day",
+                NpcCardRequest.specialist("villager", "cleric")).toLowerCase(Locale.ROOT);
+        assertTrue(cleric.contains("weakness"), cleric);
+        assertTrue("E".equals(NpcKnowledgeBase.accessCodeForDiagnostics(
+                NpcCardRequest.specialist("villager", "cleric"),
+                "vanilla_potions_enchantments_advanced.md")));
+
+        String smith = NpcKnowledgeBase.relevantContext("pickaxe tiers", "Plains", "day",
+                NpcCardRequest.specialist("villager", "smith")).toLowerCase(Locale.ROOT);
+        assertTrue(smith.contains("pickaxe tier matters"), smith);
+        assertTrue("E".equals(NpcKnowledgeBase.accessCodeForDiagnostics(
+                NpcCardRequest.specialist("villager", "smith"), "vanilla_resources_tools_deep.md")));
+        assertTrue("E".equals(NpcKnowledgeBase.accessCodeForDiagnostics(
+                NpcCardRequest.specialist("villager", "weaponsmith"), "vanilla_resources_tools_deep.md")));
+        assertTrue("E".equals(NpcKnowledgeBase.accessCodeForDiagnostics(
+                NpcCardRequest.specialist("villager", "armorer"), "vanilla_resources_tools_deep.md")));
+        assertTrue("E".equals(NpcKnowledgeBase.accessCodeForDiagnostics(
+                NpcCardRequest.specialist("villager", "toolsmith"), "vanilla_resources_tools_deep.md")));
+        assertTrue("S".equals(NpcKnowledgeBase.accessCodeForDiagnostics(
+                NpcCardRequest.specialist("villager", "fisherman"), "world_village_social_deep.md")));
+        assertTrue("S".equals(NpcKnowledgeBase.accessCodeForDiagnostics(
+                NpcCardRequest.specialist("villager", "shepherd"), "world_village_social_deep.md")));
+        assertTrue("S".equals(NpcKnowledgeBase.accessCodeForDiagnostics(
+                NpcCardRequest.specialist("villager", "butcher"), "world_village_social_deep.md")));
+    }
+
+    @Test
+    void planRegressionKeepsVillagersUsefulButNotOmniscient() {
+        String elytra = NpcKnowledgeBase.relevantContext("where are elytras?", "Plains", "day",
+                NpcCardRequest.persona("villager")).toLowerCase(Locale.ROOT);
+        assertTrue(elytra.contains("rumor/referral boundary") || elytra.contains("gray wings"), elytra);
+        assertTrue(!elytra.contains("end gateway"), elytra);
+        assertTrue(!elytra.contains("item frame"), elytra);
+
+        String cartographer = NpcKnowledgeBase.relevantContext("woodland explorer map", "Plains", "day",
+                NpcCardRequest.specialist("villager", "cartographer")).toLowerCase(Locale.ROOT);
+        assertTrue(cartographer.contains("woodland explorer maps"), cartographer);
+        assertTrue(cartographer.contains("cartographers"), cartographer);
+    }
+
+    @Test
+    void planRegressionKeepsDomainSpecialistsInTheirLanes() {
+        String impPortal = NpcKnowledgeBase.relevantContext("flame imp nether portal", "Nether Wastes", "day",
+                NpcCardRequest.persona("flame_imp")).toLowerCase(Locale.ROOT);
+        assertTrue(impPortal.contains("obsidian frame"), impPortal);
+        assertTrue(!impPortal.contains("rumor/referral boundary"), impPortal);
+
+        String impElytra = NpcKnowledgeBase.relevantContext("where are elytras?", "Nether Wastes", "day",
+                NpcCardRequest.persona("flame_imp")).toLowerCase(Locale.ROOT);
+        assertTrue(impElytra.contains("rumor/referral boundary"), impElytra);
+        assertTrue(!impElytra.contains("item frame"), impElytra);
+
+        String hobgoblinMining = NpcKnowledgeBase.relevantContext("hobgoblin ores", "Forest", "day",
+                NpcCardRequest.persona("hobgoblin")).toLowerCase(Locale.ROOT);
+        assertTrue(hobgoblinMining.contains("mining advice"), hobgoblinMining);
+
+        String hobgoblinRite = NpcKnowledgeBase.relevantContext("teach me a circle rite", "Forest", "night",
+                NpcCardRequest.persona("hobgoblin")).toLowerCase(Locale.ROOT);
+        assertTrue(hobgoblinRite.contains("rumor/referral boundary"), hobgoblinRite);
+        assertTrue(!hobgoblinRite.contains("chalk glyphs, offerings, and altar power"), hobgoblinRite);
+    }
+
+    @Test
+    void planRegressionKeepsCoordinatesAndCommandsUnderServerAuthority() {
+        String reflection = NpcKnowledgeBase.relevantContext(
+                "where exactly is the woodland mansion coordinates?", "Plains", "day",
+                NpcCardRequest.persona("reflection")).toLowerCase(Locale.ROOT);
+        assertTrue(reflection.contains("do not invent exact structure coordinates"), reflection);
+        assertTrue(!reflection.matches("(?s).*\\bx\\s*-?\\d{2,}.*"), reflection);
+
+        for (NpcCardRequest request : List.of(
+                NpcCardRequest.persona("coven_witch"),
+                NpcCardRequest.persona("villager"),
+                NpcCardRequest.persona("village_guard"),
+                NpcCardRequest.persona("reflection"))) {
+            String command = NpcKnowledgeBase.relevantContext("can you /locate a stronghold?", "Plains", "day",
+                    request).toLowerCase(Locale.ROOT);
+            assertTrue(command.contains("cannot execute") || command.contains("cannot run")
+                    || command.contains("npc speech"), command);
+            assertTrue(!command.matches("(?s).*\\bx\\s*-?\\d{2,}.*"), command);
+        }
     }
 
     @Test

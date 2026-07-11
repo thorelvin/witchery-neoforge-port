@@ -36,6 +36,8 @@ public class SpectralStoneItem extends Item {
     private static final String TAG_TYPE = "SpectralType";
     private static final String TAG_COUNT = "SpectralCount";
 
+    public static final int[] SOURCE_CREATIVE_META = {0, 17, 18, 19};
+
     public enum StoredType {
         NONE(""),
         SPECTRE("entity.witchery.spectre"),
@@ -147,22 +149,39 @@ public class SpectralStoneItem extends Item {
     }
 
     public static void clearBinding(ItemStack stack) {
-        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
-            tag.remove(TAG_TYPE);
-            tag.remove(TAG_COUNT);
-        });
+        stack.remove(DataComponents.CUSTOM_DATA);
     }
 
     public static void bind(ItemStack stack, StoredType type, int count) {
+        if (type == StoredType.NONE || count <= 0) {
+            clearBinding(stack);
+            return;
+        }
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
-            if (type == StoredType.NONE || count <= 0) {
-                tag.remove(TAG_TYPE);
-                tag.remove(TAG_COUNT);
-            } else {
-                tag.putString(TAG_TYPE, type.name());
-                tag.putInt(TAG_COUNT, Math.min(count, 3));
-            }
+            tag.putString(TAG_TYPE, type.name());
+            tag.putInt(TAG_COUNT, Math.min(count, 3));
         });
+    }
+
+    public static ItemStack createWithBinding(StoredType type, int count) {
+        ItemStack stack = new ItemStack(WitcheryItems.SPECTRAL_STONE.get());
+        bind(stack, type, count);
+        return stack;
+    }
+
+    public static ItemStack createFromLegacyMeta(int meta) {
+        int count = (meta >> 4) & 7;
+        return createWithBinding(storedTypeFromLegacyMeta(meta), count);
+    }
+
+    public static int legacyMetaFor(StoredType type, int count) {
+        int creature = switch (type) {
+            case SPECTRE -> 1;
+            case BANSHEE -> 2;
+            case POLTERGEIST -> 3;
+            case NONE -> 0;
+        };
+        return creature == 0 || count <= 0 ? 0 : creature | (Math.min(count, 3) << 4);
     }
 
     public static StoredType getStoredType(ItemStack stack) {
@@ -184,6 +203,15 @@ public class SpectralStoneItem extends Item {
             return 0;
         }
         return Math.max(0, Math.min(3, tag.getIntOr(TAG_COUNT, 0)));
+    }
+
+    private static StoredType storedTypeFromLegacyMeta(int meta) {
+        return switch (meta & 15) {
+            case 1 -> StoredType.SPECTRE;
+            case 2 -> StoredType.BANSHEE;
+            case 3 -> StoredType.POLTERGEIST;
+            default -> StoredType.NONE;
+        };
     }
 
     private static Vec3 getSpawnOrigin(Level level, HitResult hitResult) {

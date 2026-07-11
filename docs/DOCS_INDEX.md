@@ -30,6 +30,9 @@ write new notes.
 - [status/BUGS.md](status/BUGS.md) - active bug board and fixed bug record.
 - [status/ITEM_REVIEW.md](status/ITEM_REVIEW.md) - item/equipment audit,
   exact-ID decisions, and unresolved item follow-ups.
+- [status/CREATIVE_TAB_PARITY_AUDIT.md](status/CREATIVE_TAB_PARITY_AUDIT.md) -
+  original creative-tab screenshot comparison and source-visible icon/variant
+  parity notes.
 - [status/FEATURE_MATRIX.md](status/FEATURE_MATRIX.md) - compact feature-level
   parity status. Use it for feature state changes, not session journaling.
 - [status/NEXT_TASKS.md](status/NEXT_TASKS.md) - backlog and slice candidates.
@@ -61,6 +64,8 @@ for players changed. Do not copy every dev-note into them.
   - Spirit World atmosphere notes.
 - [experiments/LLM_NPCS.md](experiments/LLM_NPCS.md) - local AI NPC setup,
   scope, config, model notes, and playtest boundaries.
+- [experiments/LLM_NPC_PERSONA_AND_KNOWLEDGE_EXPANSION_PLAN_v3.md](experiments/LLM_NPC_PERSONA_AND_KNOWLEDGE_EXPANSION_PLAN_v3.md)
+  - imported persona/card expansion design and access-boundary plan.
 - [experiments/LLM_NPC_PROMPTING_RESEARCH.md](experiments/LLM_NPC_PROMPTING_RESEARCH.md)
   - prompting/card-structure research for the local NPC dialogue layer.
 

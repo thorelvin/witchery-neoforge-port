@@ -153,12 +153,14 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <p class="subtitle">A Complete Guide to the Craft of Witchery Rewoven</p>
   <p class="divider">· · · ✦ · · ·</p>
   <p class="edition">Witchery Rewoven — NeoForge 1.21.11 Edition</p>
-  <p class="version">Version 14 — Thirteenth Edition — Village voices, boss bargains, and watchful roads</p>
+  <p class="version">Version 15 — Fourteenth Edition — Persona cards, source icons, and watchful roads</p>
 </div>
 
 <div class="callout callout-tip" style="margin-bottom:2.5rem;">
 <strong>What changed in this edition</strong> — the powers of the blood and the bound are set at last:
 <ul style="margin-top:0.5rem;margin-bottom:0;">
+  <li>The speaking layer has a fuller memory of the world. Local NPC voices now draw from a broad persona-card library, with exact, scoped, rumor, and forbidden lanes keeping Coven Witches, villagers, guards, hobgoblins, imps, demons, bosses, Leonard, Baba Yaga, and reflections inside their proper knowledge and voice.</li>
+  <li>Several old icons have remembered their faces: the <a href="#circle-talisman">Circle Talisman</a> shows its stored circle pattern, <strong>Spectral Stones</strong> show their bound Spectre, Banshee, or Poltergeist, <a href="#leonards-urn">Leonard's Urn</a> shows capacity, Plant Mines show their disguise, the Torment Scroll and Soul of Torment use their source art, the <a href="#brew-bag">Brew Bag</a> returns to leather colour, and wolf and hellhound heads have been refreshed.</li>
   <li>The <a href="#ch17">werewolf's climb</a> is whole at last: a true ten-rung Wolf Altar questline (gold, mutton, Tongue of Dog, the Horn of the Hunt, then kills, howls, tamings and the taking of a life), the wolf and wolfman shapes switched by the <a href="#moon-charm">Moon Charm</a>, their distinct powers (dig-for-bones, the feast, the paralysing and pack-calling howls, armour-rending claws), and the level-ten bite that spreads the curse. The <a href="#wolftrap">Wolftrap</a> now lures and catches a Wolfman to carry the curse onward.</li>
   <li>The <a href="#ch12">Infernal</a> witch's dominion is whole: thralls now hold their pact — they will not turn on their master and they avenge any blow struck against you — may be <strong>sacrificed</strong> for their nature, and that stolen nature <strong>wards you unbidden</strong>, snuffing flame, granting breath underwater, and swallowing the lightning-bolt.</li>
   <li>The <a href="#ch16">vampire's climb</a> is cut to its full height: <strong>Resist Sun</strong> truly holds back the daylight from the fifth rung, and the late trials — the three-village pilgrimage and the caging and bleeding of villagers — open the eighth and ninth. A <strong>Rite to Remove Vampirism</strong> now offers a coven's cure for the afflicted.</li>
@@ -1041,7 +1043,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <div class="callout callout-warn">There is <strong>no 5×5 ritual circle</strong>, whatever a half-remembered rumour may tell you — the chalk rings are 7×7, 11×11, and 15×15, of sixteen, twenty-eight, and forty glyphs. The in-game Witches' Primer names them Small, Medium, and Large; this book keeps those same three names, and every rite's size is listed in <a href="#appC">Appendix C</a>.</div>
 
 <div class="callout callout-also">Do not confuse the ritual circle with the tighter <em>binding circles</em> you scratch for the cauldron and the Waystone. Those are a smaller, separate pattern — about 5×5, with a 9×9 ring for larger workings — used when you drop items onto a glyph instead of casting a full rite, as in the dropped-Waystone <a href="#dropped-waystone-bind">Otherwhere binding</a>. That, and that alone, is where a five-wide circle has its place.</div>
-<p>The <a href="#circle-talisman">Circle Talisman</a> stores up to three circle patterns — one per chalk type at one size each — in a single item. Right-click the center of a complete circle to store; right-click any suitable surface to redeploy. Keep three pre-loaded: one per chalk type, set to your most commonly cast rites. The time saved becomes noticeable.</p>
+<p>The <a href="#circle-talisman">Circle Talisman</a> stores up to three circle patterns — one per chalk type at one size each — in a single item. Right-click the center of a complete circle to store; right-click any suitable surface to redeploy. Keep three pre-loaded: one per chalk type, set to your most commonly cast rites. The time saved becomes noticeable. In the creative tab and inventory, stored circle data now chooses the old visible talisman face, so a loaded talisman is easier to tell from a blank one.</p>
 
 <h3>Night-Only Rites</h3>
 <p>The Rite of Necromancy must be cast at night. If you need it during the day, cast the Rite of Total Eclipse first:</p>
@@ -2422,7 +2424,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <p>No voice should claim power the world has not given it. A witch cannot talk a cure into your blood. A guard cannot appoint himself by boasting. A demon cannot make a contract real without the contract. Leonard cannot be flattered into dropping his urn. If a line sounds too much like a stagehand, a scroll of rules, or a thing outside the world, distrust it; the better voices stay inside their own skin.</p>
 
 <h3>For Server Keepers</h3>
-<p>Those who tend the server may wake, quiet, reload, or test the speaking layer from the <code>/witchery ai</code> commands. <code>status</code> tells whether the voices are awake, <code>chat</code> sends a trial phrase, <code>knowledge</code> checks what lore is close to a question, <code>reload</code> refreshes the cards, and <code>forget</code> clears remembered chatter. Such tools are for tending the hearth behind the curtain; players need only speak like people in the world.</p>
+<p>Those who tend the server may wake, quiet, reload, or test the speaking layer from the <code>/witchery ai</code> commands. <code>status</code> tells whether the voices are awake, <code>chat</code> sends a trial phrase, <code>knowledge</code> checks what lore is close to a question, <code>reload</code> refreshes the cards, and <code>forget</code> clears remembered chatter. The runtime library now indexes 98 card files and 1,474 targeted facts, filtered through persona access rules: exact, scoped, rumor, or no access. Such tools are for tending the hearth behind the curtain; players need only speak like people in the world.</p>
 
 <p>Used well, the voices are candlelight: not the craft itself, but enough warmth and shadow to make a village feel inhabited.</p>
 
@@ -2896,7 +2898,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <div class="callout callout-tip">If a chapter refuses to open, you have simply not yet earned its book. For testing, <code>/witchery guide unlock [all|&lt;book&gt;]</code> opens chapters and <code>/witchery guide reset</code> shuts them again. The <strong>Witches' Brews</strong> Cauldron Book (<span class="item">witchery:cauldron_book</span>) and <strong>Immortals' Observations</strong> stand apart from the chain as guides of their own. Where a recipe has not yet reached the Primer, JEI covers the machines and this Book of Shadows covers the rest.</div>
 
 <div class="page-footer">
-  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 14 &nbsp;·&nbsp; Thirteenth Edition &nbsp;·&nbsp; ☽ ✦ ☾
+  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 15 &nbsp;·&nbsp; Fourteenth Edition &nbsp;·&nbsp; ☽ ✦ ☾
 </div>
 
 </body>

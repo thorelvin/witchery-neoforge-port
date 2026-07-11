@@ -3,13 +3,19 @@ package com.emoniph.witchery.ai;
 import java.util.Locale;
 import java.util.UUID;
 
-public record NpcCardRequest(String personaId, UUID entityId, UUID playerId, long gameTime,
+public record NpcCardRequest(String personaId, String specialistId, UUID entityId, UUID playerId, long gameTime,
                              int conversationTurn, int maxTopics, int maxFactsPerTopic) {
     public static final String ANY_PERSONA = "any";
     private static final UUID ZERO_UUID = new UUID(0L, 0L);
 
+    public NpcCardRequest(String personaId, UUID entityId, UUID playerId, long gameTime,
+                          int conversationTurn, int maxTopics, int maxFactsPerTopic) {
+        this(personaId, "", entityId, playerId, gameTime, conversationTurn, maxTopics, maxFactsPerTopic);
+    }
+
     public NpcCardRequest {
         personaId = normalizePersona(personaId);
+        specialistId = normalizeSpecialist(specialistId);
         entityId = entityId == null ? ZERO_UUID : entityId;
         playerId = playerId == null ? ZERO_UUID : playerId;
         conversationTurn = Math.max(0, conversationTurn);
@@ -18,11 +24,15 @@ public record NpcCardRequest(String personaId, UUID entityId, UUID playerId, lon
     }
 
     public static NpcCardRequest any() {
-        return new NpcCardRequest(ANY_PERSONA, ZERO_UUID, ZERO_UUID, 0L, 0, 6, 1);
+        return new NpcCardRequest(ANY_PERSONA, "", ZERO_UUID, ZERO_UUID, 0L, 0, 6, 1);
     }
 
     public static NpcCardRequest persona(String personaId) {
-        return new NpcCardRequest(personaId, ZERO_UUID, ZERO_UUID, 0L, 0, 6, 1);
+        return new NpcCardRequest(personaId, "", ZERO_UUID, ZERO_UUID, 0L, 0, 6, 1);
+    }
+
+    public static NpcCardRequest specialist(String personaId, String specialistId) {
+        return new NpcCardRequest(personaId, specialistId, ZERO_UUID, ZERO_UUID, 0L, 0, 6, 1);
     }
 
     static String normalizePersona(String personaId) {
@@ -34,5 +44,16 @@ public record NpcCardRequest(String personaId, UUID entityId, UUID playerId, lon
                 .replaceAll("_+", "_")
                 .replaceAll("^_|_$", "");
         return normalized.isBlank() ? ANY_PERSONA : normalized;
+    }
+
+    static String normalizeSpecialist(String specialistId) {
+        if (specialistId == null || specialistId.isBlank()) {
+            return "";
+        }
+        String normalized = specialistId.toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9_]+", "_")
+                .replaceAll("_+", "_")
+                .replaceAll("^_|_$", "");
+        return normalized;
     }
 }

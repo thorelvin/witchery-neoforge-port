@@ -1,0 +1,29 @@
+# Vanilla Minecraft Cards: Mobs And Combat
+
+These cards give practical combat answers. Keep advice non-technical unless the player asks for specifics.
+
+## Common Hostile Mobs
+- [triggers: fight zombies|zombie tips|zombie horde|zombie survival] [topic: vanilla_zombies] [tags: vanilla, mobs, combat] Targeted fact: Zombies are simple until they swarm. Use light, doors carefully, high ground, sweeping weapons, and do not let them reach villagers.
+- [triggers: fight skeletons|skeleton tips|arrows skeleton|shield skeleton] [topic: vanilla_skeletons] [tags: vanilla, mobs, combat] Targeted fact: Skeletons punish open ground. Use a shield, corners, rushing between shots, or a bow duel if your aim is less embarrassing than theirs.
+- [triggers: fight creepers|creeper safety|creeper explosion|stop creeper] [topic: vanilla_creepers] [tags: vanilla, mobs, combat] Targeted fact: Creepers are best handled by distance, knockback, shield timing, cats, and lighting. Repairing blast holes is the tax on poor attention.
+- [triggers: fight spiders|spider tips|cave spider poison|spider spawner] [topic: vanilla_spiders] [tags: vanilla, mobs, combat] Targeted fact: Spiders climb and cave spiders poison. Fight from controlled gaps, break webs, light spawners, and bring milk if poison is likely.
+- [triggers: fight endermen|enderman tips|looked at enderman|enderman water] [topic: vanilla_endermen] [tags: vanilla, mobs, combat] Targeted fact: Endermen anger when stared at or struck. Use water, low ceilings, boats, or a carved pumpkin; their height is impressive, their rain tolerance is not.
+- [triggers: fight witches vanilla|vanilla witch mob|witch throws potions|kill witch] [topic: vanilla_witch_mob] [tags: vanilla, mobs, witch] Targeted fact: Vanilla witches throw harmful potions and drink defensive ones. Close distance quickly or use strong ranged attacks; do not confuse them with Witchery coven witches.
+- [triggers: fight slimes|slime chunks|slime balls|swamp slime] [topic: vanilla_slimes] [tags: vanilla, mobs, slime] Targeted fact: Slimes split into smaller slimes and drop slimeballs. Swamps and certain underground chunks are their usual gossip halls.
+- [triggers: fight phantoms|phantoms spawning|no sleep phantom|phantom membrane] [topic: vanilla_phantoms] [tags: vanilla, mobs, phantom] Targeted fact: Phantoms punish players who avoid sleep for too long. Sleep, shelter under a roof, or shoot them down for membranes used in Slow Falling.
+
+## Nether And End Mobs
+- [triggers: fight ghasts|ghast fireball|reflect fireball|ghast tears] [topic: vanilla_ghasts] [tags: vanilla, nether, mobs] Targeted fact: Ghast fireballs can be hit back, and bows work well. Protect portals from line of sight unless you like relighting panic.
+- [triggers: fight blazes|blaze spawner|blaze rods|fire resistance blaze] [topic: vanilla_blazes] [tags: vanilla, nether, mobs] Targeted fact: Blazes fly, shoot fire, and guard progression. Shields, bows, blocks, and Fire Resistance make blaze rods less expensive in screaming.
+- [triggers: wither skeleton|wither skulls|nether fortress skeleton|wither effect] [topic: vanilla_wither_skeletons] [tags: vanilla, nether, mobs] Targeted fact: Wither skeletons spawn in fortresses, inflict Wither, and rarely drop skulls for summoning the Wither. Fight with room, light, and respect for tall swords.
+- [triggers: piglin brute|bastion brute|brute ignores gold|fight brute] [topic: vanilla_piglin_brute] [tags: vanilla, nether, mobs] Targeted fact: Piglin Brutes in bastions are hostile regardless of gold armor. Treat them as guards, not traders.
+- [triggers: fight shulker|shulker levitation|shulker shells|end city mobs] [topic: vanilla_shulkers] [tags: vanilla, end, mobs] Targeted fact: Shulkers fire levitation bullets and guard End cities. Bring Feather Falling, Slow Falling, blocks, pearls, or a ceiling plan.
+- [triggers: fight ender dragon|dragon fight tips|dragon breath|dragon perch] [topic: vanilla_ender_dragon_combat] [tags: vanilla, end, boss] Targeted fact: Destroy healing crystals, avoid looking at Endermen, use water and blocks, and strike or shoot the dragon when openings come. The fountain is both arena and exit.
+- [triggers: summon wither|fight wither|wither boss|nether star] [topic: vanilla_wither_boss] [tags: vanilla, boss, wither] Targeted fact: The Wither is summoned from soul sand or soul soil and three wither skeleton skulls. Fight far from anything beloved unless grief is the ritual.
+- [triggers: warden|fight warden|avoid warden|deep dark monster] [topic: vanilla_warden] [tags: vanilla, deep dark, mobs] Targeted fact: The Warden is meant to be avoided more than farmed. Sneak, use wool, avoid shriekers, and leave if the dark starts listening back.
+
+## Combat Habits
+- [triggers: best early weapon|sword or axe|axe damage|weapon choice] [topic: vanilla_weapons_basic] [tags: vanilla, combat, weapons] Targeted fact: Swords handle crowds and sweeping hits; axes hit hard and break shields in some contexts. Use what the fight asks for, not what pride named favorite.
+- [triggers: armor order|first armor|iron armor|diamond armor] [topic: vanilla_armor_order] [tags: vanilla, combat, armor] Targeted fact: Early iron armor is a major survival jump. Diamond and netherite are longer projects; a shield often saves more than one shiny boot.
+- [triggers: bow or crossbow|ranged weapon|crossbow fireworks|bow tips] [topic: vanilla_ranged_weapons] [tags: vanilla, combat, ranged] Targeted fact: Bows are flexible and enchant well; crossbows load in advance and can use fireworks or multishot. Either beats arguing with a skeleton face-first.
+- [triggers: milk bucket|clear potion effects|remove poison|bad omen milk] [topic: vanilla_milk] [tags: vanilla, combat, effects] Targeted fact: Milk clears many status effects, helpful for poison, Mining Fatigue, and other curses of ordinary Minecraft biology. It also clears helpful effects, because cows are impartial.

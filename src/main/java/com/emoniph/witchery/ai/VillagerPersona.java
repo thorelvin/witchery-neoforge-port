@@ -9,6 +9,24 @@ import java.util.Optional;
 
 public final class VillagerPersona implements NpcPersona<Villager> {
     public static final VillagerPersona INSTANCE = new VillagerPersona();
+    private static final String[] VILLAGER_PROFESSION_CLAIMS = {
+            "apothecary",
+            "farmer",
+            "cleric",
+            "librarian",
+            "cartographer",
+            "armorer",
+            "weaponsmith",
+            "toolsmith",
+            "mason",
+            "fletcher",
+            "fisherman",
+            "shepherd",
+            "butcher",
+            "leatherworker",
+            "nitwit",
+            "unemployed"
+    };
 
     private VillagerPersona() {
     }
@@ -90,7 +108,11 @@ public final class VillagerPersona implements NpcPersona<Villager> {
         String cleaned = NpcBrainResponse.sanitize(rawSpeech, NpcBrainResponse.MAX_SPEECH_LENGTH);
         cleaned = NpcBrainResponse.polishSpeechAfterFallback(cleaned, displayName(entity),
                 player.getName().getString(), playerMessage, memoryContext, expectedClock).orElse(cleaned);
-        if (cleaned.isBlank() || rejectsVillagerRaw(cleaned) || rejectsVillagerRawForMessage(cleaned, playerMessage)) {
+        String profession = NpcPromptBuilder.villagerProfessionName(entity);
+        if (cleaned.isBlank()
+                || rejectsVillagerRaw(cleaned)
+                || rejectsWrongVillagerProfessionRaw(cleaned, profession)
+                || rejectsVillagerRawForMessage(cleaned, playerMessage)) {
             return Optional.empty();
         }
         return Optional.of(cleaned);
@@ -175,6 +197,61 @@ public final class VillagerPersona implements NpcPersona<Villager> {
                 || normalized.contains("realmoraleboostinggift");
     }
 
+    static boolean rejectsWrongVillagerProfessionRaw(String speech, String actualProfession) {
+        String normalized = normalizeForCheck(speech);
+        String actual = normalizeProfessionForCheck(actualProfession);
+        if (normalized.isBlank() || actual.isBlank() || "villager".equals(actual)) {
+            return false;
+        }
+        for (String profession : VILLAGER_PROFESSION_CLAIMS) {
+            if (!profession.equals(actual) && claimsProfession(normalized, profession)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean claimsProfession(String normalized, String profession) {
+        String spaced = profession.replace("_", " ");
+        if (claimsProfessionName(normalized, spaced)) {
+            return true;
+        }
+        String alternate = switch (profession) {
+            case "weaponsmith" -> "weapon smith";
+            case "toolsmith" -> "tool smith";
+            case "leatherworker" -> "leather worker";
+            default -> "";
+        };
+        return !alternate.isBlank() && claimsProfessionName(normalized, alternate);
+    }
+
+    private static boolean claimsProfessionName(String normalized, String spaced) {
+        return containsAny(normalized,
+                "i am the " + spaced,
+                "i m the " + spaced,
+                "i am a " + spaced,
+                "i m a " + spaced,
+                "i am an " + spaced,
+                "i m an " + spaced,
+                "i am " + spaced,
+                "i m " + spaced,
+                "i am the village " + spaced,
+                "i m the village " + spaced,
+                "my trade is " + spaced,
+                "i work as a " + spaced,
+                "i work as an " + spaced);
+    }
+
+    private static String normalizeProfessionForCheck(String profession) {
+        return profession == null ? "" : profession.toLowerCase(Locale.ROOT)
+                .replace("weapon smith", "weaponsmith")
+                .replace("tool smith", "toolsmith")
+                .replace('_', ' ')
+                .replaceAll("[^a-z0-9 ]+", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+    }
+
     static boolean rejectsVillagerRawForMessage(String speech, String playerMessage) {
         String answer = normalizeForCheck(speech);
         String message = normalizeForCheck(playerMessage);
@@ -199,9 +276,26 @@ public final class VillagerPersona implements NpcPersona<Villager> {
                 || answer.startsWith("apothecary ")) {
             return true;
         }
+        if (containsAny(answer, "no food for witches in this world", "costs a cow to make one loaf",
+                "always trust the witch s word", "witch talk with me", "baked bones",
+                "flood your bed", "witches fly from door to door", "ask about bread first")) {
+            return true;
+        }
         if (containsAny(message, "how big", "village size", "how many villagers", "population", "beds", "doors")
                 && (!containsAny(answer, "villager", "villagers", "bed", "beds", "door", "doors", "eight", "ten", "seven")
                     || containsAny(answer, "apothecary", "sell what keeps", "herbs and potions"))) {
+            return true;
+        }
+        if (containsAny(message, "live in this village", "do you live here", "live here")
+                && containsAny(answer, "do not live here", "don t live here", "dont live here",
+                "i do not live", "i don t live", "i dont live")) {
+            return true;
+        }
+        if (containsAny(message, "golem", "iron golem", "protector")
+                && (!containsAny(answer, "golem", "iron", "protector")
+                    || containsAny(answer, "workhorses", "do not notice walking paths")
+                    || !containsAny(answer, "nearby", "one", "two", "no golem", "golem is",
+                    "golems are", "iron golem"))) {
             return true;
         }
         if (containsAny(message, "guard", "guards")
@@ -210,11 +304,21 @@ public final class VillagerPersona implements NpcPersona<Villager> {
         }
         if (containsAny(message, "raid", "raider", "raiders", "pillager", "pillagers")
                 && (!containsAny(answer, "raid", "no raid", "raider", "raiders", "pillager", "pillagers")
-                    || containsAny(answer, "yes there is a raid", "there is a raid", "vampire raid"))) {
+                    || containsAny(answer, "yes there is a raid", "there is a raid", "vampire raid",
+                    "raid bell"))) {
+            return true;
+        }
+        if (containsAny(message, "raid right now", "raid now", "is there a raid")
+                && !containsAny(answer, "no raid", "raid active", "active raid", "raider", "raiders",
+                "pillager", "pillagers", "none")) {
             return true;
         }
         if (containsAny(message, "vampire", "vampires")
                 && (answer.contains("not sure what you mean")
+                    || answer.contains("vampires are not villagers talk")
+                    || answer.contains("watch for silver")
+                    || answer.contains("silver at")
+                    || answer.contains("rare in this village")
                     || answer.contains("few of them")
                     || answer.contains("not yet ready to drink blood")
                     || answer.contains("golem is nearby")
@@ -222,13 +326,20 @@ public final class VillagerPersona implements NpcPersona<Villager> {
             return true;
         }
         if (containsAny(message, "werewolf", "werewolves", "wolfman", "wolfmen")
-                && (!containsAny(answer, "werewolf", "werewolves", "moon", "silver")
-                    || containsAny(answer, "get my hands on some of that blood", "need blood to tell you"))) {
+                && (!containsAny(answer, "werewolf", "werewolves", "silver")
+                    || containsAny(answer, "get my hands on some of that blood", "need blood to tell you",
+                    "garlic on the sill"))) {
             return true;
         }
         if (containsAny(message, "witch", "witches", "witchcraft")
                 && containsAny(answer, "i don t know any", "i dont know any", "no specific witches",
-                "happy to show you", "best at it", "i could teach you", "i can teach you")) {
+                "happy to show you", "best at it", "i could teach you", "i can teach you",
+                "brew potions", "make her stronger", "make me stronger")) {
+            return true;
+        }
+        if (containsAny(message, "are witches near", "witches near", "witch nearby", "witches nearby")
+                && !containsAny(answer, "witch", "witches", "hair", "bottle", "bottles", "name",
+                "coven", "curse")) {
             return true;
         }
         if (containsAny(message, "witch", "witches", "coven", "curse", "hair", "taglock", "poppet")
@@ -244,6 +355,65 @@ public final class VillagerPersona implements NpcPersona<Villager> {
         if (containsAny(message, "whiff", "whif", "mutandis")
                 && containsAny(answer, "i ll give you", "i will give you", "my recipe", "my whiff",
                 "buying a bottle", "buying from you", "from you")) {
+            return true;
+        }
+        if (containsAny(message, "feed the animals", "feed animals", "animal feed", "feed cows",
+                "feed sheep", "feed pigs", "feed chickens", "livestock", "breed animals")
+                && (!containsAny(answer, "wheat", "seed", "seeds", "carrot", "carrots", "roots",
+                "beets", "cows", "sheep", "pigs", "chickens")
+                    || containsAny(answer, "bone meal", "compost", "crows", "pigs eat wheat"))) {
+            return true;
+        }
+        if (containsAny(message, "compost", "composter", "bone meal", "bonemeal")
+                && (!containsAny(answer, "compost", "composter", "bone meal", "bonemeal", "scraps")
+                    || containsAny(answer, "butcher s shop", "herb for compost", "worms from farmer"))) {
+            return true;
+        }
+        if (containsAny(message, "nether portal", "make a portal", "build a portal", "portal to nether")
+                && (!containsAny(answer, "nether", "portal", "miner", "book", "old book")
+                    || containsAny(answer, "obsidian door", "tricky one to find", "crafted with precision",
+                    "village apothecary", "special recipe"))) {
+            return true;
+        }
+        if (containsAny(message, "blaze rod", "blaze rods", "where do i get blaze", "where get blaze",
+                "find blazes", "nether fortress")
+                && (!containsAny(answer, "blaze", "rod", "rods", "nether", "fortress")
+                    || containsAny(answer, "secret door", "iron pickaxe", "fireballs when swung",
+                    "sell you one", "craft a blaze rod", "recipe starts", "100 cobblestone",
+                    "primer to learn it", "obsidian to craft", "to craft", "charcoal and wood",
+                    "pages say"))) {
+            return true;
+        }
+        if (containsAny(message, "elytra", "elytras", "end ship wings")
+                && (!containsAny(answer, "elytra", "end", "dragon", "sky", "wing", "wings", "ship")
+                    || containsAny(answer, "special recipe", "elytra rocket", "make your own elytra",
+                    "iron golem and"))) {
+            return true;
+        }
+        if (containsAny(message, "elytra", "elytras", "end ship wings")
+                && containsAny(answer, "good morning", "crops are growing", "bread in storehouses")) {
+            return true;
+        }
+        if (containsAny(message, "woodland mansion", "find mansion", "mansion map", "explorer map")
+                && (!containsAny(answer, "mansion", "cartographer", "explorer map", "map", "armor", "torches")
+                    || containsAny(answer, "generate", "current worlds", "rules of fortune", "i know them"))) {
+            return true;
+        }
+        if (containsAny(message, "locate stronghold", "locate a stronghold", "locate command",
+                "run locate", "can you locate", "slash locate")
+                && !containsAny(answer, "command", "cheat", "cheats", "cannot run", "can t run",
+                "cant run", "locate", "stronghold", "eye", "eyes", "map", "maps", "road", "roads")) {
+            return true;
+        }
+        if (message.contains("belladonna") && message.contains("latin")
+                && (containsAny(answer, "belladonna is belladonna", "latin name is", "sanguisorbae")
+                    || !containsAny(answer, "scholar", "apothecary", "librarian", "primer",
+                    "witch herb", "witch herb talk", "not scholar"))) {
+            return true;
+        }
+        if (containsAny(message, "rumor", "rumour", "gossip")
+                && !containsAny(answer, "rumor", "rumour", "gossip", "folk say", "some say", "heard",
+                "well", "old well")) {
             return true;
         }
         if (containsAny(message, "what did i say", "what do you remember", "what did i say i fear",
@@ -287,6 +457,13 @@ public final class VillagerPersona implements NpcPersona<Villager> {
                 "meal", "stew", "cellar", "barrel", "barrels", "grain", "granary", "pantry",
                 "smokehouse", "salt", "pickles", "stored food", "winter stores")
                 && containsAny(answer, "keep the door open", "road knows no fear")) {
+            return true;
+        }
+        if (containsAny(message, "enough food", "food stored", "stored for dinner", "stored food",
+                "dinner", "supper", "meal", "pantry", "barrel", "grain", "granary", "winter stores")
+                && !containsAny(answer, "food", "dinner", "supper", "meal", "bread", "bowl", "bowls",
+                "store", "stores", "stored", "pantry", "barrel", "barrels", "grain", "granary",
+                "hunger", "hungry", "stew")) {
             return true;
         }
         if (containsAny(message, "harvest", "crops", "field", "fields", "clear sky", "omens",

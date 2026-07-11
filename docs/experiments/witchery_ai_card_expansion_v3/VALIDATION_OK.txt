@@ -1,0 +1,21 @@
+# Validation OK
+
+Runtime card validation passed.
+
+- Runtime Markdown card files: 43
+- Runtime targeted fact lines: 786
+- Lines checked for `- [triggers: ...]`: 786
+- Missing `Targeted fact:`: 0
+- Missing `[topic: ...]`: 0
+- Duplicate topic keys: 0
+
+Planning-only file excluded from runtime validation/index:
+
+- `future_card_slices.md`
+
+Persona routing support:
+
+- `persona_card_access_matrix.md`
+- `persona_card_access_matrix.json`
+
+Generated locally for the v3 polish pass.

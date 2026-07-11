@@ -1,5 +1,9 @@
 package com.emoniph.witchery.ai;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -18,20 +22,82 @@ import java.util.regex.Pattern;
 
 public final class NpcKnowledgeBase {
     private static final String RESOURCE = "/data/witchery/ai/coven_witch_knowledge.md";
+    private static final String ROOT_SOURCE_FILE = "coven_witch_knowledge.md";
     private static final String CARD_INDEX_RESOURCE = "/data/witchery/ai/cards/index.txt";
     private static final String CARD_RESOURCE_DIR = "/data/witchery/ai/cards/";
+    private static final String ACCESS_MATRIX_RESOURCE = "/data/witchery/ai/persona_card_access_matrix.json";
     private static final String TARGETED_PREFIX = "- [triggers:";
     private static final String TARGETED_MARKER = "Targeted fact:";
     private static final Pattern CARD_METADATA = Pattern.compile("\\[([a-zA-Z0-9_]+):\\s*([^\\]]+)]");
     private static final int MAX_CONTEXT_LENGTH = 1400;
     private static final int MAX_RELEVANT_SECTIONS = 3;
     private static final int MAX_TARGETED_NOTES = 6;
+    private static final Set<String> LEGACY_WITCHERY_MECHANIC_FILES = Set.of(
+            ROOT_SOURCE_FILE,
+            "basic_recipes.md",
+            "starter_reagents.md",
+            "brews.md",
+            "disease_blight_brews.md",
+            "machines.md",
+            "rites.md",
+            "primer_path.md",
+            "teaching_primer.md",
+            "practical_teaching.md",
+            "covens_familiars.md",
+            "creaking_familiar.md",
+            "spirit_world.md",
+            "mirror_torment_otherworlds.md",
+            "poppets_wards.md",
+            "curses_counterplay.md",
+            "books_progression.md",
+            "scrying_waystones.md",
+            "rites_practical.md",
+            "dream_weavers.md",
+            "transformations.md",
+            "transformations_practical.md",
+            "infusions_powers.md",
+            "tools_altar.md",
+            "special_tools_compasses.md",
+            "herbology_mutations.md",
+            "cauldron_workings.md",
+            "brewcraft_advanced.md",
+            "poppet_recipes.md",
+            "distillery_essences.md",
+            "threadwork_funnels.md",
+            "circle_chalks.md",
+            "creature_reagents.md",
+            "brazier_conjurations.md",
+            "symbology_branch.md");
+    private static final Set<String> LEGACY_LOCAL_WORLD_FILES = Set.of(
+            "rumors_omens.md",
+            "trade_social.md",
+            "creatures_world.md",
+            "settlements_hunters.md",
+            "structures_huts.md");
+    private static final Set<String> LEGACY_DOMAIN_FILES = Set.of(
+            "demons_bosses.md",
+            "leonard_boss.md",
+            "baba_yaga_boss.md",
+            "leonard_boss_state.md",
+            "persona_bosses.md",
+            "persona_demon.md",
+            "persona_flame_imp.md",
+            "persona_hobgoblin.md",
+            "persona_reflection.md");
+    private static final Set<String> LEGACY_PERSONA_FILES = Set.of(
+            "ambient_witch_awareness.md",
+            "ambient_villager_awareness.md",
+            "ambient_village_guard_awareness.md",
+            "persona_coven_witch.md",
+            "persona_villager.md",
+            "persona_village_guard.md",
+            "persona_atmosphere.md");
     private static final List<String> CARD_PATHS = cardIndexPaths();
-    private static final String MARKDOWN = loadMarkdown();
-    private static final List<Section> SECTIONS = loadSections(MARKDOWN);
+    private static final PersonaAccessMatrix ACCESS_MATRIX = PersonaAccessMatrix.load();
+    private static final List<Section> SECTIONS = loadSections();
     private static final List<TargetedNote> TARGETED_NOTES = loadTargetedNotes();
     private static volatile KnowledgeDiagnostics lastDiagnostics =
-            new KnowledgeDiagnostics(0, 0, 0, "none", "none");
+            new KnowledgeDiagnostics(0, 0, 0, "none", "none", "none");
 
     private NpcKnowledgeBase() {
     }
@@ -48,7 +114,9 @@ public final class NpcKnowledgeBase {
             rememberDiagnostics("skipped:favorite_herb", "none");
             return "";
         }
-        List<TargetedMatch> selectedNotes = selectedTargetedMatches(normalized, request);
+        TargetedSelection targetedSelection = selectedTargetedMatchesWithDiagnostics(normalized, request);
+        List<TargetedMatch> selectedNotes = targetedSelection.matches();
+        List<String> droppedCards = new ArrayList<>(targetedSelection.droppedCards());
         boolean personaCue = !NpcCardRequest.ANY_PERSONA.equals(request.personaId()) && !selectedNotes.isEmpty();
         if (!looksLikeKnowledgeQuestion(playerMessage) && !containsKnowledgeCue(normalized) && !personaCue) {
             rememberDiagnostics("skipped:no_knowledge_cue", "none");
@@ -59,21 +127,27 @@ public final class NpcKnowledgeBase {
         StringBuilder context = new StringBuilder();
         selectedNotes.stream()
                 .limit(Math.min(MAX_TARGETED_NOTES, request.maxTopics() * request.maxFactsPerTopic()))
-                .forEach(match -> appendText(context, match.note().note()));
+                .forEach(match -> appendText(context, match.note().contextNote(match.access(), request)));
         for (Section section : SECTIONS) {
             int score = score(section, terms);
             if (score > 0) {
-                scored.add(new SectionScore(section, score));
+                AccessLevel access = ACCESS_MATRIX.accessFor(request, section.sourceFile());
+                if (access == AccessLevel.NO) {
+                    rememberDropped(droppedCards, section.sourceFile(), access);
+                    continue;
+                }
+                scored.add(new SectionScore(section, score, access));
             }
         }
         List<SectionScore> selectedSections = scored.stream()
                 .sorted(Comparator.comparingInt(SectionScore::score).reversed())
                 .limit(MAX_RELEVANT_SECTIONS)
                 .toList();
-        selectedSections.forEach(result -> appendSection(context, result.section()));
+        selectedSections.forEach(result -> appendSection(context, result.section(), result.access(), request));
         String text = context.toString().trim();
         rememberDiagnostics(knowledgeReason(selectedNotes, selectedSections, text),
-                knowledgeSources(selectedNotes, selectedSections));
+                knowledgeSources(selectedNotes, selectedSections),
+                droppedSummary(droppedCards));
         return text.isBlank() ? "" : NpcBrainResponse.sanitize(text, MAX_CONTEXT_LENGTH);
     }
 
@@ -107,7 +181,7 @@ public final class NpcKnowledgeBase {
     static List<TargetedNoteDiagnostic> targetedNoteDiagnostics() {
         return TARGETED_NOTES.stream()
                 .map(note -> new TargetedNoteDiagnostic(note.triggers(), note.topic(), note.personaId(),
-                        note.sourceAlias()))
+                        note.sourceAlias(), note.sourceFile()))
                 .toList();
     }
 
@@ -126,23 +200,35 @@ public final class NpcKnowledgeBase {
                 + ", cardsLoaded=" + diagnostics.cardsLoaded()
                 + ", targetedNotesLoaded=" + diagnostics.targetedNotesLoaded()
                 + ", lastKnowledgeReason=" + diagnostics.lastReason()
-                + ", lastCards=" + diagnostics.lastCards();
+                + ", lastCards=" + diagnostics.lastCards()
+                + ", lastDroppedCards=" + diagnostics.lastDroppedCards();
+    }
+
+    static String accessCodeForDiagnostics(NpcCardRequest request, String sourceFile) {
+        return ACCESS_MATRIX.accessFor(request == null ? NpcCardRequest.any() : request, sourceFile).code();
     }
 
     static KnowledgeDiagnostics diagnostics() {
         KnowledgeDiagnostics previous = lastDiagnostics;
         return new KnowledgeDiagnostics(SECTIONS.size(), CARD_PATHS.size(), TARGETED_NOTES.size(),
-                previous.lastReason(), previous.lastCards());
+                previous.lastReason(), previous.lastCards(), previous.lastDroppedCards());
     }
 
     private static void rememberDiagnostics(String reason, String cards) {
-        lastDiagnostics = new KnowledgeDiagnostics(SECTIONS.size(), CARD_PATHS.size(), TARGETED_NOTES.size(),
-                NpcBrainResponse.sanitize(reason, 120),
-                NpcBrainResponse.sanitize(cards, 180));
+        rememberDiagnostics(reason, cards, "none");
     }
 
-    private static void appendSection(StringBuilder context, Section section) {
-        appendText(context, section.title() + ": " + section.body());
+    private static void rememberDiagnostics(String reason, String cards, String droppedCards) {
+        lastDiagnostics = new KnowledgeDiagnostics(SECTIONS.size(), CARD_PATHS.size(), TARGETED_NOTES.size(),
+                NpcBrainResponse.sanitize(reason, 120),
+                NpcBrainResponse.sanitize(cards, 180),
+                NpcBrainResponse.sanitize(droppedCards, 220));
+    }
+
+    private static void appendSection(StringBuilder context, Section section, AccessLevel access,
+                                      NpcCardRequest request) {
+        appendText(context, accessAdjustedText(section.title() + ": " + section.body(), section.title(),
+                section.sourceAlias(), access, request));
     }
 
     private static void appendText(StringBuilder context, String text) {
@@ -177,7 +263,10 @@ public final class NpcKnowledgeBase {
             }
         }
         for (SectionScore match : selectedSections) {
-            names.add(normalizeTopic(match.section().title()));
+            String source = match.section().sourceAlias().isBlank()
+                    ? match.section().title()
+                    : match.section().sourceAlias();
+            names.add(normalizeTopic(source));
         }
         if (names.isEmpty()) {
             return "none";
@@ -250,21 +339,45 @@ public final class NpcKnowledgeBase {
     private static List<TargetedMatch> targetedMatches(String normalized) {
         return TARGETED_NOTES.stream()
                 .filter(note -> note.matchesPersona(NpcCardRequest.ANY_PERSONA))
-                .map(note -> new TargetedMatch(note, note.selectionScore(normalized, NpcCardRequest.ANY_PERSONA)))
+                .map(note -> new TargetedMatch(note, note.selectionScore(normalized, NpcCardRequest.ANY_PERSONA),
+                        AccessLevel.EXACT))
                 .filter(match -> match.score() > 0)
                 .sorted(Comparator.comparingInt(TargetedMatch::score).reversed())
                 .toList();
     }
 
     private static List<TargetedMatch> selectedTargetedMatches(String normalized, NpcCardRequest request) {
-        List<TargetedMatch> matches = TARGETED_NOTES.stream()
-                .filter(note -> note.matchesPersona(request.personaId()))
-                .map(note -> new TargetedMatch(note, note.selectionScore(normalized, request.personaId())))
-                .filter(match -> match.score() > 0)
+        return selectedTargetedMatchesWithDiagnostics(normalized, request).matches();
+    }
+
+    private static TargetedSelection selectedTargetedMatchesWithDiagnostics(String normalized, NpcCardRequest request) {
+        List<TargetedMatch> matches = new ArrayList<>();
+        List<String> droppedCards = new ArrayList<>();
+        for (TargetedNote note : TARGETED_NOTES) {
+            if (!note.matchesPersona(request.personaId())) {
+                continue;
+            }
+            int score = note.selectionScore(normalized, request.personaId());
+            if (score <= 0) {
+                continue;
+            }
+            AccessLevel access = ACCESS_MATRIX.accessFor(request, note.sourceFile());
+            if (!ACCESS_MATRIX.hasExplicitRule(note.sourceFile())
+                    && note.matchesSpecificPersona(request.personaId())
+                    && access != AccessLevel.NO) {
+                access = AccessLevel.EXACT;
+            }
+            if (access == AccessLevel.NO) {
+                rememberDropped(droppedCards, note.sourceFile(), access);
+                continue;
+            }
+            matches.add(new TargetedMatch(note, score, access));
+        }
+        matches = matches.stream()
                 .sorted(Comparator.comparingInt(TargetedMatch::score).reversed())
                 .toList();
         if (matches.isEmpty()) {
-            return List.of();
+            return new TargetedSelection(List.of(), List.copyOf(droppedCards));
         }
         Map<String, List<TargetedMatch>> byTopic = new LinkedHashMap<>();
         for (TargetedMatch match : matches) {
@@ -285,7 +398,7 @@ public final class NpcKnowledgeBase {
             }
             topics++;
         }
-        return selected;
+        return new TargetedSelection(List.copyOf(selected), List.copyOf(droppedCards));
     }
 
     private static TargetedMatch weightedVariant(String topic, List<TargetedMatch> variants,
@@ -386,7 +499,8 @@ public final class NpcKnowledgeBase {
                 || containsRitePoppetOrCurseCue(normalized)
                 || containsSpiritCreatureOrWorldCue(normalized)
                 || containsToolBookOrStructureCue(normalized)
-                || containsTransformationInfusionOrSymbolCue(normalized);
+                || containsTransformationInfusionOrSymbolCue(normalized)
+                || containsVanillaKnowledgeCue(normalized);
     }
 
     private static boolean containsSocialOrTradeCue(String normalized) {
@@ -532,6 +646,27 @@ public final class NpcKnowledgeBase {
                 "silver against vampires", "hunter curse protection");
     }
 
+    private static boolean containsVanillaKnowledgeCue(String normalized) {
+        return containsAnyTerm(normalized,
+                "minecraft", "vanilla", "survival", "wood", "stone", "iron", "diamond", "netherite",
+                "ore", "ores", "mining", "cave", "caves", "deep dark", "ancient city", "warden",
+                "nether", "portal", "ruined portal", "nether fortress", "bastion", "blaze",
+                "blaze rod", "blaze powder", "ghast", "piglin", "barter", "bartering",
+                "end", "stronghold", "eye of ender", "ender pearl", "end portal", "ender dragon",
+                "elytra", "shulker", "end city", "chorus fruit", "dragon breath",
+                "map", "maps", "coordinates", "coordinate", "compass", "cartographer",
+                "woodland mansion", "mansion", "monument", "ocean monument", "trial chamber",
+                "village", "villages", "villager", "villagers", "profession", "workstation",
+                "trade", "trades", "emerald", "raid", "raids", "pillager", "illager",
+                "farm", "farms", "crop", "crops", "animal", "animals", "cow", "sheep",
+                "chicken", "pig", "horse", "wolf", "dog", "cat", "bee", "bees",
+                "redstone", "hopper", "piston", "observer", "dispenser", "dropper",
+                "enchant", "enchanting", "anvil", "mending", "repair", "brewing stand",
+                "status effect", "effect", "totem", "saddle", "lead", "bundle", "spyglass",
+                "brush", "goat horn", "invisibility", "fire resistance", "night vision",
+                "wither", "poison", "bad omen", "mining fatigue", "levitation");
+    }
+
     private static boolean isFavoriteHerbQuestion(String normalized) {
         return (normalized.contains("favorite") || normalized.contains("favourite"))
                 && (normalized.contains("herb") || normalized.contains("plant"));
@@ -569,28 +704,24 @@ public final class NpcKnowledgeBase {
                 .trim();
     }
 
-    private static List<Section> loadSections(String markdown) {
-        List<Section> sections = parseSections(markdown);
+    private static List<Section> loadSections() {
+        List<Section> sections = new ArrayList<>(parseSections(loadResource(RESOURCE), ROOT_SOURCE_FILE,
+                sourceAlias(ROOT_SOURCE_FILE)));
+        for (String cardPath : CARD_PATHS) {
+            String resource = cardPath.startsWith("/") ? cardPath : CARD_RESOURCE_DIR + cardPath;
+            sections.addAll(parseSections(loadResource(resource), cardPath, sourceAlias(cardPath)));
+        }
         return sections.isEmpty() ? fallbackSections() : List.copyOf(sections);
     }
 
     private static List<TargetedNote> loadTargetedNotes() {
-        List<TargetedNote> notes = new ArrayList<>(parseTargetedNotes(loadResource(RESOURCE), ""));
+        List<TargetedNote> notes = new ArrayList<>(parseTargetedNotes(loadResource(RESOURCE), ROOT_SOURCE_FILE,
+                ""));
         for (String cardPath : CARD_PATHS) {
             String resource = cardPath.startsWith("/") ? cardPath : CARD_RESOURCE_DIR + cardPath;
-            notes.addAll(parseTargetedNotes(loadResource(resource), sourceAlias(cardPath)));
+            notes.addAll(parseTargetedNotes(loadResource(resource), cardPath, sourceAlias(cardPath)));
         }
         return List.copyOf(notes);
-    }
-
-    private static String loadMarkdown() {
-        StringBuilder markdown = new StringBuilder();
-        appendMarkdown(markdown, loadResource(RESOURCE));
-        for (String line : CARD_PATHS) {
-            String resource = line.startsWith("/") ? line : CARD_RESOURCE_DIR + line;
-            appendMarkdown(markdown, loadResource(resource));
-        }
-        return markdown.toString();
     }
 
     private static List<String> cardIndexPaths() {
@@ -614,14 +745,65 @@ public final class NpcKnowledgeBase {
         return name.replaceFirst("\\.md$", "").replace('_', ' ');
     }
 
-    private static void appendMarkdown(StringBuilder markdown, String text) {
-        if (text.isBlank()) {
+    private static String sourceFileName(String sourceFile) {
+        String name = sourceFile == null ? "" : sourceFile.strip();
+        int slash = name.lastIndexOf('/');
+        if (slash >= 0) {
+            name = name.substring(slash + 1);
+        }
+        return name;
+    }
+
+    private static String accessAdjustedText(String exactText, String topic, String sourceAlias,
+                                             AccessLevel access, NpcCardRequest request) {
+        if (access == AccessLevel.RUMOR) {
+            String subject = displaySubject(topic, sourceAlias);
+            return "Rumor/referral boundary: " + speakerLabel(request) + " may mention " + subject
+                    + " only as hearsay, danger, or a referral; do not give exact recipes, coordinates, or "
+                    + "step-by-step progression.";
+        }
+        if (access == AccessLevel.SCOPED) {
+            return "Scoped knowledge boundary: keep this within " + speakerLabel(request)
+                    + "'s lived role, profession, or immediate scene. " + exactText;
+        }
+        return exactText;
+    }
+
+    private static String displaySubject(String topic, String sourceAlias) {
+        String subject = topic == null || topic.isBlank() ? sourceAlias : topic;
+        subject = subject == null || subject.isBlank() ? "that matter" : subject;
+        return subject.replace('_', ' ').strip();
+    }
+
+    private static String speakerLabel(NpcCardRequest request) {
+        return switch (ACCESS_MATRIX.matrixPersonaFor(request)) {
+            case "apothecary" -> "an apothecary";
+            case "villager" -> "a villager";
+            case "village_guard" -> "a village guard";
+            case "hobgoblin" -> "a hobgoblin";
+            case "flame_imp" -> "a flame imp";
+            case "demon_boss" -> "a boss or demon";
+            case "reflection" -> "a reflection";
+            case "coven_witch" -> "a coven witch";
+            default -> "this speaker";
+        };
+    }
+
+    private static void rememberDropped(List<String> droppedCards, String sourceFile, AccessLevel access) {
+        if (droppedCards.size() >= 8) {
             return;
         }
-        if (!markdown.isEmpty()) {
-            markdown.append("\n\n");
+        String label = sourceAlias(sourceFileName(sourceFile)) + "=" + access.code();
+        if (!droppedCards.contains(label)) {
+            droppedCards.add(label);
         }
-        markdown.append(text);
+    }
+
+    private static String droppedSummary(List<String> droppedCards) {
+        if (droppedCards.isEmpty()) {
+            return "none";
+        }
+        return String.join(",", droppedCards.stream().limit(8).toList());
     }
 
     private static String loadResource(String resource) {
@@ -635,7 +817,7 @@ public final class NpcKnowledgeBase {
         }
     }
 
-    private static List<Section> parseSections(String markdown) {
+    private static List<Section> parseSections(String markdown, String sourceFile, String sourceAlias) {
         List<Section> sections = new ArrayList<>();
         String title = "";
         boolean always = false;
@@ -643,7 +825,7 @@ public final class NpcKnowledgeBase {
         for (String rawLine : markdown.split("\\R")) {
             String line = rawLine.strip();
             if (line.startsWith("## ")) {
-                addSection(sections, title, always, body);
+                addSection(sections, title, always, body, sourceFile, sourceAlias);
                 title = line.substring(3).replace("[always]", "").strip();
                 always = line.contains("[always]");
                 body.setLength(0);
@@ -657,11 +839,11 @@ public final class NpcKnowledgeBase {
                 body.append(line.replaceFirst("^-\\s*", ""));
             }
         }
-        addSection(sections, title, always, body);
+        addSection(sections, title, always, body, sourceFile, sourceAlias);
         return sections;
     }
 
-    private static List<TargetedNote> parseTargetedNotes(String markdown, String sourceAlias) {
+    private static List<TargetedNote> parseTargetedNotes(String markdown, String sourceFile, String sourceAlias) {
         List<TargetedNote> notes = new ArrayList<>();
         String sectionTitle = "";
         for (String rawLine : markdown.split("\\R")) {
@@ -695,6 +877,7 @@ public final class NpcKnowledgeBase {
                         cardMetadata(metadata, "weight").map(NpcKnowledgeBase::parseWeight).orElse(1),
                         cardMetadata(metadata, "tags").orElse(""),
                         sectionTitle,
+                        sourceFile,
                         sourceAlias));
             }
         }
@@ -738,21 +921,22 @@ public final class NpcKnowledgeBase {
         return normalized.isBlank() ? "general" : normalized;
     }
 
-    private static void addSection(List<Section> sections, String title, boolean always, StringBuilder body) {
+    private static void addSection(List<Section> sections, String title, boolean always, StringBuilder body,
+                                   String sourceFile, String sourceAlias) {
         String cleaned = body.toString().strip();
         if (!title.isBlank() && !cleaned.isBlank()) {
-            sections.add(new Section(title, cleaned, always));
+            sections.add(new Section(title, cleaned, always, sourceFile, sourceAlias));
         }
     }
 
     private static List<Section> fallbackSections() {
         return List.of(
-                new Section("Witchery basics", "Witchery is practical magic: brews, circles, poppets, spirits, covens, curses, and bargains.", true),
-                new Section("Coven witches", "Coven witches are neutral potion merchants who may join a player's coven after a small quest.", true)
+                new Section("Witchery basics", "Witchery is practical magic: brews, circles, poppets, spirits, covens, curses, and bargains.", true, ROOT_SOURCE_FILE, sourceAlias(ROOT_SOURCE_FILE)),
+                new Section("Coven witches", "Coven witches are neutral potion merchants who may join a player's coven after a small quest.", true, ROOT_SOURCE_FILE, sourceAlias(ROOT_SOURCE_FILE))
         );
     }
 
-    record Section(String title, String body, boolean always) {
+    record Section(String title, String body, boolean always, String sourceFile, String sourceAlias) {
         String titleLower() {
             return title.toLowerCase(Locale.ROOT);
         }
@@ -763,23 +947,302 @@ public final class NpcKnowledgeBase {
     }
 
     record KnowledgeDiagnostics(int sectionsLoaded, int cardsLoaded, int targetedNotesLoaded,
-                                String lastReason, String lastCards) {
+                                String lastReason, String lastCards, String lastDroppedCards) {
     }
 
-    record TargetedNoteDiagnostic(String triggers, String topic, String personaId, String sourceAlias) {
+    record TargetedNoteDiagnostic(String triggers, String topic, String personaId, String sourceAlias,
+                                  String sourceFile) {
     }
 
-    private record SectionScore(Section section, int score) {
+    private record SectionScore(Section section, int score, AccessLevel access) {
     }
 
     private record AnswerScore(String sentence, int score) {
     }
 
-    private record TargetedMatch(TargetedNote note, int score) {
+    private record TargetedSelection(List<TargetedMatch> matches, List<String> droppedCards) {
+    }
+
+    private record TargetedMatch(TargetedNote note, int score, AccessLevel access) {
+    }
+
+    private enum AccessLevel {
+        EXACT("E"),
+        SCOPED("S"),
+        RUMOR("R"),
+        NO("N");
+
+        private final String code;
+
+        AccessLevel(String code) {
+            this.code = code;
+        }
+
+        String code() {
+            return code;
+        }
+
+        static AccessLevel fromCode(String code) {
+            if (code == null) {
+                return NO;
+            }
+            return switch (code.strip().toUpperCase(Locale.ROOT)) {
+                case "E", "EXACT" -> EXACT;
+                case "S", "SCOPED" -> SCOPED;
+                case "R", "RUMOR" -> RUMOR;
+                case "N", "NO", "DENY", "DENIED" -> NO;
+                default -> NO;
+            };
+        }
+    }
+
+    private record PersonaAccessMatrix(Map<String, Map<String, AccessLevel>> accessByFile) {
+        static PersonaAccessMatrix load() {
+            String json = loadResource(ACCESS_MATRIX_RESOURCE);
+            if (json.isBlank()) {
+                return new PersonaAccessMatrix(Map.of());
+            }
+            try {
+                JsonObject root = JsonParser.parseString(json).getAsJsonObject();
+                JsonObject files = root.getAsJsonObject("files");
+                if (files == null) {
+                    return new PersonaAccessMatrix(Map.of());
+                }
+                Map<String, Map<String, AccessLevel>> parsed = new LinkedHashMap<>();
+                for (Map.Entry<String, JsonElement> fileEntry : files.entrySet()) {
+                    JsonObject fileObject = fileEntry.getValue().isJsonObject()
+                            ? fileEntry.getValue().getAsJsonObject()
+                            : null;
+                    if (fileObject == null) {
+                        continue;
+                    }
+                    JsonObject access = fileObject.getAsJsonObject("access");
+                    if (access == null) {
+                        continue;
+                    }
+                    Map<String, AccessLevel> personaAccess = new LinkedHashMap<>();
+                    for (Map.Entry<String, JsonElement> personaEntry : access.entrySet()) {
+                        if (personaEntry.getValue().isJsonPrimitive()) {
+                            personaAccess.put(NpcCardRequest.normalizePersona(personaEntry.getKey()),
+                                    AccessLevel.fromCode(personaEntry.getValue().getAsString()));
+                        }
+                    }
+                    parsed.put(sourceFileName(fileEntry.getKey()), Map.copyOf(personaAccess));
+                }
+                return new PersonaAccessMatrix(Map.copyOf(parsed));
+            } catch (RuntimeException ignored) {
+                return new PersonaAccessMatrix(Map.of());
+            }
+        }
+
+        AccessLevel accessFor(NpcCardRequest request, String sourceFile) {
+            NpcCardRequest cardRequest = request == null ? NpcCardRequest.any() : request;
+            if (NpcCardRequest.ANY_PERSONA.equals(cardRequest.personaId())) {
+                return AccessLevel.EXACT;
+            }
+            String fileName = sourceFileName(sourceFile);
+            Map<String, AccessLevel> fileAccess = accessByFile.get(fileName);
+            if (fileAccess == null || fileAccess.isEmpty()) {
+                return legacyAccessFor(cardRequest, fileName);
+            }
+            AccessLevel base = fileAccess.getOrDefault(matrixPersonaFor(cardRequest), AccessLevel.NO);
+            return refineSpecialistAccess(cardRequest, fileName, base);
+        }
+
+        boolean hasExplicitRule(String sourceFile) {
+            return accessByFile.containsKey(sourceFileName(sourceFile));
+        }
+
+        String matrixPersonaFor(NpcCardRequest request) {
+            NpcCardRequest cardRequest = request == null ? NpcCardRequest.any() : request;
+            String persona = cardRequest.personaId();
+            if ("villager".equals(persona)) {
+                return switch (villagerSpecialistLane(cardRequest.specialistId())) {
+                    case "apothecary" -> "apothecary";
+                    case "guard" -> "village_guard";
+                    default -> "villager";
+                };
+            }
+            return switch (persona) {
+                case "boss", "demon", "leonard", "baba_yaga" -> "demon_boss";
+                case "coven_witch", "village_guard", "hobgoblin", "flame_imp", "reflection" -> persona;
+                default -> persona;
+            };
+        }
+
+        private static AccessLevel refineSpecialistAccess(NpcCardRequest request, String sourceFile,
+                                                          AccessLevel base) {
+            if (request == null || !"villager".equals(request.personaId())) {
+                return base;
+            }
+            return switch (villagerSpecialistLane(request.specialistId())) {
+                case "cartographer" -> bestAccess(base, accessForCartographer(sourceFile));
+                case "librarian" -> bestAccess(base, accessForLibrarian(sourceFile));
+                case "cleric" -> bestAccess(base, accessForCleric(sourceFile));
+                case "farmer" -> bestAccess(base, accessForFarmer(sourceFile));
+                case "smith" -> bestAccess(base, accessForSmith(sourceFile));
+                default -> base;
+            };
+        }
+
+        private static String villagerSpecialistLane(String specialistId) {
+            return switch (NpcCardRequest.normalizeSpecialist(specialistId)) {
+                case "apothecary" -> "apothecary";
+                case "guard", "village_guard" -> "guard";
+                case "cartographer" -> "cartographer";
+                case "librarian" -> "librarian";
+                case "cleric" -> "cleric";
+                case "farmer", "fisherman", "shepherd", "butcher" -> "farmer";
+                case "smith", "armorer", "weaponsmith", "toolsmith" -> "smith";
+                default -> "";
+            };
+        }
+
+        private static AccessLevel accessForCartographer(String sourceFile) {
+            if (isOneOf(sourceFile,
+                    "vanilla_maps_coordinates_commands_deep.md",
+                    "vanilla_exploration_navigation.md",
+                    "vanilla_structures_exploration.md",
+                    "vanilla_structures_deep_pack.md")) {
+                return AccessLevel.EXACT;
+            }
+            if (isOneOf(sourceFile,
+                    "vanilla_biomes_weather_worldgen.md",
+                    "world_structures_places_deep.md")) {
+                return AccessLevel.SCOPED;
+            }
+            return AccessLevel.NO;
+        }
+
+        private static AccessLevel accessForLibrarian(String sourceFile) {
+            if (isOneOf(sourceFile,
+                    "vanilla_enchanting_repair_brewing.md",
+                    "vanilla_maps_coordinates_commands_deep.md",
+                    "vanilla_villagers_trading.md",
+                    "world_glossary_questions.md")) {
+                return AccessLevel.EXACT;
+            }
+            if (isOneOf(sourceFile,
+                    "vanilla_end_progression.md",
+                    "vanilla_end_elytra_deep_pack.md",
+                    "vanilla_structures_exploration.md",
+                    "witchery_vanilla_bridge.md",
+                    "witchery_vanilla_bridge_deep.md")) {
+                return AccessLevel.SCOPED;
+            }
+            return AccessLevel.NO;
+        }
+
+        private static AccessLevel accessForCleric(String sourceFile) {
+            if (isOneOf(sourceFile,
+                    "vanilla_potions_enchantments_advanced.md",
+                    "vanilla_enchanting_repair_brewing.md",
+                    "vanilla_status_effects_items.md")) {
+                return AccessLevel.EXACT;
+            }
+            if (isOneOf(sourceFile,
+                    "vanilla_mobs_combat.md",
+                    "vanilla_mobs_biomes_deep.md",
+                    "world_creatures_hunters_deep.md")) {
+                return AccessLevel.SCOPED;
+            }
+            return AccessLevel.NO;
+        }
+
+        private static AccessLevel accessForFarmer(String sourceFile) {
+            if (isOneOf(sourceFile,
+                    "vanilla_farming_redstone_building.md",
+                    "vanilla_farms_animals_villages_deep.md",
+                    "vanilla_villagers_trading.md",
+                    "general_worldcraft_knowledge.md",
+                    "vanilla_survival_basics.md")) {
+                return AccessLevel.EXACT;
+            }
+            if (isOneOf(sourceFile,
+                    "vanilla_biomes_weather_worldgen.md",
+                    "world_village_social_deep.md")) {
+                return AccessLevel.SCOPED;
+            }
+            return AccessLevel.NO;
+        }
+
+        private static AccessLevel accessForSmith(String sourceFile) {
+            if (isOneOf(sourceFile,
+                    "vanilla_resources_tools_deep.md",
+                    "vanilla_mining_resources.md",
+                    "vanilla_mobs_combat.md",
+                    "vanilla_status_effects_items.md")) {
+                return AccessLevel.EXACT;
+            }
+            if (isOneOf(sourceFile,
+                    "vanilla_redstone_storage_building_deep.md",
+                    "vanilla_mobs_biomes_deep.md")) {
+                return AccessLevel.SCOPED;
+            }
+            return AccessLevel.NO;
+        }
+
+        private static AccessLevel bestAccess(AccessLevel base, AccessLevel specialist) {
+            return rank(specialist) > rank(base) ? specialist : base;
+        }
+
+        private static int rank(AccessLevel access) {
+            return switch (access) {
+                case EXACT -> 3;
+                case SCOPED -> 2;
+                case RUMOR -> 1;
+                case NO -> 0;
+            };
+        }
+
+        private static boolean isOneOf(String sourceFile, String... candidates) {
+            for (String candidate : candidates) {
+                if (candidate.equals(sourceFile)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static AccessLevel legacyAccessFor(NpcCardRequest request, String sourceFile) {
+            String matrixPersona = request == null ? NpcCardRequest.ANY_PERSONA : switch (request.personaId()) {
+                case "villager" -> switch (villagerSpecialistLane(request.specialistId())) {
+                    case "apothecary" -> "apothecary";
+                    case "guard" -> "village_guard";
+                    default -> "villager";
+                };
+                case "boss", "demon", "leonard", "baba_yaga" -> "demon_boss";
+                default -> request.personaId();
+            };
+            if (LEGACY_PERSONA_FILES.contains(sourceFile)) {
+                return AccessLevel.EXACT;
+            }
+            if (LEGACY_DOMAIN_FILES.contains(sourceFile)) {
+                return switch (matrixPersona) {
+                    case "coven_witch", "demon_boss", "flame_imp", "hobgoblin", "reflection" -> AccessLevel.EXACT;
+                    case "village_guard", "apothecary" -> AccessLevel.SCOPED;
+                    default -> AccessLevel.RUMOR;
+                };
+            }
+            if (LEGACY_LOCAL_WORLD_FILES.contains(sourceFile)) {
+                return switch (matrixPersona) {
+                    case "coven_witch", "villager", "village_guard", "apothecary", "hobgoblin" -> AccessLevel.EXACT;
+                    default -> AccessLevel.SCOPED;
+                };
+            }
+            if (LEGACY_WITCHERY_MECHANIC_FILES.contains(sourceFile)) {
+                return switch (matrixPersona) {
+                    case "coven_witch" -> AccessLevel.EXACT;
+                    case "apothecary", "reflection", "demon_boss" -> AccessLevel.SCOPED;
+                    default -> AccessLevel.RUMOR;
+                };
+            }
+            return AccessLevel.EXACT;
+        }
     }
 
     private record TargetedNote(String triggers, String note, String topic, String personaId, int weight,
-                                String tags, String sectionTitle, String sourceAlias) {
+                                String tags, String sectionTitle, String sourceFile, String sourceAlias) {
         boolean matches(String normalized) {
             return matchScore(normalized) > 0;
         }
@@ -790,6 +1253,11 @@ public final class NpcKnowledgeBase {
                 return NpcCardRequest.ANY_PERSONA.equals(personaId);
             }
             return NpcCardRequest.ANY_PERSONA.equals(personaId) || personaId.equals(requested);
+        }
+
+        boolean matchesSpecificPersona(String requestedPersona) {
+            String requested = NpcCardRequest.normalizePersona(requestedPersona);
+            return !NpcCardRequest.ANY_PERSONA.equals(personaId) && personaId.equals(requested);
         }
 
         int matchScore(String normalized) {
@@ -855,6 +1323,10 @@ public final class NpcKnowledgeBase {
 
         String spokenFact() {
             return note.replaceFirst("^Targeted fact:\\s*", "");
+        }
+
+        String contextNote(AccessLevel access, NpcCardRequest request) {
+            return accessAdjustedText(note, topic, sourceAlias, access, request);
         }
     }
 }

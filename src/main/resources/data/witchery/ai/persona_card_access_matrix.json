@@ -1,0 +1,580 @@
+{
+  "legend": {
+    "E": "exact",
+    "S": "scoped",
+    "R": "rumor",
+    "N": "no"
+  },
+  "recommendation": "Filter by persona before card retrieval or before prompt assembly.",
+  "personas": [
+    "coven_witch",
+    "apothecary",
+    "villager",
+    "village_guard",
+    "hobgoblin",
+    "flame_imp",
+    "demon_boss",
+    "reflection"
+  ],
+  "files": {
+    "general_worldcraft_knowledge.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "E",
+        "village_guard": "E",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "R",
+        "reflection": "S"
+      },
+      "notes": "Common survival knowledge; persona voice changes certainty."
+    },
+    "herb_latin_names.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "E",
+        "villager": "R",
+        "village_guard": "N",
+        "hobgoblin": "R",
+        "flame_imp": "N",
+        "demon_boss": "S",
+        "reflection": "S"
+      },
+      "notes": "Botanical names with poison-safety boundaries."
+    },
+    "lore_rumor_mythic_style_cards.md": {
+      "access": {
+        "coven_witch": "S",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "S"
+      },
+      "notes": "Style tuning; exact mechanics still require a matched fact card."
+    },
+    "persona_card_access_matrix_runtime_notes.md": {
+      "access": {
+        "coven_witch": "S",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "S"
+      },
+      "notes": "Style/routing only; all personas may receive their own boundary reminders."
+    },
+    "persona_coven_witch_variants.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "N",
+        "villager": "N",
+        "village_guard": "N",
+        "hobgoblin": "N",
+        "flame_imp": "N",
+        "demon_boss": "N",
+        "reflection": "R"
+      },
+      "notes": "Coven Witch voice only."
+    },
+    "persona_guard_practical_boundaries.md": {
+      "access": {
+        "coven_witch": "S",
+        "apothecary": "R",
+        "villager": "R",
+        "village_guard": "E",
+        "hobgoblin": "N",
+        "flame_imp": "N",
+        "demon_boss": "N",
+        "reflection": "R"
+      },
+      "notes": "Guard-specific practical safety."
+    },
+    "persona_knowledge_routing.md": {
+      "access": {
+        "coven_witch": "S",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "S"
+      },
+      "notes": "Style/routing only; all personas may receive their own boundary reminders."
+    },
+    "persona_memory_relationships.md": {
+      "access": {
+        "coven_witch": "S",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "S"
+      },
+      "notes": "Relationship/memory style; use only if entity has relevant memory."
+    },
+    "persona_specialists_knowledge.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "E",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "S"
+      },
+      "notes": "Profession/domain exceptions."
+    },
+    "persona_vanilla_teacher.md": {
+      "access": {
+        "coven_witch": "S",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "S"
+      },
+      "notes": "Style/routing only; all personas may receive their own boundary reminders."
+    },
+    "persona_villager_rumor_boundaries.md": {
+      "access": {
+        "coven_witch": "S",
+        "apothecary": "E",
+        "villager": "E",
+        "village_guard": "S",
+        "hobgoblin": "N",
+        "flame_imp": "N",
+        "demon_boss": "N",
+        "reflection": "R"
+      },
+      "notes": "Villager ignorance and rumor rules."
+    },
+    "vanilla_biomes_weather_worldgen.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "R",
+        "demon_boss": "R",
+        "reflection": "S"
+      },
+      "notes": "General world facts; access depends on local/professional context."
+    },
+    "vanilla_enchanting_repair_brewing.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "E",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "R",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "S"
+      },
+      "notes": "Enchanting/potion knowledge; apothecaries know vanilla brewing."
+    },
+    "vanilla_end_elytra_deep_pack.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "R",
+        "villager": "R",
+        "village_guard": "R",
+        "hobgoblin": "R",
+        "flame_imp": "R",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "End/elytra facts; witches/reflections exact, most others rumor."
+    },
+    "vanilla_end_progression.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "R",
+        "villager": "R",
+        "village_guard": "R",
+        "hobgoblin": "R",
+        "flame_imp": "R",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "End/elytra facts; witches/reflections exact, most others rumor."
+    },
+    "vanilla_exploration_navigation.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "R",
+        "demon_boss": "R",
+        "reflection": "E"
+      },
+      "notes": "Navigation/maps; cartographers exact, ordinary villagers scoped."
+    },
+    "vanilla_farming_redstone_building.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "E",
+        "villager": "E",
+        "village_guard": "S",
+        "hobgoblin": "R",
+        "flame_imp": "N",
+        "demon_boss": "R",
+        "reflection": "S"
+      },
+      "notes": "Village/farm knowledge; villagers and apothecaries can know exactly."
+    },
+    "vanilla_farms_animals_villages_deep.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "E",
+        "villager": "E",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "N",
+        "demon_boss": "R",
+        "reflection": "S"
+      },
+      "notes": "Everyday agriculture, animals, village life."
+    },
+    "vanilla_late_game_progression.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "R",
+        "villager": "R",
+        "village_guard": "R",
+        "hobgoblin": "R",
+        "flame_imp": "R",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "End/elytra facts; witches/reflections exact, most others rumor."
+    },
+    "vanilla_maps_coordinates_commands_deep.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "R",
+        "demon_boss": "R",
+        "reflection": "E"
+      },
+      "notes": "Navigation/maps; cartographers exact, ordinary villagers scoped."
+    },
+    "vanilla_mining_resources.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "E",
+        "flame_imp": "S",
+        "demon_boss": "R",
+        "reflection": "S"
+      },
+      "notes": "Mining/resource facts; hobgoblins are strong specialists."
+    },
+    "vanilla_mobs_biomes_deep.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "E",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "R",
+        "reflection": "S"
+      },
+      "notes": "Mob/combat knowledge; guards exact for threats."
+    },
+    "vanilla_mobs_combat.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "E",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "R",
+        "reflection": "S"
+      },
+      "notes": "Mob/combat knowledge; guards exact for threats."
+    },
+    "vanilla_nether_deep_pack.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "R",
+        "villager": "R",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "E",
+        "demon_boss": "S",
+        "reflection": "S"
+      },
+      "notes": "Nether facts; witches and imps exact, villagers rumor."
+    },
+    "vanilla_nether_progression.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "R",
+        "villager": "R",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "E",
+        "demon_boss": "S",
+        "reflection": "S"
+      },
+      "notes": "Nether facts; witches and imps exact, villagers rumor."
+    },
+    "vanilla_potions_enchantments_advanced.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "E",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "R",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "S"
+      },
+      "notes": "Enchanting/potion knowledge; apothecaries know vanilla brewing."
+    },
+    "vanilla_redstone_storage_building_deep.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "R",
+        "villager": "S",
+        "village_guard": "R",
+        "hobgoblin": "S",
+        "flame_imp": "R",
+        "demon_boss": "N",
+        "reflection": "S"
+      },
+      "notes": "Technical knowledge; avoid making all NPCs engineers."
+    },
+    "vanilla_resources_tools_deep.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "E",
+        "flame_imp": "S",
+        "demon_boss": "R",
+        "reflection": "S"
+      },
+      "notes": "Mining/resource facts; hobgoblins are strong specialists."
+    },
+    "vanilla_status_effects_items.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "R",
+        "demon_boss": "R",
+        "reflection": "S"
+      },
+      "notes": "General world facts; access depends on local/professional context."
+    },
+    "vanilla_structures_deep_pack.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "R",
+        "demon_boss": "R",
+        "reflection": "E"
+      },
+      "notes": "Structure knowledge; cartographer/villager access should be profession-scoped."
+    },
+    "vanilla_structures_exploration.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "S",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "R",
+        "demon_boss": "R",
+        "reflection": "E"
+      },
+      "notes": "Structure knowledge; cartographer/villager access should be profession-scoped."
+    },
+    "vanilla_survival_basics.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "E",
+        "village_guard": "E",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "R",
+        "reflection": "S"
+      },
+      "notes": "Common survival knowledge; persona voice changes certainty."
+    },
+    "vanilla_villagers_trading.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "E",
+        "villager": "E",
+        "village_guard": "S",
+        "hobgoblin": "R",
+        "flame_imp": "N",
+        "demon_boss": "R",
+        "reflection": "S"
+      },
+      "notes": "Village/farm knowledge; villagers and apothecaries can know exactly."
+    },
+    "witchery_vanilla_bridge.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "R",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "Boundary cards separating vanilla and Witchery systems."
+    },
+    "witchery_vanilla_bridge_deep.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "R",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "Boundary cards separating vanilla and Witchery systems."
+    },
+    "world_creatures_hunters_deep.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "R",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "Witchery/world lore; non-witches get scoped or rumor access."
+    },
+    "world_glossary_questions.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "R",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "Witchery/world lore; non-witches get scoped or rumor access."
+    },
+    "world_mirror_torment_deep.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "R",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "Witchery/world lore; non-witches get scoped or rumor access."
+    },
+    "world_omens_biomes_weather.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "R",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "Witchery/world lore; non-witches get scoped or rumor access."
+    },
+    "world_orientation.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "R",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "Witchery/world lore; non-witches get scoped or rumor access."
+    },
+    "world_spirit_world_deep.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "R",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "Witchery/world lore; non-witches get scoped or rumor access."
+    },
+    "world_structures_places_deep.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "R",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "Witchery/world lore; non-witches get scoped or rumor access."
+    },
+    "world_village_social_deep.md": {
+      "access": {
+        "coven_witch": "E",
+        "apothecary": "S",
+        "villager": "R",
+        "village_guard": "S",
+        "hobgoblin": "S",
+        "flame_imp": "S",
+        "demon_boss": "S",
+        "reflection": "E"
+      },
+      "notes": "Witchery/world lore; non-witches get scoped or rumor access."
+    }
+  }
+}

@@ -1,0 +1,15 @@
+# Coven Witch Primer Cards: Short World Glossary
+
+These cards define common Witchery terms in one or two useful sentences. They are for direct glossary questions, not ambient chatter.
+
+## Core Terms
+- [triggers: what is altar power|altar power meaning|how does altar power work|altar strength] [topic: glossary_altar_power] [tags: glossary, altar] Targeted fact: Altar power is drawn from nearby nature and altar upgrades; it feeds rites, brews, and stronger workings, so a bare altar in a dead place will sulk.
+- [triggers: what is mutandis|mutandis meaning|mutandis does what|mutation powder] [topic: glossary_mutandis] [tags: glossary, herbology] Targeted fact: Mutandis changes small plants into Witchery growths such as witch trees, Spanish Moss, Glint Weed, and Ember Moss; it is the green door into herbology.
+- [triggers: what is a fume|what are fumes|whiff reek odour odor|oven fumes] [topic: glossary_fumes] [tags: glossary, oven] Targeted fact: Fumes are bottled essences from the Witches' Oven and Clay Jars, such as Whiff of Magic, Reek of Misfortune, and Odour of Purity; many recipes depend on them.
+- [triggers: what is a taglock|taglock meaning|taglock kit|how taglocks work] [topic: glossary_taglock] [tags: glossary, poppet, scrying] Targeted fact: A taglock is a personal sample that links magic to a creature or player; it matters for poppets, scrying, curses, rites, and other pointed work.
+- [triggers: what is a poppet|poppet meaning|voodoo poppet|protective doll] [topic: glossary_poppet] [tags: glossary, poppet] Targeted fact: Poppets are bound protective or harmful dolls; Spanish Moss and threadwork make them practical, while taglocks decide whom the old cloth knows.
+- [triggers: what is circle magic|what are rites|ritual circle meaning|chalk circle] [topic: glossary_circle_magic] [tags: glossary, rites] Targeted fact: Circle Magic uses chalk rings, offerings, altar power, and trigger items. The shape matters; a sloppy circle is not a poetic variation.
+- [triggers: what is a coven|coven meaning|player coven|witch coven] [topic: glossary_coven] [tags: glossary, coven] Targeted fact: A coven is a sworn group of witches, not a crowd. Player covens are earned through familiar work, trials, and oaths, and some rites ask for coven strength.
+- [triggers: what is a familiar|familiar meaning|witch familiar|animal companion] [topic: glossary_familiar] [tags: glossary, familiar] Targeted fact: A familiar is a bound magical companion such as a cat, owl, toad, or spectral helper; it changes what a witch can safely ask of the world.
+- [triggers: what is scrying|scry meaning|crystal ball|waystone scrying] [topic: glossary_scrying] [tags: glossary, scrying] Targeted fact: Scrying is seeing or seeking through a focus such as a Crystal Ball, Waystone, Taglock, or Player Compass; it finds threads, not excuses.
+- [triggers: what is otherwhere|otherwhere meaning|spirit of otherwhere|otherwhere magic] [topic: glossary_otherwhere] [tags: glossary, dimension] Targeted fact: Otherwhere is the sideways place behind movement and transposition; treat it as a dangerous path, not a shortcut with manners.

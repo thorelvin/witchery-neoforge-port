@@ -1,6 +1,75 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/circle_talisman"
+    "type": "minecraft:range_dispatch",
+    "property": "witchery:circle_talisman_variant",
+    "entries": [
+      {
+        "threshold": 1.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/circle_talisman_1"
+        }
+      },
+      {
+        "threshold": 2.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/circle_talisman_2"
+        }
+      },
+      {
+        "threshold": 3.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/circle_talisman_3"
+        }
+      },
+      {
+        "threshold": 4.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/circle_talisman_4"
+        }
+      },
+      {
+        "threshold": 5.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/circle_talisman_5"
+        }
+      },
+      {
+        "threshold": 6.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/circle_talisman_6"
+        }
+      },
+      {
+        "threshold": 7.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/circle_talisman_7"
+        }
+      },
+      {
+        "threshold": 8.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/circle_talisman_8"
+        }
+      },
+      {
+        "threshold": 9.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/circle_talisman_9"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "witchery:item/circle_talisman"
+    }
   }
 }

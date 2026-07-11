@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "witchery:item/dandelion_of_sprouting"
-  }
+  "parent": "witchery:item/plant_mine_dandelion"
 }

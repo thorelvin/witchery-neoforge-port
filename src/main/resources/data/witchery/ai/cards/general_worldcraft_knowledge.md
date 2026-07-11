@@ -1,0 +1,27 @@
+# General Worldcraft Notes
+
+These cards help NPCs answer broad, non-Witchery survival questions without becoming a giant encyclopedia.
+
+## First-Hour Survival
+- [triggers: first day survival|what do first|new world start] [topic: general_first_day_survival] [tags: vanilla, survival, beginner] Targeted fact: First day priorities are wood, tools, food, shelter, light, bed if possible, and a safe marker for where you started.
+- [triggers: first night|survive night|no bed night] [topic: general_first_night] [tags: vanilla, survival, beginner] Targeted fact: If night comes without a bed, shelter, light, block entrances, listen, and avoid wandering. The dark is patient and well staffed.
+- [triggers: food early game|need food|best early food] [topic: general_early_food] [tags: vanilla, survival, food] Targeted fact: Early food comes from animals, villages, fish, bread, berries, crops, or cooked meat. Cook food when possible; hunger punishes heroics.
+- [triggers: make bed|skip night|phantoms sleep] [topic: general_bed_sleep] [tags: vanilla, survival, bed] Targeted fact: Beds set spawn and skip night in the Overworld when safe. Do not sleep in the Nether or End unless explosions are the goal.
+- [triggers: set spawn|respawn point|bed spawn] [topic: general_respawn_point] [tags: vanilla, survival, respawn] Targeted fact: Set spawn with a bed in the Overworld or a charged respawn anchor in the Nether. Break the bed and your promise may move.
+- [triggers: torch recipe|make torches|need light] [topic: general_torches] [tags: vanilla, survival, light] Targeted fact: Torches come from sticks and coal or charcoal. Light is the cheapest guard you will ever hire.
+- [triggers: furnace recipe|smelt food|cook ore] [topic: general_furnace] [tags: vanilla, survival, smelting] Targeted fact: Furnaces smelt ore, cook food, make charcoal, and support early industry. Fuel goes below, what you want changed goes above.
+- [triggers: crafting table|basic crafting|make tools] [topic: general_crafting_table] [tags: vanilla, survival, crafting] Targeted fact: A crafting table opens the larger crafting grid needed for most tools and blocks. Wood becomes work, work becomes survival.
+- [triggers: shield recipe|make shield|early defense] [topic: general_shield] [tags: vanilla, survival, shield] Targeted fact: A shield is cheap protection once iron is available. It changes skeletons, creepers, and panic into manageable problems.
+- [triggers: boat travel|make boat|cross ocean] [topic: general_boat_travel] [tags: vanilla, survival, travel] Targeted fact: Boats are cheap, fast water travel and useful for moving some mobs. Carry one near rivers, oceans, ice, or poor decisions.
+
+## Practical Planning
+- [triggers: what should i carry|adventure checklist|exploration kit] [topic: general_adventure_checklist] [tags: vanilla, survival, checklist] Targeted fact: Carry food, blocks, torches, tools, shield, bed or spawn plan, boat, water bucket, spare wood, and coordinates before long trips.
+- [triggers: cave checklist|what bring caving|caving kit] [topic: general_caving_checklist] [tags: vanilla, mining, checklist] Targeted fact: For caves, bring torches, food, shield, water, blocks, spare pickaxe, wood, and enough sense to retreat when supplies thin.
+- [triggers: ocean checklist|what bring ocean|underwater exploration] [topic: general_ocean_checklist] [tags: vanilla, ocean, checklist] Targeted fact: For ocean work, bring boat, doors or air plan, water breathing later, night vision, blocks, food, and respect for drowned.
+- [triggers: nether checklist simple|what bring nether simple|nether kit short] [topic: general_nether_checklist_short] [tags: vanilla, nether, checklist] Targeted fact: Nether basics are gold armor, food, blocks, bow, shield, coordinates, fire resistance if possible, and a portal relighting tool.
+- [triggers: end checklist simple|what bring end simple|dragon kit short] [topic: general_end_checklist_short] [tags: vanilla, end, checklist] Targeted fact: End basics are armor, bow, arrows, blocks, food, water, slow falling if possible, Eyes prepared, and a plan for Endermen.
+- [triggers: base checklist|what needs base|base essentials] [topic: general_base_checklist] [tags: vanilla, base, checklist] Targeted fact: A base needs bed, light, storage, crafting, smelting, food, mine access, animal or crop plan, and a way to find it again.
+- [triggers: emergency kit|survival emergency|backup chest] [topic: general_emergency_kit] [tags: vanilla, survival, emergency] Targeted fact: Keep backup tools, armor, food, blocks, torches, and a map or coordinates at base. Panic is cheaper when prepaid.
+- [triggers: dont know current version|version difference|modpack changed recipe] [topic: general_version_caveat] [tags: vanilla, version, caveat] Targeted fact: If a recipe or mechanic may differ by version or modpack, say to check the local recipe book, JEI-style tool, Primer, or server rules.
+- [triggers: vanilla versus modded|is this witchery or minecraft|normal game or mod] [topic: general_vanilla_modded_boundary] [tags: vanilla, witchery, boundary] Targeted fact: Separate vanilla Minecraft from Witchery: ordinary tools and dimensions use vanilla rules unless the mod or server changes them.
+- [triggers: ask broad everything|teach me everything|what should i learn next] [topic: general_teach_next_step] [tags: teaching, broad] Targeted fact: For broad learning, give one next step based on progress: food and shelter, mining, Nether, enchanting, village trades, End, elytra, then Witchery depth.

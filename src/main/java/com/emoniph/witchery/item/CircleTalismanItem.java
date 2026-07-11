@@ -2,12 +2,16 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import com.emoniph.witchery.ritual.RitualCircleDetector;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -22,6 +26,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class CircleTalismanItem extends Item {
+    public static final int[] SOURCE_CREATIVE_DATA = {0, 1, 2, 3, 8, 16, 24, 64, 128, 192};
+
+    private static final String TAG_CIRCLE_DATA = "circle_data";
 
     // 0=empty, 1=small ring, 2=medium ring, 3=large ring, 4=center
     // Row 0 = south end, row 16 = north end; mirrored in Z during placement
@@ -52,11 +59,32 @@ public class CircleTalismanItem extends Item {
     // ── Data component helpers ────────────────────────────────────────────────
 
     public static void setCircleData(ItemStack stack, int data) {
-        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt("circle_data", data));
+        if (data == 0) {
+            stack.remove(DataComponents.CUSTOM_DATA);
+            return;
+        }
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putInt(TAG_CIRCLE_DATA, data);
+        });
     }
 
     public static int getCircleData(ItemStack stack) {
-        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getIntOr("circle_data", 0);
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getIntOr(TAG_CIRCLE_DATA, 0);
+    }
+
+    public static ItemStack createWithCircleData(int data) {
+        ItemStack stack = new ItemStack(WitcheryItems.CIRCLE_TALISMAN.get());
+        setCircleData(stack, data);
+        return stack;
+    }
+
+    public static int getIconVariant(ItemStack stack) {
+        int data = getCircleData(stack);
+        int small = data & 7;
+        int medium = (data >> 3) & 7;
+        int large = (data >> 6) & 7;
+        int variant = large > 0 ? large + 6 : medium > 0 ? medium + 3 : small;
+        return variant >= 0 && variant <= 9 ? variant : 0;
     }
 
     @Override
@@ -65,9 +93,11 @@ public class CircleTalismanItem extends Item {
         if (data == 0) {
             return super.getName(stack);
         }
-        return Component.literal("")
+        return Component.empty()
                 .append(super.getName(stack))
-                .append(Component.literal(" (" + describeCircleData(data) + ")"));
+                .append(Component.literal(" ("))
+                .append(describeCircleData(data))
+                .append(Component.literal(")"));
     }
 
     // ── Item use ──────────────────────────────────────────────────────────────
@@ -242,32 +272,27 @@ public class CircleTalismanItem extends Item {
         };
     }
 
-    private static String describeCircleData(int data) {
-        StringBuilder result = new StringBuilder();
-        appendRing(result, "Small", data & 7);
-        appendRing(result, "Medium", (data >> 3) & 7);
-        appendRing(result, "Large", (data >> 6) & 7);
-        return result.toString();
+    private static Component describeCircleData(int data) {
+        List<Component> parts = new ArrayList<>();
+        appendRing(parts, "small", data & 7);
+        appendRing(parts, "medium", (data >> 3) & 7);
+        appendRing(parts, "large", (data >> 6) & 7);
+
+        MutableComponent result = Component.empty();
+        for (int i = 0; i < parts.size(); i++) {
+            if (i > 0) {
+                result.append(Component.literal(", "));
+            }
+            result.append(parts.get(i));
+        }
+        return result;
     }
 
-    private static void appendRing(StringBuilder result, String size, int variant) {
+    private static void appendRing(List<Component> parts, String size, int variant) {
         if (variant == 0) {
             return;
         }
-        if (!result.isEmpty()) {
-            result.append(", ");
-        }
-        result.append(size).append(' ').append(chalkName(variant));
-    }
-
-    private static String chalkName(int variant) {
-        return switch (variant) {
-            case 1 -> "Ritual";
-            case 2 -> "Otherwhere";
-            case 3 -> "Infernal";
-            case 4 -> "Golden";
-            default -> "Unknown";
-        };
+        parts.add(Component.translatable("circletalisman." + size + "." + variant));
     }
 
     private void playFail(Level level, BlockPos pos, Player player) {

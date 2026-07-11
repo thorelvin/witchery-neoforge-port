@@ -1,0 +1,35 @@
+# Vanilla Minecraft Cards: Structure Deep Pack
+
+These cards broaden structure knowledge while staying useful. Avoid exact coordinates unless the player provides them.
+
+## Woodland Mansions And Illager Sites
+- [triggers: mansion preparation|prepare woodland mansion|raid mansion safely] [topic: vanilla_mansion_preparation] [tags: vanilla, mansion, combat] Targeted fact: For a woodland mansion, bring armor, shield, bow, food, torches, blocks, axe, milk if vexes and effects worry you, and an exit path.
+- [triggers: evoker vex|vexes in mansion|evoker fangs] [topic: vanilla_evoker_mansion] [tags: vanilla, mansion, mobs] Targeted fact: Evokers summon vexes and fang attacks; kill them quickly, break line of sight, and do not let panic split the room.
+- [triggers: vindicator axe|mansion axe mob|johnny vindicator] [topic: vanilla_vindicator_mansion] [tags: vanilla, mansion, mobs] Targeted fact: Vindicators hit hard with axes. Use shield, range, doorways, and light; dark halls reward cowards who brought torches.
+- [triggers: allays mansion|free allays|mansion allay rooms] [topic: vanilla_mansion_allays] [tags: vanilla, mansion, allay] Targeted fact: Some mansion rooms can hold allays. Clear danger first, then free them carefully; kindness is easier when axes stop swinging.
+- [triggers: pillager outpost|find outpost|outpost pillagers] [topic: vanilla_pillager_outpost] [tags: vanilla, outpost, raid] Targeted fact: Pillager outposts have pillagers, cages sometimes, loot, and raid trouble. Approach with cover and remember banners can turn into village problems.
+- [triggers: bad omen|ominous bottle|start raid] [topic: vanilla_raid_trigger_modern] [tags: vanilla, raid, ominous] Targeted fact: Modern raid setup may involve ominous effects or bottles depending on version and server rules. Do not walk into a village glowing with trouble unless ready.
+
+## Deep Structures
+- [triggers: ancient city prep|prepare ancient city|how raid ancient city] [topic: vanilla_ancient_city_preparation] [tags: vanilla, ancient city, deep dark] Targeted fact: For ancient cities, bring wool, night vision, food, hoe for sculk, blocks, no noisy pets, and the humility to leave when shriekers stir.
+- [triggers: sculk shrieker|avoid warden|warden summon] [topic: vanilla_sculk_shrieker_warning] [tags: vanilla, ancient city, warden] Targeted fact: Sculk shriekers are the real alarm. Move quietly, use wool to block vibrations, and do not farm courage near a Warden.
+- [triggers: swift sneak|ancient city loot|deep dark loot] [topic: vanilla_ancient_city_loot] [tags: vanilla, ancient city, loot] Targeted fact: Ancient cities can hold rare loot such as Swift Sneak books and recovery-compass materials, but the cost is silence and patience.
+- [triggers: mineshaft|find mineshaft|cave spider spawner] [topic: vanilla_mineshaft_v3] [tags: vanilla, mineshaft, cave] Targeted fact: Mineshafts contain rails, wood, chests, cobwebs, and cave spider spawners. Block poison lanes and mark intersections before greed multiplies.
+- [triggers: dungeon spawner|monster room|mossy cobblestone spawner] [topic: vanilla_monster_room] [tags: vanilla, dungeon, spawner] Targeted fact: Monster rooms are small cobblestone or mossy spawner rooms with chests. Light the spawner quickly or turn it into a farm later.
+- [triggers: geode|amethyst geode|find amethyst] [topic: vanilla_amethyst_geode] [tags: vanilla, geode, amethyst] Targeted fact: Amethyst geodes hide underground with smooth basalt and calcite shells. Budding amethyst grows crystals; do not mine budding blocks if you want more.
+
+## Trial Chambers
+- [triggers: trial chamber preparation|prepare trial chamber|trial chamber gear] [topic: vanilla_trial_chamber_preparation] [tags: vanilla, trial chamber, combat] Targeted fact: Bring armor, shield, food, blocks, water, ranged weapons, spare tools, and inventory space. Trial chambers punish the unprepared but feed the observant.
+- [triggers: trial spawner|how trial spawners work|spawner rewards trial] [topic: vanilla_trial_spawner_basic] [tags: vanilla, trial chamber, spawner] Targeted fact: Trial spawners create combat waves based on nearby players and then reward after victory; watch the surrounding blocks for clues about what may spawn.
+- [triggers: ominous trial|ominous spawner|ominous vault] [topic: vanilla_ominous_trial_basic] [tags: vanilla, trial chamber, ominous] Targeted fact: Ominous trials are harder variants tied to ominous state and special vaults. Do not trigger harder trials unless your supplies agree.
+- [triggers: breeze fight|fight breeze|wind charge mob] [topic: vanilla_breeze_fight] [tags: vanilla, trial chamber, breeze] Targeted fact: Breezes use wind to shove, jump, and disrupt. Keep spacing, avoid ledges, use cover, and remember projectiles may be trickier than usual.
+- [triggers: trial key|vault key|open vault] [topic: vanilla_trial_key_vault] [tags: vanilla, trial chamber, vault] Targeted fact: Trial keys open vaults, and vaults reward players individually. Do not waste the key on the wrong expectation; read the room first.
+
+## Water, Desert, Jungle, And Snow
+- [triggers: ocean ruin|underwater ruins|drowned ruins] [topic: vanilla_ocean_ruins] [tags: vanilla, ocean, ruins] Targeted fact: Ocean ruins can hold drowned, loot, archaeology clues, and treasure maps. Doors, potions, or respiration make underwater curiosity less fatal.
+- [triggers: shipwreck|find shipwreck|shipwreck loot] [topic: vanilla_shipwreck_v3] [tags: vanilla, shipwreck, treasure] Targeted fact: Shipwrecks often hold food, maps, treasure clues, and supplies. Search all chest spots, then breathe before greed edits your lungs.
+- [triggers: desert temple|desert pyramid|temple tnt trap] [topic: vanilla_desert_temple_v3] [tags: vanilla, desert, trap] Targeted fact: Desert temples hide a pressure-plate TNT trap under the center. Dig down from the side and break the plate before looting.
+- [triggers: jungle temple|jungle pyramid|temple tripwire] [topic: vanilla_jungle_temple_v3] [tags: vanilla, jungle, trap] Targeted fact: Jungle temples use tripwires, arrows, levers, and hidden loot. Cut strings or block dispensers before admiring the architecture.
+- [triggers: igloo basement|igloo secret|zombie villager igloo] [topic: vanilla_igloo_basement] [tags: vanilla, snow, villager] Targeted fact: Some igloos hide a basement with a villager, zombie villager, brewing stand, and cure clue. Not every snow hut has mercy underneath.
+- [triggers: trail ruins|archaeology ruins|brush suspicious gravel] [topic: vanilla_trail_ruins_v3] [tags: vanilla, archaeology, ruins] Targeted fact: Trail ruins are archaeology sites with suspicious gravel and buried paths. Bring a brush and patience; shovels solve too much too fast.
+- [triggers: ruined portal loot|ruined portal chest|crying obsidian] [topic: vanilla_ruined_portal_deep] [tags: vanilla, portal, structure] Targeted fact: Ruined portals can hold useful loot and obsidian pieces. Crying obsidian is valuable, but it cannot replace ordinary obsidian in a Nether portal frame.

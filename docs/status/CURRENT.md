@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-07-04
+Last curated: 2026-07-11
 
 This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -30,8 +30,10 @@ enough to read before starting work. Long historical deltas belong in
 ## High-Value Work Buckets
 
 - Playtest the local AI persona layer in normal survival-like sessions: Coven
-  Witches, Leonard, villagers, hobgoblins, Baba Yaga, demons/flame imps, and
-  reflections should sound distinct while keeping server mechanics authoritative.
+  Witches, Leonard, villagers, village guards, hobgoblins, Baba Yaga, bosses,
+  demons/flame imps, and reflections should sound distinct while keeping server
+  mechanics authoritative. Runtime cards now cover 98 indexed Markdown files and
+  1,474 targeted facts behind exact/scoped/rumor/no persona access boundaries.
 - In-server QA for the new protection facade: vanilla spawn/build limits plus
   Open Parties and Claims, FTB Chunks, and Common Protection API when installed.
 - In-game QA for recently restored or polished systems: Flame Imp contracts,
@@ -50,6 +52,24 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- AI persona/knowledge routing was expanded from a small NPC-card layer into a
+  broad runtime card library. `NpcKnowledgeBase` now filters cards through the
+  machine-readable persona access matrix, downgrades scoped/rumor facts in prompt
+  context, reports dropped-card diagnostics, and normalizes villager profession
+  aliases so weaponsmith/armorer/toolsmith route through the shared smith lane
+  while farmer/fisherman/shepherd/butcher route through the farm lane. Prompt and
+  knowledge-base regression tests now assert that every active persona routes to
+  its own card lane. Villager raw-polish guards also reject wrong-profession
+  identity leaks, so a weaponsmith cannot drift into "I am the apothecary" even
+  in relaxed raw mode.
+- Creative-tab/icon parity pass tightened several source-facing item families:
+  Circle Talismans expose the original visible encoded stacks and choose icons
+  from stored circle data, Spectral Stones expose blank/Spectre/Banshee/Poltergeist
+  variants from binding data, Leonard's Urn shows capacity 1-4, Plant Mines render
+  as poppy/dandelion/dead-bush disguises without creative duplicate clutter,
+  Torment Scroll and Soul of Torment use source-style art, Brew Bag tinting returns
+  to leather colour, and wolf/hellhound head sprites were refreshed. The
+  screenshot comparison lives in `docs/status/CREATIVE_TAB_PARITY_AUDIT.md`.
 - OpenAI-compatible NPC providers now support bearer-token auth via an
   environment variable, optional extra metadata headers, configurable
   `responseFormat` (`json_object`, `json_schema`, or `none`), and strict NPC

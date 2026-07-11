@@ -371,8 +371,14 @@ public class WitcheryClient {
                 HuntsmanSpearBlockingProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "deaths_hand_deployed"),
                 DeathsHandDeployedProperty.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "circle_talisman_variant"),
+                CircleTalismanVariantProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "spectral_stone_type"),
                 SpectralStoneTypeProperty.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "plant_mine_disguise"),
+                PlantMineDisguiseProperty.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "leonards_urn_capacity"),
+                LeonardsUrnCapacityProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "wooden_scanner_using"),
                 WoodenScannerUsingProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "hand_bow_pull"),

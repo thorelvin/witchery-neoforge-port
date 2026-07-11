@@ -650,6 +650,9 @@ final class NpcDialogueFallback {
     }
 
     static String villagerHarvestAnswer(String normalized, String playerName, String profession) {
+        if (containsAny(normalized, "compost", "composter", "bone meal", "bonemeal")) {
+            return "Compost turns scraps into bone meal and better rows. A farmer wastes less than a fool thinks.";
+        }
         if (containsAny(normalized, "dinner", "supper", "meal", "meals", "stew")) {
             return "Supper keeps gossip friendly. Empty bowls make every shadow sound hungry.";
         }

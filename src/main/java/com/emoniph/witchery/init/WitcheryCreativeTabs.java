@@ -4,6 +4,8 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.ChaliceBlock;
 import com.emoniph.witchery.blocks.PlantMineBlock;
 import com.emoniph.witchery.blocks.ShadedGlassBlock;
+import com.emoniph.witchery.item.CircleTalismanItem;
+import com.emoniph.witchery.item.SpectralStoneItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -213,8 +215,9 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.ICY_NEEDLE.get(),
                 WitcheryItems.WATER_DIVINER.get(),
                 WitcheryItems.LAVA_DIVINER.get(),
-                WitcheryItems.WOODEN_SCANNER.get(),
-                WitcheryItems.CIRCLE_TALISMAN.get(),
+                WitcheryItems.WOODEN_SCANNER.get());
+        addCircleTalismanVariants(output);
+        add(output,
                 WitcheryItems.WITCH_HAND.get(),
                 WitcheryItems.STAFF_OF_DUPLICATION.get(),
                 WitcheryItems.BREW_BAG.get(),
@@ -293,20 +296,6 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.GOLDEN_HEART.get());
 
         add(output,
-                WitcheryItems.DANDELION_OF_INK.get(),
-                WitcheryItems.DANDELION_OF_SPROUTING.get(),
-                WitcheryItems.DANDELION_OF_THORNS.get(),
-                WitcheryItems.DANDELION_OF_WEBS.get(),
-                WitcheryItems.POPPY_OF_INK.get(),
-                WitcheryItems.POPPY_OF_SPROUTING.get(),
-                WitcheryItems.POPPY_OF_THORNS.get(),
-                WitcheryItems.POPPY_OF_WEBS.get(),
-                WitcheryItems.SHRUB_OF_INK.get(),
-                WitcheryItems.SHRUB_OF_SPROUTING.get(),
-                WitcheryItems.SHRUB_OF_THORNS.get(),
-                WitcheryItems.SHRUB_OF_WEBS.get());
-
-        add(output,
                 WitcheryItems.DIAMOND_VAPOUR.get(),
                 WitcheryItems.EXHALE_OF_HORNED_ONE.get(),
                 WitcheryItems.HINT_OF_REBIRTH.get(),
@@ -339,8 +328,9 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.COOKED_ODD_PORKCHOP.get(),
                 WitcheryItems.SHEEP_LIVER.get(),
                 WitcheryItems.COOKED_SHEEP_LIVER.get(),
-                WitcheryItems.BIOME_NOTE.get(),
-                WitcheryItems.SPECTRAL_STONE.get(),
+                WitcheryItems.BIOME_NOTE.get());
+        addSpectralStoneVariants(output);
+        add(output,
                 WitcheryItems.NECRO_STONE.get(),
                 WitcheryItems.TORN_PAGE.get(),
                 WitcheryItems.VAMPIRE_BOOK.get());
@@ -505,8 +495,11 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.FEAR_DEMON_SOUL.get(),
                 WitcheryItems.TORMENT_DEMON_SOUL.get(),
                 WitcheryItems.TORMENT_SCROLL.get(),
-                WitcheryItems.BINKYS_SKULL.get(),
-                WitcheryItems.LEONARDS_URN.get(),
+                WitcheryItems.BINKYS_SKULL.get());
+        for (int capacity = 1; capacity <= 4; capacity++) {
+            output.accept(com.emoniph.witchery.item.LeonardsUrnItem.createWithCapacity(capacity));
+        }
+        add(output,
                 WitcheryItems.TWISTING_BAND.get(),
                 WitcheryItems.GULGS_GIRDLE.get(),
                 WitcheryItems.MOGS_QUIVER.get());
@@ -580,10 +573,28 @@ public class WitcheryCreativeTabs {
     }
 
     private static void addPlantMineVariants(CreativeModeTab.Output output) {
+        PlantMineBlock.PlantMineEffect[] sourceEffectOrder = {
+                PlantMineBlock.PlantMineEffect.WEBS,
+                PlantMineBlock.PlantMineEffect.INK,
+                PlantMineBlock.PlantMineEffect.SPROUTING,
+                PlantMineBlock.PlantMineEffect.THORNS
+        };
         for (PlantMineBlock.PlantMineDisguise disguise : PlantMineBlock.PlantMineDisguise.values()) {
-            for (PlantMineBlock.PlantMineEffect effect : PlantMineBlock.PlantMineEffect.values()) {
+            for (PlantMineBlock.PlantMineEffect effect : sourceEffectOrder) {
                 output.accept(PlantMineBlock.stackFor(disguise, effect));
             }
+        }
+    }
+
+    private static void addCircleTalismanVariants(CreativeModeTab.Output output) {
+        for (int data : CircleTalismanItem.SOURCE_CREATIVE_DATA) {
+            output.accept(CircleTalismanItem.createWithCircleData(data));
+        }
+    }
+
+    private static void addSpectralStoneVariants(CreativeModeTab.Output output) {
+        for (int meta : SpectralStoneItem.SOURCE_CREATIVE_META) {
+            output.accept(SpectralStoneItem.createFromLegacyMeta(meta));
         }
     }
 

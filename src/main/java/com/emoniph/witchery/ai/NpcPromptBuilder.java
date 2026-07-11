@@ -284,10 +284,18 @@ public final class NpcPromptBuilder {
     }
 
     static NpcBrainPrompt villagerSmoke(String playerMessage, String memory) {
+        return villagerSmokeForProfession(playerMessage, memory, "Apothecary", "apothecary");
+    }
+
+    static NpcBrainPrompt villagerSmokeForProfession(String playerMessage, String memory,
+                                                     String villagerName, String profession) {
+        String safeVillager = villagerName == null || villagerName.isBlank() ? "Villager" : villagerName;
+        String safeProfession = profession == null || profession.isBlank() ? "villager" : profession;
+        String knowledgeSpecialist = villagerKnowledgeSpecialist(safeProfession);
         return villagerPrompt(
-                "Apothecary",
+                safeVillager,
                 "Dev",
-                "apothecary",
+                safeProfession,
                 "minecraft:overworld",
                 "Plains",
                 "day",
@@ -295,9 +303,9 @@ public final class NpcPromptBuilder {
                 4L,
                 "clear",
                 "nearby villagers 8; iron golems 1; village guards 2; beds 10; doors 7; walls/fences 42; raid none; threats: vampires 1, werewolves 0, witches 1, raiders 0",
-                villagerJobCard("apothecary"),
+                villagerJobCard(safeProfession),
                 NpcKnowledgeBase.relevantContext(playerMessage, "Plains", "day",
-                        NpcCardRequest.persona("villager")),
+                        NpcCardRequest.specialist("villager", knowledgeSpecialist)),
                 memory,
                 playerMessage,
                 "the player spoke near this villager in chat",
@@ -320,7 +328,7 @@ public final class NpcPromptBuilder {
                 "nearby villagers 8; iron golems 1; village guards 2; beds 10; doors 7; walls/fences 42; raid none; threats: vampires 1, werewolves 0, witches 1, raiders 0",
                 villagerJobCard("apothecary"),
                 NpcKnowledgeBase.relevantContext(playerMessage, "Plains", "dusk",
-                        NpcCardRequest.persona("villager")),
+                        NpcCardRequest.specialist("villager", "apothecary")),
                 memory,
                 playerMessage,
                 "the player is nearby; server observed this villager-world cue: " + cue,
@@ -645,7 +653,7 @@ public final class NpcPromptBuilder {
         String profession = villagerProfessionName(villager);
         String villageInfo = villagerVillageInfo(level, villager);
         String knowledge = NpcKnowledgeBase.relevantContext(playerMessage, biome, time,
-                cardRequest("villager", villager.getUUID(), player, level));
+                cardRequest("villager", villagerKnowledgeSpecialist(profession), villager.getUUID(), player, level));
 
         return villagerPrompt(
                 name,
@@ -840,8 +848,13 @@ public final class NpcPromptBuilder {
     }
 
     private static NpcCardRequest cardRequest(String personaId, UUID npcId, ServerPlayer player, ServerLevel level) {
+        return cardRequest(personaId, "", npcId, player, level);
+    }
+
+    private static NpcCardRequest cardRequest(String personaId, String specialistId, UUID npcId, ServerPlayer player,
+                                             ServerLevel level) {
         int turn = NpcMemoryData.get(level).exchangeCount(npcId, player.getUUID());
-        return new NpcCardRequest(personaId, npcId, player.getUUID(), level.getGameTime(),
+        return new NpcCardRequest(personaId, specialistId, npcId, player.getUUID(), level.getGameTime(),
                 turn, MAX_CARD_TOPICS, 1);
     }
 
@@ -1534,6 +1547,7 @@ public final class NpcPromptBuilder {
                 # Character
                 The villager is named %s. The player is named %s.
                 Profession: %s.
+                Voice cue: wary local using peasant folklore, not an expert manual.
 
                 # Scene
                 dimension %s; biome %s; time of day %s; clock %s; day %d; weather %s.
@@ -1563,7 +1577,7 @@ public final class NpcPromptBuilder {
                 If the player asks about this villager's job, answer from Profession and Job card.
                 If the player asks about trade, speak from the profession; do not invent exact stock unless the job card or facts name it.
                 If the player asks about witches, vampires, werewolves, raids, guards, or golems, sound like a local witness, not an expert monster manual.
-                Prefer peasant folklore over expert explanation: "my gran said", "ask the bell", "salt the threshold", "count the doors", or "keep bread in your pocket" only when it fits.
+                Prefer peasant folklore and wary local judgment over expert explanation: "my gran said", "ask the bell", "salt the threshold", "count the doors", or "keep bread in your pocket" only when it fits.
                 If asked witchcraft mechanics, answer as a wary local who knows rumors and trade labels, not as a teacher; an apothecary may point to a Primer or coven witch.
                 If asked whether witches are good or bad, say both kinds exist and give village signs, not moral certainty.
                 If asked what villagers think of demons, answer with fear, doors, bells, guards, and respect for witches who can bind them; do not describe demon mechanics like an expert.
@@ -2719,6 +2733,19 @@ public final class NpcPromptBuilder {
                     "Unemployed card: knows who is hiring, which workstations are missing, village gossip, dinner talk, food stores, and where people hide when bells ring.";
             default ->
                     "Villager card: answer as a cautious peasant local, colored by job, village safety, gossip, folklore, and what can be seen nearby.";
+        };
+    }
+
+    private static String villagerKnowledgeSpecialist(String profession) {
+        String normalized = normalizeProfession(profession);
+        return switch (normalized) {
+            case "apothecary" -> "apothecary";
+            case "cartographer" -> "cartographer";
+            case "librarian" -> "librarian";
+            case "cleric" -> "cleric";
+            case "farmer", "fisherman", "shepherd", "butcher" -> "farmer";
+            case "armorer", "weaponsmith", "toolsmith" -> "smith";
+            default -> "";
         };
     }
 

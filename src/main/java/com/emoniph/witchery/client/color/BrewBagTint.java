@@ -16,7 +16,7 @@ public final class BrewBagTint implements ItemTintSource {
 
     @Override
     public int calculate(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity) {
-        return BrewBagItem.getColor(stack);
+        return 0xFF000000 | (BrewBagItem.getColor(stack) & 0xFFFFFF);
     }
 
     @Override

@@ -1,0 +1,13 @@
+# Vanilla Minecraft Cards: Deepening Backlog
+
+These are not meant as final runtime facts for every niche. They mark future card topics that deserve exact recipe/test verification before becoming broad NPC knowledge.
+
+## Candidate Future Slices
+- [triggers: todo vanilla recipes|future vanilla cards|expand vanilla recipes] [topic: todo_vanilla_recipe_cards] [tags: todo, vanilla] Targeted fact: Future vanilla recipe cards should be generated or checked against recipe JSON where possible: tools, armor, boats, beds, rails, redstone components, potions, and utility blocks.
+- [triggers: todo enchantment cards|future enchant cards|all enchantments] [topic: todo_vanilla_enchantment_cards] [tags: todo, vanilla, enchanting] Targeted fact: Future enchantment cards should cover every enchantment with compatible items, conflicts, maximum levels, and version caveats.
+- [triggers: todo biome cards|future biome cards|all biomes] [topic: todo_vanilla_biome_cards] [tags: todo, vanilla, biomes] Targeted fact: Future biome cards should cover each biome's resources, mobs, structures, tree types, village variants, and Witchery flavor hooks.
+- [triggers: todo structure cards|future structure cards|all structures] [topic: todo_vanilla_structure_cards] [tags: todo, vanilla, structures] Targeted fact: Future structure cards should split each structure into finding, danger, loot, preparation, and Witchery-world commentary.
+- [triggers: todo mob cards|future mob cards|all mobs] [topic: todo_vanilla_mob_cards] [tags: todo, vanilla, mobs] Targeted fact: Future mob cards should cover spawn logic, drops, counters, farmability boundaries, and persona-specific reactions for villagers, guards, witches, and hobgoblins.
+- [triggers: todo redstone cards|future redstone cards|redstone lessons] [topic: todo_vanilla_redstone_cards] [tags: todo, vanilla, redstone] Targeted fact: Future redstone cards should teach concepts before builds: power, direction, pulse, delay, update, storage, lag, and edition differences.
+- [triggers: todo archaeology cards|future archaeology cards|pots sherds trims] [topic: todo_vanilla_archaeology_cards] [tags: todo, vanilla, archaeology] Targeted fact: Future archaeology cards should cover suspicious sand and gravel, brushes, pottery sherds, armor trims, trail ruins, ocean ruins, desert wells, and respectful digging.
+- [triggers: todo commands cards|future command cards|commands and cheats] [topic: todo_vanilla_command_cards] [tags: todo, vanilla, commands] Targeted fact: Future command cards should stay clearly out-of-world and permission-gated: explain commands only when asked, never as NPC power.

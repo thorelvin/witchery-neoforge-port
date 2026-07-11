@@ -70,6 +70,15 @@ final class NpcVillagerFallback {
         if (containsAny(normalized, "live in this village", "do you live here", "live here")) {
             return Optional.of("I live here, trade here, and worry here. That is village life in three knots.");
         }
+        if (isSmithJob(job)) {
+            Optional<String> weirdSmithAnswer = smithWeirdQuestionAnswer(normalized, name);
+            if (weirdSmithAnswer.isPresent()) {
+                return weirdSmithAnswer;
+            }
+        }
+        if (asksFarmAnimalQuestion(normalized)) {
+            return Optional.of(farmerAnimalAnswer(normalized, job));
+        }
         if (asksVillagerHarvest(normalized)) {
             return Optional.of(villagerHarvestAnswer(normalized, name, job));
         }
@@ -93,6 +102,25 @@ final class NpcVillagerFallback {
         }
         if (containsAny(normalized, "whiff", "whif", "mutandis", "witchery recipe", "witchery recipes")) {
             return Optional.of("I've heard those names over counters. Exact witch work belongs to a Primer or a proper witch.");
+        }
+        if (asksBelladonnaScholarQuestion(normalized)) {
+            return Optional.of("Belladonna is witch-herb talk to me, not scholar's Latin. Ask an apothecary, a librarian, or a Primer.");
+        }
+        if (asksNetherPortalQuestion(normalized)) {
+            return Optional.of("Portal craft is miner and old-book business. I know the Nether burns crops and common sense alike.");
+        }
+        if (asksBlazeRodQuestion(normalized)) {
+            return Optional.of("Blaze rods come from Nether trouble, not field work. Pack food, a shield, and better courage than mine.");
+        }
+        if (asksElytraQuestion(normalized)) {
+            return Optional.of("Elytra are End stories and sky-cloth, not village stock. Ask someone who has faced the dragon and returned.");
+        }
+        if (asksMansionQuestion(normalized)) {
+            return Optional.of("For a woodland mansion, ask a cartographer for an explorer map. Bring bread, armor, torches, and no pride.");
+        }
+        if (asksLocateCommandQuestion(normalized)) {
+            return Optional.of("I cannot run commands for you, " + name
+                    + ". If cheats are yours, use them yourself; otherwise follow eyes, maps, and roads.");
         }
         if (containsAny(normalized, "how big", "village size", "how many villagers", "population",
                 "how many people", "beds", "doors")) {
@@ -180,6 +208,10 @@ final class NpcVillagerFallback {
         if (containsAny(normalized, "trade", "sell", "buy", "stock", "emerald")) {
             return Optional.of(villagerTradeAnswer(job));
         }
+        if (isSmithJob(job) && asksSmithRepairQuestion(normalized)) {
+            return Optional.of("I can judge the damage, " + name
+                    + ". Dull edge: grindstone. Bad crack: fresh iron, heat, and patience.");
+        }
         if (containsAny(normalized, "sleep here", "sleep tonight", "stay here tonight", "safe to sleep")) {
             return Optional.of("Sleep only with a bed, a door, and no bell screaming. Salt the threshold if you can.");
         }
@@ -199,6 +231,9 @@ final class NpcVillagerFallback {
                 "what should i bring on the road")) {
             return Optional.of("Bring bread, garlic, dry boots, and coin hidden twice. A sword only answers the loudest trouble.");
         }
+        if (isSmithJob(job) && asksSmithGearQuestion(normalized)) {
+            return Optional.of(smithGearAnswer(normalized, name));
+        }
         if (containsAny(normalized, "crows", "crow")) {
             return Optional.of("Crows mean something when they gather quiet. One crow is weather; three are gossip with wings.");
         }
@@ -217,5 +252,167 @@ final class NpcVillagerFallback {
             return routed;
         }
         return Optional.of(NpcFallbackAsides.villager(normalized, name, ""));
+    }
+
+    private static boolean asksFarmAnimalQuestion(String normalized) {
+        return containsAny(normalized, "feed the animals", "feed animals", "animal feed", "feed cows",
+                "feed sheep", "feed pigs", "feed chickens", "feed hens", "feed rabbits", "breed animals",
+                "breed cows", "breed sheep", "breed pigs", "breed chickens", "livestock", "stable feed");
+    }
+
+    private static String farmerAnimalAnswer(String normalized, String profession) {
+        if ("farmer".equals(profession)) {
+            if (containsAny(normalized, "chicken", "chickens", "hen", "hens")) {
+                return "Chickens take seeds. Keep some back, or tomorrow's eggs become today's mistake.";
+            }
+            if (containsAny(normalized, "pig", "pigs")) {
+                return "Pigs take carrots, potatoes, or beets. Do not feed them the village's last supper.";
+            }
+            if (containsAny(normalized, "rabbit", "rabbits")) {
+                return "Rabbits like carrots and garden greens. Fence them well, or the crop rows vanish by morning.";
+            }
+            return "Wheat for cows and sheep, seeds for chickens, roots for pigs. Feed beasts after the pantry is counted.";
+        }
+        return "Ask a farmer for exact feed. I only know hungry beasts complain almost as loudly as hungry neighbors.";
+    }
+
+    private static boolean isSmithJob(String profession) {
+        return containsAny(profession, "armorer", "weaponsmith", "toolsmith");
+    }
+
+    private static boolean asksSmithRepairQuestion(String normalized) {
+        return containsAny(normalized, "repair", "mend", "fix", "sharpen", "grindstone", "cracked", "dull")
+                && containsAny(normalized, "sword", "blade", "axe", "shield", "armor", "tool", "weapon");
+    }
+
+    private static boolean asksSmithGearQuestion(String normalized) {
+        return containsAny(normalized, "weapon", "weapons", "blade", "blades", "sword", "swords",
+                "axe", "axes", "shield", "shields", "steel", "iron")
+                && containsAny(normalized, "carry", "road", "night", "enough", "help", "against",
+                "trouble", "which", "what should", "better");
+    }
+
+    private static String smithGearAnswer(String normalized, String playerName) {
+        if (containsAny(normalized, "shield", "shields", "axe", "axes")) {
+            return "A shield keeps panic out of your ribs, " + playerName
+                    + "; an axe helps only after trouble reaches you.";
+        }
+        if (containsAny(normalized, "vampire", "vampires", "werewolf", "werewolves", "silver")) {
+            return "For vampires and werewolves, folk whisper silver. For common trouble, keep iron sharp and doors closer.";
+        }
+        if (containsAny(normalized, "road", "night")) {
+            return "On the road, carry a plain blade, a shield, and enough bread to choose doors over heroics.";
+        }
+        return "Good steel helps, " + playerName
+                + ", but courage dulls fast. Keep the edge clean and your back near a door.";
+    }
+
+    private static Optional<String> smithWeirdQuestionAnswer(String normalized, String playerName) {
+        if (containsAny(normalized, "marry my sword", "marry a sword", "marry this sword")) {
+            return Optional.of("Name the sword if you must, " + playerName
+                    + "; do not marry it. Steel is loyal only while you oil it.");
+        }
+        if (containsAny(normalized, "sharpen soup")) {
+            return Optional.of("No. I can sharpen a spoon if supper has grown that dangerous.");
+        }
+        if (containsAny(normalized, "shadow walking faster", "shadow walk faster", "shadow faster")) {
+            return Optional.of("If your shadow outruns you, step toward lamplight and stop making promises after dusk.");
+        }
+        if (containsAny(normalized, "bell rings backward", "bell ring backward")) {
+            return Optional.of("If the bell sounds wrong, shut the door first and ask questions through it.");
+        }
+        if (containsAny(normalized, "golem sneeze", "sneeze rust")) {
+            return Optional.of("If a golem sneezes rust, step aside and thank the iron it still wants to stand.");
+        }
+        if (containsAny(normalized, "bread a weapon", "throw it hard enough", "throw bread")) {
+            return Optional.of("Bread is a weapon only against hunger. Throwing it is how a village becomes foolish and hungry.");
+        }
+        if (containsAny(normalized, "helmet for a cat", "cat helmet")) {
+            return Optional.of("No cat has asked me for iron, and no cat would forgive the weight.");
+        }
+        if (containsAny(normalized, "crows pay tax", "crows pay taxes")) {
+            return Optional.of("Crows pay in warnings, not coins. Some days that is more than the mayor manages.");
+        }
+        if (containsAny(normalized, "name my axe", "axe mildred", "called mildred")) {
+            return Optional.of("A named axe is still an axe. Keep both hands respectful and Mildred may behave.");
+        }
+        if (containsAny(normalized, "vampire borrow my bed", "vampire borrow a bed")) {
+            return Optional.of("No invitations after sunset includes beds, " + playerName + ".");
+        }
+        if (containsAny(normalized, "werewolf apologize", "apologize after biting")) {
+            return Optional.of("An apology after teeth is still blood on the floor.");
+        }
+        if (containsAny(normalized, "left sock", "sock through a taglock")) {
+            return Optional.of("If it touched you, a witch can make trouble of it. Keep laundry from strangers.");
+        }
+        if (containsAny(normalized, "garlic rude", "rude to carry")) {
+            return Optional.of("Garlic is rude to vampires and polite to everyone breathing.");
+        }
+        if (containsAny(normalized, "pay you with teeth", "pay with teeth", "teeth i found")) {
+            return Optional.of("No teeth at my stand. Coin, honest goods, or walk away smiling.");
+        }
+        if (containsAny(normalized, "road stare", "road stares", "road staring")) {
+            return Optional.of("Roads stare after sunset when they want you to remember doors exist.");
+        }
+        if (containsAny(normalized, "contract on a pumpkin", "sign a contract on a pumpkin")) {
+            return Optional.of("A demon can sign a leaf and still collect a life. Do not offer surfaces.");
+        }
+        if (containsAny(normalized, "hide inside an anvil", "inside an anvil")) {
+            return Optional.of("Anvils are for metal, not frightened villagers. Hide behind a door with hinges.");
+        }
+        if (containsAny(normalized, "golem like dinner", "golem like supper")) {
+            return Optional.of("A golem eats trouble, not stew. Still, I respect the invitation.");
+        }
+        if (containsAny(normalized, "sword in a cauldron", "sword learn magic")) {
+            return Optional.of("Put a sword in a cauldron and it learns rust, not magic.");
+        }
+        if (containsAny(normalized, "blade from moonlight", "moonlight and bad decisions")) {
+            return Optional.of("Moonlight will not hold an edge. Bad decisions do, but they cut the owner first.");
+        }
+        if (containsAny(normalized, "boots are afraid", "boots afraid of mud")) {
+            return Optional.of("Comfort your boots by walking them home before the mud takes a vote.");
+        }
+        if (containsAny(normalized, "elytras sleep", "elytra sleep")) {
+            return Optional.of("Elytra sleep in End stories, far from my forge and farther from my prices.");
+        }
+        if (containsAny(normalized, "stronghold find me", "find me first")) {
+            return Optional.of("If old stone starts looking for you, stop looking nervous and find a map.");
+        }
+        if (containsAny(normalized, "reflection asks", "reflection ask")) {
+            return Optional.of("If your reflection asks for a better weapon, give it distance, not steel.");
+        }
+        if (containsAny(normalized, "hammer goodnight", "tell your hammer")) {
+            return Optional.of("I will hang it up. Hammers sleep better than villagers.");
+        }
+        return Optional.empty();
+    }
+
+    private static boolean asksBelladonnaScholarQuestion(String normalized) {
+        return containsAny(normalized, "belladonna latin", "belladonna s latin", "latin name")
+                && normalized.contains("belladonna");
+    }
+
+    private static boolean asksNetherPortalQuestion(String normalized) {
+        return containsAny(normalized, "nether portal", "make a portal", "build a portal", "portal to nether",
+                "open the nether", "get to the nether");
+    }
+
+    private static boolean asksBlazeRodQuestion(String normalized) {
+        return containsAny(normalized, "blaze rod", "blaze rods", "where get blaze", "where do i get blaze",
+                "find blazes", "nether fortress");
+    }
+
+    private static boolean asksElytraQuestion(String normalized) {
+        return containsAny(normalized, "elytra", "elytras", "end ship wings", "sky cloth");
+    }
+
+    private static boolean asksMansionQuestion(String normalized) {
+        return containsAny(normalized, "woodland mansion", "find mansion", "mansion map", "explorer map",
+                "where is mansion");
+    }
+
+    private static boolean asksLocateCommandQuestion(String normalized) {
+        return containsAny(normalized, "locate stronghold", "locate a stronghold", "locate command",
+                "run locate", "can you locate", "execute locate", "slash locate");
     }
 }

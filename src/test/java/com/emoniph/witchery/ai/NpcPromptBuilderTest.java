@@ -195,6 +195,30 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void smokePromptsRouteEveryPersonaToExpectedCardLane() {
+        assertSmokeRoute(NpcPromptBuilder.covenWitchSmoke("coven witch vanilla exact", ""),
+                "speak as the witch only", "coven witch may answer");
+        assertSmokeRoute(NpcPromptBuilder.leonardSmoke("weather", ""),
+                "speak as the shade of leonard only", "small debts beside infernal bargains");
+        assertSmokeRoute(NpcPromptBuilder.babaYagaSmoke("wooden weapon", ""),
+                "speak as baba yaga only", "wooden attacks bypass");
+        assertSmokeRoute(NpcPromptBuilder.villagerSmoke("good witch", ""),
+                "speak as the villager only", "cautious villager may judge a witch");
+        assertSmokeRoute(NpcPromptBuilder.villageGuardSmoke("guard survival advice", ""),
+                "speak as the village guard only", "carry food, shield");
+        assertSmokeRoute(NpcPromptBuilder.hobgoblinSmoke("what do you trade?", ""),
+                "speak as the hobgoblin only", "hobgoblin talk should center");
+        assertSmokeRoute(NpcPromptBuilder.reflectionSmoke("can you hear me?", ""),
+                "speak as the player's reflection only", "wrong side of the glass");
+        assertSmokeRoute(NpcPromptBuilder.bossSmoke("Death and Binky", ""),
+                "speak as this witchery boss only", "death should speak with finality");
+        assertSmokeRoute(NpcPromptBuilder.demonSmoke("bargain", ""),
+                "speak as the demon only", "demon bargain should demand");
+        assertSmokeRoute(NpcPromptBuilder.flameImpSmoke("shiny gifts", ""),
+                "speak as the flame imp only", "can be impressed with shiny gifts");
+    }
+
+    @Test
     void reflectionSmokePromptIncludesMirrorPersonaCards() {
         NpcBrainPrompt prompt = NpcPromptBuilder.reflectionSmoke(
                 "Why do you look like me, and how do I leave?", "");
@@ -536,6 +560,31 @@ class NpcPromptBuilderTest {
     }
 
     @Test
+    void villagerProfessionSmokeKeepsJobCardWhileRoutingSharedSpecialistKnowledge() {
+        NpcBrainPrompt smith = NpcPromptBuilder.villagerSmokeForProfession(
+                "weaponsmith weapon advice and pickaxe tiers?", "", "Bran", "weaponsmith");
+        String smithUser = smith.userPrompt().toLowerCase();
+
+        assertTrue(smithUser.contains("the villager is named bran"), smith.userPrompt());
+        assertTrue(smithUser.contains("profession: weaponsmith"), smith.userPrompt());
+        assertTrue(smithUser.contains("weaponsmith card"), smith.userPrompt());
+        assertTrue(smithUser.contains("smith villagers may know")
+                || smithUser.contains("pickaxe tier matters"), smith.userPrompt());
+        assertFalse(smithUser.contains("apothecary card"), smith.userPrompt());
+        assertFalse(smithUser.contains("atropa"), smith.userPrompt());
+
+        NpcBrainPrompt farmer = NpcPromptBuilder.villagerSmokeForProfession(
+                "farmer crops and food stores?", "", "Marta", "farmer");
+        String farmerUser = farmer.userPrompt().toLowerCase();
+
+        assertTrue(farmerUser.contains("profession: farmer"), farmer.userPrompt());
+        assertTrue(farmerUser.contains("farmer card"), farmer.userPrompt());
+        assertTrue(farmerUser.contains("farmers know crops")
+                || farmerUser.contains("crops, composters, bread"), farmer.userPrompt());
+        assertFalse(farmerUser.contains("apothecary card"), farmer.userPrompt());
+    }
+
+    @Test
     void villagerSmokePromptDoesNotSoundLikeWitchOrLeonard() {
         NpcBrainPrompt prompt = NpcPromptBuilder.villagerSmoke("who are you?", "");
         String system = prompt.systemPrompt().toLowerCase();
@@ -653,5 +702,14 @@ class NpcPromptBuilderTest {
                 "Mind the road.");
         assertEquals("<Marta> Mind the road.", line.getString());
         assertEquals(0xFFAA00, line.getStyle().getColor().getValue());
+    }
+
+    private static void assertSmokeRoute(NpcBrainPrompt prompt, String systemMarker, String userMarker) {
+        String system = prompt.systemPrompt().toLowerCase();
+        String user = prompt.userPrompt().toLowerCase();
+
+        assertTrue(system.contains(systemMarker), prompt.systemPrompt());
+        assertTrue(user.contains("targeted fact"), prompt.userPrompt());
+        assertTrue(user.contains(userMarker), prompt.userPrompt());
     }
 }
