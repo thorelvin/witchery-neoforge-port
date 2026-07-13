@@ -9,9 +9,9 @@ Recipe-backed distillery cards for refined fumes, fear, evil, and infernal reage
 - [triggers: glowstone distillery|distill glowstone|make glowstone dust in distillery|reek from glowstone] Targeted fact: Distill Blaze Powder and Gunpowder with one Clay Jar near a valid altar to get Glowstone Dust and Reek of Misfortune.
 
 ## Infernal Distilling
-- [triggers: infernal blood recipe|make infernal blood|get infernal blood|distill infernal blood|what do i need for infernal blood] Targeted fact: Distill Demon Heart and Diamond Vapour with four Clay Jars near a valid altar to get Infernal Blood and Refined Evil.
-- [triggers: netherrack infernal blood|infernal blood netherrack|cheap infernal blood|demon heart netherrack] Targeted fact: Distill Demon Heart and Netherrack with two Clay Jars near a valid altar to get Soul Sand and Infernal Blood.
-- [triggers: what is infernal blood for|use infernal blood|infernal blood use] Targeted fact: Infernal Blood feeds demonic craft, Mystic Unguent, and infernal transformation work; it is not beginner ink.
+- [triggers: demonic blood recipe|infernal blood recipe|make demonic blood|make infernal blood|get demonic blood|get infernal blood|distill demonic blood|distill infernal blood|what do i need for demonic blood|what do i need for infernal blood] Targeted fact: Distill Demon Heart and Diamond Vapour with four Clay Jars near a valid altar to get Demonic Blood and Refined Evil.
+- [triggers: netherrack demonic blood|netherrack infernal blood|demonic blood netherrack|infernal blood netherrack|cheap demonic blood|cheap infernal blood|demon heart netherrack] Targeted fact: Distill Demon Heart and Netherrack with two Clay Jars near a valid altar to get Soul Sand and Demonic Blood.
+- [triggers: what is demonic blood for|what is infernal blood for|use demonic blood|use infernal blood|demonic blood use|infernal blood use] Targeted fact: Demonic Blood is the source-facing name for the `witchery:infernal_blood` item; it feeds demonic craft, Mystic Unguent, and infernal transformation work.
 - [triggers: what is refined evil for|use refined evil|refined evil use] Targeted fact: Refined Evil feeds Drop of Luck, spectral and demonic craft, and darker workings; treat it like bottled intent with teeth.
 
 ## Known Earlier Distilling

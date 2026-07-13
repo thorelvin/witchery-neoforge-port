@@ -501,7 +501,7 @@ public class WitcheryCreativeTabs {
         }
         add(output,
                 WitcheryItems.TWISTING_BAND.get(),
-                WitcheryItems.GULGS_GIRDLE.get(),
+                WitcheryItems.GULGS_GRUDLE.get(),
                 WitcheryItems.MOGS_QUIVER.get());
     }
 

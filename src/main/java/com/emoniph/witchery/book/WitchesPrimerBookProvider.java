@@ -248,7 +248,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
             case "witchery:attuned_stone_charged" -> "Charged Attuned Stone";
             case "witchery:breath_of_goddess" -> "Breath of the Goddess";
             case "witchery:exhale_of_horned_one" -> "Exhale of the Horned One";
-            case "witchery:mindrakebulb" -> "Mindrake Bulb";
+            case "witchery:mindrakebulb" -> "Minedrake Bulb";
             case "witchery:tear_of_goddess" -> "Tear of the Goddess";
             case "witchery:witches_salt" -> "Witches' Salt";
             case "minecraft:dragon_breath" -> "Dragon's Breath";
@@ -790,7 +790,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "underwater **Dirt** to **Clay** and back."
                         + "\n\nAn empty **Chest** over water with Short Grass on four sides becomes four "
                         + "**Grasspers**. A **Trapped Chest** ringed with Vines over water becomes a **Leech "
-                        + "Chest**. A Leech Chest ringed with Poppies leaves four **Blood Roses**."));
+                        + "Chest**. A Leech Chest ringed with Poppies leaves four **Blood Poppies**."));
         sprig.addAll(WitcheryBooks.prose("Creature Snares",
                 "A **Cobweb** over water, with four planted Alder Saplings and a trapped Zombie, becomes four "
                         + "**Critter Snares** — the bridge into bat, slime, and magma snare chains. Four bat "
@@ -976,10 +976,10 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         distillery.add(stationRecipeCard("distillery_condensed_fear", "Condensed Fear",
                 "**Brew of Flowing Spirit** + **Oil of Vitriol**, with two clay jars, yields Focused Will, "
                         + "Condensed Fear, and two batches of Hollow Tears."));
-        distillery.add(stationRecipeCard("distillery_infernal_blood_netherrack", "Infernal Blood: Netherrack",
-                "**Demon Heart** + **Netherrack**, with two clay jars, yields Soul Sand and two Infernal Blood."));
-        distillery.add(stationRecipeCard("distillery_infernal_blood", "Infernal Blood: Vapour",
-                "**Demon Heart** + **Diamond Vapour**, with four clay jars, yields four Infernal Blood and "
+        distillery.add(stationRecipeCard("distillery_infernal_blood_netherrack", "Demonic Blood: Netherrack",
+                "**Demon Heart** + **Netherrack**, with two clay jars, yields Soul Sand and two Demonic Blood."));
+        distillery.add(stationRecipeCard("distillery_infernal_blood", "Demonic Blood: Vapour",
+                "**Demon Heart** + **Diamond Vapour**, with four clay jars, yields four Demonic Blood and "
                         + "Refined Evil."));
         cat.withEntries(
                 entry(cat, "distilling/distillery", "The Distillery", WitcheryItems.DISTILLERY.get(), 0, distillery),
@@ -1368,7 +1368,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         wicker.add(recipe("wicker_bundle", "Wicker Bundle",
                 "Nine saplings. Witchery saplings — rowan, alder, hawthorn — count too, once grown."));
         wicker.add(recipe("bloodied_wicker_bundle", "Bloodied Wicker",
-                "Five bundles and one **Infernal Blood** make five bloodied bundles. You need twenty for "
+                "Five bundles and one **Demonic Blood** make five bloodied bundles. You need twenty for "
                         + "the figure."));
         wicker.addAll(WitcheryBooks.prose("The Figure",
                 "Build a flat, human-shaped wall from exactly twenty Bloodied Wicker Bundles: two-wide "
@@ -1453,7 +1453,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "poppets are merely decorative, curses fall without direction, and certain rites "
                         + "cannot find their target."
                         + "\n\nRight-click a living creature directly, or steal a player's sample by crouching "
-                        + "up behind them. Blood Roses, Leech Chests, and a freshly slept-in bed can hold the "
+                        + "up behind them. Blood Poppies, Leech Chests, and a freshly slept-in bed can hold the "
                         + "same sample for later theft — guard your own sleep accordingly."));
         taglock.add(recipe("taglock_kit", "Taglock Kit",
                 "A glass bottle and a pin. Simple, and deliberately so — the difficulty is in what you do "

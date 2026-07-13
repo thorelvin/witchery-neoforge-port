@@ -11,7 +11,7 @@ Advanced brew cards for players who have moved past first bottles and started as
 
 ## Ointments And Power Brews
 - [triggers: flying ointment recipe|make flying ointment|craft flying ointment|brew flying ointment|what do i need for flying ointment] Targeted fact: Flying Ointment brews from Redstone Soup, Long Swiftness, Diamond, Feather, Bat Wool, and Belladonna; it needs 3000 altar power.
-- [triggers: mystic unguent recipe|make mystic unguent|craft mystic unguent|brew mystic unguent|what do i need for mystic unguent] Targeted fact: Mystic Unguent brews from Redstone Soup, Long Strength, Diamond, Rowan Sapling, Creeper Heart, and Infernal Blood; it needs 3000 altar power.
+- [triggers: mystic unguent recipe|make mystic unguent|craft mystic unguent|brew mystic unguent|what do i need for mystic unguent] Targeted fact: Mystic Unguent brews from Redstone Soup, Long Strength, Diamond, Rowan Sapling, Creeper Heart, and Demonic Blood; it needs 3000 altar power.
 - [triggers: what is redstone soup for|use redstone soup|redstone soup base] Targeted fact: Redstone Soup is a late brew base for stronger craft such as Flying Ointment, Mystic Unguent, filled chalices, and infusion paths.
 - [triggers: what is flying ointment|use flying ointment|flying ointment] Targeted fact: Flying Ointment belongs to flight and mobility work; treat it as a serious brew, not a snack in a jar.
 

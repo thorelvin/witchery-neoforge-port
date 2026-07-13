@@ -354,7 +354,8 @@ public class WitcheryClient {
                 com.emoniph.witchery.init.WitcheryItems.MOGS_QUIVER.get());
 
         event.registerItem(new com.emoniph.witchery.client.GulgsGirdleArmorClientExtensions(),
-                com.emoniph.witchery.init.WitcheryItems.GULGS_GIRDLE.get());
+                com.emoniph.witchery.init.WitcheryItems.GULGS_GIRDLE.get(),
+                com.emoniph.witchery.init.WitcheryItems.GULGS_GRUDLE.get());
 
         event.registerItem(new com.emoniph.witchery.client.WoodenScannerClientExtensions(),
                 com.emoniph.witchery.init.WitcheryItems.WOODEN_SCANNER.get());

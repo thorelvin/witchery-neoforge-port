@@ -37,7 +37,7 @@ That makes the port feel fuller and easier to browse in a modern pack, but it al
 | Leonard's Urn | Creative subitems are metas `0..3`. | Port now exposes capacity 1-4 urn stacks and chooses the matching source urn icon from capacity data. | The modern storage behavior remains. |
 | Stale seeds | Old names include stale Belladonna, Mandrake, and Water Artichoke seeds. | Port has practical plantable seeds, not the stale metadata entries. | Likely missing as creative-visible legacy variants unless intentionally dropped. |
 | Decurse statues | `Statue of Occluded Summons` and `Statue of Broken Curses` appear in old lang/source context. | No matching port item names found. | Likely missing or not yet exposed. Needs source behavior check before implementation. |
-| Brambles | Old visible names are `Ender Bramble` and `Wild Bramble`. | Port exposes `Void Bramble` and `Bramble`. | Likely equivalent mechanics, but names do not match original. |
+| Brambles | Old visible names include `Wild Bramble`, while the stronger owner/null-source plant is `Void Bramble`. | Port now names the damage/spread block `Wild Bramble` and keeps the owner/null-source block `Void Bramble`. | The old metadata `Ender Bramble` remains represented mechanically by the current `Void Bramble` path rather than a second visible stack. |
 | Debug items | Not source creative items. | `Debug Death Ward` and `Debug Inspector` are visible in the Witchery tab. | Useful for QA, but they are extras in player-facing parity. |
 | Spawn eggs | Not shown in the provided original screenshots. | 36 Witchery spawn eggs are in the tab. | Modern convention, but screenshot parity sees them as extras. |
 
@@ -55,12 +55,12 @@ These look like renamed, corrected, or modernized entries rather than hard missi
 | Diamond Vapor | Diamond Vapour |
 | Witches Hand | Witch Hand |
 | Icy Slippers | Ice Slippers |
-| Demonic Blood | Infernal Blood |
-| Blood Poppy | Blood Rose |
+| Demonic Blood | Restored display name on `witchery:infernal_blood` |
+| Blood Poppy | Restored display name on `witchery:blood_rose` |
 | Apple | Apple of Sleeping |
 | Torment | Torment Scroll |
-| Minedrake / Minedrake Bulb | Mindrake / Mindrake Bulb |
-| Gulg's Gurdle | Gulg's Girdle |
+| Minedrake / Minedrake Bulb | Restored display names on `mindrake`, `mindrakebulb`, and spawn egg |
+| Gulg's Gurdle | Exact `witchery:gulgs_grudle` restored; `gulgs_girdle` remains a compatibility stack |
 | Vampire Dress Jacket (Ladies) | Vampire Dress Jacket |
 | Vampire Chain Coat (Ladies) | Vampire Chain Coat Ladies |
 | Mirror Surface | Mirror Wall |
@@ -85,7 +85,7 @@ These should be decided by style policy. Some are probable old typos, some are s
 4. Restore stockade wood variants as visible creative entries.
 5. Add source-visible creative variant stacks for any remaining metadata-backed legacy items that still collapse to one stack.
 6. Review stale seed variants and decurse statues against source behavior before implementing.
-7. Choose a naming policy for source names versus cleaned names, especially `Minedrake`, `Demonic Blood`, `Blood Poppy`, and bramble names.
+7. Continue applying source-facing display names when the old English name is clear; keep modern registry IDs stable and add compatibility aliases where needed.
 
 ## Patch Made During This Audit
 
@@ -110,3 +110,13 @@ Follow-up icon parity fixes made after this audit:
 - Plant mine creative duplicates were removed; the real plant mine block item now renders by disguise.
 - `Circle Talisman` now exposes the source creative metadata set and uses the source icon variants for stored circle data.
 - `Spectral Stone` now exposes the source creative metadata set through modern bound-stone data.
+
+## Additional Naming Patch
+
+The first source-facing name policy slice keeps stable modern registry IDs but restores old player-visible names where the 1.7.10 English lang is unambiguous:
+
+- `witchery:mindrake` / `witchery:mindrakebulb` display as Minedrake / Minedrake Bulb.
+- `witchery:infernal_blood` displays as Demonic Blood.
+- `witchery:blood_rose` displays as Blood Poppy.
+- `witchery:bramble` displays as Wild Bramble.
+- Exact `witchery:gulgs_grudle` is registered as the source/Resurrected Gulg reward, drops from Gulg, appears in the creative tab, and shares all behavior with the older `witchery:gulgs_girdle` compatibility item.

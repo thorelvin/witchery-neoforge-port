@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.resources.Identifier;
 
 /**
- * Worn Gulg's Girdle / Grudle model, matching source {@code ItemGoblinClothes(2)}.
+ * Worn Gulg's Gurdle / Grudle model, matching source {@code ItemGoblinClothes(2)}.
  *
  * <p>The source leggings model uses a zero armor scale and the sparse
  * {@code goblinclothes_legs} sheet, so the rendered result is a narrow girdle

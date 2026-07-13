@@ -22,7 +22,7 @@ Rite cards teach requirements and safety. Exact locked rites should stay behind 
 
 ## Familiar Binding
 - [triggers: familiar binding|familiar rite|familiar ritual|bring for a familiar rite|bind familiar|binding rite|bind a familiar] Targeted fact: Familiar binding should be explained with circle, chalk, offerings, altar power, familiar requirements, and the opened Primer page before naming parts.
-- The local support text names Tear of the Goddess, Odour of Purity, Whiff of Magic, a Diamond, and Infernal Blood for familiar binding.
+- The local support text names Tear of the Goddess, Odour of Purity, Whiff of Magic, a Diamond, and Demonic Blood for familiar binding.
 - If the player has not unlocked or seen the page, advise checking the Primer instead of listing a full hidden process.
 
 ## Summoning

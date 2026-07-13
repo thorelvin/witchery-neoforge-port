@@ -774,6 +774,12 @@ public class WitcheryItems {
                     .durability(net.minecraft.world.item.equipment.ArmorType.LEGGINGS.getDurability(
                             net.minecraft.world.item.equipment.ArmorMaterials.IRON.durability()))
                     .rarity(net.minecraft.world.item.Rarity.EPIC)));
+    public static final DeferredItem<Item> GULGS_GRUDLE       = ITEMS.register("gulgs_grudle",
+            id -> new GoblinClothesItem(GoblinClothesItem.Piece.GULGS_GIRDLE, itemProps(id)
+                    .humanoidArmor(GULGS_GIRDLE_MATERIAL, net.minecraft.world.item.equipment.ArmorType.LEGGINGS)
+                    .durability(net.minecraft.world.item.equipment.ArmorType.LEGGINGS.getDurability(
+                            net.minecraft.world.item.equipment.ArmorMaterials.IRON.durability()))
+                    .rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final DeferredItem<Item> MOGS_QUIVER        = ITEMS.register("mogs_quiver",
             id -> new GoblinClothesItem(GoblinClothesItem.Piece.MOGS_QUIVER, itemProps(id)
                     .humanoidArmor(MOGS_QUIVER_MATERIAL, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)
@@ -910,7 +916,7 @@ public class WitcheryItems {
     }
 
     public static boolean isGulgsGirdle(ItemStack stack) {
-        return stack.is(GULGS_GIRDLE.get());
+        return stack.is(GULGS_GIRDLE.get()) || stack.is(GULGS_GRUDLE.get());
     }
 
     public static boolean isDemonicContract(ItemStack stack) {

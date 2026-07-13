@@ -27,7 +27,7 @@ These cards teach plants as living craft: where they come from, how they bite, a
 
 ## Mutating Sprig
 - [triggers: mutating sprig recipe|make mutating sprig|craft mutating sprig|how do i make a mutating sprig|what do i need for mutating sprig] Targeted fact: A Mutating Sprig is crafted from Mutandis Extremis surrounding an Ent Twig; it is a durability tool for controlled mutations.
-- [triggers: what does mutating sprig do|use mutating sprig|mutating sprig use|controlled mutations] Targeted fact: Mutating Sprig performs structure mutations such as Grasspers, Leech Chests, Blood Roses, Brambles, Wormwood, and Critter Snares.
+- [triggers: what does mutating sprig do|use mutating sprig|mutating sprig use|controlled mutations] Targeted fact: Mutating Sprig performs structure mutations such as Grasspers, Leech Chests, Blood Poppies, Wild Brambles, Wormwood, and Critter Snares.
 - [triggers: blood poppy|make blood poppy|get blood poppy|blood rose mutation] Targeted fact: Blood Poppies come from using a Mutating Sprig on a Leech Chest surrounded by poppies in water; harvest them safely with a Boline.
 - [triggers: grassper|make grassper|get grassper|grassper mutation] Targeted fact: Grasspers are made by mutating a chest with grass using a Mutating Sprig; they help hold material components for mutation work.
 - [triggers: critter snare mutation|make critter snare with sprig|mutate critter snare|alder zombie snare] Targeted fact: Critter Snares can be made through a Mutating Sprig route using alder saplings and a zombie; keep the source footprint exact.

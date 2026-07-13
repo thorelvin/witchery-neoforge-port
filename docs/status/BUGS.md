@@ -250,11 +250,11 @@ File: `symbol/EffectRegistry.java`.
   variant currently behaves like the hostile one minus targeting. Low priority.
 - **Arrow-prophecy skeleton** burns up in daytime sun before it can shoot (vanilla undead behaviour).
   Acceptable, but a fire-resistant or shaded spawn would read better. Cosmetic.
-- ~~Mindrake Bulb showed the raw `item.witchery.mindrakebulb` key~~ — fixed (added the item lang key).
+- ~~Minedrake Bulb showed the raw `item.witchery.mindrakebulb` key~~ — fixed (added the item lang key).
 
 All 20 crystal-ball prophecies were confirmed firing in-game (arrow/creative-bypass/lightning/
 flames/serpent/nether/ent/rescue/coal/baba-good+bad/diamond/emerald/fall/friend/iron/love/treasure/
-wet/witch_visitor/zombie). Hellhound visuals, Mindrake bulb-hatch + detonation, all verified good.
+wet/witch_visitor/zombie). Hellhound visuals, Minedrake bulb-hatch + detonation, all verified good.
 
 ---
 

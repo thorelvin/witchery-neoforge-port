@@ -270,9 +270,9 @@ public class GoblinGulgEntity extends Monster {
                 random, armor, 30, level.registryAccess(), java.util.Optional.empty());
         spawnAtLocation(level, armor);
 
-        // 50% chance: Gulg's Girdle
+        // 50% chance: source-facing Gulg's Gurdle reward.
         if (random.nextInt(2) == 0) {
-            spawnAtLocation(level, new ItemStack(WitcheryItems.GULGS_GIRDLE.get()));
+            spawnAtLocation(level, new ItemStack(WitcheryItems.GULGS_GRUDLE.get()));
         }
     }
 

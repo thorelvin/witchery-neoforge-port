@@ -11,7 +11,7 @@
     {
       "type": "patchouli:spotlight",
       "item": "witchery:infused_brew_base",
-      "text": "$(bold)Infused Brew Base$(/): the older circle-brew rites begin here. Brew Redstone Soup with Brew of Flowing Spirit, a Creeper Heart, Toe of Frog, Owlet's Wing, and Tongue of Dog for the first base, spending $(bold)3000 altar power$(/).$(br2)If you already have one, brew it again with Brew of Flowing Spirit, Hint of Rebirth, Mandrake Root, Bat Wool, and Bramble to divide it into two."
+      "text": "$(bold)Infused Brew Base$(/): the older circle-brew rites begin here. Brew Redstone Soup with Brew of Flowing Spirit, a Creeper Heart, Toe of Frog, Owlet's Wing, and Tongue of Dog for the first base, spending $(bold)3000 altar power$(/).$(br2)If you already have one, brew it again with Brew of Flowing Spirit, Hint of Rebirth, Mandrake Root, Bat Wool, and Wild Bramble to divide it into two."
     },
     {
       "type": "patchouli:spotlight",

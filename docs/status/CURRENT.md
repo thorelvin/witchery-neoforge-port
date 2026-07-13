@@ -70,6 +70,10 @@ enough to read before starting work. Long historical deltas belong in
   Torment Scroll and Soul of Torment use source-style art, Brew Bag tinting returns
   to leather colour, and wolf/hellhound head sprites were refreshed. The
   screenshot comparison lives in `docs/status/CREATIVE_TAB_PARITY_AUDIT.md`.
+- Source-facing name parity now prefers old English display names while keeping
+  stable modern IDs: Minedrake, Blood Poppy, Wild Bramble, Demonic Blood, and
+  Gulg's Gurdle are restored in lang/docs/cards; exact `witchery:gulgs_grudle`
+  is live and drops from Gulg while `witchery:gulgs_girdle` remains compatible.
 - OpenAI-compatible NPC providers now support bearer-token auth via an
   environment variable, optional extra metadata headers, configurable
   `responseFormat` (`json_object`, `json_schema`, or `none`), and strict NPC

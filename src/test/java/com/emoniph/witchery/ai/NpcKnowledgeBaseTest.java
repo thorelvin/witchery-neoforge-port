@@ -2011,7 +2011,7 @@ class NpcKnowledgeBaseTest {
         String sprigLower = sprig.get().toLowerCase(Locale.ROOT);
         assertTrue(sprigLower.contains("grasspers"), sprig.get());
         assertTrue(sprigLower.contains("leech chests"), sprig.get());
-        assertTrue(sprigLower.contains("blood roses"), sprig.get());
+        assertTrue(sprigLower.contains("blood poppies"), sprig.get());
 
         Optional<String> cotton = NpcKnowledgeBase.compactAnswer(
                 "how do I get Wispy Cotton?", "Plains", "night");
@@ -2389,6 +2389,20 @@ class NpcKnowledgeBaseTest {
 
     private static String itemName(String id) {
         String path = id.contains(":") ? id.substring(id.indexOf(':') + 1) : id;
+        switch (path) {
+            case "blood_rose":
+                return "blood poppy";
+            case "bramble":
+                return "wild bramble";
+            case "infernal_blood":
+                return "demonic blood";
+            case "mindrake":
+                return "minedrake";
+            case "mindrakebulb":
+                return "minedrake bulb";
+            default:
+                break;
+        }
         return path.replace('_', ' ').toLowerCase(Locale.ROOT);
     }
 
