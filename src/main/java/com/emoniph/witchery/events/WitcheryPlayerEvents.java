@@ -294,6 +294,7 @@ public class WitcheryPlayerEvents {
 
         WitcheryPlayerData dataEveryTick = WitcheryAttachments.get(player);
         if (dataEveryTick.hasSoaringBuff()) dataEveryTick.tickSoaring();
+        if (dataEveryTick.hasGraveBrew()) dataEveryTick.tickGrave();
         if (dataEveryTick.getHowlCooldown() > 0) dataEveryTick.setHowlCooldown(dataEveryTick.getHowlCooldown() - 1);
         dataEveryTick.tickTormentPortal();
         tickGrotesqueAura(player, dataEveryTick);

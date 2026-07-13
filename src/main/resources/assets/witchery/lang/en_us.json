@@ -672,6 +672,8 @@
   "item.witchery.infused_brew_base": "Infused Brew Base",
   "item.witchery.infused_soaring_brew": "Infused Brew of Soaring",
   "item.witchery.infused_grave_brew": "Infused Brew of the Grave",
+  "witchery.brew.grave.applied": "The dead will heed your stone for a time.",
+  "witchery.necro_stone.grave.bound": "%s is bound to your necromantic command.",
   "witchery.ritual.infusion.light.success": "The light accepts you.",
   "witchery.ritual.infusion.overworld.success": "The world breathes through you.",
   "witchery.ritual.infusion.otherwhere.success": "The void resonates within you.",

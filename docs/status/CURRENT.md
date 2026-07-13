@@ -197,6 +197,12 @@ enough to read before starting work. Long historical deltas belong in
   and Village Guards: amplifier 5+ leaves them unfrozen, clears combat targeting
   while active, and paths them once per second toward the nearest level-8+
   vampire player within the source 1-16 block window.
+- Infused Brew of the Grave now has its missing active effect: drinking the
+  Grave brew arms a source-length 120-minute state, and the Necromantic Stone
+  now handles the old undead command surface. Normal use orders nearby owned
+  undead toward a target or top-face destination; sneak-use on an undead while
+  Grave is active binds it through the shared enslaved-minion tags with the
+  old strict `> 200` tick reuse gate.
 - A first Witch's Triangle scanner slice is now live: a rowan-framed wooden
   triangle that uses a two-arm hold pose, lights its centre with purple portal
   art while scanning, remembers unique scanned block/entity ids on the item, and

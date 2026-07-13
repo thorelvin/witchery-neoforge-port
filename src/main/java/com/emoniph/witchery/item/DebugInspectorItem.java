@@ -82,6 +82,7 @@ public class DebugInspectorItem extends Item {
                     + "  transform=" + String.format("%.2f", d.getTransformationLevel())
                     + "  wolflevel=" + d.getWerewolfLevel() + "/10 (" + d.getWolfForm() + ")\n"
                     + "  soaring=" + tickStr(d.getSoaringTicks())
+                    + "  grave=" + tickStr(d.getGraveTicks())
                     + "  depths=" + tickStr(d.getDepthsTicks())
                     + "  grotesque=" + tickStr(d.getGrotesqueTicks()) + "\n"
                     + "  ghostWalker=" + d.isGhostWalkerActive()
@@ -150,6 +151,7 @@ public class DebugInspectorItem extends Item {
         WitcheryPlayerData d = WitcheryAttachments.get(player);
 
         String bar = "Soaring:" + tickStr(d.getSoaringTicks())
+                + " | Grave:" + tickStr(d.getGraveTicks())
                 + " | Depths:" + tickStr(d.getDepthsTicks())
                 + " | Grotesque:" + tickStr(d.getGrotesqueTicks())
                 + " | Ghost:" + (d.isGhostWalkerActive() ? "ON" : "off")

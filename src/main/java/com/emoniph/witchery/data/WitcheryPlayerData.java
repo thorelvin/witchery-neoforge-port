@@ -242,6 +242,8 @@ public class WitcheryPlayerData {
     private WerewolfState wws = new WerewolfState();
     private int howlCooldown = 0;
     private int soaringTicks = 0;
+    private int graveTicks = 0;
+    private long lastGraveUseGameTime = Long.MIN_VALUE;
     private int depthsTicks = 0;
     private int grotesqueTicks = 0; // transient — not persisted via CODEC
     // Mystic Branch symbol magic — transient server-side scratch for the spell the
@@ -562,6 +564,12 @@ public class WitcheryPlayerData {
     public boolean hasSoaringBuff() { return soaringTicks > 0; }
     public void setSoaringTicks(int v) { soaringTicks = Math.max(0, v); }
     public void tickSoaring() { if (soaringTicks > 0) soaringTicks--; }
+    public int getGraveTicks() { return graveTicks; }
+    public boolean hasGraveBrew() { return graveTicks > 0; }
+    public void setGraveTicks(int v) { graveTicks = Math.max(0, v); }
+    public void tickGrave() { if (graveTicks > 0) graveTicks--; }
+    public long getLastGraveUseGameTime() { return lastGraveUseGameTime; }
+    public void setLastGraveUseGameTime(long v) { lastGraveUseGameTime = v; }
     public int getDepthsTicks() { return depthsTicks; }
     public boolean hasDepthsBuff() { return depthsTicks > 0; }
     public void setDepthsTicks(int v) { depthsTicks = Math.max(0, v); }
@@ -603,6 +611,8 @@ public class WitcheryPlayerData {
         this.wws = new WerewolfState(other.wws.level, other.wws.form, other.wws.questState,
                 other.wws.questCounter, other.wws.howledChunks, other.wws.lastHowl, other.wws.lastBoneFind);
         this.soaringTicks = other.soaringTicks;
+        this.graveTicks = other.graveTicks;
+        this.lastGraveUseGameTime = other.lastGraveUseGameTime;
         this.depthsTicks = other.depthsTicks;
         this.grotesqueTicks = other.grotesqueTicks;
         this.witchHunterTriggerGameTime = other.witchHunterTriggerGameTime;

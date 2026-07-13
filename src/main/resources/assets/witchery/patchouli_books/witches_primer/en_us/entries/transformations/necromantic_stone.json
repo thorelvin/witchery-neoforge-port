@@ -16,7 +16,7 @@
     {
       "type": "patchouli:text",
       "title": "Current Port Use",
-      "text": "In Witchery: Rewoven today, the stone already has two dependable roles: it is consumed or preserved by later rites such as $(l:circle_magic/prior_incarnation)Prior Incarnation$(/l), $(l:circle_magic/manifestation)Manifestation$(/l), fetish binding, and Spectral Stone work, and it can still wake or silence an $(item)Alluring Skull$().$(br2)The broader old undead-command behaviors are still future mechanics work, so treat this as a real progression ingredient first and a fuller necromancer's tool second."
+      "text": "In Witchery: Rewoven today, the stone is consumed or preserved by later rites such as $(l:circle_magic/prior_incarnation)Prior Incarnation$(/l), $(l:circle_magic/manifestation)Manifestation$(/l), fetish binding, and Spectral Stone work, and it can still wake or silence an $(item)Alluring Skull$().$(br2)It also commands bound undead: use it on a target or the top of a block to send your thralls there. After drinking an $(item)Infused Brew of the Grave$(), sneak-use the stone on an undead creature to bind it."
     }
   ]
 }

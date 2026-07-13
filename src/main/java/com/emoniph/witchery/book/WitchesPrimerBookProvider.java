@@ -1334,9 +1334,11 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "On a small circle at night, offer an Attuned Stone, Bone, Rotten Flesh, Wood Ash, "
                         + "Gunpowder, and Spectral Dust, with **1000 altar power**."));
         necro.addAll(WitcheryBooks.prose("Current Use",
-                "Today the stone has two dependable roles: it is consumed or preserved by later rites such "
-                        + "as Prior Incarnation, Manifestation, fetish binding, and Spectral Stone work, and "
-                        + "it can wake or silence an Alluring Skull."));
+                "Today the stone is consumed or preserved by later rites such as Prior Incarnation, "
+                        + "Manifestation, fetish binding, and Spectral Stone work, and it can wake or silence "
+                        + "an Alluring Skull. It also commands bound undead: use it on a target or on the top "
+                        + "of a block to send nearby owned thralls there. After drinking an **Infused Brew of "
+                        + "the Grave**, sneak-use the stone on an undead creature to bind it."));
 
         List<BookPageModel<?>> treefyd = new ArrayList<>(WitcheryBooks.prose("Treefyd",
                 "A Treefyd is a wooden guardian raised out of corrupted hedgecraft rather than bred. The "

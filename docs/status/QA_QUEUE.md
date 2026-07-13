@@ -148,6 +148,11 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   movement-speed lock; instead they should drop combat targeting and step toward
   the vampire roughly once per second. Check that level-7 vampires and targets
   closer than 1 block or farther than 16 blocks do not trigger the lure.
+- Drink Infused Brew of the Grave, sneak-use a Necromantic Stone on an unowned
+  undead mob, and confirm it becomes an owned thrall with witch/green feedback.
+  Reuse within exactly 200 ticks should fizzle; after 201+ ticks it should bind
+  a second undead. Then normal-use the Necromantic Stone on a living target and
+  on a block top to verify nearby owned undead attack/move instead of idling.
 - Block the first release space over a ritual cauldron and confirm gas/liquid
   Dog Tongue release chooses a nearby safe space instead of failing immediately.
 

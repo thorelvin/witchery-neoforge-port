@@ -638,10 +638,10 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BREW_OF_SOLID_SANDSTONE = ITEMS.register("brew_of_solid_sandstone", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Sandstone(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SOLID_EROSION  = ITEMS.register("brew_of_solid_erosion", id -> new com.emoniph.witchery.item.BrewOfSolidifyingItem.Erosion(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SOARING        = ITEMS.register("brew_of_soaring", id -> new com.emoniph.witchery.item.BrewOfSoaringItem(itemProps(id)));
-    public static final DeferredItem<Item> BREW_OF_GRAVE          = ITEMS.register("brew_of_grave", id -> new com.emoniph.witchery.item.GenericBrewItem(itemProps(id)));
+    public static final DeferredItem<Item> BREW_OF_GRAVE          = ITEMS.register("brew_of_grave", id -> new com.emoniph.witchery.item.BrewOfGraveItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SUBSTITUTION   = ITEMS.register("brew_of_substitution", id -> new com.emoniph.witchery.item.BrewOfSubstitutionItem(itemProps(id)));
     public static final DeferredItem<Item> INFUSED_SOARING_BREW   = ITEMS.register("infused_soaring_brew", id -> new com.emoniph.witchery.item.BrewOfSoaringItem(itemProps(id)));
-    public static final DeferredItem<Item> INFUSED_GRAVE_BREW     = ITEMS.register("infused_grave_brew", id -> new com.emoniph.witchery.item.GenericBrewItem(itemProps(id)));
+    public static final DeferredItem<Item> INFUSED_GRAVE_BREW     = ITEMS.register("infused_grave_brew", id -> new com.emoniph.witchery.item.BrewOfGraveItem(itemProps(id)));
 
     // ── Infusion brew bases (M19) ─────────────────────────────────────────────
     public static final DeferredItem<Item> GHOST_OF_THE_LIGHT   = ITEMS.register("ghost_of_the_light",
@@ -704,7 +704,7 @@ public class WitcheryItems {
                     return true;
                 }
             });
-    public static final DeferredItem<Item> NECRO_STONE        = ITEMS.registerSimpleItem("necro_stone");
+    public static final DeferredItem<Item> NECRO_STONE        = ITEMS.register("necro_stone", id -> new NecroStoneItem(itemProps(id)));
     public static final DeferredItem<Item> QUARTZ_SPHERE          = ITEMS.registerSimpleItem("quartz_sphere");
     public static final DeferredItem<Item> CHARGED_QUARTZ_SPHERE  = ITEMS.register("charged_quartz_sphere",
             id -> new Item(itemProps(id)) {

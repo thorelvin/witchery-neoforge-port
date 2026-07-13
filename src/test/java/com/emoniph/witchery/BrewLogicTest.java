@@ -22,6 +22,8 @@ import com.emoniph.witchery.effect.SwimmingMobEffect;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
+import com.emoniph.witchery.item.BrewOfGraveItem;
+import com.emoniph.witchery.item.NecroStoneItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -81,6 +83,26 @@ class BrewLogicTest {
         Brews.bootstrap();
         // Spider Eye source poison duration is 900 ticks; one Redstone doubles to 1800.
         assertEquals(1800, Brews.buildEffects(level2(Items.REDSTONE, Items.SPIDER_EYE)).get(0).getDuration());
+    }
+
+    @Test
+    void graveBrewUsesSourceDurationAndCooldownGate() {
+        assertEquals(144000, BrewOfGraveItem.DURATION_TICKS, "source infused brew duration is 120 minutes");
+        assertFalse(NecroStoneItem.graveCooldownReady(300L, 100L),
+                "source requires strictly more than 200 ticks between Grave uses");
+        assertTrue(NecroStoneItem.graveCooldownReady(301L, 100L));
+        assertTrue(NecroStoneItem.graveCooldownReady(0L, Long.MIN_VALUE),
+                "a never-used Grave brew can bind immediately");
+    }
+
+    @Test
+    void graveBindingRequiresActiveBrewUndeadCooldownAndUnownedTarget() {
+        assertTrue(NecroStoneItem.canUseGraveBinding(true, true, true, true, false));
+        assertFalse(NecroStoneItem.canUseGraveBinding(false, true, true, true, false));
+        assertFalse(NecroStoneItem.canUseGraveBinding(true, false, true, true, false));
+        assertFalse(NecroStoneItem.canUseGraveBinding(true, true, false, true, false));
+        assertFalse(NecroStoneItem.canUseGraveBinding(true, true, true, false, false));
+        assertFalse(NecroStoneItem.canUseGraveBinding(true, true, true, true, true));
     }
 
     @Test

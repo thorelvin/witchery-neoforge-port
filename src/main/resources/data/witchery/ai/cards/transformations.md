@@ -15,6 +15,6 @@ Transformation cards should warn, orient, and avoid unlocking hidden paths early
 
 ## Infusions
 - [triggers: infusion|infusions|lasting infusion|permanent power|ghost of the light|soul of the world|spirit of otherwhere|infernal animus] Targeted fact: Lasting infusions begin with Kettle source items, not the circle; each uses Redstone Soup as a base, asks 4000 altar power, and prepares one branch of permanent transformation.
-- [triggers: infused brew base|make infused brew base|infused brew] Targeted fact: Infused Brew Base begins older circle-brew paths; it spends altar power and belongs after ordinary brews, distilling, and circle basics.
+- [triggers: infused brew base|make infused brew base|infused brew|brew of the grave|grave brew|necromantic stone command] Targeted fact: Infused Brew Base begins older circle-brew paths; Grave brew lasts about two hours and lets a Necromantic Stone sneak-bind undead, then command owned thralls to attack targets or move to a block top.
 - [triggers: infernal infusion|infernal animus|demonic infusion] Targeted fact: Infernal infusion grants fire resistance and creature powers, but its source uses Voodoo Poppet, Demon Heart, Refined Evil, and Blaze Rod; not beginner work.
 - Good witch voice: Permanent power is still permanent when you regret it.
