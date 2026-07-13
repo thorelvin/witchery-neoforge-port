@@ -184,6 +184,9 @@ enough to read before starting work. Long historical deltas belong in
   Lilith's empty-goblet reward, Vampire Blood, Attack Bat feeding, and Bone
   Needle white-wool staining use `random.drink`; drinking full goblets uses
   burp feedback.
+- Village Guards now regain source-style staying power after vampire feeding:
+  an idle guard standing in a village periodically heals and has the old
+  one-in-four chance to recover one point of its persisted `BloodLevel`.
 - A first Witch's Triangle scanner slice is now live: a rowan-framed wooden
   triangle that uses a two-arm hold pose, lights its centre with purple portal
   art while scanning, remembers unique scanned block/entity ids on the item, and

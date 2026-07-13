@@ -60,6 +60,8 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
     private static final int   SHOUT_RADIUS = 20;
     private static final int MAX_BLOOD = 500;
     private static final int LOW_BLOOD = 250;
+    private static final int VILLAGE_RECOVERY_MIN_TICKS = 70;
+    private static final int VILLAGE_RECOVERY_RANDOM_TICKS = 50;
     private static final int MESMERISE_SLOWNESS_AMPLIFIER = 4;
     private static final String ORIGIN_PERSISTENT_DATA_TAG = "witchery_origin_villager_persistent_data";
     private static final String ORIGIN_OFFERS_TAG = "witchery_origin_villager_offers";
@@ -124,6 +126,7 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
 
     @Nullable private LivingEntity prevTarget;
     private int shoutCooldown = 0;
+    private int villageRecoveryCooldown = VILLAGE_RECOVERY_MIN_TICKS;
     private boolean playerAppointedGuard = false;
     private String originVillagerType = "";
     private String originVillagerProfession = "";
@@ -178,6 +181,7 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
     public void setGuardType(int type) { entityData.set(GUARD_TYPE, Math.floorMod(type, 2)); }
     public int getBlood() { return entityData.get(BLOOD_LEVEL); }
     public void setBlood(int blood) { entityData.set(BLOOD_LEVEL, Math.clamp(blood, 0, MAX_BLOOD)); }
+    public void giveBlood(int quantity) { setBlood(getBlood() + Math.max(0, quantity)); }
 
     public boolean hasVillagerOrigin() {
         return playerAppointedGuard && !originVillagerProfession.isBlank();
@@ -297,6 +301,30 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
         }
 
         if (tickCount % 10 == 0) reassessWeapon();
+        tickVillageRecovery();
+    }
+
+    private void tickVillageRecovery() {
+        if (--villageRecoveryCooldown > 0) {
+            return;
+        }
+        villageRecoveryCooldown = sourceVillageRecoveryCooldown(random.nextInt(VILLAGE_RECOVERY_RANDOM_TICKS));
+        if (!(level() instanceof ServerLevel serverLevel) || !serverLevel.isVillage(blockPosition()) || getTarget() != null) {
+            return;
+        }
+        heal(1.0F);
+        if (random.nextInt(4) == 0) {
+            setBlood(sourceVillageRecoveryBlood(getBlood(), true, false, true));
+        }
+    }
+
+    static int sourceVillageRecoveryCooldown(int randomOffset) {
+        return VILLAGE_RECOVERY_MIN_TICKS + Math.clamp(randomOffset, 0, VILLAGE_RECOVERY_RANDOM_TICKS - 1);
+    }
+
+    static int sourceVillageRecoveryBlood(int currentBlood, boolean inVillage, boolean hasTarget, boolean bloodRoll) {
+        int clamped = Math.clamp(currentBlood, 0, MAX_BLOOD);
+        return inVillage && !hasTarget && bloodRoll ? Math.clamp(clamped + 1, 0, MAX_BLOOD) : clamped;
     }
 
     // ── Weapon switching ──────────────────────────────────────────────────────
