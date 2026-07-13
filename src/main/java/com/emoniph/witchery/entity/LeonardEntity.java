@@ -261,7 +261,7 @@ public class LeonardEntity extends Monster implements RangedAttackMob {
     public void nudgePlayerAttention(Player player) {
         holdPlayerAttention(player, ATTENTION_BRIEF_TICKS, true);
         if (level() instanceof ServerLevel serverLevel) {
-            serverLevel.playSound(null, blockPosition(), WitcherySoundEvents.ENTITY_LEONARD_SAY.get(),
+            serverLevel.playSound(null, blockPosition(), WitcherySoundEvents.MOB_LEONARD_SAY.get(),
                     SoundSource.HOSTILE, 0.42F, 0.82F);
         }
     }
@@ -727,17 +727,17 @@ public class LeonardEntity extends Monster implements RangedAttackMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return WitcherySoundEvents.ENTITY_LEONARD_SAY.get();
+        return WitcherySoundEvents.MOB_LEONARD_SAY.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return WitcherySoundEvents.ENTITY_LEONARD_HIT.get();
+        return WitcherySoundEvents.MOB_LEONARD_HIT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return WitcherySoundEvents.ENTITY_LEONARD_DEATH.get();
+        return WitcherySoundEvents.MOB_LEONARD_DEATH.get();
     }
 
     // ── NBT ───────────────────────────────────────────────────────────────────

@@ -157,6 +157,9 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Spawn Baba Yaga with `/witchery spawn baba_yaga`; confirm ambient uses the
   old Baba living voice, hurt remains Witch-like, and death uses the old Baba
   death sound.
+- Spawn Leonard with `/witchery spawn leonard`; confirm ambient, attention,
+  hurt, and death sounds still use the old source Leonard voice clips after the
+  move back to `mob.leonard.*` event names.
 - Spawn Owl and Toad familiars with `/witchery spawn owl` and
   `/witchery spawn toad`; confirm Owl idle/death/hurt use the old hoot/hurt
   sounds, Toad idle/death/hurt use the old croak/hurt sounds, and both idle

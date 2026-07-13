@@ -68,6 +68,25 @@
       "witchery:entity/leonard/death"
     ]
   },
+  "mob.leonard.say": {
+    "sounds": [
+      "witchery:mob/leonard/say1",
+      "witchery:mob/leonard/say2",
+      "witchery:mob/leonard/say3",
+      "witchery:mob/leonard/say4",
+      "witchery:mob/leonard/say5"
+    ]
+  },
+  "mob.leonard.hit": {
+    "sounds": [
+      "witchery:mob/leonard/hit"
+    ]
+  },
+  "mob.leonard.death": {
+    "sounds": [
+      "witchery:mob/leonard/death"
+    ]
+  },
   "mob.wolfman.howl": {
     "sounds": [
       "witchery:mob/wolfman/howl"
@@ -308,9 +327,64 @@
       "witchery:mob/darkmark/idle"
     ]
   },
+  "random.drink": {
+    "sounds": [
+      "witchery:random/drink"
+    ]
+  },
+  "random.hypnosis": {
+    "sounds": [
+      "witchery:random/hypnosis"
+    ]
+  },
+  "random.click": {
+    "sounds": [
+      "witchery:random/click"
+    ]
+  },
+  "random.mantrap": {
+    "sounds": [
+      "witchery:random/mantrap"
+    ]
+  },
   "random.heartbeat": {
     "sounds": [
       "witchery:random/heartbeat1"
+    ]
+  },
+  "random.chalk": {
+    "sounds": [
+      "witchery:random/chalk"
+    ]
+  },
+  "random.blop": {
+    "sounds": [
+      "witchery:random/blop"
+    ]
+  },
+  "random.loved": {
+    "sounds": [
+      "witchery:random/loved"
+    ]
+  },
+  "random.theycome": {
+    "sounds": [
+      "witchery:random/theycome"
+    ]
+  },
+  "random.wind_up": {
+    "sounds": [
+      "witchery:random/wind_up"
+    ]
+  },
+  "random.splash": {
+    "sounds": [
+      "witchery:random/splash"
+    ]
+  },
+  "random.poof": {
+    "sounds": [
+      "witchery:random/poof"
     ]
   },
   "random.horn": {
