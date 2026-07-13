@@ -41,7 +41,6 @@ public class WitcheryCreativeTabs {
                         addBrewsAndInfusions(output);
                         addDreamsDemonsAndContracts(output);
                         addLegacyPlaceholders(output);
-                        addDebugItems(output);
                         addSpawnEggs(output);
                     })
                     .build());
@@ -524,12 +523,6 @@ public class WitcheryCreativeTabs {
                 output.accept(item.get());
             }
         });
-    }
-
-    private static void addDebugItems(CreativeModeTab.Output output) {
-        add(output,
-                WitcheryItems.DEBUG_DEATH_WARD.get(),
-                WitcheryItems.DEBUG_INSPECTOR.get());
     }
 
     private static void addSpawnEggs(CreativeModeTab.Output output) {

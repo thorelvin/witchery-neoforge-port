@@ -38,7 +38,7 @@ That makes the port feel fuller and easier to browse in a modern pack, but it al
 | Stale seeds | 1.7.10 English lang exposes `ingredient` metadata names for Stale Belladonna Seeds, Stale Mandrake Seeds, and Stale Water Artichoke Seeds, distinct from the plantable `seeds...` items. | Port now exposes `stale_belladonna_seeds`, `stale_mandrake_seeds`, and `stale_artichoke_seeds` as non-plantable creative-visible legacy ingredient entries beside the real plantable seeds. | Patched as source-named compatibility items using the old seed sprites; no planting behavior was added because source usage points to the separate plantable seed items. |
 | Decurse statues | `Statue of Occluded Summons` (`decurseteleport`) and `Statue of Broken Curses` (`decursedirected`) are source `BlockAreaMarker` variants. | Port now exposes both exact block IDs in the Witchery tab, persists owner/killer data, and dampens taglock entity transposition or directed curse rites in the configured 32-block horizontal radius. | Functional parity slice is live; static stone-marker models stand in for the old mandrake/wolf special renderers pending visual QA. |
 | Brambles | Old visible names include `Wild Bramble`, while the stronger owner/null-source plant is `Void Bramble`. | Port now names the damage/spread block `Wild Bramble` and keeps the owner/null-source block `Void Bramble`. | The old metadata `Ender Bramble` remains represented mechanically by the current `Void Bramble` path rather than a second visible stack. |
-| Debug items | Not source creative items. | `Debug Death Ward` and `Debug Inspector` are visible in the Witchery tab. | Useful for QA, but they are extras in player-facing parity. |
+| Debug items | Not source creative items. | `Debug Death Ward` and `Debug Inspector` remain registered and `/give`-able for QA, but are no longer emitted into the normal Witchery creative tab. | Patched as command-only QA helpers so the player-facing tab stops carrying non-source debug clutter. |
 | Spawn eggs | Not shown in the provided original screenshots. | 36 Witchery spawn eggs are in the tab. | Modern convention, but screenshot parity sees them as extras. |
 
 ## Name Mismatches To Review
@@ -80,11 +80,10 @@ These should be decided by style policy. Some are probable old typos, some are s
 ## Recommended Follow-Ups
 
 1. Decide the creative tab target: exact source-order parity, modern curated tab, or two tabs/modes.
-2. Hide debug items from the normal player-facing tab, or gate them behind a config/operator-only debug path.
-3. Decide whether spawn eggs belong in the main Witchery tab or a separate/debug/entity section.
-4. Add source-visible creative variant stacks for any remaining metadata-backed legacy items that still collapse to one stack.
-5. Continue reviewing metadata-backed legacy variants that still collapse to one modern stack.
-6. Continue applying source-facing display names when the old English name is clear; keep modern registry IDs stable and add compatibility aliases where needed.
+2. Decide whether spawn eggs belong in the main Witchery tab or a separate/debug/entity section.
+3. Add source-visible creative variant stacks for any remaining metadata-backed legacy items that still collapse to one stack.
+4. Continue reviewing metadata-backed legacy variants that still collapse to one modern stack.
+5. Continue applying source-facing display names when the old English name is clear; keep modern registry IDs stable and add compatibility aliases where needed.
 
 ## Patch Made During This Audit
 

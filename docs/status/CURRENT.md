@@ -78,7 +78,8 @@ enough to read before starting work. Long historical deltas belong in
   Torment Scroll and Soul of Torment use source-style art, Brew Bag tinting returns
   to leather colour, wolf/hellhound head sprites were refreshed, source-named
   stale Belladonna/Mandrake/Water Artichoke seed ingredient entries are visible
-  beside the real plantable seeds, and the two
+  beside the real plantable seeds, debug-only QA items are kept out of the
+  normal player-facing tab, and the two
   source decurse statues are visible as exact IDs. The
   screenshot comparison lives in `docs/status/CREATIVE_TAB_PARITY_AUDIT.md`.
 - Source-facing name parity now prefers old English display names while keeping
