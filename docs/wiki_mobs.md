@@ -198,7 +198,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 ## Shade of Leonard
 - **HP:** 600
 - **Drops:** Enchanted Book, Demon Heart, Leonard's Urn
-- **Spawn:** Heat and fill a Witch's Cauldron, dissolve Nether Wart, Tear of the Goddess, Diamond Vapour, Diamond, and Nether Star in that order, then use a Witches' Hat. Requires 10000 altar power; no Gunpowder.
+- **Spawn:** Heat and fill a Witch's Cauldron, dissolve Nether Wart, Tear of the Goddess, Diamond Vapor, Diamond, and Nether Star in that order, then use a Witches' Hat. Requires 10000 altar power; no Gunpowder.
 - **Behaviour:** Neutral unless attacked; only player melee can harm him. Casts Mystic Branch spells, lays Mortal Coil, summons Lost Souls below half health, and becomes immune while any Lost Soul remains.
 - **Notes:** Coalesces briefly in an invulnerable phase and swells to a giant near death.
 

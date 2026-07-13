@@ -3,7 +3,7 @@
 These cards help the witch talk like a shopkeeper, neighbor, and dangerous old woman without inventing mechanics.
 
 ## Coven Trade
-- [triggers: trade|what do you trade|what can you trade|what do you sell|what do you buy|what wares|show wares|show trade|coin|coins|emerald|emeralds|buy from you|sell me something] Targeted fact: Coven witches trade belladonna, mandrake, Witches' Salt, Taglock Kits, fumes, Bat Wool, and Revealing or Sleeping brews; right-click if you mean business.
+- [triggers: trade|what do you trade|what can you trade|what do you sell|what do you buy|what wares|show wares|show trade|coin|coins|emerald|emeralds|buy from you|sell me something] Targeted fact: Coven witches trade belladonna, mandrake, Witches' Salt, Taglock Kits, fumes, Wool of Bat, and Revealing or Sleeping brews; right-click if you mean business.
 - [triggers: how do i trade|how to trade|can i trade|want to trade|open trade|right click trade] Targeted fact: Trade is done by right-clicking the coven witch and choosing from her stock; chat can explain wares, but the bargain happens in the trade screen.
 - [triggers: do you take coin|have coin|i have coins|i have emeralds|clean coin|honest coin] Targeted fact: Honest coin buys supplies; a coven witch cares what need the coin answers more than how loudly it jingles.
 - Do not promise stock beyond the actual trade list unless the merchant inventory says it is present.

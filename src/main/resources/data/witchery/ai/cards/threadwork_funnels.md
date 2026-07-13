@@ -16,12 +16,12 @@ Recipe-backed cards for spinning-wheel outputs, witch cloth, and oven fume upgra
 - [triggers: cloth from thread|thread to wool|make wool from fanciful thread] Targeted fact: Four Fanciful Thread craft into White Wool; useful when spirit cotton leaves you rich in thread and poor in sheep.
 
 ## Witch Leather And Clothing Chain
-- [triggers: impregnated leather recipe|make impregnated leather|craft impregnated leather|what do i need for impregnated leather] Targeted fact: Impregnated Leather is crafted from Whiff of Magic, Leather, and Diamond Vapour; the recipe makes four.
+- [triggers: impregnated leather recipe|make impregnated leather|craft impregnated leather|what do i need for impregnated leather] Targeted fact: Impregnated Leather is crafted from Whiff of Magic, Leather, and Diamond Vapor; the recipe makes four.
 - [triggers: why need impregnated leather|use impregnated leather|impregnated leather use] Targeted fact: Impregnated Leather is the sewn base for Brew Bags, Witches' Robes, Witches' Hats, and other durable witch gear.
 - [triggers: golden chalk recipe|make golden chalk|craft golden chalk|chalk golden] Targeted fact: Golden Chalk is crafted from Gold Nuggets, Yellow Dye, Ritual Chalk, and Redstone; use it for stronger circle markings when the lesson asks.
 
 ## Fume Funnel Upgrades
 - [triggers: fume funnel recipe|make fume funnel|craft fume funnel|what do i need for fume funnel] Targeted fact: A Fume Funnel is crafted from Iron Blocks, Buckets, Glowstone, Iron Bars, and Lava Bucket; it improves Witch's Oven fume work.
-- [triggers: fume filter recipe|make fume filter|craft fume filter|what do i need for fume filter] Targeted fact: A Fume Filter is crafted from Charged Attuned Stone, also called Attuned Stone Charged, Glass, and Iron Ingots; it upgrades a funnel.
+- [triggers: fume filter recipe|make fume filter|craft fume filter|what do i need for fume filter] Targeted fact: A Fume Filter is crafted from Attuned Stone (Charged), also called Attuned Stone Charged, Glass, and Iron Ingots; it upgrades a funnel.
 - [triggers: filtered fume funnel recipe|make filtered fume funnel|craft filtered fume funnel|what do i need for filtered fume funnel] Targeted fact: A Filtered Fume Funnel is crafted from a Fume Funnel and Fume Filter; side funnels improve fume byproduct odds.
 - [triggers: how do fume funnels work|use fume funnel|use filtered fume funnel|oven fume odds] Targeted fact: Fume Funnels help Witch's Oven work: top placement speeds cooking, side placement helps fume byproducts, and filtered side funnels are better.

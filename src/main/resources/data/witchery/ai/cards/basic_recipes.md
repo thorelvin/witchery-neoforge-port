@@ -44,5 +44,5 @@ Compact recipe notes for practical player teaching. These notes are grounded in 
 - Brew of Sprouting grows a branch from the struck surface.
 
 ## Brew of Flowing Spirit Recipe
-- [triggers: flowing spirit recipe|brew of flowing spirit recipe|recipe for brew of flowing spirit|flowing spirit ingredients|make flowing spirit|make brew of flowing spirit|how do i brew flowing spirit|what do i need for brew of flowing spirit|what do i need to brew flowing spirit] [topic: flowing_spirit_brew_recipe] Targeted fact: Brew of Flowing Spirit is brewed from Fanciful Thread, Artichoke, Mandrake Root, Spanish Moss, Glint Weed, and Bat Wool; it is a Spirit World brew that makes three bottles.
+- [triggers: flowing spirit recipe|brew of flowing spirit recipe|recipe for brew of flowing spirit|flowing spirit ingredients|make flowing spirit|make brew of flowing spirit|how do i brew flowing spirit|what do i need for brew of flowing spirit|what do i need to brew flowing spirit] [topic: flowing_spirit_brew_recipe] Targeted fact: Brew of Flowing Spirit is brewed from Fanciful Thread, Artichoke, Mandrake Root, Spanish Moss, Glint Weed, and Wool of Bat; it is a Spirit World brew that makes three bottles.
 - Brew of Flowing Spirit places spirit liquid and matters for spirit paths and wispy cotton.

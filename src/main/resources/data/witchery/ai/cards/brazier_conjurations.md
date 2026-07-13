@@ -9,7 +9,7 @@ Brazier cards for spectral conjuration, corpse-aura work, smoke, and practical t
 - [triggers: brazier fizzing|brazier weak smoke|brazier paused|why is brazier smoking weakly|brazier no power] Targeted fact: Weak smoke or fizz means an altar-powered Brazier working is waiting for valid altar power within 16 blocks; the timer pauses until power returns.
 
 ## Spectral Conjurations
-- [triggers: conjure spectres|conjure spectre|summon spectre|spectre brazier|spectres brazier] Targeted fact: Conjure Spectres uses Wormwood, Bat Wool, and Graveyard Dust; it needs altar power and summons a Spectre after 30 seconds, with a small Poltergeist chance.
+- [triggers: conjure spectres|conjure spectre|summon spectre|spectre brazier|spectres brazier] Targeted fact: Conjure Spectres uses Wormwood, Wool of Bat, and Graveyard Dust; it needs altar power and summons a Spectre after 30 seconds, with a small Poltergeist chance.
 - [triggers: conjure banshees|conjure banshee|summon banshee|banshee brazier] Targeted fact: Conjure Banshees uses Wormwood, Condensed Fear, and Graveyard Dust; it needs altar power and summons a Banshee after 30 seconds.
 - [triggers: conjure poltergeist|summon poltergeist|poltergeist brazier] Targeted fact: Conjure Poltergeist uses Wormwood, Refined Evil, and Focused Will; it needs no altar and summons a Poltergeist after 45 seconds.
 - [triggers: spectral undead brazier|necromancy brazier|which spectral summon] Targeted fact: Spectre and Banshee Brazier work needs Wormwood, Graveyard Dust, and altar power; Poltergeist work needs Wormwood, Refined Evil, and Focused Will.
@@ -26,5 +26,5 @@ Brazier cards for spectral conjuration, corpse-aura work, smoke, and practical t
 - [triggers: exhale brazier|exhale of the horned one brazier|brazier resistance] Targeted fact: Burning Exhale of the Horned One with altar power grants nearby players Resistance for several minutes.
 - [triggers: rowan berries brazier|rowan berry brazier|brazier regeneration] Targeted fact: Burning Rowan Berries needs no altar and grants nearby players Regeneration for a short while.
 - [triggers: fanciful thread brazier|brazier luck|luck brazier] Targeted fact: Burning Fanciful Thread needs no altar and grants nearby players Luck for a short while.
-- [triggers: diamond vapour fanciful thread brazier|diamond vapor fanciful thread brazier|brazier night vision speed] Targeted fact: Burning Diamond Vapour with Fanciful Thread needs altar power and grants nearby players Night Vision and Speed.
+- [triggers: diamond vapour fanciful thread brazier|diamond vapor fanciful thread brazier|brazier night vision speed] Targeted fact: Burning Diamond Vapor with Fanciful Thread needs altar power and grants nearby players Night Vision and Speed.
 - [triggers: gunpowder brazier|brazier strength speed|quick brazier buff] Targeted fact: Burning Gunpowder needs no altar and gives nearby players a short Strength and Speed burst.

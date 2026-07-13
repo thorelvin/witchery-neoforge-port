@@ -75,7 +75,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 | Working | Ingredients | Altar | Result |
 | --- | --- | --- | --- |
-| Conjure Spectres | Wormwood, Bat Wool, Graveyard Dust | Yes | Summons a Spectre after 30 seconds of powered burn time; 5% bonus Poltergeist roll. |
+| Conjure Spectres | Wormwood, Wool of Bat, Graveyard Dust | Yes | Summons a Spectre after 30 seconds of powered burn time; 5% bonus Poltergeist roll. |
 | Conjure Banshees | Wormwood, Condensed Fear, Graveyard Dust | Yes | Summons a Banshee after 30 seconds of powered burn time. |
 | Conjure Poltergeist | Wormwood, Refined Evil, Focused Will | No | Summons a Poltergeist after 45 seconds. |
 | Anguish of the Dead | Tear of Goddess, Blaze Rod, Golden Apple | Yes | Strength aura while burning. |
@@ -87,7 +87,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 | Exhale of the Horned One | Exhale of the Horned One | Yes | Resistance for nearby players. |
 | Rowan Berries | Rowan Berries | No | Regeneration for nearby players. |
 | Fanciful Thread | Fanciful Thread | No | Luck for nearby players. |
-| Diamond Vapour + Fanciful Thread | Diamond Vapour, Fanciful Thread | Yes | Night Vision and Speed for nearby players. |
+| Diamond Vapor + Fanciful Thread | Diamond Vapor, Fanciful Thread | Yes | Night Vision and Speed for nearby players. |
 | Gunpowder | Gunpowder | No | Short Strength II and Speed II burst for nearby players. |
 
 ## Brew Bag
@@ -166,7 +166,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Top placement still speeds cooking only; side placement uses the old default filtered 0.30 byproduct chance.
 
 ## Fume Filter
-- **Obtain:** Craft from Glass, Iron Ingots, and Charged Attuned Stone.
+- **Obtain:** Craft from Glass, Iron Ingots, and Attuned Stone (Charged).
 - **Function:** Upgrades a Fume Funnel into a Filtered Fume Funnel.
 - **Notes:** It is an item, not a placeable block.
 

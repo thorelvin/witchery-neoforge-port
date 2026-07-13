@@ -188,9 +188,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** No additional information available.
 
 ## Fume Filter
-- **Source:** Craft from Glass, Iron Ingots, and Charged Attuned Stone.
+- **Source:** Craft from Glass, Iron Ingots, and Attuned Stone (Charged).
 - **Uses:** Upgrades a Fume Funnel into a Filtered Fume Funnel.
-- **Notes:** Restored as a real item in the NeoForge remake; the recipe uses the remake's live Charged Attuned Stone item ID.
+- **Notes:** Restored as a real item in the NeoForge remake; the recipe uses the remake's live Attuned Stone (Charged) item ID.
 
 ## Glint Weed
 - **Source:** Not specified in provided text.
@@ -398,7 +398,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Can be bound with a filled Taglock Kit through the shared poppet binding recipe.
 
 ## Armor Protection Poppet
-- **Source:** Crafted from a Poppet with Reek of Misfortune above, Drop of Luck on both sides, and Diamond Vapour below.
+- **Source:** Crafted from a Poppet with Reek of Misfortune above, Drop of Luck on both sides, and Diamond Vapor below.
 - **Uses:** Repairs worn armor through poppet protection behavior.
 - **Notes:** Can be bound with a filled Taglock Kit through the shared poppet binding recipe.
 

@@ -18,5 +18,5 @@ Cauldron cards teach station use, early herbcraft progression, and dangerous lat
 - [triggers: pit dirt|pit grass|false floor|cauldron pit trap|hidden floor cauldron] Targeted fact: Cauldron pit traps use Tormented Twine: Dirt and Mandrake make Pit Dirt; Dirt, Wheat Seeds, and Dandelion make Pit Grass; both need 4000 altar power.
 
 ## Leonard's Bowl
-- [triggers: how do i summon leonard with cauldron|summon leonard with cauldron|summon leonard cauldron|shade of leonard cauldron|call leonard|leonard cauldron|witches hat leonard] Targeted fact: To summon Leonard, dissolve Nether Wart, Tear of the Goddess, Diamond Vapour, Diamond, and Nether Star in order, then use a Witches' Hat with 10000 altar power.
+- [triggers: how do i summon leonard with cauldron|summon leonard with cauldron|summon leonard cauldron|shade of leonard cauldron|call leonard|leonard cauldron|witches hat leonard] Targeted fact: To summon Leonard, dissolve Nether Wart, Tear of the Goddess, Diamond Vapor, Diamond, and Nether Star in order, then use a Witches' Hat with 10000 altar power.
 - [triggers: leonard s urn|leonards urn|what is leonards urn|use leonards urn|urn focus] Targeted fact: Leonard's Urn stores thrown brews from your other hand, sneak-use changes focus, use releases the chosen brew, and crafting urns together combines capacity up to four slots.

@@ -280,7 +280,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Real block item in the NeoForge remake; final in-game placement/render QA is still pending.
 
 ## Fume Filter
-- **Obtain:** Craft from Glass, Iron Ingots, and Charged Attuned Stone.
+- **Obtain:** Craft from Glass, Iron Ingots, and Attuned Stone (Charged).
 - **Use:** Used to upgrade fume funnels into filtered fume funnels.
 - **Stats:** Stackable (64)
 - **Notes:** The source Resurrected recipe uses the charged-attuned-stone role; the NeoForge remake uses its live `attuned_stone_charged` item ID.
@@ -545,7 +545,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** Crafted from witchcraft ingredients and carried as a durable charm.
 - **Use:** Right-click an adult, calm animal-like creature within five blocks to open its small trade list. Valid creatures include common animals, bats, squids, spiders, and special robe-gated creepers or undead. Each animal keeps its own saved stock after the first opening.
 - **Stats:** Durability 50, stack size 1, uncommon.
-- **Notes:** Trades are source-flavored: herbs, saplings, mushrooms, common drops, Bat Wool, Spectral Dust, Treefyd Seeds, and rare animal-specific goods can appear.
+- **Notes:** Trades are source-flavored: herbs, saplings, mushrooms, common drops, Wool of Bat, Spectral Dust, Treefyd Seeds, and rare animal-specific goods can appear.
 
 ## Poppet Shelf
 - **Obtain:** Craft using specific ingredients (recipe not detailed).

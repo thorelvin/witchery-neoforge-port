@@ -11,7 +11,7 @@ Infusion cards should make permanent power feel tempting and dangerous. Give the
 ## Source Items
 - [triggers: ghost of the light recipe|make ghost of the light|light infusion source|what do i need for ghost of the light] Targeted fact: Ghost of the Light uses Redstone Soup, Long Invisibility, Long Fire Resistance, Fire Protection Poppet, Torch, Tongue of Dog, and 4000 power.
 - [triggers: soul of the world recipe|make soul of the world|overworld infusion source|what do i need for soul of the world] Targeted fact: Soul of the World uses Redstone Soup, Long Regeneration, Enchanted Golden Apple, Attuned Stone, Mandrake Root, Rowan Sapling, and 4000 power.
-- [triggers: spirit of otherwhere recipe|make spirit of otherwhere|otherwhere infusion source|what do i need for spirit of otherwhere] Targeted fact: Spirit of Otherwhere uses Redstone Soup, Long Swiftness, two Ender Eyes, Drop of Luck, Bat Wool, and 4000 power; splash Swiftness also works.
+- [triggers: spirit of otherwhere recipe|make spirit of otherwhere|otherwhere infusion source|what do i need for spirit of otherwhere] Targeted fact: Spirit of Otherwhere uses Redstone Soup, Long Swiftness, two Ender Eyes, Drop of Luck, Wool of Bat, and 4000 power; splash Swiftness also works.
 - [triggers: infernal animus recipe|make infernal animus|infernal infusion source|what do i need for infernal animus] Targeted fact: Infernal Animus uses Redstone Soup, Strong Harming, Voodoo Poppet, Demon Heart, Refined Evil, Blaze Rod, and 4000 power; splash Harming also works.
 
 ## Choosing A Path

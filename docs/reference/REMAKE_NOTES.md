@@ -221,8 +221,8 @@ Follow-up (2026-06-16, slice 2): the Storm pre-scan has been generalized into an
 `FullRecipeRitualDefinition` activation table that runs before the representative trigger table. The
 converted source-registration cluster is now: Sanctity/Protection (Feather + Redstone),
 Imprisonment (Slimeball + Redstone), small monster barrier (Obsidian + Redstone), medium player
-barrier (Obsidian + Glowstone Dust), portable barrier (Obsidian + Charged Attuned Stone), the three
-Storm recipes, portable Banish (Blaze Powder + blank Waystone + Charged Attuned Stone), then
+barrier (Obsidian + Glowstone Dust), portable barrier (Obsidian + Attuned Stone (Charged)), the three
+Storm recipes, portable Banish (Blaze Powder + blank Waystone + Attuned Stone (Charged)), then
 altar-powered Banish (Blaze Powder + blank Waystone). Because `RitualRecipe` deliberately ignores
 extra harmless offerings, this table preserves source order for overlapping sets: Redstone barrier
 wins over portable barrier, portable barrier wins over Banish when both complete sets are present,
@@ -271,10 +271,10 @@ Cure Creature uses Spider Eye (`Items.field_151070_bp`). Curse Overheating accep
 Infernal/Demonic Blood alias used elsewhere in the remake.
 
 Follow-up (2026-06-16, slice 7): the Redstone Soup curse/weather cluster is in the full-offering
-table. Converted Blight (`Charged Attuned Stone + Redstone Soup + Reek of Misfortune + Fermented
-Spider Eye + Poisonous Potato + Rotten Flesh + Diamond`), Blindness (`Charged Attuned Stone +
+table. Converted Blight (`Attuned Stone (Charged) + Redstone Soup + Reek of Misfortune + Fermented
+Spider Eye + Poisonous Potato + Rotten Flesh + Diamond`), Blindness (`Attuned Stone (Charged) +
 Redstone Soup + Reek of Misfortune + Exhale of the Horned One + Brew of Ink + Poisonous Potato +
-Spider Eye + Diamond`), and Rain of Toads (`Charged Attuned Stone + Redstone Soup + Reek of
+Spider Eye + Diamond`), and Rain of Toads (`Attuned Stone (Charged) + Redstone Soup + Reek of
 Misfortune + Toe of Frog + Water Bucket + Belladonna`). The full-recipe path stages the exact matched
 dropped entities and returns `SUCCESS_NO_CONSUME`; representative-trigger fallbacks remain. Blight and
 Blindness are registered before Summon Witch to match source order, and Rain of Toads is registered
@@ -504,7 +504,7 @@ Polish pass (same day):
   `*client-extra*.jar`. Output → `assets/witchery/textures/gui/book/<name>.png`, shown via
   `BookImagePageModel.create().withImages(id("textures/gui/book/<name>.png"))` (full texture-path
   identifier, **not** an item id). `withImages(Identifier...)` accepts multiple frames that cycle —
-  room to animate alternates (e.g. Diamond Vapour vs Diamond) later, like the FTB wiki templates.
+  room to animate alternates (e.g. Diamond Vapor vs Diamond) later, like the FTB wiki templates.
   Wired oven brews into Collecting Fumes and the distillery run into Distilling.
 - **Kettle / Witch's Cauldron cards.** Those vessels have no slot GUI (you right-click items into the
   brew), so `vessel_card()` composites onto the original cauldron panel
@@ -1476,7 +1476,7 @@ private static Identifier resolveSkin(ReflectionEntity entity) {
 - **Follow-ups closed (2026-06-14):** (1) `getMaxBloodPower` now applies the source hybrid halving `500 + (wolfMastery>=2 ? floor(level*0.5) : level)*250` — the remake has no werewolf *level*, so `wolfMastery>=2` (0-3 scale) stands in for source `werewolfLevel>=2`. (2) The 7→8 visited-village set moved from a transient `Map<UUID,Set<Long>>` to a persisted `VampireState.visitedVillages` (codec `visited_villages`), so the quest survives relog. (3) Vampire **cure rite** remade from `RiteRemoveVampirism`: `remove_vampirism` dispatch (Medium Ritual ring, filled player taglock trigger, `.requiringOffering(findCureVampirismOfferings)` = breath of goddess + silver sword + garlic + diamond + brew of love), gated on `requireCoven(6)` + `hasActiveCurseMasteryFamiliar` (cat), 10000 altar power via `RitualTransaction`, source 3-in-4 cure (`setVampireLevel(0)` + clear visited villages) else a harmless fizzle. Reuses `resolveOfferedTaglockTarget`; 64-block range check mirrors source. Roster lock bumped 74→75.
 
 **Overworld infusion earth-metal powers (EarthItems, 2026-06-14)**
-- Remade source `InfusionOverworld`'s metal/earth powers onto the Witch Hand. New `util/EarthItems`: `isMetal` (iron/golden/chainmail tools+armour + iron/gold ingots & gold nugget — source-faithful set), `oreToIngot`, `isThrowableRock`. **Modern divergence:** 1.7.10 used the OreDictionary for `oreToIngot`; with none in 1.21 the remake uses an explicit `Block→ingot` map (vanilla iron/gold/copper ores) — extend that map for modded ores.
+- Remade source `InfusionOverworld`'s metal/earth powers onto the Witches Hand. New `util/EarthItems`: `isMetal` (iron/golden/chainmail tools+armour + iron/gold ingots & gold nugget — source-faithful set), `oreToIngot`, `isThrowableRock`. **Modern divergence:** 1.7.10 used the OreDictionary for `oreToIngot`; with none in 1.21 the remake uses an explicit `Block→ingot` map (vanilla iron/gold/copper ores) — extend that map for modded ores.
 - Powers: left-click flings a metal-bearing target (gated on `EarthItems.isMetal` over hand+armour); sneak-channel magnetises loose metal items + smelts ores in a 13×7×13 box (spend a local energy budget, sync once — avoid per-ore packet spam); release disarms a metal-wielding mob, smelts an aimed ore (sneak), hurls a loose earthen block as `EarthRockEntity` (block-side + air in front), or raises a pillar (block-top).
 - `EarthRockEntity`: a `ThrowableProjectile implements ItemSupplier` rendered with the vanilla `ThrownItemRenderer` (cobblestone) — register the entity (`EntityType.Builder…MISC`) and the renderer in `WitcheryClient`. Simplest faithful rock without remaking the multi-purpose source `EntityWitchProjectile`.
 - Shockwave (`events/EarthShockwaveEvents`): a transient per-server task list ticked from `LevelTickEvent.Post` (mirrors source `ServerTickEvents.TASKS`), each stage an expanding 8-damage + radial-knockback ring with a dust ring. **Simplified divergence:** dropped the source block-moving ripple (cosmetic + heavy); the damage/knockback ring carries the feel.

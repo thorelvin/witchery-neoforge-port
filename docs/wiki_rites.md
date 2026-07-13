@@ -224,7 +224,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Rite of Banishing
 - **Circle:** Small ritual
-- **Ingredients:** Blaze Powder, blank Waystone, and 2000 Altar Power. Portable branch uses a Charged Attuned Stone with Blaze Powder and a blank Waystone instead of altar power.
+- **Ingredients:** Blaze Powder, blank Waystone, and 2000 Altar Power. Portable branch uses a Attuned Stone (Charged) with Blaze Powder and a blank Waystone instead of altar power.
 - **Effect:** Sends all demons inside the circle back to their summoning point.
 - **Notes:** Activate by right-clicking the golden center glyph. Source recipe uses Blaze Powder and a blank Waystone; a lone Attuned Stone is not enough.
 
@@ -261,7 +261,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 ## Rite of Charging
 - **Circle:** Small ritual + Medium ritual
 - **Ingredients:** Attuned Stone, Glowstone Dust, Redstone, Wood Ash, Quicklime, and 2000 Altar Power.
-- **Effect:** Charges an Attuned Stone into a Charged Attuned Stone, allowing certain spells to be cast without an altar present.
+- **Effect:** Charges an Attuned Stone into a Attuned Stone (Charged), allowing certain spells to be cast without an altar present.
 - **Notes:** Activate by right-clicking the golden center glyph. The support items may be dropped near the center or held in Grasspers. Extra larger rings do not invalidate the rite if the required small and medium ritual rings are present.
 
 ## Rite of Earth's Wrath
@@ -332,7 +332,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Rite of Protection
 - **Circle:** Small ritual for the basic barrier, Small ritual for the portable barrier, Medium ritual for the larger barrier.
-- **Ingredients:** Small barrier: Obsidian, Redstone, and 500 Altar Power. Portable barrier: Obsidian and a Charged Attuned Stone. Medium barrier: Obsidian, Glowstone Dust, and 1000 Altar Power.
+- **Ingredients:** Small barrier: Obsidian, Redstone, and 500 Altar Power. Portable barrier: Obsidian and a Attuned Stone (Charged). Medium barrier: Obsidian, Glowstone Dust, and 1000 Altar Power.
 - **Effect:** Converts altar power, or a charged stone for the portable branch, into a force field surrounding the ritual chalk.
 - **Notes:** Basic and medium barriers are sustained rites. The small barrier blocks arrows and other non-player entities but lets players pass through. The portable barrier lasts about 60 seconds and uses the larger player-blocking variant. The medium barrier is also player-blocking and sustained. Optional bound Waystone relocation is source-supported for the powered barrier branches.
 

@@ -85,8 +85,12 @@ enough to read before starting work. Long historical deltas belong in
   screenshot comparison lives in `docs/status/CREATIVE_TAB_PARITY_AUDIT.md`.
 - Source-facing name parity now prefers old English display names while keeping
   stable modern IDs: Minedrake, Blood Poppy, Wild Bramble, Demonic Blood, and
-  Gulg's Gurdle are restored in lang/docs/cards; exact `witchery:gulgs_grudle`
-  is live and drops from Gulg while `witchery:gulgs_girdle` remains compatible.
+  Gulg's Gurdle are restored in lang/docs/cards; the latest display-name pass
+  also restores source labels such as Belladonna Flower, Wool of Bat, Diamond
+  Vapor, Witches Hand, Icy Slippers, Attuned Stone (Charged), the ladies vampire
+  coats, and Mirror Surface while keeping stable modern IDs. Exact
+  `witchery:gulgs_grudle` is live and drops from Gulg while
+  `witchery:gulgs_girdle` remains compatible.
 - OpenAI-compatible NPC providers now support bearer-token auth via an
   environment variable, optional extra metadata headers, configurable
   `responseFormat` (`json_object`, `json_schema`, or `none`), and strict NPC
@@ -160,7 +164,7 @@ enough to read before starting work. Long historical deltas belong in
   cast/fail feedback, Crystal Ball scry validation before altar-power charge,
   brew bucket gas/liquid tooltip feedback, Dream Weaver placement/wake cues,
   trap state sync, cursed warning cooldowns, Leonard's Urn focus release and
-  capacity upgrades, Witch Hand Otherwhere cooldown/feedback, Duplication
+  capacity upgrades, Witches Hand Otherwhere cooldown/feedback, Duplication
   Grenade mirror charging, Book of Biomes climate page stats,
   Wolftrap lured-wolf steering/capture feedback, Parasytic Louse payload cues,
   Sun Collector/Sun Grenade feedback, and compass scrying cues. Manual QA still

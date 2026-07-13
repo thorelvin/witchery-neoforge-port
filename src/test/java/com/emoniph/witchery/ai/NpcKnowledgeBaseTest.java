@@ -1027,7 +1027,7 @@ class NpcKnowledgeBaseTest {
         assertTrue(spectre.isPresent());
         String spectreLower = spectre.get().toLowerCase(Locale.ROOT);
         assertTrue(spectreLower.contains("wormwood"), spectre.get());
-        assertTrue(spectreLower.contains("bat wool"), spectre.get());
+        assertTrue(spectreLower.contains("wool of bat"), spectre.get());
         assertTrue(spectreLower.contains("graveyard dust"), spectre.get());
         assertTrue(spectreLower.contains("30 seconds"), spectre.get());
         assertTrue(spectreLower.contains("altar"), spectre.get());
@@ -1657,7 +1657,7 @@ class NpcKnowledgeBaseTest {
         assertTrue(animalTrade.isPresent());
         String tradeLower = animalTrade.get().toLowerCase(Locale.ROOT);
         assertTrue(tradeLower.contains("calm adult"), animalTrade.get());
-        assertTrue(tradeLower.contains("bat wool"), animalTrade.get());
+        assertTrue(tradeLower.contains("wool of bat"), animalTrade.get());
         assertTrue(tradeLower.contains("spectral dust"), animalTrade.get());
 
         Optional<String> arthana = NpcKnowledgeBase.compactAnswer(
@@ -1665,7 +1665,7 @@ class NpcKnowledgeBaseTest {
 
         assertTrue(arthana.isPresent());
         String arthanaLower = arthana.get().toLowerCase(Locale.ROOT);
-        assertTrue(arthanaLower.contains("bat wool"), arthana.get());
+        assertTrue(arthanaLower.contains("wool of bat"), arthana.get());
         assertTrue(arthanaLower.contains("tongue of dog"), arthana.get());
         assertTrue(arthanaLower.contains("creeper heart"), arthana.get());
     }
@@ -2394,12 +2394,25 @@ class NpcKnowledgeBaseTest {
                 return "blood poppy";
             case "bramble":
                 return "wild bramble";
+            case "attuned_stone_charged":
+                return "attuned stone charged";
+            case "bat_wool":
+                return "wool of bat";
+            case "diamond_vapour":
+                return "diamond vapor";
             case "infernal_blood":
                 return "demonic blood";
             case "mindrake":
                 return "minedrake";
             case "mindrakebulb":
                 return "minedrake bulb";
+            case "vampire_chain_coat_ladies":
+                return "vampire chain coat ladies";
+            case "vampire_dress_jacket":
+                return "vampire dress jacket ladies";
+            case "witch_hand":
+            case "witches_hand":
+                return "witches hand";
             default:
                 break;
         }

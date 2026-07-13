@@ -3,12 +3,12 @@
 Creature reagent cards for practical ingredient questions. Keep the answer useful and a little uneasy.
 
 ## Arthana And Rare Drops
-- [triggers: creature drops|rare drops|arthana drops|what should i kill with arthana|arthana rare drops] Targeted fact: Arthana improves or enables several Witchery creature drops: Bat Wool, Tongue of Dog, Toe of Frog, Owlet's Wing, Creeper Heart, Spectral Dust, and Demon Heart work.
+- [triggers: creature drops|rare drops|arthana drops|what should i kill with arthana|arthana rare drops] Targeted fact: Arthana improves or enables several Witchery creature drops: Wool of Bat, Tongue of Dog, Toe of Frog, Owlet's Wing, Creeper Heart, Spectral Dust, and Demon Heart work.
 - [triggers: why use arthana on mobs|arthana weapon|arthana loot|arthana for drops] Targeted fact: Use Arthana when hunting Witchery reagents; it is a ritual blade, not a butcher's knife, and some rare drops answer it better than ordinary steel.
 - Good witch voice: If the blade has a name, the creature should worry.
 
 ## Common Creature Reagents
-- [triggers: bat wool|wool of bat|where get bat wool|how do i get bat wool|where get wool of bat] Targeted fact: Bat Wool, also called Wool of Bat, comes from killing Bats; Arthana improves the chance. It feeds Redstone Soup, Brew of Bats, Webs, Flying Ointment, and poppets.
+- [triggers: bat wool|wool of bat|where get bat wool|how do i get bat wool|where get wool of bat] Targeted fact: Wool of Bat, also called Bat Wool by some witches, comes from killing Bats; Arthana improves the chance. It feeds Redstone Soup, Brew of Bats, Webs, Flying Ointment, and poppets.
 - [triggers: tongue of dog|where get tongue of dog|how do i get tongue of dog|dog tongue|hellhound tongue] Targeted fact: Tongue of Dog comes from wolves, pet dogs, and hellhounds; Arthana improves the chance. It feeds Redstone Soup, Brew of Sprouting, Brew of Vines, and Devil's Tongue Charm.
 - [triggers: toe of frog|where get toe of frog|how do i get toe of frog|frog toe|toad drop] Targeted fact: Toe of Frog comes from toads; Arthana improves the chance. It feeds Brew of Frogs Tongue and Poppet Protection Poppets.
 - [triggers: owlet's wing|owlet wing|where get owlet wing|how do i get owlet's wing|how do i get owlet wing] [topic: owlet_wing] Targeted fact: Owlet's Wing comes from owls; Arthana improves the chance. It belongs to owl, flight, familiar, and advanced creature work.
@@ -22,7 +22,7 @@ Creature reagent cards for practical ingredient questions. Keep the answer usefu
 
 ## Creature Trade Tools
 - [triggers: polynesia charm recipe|make polynesia charm|craft polynesia charm|what do i need for polynesia charm] Targeted fact: Polynesia Charm is crafted from Ender Pearls, Iron Ingot, Odour of Purity, Ink Sac, and Whiff of Magic; it opens small animal trades.
-- [triggers: use polynesia charm|animal trade|trade with animals|animal merchant|bat trade] Targeted fact: Polynesia Charm opens small trades with calm adult animal-like creatures nearby; stock can include herbs, saplings, mushrooms, Bat Wool, Spectral Dust, and rare goods.
+- [triggers: use polynesia charm|animal trade|trade with animals|animal merchant|bat trade] Targeted fact: Polynesia Charm opens small trades with calm adult animal-like creatures nearby; stock can include herbs, saplings, mushrooms, Wool of Bat, Spectral Dust, and rare goods.
 - [triggers: devil's tongue charm recipe|devil s tongue charm recipe|devils tongue charm recipe|make devil's tongue charm|craft devils tongue charm|what do i need for devil s tongue charm] [topic: devils_tongue_charm_recipe] Targeted fact: Devil's Tongue Charm is crafted from Blaze Powder, Polynesia Charm, Demon Heart, Sugar, Refined Evil, and Tongue of Dog; it helps demon bargaining, not safety.
 - [triggers: demonic contract recipe|make demonic contract|craft demonic contract|what do i need for demonic contract] Targeted fact: A Demonic Contract is crafted from Paper, Porkchop, and String; Flame Imps need signed contracts before their magic becomes yours to shape.
 

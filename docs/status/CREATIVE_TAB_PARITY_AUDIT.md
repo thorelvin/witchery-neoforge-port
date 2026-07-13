@@ -48,24 +48,16 @@ These look like renamed, corrected, or modernized entries rather than hard missi
 | Original name | Port name or likely equivalent |
 |---|---|
 | Chalice (Filled) | Filled Chalice / stack state |
-| Dream Weaver of Iron Arm | Dream Weaver of the Iron Arm |
-| Attuned Stone (Charged) | Charged Attuned Stone |
-| Belladonna Flower | Belladonna |
-| Wool of Bat | Bat Wool |
-| Diamond Vapor | Diamond Vapour |
-| Witches Hand | Witch Hand |
-| Icy Slippers | Ice Slippers |
 | Demonic Blood | Restored display name on `witchery:infernal_blood` |
 | Blood Poppy | Restored display name on `witchery:blood_rose` |
 | Apple | Apple of Sleeping |
 | Torment | Torment Scroll |
 | Minedrake / Minedrake Bulb | Restored display names on `mindrake`, `mindrakebulb`, and spawn egg |
 | Gulg's Gurdle | Exact `witchery:gulgs_grudle` restored; `gulgs_girdle` remains a compatibility stack |
-| Vampire Dress Jacket (Ladies) | Vampire Dress Jacket |
-| Vampire Chain Coat (Ladies) | Vampire Chain Coat Ladies |
-| Mirror Surface | Mirror Wall |
 
 These should be decided by style policy. Some are probable old typos, some are source flavor, and some may need compatibility aliases even if the display name stays cleaned up.
+
+Resolved display-name rows now use the 1.7.10 English labels while keeping modern registry IDs stable: Dream Weaver of Iron Arm, Attuned Stone (Charged), Belladonna Flower, Wool of Bat, Diamond Vapor, Witches Hand, Icy Slippers, Vampire Dress Jacket (Ladies), Vampire Chain Coat (Ladies), and Mirror Surface.
 
 ## Not Actually Missing From Original Creative
 
