@@ -3,6 +3,7 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.item.GlassGobletItem;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.network.chat.Component;
@@ -301,6 +302,8 @@ public class LilithEntity extends Monster implements RangedAttackMob {
 
         ItemStack held = player.getItemInHand(hand);
         WitcheryPlayerData data = WitcheryAttachments.get(serverPlayer);
+        ((ServerLevel) level()).playSound(null, blockPosition(), WitcherySoundEvents.MOB_LILITH_SAY.get(),
+                SoundSource.HOSTILE, 1.0F, 1.0F);
 
         // Empty goblet receives Lilith's blood; drinking it applies or feeds the curse.
         if (held.is(WitcheryItems.GLASS_GOBLET.get())) {
@@ -399,8 +402,8 @@ public class LilithEntity extends Monster implements RangedAttackMob {
             serverLevel.sendParticles(ParticleTypes.WITCH,
                     getX(), getY() + 1.0D, getZ(),
                     40, 0.5D, 0.8D, 0.5D, 0.05D);
-            serverLevel.playSound(null, blockPosition(), SoundEvents.ILLUSIONER_CAST_SPELL, SoundSource.HOSTILE,
-                    1.0F, 0.8F);
+            serverLevel.playSound(null, blockPosition(), WitcherySoundEvents.MOB_LILITH_SAY.get(), SoundSource.HOSTILE,
+                    1.0F, 1.0F);
         }
     }
 
@@ -437,17 +440,17 @@ public class LilithEntity extends Monster implements RangedAttackMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return isFriendly() ? null : SoundEvents.ENDER_DRAGON_AMBIENT;
+        return isFriendly() ? null : WitcherySoundEvents.MOB_LILITH_SAY.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.ENDER_DRAGON_HURT;
+        return WitcherySoundEvents.MOB_LILITH_HIT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.ENDER_DRAGON_DEATH;
+        return isFriendly() ? WitcherySoundEvents.MOB_LILITH_HIT.get() : WitcherySoundEvents.MOB_LILITH_DEATH.get();
     }
 
     @Override

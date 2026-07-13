@@ -192,6 +192,97 @@
       "witchery:mob/goblin/mog_idle"
     ]
   },
+  "mob.nightmare.nightmare_live": {
+    "sounds": [
+      "witchery:mob/nightmare/nightmare_live"
+    ]
+  },
+  "mob.nightmare.nightmare_dead": {
+    "sounds": [
+      "witchery:mob/nightmare/nightmare_dead"
+    ]
+  },
+  "mob.nightmare.nightmare_hit": {
+    "sounds": [
+      "witchery:mob/nightmare/nightmare_hit"
+    ]
+  },
+  "mob.spectre.spectre_say": {
+    "sounds": [
+      "witchery:mob/spectre/spectre_say"
+    ]
+  },
+  "mob.spectre.spectre_die": {
+    "sounds": [
+      "witchery:mob/spectre/spectre_die"
+    ]
+  },
+  "mob.spectre.spectre_hit": {
+    "sounds": [
+      "witchery:mob/spectre/spectre_hit"
+    ]
+  },
+  "mob.treefyd.treefyd_say": {
+    "sounds": [
+      "witchery:mob/treefyd/treefyd_say"
+    ]
+  },
+  "mob.monkey.say": {
+    "sounds": [
+      "witchery:mob/monkey/say1",
+      "witchery:mob/monkey/say2",
+      "witchery:mob/monkey/say3"
+    ]
+  },
+  "mob.monkey.hit": {
+    "sounds": [
+      "witchery:mob/monkey/hit"
+    ]
+  },
+  "mob.monkey.death": {
+    "sounds": [
+      "witchery:mob/monkey/death"
+    ]
+  },
+  "mob.reflection.say": {
+    "sounds": [
+      "witchery:mob/reflection/say1"
+    ]
+  },
+  "mob.reflection.hit": {
+    "sounds": [
+      "witchery:mob/reflection/hit"
+    ]
+  },
+  "mob.reflection.death": {
+    "sounds": [
+      "witchery:mob/reflection/death"
+    ]
+  },
+  "mob.reflection.speech": {
+    "sounds": [
+      "witchery:mob/reflection/speech"
+    ]
+  },
+  "mob.lilith.say": {
+    "sounds": [
+      "witchery:mob/lilith/say1",
+      "witchery:mob/lilith/say2",
+      "witchery:mob/lilith/say3",
+      "witchery:mob/lilith/say4",
+      "witchery:mob/lilith/say5"
+    ]
+  },
+  "mob.lilith.hit": {
+    "sounds": [
+      "witchery:mob/lilith/hit"
+    ]
+  },
+  "mob.lilith.death": {
+    "sounds": [
+      "witchery:mob/lilith/death"
+    ]
+  },
   "random.heartbeat": {
     "sounds": [
       "witchery:random/heartbeat1"

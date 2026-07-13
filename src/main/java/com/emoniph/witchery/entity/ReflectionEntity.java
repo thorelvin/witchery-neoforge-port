@@ -2,11 +2,14 @@ package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.blocks.entity.MirrorBlockEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -207,5 +210,20 @@ public class ReflectionEntity extends Monster {
             } catch (IllegalArgumentException ignored) {}
         }
         temporaryTicks = tag.getIntOr("TemporaryTicks", 0);
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return WitcherySoundEvents.MOB_REFLECTION_SAY.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return WitcherySoundEvents.MOB_REFLECTION_HIT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return WitcherySoundEvents.MOB_REFLECTION_DEATH.get();
     }
 }

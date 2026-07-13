@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.item.WaystoneItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -8,9 +9,11 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -219,5 +222,25 @@ public class FlyingMonkeyEntity extends TamableAnimal {
         waystonePos = tag.getLongOr("WaystonePos", 0L);
         waystoneDim = tag.getStringOr("WaystoneDim", "");
         isCarrying = tag.getBooleanOr("IsCarrying", false);
+    }
+
+    @Override
+    public int getAmbientSoundInterval() {
+        return super.getAmbientSoundInterval() * 2;
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return WitcherySoundEvents.MOB_MONKEY_SAY.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return WitcherySoundEvents.MOB_MONKEY_HIT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return WitcherySoundEvents.MOB_MONKEY_DEATH.get();
     }
 }

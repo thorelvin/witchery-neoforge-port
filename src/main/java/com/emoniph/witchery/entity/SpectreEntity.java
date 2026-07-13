@@ -1,8 +1,8 @@
 package com.emoniph.witchery.entity;
 
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -112,7 +112,7 @@ public class SpectreEntity extends Monster {
     @Override public boolean fireImmune() { return true; }
     @Override public boolean isOnFire()   { return false; }
 
-    @Override protected SoundEvent getAmbientSound() { return SoundEvents.VEX_AMBIENT; }
-    @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.VEX_HURT; }
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.VEX_DEATH; }
+    @Override protected SoundEvent getAmbientSound() { return WitcherySoundEvents.MOB_SPECTRE_SAY.get(); }
+    @Override protected SoundEvent getHurtSound(DamageSource src) { return WitcherySoundEvents.MOB_SPECTRE_DIE.get(); }
+    @Override protected SoundEvent getDeathSound() { return WitcherySoundEvents.MOB_SPECTRE_DIE.get(); }
 }

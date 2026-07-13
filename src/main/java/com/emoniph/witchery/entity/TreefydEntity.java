@@ -2,6 +2,7 @@ package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.item.TaglockKitItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -79,17 +80,22 @@ public class TreefydEntity extends Monster {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return null;
+        return WitcherySoundEvents.MOB_TREEFYD_SAY.get();
+    }
+
+    @Override
+    public int getAmbientSoundInterval() {
+        return super.getAmbientSoundInterval() * 2;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource src) {
-        return SoundEvents.WOOD_HIT;
+        return SoundEvents.SILVERFISH_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.WOOD_BREAK;
+        return SoundEvents.CREEPER_DEATH;
     }
 
     public void setOwner(Player player) {

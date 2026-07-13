@@ -166,6 +166,14 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   Hobgoblin idle/haggle/hurt/death/trade-yes use the old goblin clips, and
   Gulg/Mog use their source idle voices, zombie-horse hurt, Wither death, and
   Iron Golem footstep cues.
+- Spawn Nightmare, Spectre, Treefyd, Flying Monkey, and Reflection with
+  `/witchery spawn nightmare`, `/witchery spawn spectre`,
+  `/witchery spawn treefyd`, `/witchery spawn flying_monkey`, and
+  `/witchery spawn reflection`; confirm their old source voices replace the
+  Vex/wood/silent/vanilla placeholders. Summon Lilith with
+  `/summon witchery:lilith` and confirm hostile idle/hurt/death plus friendly
+  reward interactions use the old Lilith clips instead of dragon/illusioner
+  placeholders.
 - Place and inspect Rowan, Alder, and Hawthorn leaves. Blocks and inventory
   items should read as green foliage from one combined texture, with Rowan
   berries red, Alder catkins yellow, and Hawthorn blossoms pale instead of

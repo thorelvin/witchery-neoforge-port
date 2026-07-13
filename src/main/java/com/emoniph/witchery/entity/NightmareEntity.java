@@ -3,12 +3,14 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -249,5 +251,20 @@ public class NightmareEntity extends Monster {
         String victimUuidString = tag.getStringOr("VictimUUID", "");
         victimUUID = victimUuidString.isEmpty() ? null : UUID.fromString(victimUuidString);
         victimName = tag.getStringOr("VictimName", "");
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return WitcherySoundEvents.MOB_NIGHTMARE_LIVE.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return WitcherySoundEvents.MOB_NIGHTMARE_DEAD.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return WitcherySoundEvents.MOB_NIGHTMARE_HIT.get();
     }
 }
