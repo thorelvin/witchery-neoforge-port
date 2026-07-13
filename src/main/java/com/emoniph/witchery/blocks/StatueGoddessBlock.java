@@ -7,8 +7,11 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SpellParticleOption;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -144,8 +147,7 @@ public class StatueGoddessBlock extends BaseEntityBlock {
         }
 
         if (cured) {
-            level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5f, 0.4f);
-            level.levelEvent(2005, pos.above(), 0);
+            playCureFeedback(level, player);
             return InteractionResult.CONSUME;
         }
 
@@ -165,5 +167,15 @@ public class StatueGoddessBlock extends BaseEntityBlock {
 
     private static void sendCureMessage(Player player, String key) {
         player.displayClientMessage(Component.translatable(key).withStyle(ChatFormatting.BLUE), false);
+    }
+
+    private static void playCureFeedback(Level level, Player player) {
+        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FIRE_EXTINGUISH,
+                SoundSource.PLAYERS, 0.5F, 0.4F / (level.random.nextFloat() * 0.4F + 0.8F));
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(SpellParticleOption.create(ParticleTypes.INSTANT_EFFECT, 0xFFFFFF, 1.0F),
+                    player.getX(), player.getY() + player.getBbHeight() * 0.5D, player.getZ(),
+                    20, 1.0D, player.getBbHeight() * 0.5D, 1.0D, 0.0D);
+        }
     }
 }

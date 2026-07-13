@@ -205,6 +205,9 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   grey/brown or layered tint artifacts.
 - Check Goddess Statue and Crystal Ball GUI items: the statue should fit inside
   the slot, and the Crystal Ball should sit one pixel lower than the prior pass.
+- Use a Goddess Statue while carrying a removable curse/nightmare state. A
+  successful cure should produce player-centered instant-spell particles with a
+  low fizz cue; using it with nothing to cure should still give snare feedback.
 - Stack normal and ice stockades two high. The lower stockade should switch to
   the stacked/fence-like body, the top should remain pointy, and both should
   damage players and mobs on contact.

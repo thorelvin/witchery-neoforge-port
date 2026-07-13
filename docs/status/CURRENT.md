@@ -158,7 +158,9 @@ enough to read before starting work. Long historical deltas belong in
   Rowan/Alder/Hawthorn leaf art with visible berry/flower colors, added vertical
   stockade stack presentation plus source wood variants while preserving contact damage, moved Death's
   Hand back to a source-style same-item scythe toggle, and nudged the Goddess
-  statue / Crystal Ball GUI transforms.
+  statue / Crystal Ball GUI transforms. Goddess Statue cures now use
+  player-centered instant-spell particles with a low fizz cue instead of the
+  prior block-centered bonemeal effect.
 - Current parity polish tightened moving brew fluids, braziers, Spirit World
   fog, Death's Hand held-side rendering plus hit/toggle cues, Mystic Branch
   cast/fail feedback, Crystal Ball scry validation before altar-power charge,
