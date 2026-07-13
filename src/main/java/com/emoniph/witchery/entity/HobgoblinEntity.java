@@ -4,6 +4,7 @@ import com.emoniph.witchery.ai.NpcBrainService;
 import com.emoniph.witchery.ai.NpcPersonas;
 import com.emoniph.witchery.blocks.entity.StatueHobgoblinPatronBlockEntity;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.protection.WitcheryProtectionAction;
 import com.emoniph.witchery.protection.WitcheryProtectionService;
 import net.minecraft.core.BlockPos;
@@ -1227,22 +1228,29 @@ public class HobgoblinEntity extends AbstractVillager {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvents.VILLAGER_AMBIENT;
+        return isTrading()
+                ? WitcherySoundEvents.MOB_GOBLIN_HAGGLE.get()
+                : WitcherySoundEvents.MOB_GOBLIN_IDLE.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.VILLAGER_HURT;
+        return WitcherySoundEvents.MOB_GOBLIN_HIT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.VILLAGER_DEATH;
+        return WitcherySoundEvents.MOB_GOBLIN_DEATH.get();
+    }
+
+    @Override
+    public float getVoicePitch() {
+        return 1.2F;
     }
 
     @Override
     public SoundEvent getNotifyTradeSound() {
-        return SoundEvents.VILLAGER_YES;
+        return WitcherySoundEvents.MOB_GOBLIN_YES.get();
     }
 
     @Override

@@ -161,6 +161,11 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   `/witchery spawn toad`; confirm Owl idle/death/hurt use the old hoot/hurt
   sounds, Toad idle/death/hurt use the old croak/hurt sounds, and both idle
   less often than vanilla pets.
+- Spawn Hobgoblin/Gulg/Mog with `/witchery spawn hobgoblin`,
+  `/witchery spawn goblin_gulg`, and `/witchery spawn goblin_mog`; confirm
+  Hobgoblin idle/haggle/hurt/death/trade-yes use the old goblin clips, and
+  Gulg/Mog use their source idle voices, zombie-horse hurt, Wither death, and
+  Iron Golem footstep cues.
 - Place and inspect Rowan, Alder, and Hawthorn leaves. Blocks and inventory
   items should read as green foliage from one combined texture, with Rowan
   berries red, Alder catkins yellow, and Hawthorn blossoms pale instead of

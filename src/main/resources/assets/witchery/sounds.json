@@ -141,6 +141,57 @@
       "witchery:mob/toad/toad_hurt1"
     ]
   },
+  "mob.goblin.idle": {
+    "sounds": [
+      "witchery:mob/goblin/idle1",
+      "witchery:mob/goblin/idle2",
+      "witchery:mob/goblin/idle3"
+    ]
+  },
+  "mob.goblin.haggle": {
+    "sounds": [
+      "witchery:mob/goblin/haggle1",
+      "witchery:mob/goblin/haggle2",
+      "witchery:mob/goblin/haggle3"
+    ]
+  },
+  "mob.goblin.hit": {
+    "sounds": [
+      "witchery:mob/goblin/hit1",
+      "witchery:mob/goblin/hit2",
+      "witchery:mob/goblin/hit3",
+      "witchery:mob/goblin/hit4"
+    ]
+  },
+  "mob.goblin.yes": {
+    "sounds": [
+      "witchery:mob/goblin/yes1",
+      "witchery:mob/goblin/yes2",
+      "witchery:mob/goblin/yes3"
+    ]
+  },
+  "mob.goblin.no": {
+    "sounds": [
+      "witchery:mob/goblin/no1",
+      "witchery:mob/goblin/no2",
+      "witchery:mob/goblin/no3"
+    ]
+  },
+  "mob.goblin.death": {
+    "sounds": [
+      "witchery:mob/goblin/death"
+    ]
+  },
+  "mob.goblin.gulg_idle": {
+    "sounds": [
+      "witchery:mob/goblin/gulg_idle"
+    ]
+  },
+  "mob.goblin.mog_idle": {
+    "sounds": [
+      "witchery:mob/goblin/mog_idle"
+    ]
+  },
   "random.heartbeat": {
     "sounds": [
       "witchery:random/heartbeat1"

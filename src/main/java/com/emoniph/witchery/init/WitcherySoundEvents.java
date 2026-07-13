@@ -39,6 +39,14 @@ public final class WitcherySoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> MOB_OWL_HURT = register("mob.owl.owl_hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> MOB_TOAD_CROAK = register("mob.toad.toad_croak");
     public static final DeferredHolder<SoundEvent, SoundEvent> MOB_TOAD_HURT = register("mob.toad.toad_hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_GOBLIN_IDLE = register("mob.goblin.idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_GOBLIN_HAGGLE = register("mob.goblin.haggle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_GOBLIN_HIT = register("mob.goblin.hit");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_GOBLIN_YES = register("mob.goblin.yes");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_GOBLIN_NO = register("mob.goblin.no");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_GOBLIN_DEATH = register("mob.goblin.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_GOBLIN_GULG_IDLE = register("mob.goblin.gulg_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_GOBLIN_MOG_IDLE = register("mob.goblin.mog_idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_HEARTBEAT = register("random.heartbeat");
     public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_HORN = register("random.horn");
     public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_SWORD_DRAW = register("random.sworddraw");

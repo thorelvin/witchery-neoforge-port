@@ -1,6 +1,8 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -25,6 +27,7 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -237,9 +240,14 @@ public class GoblinMogEntity extends Monster implements RangedAttackMob {
 
     // ── Sounds ────────────────────────────────────────────────────────────────
 
-    @Override protected SoundEvent getAmbientSound() { return SoundEvents.WITHER_AMBIENT; }
-    @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.ZOMBIE_HURT; }
+    @Override protected SoundEvent getAmbientSound() { return WitcherySoundEvents.MOB_GOBLIN_MOG_IDLE.get(); }
+    @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.ZOMBIE_HORSE_HURT; }
     @Override protected SoundEvent getDeathSound() { return SoundEvents.WITHER_DEATH; }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        playSound(SoundEvents.IRON_GOLEM_STEP, 1.0F, 1.0F);
+    }
 
     // ── NBT ───────────────────────────────────────────────────────────────────
 
