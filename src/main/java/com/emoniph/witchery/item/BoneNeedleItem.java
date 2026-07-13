@@ -3,6 +3,7 @@ package com.emoniph.witchery.item;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.BlockPos;
@@ -74,10 +75,9 @@ public class BoneNeedleItem extends Item {
     }
 
     private static void playStainEffects(ServerLevel level, BlockPos pos) {
-        level.playSound(null, pos, SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 0.5F,
-                0.8F + level.random.nextFloat() * 0.4F);
+        level.playSound(null, pos, WitcherySoundEvents.RANDOM_DRINK.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
         level.sendParticles(DustParticleOptions.REDSTONE,
                 pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
-                24, 0.35D, 0.35D, 0.35D, 0.0D);
+                16, 0.5D, 0.5D, 0.5D, 0.0D);
     }
 }

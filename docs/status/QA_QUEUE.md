@@ -195,9 +195,10 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   compatibility `block.bear_trap.*` event names.
 - As a vampire, bite a Villager, Village Guard, animal, player, and caged
   villager quest target; fill/drink a Glass Goblet, take Lilith's empty-goblet
-  blood reward, consume Vampire Blood, and let an Attack Bat feed. Confirm
-  blood-transfer actions use `random.drink`, full goblet consumption burps, and
-  the red dust feedback lands at the victim/reward position.
+  blood reward, consume Vampire Blood, let an Attack Bat feed, and use a Bone
+  Needle as a level-4+ vampire on White Wool. Confirm blood-transfer and wool
+  staining actions use `random.drink`, full goblet consumption burps, and the
+  red dust feedback lands at the victim/reward/block position.
 - Place and inspect Rowan, Alder, and Hawthorn leaves. Blocks and inventory
   items should read as green foliage from one combined texture, with Rowan
   berries red, Alder catkins yellow, and Hawthorn blossoms pale instead of

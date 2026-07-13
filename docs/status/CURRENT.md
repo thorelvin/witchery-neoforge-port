@@ -179,8 +179,9 @@ enough to read before starting work. Long historical deltas belong in
   needs eyes on the Death Hand pose and in-world atmosphere feel.
 - Vampire blood-transfer feedback now follows the source sound surface too:
   player bites, hostile vampire villager drains, Glass Goblet fills/conversions,
-  Lilith's empty-goblet reward, Vampire Blood, and Attack Bat feeding use
-  `random.drink`; drinking full goblets uses burp feedback.
+  Lilith's empty-goblet reward, Vampire Blood, Attack Bat feeding, and Bone
+  Needle white-wool staining use `random.drink`; drinking full goblets uses
+  burp feedback.
 - A first Witch's Triangle scanner slice is now live: a rowan-framed wooden
   triangle that uses a two-arm hold pose, lights its centre with purple portal
   art while scanning, remembers unique scanned block/entity ids on the item, and
