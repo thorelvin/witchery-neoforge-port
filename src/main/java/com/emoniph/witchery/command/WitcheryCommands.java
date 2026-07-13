@@ -123,7 +123,7 @@ import java.util.Optional;
  * /witchery give primer             — give the Witches' Primer guidebook
  * /witchery altar                   — show altar power at current location
  * /witchery setup rite              - place a QA pad with ritual circle rings
- * /witchery goto <type>             — teleport to nearest witchery structure (hobgoblin_hut / witch_well / small_well / cursed_well / coven_circle / straw_man / warped_coven / nether)
+ * /witchery goto <type>             — teleport to nearest witchery structure (hobgoblin_hut / witch_well / small_well / cursed_well / coven_circle / stone_circle / straw_man / warped_coven / nether)
  *                                   or a Witchery village building such as apothecary
  * /witchery coven recruit           — swear one Coven Witch to you (skips familiar+quest); spawns one if none nearby
  * /witchery coven fill [count]      — swear witches up to the cap (or [count]); QA timesaver

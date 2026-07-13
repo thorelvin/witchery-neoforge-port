@@ -99,6 +99,17 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Warped Coven: generate in Nether warped forest terrain, choose a stable site,
   clear stems/leaves/blocks from enclosed spaces, remove the mirror, and spawn a
   Coven Witch with fitting loot.
+- Coven/Stone Circle: in a fresh Overworld, confirm `/witchery goto
+  coven_circle` and `/witchery goto stone_circle` locate the same registered
+  structure family; verify the ring is flush with terrain, keeps the three
+  source cobweb details, hides the dispenser and two Witch spawners under the
+  altar, spawns the Coven Witch resident most of the time, rejects river/ocean or
+  frozen-water sites, uses sandstone only in desert/badlands, and avoids a raised
+  dirt skirt in non-desert terrain.
+- Straw Man: in a fresh Overworld, confirm `/witchery goto straw_man` lands on a
+  placed 6x8x5 effigy with the hidden Zombie/Zombie/Skeleton spawner set, dry
+  footprint, biome-appropriate plant details, no water/frozen-water intersection,
+  and no broad raised sand/dirt platform.
 - Wells: test regular/small/cursed wells in forest/swamp terrain. Confirm
   surface adaptation, shaft/room clearance, round grass skirt blending, and no
   buried center features.
