@@ -164,6 +164,17 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   Reuse within exactly 200 ticks should fizzle; after 201+ ticks it should bind
   a second undead. Then normal-use the Necromantic Stone on a living target and
   on a block top to verify nearby owned undead attack/move instead of idling.
+- Release bound Spectral Stones for Spectre, Banshee, and Poltergeist. Confirm
+  each spawned entity remembers the releaser as summoner, does not target that
+  owner, and keeps the expected source-style combat role.
+- Release a bound Spectre and use Brew of Revealing nearby. The Spectre should
+  start obscured, then become revealed when the brew resolves.
+- Hit Spectre, Banshee, and Poltergeist with a composed Stone/Dissipate brew.
+  They should take the source spectral-undead damage; ordinary vanilla raised
+  undead should not qualify solely because they are owned thralls.
+- Use Graveyard Dust on owned spectral undead. It should add 2 max health per
+  dust up to the source 50-health cap, heal to the new max, refuse non-owners,
+  and avoid consuming dust when already capped or invalid.
 - Block the first release space over a ritual cauldron and confirm gas/liquid
   Dog Tongue release chooses a nearby safe space instead of failing immediately.
 

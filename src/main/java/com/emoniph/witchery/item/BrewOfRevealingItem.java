@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
+import com.emoniph.witchery.entity.SummonedUndeadEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -99,14 +100,18 @@ public class BrewOfRevealingItem extends BrewItem {
     private static boolean revealEntity(ServerLevel level, LivingEntity entity) {
         boolean hadInvisibility = entity.hasEffect(MobEffects.INVISIBILITY);
         boolean wasInvisible = entity.isInvisible();
+        boolean wasObscured = entity instanceof SummonedUndeadEntity summoned && summoned.isObscured();
         if (hadInvisibility) {
             entity.removeEffect(MobEffects.INVISIBILITY);
         }
         if (wasInvisible) {
             entity.setInvisible(false);
         }
+        if (wasObscured && entity instanceof SummonedUndeadEntity summoned) {
+            summoned.setObscured(false);
+        }
 
-        if (hadInvisibility || wasInvisible) {
+        if (hadInvisibility || wasInvisible || wasObscured) {
             level.sendParticles(ParticleTypes.SMOKE,
                     entity.getX(), entity.getY() + entity.getBbHeight() * 0.5D, entity.getZ(),
                     20, entity.getBbWidth() * 0.5D, entity.getBbHeight() * 0.5D,

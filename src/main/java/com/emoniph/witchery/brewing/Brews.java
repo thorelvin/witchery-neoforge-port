@@ -13,6 +13,7 @@ import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.LilithEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
+import com.emoniph.witchery.entity.SummonedUndeadEntity;
 import com.emoniph.witchery.entity.VampireEntity;
 import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
@@ -290,8 +291,6 @@ public final class Brews {
             DiseasedMobEffect.BLOCK_CLEANUP_STRENGTH;
     public static final int SOURCE_PURIFIED_MILK_DISEASE_BLOCK_CLEANUP_RADIUS =
             DiseasedMobEffect.BLOCK_CLEANUP_RADIUS;
-    private static final String SOURCE_SUMMONED_UNDEAD_OWNER_TAG = "WITCEnslaverName";
-    private static final String PORT_SUMMONED_UNDEAD_OWNER_TAG = "witchery_enslaver_uuid";
     private static final String SOURCE_BREW_GAS_TAG = "WITCBrewGas";
     private static final String PORT_BREW_GAS_TAG = "witchery_brew_gas";
     private static final BlockState[] SOURCE_FLOWER_STATES = new BlockState[] {
@@ -2527,9 +2526,7 @@ public final class Brews {
     }
 
     public static boolean isSourceSummonedUndead(LivingEntity target) {
-        return target.getType().is(EntityTypeTags.UNDEAD)
-                && (target.getPersistentData().contains(SOURCE_SUMMONED_UNDEAD_OWNER_TAG)
-                || target.getPersistentData().contains(PORT_SUMMONED_UNDEAD_OWNER_TAG));
+        return target instanceof SummonedUndeadEntity;
     }
 
     public static int sourceWeakenVampiresBloodLoss(int strength) {

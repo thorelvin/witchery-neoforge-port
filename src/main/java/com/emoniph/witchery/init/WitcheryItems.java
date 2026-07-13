@@ -670,7 +670,7 @@ public class WitcheryItems {
     public static final DeferredItem<Item> FUME_FILTER        = ITEMS.registerSimpleItem("fume_filter");
     public static final DeferredItem<Item> FROZEN_HEART       = ITEMS.registerSimpleItem("frozen_heart");
     public static final DeferredItem<Item> GOLDEN_THREAD      = ITEMS.registerSimpleItem("golden_thread");
-    public static final DeferredItem<Item> GRAVEYARD_DUST     = ITEMS.registerSimpleItem("graveyard_dust");
+    public static final DeferredItem<Item> GRAVEYARD_DUST     = ITEMS.register("graveyard_dust", id -> new GraveyardDustItem(itemProps(id)));
     public static final DeferredItem<Item> GYPSUM             = ITEMS.registerSimpleItem("gypsum");
     public static final DeferredItem<Item> ICY_NEEDLE         = ITEMS.register("icy_needle", id -> new com.emoniph.witchery.item.IcyNeedleItem(itemProps(id)));
     public static final DeferredItem<Item> IMPREGNATED_LEATHER= ITEMS.registerSimpleItem("impregnated_leather");

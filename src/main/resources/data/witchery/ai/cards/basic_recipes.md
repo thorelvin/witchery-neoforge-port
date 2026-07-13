@@ -29,7 +29,7 @@ Compact recipe notes for practical player teaching. These notes are grounded in 
 
 ## Brew of Revealing Recipe
 - [triggers: revealing brew recipe|brew of revealing recipe|recipe for brew of revealing|revealing brew ingredients|make revealing brew|make brew of revealing|how do i brew revealing brew|what do i need for brew of revealing|what do i need to brew revealing brew] [topic: revealing_brew_recipe] Targeted fact: Brew of Revealing is brewed from Carrot, two Spider Eyes, a Night Vision potion, Brown Mushroom, and Odour of Purity; the recipe makes three bottles.
-- Brew of Revealing exposes nearby invisible or hidden creatures.
+- Brew of Revealing exposes nearby invisible or hidden creatures, including obscured Spectres from Spectral Stone work.
 
 ## Brew of Poison Recipe
 - [triggers: poison brew recipe|brew of poison recipe|recipe for brew of poison|poison brew ingredients|make poison brew|make brew of poison|how do i brew poison brew|what do i need for poison brew|what do i need for brew of poison] [topic: poison_brew_recipe] Targeted fact: Brew of Poison is brewed from Dandelion of Thorns, Spider Eye, and Belladonna; it makes three bottles and is meant to harm targets, not be drunk for advice.

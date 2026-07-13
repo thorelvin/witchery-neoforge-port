@@ -3,14 +3,20 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
@@ -18,14 +24,12 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.PathType;
 
-import java.util.UUID;
-
-/** Spectre — fast flying undead that passes through walls. Fire-immune. */
-public class SpectreEntity extends Monster {
+/** Spectre - fast flying summoned undead. */
+public class SpectreEntity extends SummonedUndeadEntity {
     private static final float MELEE_HEALTH_FRACTION = 0.15F;
-    private UUID ownerUuid;
 
     public SpectreEntity(EntityType<? extends SpectreEntity> type, Level level) {
         super(type, level);
@@ -38,7 +42,6 @@ public class SpectreEntity extends Monster {
     protected PathNavigation createNavigation(Level level) {
         FlyingPathNavigation nav = new FlyingPathNavigation(this, level);
         nav.setCanFloat(true);
-        
         return nav;
     }
 
@@ -59,7 +62,7 @@ public class SpectreEntity extends Monster {
         this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.6));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8f));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<net.minecraft.world.entity.player.Player>(this, Player.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     @Override
@@ -74,45 +77,39 @@ public class SpectreEntity extends Monster {
     }
 
     public void setOwner(Player player) {
-        this.ownerUuid = player.getUUID();
-    }
-
-    private boolean isOwner(LivingEntity entity) {
-        return ownerUuid != null && entity != null && ownerUuid.equals(entity.getUUID());
+        setSummoner(player);
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (!level().isClientSide() && getTarget() != null && isOwner(getTarget())) {
-            setTarget(null);
-        }
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+                                        EntitySpawnReason spawnType, SpawnGroupData spawnGroupData) {
+        SpawnGroupData result = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+        setObscured(true);
+        return result;
     }
 
     @Override
-    public boolean canAttack(LivingEntity target) {
-        return !isOwner(target) && super.canAttack(target);
+    public boolean fireImmune() {
+        return true;
     }
 
     @Override
-    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
-        super.addAdditionalSaveData(tag);
-        if (ownerUuid != null) {
-            tag.putString("OwnerUUID", ownerUuid.toString());
-        }
+    public boolean isOnFire() {
+        return false;
     }
 
     @Override
-    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
-        super.readAdditionalSaveData(tag);
-        String ownerStr = tag.getStringOr("OwnerUUID", "");
-        ownerUuid = ownerStr.isEmpty() ? null : UUID.fromString(ownerStr);
+    protected SoundEvent getAmbientSound() {
+        return WitcherySoundEvents.MOB_SPECTRE_SAY.get();
     }
 
-    @Override public boolean fireImmune() { return true; }
-    @Override public boolean isOnFire()   { return false; }
+    @Override
+    protected SoundEvent getHurtSound(DamageSource src) {
+        return WitcherySoundEvents.MOB_SPECTRE_DIE.get();
+    }
 
-    @Override protected SoundEvent getAmbientSound() { return WitcherySoundEvents.MOB_SPECTRE_SAY.get(); }
-    @Override protected SoundEvent getHurtSound(DamageSource src) { return WitcherySoundEvents.MOB_SPECTRE_DIE.get(); }
-    @Override protected SoundEvent getDeathSound() { return WitcherySoundEvents.MOB_SPECTRE_DIE.get(); }
+    @Override
+    protected SoundEvent getDeathSound() {
+        return WitcherySoundEvents.MOB_SPECTRE_DIE.get();
+    }
 }

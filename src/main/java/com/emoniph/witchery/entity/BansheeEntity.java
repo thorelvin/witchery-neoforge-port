@@ -6,13 +6,17 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
@@ -22,13 +26,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.PathType;
 
-import java.util.UUID;
-
 /**
- * Banshee — flying undead horror that screams near dying players.
- * Now restores a first practical scream-damage loop with Earmuffs protection.
+ * Banshee - flying summoned undead whose scream is the real danger.
  */
-public class BansheeEntity extends Monster {
+public class BansheeEntity extends SummonedUndeadEntity {
     private static final EntityDataAccessor<Boolean> DATA_SCREAMING =
             SynchedEntityData.defineId(BansheeEntity.class, EntityDataSerializers.BOOLEAN);
     private static final int SCREAM_START_INTERVAL_TICKS = 100;
@@ -37,8 +38,6 @@ public class BansheeEntity extends Monster {
     private static final double SCREAM_RADIUS = 6.0;
     private static final float MIN_SCREAM_DAMAGE = 1.0F;
     private static final float SCREAM_DAMAGE_RATIO = 0.1F;
-
-    private UUID ownerUuid;
 
     public BansheeEntity(EntityType<? extends BansheeEntity> type, Level level) {
         super(type, level);
@@ -58,13 +57,12 @@ public class BansheeEntity extends Monster {
         FlyingPathNavigation nav = new FlyingPathNavigation(this, level);
         nav.setCanOpenDoors(false);
         nav.setCanFloat(true);
-        
         return nav;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0)
+                .add(Attributes.MAX_HEALTH, 40.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.2)
                 .add(Attributes.FLYING_SPEED, 0.2)
                 .add(Attributes.ATTACK_DAMAGE, 0.0)
@@ -78,24 +76,16 @@ public class BansheeEntity extends Monster {
         this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8f));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<net.minecraft.world.entity.player.Player>(this, Player.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public void setOwner(Player player) {
-        this.ownerUuid = player.getUUID();
-    }
-
-    private boolean isOwner(LivingEntity entity) {
-        return ownerUuid != null && entity != null && ownerUuid.equals(entity.getUUID());
+        setSummoner(player);
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (!level().isClientSide() && getTarget() != null && isOwner(getTarget())) {
-            setTarget(null);
-        }
-
         if (level().isClientSide()) {
             return;
         }
@@ -109,7 +99,7 @@ public class BansheeEntity extends Monster {
         boolean foundVictim = false;
         for (Player player : level().getEntitiesOfClass(Player.class, getBoundingBox().inflate(SCREAM_RADIUS),
                 LivingEntity::isAlive)) {
-            if (isOwner(player) || distanceToSqr(player) > SCREAM_RADIUS * SCREAM_RADIUS) {
+            if (isSummoner(player) || distanceToSqr(player) > SCREAM_RADIUS * SCREAM_RADIUS) {
                 continue;
             }
 
@@ -132,13 +122,8 @@ public class BansheeEntity extends Monster {
 
         if (startedScreaming || tickCount % SCREAM_SOUND_INTERVAL_TICKS == 0) {
             level().playSound(null, blockPosition(), WitcherySoundEvents.MOB_BANSHEE_SCREAM.get(),
-                    net.minecraft.sounds.SoundSource.HOSTILE, 1.0f, 0.7f + random.nextFloat() * 0.3f);
+                    SoundSource.HOSTILE, 1.0f, 0.7f + random.nextFloat() * 0.3f);
         }
-    }
-
-    @Override
-    public boolean canAttack(LivingEntity target) {
-        return !isOwner(target) && super.canAttack(target);
     }
 
     public boolean isScreaming() {
@@ -150,26 +135,22 @@ public class BansheeEntity extends Monster {
     }
 
     @Override
-    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
-        super.addAdditionalSaveData(tag);
-        if (ownerUuid != null) {
-            tag.putString("OwnerUUID", ownerUuid.toString());
-        }
+    protected SoundEvent getAmbientSound() {
+        return null;
     }
 
     @Override
-    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
-        super.readAdditionalSaveData(tag);
-        String ownerStr = tag.getStringOr("OwnerUUID", "");
-        try {
-            ownerUuid = ownerStr.isEmpty() ? null : UUID.fromString(ownerStr);
-        } catch (IllegalArgumentException ignored) {
-            ownerUuid = null;
-        }
+    protected SoundEvent getHurtSound(DamageSource src) {
+        return WitcherySoundEvents.MOB_SPECTRE_HIT.get();
     }
 
-    @Override protected SoundEvent getAmbientSound() { return null; }
-    @Override protected SoundEvent getHurtSound(DamageSource src) { return WitcherySoundEvents.MOB_SPECTRE_HIT.get(); }
-    @Override protected SoundEvent getDeathSound() { return WitcherySoundEvents.MOB_SPECTRE_HIT.get(); }
-    @Override public boolean isOnFire() { return false; }
+    @Override
+    protected SoundEvent getDeathSound() {
+        return WitcherySoundEvents.MOB_SPECTRE_HIT.get();
+    }
+
+    @Override
+    public boolean isOnFire() {
+        return false;
+    }
 }

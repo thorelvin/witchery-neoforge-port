@@ -20,6 +20,7 @@ import com.emoniph.witchery.effect.StoutBellyMobEffect;
 import com.emoniph.witchery.effect.SunAllergyMobEffect;
 import com.emoniph.witchery.effect.SwimmingMobEffect;
 import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.entity.SummonedUndeadEntity;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.BrewOfGraveItem;
@@ -1885,5 +1886,17 @@ class BrewLogicTest {
                 "Blaze Powder stays available to the Infernal Chalk cauldron offering path when dropped");
         assertFalse(Brews.canAddAutomatically(List.of(), Items.BLAZE_POWDER),
                 "dropped Blaze Powder must remain available to hardcoded cauldron offerings");
+    }
+
+    @Test
+    void summonedUndeadSourceCapsDamageAndGraveyardDustHealing() {
+        assertEquals(4.0F, SummonedUndeadEntity.sourceDamageCap(4.0F));
+        assertEquals(15.0F, SummonedUndeadEntity.sourceDamageCap(90.0F));
+
+        assertEquals(42.0F, SummonedUndeadEntity.sourceGraveyardDustHealthAfter(40.0F));
+        assertEquals(50.0F, SummonedUndeadEntity.sourceGraveyardDustHealthAfter(48.0F));
+        assertEquals(49.0F, SummonedUndeadEntity.sourceGraveyardDustHealthAfter(49.0F),
+                "source only heals when the +2 max-health step stays at or below 50");
+        assertEquals(50.0F, SummonedUndeadEntity.sourceGraveyardDustHealthAfter(50.0F));
     }
 }

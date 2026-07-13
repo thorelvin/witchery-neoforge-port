@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
+    "witchery:banshee",
+    "witchery:poltergeist",
+    "witchery:spectre",
     "witchery:vampire"
   ]
 }

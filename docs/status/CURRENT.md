@@ -52,6 +52,12 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Spectre, Banshee, and Poltergeist now share a source-shaped
+  `SummonedUndeadEntity` base without changing their registry IDs. The restored
+  common behavior covers summoner name/UUID persistence, Spectre obscured state,
+  optional suicide timers, source 15-damage incoming caps, undead tag membership,
+  source-targeted Dissipate/Revealing hooks, Spectral Stone finalization/owner
+  stamping, and Graveyard Dust strengthening for owned spectral undead.
 - Decurse statues were promoted from missing parity to playable exact IDs:
   `witchery:decurseteleport` / Statue of Occluded Summons and
   `witchery:decursedirected` / Statue of Broken Curses now appear in the

@@ -13,6 +13,7 @@ Brazier cards for spectral conjuration, corpse-aura work, smoke, and practical t
 - [triggers: conjure banshees|conjure banshee|summon banshee|banshee brazier] Targeted fact: Conjure Banshees uses Wormwood, Condensed Fear, and Graveyard Dust; it needs altar power and summons a Banshee after 30 seconds.
 - [triggers: conjure poltergeist|summon poltergeist|poltergeist brazier] Targeted fact: Conjure Poltergeist uses Wormwood, Refined Evil, and Focused Will; it needs no altar and summons a Poltergeist after 45 seconds.
 - [triggers: spectral undead brazier|necromancy brazier|which spectral summon] Targeted fact: Spectre and Banshee Brazier work needs Wormwood, Graveyard Dust, and altar power; Poltergeist work needs Wormwood, Refined Evil, and Focused Will.
+- Bound or released Spectre, Banshee, and Poltergeist spirits remember their summoner, will not hunt that owner, and can be strengthened with Graveyard Dust up to 50 max health.
 
 ## Corpse And Mist Work
 - [triggers: anguish of the dead|anguish brazier|strength aura brazier] Targeted fact: Anguish of the Dead uses Tear of the Goddess, Blaze Rod, and Golden Apple; with altar power it gives a Strength aura while burning.

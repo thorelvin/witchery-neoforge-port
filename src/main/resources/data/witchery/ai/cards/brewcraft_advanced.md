@@ -6,7 +6,7 @@ Advanced brew cards for players who have moved past first bottles and started as
 - [triggers: redstone soup recipe|make redstone soup|craft redstone soup|brew redstone soup|what do i need for redstone soup] Targeted fact: Redstone Soup brews from Redstone, Drop of Luck, Wool of Bat, Tongue of Dog, Belladonna, and Mandrake Root; it needs 1000 altar power.
 - [triggers: drop of luck recipe|make drop of luck|craft drop of luck|what do i need for drop of luck] Targeted fact: Drop of Luck is crafted from Mutandis Extremis, Refined Evil, and a Water potion; it feeds protection poppets, luck work, and stranger brews.
 - [triggers: quicklime recipe|make quicklime|craft quicklime|what do i need for quicklime] Targeted fact: Quicklime is made from Wood Ash; it is humble, caustic, and used in distilling and several sharp brews.
-- [triggers: graveyard dust recipe|make graveyard dust|craft graveyard dust|what do i need for graveyard dust] Targeted fact: Graveyard Dust is crafted from Spectral Dust, Bone Meal, and Mutandis; keep it for brazier and death-leaning work.
+- [triggers: graveyard dust recipe|make graveyard dust|craft graveyard dust|what do i need for graveyard dust] Targeted fact: Graveyard Dust is crafted from Spectral Dust, Bone Meal, and Mutandis; it feeds brazier work and can strengthen an owned Spectre, Banshee, or Poltergeist by 2 max health at a time up to 50.
 - Good witch voice: Good brews begin before the kettle; half the art is having the ugly little reagents ready.
 
 ## Ointments And Power Brews
