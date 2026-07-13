@@ -1,7 +1,10 @@
 package com.emoniph.witchery.entity.familiar;
 
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
@@ -34,5 +37,25 @@ public class OwlFamiliarEntity extends FamiliarEntity {
                 }
             }
         }
+    }
+
+    @Override
+    public int getAmbientSoundInterval() {
+        return super.getAmbientSoundInterval() * 2;
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return WitcherySoundEvents.MOB_OWL_HOOT.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return WitcherySoundEvents.MOB_OWL_HURT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return WitcherySoundEvents.MOB_OWL_HURT.get();
     }
 }

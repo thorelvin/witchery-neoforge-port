@@ -119,6 +119,28 @@
       "witchery:mob/baba/baba_death"
     ]
   },
+  "mob.owl.owl_hoot": {
+    "sounds": [
+      "witchery:mob/owl/owl_hoot1",
+      "witchery:mob/owl/owl_hoot2"
+    ]
+  },
+  "mob.owl.owl_hurt": {
+    "sounds": [
+      "witchery:mob/owl/owl_hurt1"
+    ]
+  },
+  "mob.toad.toad_croak": {
+    "sounds": [
+      "witchery:mob/toad/toad_croak1",
+      "witchery:mob/toad/toad_croak2"
+    ]
+  },
+  "mob.toad.toad_hurt": {
+    "sounds": [
+      "witchery:mob/toad/toad_hurt1"
+    ]
+  },
   "random.heartbeat": {
     "sounds": [
       "witchery:random/heartbeat1"

@@ -157,6 +157,10 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Spawn Baba Yaga with `/witchery spawn baba_yaga`; confirm ambient uses the
   old Baba living voice, hurt remains Witch-like, and death uses the old Baba
   death sound.
+- Spawn Owl and Toad familiars with `/witchery spawn owl` and
+  `/witchery spawn toad`; confirm Owl idle/death/hurt use the old hoot/hurt
+  sounds, Toad idle/death/hurt use the old croak/hurt sounds, and both idle
+  less often than vanilla pets.
 - Place and inspect Rowan, Alder, and Hawthorn leaves. Blocks and inventory
   items should read as green foliage from one combined texture, with Rowan
   berries red, Alder catkins yellow, and Hawthorn blossoms pale instead of

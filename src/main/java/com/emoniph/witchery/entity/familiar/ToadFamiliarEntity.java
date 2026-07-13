@@ -1,6 +1,9 @@
 package com.emoniph.witchery.entity.familiar;
 
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +32,31 @@ public class ToadFamiliarEntity extends FamiliarEntity {
                 collectNearbyItems(owner);
             }
         }
+    }
+
+    @Override
+    public int getAmbientSoundInterval() {
+        return super.getAmbientSoundInterval() * 2;
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return WitcherySoundEvents.MOB_TOAD_CROAK.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return WitcherySoundEvents.MOB_TOAD_HURT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return WitcherySoundEvents.MOB_TOAD_HURT.get();
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 0.4F;
     }
 
     private void collectNearbyItems(ServerPlayer owner) {
