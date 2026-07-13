@@ -214,6 +214,9 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   Confirm ring diagrams, two-row offering layouts, coven faces, and captions fit
   for Beastial Call, Manifestation, Nature's Power, and a small two-item rite
   such as Sanctity.
+- Draw a few ritual/otherwhere/infernal chalk marks and reroll one existing
+  same-family mark; each successful draw should use the old chalk-scratch sound
+  rather than a sand placement cue.
 - Confirm altar setup instructions are concrete and readable in the in-game
   book.
 - Confirm `Book_of_Shadows.html` and README match player-facing recipes,

@@ -169,8 +169,8 @@ enough to read before starting work. Long historical deltas belong in
   Wolftrap lured-wolf steering/capture feedback, Wolfman, Flame Imp, Baba Yaga,
   Owl, Toad, Hobgoblin, Gulg, Mog, Nightmare, Spectre, Banshee, Treefyd,
   Flying Monkey, Reflection, Lilith, Leonard, Dark Mark, and Lord of Torment
-  source sounds, the original `random.*` utility sound event surface,
-  Demon source vanilla sound mix,
+  source sounds, the original `random.*` utility sound event surface, chalk
+  drawing through the old `random.chalk` cue, Demon source vanilla sound mix,
   Parasytic Louse payload cues,
   Sun Collector/Sun Grenade feedback, and compass scrying cues. Manual QA still
   needs eyes on the Death Hand pose and in-world atmosphere feel.

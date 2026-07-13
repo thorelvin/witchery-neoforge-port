@@ -2,9 +2,9 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.init.WitcheryBlockTags;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.protection.WitcheryTerrainProtection;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -47,7 +47,7 @@ public class ChalkItem extends Item {
                 return InteractionResult.FAIL;
             }
             level.setBlock(mark.pos, next, 3);
-            level.playSound(null, mark.pos, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.6f, 1.4f);
+            playChalkSound(level, mark);
             if (ctx.getPlayer() != null) ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
             return InteractionResult.CONSUME;
         }
@@ -62,9 +62,13 @@ public class ChalkItem extends Item {
         }
 
         level.setBlock(mark.pos, next, 3);
-        level.playSound(null, mark.pos, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.6f, 1.4f);
+        playChalkSound(level, mark);
         if (ctx.getPlayer() != null) ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), slot);
         return InteractionResult.CONSUME;
+    }
+
+    private static void playChalkSound(Level level, BlockPosAndState mark) {
+        level.playSound(null, mark.pos, WitcherySoundEvents.RANDOM_CHALK.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     private static BlockPosAndState targetMark(Level level, UseOnContext ctx) {
