@@ -139,7 +139,7 @@ enough to read before starting work. Long historical deltas belong in
   well ladder behavior.
 - Recent QA polish cleaned up the Witchery creative tab, restored single-texture
   Rowan/Alder/Hawthorn leaf art with visible berry/flower colors, added vertical
-  stockade stack presentation while preserving contact damage, moved Death's
+  stockade stack presentation plus source wood variants while preserving contact damage, moved Death's
   Hand back to a source-style same-item scythe toggle, and nudged the Goddess
   statue / Crystal Ball GUI transforms.
 - Current parity polish tightened moving brew fluids, braziers, Spirit World

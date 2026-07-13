@@ -1,0 +1,7 @@
+{
+    "parent":  "witchery:block/stockade_side_stacked",
+    "textures":  {
+                     "texture":  "witchery:block/log_hawthorn",
+                     "particle":  "witchery:block/log_hawthorn"
+                 }
+}

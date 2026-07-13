@@ -378,6 +378,8 @@ public class WitcheryClient {
                 SpectralStoneTypeProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "plant_mine_disguise"),
                 PlantMineDisguiseProperty.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "stockade_wood"),
+                StockadeWoodProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "leonards_urn_capacity"),
                 LeonardsUrnCapacityProperty.MAP_CODEC);
         event.register(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "wooden_scanner_using"),

@@ -1,10 +1,1192 @@
 {
-  "multipart": [
-    { "when": { "north": "false", "east": "false", "south": "false", "west": "false", "up": "false" }, "apply": { "model": "witchery:block/stockade_post" } },
-    { "when": { "north": "false", "east": "false", "south": "false", "west": "false", "up": "true" }, "apply": { "model": "witchery:block/stockade_post_stacked" } },
-    { "when": { "AND": [ { "up": "false" }, { "OR": [ { "north": "true" }, { "south": "true" } ] } ] }, "apply": { "model": "witchery:block/stockade_side", "uvlock": true } },
-    { "when": { "AND": [ { "up": "true" }, { "OR": [ { "north": "true" }, { "south": "true" } ] } ] }, "apply": { "model": "witchery:block/stockade_side_stacked", "uvlock": true } },
-    { "when": { "AND": [ { "up": "false" }, { "OR": [ { "east": "true" }, { "west": "true" } ] } ] }, "apply": { "model": "witchery:block/stockade_side", "uvlock": true, "y": 90 } },
-    { "when": { "AND": [ { "up": "true" }, { "OR": [ { "east": "true" }, { "west": "true" } ] } ] }, "apply": { "model": "witchery:block/stockade_side_stacked", "uvlock": true, "y": 90 } }
-  ]
+    "multipart":  [
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "false",
+                                       "wood":  "oak"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "true",
+                                       "wood":  "oak"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_stacked"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "oak"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "oak"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "oak"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "oak"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "false",
+                                       "wood":  "spruce"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_spruce"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "true",
+                                       "wood":  "spruce"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_stacked_spruce"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "spruce"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_spruce",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "spruce"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_spruce",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "spruce"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_spruce",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "spruce"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_spruce",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "false",
+                                       "wood":  "birch"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_birch"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "true",
+                                       "wood":  "birch"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_stacked_birch"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "birch"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_birch",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "birch"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_birch",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "birch"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_birch",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "birch"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_birch",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "false",
+                                       "wood":  "jungle"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_jungle"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "true",
+                                       "wood":  "jungle"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_stacked_jungle"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "jungle"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_jungle",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "jungle"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_jungle",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "jungle"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_jungle",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "jungle"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_jungle",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "false",
+                                       "wood":  "rowan"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_rowan"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "true",
+                                       "wood":  "rowan"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_stacked_rowan"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "rowan"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_rowan",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "rowan"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_rowan",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "rowan"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_rowan",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "rowan"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_rowan",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "false",
+                                       "wood":  "alder"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_alder"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "true",
+                                       "wood":  "alder"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_stacked_alder"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "alder"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_alder",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "alder"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_alder",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "alder"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_alder",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "alder"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_alder",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "false",
+                                       "wood":  "hawthorn"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_hawthorn"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "true",
+                                       "wood":  "hawthorn"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_stacked_hawthorn"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "hawthorn"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_hawthorn",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "hawthorn"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_hawthorn",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "hawthorn"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_hawthorn",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "hawthorn"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_hawthorn",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "false",
+                                       "wood":  "acacia"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_acacia"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "true",
+                                       "wood":  "acacia"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_stacked_acacia"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "acacia"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_acacia",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "acacia"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_acacia",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "acacia"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_acacia",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "acacia"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_acacia",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "false",
+                                       "wood":  "big_oak"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_big_oak"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "north":  "false",
+                                       "east":  "false",
+                                       "south":  "false",
+                                       "west":  "false",
+                                       "up":  "true",
+                                       "wood":  "big_oak"
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_post_stacked_big_oak"
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "big_oak"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_big_oak",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "big_oak"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "north":  "true"
+                                                                  },
+                                                                  {
+                                                                      "south":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_big_oak",
+                                        "uvlock":  true
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "big_oak"
+                                                   },
+                                                   {
+                                                       "up":  "false"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_big_oak",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      },
+                      {
+                          "when":  {
+                                       "AND":  [
+                                                   {
+                                                       "wood":  "big_oak"
+                                                   },
+                                                   {
+                                                       "up":  "true"
+                                                   },
+                                                   {
+                                                       "OR":  [
+                                                                  {
+                                                                      "east":  "true"
+                                                                  },
+                                                                  {
+                                                                      "west":  "true"
+                                                                  }
+                                                              ]
+                                                   }
+                                               ]
+                                   },
+                          "apply":  {
+                                        "model":  "witchery:block/stockade_side_stacked_big_oak",
+                                        "uvlock":  true,
+                                        "y":  90
+                                    }
+                      }
+                  ]
 }

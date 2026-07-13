@@ -189,8 +189,9 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.ICE_SLAB.get(),
                 WitcheryItems.ICE_DOOR.get(),
                 WitcheryItems.ICE_FENCE.get(),
-                WitcheryItems.ICE_GATE.get(),
-                WitcheryItems.STOCKADE.get(),
+                WitcheryItems.ICE_GATE.get());
+        addStockadeVariants(output);
+        add(output,
                 WitcheryItems.ICE_STOCKADE.get(),
                 WitcheryItems.ICE_PRESSURE_PLATE.get(),
                 WitcheryItems.SNOW_PRESSURE_PLATE.get(),
@@ -583,6 +584,13 @@ public class WitcheryCreativeTabs {
             for (PlantMineBlock.PlantMineEffect effect : sourceEffectOrder) {
                 output.accept(PlantMineBlock.stackFor(disguise, effect));
             }
+        }
+    }
+
+    private static void addStockadeVariants(CreativeModeTab.Output output) {
+        for (com.emoniph.witchery.blocks.StockadeBlock.WoodVariant variant
+                : com.emoniph.witchery.blocks.StockadeBlock.WoodVariant.values()) {
+            output.accept(com.emoniph.witchery.blocks.StockadeBlock.stackFor(variant));
         }
     }
 

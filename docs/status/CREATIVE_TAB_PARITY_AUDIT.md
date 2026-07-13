@@ -31,7 +31,7 @@ That makes the port feel fuller and easier to browse in a modern pack, but it al
 | Overall order | Screenshots begin with the large `ItemGeneral` metadata sequence: Candelabra, Chalice, Dream Weavers, waystones, etc. | Starts with guidebooks and then modern category groups. | This is the biggest visual mismatch. Decide whether exact source order or curated modern order is the target. |
 | Total visible entries | About 313 visible entries across the screenshots. | 473 entries in the port tab. | Port includes modern extras and split-out variants. |
 | Plant mines | Metadata order is webs, ink, sprouting, thorns for each disguise, with vanilla flower/shrub disguise icons. | Port now emits source order and renders inventory stacks by disguise: poppy, dandelion, or dead bush. | Patched without changing enum serialization. The old standalone alias items remain registered but no longer clutter the creative tab. |
-| Stockades | Normal stockade exposes 9 wood variants: Oak, Spruce, Birch, Jungle, Rowan, Alder, Hawthorn, Acacia, Dark Oak. Ice stockade exposes one variant. | Only `stockade`/Oak Stockade and `ice_stockade` are present. | Missing visible source variants. Needs a proper blockstate/component or separate-item design. |
+| Stockades | Normal stockade exposes 9 wood variants: Oak, Spruce, Birch, Jungle, Rowan, Alder, Hawthorn, Acacia, Dark Oak. Ice stockade exposes one variant. | Port now exposes the same nine `witchery:stockade` block-state stacks plus `ice_stockade`. | Patched through a `wood` block-state/component design on the real stockade item, with variant-aware names, models, drops, and recipes. |
 | Circle Talisman | Creative subitems are metas `0,1,2,3,8,16,24,64,128,192`. | Port now exposes the same source-visible encoded stacks, with names and icons driven by the stored circle data. | Patched through the real talisman item data, not alias items. |
 | Spectral Stone | Creative subitems are metas `0,17,18,19`. | Port now exposes the same source-visible blank, Spectre, Banshee, and Poltergeist stacks. | Patched through the real binding data used by the rite/release behavior. |
 | Leonard's Urn | Creative subitems are metas `0..3`. | Port now exposes capacity 1-4 urn stacks and chooses the matching source urn icon from capacity data. | The modern storage behavior remains. |
@@ -82,10 +82,9 @@ These should be decided by style policy. Some are probable old typos, some are s
 1. Decide the creative tab target: exact source-order parity, modern curated tab, or two tabs/modes.
 2. Hide debug items from the normal player-facing tab, or gate them behind a config/operator-only debug path.
 3. Decide whether spawn eggs belong in the main Witchery tab or a separate/debug/entity section.
-4. Restore stockade wood variants as visible creative entries.
-5. Add source-visible creative variant stacks for any remaining metadata-backed legacy items that still collapse to one stack.
-6. Review stale seed variants and decurse statues against source behavior before implementing.
-7. Continue applying source-facing display names when the old English name is clear; keep modern registry IDs stable and add compatibility aliases where needed.
+4. Add source-visible creative variant stacks for any remaining metadata-backed legacy items that still collapse to one stack.
+5. Review stale seed variants and decurse statues against source behavior before implementing.
+6. Continue applying source-facing display names when the old English name is clear; keep modern registry IDs stable and add compatibility aliases where needed.
 
 ## Patch Made During This Audit
 
@@ -110,6 +109,7 @@ Follow-up icon parity fixes made after this audit:
 - Plant mine creative duplicates were removed; the real plant mine block item now renders by disguise.
 - `Circle Talisman` now exposes the source creative metadata set and uses the source icon variants for stored circle data.
 - `Spectral Stone` now exposes the source creative metadata set through modern bound-stone data.
+- `Stockade` now exposes the source Oak, Spruce, Birch, Jungle, Rowan, Alder, Hawthorn, Acacia, and Dark Oak creative stacks through modern block-state data.
 
 ## Additional Naming Patch
 

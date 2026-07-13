@@ -1,6 +1,68 @@
 {
-  "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/stockade"
-  }
+    "model":  {
+                  "type":  "minecraft:range_dispatch",
+                  "property":  "witchery:stockade_wood",
+                  "entries":  [
+                                  {
+                                      "threshold":  1,
+                                      "model":  {
+                                                    "type":  "minecraft:model",
+                                                    "model":  "witchery:item/stockade_spruce"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  2,
+                                      "model":  {
+                                                    "type":  "minecraft:model",
+                                                    "model":  "witchery:item/stockade_birch"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  3,
+                                      "model":  {
+                                                    "type":  "minecraft:model",
+                                                    "model":  "witchery:item/stockade_jungle"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  4,
+                                      "model":  {
+                                                    "type":  "minecraft:model",
+                                                    "model":  "witchery:item/stockade_rowan"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  5,
+                                      "model":  {
+                                                    "type":  "minecraft:model",
+                                                    "model":  "witchery:item/stockade_alder"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  6,
+                                      "model":  {
+                                                    "type":  "minecraft:model",
+                                                    "model":  "witchery:item/stockade_hawthorn"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  7,
+                                      "model":  {
+                                                    "type":  "minecraft:model",
+                                                    "model":  "witchery:item/stockade_acacia"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  8,
+                                      "model":  {
+                                                    "type":  "minecraft:model",
+                                                    "model":  "witchery:item/stockade_big_oak"
+                                                }
+                                  }
+                              ],
+                  "fallback":  {
+                                   "type":  "minecraft:model",
+                                   "model":  "witchery:item/stockade"
+                               }
+              }
 }

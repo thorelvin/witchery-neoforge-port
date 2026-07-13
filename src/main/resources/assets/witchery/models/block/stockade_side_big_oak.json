@@ -1,0 +1,7 @@
+{
+    "parent":  "witchery:block/stockade_side",
+    "textures":  {
+                     "texture":  "minecraft:block/dark_oak_log",
+                     "particle":  "minecraft:block/dark_oak_log"
+                 }
+}
