@@ -193,6 +193,10 @@ enough to read before starting work. Long historical deltas belong in
   Paralysed, Queasy, Diseased, and the Shade of Leonard hex effects no longer
   count as normal curable effects for those composed-brew actions; Purified Milk
   still keeps the source Diseased special-cleanup branch.
+- High-strength Paralysed now restores the old vampire lure branch for villagers
+  and Village Guards: amplifier 5+ leaves them unfrozen, clears combat targeting
+  while active, and paths them once per second toward the nearest level-8+
+  vampire player within the source 1-16 block window.
 - A first Witch's Triangle scanner slice is now live: a rowan-framed wooden
   triangle that uses a two-arm hold pose, lights its centre with purple portal
   art while scanning, remembers unique scanned block/entity ids on the item, and

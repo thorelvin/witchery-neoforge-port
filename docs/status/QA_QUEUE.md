@@ -143,6 +143,11 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   Sun Allergy, Paralysed, Queasy, and Leonard hexes should not count as normal
   curable effects. Diseased should still follow Purified Milk's special strength
   2+ cure and strength 3+ disease-block cleanup.
+- Apply Paralysed amplifier 5+ to a Villager and a Village Guard with a vampire
+  player level 8+ standing 1-16 blocks away. They should not receive the
+  movement-speed lock; instead they should drop combat targeting and step toward
+  the vampire roughly once per second. Check that level-7 vampires and targets
+  closer than 1 block or farther than 16 blocks do not trigger the lure.
 - Block the first release space over a ritual cauldron and confirm gas/liquid
   Dog Tongue release chooses a nearby safe space instead of failing immediately.
 

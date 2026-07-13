@@ -9,11 +9,14 @@ import com.emoniph.witchery.entity.HornedHuntsmanEntity;
 import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.VillageGuardEntity;
+import com.emoniph.witchery.init.WitcheryAttachments;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -22,6 +25,7 @@ import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -36,6 +40,10 @@ public class ParalyzedMobEffect extends MobEffect {
     public static final int QUEASY_EXPIRY_DURATION_TICKS = QueasyMobEffect.PARALYSED_EXPIRY_DURATION_TICKS;
     public static final double SOURCE_SPEED_MODIFIER_BASE = -40.0D;
     public static final double PINNED_Y_VELOCITY = -0.2D;
+    public static final double VAMPIRE_ATTRACTION_SPEED = 0.8D;
+    public static final double VAMPIRE_ATTRACTION_MIN_DISTANCE = 1.0D;
+    public static final double VAMPIRE_ATTRACTION_MAX_DISTANCE = 16.0D;
+    public static final int VAMPIRE_ATTRACTION_REPATH_TICKS = 20;
     private static final Identifier SPEED_MODIFIER_ID =
             Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "effect.paralysed");
 
@@ -52,6 +60,7 @@ public class ParalyzedMobEffect extends MobEffect {
     public boolean applyEffectTick(ServerLevel level, LivingEntity entity, int amplifier) {
         syncSourceSpeedModifier(entity, amplifier);
         if (!canApplyToEntity(entity, amplifier)) {
+            directSourceVillagerTowardVampire(level, entity, amplifier);
             return true;
         }
 
@@ -106,6 +115,54 @@ public class ParalyzedMobEffect extends MobEffect {
 
     public static boolean shouldApplyQueasyOnExpiry(boolean clientSide, boolean player, int amplifier) {
         return !clientSide && player && amplifier >= DAMAGE_BREAK_AMPLIFIER;
+    }
+
+    public static boolean directSourceVillagerTowardVampire(ServerLevel level, LivingEntity entity, int amplifier) {
+        if (!shouldDirectVillagerToVampire(isSourceVillager(entity), amplifier) || !(entity instanceof Mob mob)) {
+            return false;
+        }
+        ServerPlayer vampire = findNearestSourceVampire(level, entity);
+        if (vampire == null || !sourceVampireAttractionDistanceAllowed(entity.distanceToSqr(vampire))) {
+            return false;
+        }
+
+        mob.setTarget(null);
+        if (entity.tickCount % VAMPIRE_ATTRACTION_REPATH_TICKS == 0) {
+            mob.getNavigation().moveTo(vampire.getX(), vampire.getY(), vampire.getZ(), VAMPIRE_ATTRACTION_SPEED);
+        }
+        return true;
+    }
+
+    private static ServerPlayer findNearestSourceVampire(ServerLevel level, LivingEntity entity) {
+        AABB bounds = entity.getBoundingBox().inflate(VAMPIRE_ATTRACTION_MAX_DISTANCE);
+        ServerPlayer closest = null;
+        double closestDistance = Double.MAX_VALUE;
+        for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, bounds)) {
+            var data = WitcheryAttachments.get(player);
+            if (!sourceVampireAttractionPlayer(data.isVampire(), data.getVampireLevel())) {
+                continue;
+            }
+            double distance = entity.distanceToSqr(player);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closest = player;
+            }
+        }
+        return closest;
+    }
+
+    public static boolean shouldDirectVillagerToVampire(boolean villager, int amplifier) {
+        return villager && amplifier >= VILLAGER_ESCAPE_AMPLIFIER;
+    }
+
+    public static boolean sourceVampireAttractionPlayer(boolean vampire, int vampireLevel) {
+        return vampire && vampireLevel >= 8;
+    }
+
+    public static boolean sourceVampireAttractionDistanceAllowed(double distanceSq) {
+        double min = VAMPIRE_ATTRACTION_MIN_DISTANCE * VAMPIRE_ATTRACTION_MIN_DISTANCE;
+        double max = VAMPIRE_ATTRACTION_MAX_DISTANCE * VAMPIRE_ATTRACTION_MAX_DISTANCE;
+        return distanceSq >= min && distanceSq <= max;
     }
 
     public static double sourceSpeedModifierAmount(int amplifier) {

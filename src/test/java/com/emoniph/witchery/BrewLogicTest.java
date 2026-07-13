@@ -793,6 +793,16 @@ class BrewLogicTest {
         assertFalse(ParalyzedMobEffect.shouldApplyQueasyOnExpiry(false, false, 4));
         assertFalse(ParalyzedMobEffect.shouldApplyQueasyOnExpiry(false, true, 3));
         assertTrue(ParalyzedMobEffect.shouldApplyQueasyOnExpiry(false, true, 4));
+        assertFalse(ParalyzedMobEffect.shouldDirectVillagerToVampire(true, 4));
+        assertFalse(ParalyzedMobEffect.shouldDirectVillagerToVampire(false, 5));
+        assertTrue(ParalyzedMobEffect.shouldDirectVillagerToVampire(true, 5));
+        assertFalse(ParalyzedMobEffect.sourceVampireAttractionPlayer(false, 10));
+        assertFalse(ParalyzedMobEffect.sourceVampireAttractionPlayer(true, 7));
+        assertTrue(ParalyzedMobEffect.sourceVampireAttractionPlayer(true, 8));
+        assertFalse(ParalyzedMobEffect.sourceVampireAttractionDistanceAllowed(0.99D));
+        assertTrue(ParalyzedMobEffect.sourceVampireAttractionDistanceAllowed(1.0D));
+        assertTrue(ParalyzedMobEffect.sourceVampireAttractionDistanceAllowed(16.0D * 16.0D));
+        assertFalse(ParalyzedMobEffect.sourceVampireAttractionDistanceAllowed(16.0D * 16.0D + 0.01D));
         assertEquals(QueasyMobEffect.PARALYSED_EXPIRY_DURATION_TICKS, ParalyzedMobEffect.QUEASY_EXPIRY_DURATION_TICKS,
                 "source amplified player expiry applies Queasy for ninety seconds");
     }
