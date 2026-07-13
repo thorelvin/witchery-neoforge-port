@@ -167,8 +167,9 @@ enough to read before starting work. Long historical deltas belong in
   capacity upgrades, Witches Hand Otherwhere cooldown/feedback, Duplication
   Grenade mirror charging, Book of Biomes climate page stats,
   Wolftrap lured-wolf steering/capture feedback, Wolfman, Flame Imp, Baba Yaga,
-  Owl, Toad, Hobgoblin, Gulg, Mog, Nightmare, Spectre, Treefyd,
-  Flying Monkey, Reflection, and Lilith source sounds, Demon source vanilla sound mix,
+  Owl, Toad, Hobgoblin, Gulg, Mog, Nightmare, Spectre, Banshee, Treefyd,
+  Flying Monkey, Reflection, Lilith, Dark Mark, and Lord of Torment source
+  sounds, Demon source vanilla sound mix,
   Parasytic Louse payload cues,
   Sun Collector/Sun Grenade feedback, and compass scrying cues. Manual QA still
   needs eyes on the Death Hand pose and in-world atmosphere feel.

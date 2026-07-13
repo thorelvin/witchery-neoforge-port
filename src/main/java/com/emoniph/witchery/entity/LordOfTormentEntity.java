@@ -3,6 +3,7 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.world.TormentHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -12,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -214,6 +216,13 @@ public class LordOfTormentEntity extends Monster implements RangedAttackMob {
 
     @Override
     public boolean fireImmune() { return true; }
+
+    // ── Sounds ────────────────────────────────────────────────────────────────
+
+    @Override protected SoundEvent getAmbientSound() { return WitcherySoundEvents.MOB_TORMENT_LAUGH.get(); }
+    @Override protected SoundEvent getHurtSound(DamageSource source) { return WitcherySoundEvents.MOB_TORMENT_HIT.get(); }
+    @Override protected SoundEvent getDeathSound() { return WitcherySoundEvents.MOB_TORMENT_DEATH.get(); }
+    @Override public int getAmbientSoundInterval() { return 200; }
 
     // ── Model animation helper ────────────────────────────────────────────────
 

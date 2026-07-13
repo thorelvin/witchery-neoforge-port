@@ -6,7 +6,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -132,8 +131,8 @@ public class BansheeEntity extends Monster {
         }
 
         if (startedScreaming || tickCount % SCREAM_SOUND_INTERVAL_TICKS == 0) {
-            level().playSound(null, blockPosition(), WitcherySoundEvents.ENTITY_BANSHEE_SCREAM.get(),
-                    net.minecraft.sounds.SoundSource.HOSTILE, 1.0f, 1.0f + random.nextFloat() * 0.3f);
+            level().playSound(null, blockPosition(), WitcherySoundEvents.MOB_BANSHEE_SCREAM.get(),
+                    net.minecraft.sounds.SoundSource.HOSTILE, 1.0f, 0.7f + random.nextFloat() * 0.3f);
         }
     }
 
@@ -169,8 +168,8 @@ public class BansheeEntity extends Monster {
         }
     }
 
-    @Override protected SoundEvent getAmbientSound() { return SoundEvents.PHANTOM_AMBIENT; }
-    @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.PHANTOM_HURT; }
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.PHANTOM_DEATH; }
+    @Override protected SoundEvent getAmbientSound() { return null; }
+    @Override protected SoundEvent getHurtSound(DamageSource src) { return WitcherySoundEvents.MOB_SPECTRE_HIT.get(); }
+    @Override protected SoundEvent getDeathSound() { return WitcherySoundEvents.MOB_SPECTRE_HIT.get(); }
     @Override public boolean isOnFire() { return false; }
 }

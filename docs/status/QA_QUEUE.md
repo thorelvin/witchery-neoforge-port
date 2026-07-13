@@ -174,6 +174,13 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   `/summon witchery:lilith` and confirm hostile idle/hurt/death plus friendly
   reward interactions use the old Lilith clips instead of dragon/illusioner
   placeholders.
+- Spawn a Banshee with `/witchery spawn banshee`; confirm it has no idle
+  phantom ambient, its scream uses the old lower-pitched Banshee clip, and
+  hurt/death use the source Spectre hit sound.
+- Spawn a Lord of Torment with `/witchery spawn lord_of_torment` and a Dark
+  Mark with `witchery:dark_mark_spawn_egg`; confirm the Lord uses the old
+  Torment laugh/hit/death clips with a roughly 10-second idle cadence, while
+  Dark Mark uses the distant Torment laugh and has no hurt/death sound.
 - Place and inspect Rowan, Alder, and Hawthorn leaves. Blocks and inventory
   items should read as green foliage from one combined texture, with Rowan
   berries red, Alder catkins yellow, and Hawthorn blossoms pale instead of

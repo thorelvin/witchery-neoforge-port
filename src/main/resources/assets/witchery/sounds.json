@@ -14,6 +14,11 @@
       "witchery:entity/banshee/scream"
     ]
   },
+  "mob.banshee.banshee_scream": {
+    "sounds": [
+      "witchery:mob/banshee/banshee_scream"
+    ]
+  },
   "entity.raven.idle1": {
     "sounds": [
       "witchery:entity/raven/idle1"
@@ -281,6 +286,26 @@
   "mob.lilith.death": {
     "sounds": [
       "witchery:mob/lilith/death"
+    ]
+  },
+  "mob.torment.laugh": {
+    "sounds": [
+      "witchery:mob/torment/laugh"
+    ]
+  },
+  "mob.torment.hit": {
+    "sounds": [
+      "witchery:mob/torment/hit"
+    ]
+  },
+  "mob.torment.death": {
+    "sounds": [
+      "witchery:mob/torment/death"
+    ]
+  },
+  "mob.darkmark.idle": {
+    "sounds": [
+      "witchery:mob/darkmark/idle"
     ]
   },
   "random.heartbeat": {

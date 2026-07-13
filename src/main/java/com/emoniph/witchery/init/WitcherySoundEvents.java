@@ -15,6 +15,7 @@ public final class WitcherySoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> BLOCK_BEAR_TRAP_CLICK = register("block.bear_trap.click");
     public static final DeferredHolder<SoundEvent, SoundEvent> BLOCK_BEAR_TRAP_MANTRAP = register("block.bear_trap.mantrap");
     public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BANSHEE_SCREAM = register("entity.banshee.scream");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_BANSHEE_SCREAM = register("mob.banshee.banshee_scream");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAVEN_IDLE_1 = register("entity.raven.idle1");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAVEN_IDLE_2 = register("entity.raven.idle2");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAVEN_IDLE_3 = register("entity.raven.idle3");
@@ -64,6 +65,10 @@ public final class WitcherySoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> MOB_LILITH_SAY = register("mob.lilith.say");
     public static final DeferredHolder<SoundEvent, SoundEvent> MOB_LILITH_HIT = register("mob.lilith.hit");
     public static final DeferredHolder<SoundEvent, SoundEvent> MOB_LILITH_DEATH = register("mob.lilith.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_TORMENT_LAUGH = register("mob.torment.laugh");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_TORMENT_HIT = register("mob.torment.hit");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_TORMENT_DEATH = register("mob.torment.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_DARKMARK_IDLE = register("mob.darkmark.idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_HEARTBEAT = register("random.heartbeat");
     public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_HORN = register("random.horn");
     public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_SWORD_DRAW = register("random.sworddraw");

@@ -1,9 +1,9 @@
 package com.emoniph.witchery.entity;
 
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -115,9 +115,10 @@ public class DarkMarkEntity extends Mob {
 
     // ── Sounds (a distant cackle) ────────────────────────────────────────────
 
-    @Override protected SoundEvent getAmbientSound() { return SoundEvents.WITCH_CELEBRATE; }
+    @Override protected SoundEvent getAmbientSound() { return WitcherySoundEvents.MOB_TORMENT_LAUGH.get(); }
     @Override public int getAmbientSoundInterval() { return 80; }
     @Override protected float getSoundVolume() { return 0.8F; }
+    @Override public float getVoicePitch() { return 1.0F; }
     @Override protected SoundEvent getHurtSound(DamageSource src) { return null; }
     @Override protected SoundEvent getDeathSound() { return null; }
 
