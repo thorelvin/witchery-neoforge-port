@@ -1,5 +1,6 @@
 package com.emoniph.witchery.brewing;
 
+import com.emoniph.witchery.init.WitcheryMobEffects;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -104,6 +105,7 @@ class BrewNatureActionTest {
         assertTrue(Brews.shouldSpreadDebuff(slowness, 2, true, 4));   // amp 2 <= max(3,1)=3
         org.junit.jupiter.api.Assertions.assertFalse(Brews.shouldSpreadDebuff(slowness, 4, true, 4)); // amp 4 > 3
         org.junit.jupiter.api.Assertions.assertFalse(Brews.shouldSpreadDebuff(slowness, 0, false, 4)); // not curable
+        org.junit.jupiter.api.Assertions.assertFalse(Brews.shouldSpreadDebuff(WitcheryMobEffects.PARALYSED, 0, true, 4));
         // beneficial effects never spread
         org.junit.jupiter.api.Assertions.assertFalse(
                 Brews.shouldSpreadDebuff(net.minecraft.world.effect.MobEffects.SPEED, 0, true, 4));

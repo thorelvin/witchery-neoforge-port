@@ -1121,6 +1121,12 @@ class BrewLogicTest {
                 "negative effects are not buffs");
         assertFalse(Brews.shouldRemoveBuff(MobEffects.SPEED, 0, false, 3),
                 "source Cure Buffs does not remove incurable effects");
+        assertFalse(Brews.shouldRemoveBuff(WitcheryMobEffects.MOONSHINE, 0, true, 3),
+                "source Moonshine / Feel No Pain is setIncurable and survives Cure Buffs");
+        assertFalse(Brews.shouldRemoveBuff(WitcheryMobEffects.STOUT_BELLY, 0, true, 3),
+                "source Stout Belly is setIncurable and survives Cure Buffs");
+        assertFalse(Brews.shouldRemoveBuff(WitcheryMobEffects.GAS_MASK, 0, true, 3),
+                "source Gas Mask is setIncurable and survives Cure Buffs");
     }
 
     @Test
@@ -1166,11 +1172,26 @@ class BrewLogicTest {
                 "positive effects are not debuffs");
         assertFalse(Brews.shouldRemoveDebuff(MobEffects.POISON, 0, false, 3),
                 "source Cure Debuffs does not remove incurable effects on the normal entity path");
+        assertFalse(Brews.shouldRemoveDebuff(WitcheryMobEffects.PARALYSED, 0, true, 5),
+                "source Paralysed is setIncurable and survives the normal Cure Debuffs path");
+        assertFalse(Brews.shouldRemoveDebuff(WitcheryMobEffects.QUEASY, 0, true, 5),
+                "source Queasy is setIncurable and survives the normal Cure Debuffs path");
+        assertFalse(Brews.shouldRemoveDebuff(WitcheryMobEffects.SUN_ALLERGY, 0, true, 5),
+                "source Sun Allergy is setIncurable and survives the normal Cure Debuffs path");
+        assertFalse(Brews.shouldRemoveDebuff(WitcheryMobEffects.MORTAL_COIL, 0, true, 5),
+                "source Death Coil is setIncurable and survives the normal Cure Debuffs path");
+        assertFalse(Brews.shouldRemoveDebuff(WitcheryMobEffects.SINKING, 0, true, 5),
+                "source Sinking is setIncurable and survives the normal Cure Debuffs path");
+        assertFalse(Brews.shouldRemoveDebuff(WitcheryMobEffects.INSANITY, 0, true, 5),
+                "source Insanity is setIncurable and survives the normal Cure Debuffs path");
+        assertFalse(Brews.shouldRemoveDebuff(WitcheryMobEffects.OVERHEATING, 0, true, 5),
+                "source Overheating is setIncurable and survives the normal Cure Debuffs path");
         assertFalse(Brews.shouldRemoveDebuff(WitcheryMobEffects.DISEASED, 0, false, 1),
                 "source Diseased is the special Purified Milk branch, not a base-strength debuff cure");
         assertTrue(Brews.shouldRemoveDebuff(WitcheryMobEffects.DISEASED, 5, false, 2),
                 "source Purified Milk II+ clears Diseased even though Diseased is incurable");
         assertTrue(Brews.isSourceDiseaseEffect(WitcheryMobEffects.DISEASED));
+        assertTrue(Brews.isSourceIncurableEffect(WitcheryMobEffects.DISEASED));
     }
 
     @Test
@@ -1459,6 +1480,8 @@ class BrewLogicTest {
                 "negative effects are not stolen");
         assertFalse(Brews.shouldStealBuff(MobEffects.SPEED, 200, 0, false, -1, -1, 3),
                 "source Steal Buffs does not steal incurable effects");
+        assertFalse(Brews.shouldStealBuff(WitcheryMobEffects.MOONSHINE, 200, 0, true, -1, -1, 3),
+                "source Steal Buffs respects Witchery setIncurable buffs too");
         assertTrue(Brews.shouldStealBuff(MobEffects.SPEED, 400, 1, true, 200, 0, 1),
                 "source Steal Buffs replaces weaker or shorter matching buffs");
         assertFalse(Brews.shouldStealBuff(MobEffects.SPEED, 200, 0, true, 400, 0, 1),

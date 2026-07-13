@@ -16,10 +16,11 @@ Current target:
 ## 2026-06-19 Shade of Leonard — combat/hex/soul parity gotchas
 
 - **`MobEffectInstance.getCures()` is not present** in this NeoForge build (21.11.42). The NeoForge
-  `EffectCure` API used elsewhere for milk-gated incurability isn't available here, and no other
-  remake effect uses it. To make an effect "incurable" the way source `setIncurable()` did, the remake
-  has no current hook — so incurability is left un-gated (consistent with Diseased/Paralysed). Don't
-  reach for `getCures().clear()`; it won't compile.
+  `EffectCure` API used elsewhere for milk-gated incurability isn't available here. Don't reach for
+  `getCures().clear()`; it won't compile. Witchery's own old `PotionBase.isCurable()` gate is modeled
+  separately in `Brews.isSourceIncurableEffect(...)` for composed-brew actions such as Spread
+  Affliction, Cure Buffs, Cure Debuffs, and Steal Buffs, but a general milk-bucket removal gate remains
+  a separate API problem.
 - **`Entity.hasImpulse` is not accessible** from a `LivingEntity` reference. To force a server-set
   velocity to sync to the client, set `entity.hurtMarked = true` instead.
 - **`Mob.customServerAiStep(ServerLevel)`** — signature couldn't be confirmed against any existing

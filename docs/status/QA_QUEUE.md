@@ -136,6 +136,13 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   shapes.
 - Retest gas/liquid brews for tint persistence, lifetime, source/flow behavior,
   deterministic contact refresh, and Gas Mask protection.
+- Apply ordinary curable effects plus Witchery source-incurable effects, then
+  test Reek Cure Buffs, Purified Milk Cure Debuffs, Skeleton Skull Steal Buffs,
+  and Creeper Head Spread Affliction. Ordinary curable effects should clear,
+  steal, or spread by source strength gates; Moonshine, Stout Belly, Gas Mask,
+  Sun Allergy, Paralysed, Queasy, and Leonard hexes should not count as normal
+  curable effects. Diseased should still follow Purified Milk's special strength
+  2+ cure and strength 3+ disease-block cleanup.
 - Block the first release space over a ritual cauldron and confirm gas/liquid
   Dog Tongue release chooses a nearby safe space instead of failing immediately.
 

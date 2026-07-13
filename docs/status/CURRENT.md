@@ -187,6 +187,12 @@ enough to read before starting work. Long historical deltas belong in
 - Village Guards now regain source-style staying power after vampire feeding:
   an idle guard standing in a village periodically heals and has the old
   one-in-four chance to recover one point of its persisted `BloodLevel`.
+- Custom Brew curability now respects the old `PotionBase.setIncurable()` gate
+  for current Witchery effects across Spread Affliction, Cure Buffs, Cure
+  Debuffs, and Steal Buffs. Moonshine, Stout Belly, Gas Mask, Sun Allergy,
+  Paralysed, Queasy, Diseased, and the Shade of Leonard hex effects no longer
+  count as normal curable effects for those composed-brew actions; Purified Milk
+  still keeps the source Diseased special-cleanup branch.
 - A first Witch's Triangle scanner slice is now live: a rowan-framed wooden
   triangle that uses a two-arm hold pose, lights its centre with purple portal
   art while scanning, remembers unique scanned block/entity ids on the item, and

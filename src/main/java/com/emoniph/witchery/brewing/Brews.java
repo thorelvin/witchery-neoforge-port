@@ -2235,7 +2235,7 @@ public final class Brews {
 
     public static boolean shouldSpreadDebuff(Holder<MobEffect> effect, int amplifier, boolean curable, int strength) {
         return effect.value().getCategory() == MobEffectCategory.HARMFUL
-                && curable
+                && isSourceCurableEffect(effect, curable)
                 && amplifier <= Math.max(strength - 1, 1);
     }
 
@@ -2657,7 +2657,7 @@ public final class Brews {
     public static boolean shouldRemoveBuff(Holder<MobEffect> effect, int amplifier, boolean curable, int strength) {
         return amplifier <= strength
                 && effect.value().getCategory() != MobEffectCategory.HARMFUL
-                && curable;
+                && isSourceCurableEffect(effect, curable);
     }
 
     public static boolean shouldRemoveDebuff(MobEffectInstance effect, int strength) {
@@ -2670,7 +2670,25 @@ public final class Brews {
         }
         return amplifier <= strength
                 && effect.value().getCategory() == MobEffectCategory.HARMFUL
-                && curable;
+                && isSourceCurableEffect(effect, curable);
+    }
+
+    public static boolean isSourceCurableEffect(Holder<MobEffect> effect, boolean modernCurable) {
+        return modernCurable && !isSourceIncurableEffect(effect);
+    }
+
+    public static boolean isSourceIncurableEffect(Holder<MobEffect> effect) {
+        return effect.is(WitcheryMobEffects.MOONSHINE)
+                || effect.is(WitcheryMobEffects.STOUT_BELLY)
+                || effect.is(WitcheryMobEffects.GAS_MASK)
+                || effect.is(WitcheryMobEffects.SUN_ALLERGY)
+                || effect.is(WitcheryMobEffects.PARALYSED)
+                || effect.is(WitcheryMobEffects.QUEASY)
+                || effect.is(WitcheryMobEffects.DISEASED)
+                || effect.is(WitcheryMobEffects.MORTAL_COIL)
+                || effect.is(WitcheryMobEffects.SINKING)
+                || effect.is(WitcheryMobEffects.INSANITY)
+                || effect.is(WitcheryMobEffects.OVERHEATING);
     }
 
     public static boolean sourcePurifiedMilkClearsDisease(int strength) {
