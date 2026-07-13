@@ -208,11 +208,14 @@ public class WitcheryItems {
     // harvested ingredient item they produce.
     public static final DeferredItem<Item> BELLADONNA = ITEMS.registerSimpleItem("belladonna");
     public static final DeferredItem<Item> BELLADONNA_SEEDS = ITEMS.register("belladonna_seeds", id -> new BlockItem(WitcheryBlocks.BELLADONNA.get(), itemProps(id)));
+    public static final DeferredItem<Item> STALE_BELLADONNA_SEEDS = ITEMS.registerSimpleItem("stale_belladonna_seeds");
     public static final DeferredItem<Item> MANDRAKE_ROOT = ITEMS.registerSimpleItem("mandrake_root");
     public static final DeferredItem<Item> MANDRAKE_SEEDS = ITEMS.register("mandrake_seeds", id -> new BlockItem(WitcheryBlocks.MANDRAKE.get(), itemProps(id)));
+    public static final DeferredItem<Item> STALE_MANDRAKE_SEEDS = ITEMS.registerSimpleItem("stale_mandrake_seeds");
     public static final DeferredItem<Item> MINDRAKE_BULB = ITEMS.register("mindrakebulb", id -> new BlockItem(WitcheryBlocks.MINDRAKE.get(), itemProps(id)));
     public static final DeferredItem<Item> ARTICHOKE = ITEMS.registerSimpleItem("artichoke");
     public static final DeferredItem<Item> ARTICHOKE_SEEDS = ITEMS.register("artichoke_seeds", id -> new ArtichokeSeedItem(itemProps(id)));
+    public static final DeferredItem<Item> STALE_ARTICHOKE_SEEDS = ITEMS.registerSimpleItem("stale_artichoke_seeds");
     public static final DeferredItem<Item> SNOWBELL_SEEDS = ITEMS.register("snowbell_seeds", id -> new BlockItem(WitcheryBlocks.SNOWBELL.get(), itemProps(id)));
     public static final DeferredItem<Item>      GARLIC         = ITEMS.register("garlic",         id -> new BlockItem(WitcheryBlocks.GARLIC_CROP.get(), itemProps(id)));
     public static final DeferredItem<BlockItem> GARLIC_GARLAND = ITEMS.registerSimpleBlockItem(WitcheryBlocks.GARLIC_GARLAND);

@@ -35,7 +35,7 @@ That makes the port feel fuller and easier to browse in a modern pack, but it al
 | Circle Talisman | Creative subitems are metas `0,1,2,3,8,16,24,64,128,192`. | Port now exposes the same source-visible encoded stacks, with names and icons driven by the stored circle data. | Patched through the real talisman item data, not alias items. |
 | Spectral Stone | Creative subitems are metas `0,17,18,19`. | Port now exposes the same source-visible blank, Spectre, Banshee, and Poltergeist stacks. | Patched through the real binding data used by the rite/release behavior. |
 | Leonard's Urn | Creative subitems are metas `0..3`. | Port now exposes capacity 1-4 urn stacks and chooses the matching source urn icon from capacity data. | The modern storage behavior remains. |
-| Stale seeds | Old names include stale Belladonna, Mandrake, and Water Artichoke seeds. | Port has practical plantable seeds, not the stale metadata entries. | Likely missing as creative-visible legacy variants unless intentionally dropped. |
+| Stale seeds | 1.7.10 English lang exposes `ingredient` metadata names for Stale Belladonna Seeds, Stale Mandrake Seeds, and Stale Water Artichoke Seeds, distinct from the plantable `seeds...` items. | Port now exposes `stale_belladonna_seeds`, `stale_mandrake_seeds`, and `stale_artichoke_seeds` as non-plantable creative-visible legacy ingredient entries beside the real plantable seeds. | Patched as source-named compatibility items using the old seed sprites; no planting behavior was added because source usage points to the separate plantable seed items. |
 | Decurse statues | `Statue of Occluded Summons` (`decurseteleport`) and `Statue of Broken Curses` (`decursedirected`) are source `BlockAreaMarker` variants. | Port now exposes both exact block IDs in the Witchery tab, persists owner/killer data, and dampens taglock entity transposition or directed curse rites in the configured 32-block horizontal radius. | Functional parity slice is live; static stone-marker models stand in for the old mandrake/wolf special renderers pending visual QA. |
 | Brambles | Old visible names include `Wild Bramble`, while the stronger owner/null-source plant is `Void Bramble`. | Port now names the damage/spread block `Wild Bramble` and keeps the owner/null-source block `Void Bramble`. | The old metadata `Ender Bramble` remains represented mechanically by the current `Void Bramble` path rather than a second visible stack. |
 | Debug items | Not source creative items. | `Debug Death Ward` and `Debug Inspector` are visible in the Witchery tab. | Useful for QA, but they are extras in player-facing parity. |
@@ -83,7 +83,7 @@ These should be decided by style policy. Some are probable old typos, some are s
 2. Hide debug items from the normal player-facing tab, or gate them behind a config/operator-only debug path.
 3. Decide whether spawn eggs belong in the main Witchery tab or a separate/debug/entity section.
 4. Add source-visible creative variant stacks for any remaining metadata-backed legacy items that still collapse to one stack.
-5. Review stale seed variants against source behavior before implementing.
+5. Continue reviewing metadata-backed legacy variants that still collapse to one modern stack.
 6. Continue applying source-facing display names when the old English name is clear; keep modern registry IDs stable and add compatibility aliases where needed.
 
 ## Patch Made During This Audit
