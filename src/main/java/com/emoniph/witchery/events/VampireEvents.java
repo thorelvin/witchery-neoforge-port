@@ -7,7 +7,9 @@ import com.emoniph.witchery.entity.AttackBatEntity;
 import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.level.Level;
 import com.emoniph.witchery.item.VampireClothingUtil;
@@ -308,10 +310,22 @@ public class VampireEvents {
         tryFillNearbyBloodCrucible(vampire);
         PacketDistributor.sendToPlayer(vampire, SyncPlayerDataPayload.from(vampire, data));
 
-        vampire.level().playSound(null, vampire.blockPosition(),
-                SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 0.6f, 0.5f);
+        playBloodDrinkFeedback(vampire, target);
         vampire.displayClientMessage(Component.translatable("witchery.vampire.bite.success",
                 target.getName(), gained, data.getBloodLevel()), false);
+    }
+
+    private static void playBloodDrinkFeedback(ServerPlayer vampire, LivingEntity target) {
+        if (!(vampire.level() instanceof ServerLevel level)) {
+            return;
+        }
+        double y = target.getY() + target.getBbHeight() * 0.8D;
+        level.playSound(null, target.getX(), y, target.getZ(), WitcherySoundEvents.RANDOM_DRINK.get(),
+                SoundSource.PLAYERS, 0.5F, 1.0F);
+        level.sendParticles(DustParticleOptions.REDSTONE,
+                target.getX(), y, target.getZ(),
+                10, target.getBbWidth() * 0.35D, target.getBbHeight() * 0.1D,
+                target.getBbWidth() * 0.35D, 0.0D);
     }
 
     private static int drainBloodFromTarget(ServerPlayer vampire, LivingEntity target) {

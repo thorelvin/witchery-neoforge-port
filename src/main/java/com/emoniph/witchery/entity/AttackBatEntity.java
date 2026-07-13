@@ -1,10 +1,10 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.brewing.Brews;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -125,8 +125,8 @@ public class AttackBatEntity extends Bat {
                 serverLevel.sendParticles(new DustParticleOptions(0x4A0010, 1.0F),
                         target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ(),
                         12, target.getBbWidth(), target.getBbHeight() * 0.35D, target.getBbWidth(), 0.0D);
-                serverLevel.playSound(null, target.blockPosition(), SoundEvents.WITCH_DRINK,
-                        SoundSource.HOSTILE, 0.35F, 1.2F);
+                serverLevel.playSound(null, target.blockPosition(), WitcherySoundEvents.RANDOM_DRINK.get(),
+                        SoundSource.HOSTILE, 0.5F, 1.0F);
             }
             discard();
             return;

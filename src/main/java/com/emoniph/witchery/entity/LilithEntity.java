@@ -6,6 +6,7 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.item.GlassGobletItem;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -315,6 +316,13 @@ public class LilithEntity extends Monster implements RangedAttackMob {
             serverPlayer.displayClientMessage(
                     Component.translatable("entity.witchery.lilith.quest.vampire_blood"), false);
             player.setItemInHand(hand, GlassGobletItem.withLilithBlood());
+            ServerLevel serverLevel = (ServerLevel) level();
+            serverLevel.playSound(null, player.getX(), player.getY() + player.getBbHeight() * 0.85D,
+                    player.getZ(), WitcherySoundEvents.RANDOM_DRINK.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
+            serverLevel.sendParticles(DustParticleOptions.REDSTONE,
+                    player.getX(), player.getY() + player.getBbHeight() * 0.85D, player.getZ(),
+                    10, player.getBbWidth() * 0.4D, player.getBbHeight() * 0.2D,
+                    player.getBbWidth() * 0.4D, 0.0D);
             vanish();
             return InteractionResult.SUCCESS_SERVER;
         }

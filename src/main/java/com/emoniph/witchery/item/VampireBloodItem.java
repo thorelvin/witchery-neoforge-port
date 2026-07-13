@@ -2,11 +2,11 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -95,7 +95,7 @@ public class VampireBloodItem extends Item {
     }
 
     private static void playDrink(ServerPlayer player) {
-        player.level().playSound(null, player.blockPosition(), SoundEvents.GENERIC_DRINK.value(),
-                SoundSource.PLAYERS, 0.5F, player.getRandom().nextFloat() * 0.1F + 0.9F);
+        player.level().playSound(null, player.blockPosition(), WitcherySoundEvents.RANDOM_DRINK.get(),
+                SoundSource.PLAYERS, 0.5F, 1.0F);
     }
 }

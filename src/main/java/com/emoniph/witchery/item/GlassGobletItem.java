@@ -7,6 +7,7 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -184,9 +185,7 @@ public class GlassGobletItem extends Item {
         if (spentPower) {
             PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
         }
-        level.playSound(null, player.getX(), player.getY() + player.getBbHeight() * 0.85D, player.getZ(),
-                SoundEvents.GENERIC_DRINK.value(), SoundSource.PLAYERS, 0.5F,
-                level.random.nextFloat() * 0.1F + 0.9F);
+        playBloodDrink(level, player.getX(), player.getY() + player.getBbHeight() * 0.85D, player.getZ(), 0.5F);
         level.sendParticles(DustParticleOptions.REDSTONE, player.getX(), player.getY() + player.getBbHeight() * 0.85D,
                 player.getZ(), 8, player.getBbWidth() * 0.35D, player.getBbHeight() * 0.15D,
                 player.getBbWidth() * 0.35D, 0.0D);
@@ -200,8 +199,7 @@ public class GlassGobletItem extends Item {
             return stack;
         }
         if (hasChickenBlood(stack)) {
-            level.playSound(null, player.blockPosition(), SoundEvents.GENERIC_DRINK.value(), SoundSource.PLAYERS,
-                    0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+            playBurp(level, player);
             return new ItemStack(WitcheryItems.GLASS_GOBLET.get());
         }
 
@@ -225,8 +223,7 @@ public class GlassGobletItem extends Item {
                     .withStyle(ChatFormatting.DARK_RED), false);
         }
 
-        level.playSound(null, player.blockPosition(), SoundEvents.GENERIC_DRINK.value(), SoundSource.PLAYERS,
-                0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+        playBurp(level, player);
         return new ItemStack(WitcheryItems.GLASS_GOBLET.get());
     }
 
@@ -245,12 +242,10 @@ public class GlassGobletItem extends Item {
             if (isCreaturesOfNightRitual(level, scan)) {
                 player.getInventory().setItem(gobletSlot, withBloodOwner(new ItemStack(WitcheryItems.FULL_GLASS_GOBLET.get()), victim, true));
                 player.getInventory().setChanged();
-                level.playSound(null, victim.getX(), victim.getY() + victim.getBbHeight() * 0.85D, victim.getZ(),
-                        SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 0.5F,
-                        0.4F / (level.random.nextFloat() * 0.4F + 0.8F));
-                level.sendParticles(ParticleTypes.DAMAGE_INDICATOR, victim.getX(), victim.getY() + victim.getBbHeight() * 0.85D,
+                playBloodDrink(level, victim.getX(), victim.getY() + victim.getBbHeight() * 0.85D, victim.getZ(), 0.5F);
+                level.sendParticles(DustParticleOptions.REDSTONE, victim.getX(), victim.getY() + victim.getBbHeight() * 0.85D,
                         victim.getZ(), 8, victim.getBbWidth() * 0.35D, victim.getBbHeight() * 0.15D,
-                        victim.getBbWidth() * 0.35D, 0.02D);
+                        victim.getBbWidth() * 0.35D, 0.0D);
                 return;
             }
         }
@@ -289,8 +284,7 @@ public class GlassGobletItem extends Item {
             return false;
         }
         maybeAdvanceVampireConversionOwner(stack, level, player);
-        level.playSound(null, target.blockPosition(), SoundEvents.GENERIC_DRINK.value(), SoundSource.PLAYERS, 0.5F,
-                level.random.nextFloat() * 0.1F + 0.9F);
+        playBloodDrink(level, target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ(), 0.5F);
         level.sendParticles(DustParticleOptions.REDSTONE,
                 target.getX(),
                 target.getY() + target.getBbHeight() * 0.5D,
@@ -439,5 +433,14 @@ public class GlassGobletItem extends Item {
         player.displayClientMessage(Component.translatable(translationKey).withStyle(ChatFormatting.RED), true);
         player.level().playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_SNARE.value(),
                 SoundSource.PLAYERS, 0.5F, 0.5F);
+    }
+
+    private static void playBloodDrink(ServerLevel level, double x, double y, double z, float volume) {
+        level.playSound(null, x, y, z, WitcherySoundEvents.RANDOM_DRINK.get(), SoundSource.PLAYERS, volume, 1.0F);
+    }
+
+    private static void playBurp(ServerLevel level, ServerPlayer player) {
+        level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS,
+                0.5F, level.random.nextFloat() * 0.1F + 0.9F);
     }
 }

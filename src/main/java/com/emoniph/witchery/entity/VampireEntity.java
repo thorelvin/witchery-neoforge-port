@@ -5,8 +5,11 @@ import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -187,11 +190,11 @@ public class VampireEntity extends Monster {
             if (random.nextInt(10) == 0) {
                 damageDone += 4.0F;
                 heal(4.0F);
-                // Red dust particles at villager
-                level.sendParticles(ParticleTypes.DAMAGE_INDICATOR,
+                level.sendParticles(DustParticleOptions.REDSTONE,
                         villager.getX(), villager.getY() + villager.getBbHeight() * 0.8, villager.getZ(),
-                        6, 0.3, 0.2, 0.3, 0.02);
-                playSound(SoundEvents.PLAYER_HURT, 0.6f, 1.2f);
+                        8, 0.3, 0.2, 0.3, 0.0D);
+                level.playSound(null, villager.getX(), villager.getY() + villager.getBbHeight() * 0.8D,
+                        villager.getZ(), WitcherySoundEvents.RANDOM_DRINK.get(), SoundSource.HOSTILE, 0.5F, 1.0F);
             }
             // Still register the attack
             return villager.hurtServer(level, damageSources().mobAttack(this), (float) getAttributeValue(Attributes.ATTACK_DAMAGE));
