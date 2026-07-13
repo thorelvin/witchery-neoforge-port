@@ -2,6 +2,7 @@ package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.item.DemonicContractItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -12,6 +13,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -262,7 +264,7 @@ public class FlameImpEntity extends Monster {
     }
 
     private InteractionResult castSpellContract(ServerPlayer player, ItemStack stack) {
-        playSound(SoundEvents.BLAZE_AMBIENT, 0.5F, getVoicePitch());
+        playSound(WitcherySoundEvents.MOB_IMP_LAUGH.get(), 0.5F, getVoicePitch());
         if (!DemonicContractItem.isBound(stack)) {
             player.displayClientMessage(Component.translatable("entity.witchery.flame_imp.contract.unsigned", getDisplayName())
                     .withStyle(s -> s.withColor(0xAA0000)), false);
@@ -363,6 +365,38 @@ public class FlameImpEntity extends Monster {
 
     @Override
     public boolean removeWhenFarAway(double dist) { return !isOwned(); }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return WitcherySoundEvents.MOB_IMP_LAUGH.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return WitcherySoundEvents.MOB_IMP_HIT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return WitcherySoundEvents.MOB_IMP_DEATH.get();
+    }
+
+    @Override
+    public float getVoicePitch() {
+        return isPowered()
+                ? (random.nextFloat() - random.nextFloat()) * 0.2F + 0.7F
+                : (random.nextFloat() - random.nextFloat()) * 0.2F + 1.1F;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 0.5F;
+    }
+
+    @Override
+    public int getAmbientSoundInterval() {
+        return 20 * 40;
+    }
 
     // ── NBT ───────────────────────────────────────────────────────────────────
 

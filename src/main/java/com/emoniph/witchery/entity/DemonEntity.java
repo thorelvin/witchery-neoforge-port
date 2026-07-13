@@ -2,6 +2,7 @@ package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryItems;
 import com.mojang.serialization.Dynamic;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -36,6 +37,7 @@ import net.minecraft.world.item.trading.Merchant;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
@@ -147,7 +149,7 @@ public class DemonEntity extends Monster implements RangedAttackMob, Merchant {
         LargeFireball fireball = new LargeFireball(level(), this, shot, 1);
         fireball.setPos(getX() + look.x, getY() + getBbHeight() / 2.0 + 0.5, getZ() + look.z);
         level().addFreshEntity(fireball);
-        level().playSound(null, blockPosition(), SoundEvents.BLAZE_SHOOT,
+        level().playSound(null, blockPosition(), SoundEvents.GHAST_SHOOT,
                 net.minecraft.sounds.SoundSource.HOSTILE, 1f, 1f);
     }
 
@@ -426,6 +428,11 @@ public class DemonEntity extends Monster implements RangedAttackMob, Merchant {
     }
 
     @Override protected SoundEvent getAmbientSound() { return SoundEvents.BLAZE_AMBIENT; }
-    @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.BLAZE_HURT; }
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.BLAZE_DEATH; }
+    @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.WITHER_HURT; }
+    @Override protected SoundEvent getDeathSound() { return SoundEvents.WITHER_DEATH; }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        playSound(SoundEvents.IRON_GOLEM_STEP, 1.0F, 1.0F);
+    }
 }

@@ -166,7 +166,8 @@ enough to read before starting work. Long historical deltas belong in
   trap state sync, cursed warning cooldowns, Leonard's Urn focus release and
   capacity upgrades, Witches Hand Otherwhere cooldown/feedback, Duplication
   Grenade mirror charging, Book of Biomes climate page stats,
-  Wolftrap lured-wolf steering/capture feedback, Wolfman source sounds,
+  Wolftrap lured-wolf steering/capture feedback, Wolfman and Flame Imp source
+  sounds, Demon source vanilla sound mix,
   Parasytic Louse payload cues,
   Sun Collector/Sun Grenade feedback, and compass scrying cues. Manual QA still
   needs eyes on the Death Hand pose and in-world atmosphere feel.

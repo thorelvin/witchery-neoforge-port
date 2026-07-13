@@ -148,6 +148,12 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Spawn a Wolfman with `/witchery spawn wolfman`; confirm idle audio uses the
   old low talk with rare howls, and hurt/death sounds are no longer zombie
   placeholders.
+- Spawn a Flame Imp with `/witchery spawn flame_imp`; confirm idle/cast audio
+  uses the old imp laugh at low volume, with slower/lower powered pitch, and
+  hurt/death use the old imp hit/death sounds. Spawn a Demon with
+  `/witchery spawn demon`; confirm ambient remains Blaze-like, but hurt/death
+  read as Wither-like, fireballs use the Ghast launch cue, and footsteps use
+  the Iron Golem step cue.
 - Place and inspect Rowan, Alder, and Hawthorn leaves. Blocks and inventory
   items should read as green foliage from one combined texture, with Rowan
   berries red, Alder catkins yellow, and Hawthorn blossoms pale instead of

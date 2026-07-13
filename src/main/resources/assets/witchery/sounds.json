@@ -94,6 +94,21 @@
       "witchery:mob/wolfman/death"
     ]
   },
+  "mob.imp.laugh": {
+    "sounds": [
+      "witchery:mob/imp/laugh"
+    ]
+  },
+  "mob.imp.hit": {
+    "sounds": [
+      "witchery:mob/imp/hit"
+    ]
+  },
+  "mob.imp.death": {
+    "sounds": [
+      "witchery:mob/imp/death"
+    ]
+  },
   "random.heartbeat": {
     "sounds": [
       "witchery:random/heartbeat1"
