@@ -163,7 +163,8 @@ enough to read before starting work. Long historical deltas belong in
   fog, Death's Hand held-side rendering plus hit/toggle cues, Mystic Branch
   cast/fail feedback, Crystal Ball scry validation before altar-power charge,
   brew bucket gas/liquid tooltip feedback, Dream Weaver placement/wake cues,
-  trap state sync, cursed warning cooldowns, Leonard's Urn focus release and
+  trap state sync, Beartrap/Wolftrap toggles/snaps through the old
+  `random.click` / `random.mantrap` cues, cursed warning cooldowns, Leonard's Urn focus release and
   capacity upgrades, Witches Hand Otherwhere cooldown/feedback, Duplication
   Grenade mirror charging, Book of Biomes climate page stats,
   Wolftrap lured-wolf steering/capture feedback, Wolfman, Flame Imp, Baba Yaga,

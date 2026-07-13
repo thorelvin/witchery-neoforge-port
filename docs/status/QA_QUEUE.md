@@ -184,6 +184,10 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   Mark with `witchery:dark_mark_spawn_egg`; confirm the Lord uses the old
   Torment laugh/hit/death clips with a roughly 10-second idle cadence, while
   Dark Mark uses the distant Torment laugh and has no hurt/death sound.
+- Place a Beartrap and Wolftrap, open/close them by hand, then spring each with
+  an appropriate target. Toggling should use the old `random.click` cue, and
+  snapping shut should use the old `random.mantrap` cue rather than the
+  compatibility `block.bear_trap.*` event names.
 - Place and inspect Rowan, Alder, and Hawthorn leaves. Blocks and inventory
   items should read as green foliage from one combined texture, with Rowan
   berries red, Alder catkins yellow, and Hawthorn blossoms pale instead of

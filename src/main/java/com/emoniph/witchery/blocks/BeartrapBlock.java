@@ -149,7 +149,7 @@ public class BeartrapBlock extends BaseEntityBlock {
             living.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 600, 2, true, true));
         }
         living.hurt(level.damageSources().fellOutOfWorld(), 4.0F);
-        level.playSound(null, pos, WitcherySoundEvents.BLOCK_BEAR_TRAP_MANTRAP.get(),
+        level.playSound(null, pos, WitcherySoundEvents.RANDOM_MANTRAP.get(),
                 SoundSource.BLOCKS, 0.5F, soundPitch(level.getRandom()));
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(DustParticleOptions.REDSTONE,
@@ -172,7 +172,7 @@ public class BeartrapBlock extends BaseEntityBlock {
             if (level.getBlockEntity(pos) instanceof BeartrapBlockEntity trap) {
                 trap.setSourceClosed(closing);
             }
-            level.playSound(null, pos, WitcherySoundEvents.BLOCK_BEAR_TRAP_CLICK.get(),
+            level.playSound(null, pos, WitcherySoundEvents.RANDOM_CLICK.get(),
                     SoundSource.BLOCKS, 0.5F, soundPitch(level.getRandom()));
             if (!closing) {
                 level.scheduleTick(pos, this, ARM_DELAY_TICKS);
