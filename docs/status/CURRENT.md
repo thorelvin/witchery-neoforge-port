@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-07-11
+Last curated: 2026-07-13
 
 This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -166,7 +166,8 @@ enough to read before starting work. Long historical deltas belong in
   trap state sync, cursed warning cooldowns, Leonard's Urn focus release and
   capacity upgrades, Witches Hand Otherwhere cooldown/feedback, Duplication
   Grenade mirror charging, Book of Biomes climate page stats,
-  Wolftrap lured-wolf steering/capture feedback, Parasytic Louse payload cues,
+  Wolftrap lured-wolf steering/capture feedback, Wolfman source sounds,
+  Parasytic Louse payload cues,
   Sun Collector/Sun Grenade feedback, and compass scrying cues. Manual QA still
   needs eyes on the Death Hand pose and in-world atmosphere feel.
 - A first Witch's Triangle scanner slice is now live: a rowan-framed wooden

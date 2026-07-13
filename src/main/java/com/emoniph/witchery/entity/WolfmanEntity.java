@@ -4,10 +4,10 @@ import com.emoniph.witchery.events.SilverEvents;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -165,12 +165,18 @@ public class WolfmanEntity extends Monster {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        // Wolf variant sounds have no simple static field in 1.21; use zombie as placeholder
-        return SoundEvents.ZOMBIE_AMBIENT;
+        return random.nextInt(20) == 0
+                ? WitcherySoundEvents.MOB_WOLFMAN_HOWL.get()
+                : WitcherySoundEvents.MOB_WOLFMAN_SAY.get();
     }
 
-    @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.ZOMBIE_HURT; }
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.ZOMBIE_DEATH; }
+    @Override
+    public int getAmbientSoundInterval() {
+        return super.getAmbientSoundInterval() * 4;
+    }
+
+    @Override protected SoundEvent getHurtSound(DamageSource src) { return WitcherySoundEvents.MOB_WOLFMAN_HIT.get(); }
+    @Override protected SoundEvent getDeathSound() { return WitcherySoundEvents.MOB_WOLFMAN_DEATH.get(); }
 
     // ── NBT ───────────────────────────────────────────────────────────────────
 

@@ -63,6 +63,37 @@
       "witchery:entity/leonard/death"
     ]
   },
+  "mob.wolfman.howl": {
+    "sounds": [
+      "witchery:mob/wolfman/howl"
+    ]
+  },
+  "mob.wolfman.eat": {
+    "sounds": [
+      "witchery:mob/wolfman/eat"
+    ]
+  },
+  "mob.wolfman.lord": {
+    "sounds": [
+      "witchery:mob/wolfman/lord"
+    ]
+  },
+  "mob.wolfman.say": {
+    "sounds": [
+      "witchery:mob/wolfman/say1",
+      "witchery:mob/wolfman/say2"
+    ]
+  },
+  "mob.wolfman.hit": {
+    "sounds": [
+      "witchery:mob/wolfman/hit"
+    ]
+  },
+  "mob.wolfman.death": {
+    "sounds": [
+      "witchery:mob/wolfman/death"
+    ]
+  },
   "random.heartbeat": {
     "sounds": [
       "witchery:random/heartbeat1"

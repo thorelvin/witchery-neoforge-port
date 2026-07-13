@@ -1,6 +1,6 @@
 # QA Queue
 
-Last curated: 2026-07-04
+Last curated: 2026-07-13
 
 This is the active in-game QA queue. It replaces scattered new QA notes in
 the archived parity/fixes/ritual QA notes under `docs/archive/status/` and small
@@ -145,6 +145,9 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   hidden: Pit Dirt, Pit Grass, duplicate Koboldite Pentacle, Witches' Shoes, and
   the unfinished Hobgoblin Patron statue should not appear as normal player
   picks.
+- Spawn a Wolfman with `/witchery spawn wolfman`; confirm idle audio uses the
+  old low talk with rare howls, and hurt/death sounds are no longer zombie
+  placeholders.
 - Place and inspect Rowan, Alder, and Hawthorn leaves. Blocks and inventory
   items should read as green foliage from one combined texture, with Rowan
   berries red, Alder catkins yellow, and Hawthorn blossoms pale instead of
