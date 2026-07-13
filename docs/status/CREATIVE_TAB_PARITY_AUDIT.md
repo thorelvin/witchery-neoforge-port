@@ -18,9 +18,9 @@ Date: 2026-07-13
 
 ## Summary
 
-The screenshots show roughly 313 visible original Witchery creative/search entries. The port currently exposes 473 entries in the Witchery tab.
+The screenshots show roughly 313 visible original Witchery creative/search entries. The port currently exposes roughly 438 entries in the main Witchery tab, plus 36 spawn eggs in a separate Witchery Spawn Eggs tab.
 
-The port is not source-order parity. It is a curated modern tab, grouped by guidebooks, wood/trees, plants, machines, ritual/world blocks, tools, poppets/scrying, ingredients/alchemy, vampire/werewolf items, weapons/armor, brews/infusions, dreams/demons/contracts, legacy/debug entries, and spawn eggs.
+The port is not source-order parity. It is a curated modern tab, grouped by guidebooks, wood/trees, plants, machines, ritual/world blocks, tools, poppets/scrying, ingredients/alchemy, vampire/werewolf items, weapons/armor, brews/infusions, and dreams/demons/contracts. Empty legacy placeholder slots and debug-only QA items are not emitted into the normal tab, and spawn eggs live in their own tab.
 
 That makes the port feel fuller and easier to browse in a modern pack, but it also means screenshot-by-screenshot parity checks will report many order differences and some deliberate extras.
 
@@ -29,7 +29,7 @@ That makes the port feel fuller and easier to browse in a modern pack, but it al
 | Area | Original 1.7.10 behavior | Port behavior | Notes |
 |---|---|---|---|
 | Overall order | Screenshots begin with the large `ItemGeneral` metadata sequence: Candelabra, Chalice, Dream Weavers, waystones, etc. | Starts with guidebooks and then modern category groups. | This is the biggest visual mismatch. Decide whether exact source order or curated modern order is the target. |
-| Total visible entries | About 313 visible entries across the screenshots. | 473 entries in the port tab. | Port includes modern extras and split-out variants. |
+| Total visible entries | About 313 visible entries across the screenshots. | Roughly 438 entries in the main port tab, plus 36 entries in the separate Witchery Spawn Eggs tab. | Main tab still includes modern extras and split-out variants, but debug helpers and spawn eggs no longer inflate the player-facing item run. |
 | Plant mines | Metadata order is webs, ink, sprouting, thorns for each disguise, with vanilla flower/shrub disguise icons. | Port now emits source order and renders inventory stacks by disguise: poppy, dandelion, or dead bush. | Patched without changing enum serialization. The old standalone alias items remain registered but no longer clutter the creative tab. |
 | Stockades | Normal stockade exposes 9 wood variants: Oak, Spruce, Birch, Jungle, Rowan, Alder, Hawthorn, Acacia, Dark Oak. Ice stockade exposes one variant. | Port now exposes the same nine `witchery:stockade` block-state stacks plus `ice_stockade`. | Patched through a `wood` block-state/component design on the real stockade item, with variant-aware names, models, drops, and recipes. |
 | Circle Talisman | Creative subitems are metas `0,1,2,3,8,16,24,64,128,192`. | Port now exposes the same source-visible encoded stacks, with names and icons driven by the stored circle data. | Patched through the real talisman item data, not alias items. |
@@ -39,7 +39,7 @@ That makes the port feel fuller and easier to browse in a modern pack, but it al
 | Decurse statues | `Statue of Occluded Summons` (`decurseteleport`) and `Statue of Broken Curses` (`decursedirected`) are source `BlockAreaMarker` variants. | Port now exposes both exact block IDs in the Witchery tab, persists owner/killer data, and dampens taglock entity transposition or directed curse rites in the configured 32-block horizontal radius. | Functional parity slice is live; static stone-marker models stand in for the old mandrake/wolf special renderers pending visual QA. |
 | Brambles | Old visible names include `Wild Bramble`, while the stronger owner/null-source plant is `Void Bramble`. | Port now names the damage/spread block `Wild Bramble` and keeps the owner/null-source block `Void Bramble`. | The old metadata `Ender Bramble` remains represented mechanically by the current `Void Bramble` path rather than a second visible stack. |
 | Debug items | Not source creative items. | `Debug Death Ward` and `Debug Inspector` remain registered and `/give`-able for QA, but are no longer emitted into the normal Witchery creative tab. | Patched as command-only QA helpers so the player-facing tab stops carrying non-source debug clutter. |
-| Spawn eggs | Not shown in the provided original screenshots. | 36 Witchery spawn eggs are in the tab. | Modern convention, but screenshot parity sees them as extras. |
+| Spawn eggs | Not shown in the provided original screenshots. | 36 Witchery spawn eggs are now grouped in the separate `Witchery Spawn Eggs` creative tab instead of the main Witchery tab. | Keeps modern creative access without making the source-facing item tab look like the screenshot comparison has 36 extra items. |
 
 ## Name Mismatches To Review
 
@@ -80,10 +80,9 @@ These should be decided by style policy. Some are probable old typos, some are s
 ## Recommended Follow-Ups
 
 1. Decide the creative tab target: exact source-order parity, modern curated tab, or two tabs/modes.
-2. Decide whether spawn eggs belong in the main Witchery tab or a separate/debug/entity section.
-3. Add source-visible creative variant stacks for any remaining metadata-backed legacy items that still collapse to one stack.
-4. Continue reviewing metadata-backed legacy variants that still collapse to one modern stack.
-5. Continue applying source-facing display names when the old English name is clear; keep modern registry IDs stable and add compatibility aliases where needed.
+2. Add source-visible creative variant stacks for any remaining metadata-backed legacy items that still collapse to one stack.
+3. Continue reviewing metadata-backed legacy variants that still collapse to one modern stack.
+4. Continue applying source-facing display names when the old English name is clear; keep modern registry IDs stable and add compatibility aliases where needed.
 
 ## Patch Made During This Audit
 

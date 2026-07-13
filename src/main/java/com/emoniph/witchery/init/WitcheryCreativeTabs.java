@@ -41,9 +41,16 @@ public class WitcheryCreativeTabs {
                         addBrewsAndInfusions(output);
                         addDreamsDemonsAndContracts(output);
                         addLegacyPlaceholders(output);
-                        addSpawnEggs(output);
                     })
                     .build());
+
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> WITCHERY_SPAWN_EGGS_TAB =
+            TABS.register("witchery_spawn_eggs_tab", () ->
+                    CreativeModeTab.builder()
+                            .title(Component.translatable("itemGroup.witchery.spawn_eggs"))
+                            .icon(() -> WitcheryItems.COVEN_WITCH_SPAWN_EGG.get().getDefaultInstance())
+                            .displayItems((params, output) -> addSpawnEggs(output))
+                            .build());
 
     private static void addGuide(CreativeModeTab.Output output) {
         add(output,
