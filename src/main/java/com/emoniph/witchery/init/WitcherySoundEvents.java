@@ -33,6 +33,8 @@ public final class WitcherySoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> MOB_IMP_LAUGH = register("mob.imp.laugh");
     public static final DeferredHolder<SoundEvent, SoundEvent> MOB_IMP_HIT = register("mob.imp.hit");
     public static final DeferredHolder<SoundEvent, SoundEvent> MOB_IMP_DEATH = register("mob.imp.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_BABA_LIVING = register("mob.baba.baba_living");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOB_BABA_DEATH = register("mob.baba.baba_death");
     public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_HEARTBEAT = register("random.heartbeat");
     public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_HORN = register("random.horn");
     public static final DeferredHolder<SoundEvent, SoundEvent> RANDOM_SWORD_DRAW = register("random.sworddraw");

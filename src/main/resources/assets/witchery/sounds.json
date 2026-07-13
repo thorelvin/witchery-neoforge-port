@@ -109,6 +109,16 @@
       "witchery:mob/imp/death"
     ]
   },
+  "mob.baba.baba_living": {
+    "sounds": [
+      "witchery:mob/baba/baba_living1"
+    ]
+  },
+  "mob.baba.baba_death": {
+    "sounds": [
+      "witchery:mob/baba/baba_death"
+    ]
+  },
   "random.heartbeat": {
     "sounds": [
       "witchery:random/heartbeat1"

@@ -154,6 +154,9 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   `/witchery spawn demon`; confirm ambient remains Blaze-like, but hurt/death
   read as Wither-like, fireballs use the Ghast launch cue, and footsteps use
   the Iron Golem step cue.
+- Spawn Baba Yaga with `/witchery spawn baba_yaga`; confirm ambient uses the
+  old Baba living voice, hurt remains Witch-like, and death uses the old Baba
+  death sound.
 - Place and inspect Rowan, Alder, and Hawthorn leaves. Blocks and inventory
   items should read as green foliage from one combined texture, with Rowan
   berries red, Alder catkins yellow, and Hawthorn blossoms pale instead of

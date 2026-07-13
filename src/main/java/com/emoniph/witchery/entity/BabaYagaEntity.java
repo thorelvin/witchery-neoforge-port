@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.ai.NpcBrainService;
 import com.emoniph.witchery.ai.NpcPersonas;
 import net.minecraft.core.component.DataComponents;
@@ -526,9 +527,9 @@ public class BabaYagaEntity extends Monster implements RangedAttackMob {
 
     // ── Sounds ────────────────────────────────────────────────────────────────
 
-    @Override protected SoundEvent getAmbientSound() { return SoundEvents.WITCH_AMBIENT; }
+    @Override protected SoundEvent getAmbientSound() { return WitcherySoundEvents.MOB_BABA_LIVING.get(); }
     @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.WITCH_HURT; }
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.WITCH_DEATH; }
+    @Override protected SoundEvent getDeathSound() { return WitcherySoundEvents.MOB_BABA_DEATH.get(); }
 
     // ── Client events — witch magic particles ─────────────────────────────────
 
