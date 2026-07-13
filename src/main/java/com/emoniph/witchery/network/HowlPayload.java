@@ -5,6 +5,7 @@ import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryMobEffects;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.item.WerewolfShiftUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,7 +16,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -48,8 +48,9 @@ public class HowlPayload implements CustomPacketPayload {
 
         ServerLevel level = ((net.minecraft.server.level.ServerLevel) player.level());
 
-        // Howl sound heard up to 64 blocks away
-        level.playSound(null, player.blockPosition(), SoundEvents.WOLF_SHAKE, SoundSource.PLAYERS, 2f, 0.8f);
+        // Source Shapeshift.checkForHowling uses the Wolfman howl clip for both wolf and wolfman forms.
+        level.playSound(null, player.blockPosition(), WitcherySoundEvents.MOB_WOLFMAN_HOWL.get(),
+                SoundSource.PLAYERS, 1.0F, 1.0F);
 
         int wolfLevel = data.getWerewolfLevel();
         if (WerewolfShiftUtil.inWolfmanForm(data) && wolfLevel >= 7) {

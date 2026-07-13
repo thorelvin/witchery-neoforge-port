@@ -5,13 +5,18 @@ import com.emoniph.witchery.data.WitcheryPlayerData.WolfQuestState;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.blocks.entity.WolfAltarBlockEntity;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -99,7 +104,7 @@ public class WolfAltarBlock extends BaseEntityBlock {
 
     private InteractionResult serve(Level level, BlockPos pos, ServerPlayer player, ItemStack held) {
         WitcheryPlayerData data = WitcheryAttachments.get(player);
-        level.playSound(null, pos, SoundEvents.WOLF_SHAKE, SoundSource.BLOCKS, 1.0F, 0.7F);
+        playSourceLordVoice(player, pos);
         int wolfLevel = data.getWerewolfLevel();
 
         // Re-craft a spare Moon Charm: an established werewolf may always trade 3 gold for one.
@@ -194,5 +199,13 @@ public class WolfAltarBlock extends BaseEntityBlock {
 
     private static void msg(ServerPlayer player, String key, Object... args) {
         player.displayClientMessage(Component.translatable(key, args).withStyle(ChatFormatting.GOLD), false);
+    }
+
+    private static void playSourceLordVoice(ServerPlayer player, BlockPos pos) {
+        SoundEvent sound = WitcherySoundEvents.MOB_WOLFMAN_LORD.get();
+        Holder<SoundEvent> holder = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound);
+        player.connection.send(new ClientboundSoundPacket(holder, SoundSource.BLOCKS,
+                pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                1.0F, 1.0F, player.level().random.nextLong()));
     }
 }

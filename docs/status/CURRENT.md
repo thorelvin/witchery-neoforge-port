@@ -167,7 +167,9 @@ enough to read before starting work. Long historical deltas belong in
   `random.click` / `random.mantrap` cues, cursed warning cooldowns, Leonard's Urn focus release and
   capacity upgrades, Witches Hand Otherwhere cooldown/feedback, Duplication
   Grenade mirror charging, Book of Biomes climate page stats,
-  Wolftrap lured-wolf steering/capture feedback, Wolfman, Flame Imp, Baba Yaga,
+  Wolftrap lured-wolf steering/capture feedback plus source Wolfman lure/capture
+  voices, player werewolf howls and Wolf Altar checks through the old Wolfman
+  clips, Wolfman, Flame Imp, Baba Yaga,
   Owl, Toad, Hobgoblin, Gulg, Mog, Nightmare, Spectre, Banshee, Treefyd,
   Flying Monkey, Reflection, Lilith, Leonard, Dark Mark, and Lord of Torment
   source sounds, the original `random.*` utility sound event surface, chalk

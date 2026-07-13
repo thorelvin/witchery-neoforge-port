@@ -5,6 +5,7 @@ import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -194,7 +195,8 @@ public class BeartrapBlockEntity extends BlockEntity {
                 wolf.setTarget(bait);
                 wolf.getNavigation().moveTo(bait, 1.05D);
             }
-            level.playSound(null, pos, SoundEvents.WOLF_SHAKE, SoundSource.HOSTILE, 1.0F, 0.65F);
+            level.playSound(null, pos, WitcherySoundEvents.MOB_WOLFMAN_SAY.get(),
+                    SoundSource.HOSTILE, 1.0F, 1.0F);
             level.sendParticles(ParticleTypes.SMOKE, x + 0.5D, y + 0.5D, z + 0.5D,
                     24, 0.5D, 0.5D, 0.5D, 0.02D);
             level.sendParticles(ParticleTypes.SOUL, pos.getX() + 0.5D, pos.getY() + 0.25D, pos.getZ() + 0.5D,
@@ -213,7 +215,8 @@ public class BeartrapBlockEntity extends BlockEntity {
             spawnedWolfUuid = null;
             wolftrapStartTime = 0L;
             if (living.level() instanceof ServerLevel level) {
-                level.playSound(null, living.blockPosition(), SoundEvents.WOLF_SHAKE, SoundSource.HOSTILE, 1.0F, 0.9F);
+                level.playSound(null, living.blockPosition(), WitcherySoundEvents.MOB_WOLFMAN_LORD.get(),
+                        SoundSource.HOSTILE, 1.0F, 1.0F);
                 level.sendParticles(ParticleTypes.SOUL,
                         living.getX(), living.getY() + 0.7D, living.getZ(),
                         20, 0.35D, 0.35D, 0.35D, 0.03D);

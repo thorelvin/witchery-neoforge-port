@@ -148,6 +148,11 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Spawn a Wolfman with `/witchery spawn wolfman`; confirm idle audio uses the
   old low talk with rare howls, and hurt/death sounds are no longer zombie
   placeholders.
+- As a transformed werewolf player, trigger the howl keybind and confirm it uses
+  the old Wolfman howl clip rather than vanilla wolf shake. Interact with the
+  Wolf Altar and confirm the feedback voice is private/source Wolfman Lord, then
+  run the Wolftrap lure/capture loop and confirm lure talk plus Lord capture
+  voice cues.
 - Spawn a Flame Imp with `/witchery spawn flame_imp`; confirm idle/cast audio
   uses the old imp laugh at low volume, with slower/lower powered pitch, and
   hurt/death use the old imp hit/death sounds. Spawn a Demon with
