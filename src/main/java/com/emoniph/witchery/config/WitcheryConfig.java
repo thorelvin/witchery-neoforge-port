@@ -34,6 +34,10 @@ public class WitcheryConfig {
     // ── Altar / Rituals ───────────────────────────────────────────────────────
     public static final ModConfigSpec.DoubleValue RITUAL_POWER_MULTIPLIER;
     public static final ModConfigSpec.BooleanValue ALLOW_BIOME_CHANGING;
+    public static final ModConfigSpec.BooleanValue ALLOW_DECURSE_TELEPORT;
+    public static final ModConfigSpec.BooleanValue ALLOW_DECURSE_DIRECTED;
+    public static final ModConfigSpec.IntValue DECURSE_TELEPORT_RADIUS;
+    public static final ModConfigSpec.IntValue DECURSE_DIRECTED_RADIUS;
 
     // ── World gen ─────────────────────────────────────────────────────────────
     public static final ModConfigSpec.BooleanValue ENABLE_ROWAN_TREES;
@@ -123,6 +127,18 @@ public class WitcheryConfig {
         ALLOW_BIOME_CHANGING = BUILDER
                 .comment("Allow the Rite of Shifting Seasons to rewrite biome data. Default: true")
                 .define("allowBiomeChanging", true);
+        ALLOW_DECURSE_TELEPORT = BUILDER
+                .comment("Allow Statues of Occluded Summons to dampen taglock transposition pulls near the target. Source default: true")
+                .define("allowDecurseTeleport", true);
+        ALLOW_DECURSE_DIRECTED = BUILDER
+                .comment("Allow Statues of Broken Curses to dampen directed curse rites near the target. Source default: true")
+                .define("allowDecurseDirected", true);
+        DECURSE_TELEPORT_RADIUS = BUILDER
+                .comment("Horizontal protection radius for Statues of Occluded Summons. Source default: 32")
+                .defineInRange("decurseTeleportRadius", 32, 0, 128);
+        DECURSE_DIRECTED_RADIUS = BUILDER
+                .comment("Horizontal protection radius for Statues of Broken Curses. Source default: 32")
+                .defineInRange("decurseDirectedRadius", 32, 0, 128);
         BUILDER.pop();
 
         BUILDER.push("worldgen");

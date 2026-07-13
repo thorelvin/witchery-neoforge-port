@@ -397,6 +397,14 @@ public class WitcheryBlocks {
     public static final DeferredBlock<FetishBlock>      FETISH_TRENT_EFFIGY   = registerBlock("fetish_trent_effigy",  FetishBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.5f, 100000.0f).noOcclusion());
     public static final DeferredBlock<FetishBlock>      FETISH_WITCHS_LADDER  = registerBlock("fetish_witchs_ladder", FetishBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3.5f, 100000.0f).noOcclusion());
     public static final DeferredBlock<StatueGoddessBlock> STATUE_GODDESS      = registerBlock("statue_goddess",       StatueGoddessBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(2.5f, 1000.0f).noOcclusion());
+    public static final DeferredBlock<AreaMarkerBlock> DECURSE_TELEPORT = registerBlock("decurseteleport",
+            AreaMarkerBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE)
+                    .strength(2.5f, 9999.0f).noOcclusion());
+    public static final DeferredBlock<AreaMarkerBlock> DECURSE_DIRECTED = registerBlock("decursedirected",
+            AreaMarkerBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE)
+                    .strength(2.5f, 9999.0f).noOcclusion());
     public static final DeferredBlock<WickerBundleBlock> WICKER_BUNDLE = registerBlock("wicker_bundle",
             WickerBundleBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).sound(SoundType.GRASS).strength(0.5f, 2.5f).noOcclusion());

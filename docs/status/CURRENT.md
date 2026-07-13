@@ -52,6 +52,14 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Decurse statues were promoted from missing parity to playable exact IDs:
+  `witchery:decurseteleport` / Statue of Occluded Summons and
+  `witchery:decursedirected` / Statue of Broken Curses now appear in the
+  Witchery creative tab, persist source-style owner/killer marker data, allow
+  creative or sneaking-owner stacked removal, and dampen taglock entity
+  transposition or directed curse rites in the configured 32-block horizontal
+  radius. Current visuals are static stone-marker models pending old
+  mandrake/wolf special-renderer parity.
 - AI persona/knowledge routing was expanded from a small NPC-card layer into a
   broad runtime card library. `NpcKnowledgeBase` now filters cards through the
   machine-readable persona access matrix, downgrades scoped/rumor facts in prompt
@@ -68,7 +76,8 @@ enough to read before starting work. Long historical deltas belong in
   variants from binding data, Leonard's Urn shows capacity 1-4, Plant Mines render
   as poppy/dandelion/dead-bush disguises without creative duplicate clutter,
   Torment Scroll and Soul of Torment use source-style art, Brew Bag tinting returns
-  to leather colour, and wolf/hellhound head sprites were refreshed. The
+  to leather colour, wolf/hellhound head sprites were refreshed, and the two
+  source decurse statues are visible as exact IDs. The
   screenshot comparison lives in `docs/status/CREATIVE_TAB_PARITY_AUDIT.md`.
 - Source-facing name parity now prefers old English display names while keeping
   stable modern IDs: Minedrake, Blood Poppy, Wild Bramble, Demonic Blood, and

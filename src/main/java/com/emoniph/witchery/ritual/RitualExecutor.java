@@ -4,6 +4,7 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.BlightHelper;
 import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
+import com.emoniph.witchery.blocks.entity.AreaMarkerBlockEntity;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.data.InfusionType;
@@ -6860,20 +6861,26 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.spirit_world"), false);
             return false;
         }
-        if (!EnderInhibitionMobEffect.canTeleport(targetEntity, 3)) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.inhibited"), false);
-            return false;
-        }
         if (targetEntity instanceof ServerPlayer targetPlayer) {
             if (hasCurseProtection(targetPlayer)) {
                 sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
                 return false;
             }
+        }
+        if (AreaMarkerBlockEntity.isTeleportPullProtected(targetEntity)) {
+            sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+            return false;
+        }
+        if (targetEntity instanceof ServerPlayer targetPlayer) {
             if (triggerVoodooProtection(targetPlayer)) {
                 targetPlayer.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
                 sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
                 return false;
             }
+        }
+        if (!EnderInhibitionMobEffect.canTeleport(targetEntity, 3)) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.transposition_entity.inhibited"), false);
+            return false;
         }
 
         RitualTransaction transaction = new RitualTransaction(sl, center, 16, 3000,
@@ -6929,6 +6936,10 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
             return false;
         }
+        if (AreaMarkerBlockEntity.isDirectedCurseProtected(target)) {
+            sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+            return false;
+        }
         if (triggerVoodooProtection(target)) {
             target.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
             sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
@@ -6975,6 +6986,10 @@ public class RitualExecutor {
             return false;
         }
         if (checkHunterArmorProtection && hasCurseProtection(target)) {
+            sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+            return false;
+        }
+        if (AreaMarkerBlockEntity.isDirectedCurseProtected(target)) {
             sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
             return false;
         }

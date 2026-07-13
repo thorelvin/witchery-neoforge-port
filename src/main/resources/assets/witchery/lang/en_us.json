@@ -324,6 +324,8 @@
   "witchery.fetish.mode.5": "Mode: OFF",
   "witchery.ritual.fetish.no_spirits": "Not enough spirits nearby to bind.",
   "block.witchery.statue_goddess": "Statue of the Goddess",
+  "block.witchery.decurseteleport": "Statue of Occluded Summons",
+  "block.witchery.decursedirected": "Statue of Broken Curses",
   "block.witchery.wicker_bundle": "Wicker Bundle",
   "block.witchery.bloodied_wicker_bundle": "Bloodied Wicker Bundle",
   "block.witchery.bloodedwool": "Blood-stained Wool",

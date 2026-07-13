@@ -432,8 +432,8 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Statue of Broken Curses
 - **Obtain:** Not specified in the provided text.
-- **Function:** Not specified in the provided text.
-- **Notes:** Not specified in the provided text.
+- **Function:** Source decurse area marker that dampens directed curse rites against nearby targets.
+- **Notes:** Port ID `witchery:decursedirected`; current radius defaults to 32 blocks horizontally. Creative players, or the placing owner while sneaking, can break stacked markers. Player killers recorded near the marker are not protected by it.
 
 ## Statue of Hobgoblin Patron
 - **Obtain:** Not specified in the provided text.
@@ -442,8 +442,8 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Statue of Occluded Summons
 - **Obtain:** Not specified in the provided text.
-- **Function:** Not specified in the provided text.
-- **Notes:** Not specified in the provided text.
+- **Function:** Source decurse area marker that dampens taglock-based entity transposition pulls against nearby targets.
+- **Notes:** Port ID `witchery:decurseteleport`; current radius defaults to 32 blocks horizontally. Creative players, or the placing owner while sneaking, can break stacked markers. Player killers recorded near the marker are not protected by it.
 
 ## Statue of The Goddess
 - **Obtain:** Crafted using a variety of ingredients including stone, gold ingots, and specific Witchery items.

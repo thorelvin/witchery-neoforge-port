@@ -170,6 +170,8 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.FETISH_TRENT_EFFIGY.get(),
                 WitcheryItems.FETISH_WITCHS_LADDER.get(),
                 WitcheryItems.STATUE_GODDESS.get(),
+                WitcheryItems.DECURSE_TELEPORT.get(),
+                WitcheryItems.DECURSE_DIRECTED.get(),
                 WitcheryItems.WICKER_BUNDLE.get(),
                 WitcheryItems.BLOODIED_WICKER_BUNDLE.get(),
                 WitcheryItems.BLOODED_WOOL.get());

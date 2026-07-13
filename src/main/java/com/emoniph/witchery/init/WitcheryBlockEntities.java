@@ -53,6 +53,9 @@ public class WitcheryBlockEntities {
                            WitcheryBlocks.FETISH_WITCHS_LADDER.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StatueGoddessBlockEntity>> STATUE_GODDESS =
             BLOCK_ENTITIES.register("statue_goddess", () -> new BlockEntityType<>(StatueGoddessBlockEntity::new, Set.of(WitcheryBlocks.STATUE_GODDESS.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AreaMarkerBlockEntity>> AREA_MARKER =
+            BLOCK_ENTITIES.register("area_marker", () -> new BlockEntityType<>(AreaMarkerBlockEntity::new,
+                    Set.of(WitcheryBlocks.DECURSE_TELEPORT.get(), WitcheryBlocks.DECURSE_DIRECTED.get())));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.emoniph.witchery.blocks.entity.WolfAltarBlockEntity>> WOLF_ALTAR =
             BLOCK_ENTITIES.register("wolf_altar", () -> new BlockEntityType<>(
