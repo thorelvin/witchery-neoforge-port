@@ -29,6 +29,7 @@ public class NightmareModel extends EntityModel<NightmareModel.NightmareRenderSt
     public static class NightmareRenderState extends LivingEntityRenderState {
         public float attackTimer;
         public int entityId;
+        public boolean defended;
     }
 
     public NightmareModel(ModelPart root) {

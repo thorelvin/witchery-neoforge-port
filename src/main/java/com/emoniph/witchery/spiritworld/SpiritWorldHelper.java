@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -372,15 +373,23 @@ public final class SpiritWorldHelper {
 
     /** Initial nightmare spawn when entering Spirit World with nightmare state. */
     public static void spawnNightmare(ServerPlayer player, ServerLevel sw, double[] pos) {
-        NightmareEntity nightmare = WitcheryEntities.NIGHTMARE.get().create(sw, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        spawnNightmare(player, sw, pos, 4.0D, 8.0D);
+    }
+
+    private static void spawnNightmare(ServerPlayer player, ServerLevel level, double[] pos,
+                                       double minimumDistance, double maximumDistance) {
+        NightmareEntity nightmare = WitcheryEntities.NIGHTMARE.get().create(
+                level, EntitySpawnReason.TRIGGERED);
         if (nightmare == null) return;
-        double angle = sw.getRandom().nextDouble() * Math.PI * 2;
-        double dist  = 4 + sw.getRandom().nextDouble() * 4;
+        double angle = level.getRandom().nextDouble() * Math.PI * 2;
+        double dist = minimumDistance
+                + level.getRandom().nextDouble() * (maximumDistance - minimumDistance);
         nightmare.setPos(pos[0] + dist * Math.cos(angle), pos[1], pos[2] + dist * Math.sin(angle));
         nightmare.setVictim(player);
-        nightmare.finalizeSpawn(sw, sw.getCurrentDifficultyAt(nightmare.blockPosition()),
+        nightmare.setTarget(player);
+        nightmare.finalizeSpawn(level, level.getCurrentDifficultyAt(nightmare.blockPosition()),
                 EntitySpawnReason.TRIGGERED, null);
-        sw.addFreshEntity(nightmare);
+        level.addFreshEntity(nightmare);
     }
 
     /**
@@ -398,12 +407,35 @@ public final class SpiritWorldHelper {
         // Check if one of this player's nightmares is already nearby (18-block AABB)
         boolean hasOne = sw.getEntitiesOfClass(NightmareEntity.class,
                 player.getBoundingBox().inflate(18),
-                n -> player.getUUID().equals(n.getVictimUUID())
+                n -> n.hasAssignedVictim() && n.matchesVictim(player)
         ).size() > 0;
         if (hasOne) return;
 
         double[] pos = { player.getX(), player.getY(), player.getZ() };
         spawnNightmare(player, sw, pos);
+    }
+
+    /**
+     * Source Curse of Waking Nightmare pressure. The entity query only runs after
+     * the rare level-dependent spawn roll succeeds.
+     */
+    public static void tickWakingNightmare(ServerPlayer player, ServerLevel level, WitcheryPlayerData data) {
+        int curseLevel = data.getWakingNightmareLevel();
+        if (curseLevel <= 0
+                || level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
+                || level.random.nextInt(NightmareEntity.sourceWakingSpawnBound(curseLevel)) != 0) {
+            return;
+        }
+
+        AABB bounds = new AABB(
+                player.getX() - 16.0D, player.getY() - 8.0D, player.getZ() - 16.0D,
+                player.getX() + 16.0D, player.getY() + 8.0D, player.getZ() + 16.0D);
+        boolean hasOne = !level.getEntitiesOfClass(NightmareEntity.class, bounds,
+                nightmare -> nightmare.hasAssignedVictim() && nightmare.matchesVictim(player)).isEmpty();
+        if (!hasOne) {
+            spawnNightmare(player, level,
+                    new double[]{player.getX(), player.getY(), player.getZ()}, 2.0D, 6.0D);
+        }
     }
 
     // ── Position ─────────────────────────────────────────────────────────────

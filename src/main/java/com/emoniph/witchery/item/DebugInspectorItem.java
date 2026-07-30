@@ -92,7 +92,9 @@ public class DebugInspectorItem extends Item {
                     + "  charges=" + d.getCreaturePowerCharges() + "/100\n"
                     + "  familiar=" + d.getFamiliarUUID().map(u -> u.toString().substring(0, 8) + "..." + " (" + d.getFamiliarType() + ")").orElse("none") + "\n"
                     + "  inSpiritWorld=" + d.isInSpiritWorld()
-                    + (d.isInSpiritWorld() ? " (" + (d.isSpiritWorldDream() ? "dream" : "nightmare") + "  ghost=" + d.isManifestedGhost() + ")" : "");
+                    + (d.isInSpiritWorld() ? " (" + (d.isSpiritWorldDream() ? "dream" : "nightmare")
+                    + "  ghost=" + d.isManifestedGhost() + ")" : "")
+                    + "  wakingNightmare=" + d.getWakingNightmareLevel();
             user.displayClientMessage(Component.literal(msg), false);
         } else {
             // Non-player entity — show type + health

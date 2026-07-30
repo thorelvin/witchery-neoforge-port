@@ -159,12 +159,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Behaviour:** Hostile boss mob
 
 ## Nightmare (Witchery)
-- **HP:** 100 (x 50)
-- **Damage:** ~, also flings off player's armor
-- **Drops:** Mellifluous Hunger
-- **Spawn:** Spirit World during a nightmare
-- **Behaviour:** Hostile, chases the player even if far away and teleports back. Invincible for a while after being hit.
-- **Notes:** Having a Charm of Fanciful Thinking prevents armor removal.
+- **HP:** 100
+- **Damage:** 4 in the Spirit World; 0.5 outside it; may tear off one random armor piece before striking
+- **Drops:** 1 Mellifluous Hunger in the Spirit World only; Looting can raise it to 2
+- **Spawn:** Spirit World during a nightmare; outside it through Curse of Waking Nightmare
+- **Behaviour:** Pursues its named victim without teleporting and bursts away when the victim dies, gets more than 16 blocks away, or is no longer having a nightmare. After one hit it becomes temporarily defended; the Spear of the Huntsman shortens that defense, and Flowing Spirit prevents it.
+- **Notes:** Fireproof and immune to fall damage and cobwebs. A Charm of Fanciful Thinking or compatibility Charm of Disrupted Dreams prevents armor removal.
 
 ## Owl
 - **HP:** N/A (not specified)

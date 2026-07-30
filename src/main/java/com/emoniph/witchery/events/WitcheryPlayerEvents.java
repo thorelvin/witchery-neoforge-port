@@ -338,6 +338,15 @@ public class WitcheryPlayerEvents {
                 tickDemonicNightmare(player, spiritWorld);
             }
         }
+        if (dataEveryTick.hasWakingNightmare()) {
+            ServerLevel currentLevel = (ServerLevel) player.level();
+            if (currentLevel.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+                dataEveryTick.setWakingNightmareLevel(0);
+                syncToClient(player);
+            } else {
+                SpiritWorldHelper.tickWakingNightmare(player, currentLevel, dataEveryTick);
+            }
+        }
         WitchHunterEntity.tickBlackMagicHunterPressure(player);
 
         ServerLevel level = (ServerLevel) player.level();

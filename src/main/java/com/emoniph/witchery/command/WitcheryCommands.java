@@ -1079,7 +1079,8 @@ public class WitcheryCommands {
                 + "  grotesque=" + tickStr(d.getGrotesqueTicks());
         String misc  = "  ghostWalker=" + d.isGhostWalkerActive()
                 + "  tormentCooldown=" + tickStr(d.getTormentPortalCooldown())
-                + "  demonicNightmare=" + d.isDemonicNightmare();
+                + "  demonicNightmare=" + d.isDemonicNightmare()
+                + "  wakingNightmare=" + d.getWakingNightmareLevel();
 
         // ── infusion / creature power ────────────────────────────────────
         String infusion = "  infusion=" + d.getInfusionType()

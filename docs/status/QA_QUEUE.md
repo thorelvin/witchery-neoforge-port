@@ -301,6 +301,16 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   `/summon witchery:lilith` and confirm hostile idle/hurt/death plus friendly
   reward interactions use the old Lilith clips instead of dragon/illusioner
   placeholders.
+- Enter a forced Spirit World nightmare and verify the victim-bound Nightmare
+  never teleports, bursts away when separated by more than 16 blocks or when
+  nightmare state ends, opens/breaks doors, strips armor before a strike unless
+  either disrupted-dream charm is in the main inventory, and raises its
+  translucent defended veil after a hit. Flowing Spirit should prevent the veil;
+  the Spear of the Huntsman should shorten it. Kill it with and without Looting
+  and confirm Mellifluous Hunger is its only Spirit World loot. Then cast Curse
+  of Waking Nightmare on an Overworld player, confirm at most one weaker
+  victim-bound hunter nearby, and clear the curse by Spirit World entry, cure
+  rite, and Goddess Statue in separate runs.
 - Spawn a Banshee with `/witchery spawn banshee`; confirm it has no idle
   phantom ambient, its scream uses the old lower-pitched Banshee clip, and
   hurt/death use the source Spectre hit sound.
@@ -328,7 +338,8 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   grey/brown or layered tint artifacts.
 - Check Goddess Statue and Crystal Ball GUI items: the statue should fit inside
   the slot, and the Crystal Ball should sit one pixel lower than the prior pass.
-- Use a Goddess Statue while carrying a removable curse/nightmare state. A
+- Use a Goddess Statue while carrying a removable curse, including persisted
+  Waking Nightmare. A natural Spirit World nightmare is not itself a curse. A
   successful cure should produce player-centered instant-spell particles with a
   low fizz cue; using it with nothing to cure should still give snare feedback.
 - Stack normal and ice stockades two high. The lower stockade should switch to

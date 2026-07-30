@@ -52,6 +52,16 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Nightmare 1.7.10 parity is code-complete pending live QA. The entity now uses
+  the source 0.6 x 1.8 fireproof body, 25 XP, full door/target/village movement
+  stack, 16-block victim expiry burst, persistent source victim-name key,
+  screaming and defended sync, fall/web immunity, 15-damage cap, source defense
+  timings, pre-hit armor stripping, out-of-dimension half-heart attacks, and
+  exact Mellifluous Hunger plus Looting math instead of invented teleporting and
+  Condensed Fear. The renderer uses the authentic texture, 0.5 shadow, 0.9
+  translucency, and 0.6 defended veil. Waking Nightmare is again a persisted
+  curse that rarely calls one victim-bound hunter outside the Spirit World and
+  clears on Spirit World entry or either source cure route.
 - Flame Imp 1.7.10 parity is code-complete pending live QA. The entity is again
   tameable rather than a generic monster, with wild player hostility, owner
   defense, a 16-block home range, source attributes/healing/despawn rules, and

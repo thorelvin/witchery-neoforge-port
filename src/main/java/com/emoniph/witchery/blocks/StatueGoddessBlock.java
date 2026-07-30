@@ -135,10 +135,9 @@ public class StatueGoddessBlock extends BaseEntityBlock {
             cured = true;
         }
 
-        boolean hadNightmare = data.isDemonicNightmare() || (data.isInSpiritWorld() && !data.isSpiritWorldDream());
+        boolean hadNightmare = data.hasWakingNightmare();
         if (hadNightmare) {
-            data.setSpiritWorldIsDream(true);
-            data.setDemonicNightmare(false);
+            data.setWakingNightmareLevel(0);
             if (player instanceof ServerPlayer serverPlayer) {
                 WitcheryPlayerEvents.syncToClient(serverPlayer);
             }

@@ -269,7 +269,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<NightmareEntity>> NIGHTMARE =
             ENTITY_TYPES.register("nightmare", () ->
                     EntityType.Builder.of(NightmareEntity::new, MobCategory.MONSTER)
-                            .sized(0.6F, 1.95F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "nightmare"))));
+                            .fireImmune().sized(0.6F, 1.8F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "nightmare"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SpiritEntity>> SPIRIT =
             ENTITY_TYPES.register("spirit", () ->

@@ -7215,12 +7215,11 @@ public class RitualExecutor {
                     wakingNightmare.get().taglockKit(),
                     target -> {
                         WitcheryPlayerData data = WitcheryAttachments.get(target);
-                        return data.isDemonicNightmare() || (data.isInSpiritWorld() && !data.isSpiritWorldDream());
+                        return data.hasWakingNightmare();
                     },
                     target -> {
                         WitcheryPlayerData data = WitcheryAttachments.get(target);
-                        data.setSpiritWorldIsDream(true);
-                        data.setDemonicNightmare(false);
+                        data.setWakingNightmareLevel(0);
                         PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
                     },
                     "curse.witchery.waking_nightmare.goddess_removal",
@@ -7311,12 +7310,11 @@ public class RitualExecutor {
         return performMatchedCure(caster, level, center, matchedItems,
                 target -> {
                     WitcheryPlayerData data = WitcheryAttachments.get(target);
-                    return data.isDemonicNightmare() || (data.isInSpiritWorld() && !data.isSpiritWorldDream());
+                    return data.hasWakingNightmare();
                 },
                 target -> {
                     WitcheryPlayerData data = WitcheryAttachments.get(target);
-                    data.setSpiritWorldIsDream(true);
-                    data.setDemonicNightmare(false);
+                    data.setWakingNightmareLevel(0);
                     PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
                 },
                 "curse.witchery.waking_nightmare.goddess_removal");
@@ -7541,7 +7539,7 @@ public class RitualExecutor {
         return true;
     }
 
-    /** Curse of Waking Nightmare — forces target into nightmare state if in Spirit World. */
+    /** Curse of Waking Nightmare - persistently calls weakened Nightmares outside the Spirit World. */
     private static boolean riteOfCurseWakingNightmare(Player caster, Level level, BlockPos center) {
         if (!requireThunderstorm(caster, level, center)) return false;
         Optional<CurseWakingNightmareOfferings> offerings = findCurseWakingNightmareOfferings(level, center);
@@ -7550,18 +7548,15 @@ public class RitualExecutor {
             caster.displayClientMessage(Component.translatable("witchery.ritual.curse_waking_nightmare.support"), false);
             return false;
         }
+        int potencyBonus = cursePotencyBonus(caster, level, center);
         return performOfferedCurse(caster, level, center,
                 offerings.get().taglockKit(),
                 10000,
                 "witchery.ritual.curse_waking_nightmare.no_power",
                 target -> {
             WitcheryPlayerData data = WitcheryAttachments.get(target);
-            if (data.isInSpiritWorld()) {
-                data.setSpiritWorldIsDream(false); // flip to nightmare
-                PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
-            }
-            target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 600, 0));
-            target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 1200, 0));
+            data.setWakingNightmareLevel(Math.max(1 + potencyBonus, data.getWakingNightmareLevel()));
+            PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
                 },
                 "witchery.curse.waking_nightmare",
                 "witchery.curse.waking_nightmare",
@@ -7576,17 +7571,14 @@ public class RitualExecutor {
     private static boolean startCurseWakingNightmareFromRecipe(Player caster, Level level, BlockPos center,
                                                                List<ItemEntity> matchedItems) {
         if (!requireThunderstorm(caster, level, center)) return false;
+        int potencyBonus = cursePotencyBonus(caster, level, center);
         return performMatchedCurse(caster, level, center, matchedItems,
                 10000,
                 "witchery.ritual.curse_waking_nightmare.no_power",
                 target -> {
                     WitcheryPlayerData data = WitcheryAttachments.get(target);
-                    if (data.isInSpiritWorld()) {
-                        data.setSpiritWorldIsDream(false);
-                        PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
-                    }
-                    target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 600, 0));
-                    target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 1200, 0));
+                    data.setWakingNightmareLevel(Math.max(1 + potencyBonus, data.getWakingNightmareLevel()));
+                    PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
                 },
                 "witchery.curse.waking_nightmare",
                 "witchery.curse.waking_nightmare",

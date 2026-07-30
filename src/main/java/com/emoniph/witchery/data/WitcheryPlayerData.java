@@ -176,6 +176,7 @@ public class WitcheryPlayerData {
         public int manifestationTime = 0;
         public boolean manifestationSkipTick = false;
         public long manifestationReturnPos = Long.MIN_VALUE;
+        public int wakingNightmareLevel = 0;
 
         public SpiritWorldState() {}
 
@@ -183,7 +184,7 @@ public class WitcheryPlayerData {
                                  float savedHealth, int savedFood, float savedSat,
                                  String corpseUUID, boolean manifestedGhost,
                                  int manifestationTime, boolean manifestationSkipTick,
-                                 long manifestationReturnPos) {
+                                 long manifestationReturnPos, int wakingNightmareLevel) {
             this.isDream = isDream;
             this.inventorySnbt = inventorySnbt;
             this.savedHealth = savedHealth;
@@ -194,6 +195,7 @@ public class WitcheryPlayerData {
             this.manifestationTime = Math.max(0, manifestationTime);
             this.manifestationSkipTick = manifestationSkipTick;
             this.manifestationReturnPos = manifestationReturnPos;
+            this.wakingNightmareLevel = Math.max(0, wakingNightmareLevel);
         }
 
         public SpiritWorldState copy() {
@@ -207,7 +209,8 @@ public class WitcheryPlayerData {
                     manifestedGhost,
                     manifestationTime,
                     manifestationSkipTick,
-                    manifestationReturnPos);
+                    manifestationReturnPos,
+                    wakingNightmareLevel);
         }
 
         public static final Codec<SpiritWorldState> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -220,7 +223,8 @@ public class WitcheryPlayerData {
             Codec.BOOL.optionalFieldOf("manifested_ghost", false).forGetter(s -> s.manifestedGhost),
             Codec.INT.optionalFieldOf("manifest_time", 0).forGetter(s -> s.manifestationTime),
             Codec.BOOL.optionalFieldOf("manifest_skip_tick", false).forGetter(s -> s.manifestationSkipTick),
-            Codec.LONG.optionalFieldOf("manifest_return_pos", Long.MIN_VALUE).forGetter(s -> s.manifestationReturnPos)
+            Codec.LONG.optionalFieldOf("manifest_return_pos", Long.MIN_VALUE).forGetter(s -> s.manifestationReturnPos),
+            Codec.INT.optionalFieldOf("waking_nightmare_level", 0).forGetter(s -> s.wakingNightmareLevel)
         ).apply(i, SpiritWorldState::new));
     }
 
@@ -584,6 +588,9 @@ public class WitcheryPlayerData {
     public void tickTormentPortal() { if (tormentPortalCooldown > 0) tormentPortalCooldown--; }
     public boolean isDemonicNightmare() { return demonicNightmare; }
     public void setDemonicNightmare(boolean v) { this.demonicNightmare = v; }
+    public int getWakingNightmareLevel() { return sw.wakingNightmareLevel; }
+    public boolean hasWakingNightmare() { return sw.wakingNightmareLevel > 0; }
+    public void setWakingNightmareLevel(int level) { sw.wakingNightmareLevel = Math.max(0, level); }
     public boolean isNightmare() { return !sw.isDream; }
     public long getLastNightmareKillGameTime() { return lastNightmareKillGameTime; }
     public void setLastNightmareKillGameTime(long t) { this.lastNightmareKillGameTime = t; }

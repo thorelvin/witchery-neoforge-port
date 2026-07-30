@@ -203,6 +203,16 @@ class WitcheryResourceIntegrityTest {
                 "EntityImp has no ordinary death-drop pools");
     }
 
+    @Test
+    void nightmareUsesSourceTextureAndHasNoInventedOrdinaryLoot()
+            throws IOException, NoSuchAlgorithmException {
+        assertTexture(Path.of("entity", "nightmare.png"), 64, 64,
+                "fcaa502aa68c051fd082b14c42be2e186066dbdee2fb996803485edae15dc202");
+        JsonObject loot = readJson(DATA.resolve(Path.of("loot_table", "entities", "nightmare.json")));
+        assertEquals(0, loot.getAsJsonArray("pools").size(),
+                "EntityNightmare only drops Mellifluous Hunger through its Spirit World rule");
+    }
+
     private static void assertSpecialItemRenderer(String itemId, String rendererType) throws IOException {
         JsonObject root = readJson(ITEM_DEFINITIONS.resolve(itemId + ".json"));
         JsonObject model = root.getAsJsonObject("model");

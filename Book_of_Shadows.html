@@ -212,12 +212,13 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <p class="subtitle">A Complete Guide to the Craft of Witchery Rewoven</p>
   <p class="divider">· · · ✦ · · ·</p>
   <p class="edition">Witchery Rewoven — NeoForge 1.21.11 Edition</p>
-  <p class="version">Version 15 — Fourteenth Edition — Persona cards, source icons, and watchful roads</p>
+  <p class="version">Version 16 — Fifteenth Edition — Nightmares at the threshold</p>
 </div>
 
 <div class="callout callout-tip" style="margin-bottom:2.5rem;">
-<strong>What changed in this edition</strong> — the powers of the blood and the bound are set at last:
+<strong>What changed in this edition</strong> — old paths are drawn more clearly:
 <ul style="margin-top:0.5rem;margin-bottom:0;">
+  <li>The <a href="#ch31">Nightmare</a> hunts by the old laws again: no false teleport, a named victim and sixteen-block tether, armor torn away before the blow, a visible defense veil broken by Flowing Spirit, and only Mellifluous Hunger left behind in the Spirit World. The <a href="#ch19">Curse of Waking Nightmare</a> once more persists outside dreams until its victim crosses into the Spirit World or finds a proper cure.</li>
   <li>The speaking layer has a fuller memory of the world. Local NPC voices now draw from a broad persona-card library, with exact, scoped, rumor, and forbidden lanes keeping Coven Witches, villagers, guards, hobgoblins, imps, demons, bosses, Leonard, Baba Yaga, and reflections inside their proper knowledge and voice.</li>
   <li>Several old icons have remembered their faces: the <a href="#circle-talisman">Circle Talisman</a> shows its stored circle pattern, <strong>Spectral Stones</strong> show their bound Spectre, Banshee, or Poltergeist, <a href="#leonards-urn">Leonard's Urn</a> shows capacity, Plant Mines show their disguise, stale seed ingredients show beside the real planting seeds, creature spawn eggs have their own creative tab, the Torment Scroll and Soul of Torment use their source art, the <a href="#brew-bag">Brew Bag</a> returns to leather colour, and wolf and hellhound heads have been refreshed.</li>
   <li>The <a href="#ch17">werewolf's climb</a> is whole at last: a true ten-rung Wolf Altar questline (gold, mutton, Tongue of Dog, the Horn of the Hunt, then kills, howls, tamings and the taking of a life), the wolf and wolfman shapes switched by the <a href="#moon-charm">Moon Charm</a>, their distinct powers (dig-for-bones, the feast, the paralysing and pack-calling howls, armour-rending claws), and the level-ten bite that spreads the curse. The <a href="#wolftrap">Wolftrap</a> now lures and catches a Wolfman to carry the curse onward.</li>
@@ -1650,7 +1651,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Sinking</td><td>Removes swimming; target sinks and drowns in any water</td><td>Requires a storm to cast</td></tr>
   <tr><td>Insanity</td><td>Distorted vision and hearing; hallucinations</td><td>Requires a storm to cast</td></tr>
   <tr><td>Raining Toads</td><td>Toads fall from the sky around the target periodically; each toad explodes in a poisonous mist on impact</td><td>Arguably the most annoying</td></tr>
-  <tr><td>Waking Nightmare</td><td>Summons Nightmare entities from the Spirit World to harass the target; Nightmares are weakened outside the Spirit World but still dangerous in numbers</td><td>90% blocked by full WH armor</td></tr>
+  <tr><td>Waking Nightmare</td><td>Persistently calls a victim-bound Nightmare outside the Spirit World. Only one stalks the victim nearby at a time, and its blows are weakened there.</td><td>90% blocked by full WH armor; entering the Spirit World ends it</td></tr>
   <tr><td>Corrupt Poppet</td><td>Destroys up to ten poppets in the target's possession at once</td><td><a href="#ch7">Cat Familiar</a> required to cast this one</td></tr>
   <tr><td>Hell on Earth</td><td>Converts ground around target into Nether terrain</td><td>—</td></tr>
   <tr><td>Creatures of Night</td><td>Forces vampirism on the victim permanently — they become a vampire and remain one through death</td><td>See <a href="#ch16">Chapter 16</a> for full vampirism progression</td></tr>
@@ -2215,7 +2216,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <table>
   <tr><th>Entity</th><th>Notes</th></tr>
   <tr><td>Demon <code>demon</code></td><td>Summoned via Infernal circles. Player kills roll 0 to 1 + Looting Magma Cream; a held Arthana adds the source Demon Heart chance, while every bargain list includes a Heart offer. The placed Heart gives +100 altar power with cap 2.</td></tr>
-  <tr><td>Nightmare <code>nightmare</code></td><td>100 HP, 4 damage. Teleports to sleeping players; strips a random armor slot on hit. Spawned by Curse of Waking Nightmare or Brew of Nightmare. Blocked by protective <a href="#ch28">Dream Weaver</a>s. Drops Mellifluous Hunger in the Spirit World only.</td></tr>
+  <tr><td>Nightmare <code>nightmare</code></td><td>100 HP and 4 damage in the Spirit World, but only half a heart outside it. It pursues its named victim without teleporting and bursts away if that victim dies, escapes beyond 16 blocks, or wakes from the nightmare. Before each strike it may tear off one random armor piece; carrying a Charm of Disrupted Dreams or Charm of Fanciful Thinking prevents this. After taking damage it raises a temporary translucent defense, shortened by the Spear of the Huntsman and prevented while standing in Flowing Spirit. It ignores fire, falls, and cobwebs, and drops one Mellifluous Hunger only when slain in the Spirit World, with a Looting chance for a second.</td></tr>
   <tr><td>Broom <code>broom</code></td><td>The rideable broom entity. Not a combat entity.</td></tr>
   <tr><td>Soulfire <code>soulfire</code></td><td>Spectral fire entity; ambient hazard in Spirit World.</td></tr>
   <tr><td>Lost Soul <code>lost_soul</code></td><td>The adds the <a href="#ch30">Shade of Leonard</a> spawns in waves below half HP. Leonard is invincible while any Lost Soul lives — kill them first.</td></tr>
@@ -2978,7 +2979,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <div class="callout callout-tip">If a chapter refuses to open, you have simply not yet earned its book. For testing, <code>/witchery guide unlock [all|&lt;book&gt;]</code> opens chapters and <code>/witchery guide reset</code> shuts them again. The <strong>Witches' Brews</strong> Cauldron Book (<span class="item">witchery:cauldron_book</span>) and <strong>Immortals' Observations</strong> stand apart from the chain as guides of their own. Where a recipe has not yet reached the Primer, JEI covers the machines and this Book of Shadows covers the rest.</div>
 
 <div class="page-footer">
-  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 15 &nbsp;·&nbsp; Fourteenth Edition &nbsp;·&nbsp; ☽ ✦ ☾
+  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 16 &nbsp;·&nbsp; Fifteenth Edition &nbsp;·&nbsp; ☽ ✦ ☾
 </div>
 
 <script>

@@ -87,8 +87,8 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 ## Curse of Waking Nightmare
 - **Circle:** Large
 - **Ingredients:** 11x11 grid, Altar Power: 10000
-- **Effect:** Brings the victim's nightmares out of the Spirit World, making them weaker.
-- **Notes:** Negated by Voodoo Protection Poppet or Witch Hunter armor (90% protection).
+- **Effect:** Persistently brings the victim's Nightmares out of the Spirit World, where their melee damage is reduced to 0.5. At most one victim-bound Nightmare is kept nearby.
+- **Notes:** Negated by Voodoo Protection Poppet or Witch Hunter armor (90% protection). Entering the Spirit World removes the curse; the dedicated cure rite or a Goddess Statue also removes it without changing a natural Spirit World nightmare.
 
 ## Death Protection Poppet
 - **Circle:** None
