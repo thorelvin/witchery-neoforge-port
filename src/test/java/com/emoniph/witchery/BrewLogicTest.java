@@ -788,6 +788,13 @@ class BrewLogicTest {
 
     @Test
     void grotesqueEffectUsesSourceRepulsionRules() {
+        assertEquals(1200, GrotesqueMobEffect.FIXED_BREW_DURATION_TICKS);
+        assertFalse(GrotesqueMobEffect.isOverlayActive(false, false));
+        assertTrue(GrotesqueMobEffect.isOverlayActive(true, false),
+                "the composed MobEffect activates the source head overlay");
+        assertTrue(GrotesqueMobEffect.isOverlayActive(false, true),
+                "the fixed brew timer activates the source head overlay");
+        assertTrue(GrotesqueMobEffect.isOverlayActive(true, true));
         assertFalse(GrotesqueMobEffect.isSourceTickPhase(2L));
         assertTrue(GrotesqueMobEffect.isSourceTickPhase(3L));
         assertFalse(GrotesqueMobEffect.shouldRepulseMob(true, false, 1.0D));

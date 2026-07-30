@@ -184,6 +184,15 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 ### Visuals And Creative Tab
 
+- Drink Brew of the Grotesque and confirm the 60-second repulsion aura also
+  replaces the player's head with the source Demon-textured horned/tusked head.
+  Have a second player enter tracking range after activation and verify they see
+  it immediately, then verify it disappears for both clients on expiry. Apply a
+  composed Infernal Blood Grotesque effect to a non-player living entity and
+  confirm the same head follows yaw/pitch for the three-minute effect. Finally,
+  test normal invisibility: the fixed player style should hide, while the
+  composed effect should retain the source faint 15% render only for a viewer
+  allowed to see the invisible entity.
 - Place a normal Mirror that has not had its Reflection guardian cleared. Use it
   empty-handed, then say `mirror mirror on the wall` nearby. Each route should
   call up one translucent floating Mirror Face just outside the reflective side,

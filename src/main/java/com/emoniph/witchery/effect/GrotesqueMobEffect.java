@@ -26,6 +26,7 @@ import net.minecraft.world.phys.Vec3;
  */
 public class GrotesqueMobEffect extends MobEffect {
     public static final int BREW_DURATION_TICKS = 3600;
+    public static final int FIXED_BREW_DURATION_TICKS = 1200;
     public static final double SOURCE_RADIUS = 4.0D;
     public static final double SOURCE_RADIUS_SQ = SOURCE_RADIUS * SOURCE_RADIUS;
     public static final double HORIZONTAL_PUSH = 0.22D;
@@ -67,6 +68,10 @@ public class GrotesqueMobEffect extends MobEffect {
 
     public static boolean shouldRepulseMob(boolean sameEntity, boolean sourceExempt, double distanceSq) {
         return !sameEntity && !sourceExempt && distanceSq < SOURCE_RADIUS_SQ;
+    }
+
+    public static boolean isOverlayActive(boolean effectActive, boolean fixedAuraActive) {
+        return effectActive || fixedAuraActive;
     }
 
     public static Vec3 repulsionPush(Vec3 source, Vec3 victim) {

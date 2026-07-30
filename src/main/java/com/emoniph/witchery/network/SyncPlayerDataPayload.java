@@ -31,7 +31,8 @@ public record SyncPlayerDataPayload(
         boolean inSpiritWorld,
         boolean manifestedGhost,
         boolean spiritWorldDream,
-        boolean demonicNightmare
+        boolean demonicNightmare,
+        int grotesqueTicks
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SyncPlayerDataPayload> TYPE =
@@ -61,7 +62,8 @@ public record SyncPlayerDataPayload(
                             buf.readBoolean(),
                             buf.readBoolean(),
                             buf.readBoolean(),
-                            buf.readBoolean()
+                            buf.readBoolean(),
+                            buf.readInt()
                     );
                 }
 
@@ -87,6 +89,7 @@ public record SyncPlayerDataPayload(
                     buf.writeBoolean(payload.manifestedGhost());
                     buf.writeBoolean(payload.spiritWorldDream());
                     buf.writeBoolean(payload.demonicNightmare());
+                    buf.writeInt(payload.grotesqueTicks());
                 }
             };
 
@@ -110,7 +113,8 @@ public record SyncPlayerDataPayload(
                 data.isInSpiritWorld(),
                 data.isManifestedGhost(),
                 data.isSpiritWorldDream(),
-                data.isDemonicNightmare()
+                data.isDemonicNightmare(),
+                data.getGrotesqueTicks()
         );
     }
 

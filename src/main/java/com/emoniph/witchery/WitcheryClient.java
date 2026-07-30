@@ -1,5 +1,6 @@
 package com.emoniph.witchery;
 
+import com.google.common.reflect.TypeToken;
 import com.emoniph.witchery.client.model.*;
 import com.emoniph.witchery.client.model.LeonardModel;
 import com.emoniph.witchery.client.model.VillageGuardModel;
@@ -65,6 +66,7 @@ import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -135,6 +137,7 @@ public class WitcheryClient {
         Map.entry(HornedHuntsmanModel.LAYER_LOCATION,  HornedHuntsmanModel::createBodyLayer),
         Map.entry(DeathEntityModel.LAYER_LOCATION,     DeathEntityModel::createBodyLayer),
         Map.entry(FlameImpModel.LAYER_LOCATION,        FlameImpModel::createBodyLayer),
+        Map.entry(GrotesqueModel.LAYER_LOCATION,       GrotesqueModel::createBodyLayer),
         Map.entry(EgassyWartLayer.LAYER_LOCATION,      EgassyWartLayer::createLayerDefinition),
         Map.entry(com.emoniph.witchery.client.model.BloodCrucibleModel.LAYER_LOCATION,
                   com.emoniph.witchery.client.model.BloodCrucibleModel::createBodyLayer),
@@ -397,6 +400,23 @@ public class WitcheryClient {
         WitcherySpecialItemRenderers.register(event);
     }
 
+    public static void registerRenderStateModifiers(RegisterRenderStateModifiersEvent event) {
+        event.registerEntityModifier(
+                new TypeToken<net.minecraft.client.renderer.entity.LivingEntityRenderer<
+                        net.minecraft.world.entity.LivingEntity,
+                        net.minecraft.client.renderer.entity.state.LivingEntityRenderState, ?>>() {},
+                (entity, state) -> {
+                    boolean effectActive = entity.hasEffect(WitcheryMobEffects.GROTESQUE);
+                    boolean fixedAuraActive = entity instanceof Player player
+                            && WitcheryAttachments.get(player).hasGrotesqueAura();
+                    state.setRenderData(GrotesqueLayer.OVERLAY_STATUS,
+                            com.emoniph.witchery.effect.GrotesqueMobEffect.isOverlayActive(
+                                    effectActive, fixedAuraActive)
+                                    ? new GrotesqueLayer.OverlayStatus(effectActive, fixedAuraActive)
+                                    : null);
+                });
+    }
+
     public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
         for (net.minecraft.world.entity.player.PlayerModelType skin : event.getSkins()) {
             net.minecraft.client.renderer.entity.player.AvatarRenderer<?> ar = event.getPlayerRenderer(skin);
@@ -405,8 +425,27 @@ public class WitcheryClient {
                 ar.addLayer(new ManifestedGhostLayer(ar));
                 ar.addLayer(new MountedBroomInventoryLayer(ar, event.getContext()));
                 ar.addLayer(new EarmuffsLayer(ar, event.getContext()));
+                addGrotesqueLayer(ar, event.getContext());
             }
         }
+        for (net.minecraft.world.entity.EntityType<?> entityType : event.getEntityTypes()) {
+            addGrotesqueLayer(event.getRenderer(entityType), event.getContext());
+        }
+    }
+
+    private static void addGrotesqueLayer(
+            net.minecraft.client.renderer.entity.EntityRenderer<?, ?> renderer,
+            net.minecraft.client.renderer.entity.EntityRendererProvider.Context context) {
+        if (renderer instanceof net.minecraft.client.renderer.entity.LivingEntityRenderer<?, ?, ?> livingRenderer) {
+            addGrotesqueLayerUnchecked(livingRenderer, context);
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void addGrotesqueLayerUnchecked(
+            net.minecraft.client.renderer.entity.LivingEntityRenderer renderer,
+            net.minecraft.client.renderer.entity.EntityRendererProvider.Context context) {
+        renderer.addLayer(new GrotesqueLayer(renderer, context));
     }
 
     public static void registerBookPageRenderers(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
@@ -554,6 +593,7 @@ public class WitcheryClient {
             data.setManifestedGhost(payload.manifestedGhost());
             data.setSpiritWorldIsDream(payload.spiritWorldDream());
             data.setDemonicNightmare(payload.demonicNightmare());
+            data.setGrotesqueTicks(payload.grotesqueTicks());
         });
     }
 

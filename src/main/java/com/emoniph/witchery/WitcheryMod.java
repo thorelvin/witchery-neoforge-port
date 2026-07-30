@@ -75,6 +75,7 @@ public class WitcheryMod {
             modEventBus.addListener(WitcheryClient::registerItemTintSources);
             modEventBus.addListener(WitcheryClient::onModifyBakingResult);
             modEventBus.addListener(WitcheryClient::registerClientExtensions);
+            modEventBus.addListener(WitcheryClient::registerRenderStateModifiers);
             modEventBus.addListener(WitcheryClient::onAddLayers);
             modEventBus.addListener(WitcheryClient::registerRenderers);
             modEventBus.addListener(WitcheryClient::registerSpecialModelRenderers);

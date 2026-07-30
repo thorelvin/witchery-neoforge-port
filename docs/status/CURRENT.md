@@ -52,6 +52,14 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Grotesque visual parity now covers both source routes. The fixed Brew of the
+  Grotesque keeps its 1200-tick player repulsion timer, while composed Infernal
+  Blood applies the three-minute `witchery:grotesque` effect to living targets;
+  either route now renders the original mirrored 128x32 Demon-textured head
+  with horns, tusks, snout, lip, source scale/offset, head tracking, and
+  source-shaped invisibility handling. Fixed player state syncs on activation,
+  expiry, and first tracking so other clients see the transformation without
+  per-tick network traffic.
 - `EntityMirrorFace` is restored in its actual source role, correcting the old
   backlog description that called it another Mirror World guardian. Ordinary
   uncleared mirrors now show the invulnerable, no-collision translucent

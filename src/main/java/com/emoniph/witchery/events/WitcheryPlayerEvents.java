@@ -151,6 +151,15 @@ public class WitcheryPlayerEvents {
     }
 
     @SubscribeEvent
+    public static void onStartTracking(PlayerEvent.StartTracking event) {
+        if (event.getEntity() instanceof ServerPlayer viewer
+                && event.getTarget() instanceof ServerPlayer target) {
+            PacketDistributor.sendToPlayer(viewer,
+                    SyncPlayerDataPayload.from(target, WitcheryAttachments.get(target)));
+        }
+    }
+
+    @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         WitcheryPlayerData data = WitcheryAttachments.get(player);
@@ -738,6 +747,9 @@ public class WitcheryPlayerEvents {
                     Mth.clamp(-dy * scale, -0.10, 0.12),
                     Mth.clamp(-dz * scale, -0.22, 0.22));
             entity.hurtMarked = true;
+        }
+        if (!data.hasGrotesqueAura()) {
+            syncToClient(player);
         }
     }
 
