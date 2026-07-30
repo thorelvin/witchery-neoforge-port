@@ -100,6 +100,8 @@ public class WitcheryClient {
         Map.entry(AlluringSkullModel.LAYER_LOCATION,   AlluringSkullModel::createBodyLayer),
         Map.entry(com.emoniph.witchery.client.model.WolfHeadModel.LAYER_LOCATION, com.emoniph.witchery.client.model.WolfHeadModel::createBodyLayer),
         Map.entry(StatueGoddessModel.LAYER_LOCATION,   StatueGoddessModel::createBodyLayer),
+        Map.entry(MandrakeStatueModel.LAYER_LOCATION, MandrakeStatueModel::createBodyLayer),
+        Map.entry(WolfStatueModel.LAYER_LOCATION,     WolfStatueModel::createBodyLayer),
         Map.entry(com.emoniph.witchery.client.model.WolfAltarModel.LAYER_LOCATION, com.emoniph.witchery.client.model.WolfAltarModel::createBodyLayer),
         Map.entry(OwlModel.LAYER_LOCATION,             OwlModel::createBodyLayer),
         Map.entry(RavenModel.LAYER_LOCATION,           RavenModel::createBodyLayer),
@@ -489,6 +491,7 @@ public class WitcheryClient {
         event.registerBlockEntityRenderer(WitcheryBlockEntities.GRASSPER.get(),        GrassperRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.BEARTRAP.get(),        BeartrapRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.STATUE_GODDESS.get(),  StatueGoddessRenderer::new);
+        event.registerBlockEntityRenderer(WitcheryBlockEntities.AREA_MARKER.get(),     DecurseStatueRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.WOLF_ALTAR.get(),      com.emoniph.witchery.client.renderer.WolfAltarRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.DEMON_HEART.get(),     DemonHeartRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.ALLURING_SKULL.get(),  AlluringSkullRenderer::new);

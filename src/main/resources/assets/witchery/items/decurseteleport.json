@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/decurseteleport"
+    "type": "minecraft:special",
+    "base": "witchery:item/decurseteleport",
+    "model": {
+      "type": "witchery:statue_mandrake"
+    }
   }
 }

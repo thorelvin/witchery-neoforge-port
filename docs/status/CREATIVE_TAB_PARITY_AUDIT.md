@@ -1,6 +1,6 @@
 # Witchery Creative Tab Parity Audit
 
-Date: 2026-07-13
+Date: 2026-07-30
 
 ## Sources
 
@@ -36,7 +36,7 @@ That makes the port feel fuller and easier to browse in a modern pack, but it al
 | Spectral Stone | Creative subitems are metas `0,17,18,19`. | Port now exposes the same source-visible blank, Spectre, Banshee, and Poltergeist stacks. | Patched through the real binding data used by the rite/release behavior. |
 | Leonard's Urn | Creative subitems are metas `0..3`. | Port now exposes capacity 1-4 urn stacks and chooses the matching source urn icon from capacity data. | The modern storage behavior remains. |
 | Stale seeds | 1.7.10 English lang exposes `ingredient` metadata names for Stale Belladonna Seeds, Stale Mandrake Seeds, and Stale Water Artichoke Seeds, distinct from the plantable `seeds...` items. | Port now exposes `stale_belladonna_seeds`, `stale_mandrake_seeds`, and `stale_artichoke_seeds` as non-plantable creative-visible legacy ingredient entries beside the real plantable seeds. | Patched as source-named compatibility items using the old seed sprites; no planting behavior was added because source usage points to the separate plantable seed items. |
-| Decurse statues | `Statue of Occluded Summons` (`decurseteleport`) and `Statue of Broken Curses` (`decursedirected`) are source `BlockAreaMarker` variants. | Port now exposes both exact block IDs in the Witchery tab, persists owner/killer data, and dampens taglock entity transposition or directed curse rites in the configured 32-block horizontal radius. | Functional parity slice is live; static stone-marker models stand in for the old mandrake/wolf special renderers pending visual QA. |
+| Decurse statues | `Statue of Occluded Summons` (`decurseteleport`) and `Statue of Broken Curses` (`decursedirected`) are source `BlockAreaMarker` variants, rendered as a small mandrake effigy and a wolf statue on a pedestal. | Port exposes both exact block IDs in the Witchery tab, persists owner/killer data, dampens taglock entity transposition or directed curse rites in the configured 32-block horizontal radius, and uses remade source geometry plus the exact 64x32 textures for placed and item forms. | Mechanical and renderer implementation parity is live; four-facing, GUI, held, ground, and multiplayer visual QA remains. |
 | Brambles | Old visible names include `Wild Bramble`, while the stronger owner/null-source plant is `Void Bramble`. | Port now names the damage/spread block `Wild Bramble` and keeps the owner/null-source block `Void Bramble`. | The old metadata `Ender Bramble` remains represented mechanically by the current `Void Bramble` path rather than a second visible stack. |
 | Debug items | Not source creative items. | `Debug Death Ward` and `Debug Inspector` remain registered and `/give`-able for QA, but are no longer emitted into the normal Witchery creative tab. | Patched as command-only QA helpers so the player-facing tab stops carrying non-source debug clutter. |
 | Spawn eggs | Not shown in the provided original screenshots. | 36 Witchery spawn eggs are now grouped in the separate `Witchery Spawn Eggs` creative tab instead of the main Witchery tab. | Keeps modern creative access without making the source-facing item tab look like the screenshot comparison has 36 extra items. |
@@ -100,7 +100,7 @@ Follow-up icon parity fixes made after this audit:
 - `Circle Talisman` now exposes the source creative metadata set and uses the source icon variants for stored circle data.
 - `Spectral Stone` now exposes the source creative metadata set through modern bound-stone data.
 - `Stockade` now exposes the source Oak, Spruce, Birch, Jungle, Rowan, Alder, Hawthorn, Acacia, and Dark Oak creative stacks through modern block-state data.
-- `Statue of Occluded Summons` and `Statue of Broken Curses` are now exposed as exact source block IDs with loaded-marker protection behavior.
+- `Statue of Occluded Summons` and `Statue of Broken Curses` are exposed as exact source block IDs with loaded-marker protection behavior and source mandrake/wolf special-renderer forms.
 
 ## Additional Naming Patch
 

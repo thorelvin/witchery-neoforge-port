@@ -1,6 +1,6 @@
 # QA Queue
 
-Last curated: 2026-07-13
+Last curated: 2026-07-30
 
 This is the active in-game QA queue. It replaces scattered new QA notes in
 the archived parity/fixes/ritual QA notes under `docs/archive/status/` and small
@@ -184,6 +184,15 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 ### Visuals And Creative Tab
 
+- Place `witchery:decurseteleport` and `witchery:decursedirected` facing all four
+  horizontal directions. Occluded Summons should be the small source-textured
+  stone mandrake; Broken Curses should be the source-textured wolf with its low
+  pedestal. Confirm neither has the old static stone-marker cubes, both sit on
+  the floor inside the source half-block outline, and breaking particles use
+  the matching statue texture. Check each item in the creative GUI, both hands,
+  an item frame, and as a dropped stack for readable scale/centering. With two
+  players, also confirm the renderer stays visible while owner/killer protection
+  and sneaking-owner stacked removal still behave as documented.
 - Drink Brew of the Grotesque and confirm the 60-second repulsion aura also
   replaces the player's head with the source Demon-textured horned/tusked head.
   Have a second player enter tracking range after activation and verify they see

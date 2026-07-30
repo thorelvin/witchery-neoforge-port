@@ -1,20 +1,27 @@
 package com.emoniph.witchery.resources;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import javax.imageio.ImageIO;
 import org.junit.jupiter.api.Test;
 
 class WitcheryResourceIntegrityTest {
@@ -153,6 +160,35 @@ class WitcheryResourceIntegrityTest {
         assertTrue(lang.has("entity.witchery.attack_bat"), "Attack Bat entity is missing an en_us lang key");
         assertTrue(lang.has("witchery.vampire.ultimate.swarm"), "Vampire swarm ultimate is missing an en_us lang key");
         assertTrue(lang.has("witchery.vampire.ultimate.no_charges"), "Vampire ultimate no-charge feedback is missing an en_us lang key");
+    }
+
+    @Test
+    void decurseStatuesUseSourceTexturesAndSpecialItemRenderers() throws IOException, NoSuchAlgorithmException {
+        assertSpecialItemRenderer("decurseteleport", "witchery:statue_mandrake");
+        assertSpecialItemRenderer("decursedirected", "witchery:statue_wolf");
+        assertSourceTexture("statuemandrake.png",
+                "d5dc5743fb73ca6dcf0c6947b7b99b7adce788b871dd1b3f91c823054c5c97df");
+        assertSourceTexture("statuewolf.png",
+                "e273a44174f059d53a6e6496d057e4bbdb5d1c48de6d513f03cb4e490f9e0752");
+    }
+
+    private static void assertSpecialItemRenderer(String itemId, String rendererType) throws IOException {
+        JsonObject root = readJson(ITEM_DEFINITIONS.resolve(itemId + ".json"));
+        JsonObject model = root.getAsJsonObject("model");
+        assertEquals("minecraft:special", model.get("type").getAsString());
+        assertEquals("witchery:item/" + itemId, model.get("base").getAsString());
+        assertEquals(rendererType, model.getAsJsonObject("model").get("type").getAsString());
+    }
+
+    private static void assertSourceTexture(String fileName, String expectedSha256)
+            throws IOException, NoSuchAlgorithmException {
+        Path texture = TEXTURE_ROOT.resolve(Path.of("block", fileName));
+        BufferedImage image = ImageIO.read(texture.toFile());
+        assertNotNull(image, fileName + " is not a readable PNG");
+        assertEquals(64, image.getWidth(), fileName + " width changed");
+        assertEquals(32, image.getHeight(), fileName + " height changed");
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(texture));
+        assertEquals(expectedSha256, HexFormat.of().formatHex(digest), fileName + " is no longer the source texture");
     }
 
     private static List<ModelReference> collectItemModelReferences(JsonElement root) {

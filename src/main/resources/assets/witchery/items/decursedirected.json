@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/decursedirected"
+    "type": "minecraft:special",
+    "base": "witchery:item/decursedirected",
+    "model": {
+      "type": "witchery:statue_wolf"
+    }
   }
 }

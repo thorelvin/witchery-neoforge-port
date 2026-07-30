@@ -14,6 +14,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 Detailed session history is archived in `docs/archive/CHANGELOG.md`; keep this file focused on backlog and slice candidates.
 
+- 2026-07-30: Both decurse marker visuals now match their 1.7.10 special renderers: Statue of Occluded Summons uses the source mandrake geometry/texture and Statue of Broken Curses uses the source wolf-and-pedestal geometry/texture in placed, GUI, held, and dropped-item routes. Live visual/multiplayer QA remains.
 - 2026-07-30: Grotesque renderer parity was restored for both paths: the 60-second fixed player brew and three-minute composed Infernal Blood effect now share the source mirrored Demon head geometry, transform, tracking, invisibility behavior, and activation/expiry/tracker state sync.
 - 2026-07-30: `EntityMirrorFace` was restored in its real 1.7.10 role, not the stale backlog's "alternate guardian" role: empty-hand normal-mirror use and nearby mirror speech now show one invulnerable, no-collision translucent source-textured head for the old ten-second lifetime, while Mirror World and cleared mirrors refuse the apparition.
 - 2026-07-04: Hobgoblin chat commands now execute `follow` and `guard` instead of only classifying them; follow/guard suppress ordinary villager-hunting while active, guard targets threats attacking the command holder, and `stop` clears movement/combat orders. Protection adapters now fail closed on runtime exceptions, and Common Protection API reflection handles `UNKNOWN` profile signature drift.

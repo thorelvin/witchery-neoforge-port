@@ -15,9 +15,11 @@ import com.emoniph.witchery.client.model.FetishTrentModel;
 import com.emoniph.witchery.client.model.GrassperModel;
 import com.emoniph.witchery.client.model.KettleModel;
 import com.emoniph.witchery.client.model.LeechChestModel;
+import com.emoniph.witchery.client.model.MandrakeStatueModel;
 import com.emoniph.witchery.client.model.PoppetShelfModel;
 import com.emoniph.witchery.client.model.SpinningWheelModel;
 import com.emoniph.witchery.client.model.StatueGoddessModel;
+import com.emoniph.witchery.client.model.WolfStatueModel;
 import com.emoniph.witchery.client.model.WitchesOvenModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -62,6 +64,8 @@ public final class WitcherySpecialItemRenderers {
         event.register(id("fetish_trent_effigy"), FetishTrentUnbaked.MAP_CODEC);
         event.register(id("fetish_witchs_ladder"), FetishWitchsLadderUnbaked.MAP_CODEC);
         event.register(id("statue_goddess"), StatueGoddessUnbaked.MAP_CODEC);
+        event.register(id("statue_mandrake"), MandrakeStatueUnbaked.MAP_CODEC);
+        event.register(id("statue_wolf"), WolfStatueUnbaked.MAP_CODEC);
     }
 
     private static Identifier id(String path) {
@@ -808,6 +812,66 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<StatueGoddessUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record DecurseStatueSpecialRenderer(ModelPart model, Identifier texture, float verticalOffset)
+            implements NoDataSpecialModelRenderer {
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            poseStack.pushPose();
+            poseStack.translate(0.5F, 0.5F, 0.5F);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+            poseStack.translate(0.0F, -verticalOffset, 0.0F);
+            poseStack.scale(0.5F, 0.5F, 0.5F);
+            poseStack.scale(0.6F, 0.6F, 0.6F);
+            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+            poseStack.translate(0.0F, 1.5F, 0.0F);
+            collector.submitModelPart(model, poseStack, RenderTypes.entityCutout(texture),
+                    lightCoords, OverlayTexture.NO_OVERLAY, null);
+            poseStack.popPose();
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record MandrakeStatueUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<MandrakeStatueUnbaked> MAP_CODEC =
+                MapCodec.unit(new MandrakeStatueUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            MandrakeStatueModel model = new MandrakeStatueModel(
+                    context.entityModelSet().bakeLayer(MandrakeStatueModel.LAYER_LOCATION));
+            return new DecurseStatueSpecialRenderer(
+                    model.root(), blockTexture("statuemandrake"), 0.255F);
+        }
+
+        @Override
+        public MapCodec<MandrakeStatueUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record WolfStatueUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<WolfStatueUnbaked> MAP_CODEC =
+                MapCodec.unit(new WolfStatueUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            WolfStatueModel model = new WolfStatueModel(
+                    context.entityModelSet().bakeLayer(WolfStatueModel.LAYER_LOCATION));
+            return new DecurseStatueSpecialRenderer(
+                    model.root(), blockTexture("statuewolf"), 0.26F);
+        }
+
+        @Override
+        public MapCodec<WolfStatueUnbaked> type() {
             return MAP_CODEC;
         }
     }

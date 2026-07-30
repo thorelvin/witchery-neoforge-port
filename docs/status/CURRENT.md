@@ -79,8 +79,9 @@ enough to read before starting work. Long historical deltas belong in
   Witchery creative tab, persist source-style owner/killer marker data, allow
   creative or sneaking-owner stacked removal, and dampen taglock entity
   transposition or directed curse rites in the configured 32-block horizontal
-  radius. Current visuals are static stone-marker models pending old
-  mandrake/wolf special-renderer parity.
+  radius. Their placed and item forms now use exact 1.7.10 geometry, transforms,
+  and 64x32 textures: the former is the small mandrake effigy and the latter is
+  the wolf statue with its source pedestal. Live visual/multiplayer QA remains.
 - AI persona/knowledge routing was expanded from a small NPC-card layer into a
   broad runtime card library. `NpcKnowledgeBase` now filters cards through the
   machine-readable persona access matrix, downgrades scoped/rumor facts in prompt
@@ -102,7 +103,8 @@ enough to read before starting work. Long historical deltas belong in
   beside the real plantable seeds, debug-only QA items are kept out of the
   normal player-facing tab, spawn eggs live in their own Witchery Spawn Eggs
   tab, and the two
-  source decurse statues are visible as exact IDs. The
+  source decurse statues are visible as exact IDs with their original
+  mandrake/wolf render forms. The
   screenshot comparison lives in `docs/status/CREATIVE_TAB_PARITY_AUDIT.md`.
 - Source-facing name parity now prefers old English display names while keeping
   stable modern IDs: Minedrake, Blood Poppy, Wild Bramble, Demonic Blood, and
