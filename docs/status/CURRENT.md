@@ -52,6 +52,13 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Silver Vat source-renderer parity replaces the temporary baked approximation.
+  Placed and item forms now use the exact 64x32 `silvervat` sheet and remade
+  `ModelSilverVat` geometry, including all four item spouts, world spouts hidden
+  beside neighboring block entities, the old blue brew surface, and one to eight
+  visible source deposit pieces based on the stored stack's eight-item
+  thresholds. Storage, comparator, collection, and adjacent-output mechanics are
+  unchanged; live model and furnace/hopper QA remains.
 - Grotesque visual parity now covers both source routes. The fixed Brew of the
   Grotesque keeps its 1200-tick player repulsion timer, while composed Infernal
   Blood applies the three-minute `witchery:grotesque` effect to living targets;

@@ -17,6 +17,7 @@ import com.emoniph.witchery.client.model.KettleModel;
 import com.emoniph.witchery.client.model.LeechChestModel;
 import com.emoniph.witchery.client.model.MandrakeStatueModel;
 import com.emoniph.witchery.client.model.PoppetShelfModel;
+import com.emoniph.witchery.client.model.SilverVatModel;
 import com.emoniph.witchery.client.model.SpinningWheelModel;
 import com.emoniph.witchery.client.model.StatueGoddessModel;
 import com.emoniph.witchery.client.model.WolfStatueModel;
@@ -24,6 +25,7 @@ import com.emoniph.witchery.client.model.WitchesOvenModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
+import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
@@ -66,6 +68,7 @@ public final class WitcherySpecialItemRenderers {
         event.register(id("statue_goddess"), StatueGoddessUnbaked.MAP_CODEC);
         event.register(id("statue_mandrake"), MandrakeStatueUnbaked.MAP_CODEC);
         event.register(id("statue_wolf"), WolfStatueUnbaked.MAP_CODEC);
+        event.register(id("silver_vat"), SilverVatUnbaked.MAP_CODEC);
     }
 
     private static Identifier id(String path) {
@@ -872,6 +875,56 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<WolfStatueUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record SilverVatSpecialRenderer(SilverVatModel model, ModelPart liquid)
+            implements NoDataSpecialModelRenderer {
+        private static final Identifier TEXTURE = blockTexture("silvervat");
+
+        @Override
+        public void submit(ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector,
+                           int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+            startBlockEntityPose(poseStack);
+            for (ModelPart part : model.bodyParts()) {
+                collector.submitModelPart(part, poseStack, RenderTypes.entityCutout(TEXTURE),
+                        lightCoords, OverlayTexture.NO_OVERLAY, null);
+            }
+            for (var direction : List.of(
+                    net.minecraft.core.Direction.NORTH,
+                    net.minecraft.core.Direction.SOUTH,
+                    net.minecraft.core.Direction.WEST,
+                    net.minecraft.core.Direction.EAST)) {
+                for (ModelPart part : model.spout(direction)) {
+                    collector.submitModelPart(part, poseStack, RenderTypes.entityCutout(TEXTURE),
+                            lightCoords, OverlayTexture.NO_OVERLAY, null);
+                }
+            }
+            SilverVatRenderer.submitLiquid(liquid, poseStack, collector, lightCoords);
+            finishPose(poseStack);
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record SilverVatUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<SilverVatUnbaked> MAP_CODEC =
+                MapCodec.unit(new SilverVatUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new SilverVatSpecialRenderer(
+                    new SilverVatModel(context.entityModelSet().bakeLayer(SilverVatModel.LAYER_LOCATION)),
+                    context.entityModelSet().bakeLayer(SilverVatModel.LIQUID_LAYER_LOCATION)
+                            .getChild("liquid"));
+        }
+
+        @Override
+        public MapCodec<SilverVatUnbaked> type() {
             return MAP_CODEC;
         }
     }

@@ -111,6 +111,10 @@ public class SilverVatBlockEntity extends BlockEntity implements Container {
         return stored;
     }
 
+    public static int visibleDepositParts(int count) {
+        return count <= 0 ? 0 : Math.min(8, Math.max(count / 8, 1));
+    }
+
     private void sync(@Nullable Level level) {
         setChanged();
         if (level != null && !level.isClientSide()) {

@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/silver_vat"
+    "type": "minecraft:special",
+    "base": "witchery:item/silver_vat",
+    "model": {
+      "type": "witchery:silver_vat"
+    }
   }
 }

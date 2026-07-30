@@ -166,10 +166,19 @@ class WitcheryResourceIntegrityTest {
     void decurseStatuesUseSourceTexturesAndSpecialItemRenderers() throws IOException, NoSuchAlgorithmException {
         assertSpecialItemRenderer("decurseteleport", "witchery:statue_mandrake");
         assertSpecialItemRenderer("decursedirected", "witchery:statue_wolf");
-        assertSourceTexture("statuemandrake.png",
+        assertTexture("statuemandrake.png", 64, 32,
                 "d5dc5743fb73ca6dcf0c6947b7b99b7adce788b871dd1b3f91c823054c5c97df");
-        assertSourceTexture("statuewolf.png",
+        assertTexture("statuewolf.png", 64, 32,
                 "e273a44174f059d53a6e6496d057e4bbdb5d1c48de6d513f03cb4e490f9e0752");
+    }
+
+    @Test
+    void silverVatUsesSourceTextureAndSpecialItemRenderer() throws IOException, NoSuchAlgorithmException {
+        assertSpecialItemRenderer("silver_vat", "witchery:silver_vat");
+        assertTexture("silvervat.png", 64, 32,
+                "4a7f35fcfd7cdda8fd4e731a85f69c4d1881daa04ee09ef509a271b52e374e6b");
+        assertTexture("silvervat_liquid.png", 64, 16,
+                "9d80249fba30d0d7ec065e830b0bd093eba6cc4bbc1795e8589461cb4c3d71e1");
     }
 
     private static void assertSpecialItemRenderer(String itemId, String rendererType) throws IOException {
@@ -180,13 +189,13 @@ class WitcheryResourceIntegrityTest {
         assertEquals(rendererType, model.getAsJsonObject("model").get("type").getAsString());
     }
 
-    private static void assertSourceTexture(String fileName, String expectedSha256)
+    private static void assertTexture(String fileName, int expectedWidth, int expectedHeight, String expectedSha256)
             throws IOException, NoSuchAlgorithmException {
         Path texture = TEXTURE_ROOT.resolve(Path.of("block", fileName));
         BufferedImage image = ImageIO.read(texture.toFile());
         assertNotNull(image, fileName + " is not a readable PNG");
-        assertEquals(64, image.getWidth(), fileName + " width changed");
-        assertEquals(32, image.getHeight(), fileName + " height changed");
+        assertEquals(expectedWidth, image.getWidth(), fileName + " width changed");
+        assertEquals(expectedHeight, image.getHeight(), fileName + " height changed");
         byte[] digest = MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(texture));
         assertEquals(expectedSha256, HexFormat.of().formatHex(digest), fileName + " is no longer the source texture");
     }
