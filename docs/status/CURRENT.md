@@ -52,6 +52,12 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- `EntityMirrorFace` is restored in its actual source role, correcting the old
+  backlog description that called it another Mirror World guardian. Ordinary
+  uncleared mirrors now show the invulnerable, no-collision translucent
+  head apparition for the source ten seconds when used empty-handed or prompted
+  by nearby mirror speech, with the original texture, head-only model, source
+  placement offsets, reflection-speech cue, and persisted `WITCTicksAlive` age.
 - Spectre, Banshee, and Poltergeist now share a source-shaped
   `SummonedUndeadEntity` base without changing their registry IDs. The restored
   common behavior covers summoner name/UUID persistence, Spectre obscured state,

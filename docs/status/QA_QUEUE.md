@@ -184,6 +184,13 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 ### Visuals And Creative Tab
 
+- Place a normal Mirror that has not had its Reflection guardian cleared. Use it
+  empty-handed, then say `mirror mirror on the wall` nearby. Each route should
+  call up one translucent floating Mirror Face just outside the reflective side,
+  turn its head toward a nearby player, use the old reflection-speech cue, ignore
+  hits/collision, and disappear just after ten seconds. Repeated prompts while it
+  is present should not stack faces; cleared mirrors and mirrors inside Mirror
+  World should not show one.
 - Open the Witchery creative tab and confirm internal utility entries stay
   hidden: Pit Dirt, Pit Grass, duplicate Koboldite Pentacle, Witches' Shoes, and
   the unfinished Hobgoblin Patron statue should not appear as normal player

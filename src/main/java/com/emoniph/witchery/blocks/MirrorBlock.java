@@ -3,10 +3,12 @@ package com.emoniph.witchery.blocks;
 import com.emoniph.witchery.blocks.entity.MirrorBlockEntity;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.ai.NpcBrainService;
+import com.emoniph.witchery.entity.MirrorFaceEntity;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.item.DuplicationGrenadeItem;
 import com.emoniph.witchery.ritual.AltarPowerSourceLookup;
 import com.emoniph.witchery.world.MirrorHelper;
@@ -226,7 +228,9 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
         boolean unbreakable = footState.hasProperty(UNBREAKABLE) && footState.getValue(UNBREAKABLE);
         String speech = mirrorRightClickSpeech(serverLevel, footPos, player, mirrorWorld, unbreakable);
         player.displayClientMessage(NpcBrainService.speechComponent("Mirror", 0x55FFFF, speech), false);
-        serverLevel.playSound(null, footPos, SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.BLOCKS, 0.45F, 0.72F);
+        showMirrorFace(serverLevel, footPos);
+        serverLevel.playSound(null, footPos, WitcherySoundEvents.MOB_REFLECTION_SPEECH.get(),
+                SoundSource.BLOCKS, 0.5F, 0.5F);
         serverLevel.sendParticles(ParticleTypes.WITCH,
                 footPos.getX() + 0.5D, footPos.getY() + 1.0D, footPos.getZ() + 0.5D,
                 8, 0.25D, 0.35D, 0.25D, 0.02D);
@@ -234,6 +238,23 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
                 footPos.getX() + 0.5D, footPos.getY() + 1.0D, footPos.getZ() + 0.5D,
                 6, 0.3D, 0.35D, 0.3D, 0.01D);
         return InteractionResult.CONSUME;
+    }
+
+    public static boolean showMirrorFace(ServerLevel level, BlockPos mirrorPos) {
+        BlockState state = level.getBlockState(mirrorPos);
+        if (!state.is(WitcheryBlocks.MIRROR.get()) || WitcheryDimensions.isMirrorWorld(level)) {
+            return false;
+        }
+        BlockPos footPos = state.hasProperty(PART) && state.getValue(PART) == BedPart.HEAD
+                ? mirrorPos.below()
+                : mirrorPos;
+        BlockState footState = level.getBlockState(footPos);
+        if (!footState.is(WitcheryBlocks.MIRROR.get())
+                || footState.getValue(UNBREAKABLE)
+                || level.getBlockEntity(footPos) instanceof MirrorBlockEntity mirror && mirror.isDemonKilled()) {
+            return false;
+        }
+        return MirrorFaceEntity.show(level, footPos, footState.getValue(FACING));
     }
 
     private static String mirrorRightClickSpeech(ServerLevel level, BlockPos footPos, Player player,

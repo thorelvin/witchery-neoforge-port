@@ -130,6 +130,7 @@ public class WitcheryClient {
         Map.entry(DemonEntityModel.LAYER_LOCATION,     DemonEntityModel::createBodyLayer),
         Map.entry(NightmareModel.LAYER_LOCATION,       NightmareModel::createBodyLayer),
         Map.entry(SpiritModel.LAYER_LOCATION,          SpiritModel::createBodyLayer),
+        Map.entry(MirrorFaceModel.LAYER_LOCATION,      MirrorFaceModel::createBodyLayer),
         Map.entry(LordOfTormentModel.LAYER_LOCATION,   LordOfTormentModel::createBodyLayer),
         Map.entry(HornedHuntsmanModel.LAYER_LOCATION,  HornedHuntsmanModel::createBodyLayer),
         Map.entry(DeathEntityModel.LAYER_LOCATION,     DeathEntityModel::createBodyLayer),
@@ -500,6 +501,7 @@ public class WitcheryClient {
         event.registerEntityRenderer(WitcheryEntities.FLYING_MONKEY.get(),   FlyingMonkeyRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.CORPSE.get(),          CorpseRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.REFLECTION.get(),      ReflectionRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.MIRROR_FACE.get(),     MirrorFaceRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.ELLE.get(),            ElleRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.LILITH.get(),          LilithRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.GOBLIN_GULG.get(), GoblinGulgRenderer::new);

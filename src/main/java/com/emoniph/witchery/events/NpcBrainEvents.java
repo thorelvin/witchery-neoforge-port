@@ -18,6 +18,7 @@ import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.protection.WitcheryProtectionService;
 import com.emoniph.witchery.world.MirrorHelper;
 import net.minecraft.core.BlockPos;
@@ -821,7 +822,9 @@ public final class NpcBrainEvents {
     }
 
     private static void playMirrorCue(ServerLevel level, BlockPos pos) {
-        level.playSound(null, pos, SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.BLOCKS, 0.45F, 0.7F);
+        MirrorBlock.showMirrorFace(level, pos);
+        level.playSound(null, pos, WitcherySoundEvents.MOB_REFLECTION_SPEECH.get(),
+                SoundSource.BLOCKS, 0.5F, 0.5F);
         level.sendParticles(ParticleTypes.WITCH,
                 pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
                 8, 0.25D, 0.35D, 0.25D, 0.02D);

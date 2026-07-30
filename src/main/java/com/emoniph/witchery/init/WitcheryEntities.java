@@ -377,6 +377,12 @@ public class WitcheryEntities {
                             .sized(0.6F, 1.95F).clientTrackingRange(12)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "reflection"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.MirrorFaceEntity>> MIRROR_FACE =
+            ENTITY_TYPES.register("mirror_face", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.MirrorFaceEntity::new, MobCategory.MISC)
+                            .sized(0.5F, 0.5F).clientTrackingRange(8).updateInterval(2).fireImmune()
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "mirror_face"))));
+
     @SubscribeEvent
     public static void onRegisterSpawnPlacements(RegisterSpawnPlacementsEvent event) {
         event.register(BANSHEE.get(),      SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
@@ -464,6 +470,7 @@ public class WitcheryEntities {
         event.put(FLYING_MONKEY.get(),    com.emoniph.witchery.entity.FlyingMonkeyEntity.createAttributes().build());
         event.put(CORPSE.get(),           com.emoniph.witchery.entity.CorpseEntity.createAttributes().build());
         event.put(REFLECTION.get(),       com.emoniph.witchery.entity.ReflectionEntity.createAttributes().build());
+        event.put(MIRROR_FACE.get(),      com.emoniph.witchery.entity.MirrorFaceEntity.createAttributes().build());
         event.put(ELLE.get(),             ElleEntity.createAttributes().build());
         event.put(LILITH.get(),           LilithEntity.createAttributes().build());
         event.put(VILLAGE_GUARD.get(),     com.emoniph.witchery.entity.VillageGuardEntity.createAttributes().build());
