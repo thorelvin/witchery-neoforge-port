@@ -124,9 +124,6 @@ public class FlameImpModel extends EntityModel<FlameImpModel.FlameImpRenderState
         rightArm.zRot += swayC;  rightArm.xRot += swayS;
         leftArm.zRot  -= swayC;  leftArm.xRot  -= swayS;
 
-        // Leg spacing
-        rightLeg.x = -1.5f + 0.1f;
-        leftLeg.x  =  1.5f - 0.1f;
     }
 
     private void applyAttackSwing(float swingProgress) {

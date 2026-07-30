@@ -68,12 +68,29 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 - Sign a blank ownership contract with the player's blood, then use it on a
   wild Flame Imp with at least 25 levels.
-- Give shiny gifts until the imp is pleased.
+- Confirm the wild imp attacks players and can despawn at distance; after
+  binding, confirm it defends its owner, persists, and wanders within roughly
+  16 blocks of the bargain site.
+- Give only source shinies. Useful checks include Gold Ingot `+1`, Emerald `+3`,
+  Diamond `+8`, Nether Star `+16`, Diamond Pickaxe/Axe `+24`, and Diamond Block
+  `+72`; Amethyst, Prismarine Crystals, Heart of the Sea, and Gold Nugget should
+  be rejected. Damaged tools should also be rejected.
+- Confirm affection can accumulate beyond 20 and rewards become more likely,
+  then verify the first four rewards are Hunger Soul, Fear Soul, Anguish Soul,
+  and Torment Scroll in that order. Further gifts should come from the source
+  seven-item ingredient pool, and another reward should be held for three
+  minutes.
 - Bind each spell contract to a target, and also test crouch-use self binding.
 - Confirm a pleased, unpowered imp spends contracts for Living Flame, Fiery
   Tolerance, Evaporation, Fiery Touch, and Melting Touch.
 - Confirm refusal cases are clear: wrong owner, not pleased, powered imp, no
   contract target, or missing contract.
+- Give a Demon Heart twice and confirm both are consumed and the 60-minute
+  timer refreshes. While powered, confirm the imp becomes wider rather than
+  taller, emits flames, heals every second, deals 8 melee damage, and caps one
+  incoming hit at 5. Icy Needles should always be consumed and clear power.
+- Kill ordinary wild and bound imps and confirm neither drops Exhale of the
+  Horned One, Refined Evil, or a random Torment Scroll.
 
 ### Vanishing Witch Hut
 

@@ -52,6 +52,16 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Flame Imp 1.7.10 parity is code-complete pending live QA. The entity is again
+  tameable rather than a generic monster, with wild player hostility, owner
+  defense, a 16-block home range, source attributes/healing/despawn rules, and
+  the original affection decay and rare contract-abandonment path. The exact
+  21-item shiny table and uncapped gift odds restore the Hunger, Fear, Anguish,
+  and Torment Scroll sequence plus later ingredient gifts. Demon Heart power
+  lasts 60 minutes, doubles melee damage from 4 to 8, changes the incoming cap
+  from 15 to 5, heals each second, widens the model/body without making it
+  taller, and ends with Icy Needles. Source names, particles, sounds, texture,
+  wall-clock persistence, and empty ordinary death loot are restored.
 - Demon 1.7.10 parity is code-complete pending live QA. The bow-only ranged goal
   was replaced with the original close-melee/generic-fireball split and village
   movement stack; source XP, attributes, door navigation, spawn Fire Resistance,

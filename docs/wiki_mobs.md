@@ -71,9 +71,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **HP:** 50
 - **Damage:** 4 (Normal), 8 (with Demon Heart)
 - **Spawn:** Anywhere with the Rite of Summoning
-- **Drops:** Torment Scroll chance if it has not shared its secret
-- **Behaviour:** Hostile while wild. A Demonic Contract or `contract_ownership` must be signed by using it in hand, then used on the imp with 25 experience levels to tame it. Tamed imps can be impressed with shiny gifts and can spend signed spell contracts for Imp Magic.
-- **Notes:** Spell contracts are signed on a target, or on yourself by using the contract while crouched. A pleased, unpowered Flame Imp can cast Living Flame, Fiery Tolerance, Evaporation, Fiery Touch, and Melting Touch. Demon Heart power doubles its bite for 30 minutes but stops Imp Magic until the time passes or Icy Needles calm it.
+- **Drops:** No ordinary death loot. Its first four relationship gifts are Hunger, Fear, and Anguish souls, followed by a Torment Scroll.
+- **Behaviour:** Hostile while wild. A Demonic Contract must be signed by using it in hand, then used on the imp with 25 experience levels to tame it. A bound imp protects its owner and stays near the place where the bargain was made. Undamaged gold and diamond tools, gems, Nether Stars, Blaze Rods, Ghast Tears, and selected storage blocks build affection; affection beyond 20 improves the gift chance.
+- **Notes:** Spell contracts are signed on a target, or on yourself by using the contract while crouched. A pleased, unpowered Flame Imp can cast Living Flame, Fiery Tolerance, Evaporation, Fiery Touch, and Melting Touch, with a three-minute working/gift cooldown. Demon Heart power lasts 60 minutes, doubles its melee damage from 4 to 8, lowers its incoming-damage cap from 15 to 5, and stops Imp Magic until the time passes or Icy Needles calm it.
 
 ## Flying Monkey
 - **HP:** 5

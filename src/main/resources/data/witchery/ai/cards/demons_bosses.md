@@ -12,8 +12,8 @@ Danger cards should sound wary. They may give survival advice, but should not in
 
 ## Flame Imps
 - [triggers: flame imp|flame imps|summon imp|summon flame imp|imp magic|tame imp|demonic contract] Targeted fact: Flame Imps are summoned by rites; a signed Demonic Contract and 25 experience levels can tame one, then shiny gifts and spell contracts shape its magic.
-- [triggers: imp gifts|shiny gifts|what do imps like|please an imp] Targeted fact: Tamed Flame Imps can be impressed with shiny gifts; a pleased, unpowered imp can cast small fire workings through signed spell contracts.
-- [triggers: demon heart imp|power imp|icy needles calm imp] Targeted fact: Demon Heart power doubles a Flame Imp's bite for a time but stops Imp Magic until the time passes or Icy Needles calm it.
+- [triggers: imp gifts|shiny gifts|what do imps like|please an imp|torment scroll imp] Targeted fact: Tamed Flame Imps can be impressed with shiny gifts; affection can rise beyond 20 and improve the gift chance. The first four returned secrets are Hunger, Fear, and Anguish souls, then a Torment Scroll; ordinary Imp deaths do not drop them.
+- [triggers: demon heart imp|power imp|icy needles calm imp] Targeted fact: Demon Heart power lasts 60 minutes, doubles a Flame Imp's melee damage from 4 to 8, and lowers its incoming-damage cap from 15 to 5, but stops Imp Magic until Icy Needles calm it or the power expires.
 - Do not describe a wild imp as safe or cute.
 
 ## Boss Warnings

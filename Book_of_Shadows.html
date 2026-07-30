@@ -1059,7 +1059,11 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Fiery Tolerance</td><td>Blaze Powder</td><td>Grants the bound target 15 minutes of Fire Resistance.</td></tr>
 </table>
 
-<div class="callout callout-warn">An Imp refuses unsigned Contracts, Contracts signed by the wrong witch, magic while it is swollen with Demon Heart power, and magic before it likes you enough. After a spell, let the embers settle for about three minutes before asking again.</div>
+<p>Affection is not capped at the first useful threshold. Undamaged gold or diamond tools, gems, Nether Stars, Blaze Rods, Ghast Tears, and selected storage blocks all count as shinies; continued offerings beyond affection 20 make a returned gift increasingly likely. An Imp's first four returned secrets are always a Hunger soul, Fear soul, Anguish soul, and then the Torment Scroll. Later gifts come from a small creature-reagent hoard. These are relationship gifts, not death loot: killing an Imp normally yields nothing.</p>
+
+<div class="callout callout-tip">A Demon Heart empowers the Imp for 60 minutes. Its melee damage rises from 4 to 8, no single incoming hit can deal more than 5 damage instead of the normal 15, and it heals every second. The powered Imp becomes wider, not taller. Icy Needles end the state immediately.</div>
+
+<div class="callout callout-warn">An Imp refuses unsigned Contracts, Contracts signed by the wrong witch, magic while it is swollen with Demon Heart power, and magic before it likes you enough. Gifts and spell workings share a three-minute interval. Neglect also matters: affection slowly fades while the owner is present, and a long-unhappy Imp may eventually declare the bargain fulfilled and leave.</div>
 
 <!-- CH 9d -->
 <h2 class="chapter" id="ch9d">Chapter 9d: Special Ingredients Reference<span class="stage stage-mid">Mid</span> <a href="#toc" class="ch-top">&uarr; Contents</a></h2>
@@ -2182,7 +2186,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Hellhound <code>hellhound</code></td><td>20</td><td>Hostile (infernal)</td><td>Fire-immune, and sets its bite alight; its hide turns aside all but a witch's own blows and arrows. Hunts sheep and the careless. Drops Tongue of Dog and, rarely, its own mounted head. Weaken one and feed it a plain Golden Apple — penned among iron bars it will whimper down into an ordinary Wolf in well under a minute.</td></tr>
   <tr><td>Treefyd <code>treefyd</code></td><td>50 base; upgradeable</td><td>Hostile to non-whitelist</td><td>Grown from Treefyd Seeds. Creeper Heart → 100 HP / 4 dmg. Demon Heart → 150 HP / 8 dmg. <a href="#boline">Boline</a> adjusts roaming behavior. Drops Roses.</td></tr>
   <tr><td>Ent <code>ent</code></td><td>200</td><td>Hostile (deforestation)</td><td>Summoned by felling too many witch trees. Weak to axes. Drops Ent Twig + saplings.</td></tr>
-  <tr><td>Flame Imp <code>flame_imp</code></td><td>50</td><td>Hostile until bound</td><td>Fast fire entity. Summonable via Infernal rite; bind with a signed <a href="#demonic-contract">Demonic Contract</a>, then impress with shiny gifts to work Imp Magic.</td></tr>
+  <tr><td>Flame Imp <code>flame_imp</code></td><td>50</td><td>Hostile until bound</td><td>Summonable via Infernal rite; bind with a signed <a href="#demonic-contract">Demonic Contract</a> for 25 levels. It then defends its owner, remains near the bargain site, accepts source shinies for ordered secret gifts, and works Imp Magic while unpowered. Ordinary deaths yield nothing.</td></tr>
   <tr><td>Hobgoblin <code>hobgoblin</code></td><td>20</td><td>Neutral / hostile to villagers</td><td>5-trade sequence. 15% Koboldite Dust drop from mining. Lives in forest huts.</td></tr>
   <tr><td>Vampire <code>vampire</code></td><td>Moderate</td><td>Hostile</td><td>Hostile vampire mob. Weak to silver and sunlight. See <a href="#ch16">Ch 16</a>.</td></tr>
   <tr><td>Wolfman <code>wolfman</code></td><td>High</td><td>Hostile</td><td>The bestial werewolf form as a standalone creature. Weak to silver.</td></tr>
@@ -2841,8 +2845,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><th>ID(s)</th><th>Item</th></tr>
   <tr><td><code>demonic_contract</code></td><td>Blank Demonic Contract</td></tr>
   <tr><td><code>living_flame_contract</code>, <code>fiery_tolerance_contract</code>, <code>evaporation_contract</code>, <code>fiery_touch_contract</code>, <code>melting_touch_contract</code></td><td>Flame Imp ability contracts</td></tr>
-  <tr><td><code>contract_blaze</code>, <code>contract_evaporate</code>, <code>contract_fiery_touch</code>, <code>contract_ownership</code>, <code>contract_resist_fire</code>, <code>contract_smelting</code></td><td>Older contract IDs</td></tr>
-  <tr><td><code>torment_contract</code> · <code>contract_torment</code>, <code>torment_scroll</code></td><td>Torment contract / scroll (Lord of Torment)</td></tr>
+  <tr><td><code>torment_scroll</code></td><td>Torment Scroll (Lord of Torment)</td></tr>
   <tr><td><code>hunger_demon_soul</code>, <code>anguish_demon_soul</code>, <code>fear_demon_soul</code>, <code>torment_demon_soul</code>, <code>soul_of_torment</code></td><td>Demon souls</td></tr>
 </table>
 
@@ -2921,7 +2924,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Spectre</td><td>Moderate</td><td>Moderate</td><td>Hostile</td><td>—</td></tr>
   <tr><td>Poltergeist</td><td>Low</td><td>Item throwing</td><td>Hostile</td><td>—</td></tr>
   <tr><td>Nightmare</td><td>100</td><td>4</td><td>Hostile</td><td>Mellifluous Hunger (Spirit World only)</td></tr>
-  <tr><td>Flame Imp</td><td>Low</td><td>Fire</td><td>Hostile</td><td>—</td></tr>
+  <tr><td>Flame Imp</td><td>50</td><td>4 melee; 8 powered</td><td>Hostile until bound</td><td>No death loot; Hunger/Fear/Anguish souls and Torment Scroll are ordered relationship gifts</td></tr>
   <tr><td>Flying Monkey</td><td>Moderate</td><td>Low</td><td>Neutral (tamed)</td><td>—</td></tr>
   <tr><td>Horned Huntsman</td><td>200 or 400</td><td>Up to 20</td><td>Hostile</td><td>Enchanted Books, Spear of Huntsman, Demonic Blood</td></tr>
   <tr><td>Lord of Torment</td><td>Very High</td><td>Very High</td><td>Hostile</td><td>Endgame materials</td></tr>

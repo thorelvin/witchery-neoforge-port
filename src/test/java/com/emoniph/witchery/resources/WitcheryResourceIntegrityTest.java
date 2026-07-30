@@ -193,6 +193,16 @@ class WitcheryResourceIntegrityTest {
                 "1b00271a363e46f6fc6932774e72e46624ed6abd953bb27cbf17becc183432b6");
     }
 
+    @Test
+    void flameImpUsesSourceTextureAndHasNoOrdinaryDeathLoot()
+            throws IOException, NoSuchAlgorithmException {
+        assertTexture(Path.of("entity", "imp.png"), 64, 64,
+                "18335af8f7a9af9daeef9f14b6e4d702e9aa4fcf6d234f5378c0c4b5eb905094");
+        JsonObject loot = readJson(DATA.resolve(Path.of("loot_table", "entities", "flame_imp.json")));
+        assertEquals(0, loot.getAsJsonArray("pools").size(),
+                "EntityImp has no ordinary death-drop pools");
+    }
+
     private static void assertSpecialItemRenderer(String itemId, String rendererType) throws IOException {
         JsonObject root = readJson(ITEM_DEFINITIONS.resolve(itemId + ".json"));
         JsonObject model = root.getAsJsonObject("model");

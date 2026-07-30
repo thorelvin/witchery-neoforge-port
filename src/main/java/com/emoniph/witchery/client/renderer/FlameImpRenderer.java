@@ -27,8 +27,7 @@ public class FlameImpRenderer extends MobRenderer<FlameImpEntity, FlameImpModel.
     @Override
     protected void scale(FlameImpModel.FlameImpRenderState state, PoseStack ps) {
         if (state.powered) {
-            ps.scale(1.0F, 1.5F, 1.0F);
-            ps.translate(0.0F, -0.5F, 0.0F);
+            ps.scale(1.5F, 1.0F, 1.5F);
         }
     }
 }
