@@ -105,6 +105,7 @@ public final class SpiritWorldHelper {
         if (sw == null) return;
 
         data.clearManifestationState();
+        data.setOtherwhereHearthTraveler(false);
         data.setReturnPos(player.blockPosition(), player.level().dimension());
 
         // Nightmare chance — block scan around sleeping position
@@ -175,6 +176,7 @@ public final class SpiritWorldHelper {
 
         data.setInSpiritWorld(false);
         data.setSpiritWorldIsDream(false);
+        data.setOtherwhereHearthTraveler(false);
         data.setDemonicNightmare(false);
         data.clearManifestationState();
         data.clearReturnPos();

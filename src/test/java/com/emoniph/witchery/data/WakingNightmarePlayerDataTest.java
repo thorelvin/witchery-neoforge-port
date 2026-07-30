@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import net.minecraft.nbt.NbtOps;
 import org.junit.jupiter.api.Test;
 
 class WakingNightmarePlayerDataTest {
@@ -25,11 +26,29 @@ class WakingNightmarePlayerDataTest {
     void curseStateCopiesWithPersistentPlayerData() {
         WitcheryPlayerData original = new WitcheryPlayerData();
         original.setWakingNightmareLevel(2);
+        original.setOtherwhereHearthTraveler(true);
 
         WitcheryPlayerData copy = new WitcheryPlayerData();
         copy.copyFrom(original, false);
 
         assertEquals(2, copy.getWakingNightmareLevel());
         assertTrue(copy.hasWakingNightmare());
+        assertTrue(copy.isOtherwhereHearthTraveler());
+    }
+
+    @Test
+    void physicalSpiritTravelerFlagPersistsInNestedState() {
+        WitcheryPlayerData.SpiritWorldState state = new WitcheryPlayerData.SpiritWorldState();
+        state.otherwhereHearthTraveler = true;
+
+        var encoded = WitcheryPlayerData.SpiritWorldState.CODEC
+                .encodeStart(NbtOps.INSTANCE, state)
+                .getOrThrow();
+        WitcheryPlayerData.SpiritWorldState decoded =
+                WitcheryPlayerData.SpiritWorldState.CODEC
+                        .parse(NbtOps.INSTANCE, encoded)
+                        .getOrThrow();
+
+        assertTrue(decoded.otherwhereHearthTraveler);
     }
 }

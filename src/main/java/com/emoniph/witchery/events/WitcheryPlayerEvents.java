@@ -28,6 +28,7 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.GlassGobletItem;
 import com.emoniph.witchery.item.WerewolfShiftUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import com.emoniph.witchery.ritual.OtherwhereHearthTransposition;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -116,6 +117,7 @@ public class WitcheryPlayerEvents {
             giveFirstJoinPrimer(player);
             syncKnownRecipeGuideAdvancements(player);
             syncToClient(player);
+            OtherwhereHearthTransposition.recover(player.level().getServer());
         }
     }
 
@@ -132,6 +134,9 @@ public class WitcheryPlayerEvents {
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            if (!event.getTo().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+                WitcheryAttachments.get(player).setOtherwhereHearthTraveler(false);
+            }
             syncToClient(player);
         }
     }
@@ -146,6 +151,9 @@ public class WitcheryPlayerEvents {
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            if (!player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+                WitcheryAttachments.get(player).setOtherwhereHearthTraveler(false);
+            }
             syncToClient(player);
         }
     }
@@ -169,7 +177,8 @@ public class WitcheryPlayerEvents {
             SpiritWorldHelper.returnGhostPlayerToSpiritWorld(player);
             return;
         }
-        if (!player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) return;
+        if (!player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
+                || data.isOtherwhereHearthTraveler()) return;
         event.setCanceled(true);
         player.setHealth(1.0f);
         SpiritWorldHelper.exit(player);

@@ -45,13 +45,28 @@ public final class WitcheryProtectionService {
 
     public static boolean canModifyBlock(@Nullable ServerPlayer actor, ServerLevel level, BlockPos pos,
                                          WitcheryProtectionAction action) {
+        return canModifyBlock(actor, level, pos, action, true);
+    }
+
+    /**
+     * Checks a cross-dimension terrain change while the acting player remains in the source level.
+     * Claim adapters still receive the real destination level and position; only the ordinary
+     * same-level actor guard is relaxed.
+     */
+    public static boolean canModifyRemoteBlock(@Nullable ServerPlayer actor, ServerLevel level, BlockPos pos,
+                                               WitcheryProtectionAction action) {
+        return canModifyBlock(actor, level, pos, action, false);
+    }
+
+    private static boolean canModifyBlock(@Nullable ServerPlayer actor, ServerLevel level, BlockPos pos,
+                                          WitcheryProtectionAction action, boolean requireActorInLevel) {
         if (!WitcheryConfig.PROTECT_TERRAIN_MAGIC.get()) {
             return true;
         }
         if (level == null || pos == null || action == null) {
             return false;
         }
-        if (actor == null || !actor.isAlive() || actor.level() != level) {
+        if (actor == null || !actor.isAlive() || (requireActorInLevel && actor.level() != level)) {
             return false;
         }
         if (isAdmin(actor)) {

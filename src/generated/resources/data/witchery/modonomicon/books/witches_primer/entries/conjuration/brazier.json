@@ -71,7 +71,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)**Conjure Poltergeist** - Wormwood, Refined Evil, and Focused Will; this one needs no altar. Released spectral undead remember their summoner, ignore that owner, and can be strengthened with Graveyard Dust up to 50 health. **Anguish of the Dead** - Tear of the Goddess, Blaze Rod, and Golden Apple. Strength radiates outward.[#]()",
+      "text": "[#](53341a)**Conjure Poltergeist** - Wormwood, Refined Evil, and Focused Will; this one needs no altar. Released spectral undead remember their summoner, ignore that owner, and can be strengthened with Graveyard Dust up to 50 health.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -82,7 +82,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)**Fortification of the Corpse** - Tear of the Goddess, Diamond, and Golden Apple. Resistance gathers nearby. **Deathly Veil** - Fermented Eye, Ender Pearl, and Diamond. Light passes through.[#]()",
+      "text": "[#](53341a)**Anguish of the Dead** - Tear of the Goddess, Blaze Rod, and Golden Apple. Strength radiates outward. **Fortification of the Corpse** - Tear of the Goddess, Diamond, and Golden Apple. Resistance gathers nearby.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -93,7 +93,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)**Drain Growth** - Condensed Fear, Wormy Apple, and Graveyard Dust. Crops regress and undead knit together. **Graveyard Mist** - Nether Wart, Quicklime, and Blaze Powder. You will know it by the smoke.[#]()",
+      "text": "[#](53341a)**Deathly Veil** - Fermented Eye, Ender Pearl, and Diamond. Light passes through. **Drain Growth** - Condensed Fear, Wormy Apple, and Graveyard Dust. Crops regress and undead knit together.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -104,7 +104,18 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)**Quick burnings** - Infernal Animus; Exhale of the Horned One; Rowan Berries; Fanciful Thread; Diamond Vapour with Fanciful Thread; or Gunpowder. These release their nearby player effects after a short burn.[#]()",
+      "text": "[#](53341a)**Graveyard Mist** - Nether Wart, Quicklime, and Blaze Powder. You will know it by the smoke. **Quick burnings** - Infernal Animus; Exhale of the Horned One; Rowan Berries; Fanciful Thread; Diamond Vapour with Fanciful Thread; or Gunpowder.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)These release their nearby player effects after a short burn.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

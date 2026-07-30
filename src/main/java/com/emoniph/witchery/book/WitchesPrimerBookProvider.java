@@ -412,6 +412,11 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                     List.of(WitcheryItems.PURIFIED_MILK.get(), Items.COOKIE, WitcheryItems.BREW_OF_LOVE.get(),
                             WitcheryItems.WHIFF_OF_MAGIC.get(), WitcheryItems.ICY_NEEDLE.get(),
                             WitcheryItems.ARTICHOKE.get()));
+            case "kettle_otherwhere_hearth" -> vesselRecipe(title, caption,
+                    WitcheryItems.OTHERWHERE_HEARTH_BREW.get(), 1,
+                    List.of(WitcheryItems.SOUL_OF_TORMENT.get(), WitcheryItems.DEMON_HEART.get(),
+                            WitcheryItems.BREW_OF_SLEEPING.get(), WitcheryItems.SPIRIT_OF_OTHERWHERE.get(),
+                            WitcheryItems.ATTUNED_STONE_CHARGED.get(), WitcheryItems.DROP_OF_LUCK.get()));
             case "oven_odour_of_purity" -> ovenRecipeNote(title, caption, WitcheryItems.HAWTHORN_SAPLING.get(),
                     WitcheryItems.ODOUR_OF_PURITY.get());
             case "oven_breath_of_goddess" -> ovenRecipeNote(title, caption, Items.BIRCH_SAPLING,
@@ -1522,6 +1527,35 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "Brew it from **Purified Milk**, a **Cookie**, **Brew of Love**, **Whiff of Magic**, an "
                         + "**Icy Needle**, and an **Artichoke** — three bottles per working."));
 
+        List<BookPageModel<?>> hearth = new ArrayList<>(WitcheryBooks.prose("The Otherwhere Hearth",
+                "This additive endgame working carries a settled home bodily between the waking world and "
+                        + "the Spirit World. Brew and bottle an Otherwhere Hearth, then use it on an empty, "
+                        + "dry Kettle. The Kettle binds permanently to the witch who named it."
+                        + "\n\nTo cross, draw a **large Otherwhere ring** and a **medium Ritual ring** around "
+                        + "the block beneath the Kettle. Gather six coven witches and a complete altar inside "
+                        + "the hearth, fill that altar with at least 10,000 power, then crouch and touch the "
+                        + "bound Kettle with an empty hand."));
+        hearth.add(spotlight(WitcheryItems.OTHERWHERE_HEARTH_BREW.get(), "Otherwhere Hearth",
+                "The hearth is a **25 x 25 x 25** volume: twelve blocks outward from the Kettle in every "
+                        + "horizontal direction, eight below it, and sixteen above. The same coordinates in "
+                        + "the Overworld and Spirit World exchange places. Blocks, block entities, and every "
+                        + "movable entity inside both volumes travel with them."));
+        hearth.add(stationRecipeCard("kettle_otherwhere_hearth", "Kettle: Otherwhere Hearth",
+                "Brew **Soul of Torment**, **Demon Heart**, **Brew of Sleeping**, **Spirit of Otherwhere**, "
+                        + "**Charged Attuned Stone**, and **Drop of Luck** in that order. The batch needs "
+                        + "10,000 altar power and yields one binding draught."));
+        hearth.addAll(WitcheryBooks.prose("A Hearth Must Arrive Safely",
+                "This is a true swap, not an erasure. The far volume returns to the place the house left, and "
+                        + "the same bound Kettle performs the return journey."
+                        + "\n\nThe rite refuses to begin if a player occupies the destination, a sleeping "
+                        + "dream-traveller or unmovable entity is caught inside, either volume crosses a "
+                        + "world border or protected claim, an unbreakable block or another bound hearth is "
+                        + "present, or the circles, coven, altar strength, or available power are incomplete."
+                        + "\n\nBoth volumes and every non-player traveller are recorded before anything is "
+                        + "changed. If the server stops during the crossing, the saved working resumes until "
+                        + "the hearth settles. Witches carried bodily into the Spirit World keep their "
+                        + "inventory and face ordinary death there; this is not dream walking."));
+
         List<BookPageModel<?>> dream = new ArrayList<>(WitcheryBooks.prose("Dream Weavers",
                 "Sleep is not passive, and the spirit world is not a waiting room. A Dream Catcher placed "
                         + "near the sleeping body shapes what happens when consciousness crosses the boundary "
@@ -1558,9 +1592,11 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
 
         cat.withEntries(
                 entry(cat, "spirit_world/spirit_world", "The Spirit World", WitcheryItems.BREW_OF_SLEEPING.get(), 0, spirit),
-                entry(cat, "spirit_world/dream_weavers", "Dream Weavers", WitcheryItems.DREAM_CATCHER.get(), 1, dream),
-                entry(cat, "spirit_world/crystal_ball", "The Crystal Ball", WitcheryItems.CRYSTAL_BALL.get(), 2, crystal),
-                gatedByItem("guide/obtained/brew_of_flowing_spirit", whatsNext(cat, "spirit_world", 3, "book_creatures", "Witchcraft: Creatures", WitcheryItems.BOOK_CREATURES.get(), "Creatures")));
+                entry(cat, "spirit_world/otherwhere_hearth", "The Otherwhere Hearth",
+                        WitcheryItems.OTHERWHERE_HEARTH_BREW.get(), 1, hearth),
+                entry(cat, "spirit_world/dream_weavers", "Dream Weavers", WitcheryItems.DREAM_CATCHER.get(), 2, dream),
+                entry(cat, "spirit_world/crystal_ball", "The Crystal Ball", WitcheryItems.CRYSTAL_BALL.get(), 3, crystal),
+                gatedByItem("guide/obtained/brew_of_flowing_spirit", whatsNext(cat, "spirit_world", 4, "book_creatures", "Witchcraft: Creatures", WitcheryItems.BOOK_CREATURES.get(), "Creatures")));
         return cat;
     }
 

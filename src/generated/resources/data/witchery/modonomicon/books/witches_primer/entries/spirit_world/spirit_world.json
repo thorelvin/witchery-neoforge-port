@@ -27,7 +27,18 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)To enter, drink a Brew of Sleeping near an altar, or eat an Apple of Sleeping. You will leave your body behind. It will wait for you — try to come back before something finds it.[#]()",
+      "text": "[#](53341a)To enter, drink a Brew of Sleeping near an altar, or eat an Apple of Sleeping. Your prone Body remains at the centre of the entry block with your name, skin, and entry health. It cannot be pushed and persists until you return.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)If another player destroys it, you are torn awake immediately.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

@@ -29,6 +29,7 @@ public record SyncPlayerDataPayload(
         int infusionEnergy,
         int infusionMaxEnergy,
         boolean inSpiritWorld,
+        boolean otherwhereHearthTraveler,
         boolean manifestedGhost,
         boolean spiritWorldDream,
         boolean demonicNightmare,
@@ -63,6 +64,7 @@ public record SyncPlayerDataPayload(
                             buf.readBoolean(),
                             buf.readBoolean(),
                             buf.readBoolean(),
+                            buf.readBoolean(),
                             buf.readInt()
                     );
                 }
@@ -86,6 +88,7 @@ public record SyncPlayerDataPayload(
                     buf.writeInt(payload.infusionEnergy());
                     buf.writeInt(payload.infusionMaxEnergy());
                     buf.writeBoolean(payload.inSpiritWorld());
+                    buf.writeBoolean(payload.otherwhereHearthTraveler());
                     buf.writeBoolean(payload.manifestedGhost());
                     buf.writeBoolean(payload.spiritWorldDream());
                     buf.writeBoolean(payload.demonicNightmare());
@@ -111,6 +114,7 @@ public record SyncPlayerDataPayload(
                 data.getInfusionEnergy(),
                 data.getInfusionMaxEnergy(),
                 data.isInSpiritWorld(),
+                data.isOtherwhereHearthTraveler(),
                 data.isManifestedGhost(),
                 data.isSpiritWorldDream(),
                 data.isDemonicNightmare(),

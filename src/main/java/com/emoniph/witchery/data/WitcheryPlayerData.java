@@ -177,6 +177,7 @@ public class WitcheryPlayerData {
         public boolean manifestationSkipTick = false;
         public long manifestationReturnPos = Long.MIN_VALUE;
         public int wakingNightmareLevel = 0;
+        public boolean otherwhereHearthTraveler = false;
 
         public SpiritWorldState() {}
 
@@ -184,7 +185,8 @@ public class WitcheryPlayerData {
                                  float savedHealth, int savedFood, float savedSat,
                                  String corpseUUID, boolean manifestedGhost,
                                  int manifestationTime, boolean manifestationSkipTick,
-                                 long manifestationReturnPos, int wakingNightmareLevel) {
+                                 long manifestationReturnPos, int wakingNightmareLevel,
+                                 boolean otherwhereHearthTraveler) {
             this.isDream = isDream;
             this.inventorySnbt = inventorySnbt;
             this.savedHealth = savedHealth;
@@ -196,6 +198,7 @@ public class WitcheryPlayerData {
             this.manifestationSkipTick = manifestationSkipTick;
             this.manifestationReturnPos = manifestationReturnPos;
             this.wakingNightmareLevel = Math.max(0, wakingNightmareLevel);
+            this.otherwhereHearthTraveler = otherwhereHearthTraveler;
         }
 
         public SpiritWorldState copy() {
@@ -210,7 +213,8 @@ public class WitcheryPlayerData {
                     manifestationTime,
                     manifestationSkipTick,
                     manifestationReturnPos,
-                    wakingNightmareLevel);
+                    wakingNightmareLevel,
+                    otherwhereHearthTraveler);
         }
 
         public static final Codec<SpiritWorldState> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -224,7 +228,9 @@ public class WitcheryPlayerData {
             Codec.INT.optionalFieldOf("manifest_time", 0).forGetter(s -> s.manifestationTime),
             Codec.BOOL.optionalFieldOf("manifest_skip_tick", false).forGetter(s -> s.manifestationSkipTick),
             Codec.LONG.optionalFieldOf("manifest_return_pos", Long.MIN_VALUE).forGetter(s -> s.manifestationReturnPos),
-            Codec.INT.optionalFieldOf("waking_nightmare_level", 0).forGetter(s -> s.wakingNightmareLevel)
+            Codec.INT.optionalFieldOf("waking_nightmare_level", 0).forGetter(s -> s.wakingNightmareLevel),
+            Codec.BOOL.optionalFieldOf("otherwhere_hearth_traveler", false)
+                    .forGetter(s -> s.otherwhereHearthTraveler)
         ).apply(i, SpiritWorldState::new));
     }
 
@@ -464,6 +470,7 @@ public class WitcheryPlayerData {
     public String getReturnDimension() { return returnDimension; }
     public boolean isInSpiritWorld() { return inSpiritWorld; }
     public boolean isSpiritWorldDream() { return sw.isDream; }
+    public boolean isOtherwhereHearthTraveler() { return sw.otherwhereHearthTraveler; }
     public String getSavedInventorySnbt() { return sw.inventorySnbt; }
 
     public void setReturnPos(BlockPos pos, ResourceKey<Level> dimension) {
@@ -478,6 +485,7 @@ public class WitcheryPlayerData {
 
     public void setInSpiritWorld(boolean v) { this.inSpiritWorld = v; }
     public void setSpiritWorldIsDream(boolean v) { sw.isDream = v; }
+    public void setOtherwhereHearthTraveler(boolean value) { sw.otherwhereHearthTraveler = value; }
     public void setSavedInventorySnbt(String snbt) { sw.inventorySnbt = snbt == null ? "" : snbt; }
     public float getSavedHealth() { return sw.savedHealth; }
     public int getSavedFoodLevel() { return sw.savedFood; }

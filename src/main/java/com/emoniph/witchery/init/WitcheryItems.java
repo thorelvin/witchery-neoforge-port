@@ -595,6 +595,8 @@ public class WitcheryItems {
     public static final DeferredItem<Item> BREW_OF_RAISING        = ITEMS.register("brew_of_raising", id -> new BrewOfRaisingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_SLEEPING       = ITEMS.register("brew_of_sleeping", id -> new BrewOfSleepingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_FLOWING_SPIRIT = ITEMS.register("brew_of_flowing_spirit", id -> new BrewOfFlowingSpiritItem(itemProps(id)));
+    public static final DeferredItem<Item> OTHERWHERE_HEARTH_BREW = ITEMS.register("otherwhere_hearth_brew", id ->
+            new Item(itemProps(id).stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final DeferredItem<Item> BREW_OF_WASTING        = ITEMS.register("brew_of_wasting", id -> new BrewOfWastingItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_EROSION        = ITEMS.register("brew_of_erosion", id -> new BrewOfErosionItem(itemProps(id)));
     public static final DeferredItem<Item> BREW_OF_FOULNESS       = ITEMS.register("brew_of_foulness", id -> new BrewOfFoulnessItem(itemProps(id)));

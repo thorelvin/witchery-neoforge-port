@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Some creatures are better studied after they have stopped moving. The traps are low metal plates: place one, give it a moment to arm, and keep your own feet clear.[#]()",
+      "text": "[#](53341a)Some creatures are better studied after they have stopped moving. The traps are low metal plates: place one closed, then right-click it open. A moment later it is armed; keep your own feet clear.[#]()",
       "title": "Creature Traps",
       "use_markdown_in_title": false
     },
@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "recipe_id_1": "witchery:beartrap",
-      "text": "[#](53341a)Iron and shears. Once armed it catches living creatures, snaps shut for four damage, and applies strong slowness. Right-click to open or close it.[#]()",
+      "text": "[#](53341a)Iron and shears. It rests closed when placed. Open it to arm the jaws; once armed it catches living creatures, snaps shut for four damage, and applies strong slowness.[#]()",
       "title1": "Beartrap",
       "title2": ""
     },
@@ -38,7 +38,7 @@
         "type": "modonomicon:none"
       },
       "recipe_id_1": "witchery:wolftrap",
-      "text": "[#](53341a)Upgrade a Beartrap with Silver, Null Catalysts, and Wolfsbane. Werewolves trigger it; others do not. It drops nothing when broken.[#]()",
+      "text": "[#](53341a)Upgrade a Beartrap with Silver, Null Catalysts, and Wolfsbane. Werewolves trigger it; others do not. Beside a Wolf Altar, with a leashed sheep close by, an open Wolftrap can lure a Wolfman on the full moon; catching that beast makes it infectious. It drops nothing when broken.[#]()",
       "title1": "Wolftrap",
       "title2": ""
     }

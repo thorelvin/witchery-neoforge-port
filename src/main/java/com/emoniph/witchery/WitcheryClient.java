@@ -596,6 +596,7 @@ public class WitcheryClient {
             data.setInfusionType(InfusionType.fromString(payload.infusionType()));
             data.setInfusionEnergy(payload.infusionEnergy(), payload.infusionMaxEnergy());
             data.setInSpiritWorld(payload.inSpiritWorld());
+            data.setOtherwhereHearthTraveler(payload.otherwhereHearthTraveler());
             data.setManifestedGhost(payload.manifestedGhost());
             data.setSpiritWorldIsDream(payload.spiritWorldDream());
             data.setDemonicNightmare(payload.demonicNightmare());

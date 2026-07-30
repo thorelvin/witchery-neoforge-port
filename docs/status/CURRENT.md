@@ -52,6 +52,18 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- The additive Otherwhere Hearth endgame working is code-complete pending live
+  and restart QA. A 10,000-power six-ingredient Kettle batch permanently binds
+  one empty Kettle to its owner. A large Otherwhere ring, medium Ritual ring,
+  six coven members, and an in-volume altar with a base 10,000 available power
+  then swap the complete same-coordinate 25 x 25 x 25 Overworld/Spirit World
+  volumes, including block entities and every movable entity on either side.
+  Activation refuses occupied destinations, dream travellers, unmovable
+  entities, world/claim boundaries, unbreakable blocks, and other bound hearths.
+  A persisted pre-mutation journal stores both structures, the traveller
+  manifest, and complete non-player entity snapshots, allowing interrupted
+  crossings, missing-entity recovery, and offline-player transfers to resume
+  safely.
 - Corpse 1.7.10 parity is code-complete pending live QA. Spirit World entry now
   leaves the source `1.2 x 0.5` persistent Body at the centre of the entry block,
   carrying the owner's name, UUID, health, and skin. It cannot fall, drift, or

@@ -54,12 +54,12 @@
         "count": 1,
         "item": "witchery:crystal_ball"
       },
-      "text": "[#](53341a)The rite returns a Crystal Ball attuned for fortune work. Use it near a powered altar, or focus it with waystones and taglocks.[#]()",
+      "text": "[#](53341a)The rite returns a Crystal Ball attuned for fortune work. Use it near a powered altar, or focus it with waystones and taglocks. Bad foci are refused before the altar is charged; a true focus wakes the ball with violet motes.[#]()",
       "title": "Crystal Ball"
     }
   ],
   "show_when_any_parent_unlocked": false,
-  "sort_number": 2,
+  "sort_number": 3,
   "x": 0,
   "y": 0
 }

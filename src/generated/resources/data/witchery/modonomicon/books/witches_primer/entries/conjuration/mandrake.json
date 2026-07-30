@@ -16,8 +16,19 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Mandrake is never a polite harvest. A mature root sometimes comes quietly, and sometimes wakes as a shrieking creature instead — especially at night.[#]() [#](53341a)When the crop awakens, the living root keeps nearby players sickened until it is killed.[#]()",
+      "text": "[#](53341a)Mandrake is never a polite harvest. Pulling a mature root by day has a **90% chance** to wake the shrieking creature instead of yielding the crop; at night that falls to **10%**. Peaceful difficulty prevents it entirely.[#]()",
       "title": "Mandrake",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)An awakened root lunges at players, and contact brings fifteen seconds of nausea. Kill it to recover one Mandrake Root and one or two seeds.[#]()",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {

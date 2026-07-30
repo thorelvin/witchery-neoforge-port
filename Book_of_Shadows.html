@@ -212,12 +212,13 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <p class="subtitle">A Complete Guide to the Craft of Witchery Rewoven</p>
   <p class="divider">· · · ✦ · · ·</p>
   <p class="edition">Witchery Rewoven — NeoForge 1.21.11 Edition</p>
-  <p class="version">Version 17 — Sixteenth Edition — The body remembers</p>
+  <p class="version">Version 18 — Seventeenth Edition — The hearth crosses</p>
 </div>
 
 <div class="callout callout-tip" style="margin-bottom:2.5rem;">
 <strong>What changed in this edition</strong> — old paths are drawn more clearly:
 <ul style="margin-top:0.5rem;margin-bottom:0;">
+  <li>The additive endgame <a href="#otherwhere-hearth"><strong>Otherwhere Hearth</strong></a> now lets a full coven carry a settled home bodily between the Overworld and Spirit World. An expensive Kettle batch permanently binds the hearth; each later crossing uses a large Otherwhere ring, medium Ritual ring, and high-strength altar to exchange both same-coordinate 25-block cubes, with persisted recovery guarding the house if a crossing is interrupted.</li>
   <li>The sleeping <strong>Body</strong> left behind by Spirit Walking has remembered its old shape: broad and prone at the centre of the entry block, wearing its owner's name and skin, unable to drift or be pushed, and casting no shadow. It persists while its witch dreams, vanishes on a normal return, leaves no loot, and wakes its owner by force if destroyed.</li>
   <li>The <a href="#ch31">Nightmare</a> hunts by the old laws again: no false teleport, a named victim and sixteen-block tether, armor torn away before the blow, a visible defense veil broken by Flowing Spirit, and only Mellifluous Hunger left behind in the Spirit World. The <a href="#ch19">Curse of Waking Nightmare</a> once more persists outside dreams until its victim crosses into the Spirit World or finds a proper cure.</li>
   <li>The speaking layer has a fuller memory of the world. Local NPC voices now draw from a broad persona-card library, with exact, scoped, rumor, and forbidden lanes keeping Coven Witches, villagers, guards, hobgoblins, imps, demons, bosses, Leonard, Baba Yaga, and reflections inside their proper knowledge and voice.</li>
@@ -1680,6 +1681,32 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 
 <div class="callout callout-warn">Guard the Body you leave behind. It persists and cannot be pushed away, but another player may kill it while you dream; its destruction tears you awake immediately. A normal return removes it cleanly, and it leaves no loot.</div>
 
+<h3 id="otherwhere-hearth">The Otherwhere Hearth</h3>
+<div class="lore-pull">A dream carries the witch. A hearth carries everything the witch refuses to leave behind.</div>
+
+<p>The <strong>Otherwhere Hearth</strong> is an additive endgame working that combines the Kettle with circle magic. Brew and bottle the binding draught, then use it on an empty, dry Kettle. That Kettle permanently remembers its owner. The draught is consumed once; later crossings spend altar power instead.</p>
+
+<div class="callout callout-recipe">
+  <strong>Kettle — Otherwhere Hearth:</strong> Soul of Torment · Demon Heart · Brew of Sleeping · Spirit of Otherwhere · Charged Attuned Stone · Drop of Luck → 1 Otherwhere Hearth<br>
+  <strong>Power:</strong> 10,000
+</div>
+
+<p>Centre a <strong>large Otherwhere ring</strong> and a <strong>medium Ritual ring</strong> on the block beneath the bound Kettle. Gather six coven members within the hearth and place a complete altar there whose maximum strength and current charge can meet the base 10,000-power crossing cost. The owner then crouches and touches the Kettle with an empty hand.</p>
+
+<table>
+  <tr><th>Property</th><th>Otherwhere Hearth rule</th></tr>
+  <tr><td>Volume</td><td>25 × 25 × 25: 12 blocks from the Kettle in each horizontal direction, 8 blocks below, and 16 above.</td></tr>
+  <tr><td>Destination</td><td>The same coordinates in the other world: Overworld to Spirit World, or Spirit World to Overworld.</td></tr>
+  <tr><td>Crossing</td><td>A true swap. Every block, block entity, and transferable entity in both volumes exchanges worlds; vehicle and passenger links are restored.</td></tr>
+  <tr><td>Return</td><td>Use the same bound Kettle after it crosses. The displaced far-side volume returns to the place the house left.</td></tr>
+</table>
+
+<p>The working examines both volumes before it spends power or changes a block. It refuses an occupied destination, a sleeping dream-traveller, an entity that cannot cross dimensions, an incomplete coven or altar, insufficient altar capacity or charge, protected ground, world-border or build-height overflow, unbreakable blocks, or another bound Otherwhere Hearth.</p>
+
+<div class="callout callout-tip">Both complete structures, the traveller manifest, and full non-player entity snapshots are written to persistent storage before the first block moves. If the server stops during a crossing, the saved working resumes until one complete, charged swap has settled. A missing creature or vehicle can be restored from its record; an absent player is held in the manifest and moved when they return.</div>
+
+<div class="callout callout-warn">A witch carried bodily by an Otherwhere Hearth is not dreaming. Inventory travels with the body, no sleeping Body remains behind, and death in the Spirit World is ordinary death rather than a forced awakening.</div>
+
 <h3>The Torment Dimension</h3>
 <p>A hostile dungeon-dimension. Six levels deep, DFS-maze layout of Torment Stone corridors. Enter through a Torment Portal found in the overworld. The dimension is designed as a gauntlet. The Lord of Torment waits at the bottom — see <a href="#ch30">Chapter 30</a> for preparation.</p>
 
@@ -2980,7 +3007,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <div class="callout callout-tip">If a chapter refuses to open, you have simply not yet earned its book. For testing, <code>/witchery guide unlock [all|&lt;book&gt;]</code> opens chapters and <code>/witchery guide reset</code> shuts them again. The <strong>Witches' Brews</strong> Cauldron Book (<span class="item">witchery:cauldron_book</span>) and <strong>Immortals' Observations</strong> stand apart from the chain as guides of their own. Where a recipe has not yet reached the Primer, JEI covers the machines and this Book of Shadows covers the rest.</div>
 
 <div class="page-footer">
-  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 17 &nbsp;·&nbsp; Sixteenth Edition &nbsp;·&nbsp; ☽ ✦ ☾
+  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 18 &nbsp;·&nbsp; Seventeenth Edition &nbsp;·&nbsp; ☽ ✦ ☾
 </div>
 
 <script>

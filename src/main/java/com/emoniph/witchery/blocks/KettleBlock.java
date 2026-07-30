@@ -1,10 +1,14 @@
 package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.blocks.entity.KettleBlockEntity;
+import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.ritual.OtherwhereHearthTransposition;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -137,6 +141,29 @@ public class KettleBlock extends BaseEntityBlock {
                                           InteractionHand hand, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof KettleBlockEntity kettle)) return InteractionResult.TRY_WITH_EMPTY_HAND;
 
+        if (stack.is(WitcheryItems.OTHERWHERE_HEARTH_BREW.get())) {
+            if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+                if (kettle.isOtherwhereHearthBound()) {
+                    player.displayClientMessage(Component.translatable(
+                            "witchery.otherwhere_hearth.already_bound",
+                            kettle.getOtherwhereHearthOwnerName()), false);
+                } else if (!kettle.isEmptyForOtherwhereHearthBinding()) {
+                    player.displayClientMessage(Component.translatable(
+                            "witchery.otherwhere_hearth.must_be_empty"), false);
+                } else {
+                    kettle.bindOtherwhereHearth(serverPlayer);
+                    if (!player.isCreative()) {
+                        stack.shrink(1);
+                    }
+                    level.playSound(null, pos, SoundEvents.BEACON_ACTIVATE,
+                            SoundSource.BLOCKS, 1.0F, 1.15F);
+                    player.displayClientMessage(Component.translatable(
+                            "witchery.otherwhere_hearth.bound"), false);
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
         if (stack.is(Items.GLASS_BOTTLE)) {
             if (!kettle.isReady()) {
                 if (!level.isClientSide()) {
@@ -216,6 +243,24 @@ public class KettleBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof KettleBlockEntity kettle)) return InteractionResult.PASS;
 
         ItemStack held = player.getMainHandItem();
+
+        if (held.isEmpty() && player.isShiftKeyDown() && kettle.isOtherwhereHearthBound()) {
+            if (!level.isClientSide()
+                    && player instanceof ServerPlayer serverPlayer
+                    && level instanceof ServerLevel serverLevel) {
+                OtherwhereHearthTransposition.activate(serverPlayer, serverLevel, pos, kettle);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        if (held.isEmpty() && kettle.isOtherwhereHearthBound()) {
+            if (!level.isClientSide()) {
+                player.displayClientMessage(Component.translatable(
+                        "witchery.otherwhere_hearth.status",
+                        kettle.getOtherwhereHearthOwnerName()), true);
+            }
+            return InteractionResult.SUCCESS;
+        }
 
         // Glass bottle when brew is ready → extract brew
         if (held.is(Items.GLASS_BOTTLE) && kettle.isReady()) {

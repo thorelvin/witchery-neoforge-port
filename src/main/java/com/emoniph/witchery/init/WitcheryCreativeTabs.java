@@ -437,6 +437,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.BREW_OF_RAISING.get(),
                 WitcheryItems.BREW_OF_SLEEPING.get(),
                 WitcheryItems.BREW_OF_FLOWING_SPIRIT.get(),
+                WitcheryItems.OTHERWHERE_HEARTH_BREW.get(),
                 WitcheryItems.BREW_OF_WASTING.get(),
                 WitcheryItems.BREW_OF_EROSION.get(),
                 WitcheryItems.BREW_OF_FOULNESS.get(),

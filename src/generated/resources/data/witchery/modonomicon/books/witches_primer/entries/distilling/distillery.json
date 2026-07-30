@@ -16,8 +16,19 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Some essences cannot be coaxed directly from raw materials. They must be drawn out through heat and pressure — concentrated and refined until only the potent core remains.[#]() [#](53341a)The Distillery takes two inputs and clay jars, then draws steady power from a valid nearby altar.[#]()",
+      "text": "[#](53341a)Some essences cannot be coaxed directly from raw materials. They must be drawn out through heat and pressure — concentrated and refined until only the potent core remains.[#]()",
       "title": "The Distillery",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The Distillery takes two inputs and clay jars, then draws steady power from a valid nearby altar.[#]()",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -474,8 +485,8 @@
           "y": 36
         }
       ],
-      "text": "[#](53341a)**Demon Heart** + **Netherrack**, with two clay jars, yields Soul Sand and two Infernal Blood.[#]()",
-      "title": "Infernal Blood: Netherrack"
+      "text": "[#](53341a)**Demon Heart** + **Netherrack**, with two clay jars, yields Soul Sand and two Demonic Blood.[#]()",
+      "title": "Demonic Blood: Netherrack"
     },
     {
       "type": "witchery:station_recipe",
@@ -526,8 +537,8 @@
           "y": 36
         }
       ],
-      "text": "[#](53341a)**Demon Heart** + **Diamond Vapour**, with four clay jars, yields four Infernal Blood and Refined Evil.[#]()",
-      "title": "Infernal Blood: Vapour"
+      "text": "[#](53341a)**Demon Heart** + **Diamond Vapour**, with four clay jars, yields four Demonic Blood and Refined Evil.[#]()",
+      "title": "Demonic Blood: Vapour"
     }
   ],
   "show_when_any_parent_unlocked": false,

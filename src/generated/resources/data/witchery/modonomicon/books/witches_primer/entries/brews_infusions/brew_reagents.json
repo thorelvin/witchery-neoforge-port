@@ -198,10 +198,6 @@
         {
           "item": "witchery:pentacle",
           "text": "[#](53341a)**Pentacle** - capacity +6 up to 16 (1000 power).[#]()"
-        },
-        {
-          "item": "witchery:koboldite_pentacle",
-          "text": "[#](53341a)**Koboldite Pentacle** - capacity +6 up to 16 (1000 power).[#]()"
         }
       ],
       "text": "",
@@ -333,7 +329,7 @@
         },
         {
           "item": "witchery:mindrakebulb",
-          "text": "[#](53341a)**Mindrake Bulb** - duration tier 3 (150 power).[#]()"
+          "text": "[#](53341a)**Minedrake Bulb** - duration tier 3 (150 power).[#]()"
         }
       ],
       "text": "",

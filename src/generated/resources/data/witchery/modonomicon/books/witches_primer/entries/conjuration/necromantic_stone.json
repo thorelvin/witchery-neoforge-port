@@ -40,8 +40,19 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Today the stone has two dependable roles: it is consumed or preserved by later rites such as Prior Incarnation, Manifestation, fetish binding, and Spectral Stone work, and it can wake or silence an Alluring Skull.[#]()",
+      "text": "[#](53341a)Today the stone is consumed or preserved by later rites such as Prior Incarnation, Manifestation, fetish binding, and Spectral Stone work, and it can wake or silence an Alluring Skull.[#]()",
       "title": "Current Use",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)It also commands bound undead: use it on a target or on the top of a block to send nearby owned thralls there. After drinking an **Infused Brew of the Grave**, sneak-use the stone on an undead creature to bind it.[#]()",
+      "title": " ",
       "use_markdown_in_title": false
     }
   ],

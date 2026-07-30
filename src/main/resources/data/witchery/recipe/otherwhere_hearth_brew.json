@@ -1,0 +1,14 @@
+{
+  "type": "witchery:kettle_brewing",
+  "ingredients": [
+    {"id": "witchery:soul_of_torment"},
+    {"id": "witchery:demon_heart"},
+    {"id": "witchery:brew_of_sleeping"},
+    {"id": "witchery:spirit_of_otherwhere"},
+    {"id": "witchery:attuned_stone_charged"},
+    {"id": "witchery:drop_of_luck"}
+  ],
+  "result": {"id": "witchery:otherwhere_hearth_brew", "count": 1},
+  "power": 10000.0,
+  "color": -10053121
+}

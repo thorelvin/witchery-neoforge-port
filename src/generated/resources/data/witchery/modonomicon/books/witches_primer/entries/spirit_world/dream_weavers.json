@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Only one catcher near you takes effect — choose deliberately.[#]()",
+      "text": "[#](53341a)Only one catcher near you takes effect — choose deliberately. A placed weave now chimes when it catches, and waking feedback tells you which dream-thread stirred.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -88,7 +88,7 @@
     }
   ],
   "show_when_any_parent_unlocked": false,
-  "sort_number": 1,
+  "sort_number": 2,
   "x": 0,
   "y": 0
 }

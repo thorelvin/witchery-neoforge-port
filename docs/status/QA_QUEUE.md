@@ -149,6 +149,30 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Confirm dream, nightmare, and demonic nightmare colors/fog match the current
   design; normal dreams should read visibly foggy, with nightmares denser.
 - Confirm ordinary passive animals can spawn in Spirit World biomes.
+- Brew the Otherwhere Hearth ingredients in exact order: Soul of Torment,
+  Demon Heart, Brew of Sleeping, Spirit of Otherwhere, Charged Attuned Stone,
+  and Drop of Luck. Confirm the Kettle needs 10,000 altar power, yields one
+  binding item, binds only while empty and dry, consumes the item, remembers
+  its owner through reload, and refuses a second binding or a non-owner.
+- Build a disposable 25 x 25 x 25 test house around the bound Kettle, extending
+  12 blocks horizontally, 8 below, and 16 above. Include inventories, signs,
+  fluids, redstone, villagers, pets, vehicles with passengers, item entities,
+  and hostile mobs in both dimensions. With a large Otherwhere ring, medium
+  Ritual ring, six coven members, and a complete in-volume altar holding at
+  least the scaled 10,000-power cost, confirm both volumes and every entity swap
+  at identical coordinates and a second crossing restores them exactly.
+- Separately confirm the Otherwhere Hearth refuses wrong dimensions, incomplete
+  rings/coven/altar, insufficient altar capacity or power, an altar outside the
+  volume, a destination player, a dream-walking player, an unteleportable
+  entity, an unbreakable block, world-border/build-height overflow, source or
+  destination claim denial, and another bound Kettle on either side. No failed
+  preflight may consume altar power or change either volume.
+- Interrupt a prepared Otherwhere Hearth crossing during a disposable-world
+  server restart and verify its persisted journal converges to one complete,
+  charged swap. Repeat with a travelling player offline; the structures should
+  settle, the journal should wait, and that player should cross on login before
+  the journal clears. A physically carried Spirit World player keeps inventory
+  and dies normally rather than waking like a dream traveller.
 
 ### Cursed Blocks And Wells
 

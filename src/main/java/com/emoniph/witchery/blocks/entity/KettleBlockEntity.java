@@ -16,6 +16,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -26,6 +27,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
@@ -43,6 +46,9 @@ public class KettleBlockEntity extends BlockEntity implements WorldlyContainer {
     private boolean isPowered = false;
     private int color = 0;
     private int tickCount = 0;
+    @Nullable
+    private UUID otherwhereHearthOwner;
+    private String otherwhereHearthOwnerName = "";
 
     public KettleBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.KETTLE.get(), pos, state);
@@ -149,6 +155,35 @@ public class KettleBlockEntity extends BlockEntity implements WorldlyContainer {
     public boolean isRuined() { return isRuined; }
     public boolean isReady() { return !getItem(RESULT_SLOT).isEmpty() && !isRuined; }
     public boolean isBrewing() { return isFilled() && !isRuined && getItem(RESULT_SLOT).isEmpty() && someFilled(); }
+
+    public boolean isOtherwhereHearthBound() {
+        return otherwhereHearthOwner != null;
+    }
+
+    public boolean isOtherwhereHearthOwner(ServerPlayer player) {
+        return player != null && player.getUUID().equals(otherwhereHearthOwner);
+    }
+
+    public Optional<UUID> getOtherwhereHearthOwner() {
+        return Optional.ofNullable(otherwhereHearthOwner);
+    }
+
+    public String getOtherwhereHearthOwnerName() {
+        return otherwhereHearthOwnerName;
+    }
+
+    public boolean isEmptyForOtherwhereHearthBinding() {
+        return waterLevel == 0 && !isRuined && isEmpty();
+    }
+
+    public void bindOtherwhereHearth(ServerPlayer owner) {
+        if (owner == null || isOtherwhereHearthBound()) {
+            return;
+        }
+        otherwhereHearthOwner = owner.getUUID();
+        otherwhereHearthOwnerName = owner.getName().getString();
+        sync();
+    }
 
     private boolean someFilled() {
         for (int i = 0; i < INGREDIENT_SLOTS; i++) if (!getItem(i).isEmpty()) return true;
@@ -293,6 +328,10 @@ public class KettleBlockEntity extends BlockEntity implements WorldlyContainer {
         tag.putBoolean("IsRuined", isRuined);
         tag.putBoolean("IsPowered", isPowered);
         tag.putInt("Color", color);
+        if (otherwhereHearthOwner != null) {
+            tag.putString("OtherwhereHearthOwner", otherwhereHearthOwner.toString());
+            tag.putString("OtherwhereHearthOwnerName", otherwhereHearthOwnerName);
+        }
         var itemListOut = tag.childrenList("Items");
         for (int i = 0; i < items.length; i++) {
             if (!items[i].isEmpty()) {
@@ -310,6 +349,8 @@ public class KettleBlockEntity extends BlockEntity implements WorldlyContainer {
         isRuined = tag.getBooleanOr("IsRuined", false);
         isPowered = tag.getBooleanOr("IsPowered", false);
         color = tag.getIntOr("Color", 0);
+        otherwhereHearthOwner = parseUuid(tag.getStringOr("OtherwhereHearthOwner", ""));
+        otherwhereHearthOwnerName = tag.getStringOr("OtherwhereHearthOwnerName", "");
         for (int i = 0; i < items.length; i++) items[i] = ItemStack.EMPTY;
         for (net.minecraft.world.level.storage.ValueInput child : tag.childrenListOrEmpty("Items")) {
             int slot = child.getByteOr("Slot", (byte)0) & 0xFF;
@@ -449,5 +490,14 @@ public class KettleBlockEntity extends BlockEntity implements WorldlyContainer {
 
     private static boolean isValidSlot(int slot) {
         return slot >= 0 && slot < SLOT_COUNT;
+    }
+
+    @Nullable
+    private static UUID parseUuid(String raw) {
+        try {
+            return raw == null || raw.isBlank() ? null : UUID.fromString(raw);
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
     }
 }
