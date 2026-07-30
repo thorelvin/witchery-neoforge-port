@@ -241,7 +241,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** Crafted as the demonic upgrade of the Polynesia Charm.
 - **Use:** Protects the holder from most Demon attention, with the old small failure chance still present. It also lets players bargain with Demons; holding the charm lowers most prices and wears the charm when a bargain is struck.
 - **Stats:** Durability 50, stack size 1, uncommon.
-- **Notes:** Demon bargains can offer enchanted books, Demon Hearts, Spectral Dust, Tongue of Dog, Redstone Soup, Blaze Powder, and Magma Cream.
+- **Notes:** Demon bargains can offer enchanted books, a guaranteed Demon Heart route, Spectral Dust, Tongue of Dog, Redstone Soup, and optional two-Ghast-Tear or two-Ender-Pearl exchanges. Prices use Blaze Rod, Magma Cream, Diamond, Emerald, or Gold Ingot. Paying with Blaze Rod or Magma Cream starts the Demon's delayed escape explosion.
 
 ## Distillery
 - **Obtain:** Crafted using a specific recipe.

@@ -850,6 +850,9 @@ public class WitcheryPlayerEvents {
                     double radius = 4 + random.nextDouble() * 4;
                     demon.setPos(px + radius * Math.cos(angle), py, pz + radius * Math.sin(angle));
                     demon.setTarget(player);
+                    demon.setDemonicNightmareOwner(player.getUUID());
+                    demon.finalizeSpawn(spiritWorld, spiritWorld.getCurrentDifficultyAt(demon.blockPosition()),
+                            net.minecraft.world.entity.EntitySpawnReason.EVENT, null);
                     spiritWorld.addFreshEntity(demon);
                 }
             }

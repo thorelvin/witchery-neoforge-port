@@ -3,8 +3,10 @@
 Danger cards should sound wary. They may give survival advice, but should not invite the player into advanced boss routes unless the player clearly asks.
 
 ## Demons
-- [triggers: demon|demons|summon demon|trust a demon|demon bargain|demon heart] Targeted fact: Demons are summoned by rites, resist fire, throw fire, and drop Demon Hearts; they are hostile unless special charms or bargains say otherwise.
-- [triggers: devil's tongue charm|devils tongue charm|demon charm|bargain with demon] Targeted fact: A Devil's Tongue Charm can reduce demon attention and help with bargaining, but it is not perfect safety.
+- [triggers: demon|demons|summon demon|trust a demon|demon bargain|demon heart] Targeted fact: Demons are summoned by rites, resist fire, throw large fireballs, and strike hard at close range; they are hostile unless special charms or bargains say otherwise.
+- [triggers: devil's tongue charm|devils tongue charm|demon charm|bargain with demon] Targeted fact: A Devil's Tongue Charm can reduce demon attention, lower most bargain prices, and wears by five durability per completed bargain, but it is not perfect safety.
+- [triggers: demon heart drop|demon heart chance|get demon heart|demon loot|arthana demon] Targeted fact: A player-killed Demon drops a random amount of Magma Cream; Demon Hearts require an Arthana chance or the heart offer guaranteed in every Demon bargain list.
+- [triggers: demon explosion|demon bargain explosion|blaze rod demon|magma cream demon] Targeted fact: Demon prices may use Blaze Rod, Magma Cream, Diamond, Emerald, or Gold Ingot; payment in Blaze Rod or Magma Cream makes the Demon explode after a short warning delay.
 - [triggers: demon heart|eat demon heart|use demon heart] Targeted fact: Demon Hearts feed infernal workings and dangerous transformations; eating one grants violent power with nasty side effects, so do not call it safe food.
 - Good witch voice: If a demon sounds reasonable, count your wards and step back twice.
 

@@ -108,7 +108,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Stackable up to 64, not affected by gravity, not flammable.
 
 ## Demon Heart
-- **Source:** Acquired from demons through trading or killing them; better chances with Arthana.
+- **Source:** Every Demon bargain list includes one. On a player kill, a held Arthana gives a 33% base chance, increasing every two Looting levels to 66%, 99%, then 100%.
 - **Uses:** Can be used in rituals, as decoration, for Altars, and to feed a Treefyd. Also grants temporary demon powers when eaten.
 - **Notes:** Stackable up to 64.
 

@@ -3671,6 +3671,8 @@ public class RitualExecutor {
         BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, center);
         mob.setPos(surface.getX() + 0.5, surface.getY() + 2.0, surface.getZ() + 0.5);
         mob.setYRot(level.random.nextFloat() * 360.0f);
+        mob.finalizeSpawn(level, level.getCurrentDifficultyAt(surface),
+                net.minecraft.world.entity.EntitySpawnReason.EVENT, null);
         level.addFreshEntity(mob);
         level.playSound(null, surface, SoundEvents.BLAZE_DEATH, SoundSource.HOSTILE, 1.0f, 1.0f);
         level.sendParticles(ParticleTypes.EXPLOSION,
@@ -6150,6 +6152,7 @@ public class RitualExecutor {
                 offerings);
         if (!transaction.commitDeferred(player, () -> {
             demon.setPos(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5);
+            demon.setPlayerCreated(true);
             demon.finalizeSpawn(sl, sl.getCurrentDifficultyAt(center),
                     net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED, null);
             sl.addFreshEntity(demon);

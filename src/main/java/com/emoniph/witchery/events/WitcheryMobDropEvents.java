@@ -4,6 +4,7 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.entity.BabaYagaEntity;
 import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.entity.DeathEntity;
+import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.GoblinGulgEntity;
 import com.emoniph.witchery.entity.GoblinMogEntity;
 import com.emoniph.witchery.entity.HornedHuntsmanEntity;
@@ -19,6 +20,8 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.CaneSwordItem;
 import com.emoniph.witchery.item.ImmortalsObservationsBookItem;
 import com.emoniph.witchery.item.WerewolfShiftUtil;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
@@ -38,6 +41,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
@@ -65,6 +69,19 @@ public class WitcheryMobDropEvents {
             CaneSwordItem.tryAbsorbBloodFromKill(serverPlayer, entity);
         }
         boolean arthana = killer != null && killer.getMainHandItem().is(WitcheryItems.ARTHANA.get());
+
+        if (entity instanceof DemonEntity && killer != null && level instanceof ServerLevel serverLevel) {
+            int lootingLevel = sourceLootingLevel(serverLevel, event.getSource().getWeaponItem());
+            int magmaCream = rng.nextInt(sourceDemonMagmaCreamDropBound(lootingLevel));
+            if (magmaCream > 0) {
+                event.getDrops().add(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(),
+                        new ItemStack(net.minecraft.world.item.Items.MAGMA_CREAM, magmaCream)));
+            }
+            if (arthana && rng.nextDouble() <= sourceDemonHeartChance(lootingLevel)) {
+                event.getDrops().add(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(),
+                        new ItemStack(WitcheryItems.DEMON_HEART.get())));
+            }
+        }
 
         if (killer != null
                 && hasIncompleteObservationsBook(killer)
@@ -151,6 +168,27 @@ public class WitcheryMobDropEvents {
 
     private static float sourceArthanaChance(boolean arthana) {
         return arthana ? SOURCE_ARTHANA_RARE_DROP_CHANCE : SOURCE_RARE_DROP_CHANCE;
+    }
+
+    static int sourceDemonMagmaCreamDropBound(int lootingLevel) {
+        return 2 + Math.max(0, lootingLevel);
+    }
+
+    static double sourceDemonHeartChance(int lootingLevel) {
+        return Math.min(0.33D * (1 + Math.max(0, lootingLevel) / 2), 1.0D);
+    }
+
+    private static int sourceLootingLevel(ServerLevel level, ItemStack weapon) {
+        if (weapon == null || weapon.isEmpty()) {
+            return 0;
+        }
+        try {
+            return weapon.getEnchantmentLevel(level.registryAccess()
+                    .lookupOrThrow(Registries.ENCHANTMENT)
+                    .getOrThrow(Enchantments.LOOTING));
+        } catch (RuntimeException ignored) {
+            return 0;
+        }
     }
 
     private static boolean isSourceWerewolf(Entity entity) {

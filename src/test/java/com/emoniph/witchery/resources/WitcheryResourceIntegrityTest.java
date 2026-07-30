@@ -187,6 +187,12 @@ class WitcheryResourceIntegrityTest {
                 "63edc96e105e7da2d801b59dd6880ee2032c851c9c104a689218b01b51b9cb13");
     }
 
+    @Test
+    void demonMobUsesSourceTexture() throws IOException, NoSuchAlgorithmException {
+        assertTexture(Path.of("entity", "demon.png"), 128, 32,
+                "1b00271a363e46f6fc6932774e72e46624ed6abd953bb27cbf17becc183432b6");
+    }
+
     private static void assertSpecialItemRenderer(String itemId, String rendererType) throws IOException {
         JsonObject root = readJson(ITEM_DEFINITIONS.resolve(itemId + ".json"));
         JsonObject model = root.getAsJsonObject("model");

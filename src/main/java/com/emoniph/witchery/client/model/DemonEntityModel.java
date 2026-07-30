@@ -1,6 +1,5 @@
 package com.emoniph.witchery.client.model;
 
-import com.emoniph.witchery.entity.DemonEntity;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -17,10 +16,11 @@ import net.minecraft.util.Mth;
  * Head face details (horns, tusks, snout, lip) are inline addBox on the head part —
  * no children needed, matching the absolute position of the originals.
  */
-public class DemonEntityModel extends EntityModel<net.minecraft.client.renderer.entity.state.LivingEntityRenderState> {
+public class DemonEntityModel extends EntityModel<DemonEntityModel.DemonRenderState> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(Identifier.fromNamespaceAndPath("witchery", "demon"), "main");
+    private final ModelPart rootPart;
     private final ModelPart head;
     private final ModelPart body;
     private final ModelPart rightArm;
@@ -35,6 +35,7 @@ public class DemonEntityModel extends EntityModel<net.minecraft.client.renderer.
 
     public DemonEntityModel(ModelPart root) {
         super(root);
+        this.rootPart  = root;
         this.head      = root.getChild("head");
         this.body      = root.getChild("body");
         this.rightArm  = root.getChild("right_arm");
@@ -79,7 +80,7 @@ public class DemonEntityModel extends EntityModel<net.minecraft.client.renderer.
                 PartPose.offset(-5, -7, 0));
 
         root.addOrReplaceChild("left_arm",
-                CubeListBuilder.create().texOffs(48, 0).mirror().addBox(-1, -2, -2, 4, 20, 4),
+                CubeListBuilder.create().texOffs(48, 0).addBox(-1, -2, -2, 4, 20, 4),
                 PartPose.offset(5, -7, 0));
 
         // ── Legs ─────────────────────────────────────────────────────────────
@@ -88,7 +89,7 @@ public class DemonEntityModel extends EntityModel<net.minecraft.client.renderer.
                 PartPose.offset(-2, 4, 0));
 
         root.addOrReplaceChild("left_leg",
-                CubeListBuilder.create().texOffs(32, 0).mirror().addBox(-2, 0, -2, 4, 20, 4),
+                CubeListBuilder.create().texOffs(32, 0).addBox(-2, 0, -2, 4, 20, 4),
                 PartPose.offset(2, 4, 0));
 
         // ── Wings — attached high on back (y=-8), original rotations preserved
@@ -106,19 +107,24 @@ public class DemonEntityModel extends EntityModel<net.minecraft.client.renderer.
         return LayerDefinition.create(mesh, 128, 32);
     }
     @Override
-    public void setupAnim(LivingEntityRenderState state) {
+    public void setupAnim(DemonRenderState state) {
         float limbSwing = state.walkAnimationPos;
         float limbSwingAmount = state.walkAnimationSpeed;
-        float netHeadYaw = state.yRot;
-        float headPitch = state.xRot;
         head.yRot = state.yRot * Mth.DEG_TO_RAD;
-        head.xRot = headPitch  * Mth.DEG_TO_RAD;
+        head.xRot = state.xRot * Mth.DEG_TO_RAD;
 
-        float swing = Mth.cos(limbSwing * 0.6662f) * 1.4f * limbSwingAmount;
-        rightLeg.xRot =  swing;
-        leftLeg.xRot  = -swing;
-        rightArm.xRot = -swing;
-        leftArm.xRot  =  swing;
+        float gait = triangleWave(limbSwing, 13.0F);
+        leftLeg.xRot = -1.5F * gait * limbSwingAmount;
+        rightLeg.xRot = 1.5F * gait * limbSwingAmount;
+        leftLeg.yRot = 0.0F;
+        rightLeg.yRot = 0.0F;
+        leftArm.xRot = (-0.2F - 1.5F * gait) * limbSwingAmount;
+        rightArm.xRot = state.attackTimer > 0.0F
+                ? -2.0F + 1.5F * triangleWave(state.attackTimer, 10.0F)
+                : (-0.2F + 1.5F * gait) * limbSwingAmount;
+        rootPart.zRot = limbSwingAmount >= 0.01F
+                ? 6.5F * Mth.DEG_TO_RAD * triangleWave(limbSwing + 6.0F, 13.0F)
+                : 0.0F;
 
         wingRight.xRot = WING_X_ROT;
         wingRight.yRot = WING_Y_ROT;
@@ -126,5 +132,13 @@ public class DemonEntityModel extends EntityModel<net.minecraft.client.renderer.
         wingLeft.xRot = -WING_X_ROT;
         wingLeft.yRot = (float) Math.PI - WING_Y_ROT;
         wingLeft.zRot = -WING_Z_ROT;
+    }
+
+    private static float triangleWave(float value, float period) {
+        return (Math.abs(value % period - period * 0.5F) - period * 0.25F) / (period * 0.25F);
+    }
+
+    public static class DemonRenderState extends LivingEntityRenderState {
+        public float attackTimer;
     }
 }

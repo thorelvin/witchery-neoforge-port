@@ -52,6 +52,15 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Demon 1.7.10 parity is code-complete pending live QA. The bow-only ranged goal
+  was replaced with the original close-melee/generic-fireball split and village
+  movement stack; source XP, attributes, door navigation, spawn Fire Resistance,
+  Peaceful survival, summoned persistence, nightmare cleanup, walking debris,
+  attack pose, gait/wobble, full-bright light, `0.5` shadow, and exact texture are
+  restored. Bargains now use Blaze Rod rather than Blaze Powder, restore the
+  Ghast Tear/Ender Pearl offers, and explode after Blaze Rod or Magma Cream
+  payment. Player kills roll `0..(1 + Looting)` Magma Cream; Demon Hearts require
+  the source Arthana chance or the guaranteed heart bargain.
 - Awakened Mandrake code parity is complete against 1.7.10. Mature plants use
   the source 90% daytime / 10% nighttime awakening split on the server,
   Peaceful always yields the crop, and a successful awakening now restores the

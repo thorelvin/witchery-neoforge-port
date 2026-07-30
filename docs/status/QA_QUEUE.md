@@ -245,7 +245,22 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   hurt/death use the old imp hit/death sounds. Spawn a Demon with
   `/witchery spawn demon`; confirm ambient remains Blaze-like, but hurt/death
   read as Wither-like, fireballs use the Ghast launch cue, and footsteps use
-  the Iron Golem step cue.
+  the Iron Golem step cue. At range it should launch large fireballs rather than
+  stall with bow AI; inside three blocks it should use the `7-21` throw and raise
+  only its right arm. Confirm the full-bright source skin, static wings,
+  side-to-side walking wobble, and block debris under moving feet.
+- Summon a Demon through the Infernal rite, leave the area, and return; it should
+  persist. Test direct bargains and Devil's Tongue discounts: currencies may be
+  Blaze Rod, Magma Cream, Diamond, Emerald, or Gold Ingot, while optional
+  diamond offers return two Ghast Tears or two Ender Pearls. Paying with Blaze
+  Rod or Magma Cream should play the Wither launch cue and produce the delayed
+  3-power explosion about 2.5 seconds later. Name Tags and spawn eggs should
+  retain their normal interactions, and Spirit World Demons should not trade.
+- Kill Demons as a player with no Looting, then increasing Looting. Expect
+  `0..(1 + Looting)` Magma Cream. No Demon Heart should drop without an Arthana;
+  with an Arthana, expect 33% at Looting 0-1, 66% at 2-3, 99% at 4-5, and 100%
+  at 6+. Every generated bargain list should expose a Demon Heart among its
+  first three offers.
 - Spawn Baba Yaga with `/witchery spawn baba_yaga`; confirm ambient uses the
   old Baba living voice, hurt remains Witch-like, and death uses the old Baba
   death sound.

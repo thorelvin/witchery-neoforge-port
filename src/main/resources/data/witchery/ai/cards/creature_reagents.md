@@ -16,7 +16,7 @@ Creature reagent cards for practical ingredient questions. Keep the answer usefu
 
 ## Spectral And Demonic Reagents
 - [triggers: spectral dust|where get spectral dust|how do i get spectral dust|undead dust] Targeted fact: Spectral Dust drops from Spectral Familiars, can rarely drop from non-temporary Spectres, Banshees, and Poltergeists, and can rarely come from regular undead when using Arthana; it feeds Graveyard Dust and reflective spirit work.
-- [triggers: demon heart|where get demon heart|where do i get demon heart|how do i get demon heart|demon drop] Targeted fact: Demon Hearts come from demons by killing or trading, with better chances when Arthana is involved; they feed infernal blood, Treefyd strength, altars, and dangerous powers.
+- [triggers: demon heart|where get demon heart|where do i get demon heart|how do i get demon heart|demon drop] Targeted fact: Every Demon bargain list includes a Demon Heart; killing one only gives a heart when a player uses Arthana, at 33% base chance that rises every two Looting levels. Demon Hearts feed infernal blood, Treefyd strength, altars, and dangerous powers.
 - [triggers: hellhound head|where get hellhound head|how do i get hellhound head|wolf altar head] Targeted fact: Hellhound Heads drop from Hellhounds and matter for Wolf Altar work; do not hunt them before you can survive fire and teeth.
 - [triggers: concentrated bat ball|how get concentrated bat ball|make concentrated bat ball|bat ball] Targeted fact: Concentrated Bat Ball is made through the bat-and-slime Critter Snare chain; it is used for Brew of Bats.
 

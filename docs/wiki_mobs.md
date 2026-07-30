@@ -45,11 +45,11 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Demon
 - **HP:** 100
-- **Damage:** Melee: up to 18, Ranged: Fire Charges
-- **Drops:** Demon Heart, Gunpowder, Magma Cream
+- **Damage:** Melee: 7-21 with an upward throw; Ranged: large fireballs
+- **Drops:** A player kill rolls 0 to `1 + Looting` Magma Cream. An Arthana also gives the source Demon Heart chance: 33% at Looting 0-1, 66% at 2-3, 99% at 4-5, and 100% at 6+.
 - **Spawn:** Anywhere with the Rite of Summoning ritual
 - **Behaviour:** Hostile; launches fireballs and punches; immune to fire-based attacks; usually ignores players carrying a Devil's Tongue Charm, though the old small failure chance remains.
-- **Notes:** Demons are native to the Nether but do not spawn there naturally. They must be summoned via a Rite of Summoning.
+- **Notes:** Demons are native to the Nether but do not spawn there naturally. They must be summoned via a Rite of Summoning. Summoned Demons persist. Bargaining always includes a Demon Heart offer, but Blaze Rod or Magma Cream payment makes the Demon explode after a short delay.
 
 ## Demon Heart
 - **Type:** Item

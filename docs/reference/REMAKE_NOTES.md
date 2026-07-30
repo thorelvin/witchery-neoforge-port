@@ -1061,7 +1061,7 @@ Full compile-clean migration from 1.21.1 (NeoForge 21.1.229) → 1.21.11 (NeoFor
 **Ritual-only mobs (do NOT naturally spawn):**
 - Banshee: Summon Banshee ritual + Brazier (drops Spectral Dust)
 - Spectre: Summon Spectre ritual + Brazier
-- Demon: Rite of Summoning (drops Demon Heart, Gunpowder, Magma Cream)
+- Demon: Rite of Summoning (player kills roll Magma Cream; Arthana enables the Demon Heart chance; every bargain list includes a Heart offer)
 - Mandrake mob: spawned from Mandrake plant pull
 - Treefyd: conjured by witch player ability
 
