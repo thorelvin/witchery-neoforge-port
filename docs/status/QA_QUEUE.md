@@ -184,6 +184,16 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 ### Visuals And Creative Tab
 
+- Grow several mature Mandrakes and harvest them in daylight, at night, and on
+  Peaceful. Day should awaken roughly 9 in 10, night roughly 1 in 10, and
+  Peaceful never; awakenings give no crop drop and raise the creature in a
+  20-particle poof burst. Spawn one directly with
+  `/witchery spawn mandrake_mob` and verify its `0.6 x 0.9` source-sized body,
+  `0.5` shadow, mirror-mapped face/body, flat leaf crown, arm twitch, and subtle
+  whole-body side wobble while walking. It should pursue within about 32 blocks,
+  use Ghast scream/hurt/death sounds, deal no direct bite damage, apply 15
+  seconds of Nausea on contact without Earmuffs, apply none with Earmuffs, award
+  no XP, and drop one Mandrake Root plus one seed with a 25% second seed.
 - Place a Silver Vat alone, then put block-entity machines against each side one
   at a time. It should use the exact pale source texture, keep its blue bath,
   show all four spouts when clear, and hide only the spout touching each machine.

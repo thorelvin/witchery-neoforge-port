@@ -13,13 +13,15 @@ import net.minecraft.resources.Identifier;
 
 /**
  * Mandrake mob - tiny screaming root creature.
- * Ported from original ModelMandrake (witchery-1.7.2-0.19.0).
+ * Ported from original ModelMandrake (witchery-1.7.10-0.24.1).
  */
 public class MandrakeEntityModel extends EntityModel<LivingEntityRenderState> {
+    private static final float SOURCE_BODY_SWAY_RADIANS = 6.5F * ((float) Math.PI / 180.0F);
 
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(Identifier.fromNamespaceAndPath("witchery", "mandrake_mob"), "main");
 
+    private final ModelPart root;
     private final ModelPart head;
     private final ModelPart rightArm;
     private final ModelPart leftArm;
@@ -28,6 +30,7 @@ public class MandrakeEntityModel extends EntityModel<LivingEntityRenderState> {
 
     public MandrakeEntityModel(ModelPart root) {
         super(root);
+        this.root = root;
         this.head = root.getChild("head");
         this.rightArm = root.getChild("right_arm");
         this.leftArm = root.getChild("left_arm");
@@ -83,6 +86,9 @@ public class MandrakeEntityModel extends EntityModel<LivingEntityRenderState> {
 
         head.xRot = 0.0F;
         head.yRot = 0.0F;
+        root.zRot = limbSwingAmount >= 0.01F
+                ? SOURCE_BODY_SWAY_RADIANS * triangleWave(limbSwing + 6.0F, 13.0F)
+                : 0.0F;
         rightLeg.xRot = 0.0F;
         leftLeg.xRot = 0.0F;
 

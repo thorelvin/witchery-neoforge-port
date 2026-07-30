@@ -178,7 +178,8 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<MandrakeEntity>> MANDRAKE_MOB =
             ENTITY_TYPES.register("mandrake_mob", () ->
                     EntityType.Builder.of(MandrakeEntity::new, MobCategory.MONSTER)
-                            .sized(0.4F, 0.8F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "mandrake_mob"))));
+                            .sized(MandrakeEntity.SOURCE_WIDTH, MandrakeEntity.SOURCE_HEIGHT)
+                            .clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "mandrake_mob"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<DemonEntity>> DEMON =
             ENTITY_TYPES.register("demon", () ->

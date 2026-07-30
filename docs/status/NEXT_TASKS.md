@@ -14,6 +14,7 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 Detailed session history is archived in `docs/archive/CHANGELOG.md`; keep this file focused on backlog and slice candidates.
 
+- 2026-07-30: Awakened Mandrake code parity closed the remaining source gaps: exact `0.6 x 0.9` body and `0.5` shadow, 90% day / 10% night server-side emergence, the old 20-particle root burst, inherited 32-block pursuit, ordinary wandering, and whole-body walking wobble. The source texture remains byte-identical. Decompiled source confirms the existing Ghast scream/hurt/death family is authentic; there is no custom Mandrake sound asset. Live harvest/contact/render QA remains.
 - 2026-07-30: Silver Vat exact renderer parity replaced the temporary baked vat: placed/item forms use source geometry and texture, world spouts disappear beside block entities, stored stacks expose the old one-to-eight deposit pieces at eight-item thresholds, and the source-tinted blue bath is visible again. Furnace/hopper and live visual QA remains.
 - 2026-07-30: Both decurse marker visuals now match their 1.7.10 special renderers: Statue of Occluded Summons uses the source mandrake geometry/texture and Statue of Broken Curses uses the source wolf-and-pedestal geometry/texture in placed, GUI, held, and dropped-item routes. Live visual/multiplayer QA remains.
 - 2026-07-30: Grotesque renderer parity was restored for both paths: the 60-second fixed player brew and three-minute composed Infernal Blood effect now share the source mirrored Demon head geometry, transform, tracking, invisibility behavior, and activation/expiry/tracker state sync.
@@ -164,7 +165,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 | `dream_catcher` | Clicked-face wall placement and centered GUI item renderer are restored; needs in-game verification only | Low |
 | `kettle` | Original texture/model path restored for all live blockstates; verify side/ceiling support, filled liquid, and bottle visuals in-game | Low |
 | `poppet_shelf` | ✅ Source toughness, client slot clearing, and source 3x3 top centers now rotate with shelf facing; verify break/blast feel, creative-slot height, and shelf-top spacing in-game | Low |
-| `mandrake_root` | Retest Mandrake summon branch, Banshee custom scream, Earmuffs hush, and final audio feel | Small |
+| `mandrake_root` | Code parity complete; retest 90% day / 10% night awakening, root burst, source-sized mob/wobble, contact Nausea, Earmuffs, drops, and authentic Ghast-family audio | Low |
 | `grassper` | Source default toughness and transform order/scale restored; verify break/blast feel, held-item cup pose, and Fancy/Fabulous spin in-game | Low |
 | `glowglobe` | Translucent low-alpha render path restored; verify visibility in-game | Low |
 | `rowan_door` | Vanilla hinge/facing placement, source toughness, and source-style redstone-open refusal restored; verify lock/unlock, redstone bypass, break/blast, and facing feel in-game | Low |
@@ -371,7 +372,7 @@ The new raven should not stop at "real bird instead of parrot". It can become on
 - **Treefyd model and seed item** - `/witchery spawn treefyd` and verify the restored old 1.7 zero-plane petals, tongue, and crossed leaves now render visibly with the original 64x32 texture; also verify the `Treefyd Seeds` inventory icon is no longer magenta/black and that grass-top use immediately raises an owned Treefyd
 - **Poltergeist model** - `/witchery spawn poltergeist` and verify the restored old all-part mirror UV flags close the reported wrong-mapping/holes issue
 - **Banshee model** - `/witchery spawn banshee`, provoke/approach it, and verify the flat source mouth appears only while screaming and no chin/face patch protrudes at rest
-- **Mandrake model** - `/witchery spawn mandrake` and verify the restored old mirror UVs and zero-depth leaf crown close the reported texture holes
+- **Mandrake model/harvest** - `/witchery spawn mandrake_mob` and verify the exact source-sized body, whole-body walking wobble, mirror UVs, zero-depth leaf crown, `0.5` shadow, and Ghast-family voice. Harvest mature plants by day/night to verify the 90%/10% awakening split and 20-particle root burst
 - **Ent model** - `/witchery spawn ent`, provoke it, and verify the restored old mirror UVs, face plate, inner leaf fill, root-leg walk, and attack arm lift close the reported wrong-mapping/holes issue
 
 - **Flying Monkey model** - `/witchery spawn flying_monkey` and verify the source monkey body, wings, ears, tail, landed/flying animation, and feather tint close the reported wrong-model/texture-holes issue

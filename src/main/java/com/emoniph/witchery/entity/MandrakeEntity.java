@@ -15,7 +15,7 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
@@ -23,10 +23,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 /**
- * Mandrake mob — tiny screaming creature that emerges from harvesting mandrake at night.
+ * Mandrake mob - tiny screaming creature that emerges from harvested mandrake.
  * Chases players and sickens them on contact, matching the old source behavior.
  */
 public class MandrakeEntity extends Monster {
+    public static final float SOURCE_WIDTH = 0.6F;
+    public static final float SOURCE_HEIGHT = 0.9F;
+    public static final float SOURCE_SHADOW_RADIUS = 0.5F;
+    public static final double SOURCE_FOLLOW_RANGE = 32.0D;
+
     private static final int CONTACT_NAUSEA_TICKS = 300;
     private static final int SCREAM_AMPLIFIER = 1;
 
@@ -40,14 +45,14 @@ public class MandrakeEntity extends Monster {
                 .add(Attributes.MAX_HEALTH, 20.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.65)
                 .add(Attributes.ATTACK_DAMAGE, 2.0)
-                .add(Attributes.FOLLOW_RANGE, 12.0);
+                .add(Attributes.FOLLOW_RANGE, SOURCE_FOLLOW_RANGE);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8));
+        this.goalSelector.addGoal(3, new RandomStrollGoal(this, 0.8));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8f));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));

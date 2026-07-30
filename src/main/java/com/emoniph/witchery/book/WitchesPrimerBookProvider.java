@@ -1357,10 +1357,11 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "ignore a named player or one creature."));
 
         List<BookPageModel<?>> mandrake = new ArrayList<>(WitcheryBooks.prose("Mandrake",
-                "Mandrake is never a polite harvest. A mature root sometimes comes quietly, and sometimes "
-                        + "wakes as a shrieking creature instead — especially at night."
-                        + "\n\nWhen the crop awakens, the living root keeps nearby players sickened until it "
-                        + "is killed."));
+                "Mandrake is never a polite harvest. Pulling a mature root by day has a **90% chance** "
+                        + "to wake the shrieking creature instead of yielding the crop; at night that falls "
+                        + "to **10%**. Peaceful difficulty prevents it entirely."
+                        + "\n\nAn awakened root lunges at players, and contact brings fifteen seconds of "
+                        + "nausea. Kill it to recover one Mandrake Root and one or two seeds."));
         mandrake.add(recipe("earmuffs", "Earmuffs",
                 "Leather and white wool. Worn on the head, they block the nausea scream — and blunt a "
                         + "Banshee's cry — so large harvests are far less miserable."));

@@ -181,6 +181,12 @@ class WitcheryResourceIntegrityTest {
                 "9d80249fba30d0d7ec065e830b0bd093eba6cc4bbc1795e8589461cb4c3d71e1");
     }
 
+    @Test
+    void mandrakeMobUsesSourceTexture() throws IOException, NoSuchAlgorithmException {
+        assertTexture(Path.of("entity", "mandrake.png"), 64, 32,
+                "63edc96e105e7da2d801b59dd6880ee2032c851c9c104a689218b01b51b9cb13");
+    }
+
     private static void assertSpecialItemRenderer(String itemId, String rendererType) throws IOException {
         JsonObject root = readJson(ITEM_DEFINITIONS.resolve(itemId + ".json"));
         JsonObject model = root.getAsJsonObject("model");
@@ -191,7 +197,13 @@ class WitcheryResourceIntegrityTest {
 
     private static void assertTexture(String fileName, int expectedWidth, int expectedHeight, String expectedSha256)
             throws IOException, NoSuchAlgorithmException {
-        Path texture = TEXTURE_ROOT.resolve(Path.of("block", fileName));
+        assertTexture(Path.of("block", fileName), expectedWidth, expectedHeight, expectedSha256);
+    }
+
+    private static void assertTexture(Path relativePath, int expectedWidth, int expectedHeight, String expectedSha256)
+            throws IOException, NoSuchAlgorithmException {
+        Path texture = TEXTURE_ROOT.resolve(relativePath);
+        String fileName = relativePath.toString();
         BufferedImage image = ImageIO.read(texture.toFile());
         assertNotNull(image, fileName + " is not a readable PNG");
         assertEquals(expectedWidth, image.getWidth(), fileName + " width changed");

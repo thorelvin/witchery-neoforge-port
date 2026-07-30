@@ -4,6 +4,7 @@ import com.emoniph.witchery.entity.MandrakeEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.Difficulty;
@@ -22,6 +23,10 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 public class MandrakeBlock extends CropBlock {
     public static final IntegerProperty MANDRAKE_AGE = BlockStateProperties.AGE_4;
+    static final int SOURCE_MATURE_AGE = 4;
+    static final double SOURCE_DAY_SUMMON_CHANCE = 0.9D;
+    static final double SOURCE_NIGHT_SUMMON_CHANCE = 0.1D;
+    static final int SOURCE_EMERGENCE_PARTICLES = 20;
 
     public MandrakeBlock(BlockBehaviour.Properties props) {
         super(props);
@@ -31,7 +36,7 @@ public class MandrakeBlock extends CropBlock {
     public IntegerProperty getAgeProperty() { return MANDRAKE_AGE; }
 
     @Override
-    public int getMaxAge() { return 4; }
+    public int getMaxAge() { return SOURCE_MATURE_AGE; }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -44,7 +49,7 @@ public class MandrakeBlock extends CropBlock {
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         // Herbalism Primer: tilled earth / farmland only. (1.7.10 BlockWitchCrop also accepted
-        // grass/dirt, but the in-game primer — the canonical herbalism guide — calls for tilled
+        // grass/dirt, but the in-game primer - the canonical herbalism guide - calls for tilled
         // farmland, so the port follows the primer.)
         return state.is(Blocks.FARMLAND);
     }
@@ -54,33 +59,45 @@ public class MandrakeBlock extends CropBlock {
     @Override
     public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state,
                               net.minecraft.world.level.block.entity.BlockEntity be, net.minecraft.world.item.ItemStack tool) {
-        if (!shouldSummonMandrake(level, state)) {
+        if (!(level instanceof ServerLevel serverLevel)) {
             super.playerDestroy(level, player, pos, state, be, tool);
             return;
         }
 
-        if (!(level instanceof ServerLevel sl)) {
+        if (!shouldSummonMandrake(state.getValue(MANDRAKE_AGE), level.getDifficulty(),
+                isSourceDaytime(level.getDayTime()), level.random.nextDouble())) {
+            super.playerDestroy(level, player, pos, state, be, tool);
+            return;
+        }
+
+        MandrakeEntity mob = WitcheryEntities.MANDRAKE_MOB.get().create(
+                serverLevel, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+        if (mob == null) {
+            super.playerDestroy(level, player, pos, state, be, tool);
+            return;
+        }
+
+        mob.setPos(pos.getX() + 0.5D, pos.getY() + 0.05D, pos.getZ() + 0.5D);
+        if (!serverLevel.addFreshEntity(mob)) {
+            super.playerDestroy(level, player, pos, state, be, tool);
             return;
         }
 
         player.awardStat(Stats.BLOCK_MINED.get(this));
         player.causeFoodExhaustion(0.005F);
-
-        MandrakeEntity mob = WitcheryEntities.MANDRAKE_MOB.get().create(sl, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
-        if (mob == null) return;
-        mob.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-        sl.addFreshEntity(mob);
+        serverLevel.sendParticles(ParticleTypes.POOF,
+                mob.getX(), mob.getY(), mob.getZ(),
+                SOURCE_EMERGENCE_PARTICLES, 0.5D, 1.0D, 0.5D, 0.0D);
     }
 
-    private boolean shouldSummonMandrake(Level level, BlockState state) {
-        if (state.getValue(MANDRAKE_AGE) < getMaxAge()) {
-            return false;
-        }
-        if (level.getDifficulty() == Difficulty.PEACEFUL) {
-            return false;
-        }
+    static boolean shouldSummonMandrake(int age, Difficulty difficulty, boolean daytime, double roll) {
+        double chance = daytime ? SOURCE_DAY_SUMMON_CHANCE : SOURCE_NIGHT_SUMMON_CHANCE;
+        return age >= SOURCE_MATURE_AGE
+                && difficulty != Difficulty.PEACEFUL
+                && roll <= chance;
+    }
 
-        double chance = (level.getDayTime() % 24000L) < 13000L ? 0.9 : 0.1;
-        return level.random.nextDouble() <= chance;
+    static boolean isSourceDaytime(long dayTime) {
+        return Math.floorMod(dayTime, 24000L) < 13000L;
     }
 }

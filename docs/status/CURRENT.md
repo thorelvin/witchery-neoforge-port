@@ -52,6 +52,14 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Awakened Mandrake code parity is complete against 1.7.10. Mature plants use
+  the source 90% daytime / 10% nighttime awakening split on the server,
+  Peaceful always yields the crop, and a successful awakening now restores the
+  20-particle root burst, exact `0.6 x 0.9` body, inherited 32-block player pursuit,
+  ordinary wandering, `0.5` render shadow, and whole-body walking wobble. The
+  exact source texture remains byte-identical. Original Mandrakes intentionally
+  use vanilla Ghast scream/hurt/death sounds; no custom Mandrake sound asset
+  existed. Live harvest/contact/render feel remains in the QA queue.
 - Silver Vat source-renderer parity replaces the temporary baked approximation.
   Placed and item forms now use the exact 64x32 `silvervat` sheet and remade
   `ModelSilverVat` geometry, including all four item spouts, world spouts hidden
