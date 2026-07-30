@@ -212,12 +212,13 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <p class="subtitle">A Complete Guide to the Craft of Witchery Rewoven</p>
   <p class="divider">· · · ✦ · · ·</p>
   <p class="edition">Witchery Rewoven — NeoForge 1.21.11 Edition</p>
-  <p class="version">Version 16 — Fifteenth Edition — Nightmares at the threshold</p>
+  <p class="version">Version 17 — Sixteenth Edition — The body remembers</p>
 </div>
 
 <div class="callout callout-tip" style="margin-bottom:2.5rem;">
 <strong>What changed in this edition</strong> — old paths are drawn more clearly:
 <ul style="margin-top:0.5rem;margin-bottom:0;">
+  <li>The sleeping <strong>Body</strong> left behind by Spirit Walking has remembered its old shape: broad and prone at the centre of the entry block, wearing its owner's name and skin, unable to drift or be pushed, and casting no shadow. It persists while its witch dreams, vanishes on a normal return, leaves no loot, and wakes its owner by force if destroyed.</li>
   <li>The <a href="#ch31">Nightmare</a> hunts by the old laws again: no false teleport, a named victim and sixteen-block tether, armor torn away before the blow, a visible defense veil broken by Flowing Spirit, and only Mellifluous Hunger left behind in the Spirit World. The <a href="#ch19">Curse of Waking Nightmare</a> once more persists outside dreams until its victim crosses into the Spirit World or finds a proper cure.</li>
   <li>The speaking layer has a fuller memory of the world. Local NPC voices now draw from a broad persona-card library, with exact, scoped, rumor, and forbidden lanes keeping Coven Witches, villagers, guards, hobgoblins, imps, demons, bosses, Leonard, Baba Yaga, and reflections inside their proper knowledge and voice.</li>
   <li>Several old icons have remembered their faces: the <a href="#circle-talisman">Circle Talisman</a> shows its stored circle pattern, <strong>Spectral Stones</strong> show their bound Spectre, Banshee, or Poltergeist, <a href="#leonards-urn">Leonard's Urn</a> shows capacity, Plant Mines show their disguise, stale seed ingredients show beside the real planting seeds, creature spawn eggs have their own creative tab, the Torment Scroll and Soul of Torment use their source art, the <a href="#brew-bag">Brew Bag</a> returns to leather colour, and wolf and hellhound heads have been refreshed.</li>
@@ -711,9 +712,9 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <div class="prog-arrow">↓</div>
 
 <div class="prog-stage prog-s4">
-  <div class="prog-stage-head"><span class="prog-num">Stage 5</span><span class="prog-title">Spirit World &amp; Specialist Gear</span><span class="prog-power">Brew of Flowing Spirit required</span></div>
+  <div class="prog-stage-head"><span class="prog-num">Stage 5</span><span class="prog-title">Spirit World &amp; Specialist Gear</span><span class="prog-power">Brew of Sleeping or Apple of Sleeping required</span></div>
   <div class="prog-cols">
-    <div><h5>Requirements</h5><ul><li>Brew of Flowing Spirit brewed</li><li>Waystone marking entry point</li><li>Icy Needle in inventory (emergency exit)</li></ul></div>
+    <div><h5>Requirements</h5><ul><li>Brew of Sleeping brewed or Apple of Sleeping obtained</li><li>Safe entry point chosen</li><li>Icy Needle in inventory (emergency exit)</li></ul></div>
     <div><h5>Unlocks</h5><ul><li><a href="#ch20">Spirit World</a> exploration + combat</li><li>Wispy Cotton + Disturbed Cotton harvest</li><li>Fanciful Thread + Tormented Twine → Dream Weavers (all 5 variants)</li><li>Impregnated Leather chain → Witches' Hat + Robes (+35% brew yield each)</li></ul></div>
   </div>
 </div>
@@ -1673,11 +1674,11 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <h2 class="chapter" id="ch20">Chapter 20: Other Dimensions<span class="stage stage-late">Late</span> <a href="#toc" class="ch-top">&uarr; Contents</a></h2>
 
 <h3>The Spirit World</h3>
-<p>The world you walk in is not the only world that exists. The <a href="#ch20">Spirit World</a> lies beside it, separated by a boundary that thins around places of power and at the edges of sleep. To enter it, drink a <a href="#ch20">Brew of Flowing Spirit</a> near an altar. You will leave your body behind. It will wait for you. Try to come back before something finds it.</p>
+<p>The world you walk in is not the only world that exists. The <a href="#ch20">Spirit World</a> lies beside it, separated by a boundary that thins around places of power and at the edges of sleep. To enter it, drink a <strong>Brew of Sleeping</strong> near an altar, or eat an <strong>Apple of Sleeping</strong>. You will leave your physical Body behind. Guard it until you return.</p>
 
-<p>The <a href="#ch20">Spirit World</a> has a pink-magenta fog (RGB 204, 51, 153) and 50% ambient light — dim but not fully dark. Your physical body (the Corpse entity) remains at the entry point. Your health and hunger are saved and restored on exit. Natural inhabitants: Spirits, Spectres, Banshees, Poltergeists, Nightmares. Demonic Nightmare events can trigger — waves of hostile spectral entities.</p>
+<p>The <a href="#ch20">Spirit World</a> changes its sky and fog with the dream: rose-magenta in gentler sleep, denser and darker through nightmare and demonic nightmare. It has no false ambient-light lift; its celestial light and fog carry the mood. Your physical <strong>Body</strong> (the <code>corpse</code> entity) remains prone at the centre of the entry block, carrying your name, skin, and entry health. Your health and hunger are saved and restored on exit. Natural inhabitants include Spirits and Nightmares, while darker dream events may bring worse company.</p>
 
-<div class="callout callout-warn">Know where your Corpse is before you explore. If it despawns, you are stranded. Mark the entry point with a waystone before drinking.</div>
+<div class="callout callout-warn">Guard the Body you leave behind. It persists and cannot be pushed away, but another player may kill it while you dream; its destruction tears you awake immediately. A normal return removes it cleanly, and it leaves no loot.</div>
 
 <h3>The Torment Dimension</h3>
 <p>A hostile dungeon-dimension. Six levels deep, DFS-maze layout of Torment Stone corridors. Enter through a Torment Portal found in the overworld. The dimension is designed as a gauntlet. The Lord of Torment waits at the bottom — see <a href="#ch30">Chapter 30</a> for preparation.</p>
@@ -1697,7 +1698,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <p>A dark reflection of the overworld. Deep blue fog (0, 0.03, 0.1); permanently black sky with End rendering; no natural light. Touching an inhabited mirror carries you into its private reflected room, where your own Reflection guards the way home. Defeat it to clear the mirror and leave safely. Old generated Mirror World chunks are not rewritten when the room design changes, so test this path in a fresh world.</p>
 <p>An ordinary uncleared mirror in the waking world has a quieter answer too. Touch it empty-handed, or address it with nearby mirror speech, and one translucent floating face may appear just outside the glass. It follows a nearby gaze, speaks with the old reflection voice, ignores blows and collision, and fades after ten seconds. It is an apparition, not the Reflection guardian, and cleared mirrors or mirrors already inside the Mirror World will not call it.</p>
 
-<div class="callout callout-also">Spirit World materials &amp; Dream Weavers: <a href="#ch28">Ch 28</a> · The Lord of Torment: <a href="#ch30">Ch 30</a> · Spectral creatures you will meet: <a href="#ch31">Ch 31</a> · Brew of Flowing Spirit (the entry brew): <a href="#appB">App B</a> · Reflection &amp; the Mirror World decoy: <a href="#duplication-grenade">Ch 34</a></div>
+<div class="callout callout-also">Spirit World materials &amp; Dream Weavers: <a href="#ch28">Ch 28</a> · The Lord of Torment: <a href="#ch30">Ch 30</a> · Spectral creatures you will meet: <a href="#ch31">Ch 31</a> · Brew and ingredient reference: <a href="#appB">App B</a> · Reflection &amp; the Mirror World decoy: <a href="#duplication-grenade">Ch 34</a></div>
 
 <!-- CH 21 -->
 <h2 class="chapter" id="ch21">Chapter 21: Fetishes and Conjuration<span class="stage stage-late">Late</span> <a href="#toc" class="ch-top">&uarr; Contents</a></h2>
@@ -2174,7 +2175,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Spectre <code>spectre</code></td><td>Moderate</td><td>Spirit World; Brazier</td><td>Hostile. Can pass through certain blocks.</td></tr>
   <tr><td>Banshee <code>banshee</code></td><td>Moderate</td><td>Spirit World; Brazier</td><td>Hostile. AoE screaming attack.</td></tr>
   <tr><td>Poltergeist <code>poltergeist</code></td><td>Low</td><td>Spirit World; Brazier</td><td>Hostile. Throws items; disrupts inventories.</td></tr>
-  <tr><td>Corpse <code>corpse</code></td><td>—</td><td><a href="#ch20">Spirit World</a> entry point</td><td>Your physical body while in the Spirit World. Return to it to exit.</td></tr>
+  <tr><td>Body <code>corpse</code></td><td>Entry health, up to 20</td><td><a href="#ch20">Spirit World</a> entry point</td><td>Your persistent, immovable, owner-skinned physical body while Spirit Walking. It vanishes on normal return, drops nothing, and wakes you by force if destroyed.</td></tr>
 </table>
 
 <h3>Wild Creatures</h3>
@@ -2621,7 +2622,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Brew of Substitution</td><td>Shuffles block types in area</td><td>None</td><td>—</td></tr>
   <tr><td>Brew of Erosion</td><td>Erodes surrounding blocks gradually</td><td>None</td><td>—</td></tr>
   <tr><td>Brew of Soaring</td><td>120 min flight; +30% speed</td><td>Required</td><td><a href="#ch7">Owl Familiar</a>: +50% speed</td></tr>
-  <tr><td>Brew of Flowing Spirit</td><td><a href="#ch20">Spirit World</a> entry</td><td>Required</td><td>—</td></tr>
+  <tr><td>Brew of Flowing Spirit</td><td>Advanced spirit reagent used in distilling, weaving, and specialist equipment</td><td>Varies by recipe</td><td>—</td></tr>
   <tr><td>Brew of Frost</td><td>Freezes nearby water; ice shield around the caster; cages and chips at nearby entities; also slices the <a href="#ice-world-blocks">Ice World block conversion</a></td><td>None</td><td>—</td></tr>
   <tr><td>Brew of Love</td><td>Charms nearby mobs toward target</td><td>None</td><td>—</td></tr>
   <tr><td>Brew of Infection</td><td>Spreads disease debuffs to nearby mobs</td><td>None</td><td>—</td></tr>
@@ -2979,7 +2980,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <div class="callout callout-tip">If a chapter refuses to open, you have simply not yet earned its book. For testing, <code>/witchery guide unlock [all|&lt;book&gt;]</code> opens chapters and <code>/witchery guide reset</code> shuts them again. The <strong>Witches' Brews</strong> Cauldron Book (<span class="item">witchery:cauldron_book</span>) and <strong>Immortals' Observations</strong> stand apart from the chain as guides of their own. Where a recipe has not yet reached the Primer, JEI covers the machines and this Book of Shadows covers the rest.</div>
 
 <div class="page-footer">
-  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 16 &nbsp;·&nbsp; Fifteenth Edition &nbsp;·&nbsp; ☽ ✦ ☾
+  Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 17 &nbsp;·&nbsp; Sixteenth Edition &nbsp;·&nbsp; ☽ ✦ ☾
 </div>
 
 <script>

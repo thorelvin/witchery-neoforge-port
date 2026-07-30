@@ -137,6 +137,15 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   Spirit World X/Z match exactly.
 - Y should stay in the same column and only move enough to find a safe landing.
 - Run `/witchery exit` and confirm return to the stored Overworld coordinate.
+- Enter through normal Spirit World gameplay and inspect the sleeping Body at
+  the Overworld entry block. It should be centred, broad and prone, show the
+  owner's player skin/name, cast no shadow, remain perfectly immobile, and
+  survive distance/chunk unload. Right-clicking should do nothing but consume
+  the interaction. Normal return must remove it.
+- With a second player present, damage the Body while its owner is dreaming.
+  Confirm it has the owner's entry health, drops nothing, and death immediately
+  wakes the owner. Log the owner out and confirm non-creative/environmental
+  damage cannot destroy the orphaned Body; a creative player still can.
 - Confirm dream, nightmare, and demonic nightmare colors/fog match the current
   design; normal dreams should read visibly foggy, with nightmares denser.
 - Confirm ordinary passive animals can spawn in Spirit World biomes.

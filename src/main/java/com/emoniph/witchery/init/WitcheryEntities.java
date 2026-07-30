@@ -279,7 +279,9 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.CorpseEntity>> CORPSE =
             ENTITY_TYPES.register("corpse", () ->
                     EntityType.Builder.<com.emoniph.witchery.entity.CorpseEntity>of(com.emoniph.witchery.entity.CorpseEntity::new, MobCategory.MISC)
-                            .sized(0.6F, 0.2F).clientTrackingRange(10).noSummon()
+                            .sized(com.emoniph.witchery.entity.CorpseEntity.SOURCE_WIDTH,
+                                    com.emoniph.witchery.entity.CorpseEntity.SOURCE_HEIGHT)
+                            .clientTrackingRange(10).noSummon()
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "corpse"))));
 
     // ── Village Guard ─────────────────────────────────────────────────────────

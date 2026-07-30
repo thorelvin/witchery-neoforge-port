@@ -216,6 +216,13 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Behaviour:** Passive, capable of flight, attempts to flee from the player
 - **Notes:** Cannot be captured in a Safari Net
 
+## Body
+- **HP:** The owner's health on Spirit World entry, up to 20
+- **Drops:** None
+- **Spawn:** At the centre of the owner's Overworld entry block when Spirit Walking begins
+- **Behaviour:** Persistent and completely immovable. It carries the owner's name and skin. Destroying it while the owner is online forces that player out of the Spirit World; returning normally removes it.
+- **Notes:** Registered as `witchery:corpse`, matching the source entity ID while using the source English display name Body.
+
 ## Toad
 - **HP:** 5
 - **Damage:** 1

@@ -14,6 +14,15 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 Detailed session history is archived in `docs/archive/CHANGELOG.md`; keep this file focused on backlog and slice candidates.
 
+- Active additive endgame design: an expensive Kettle batch permanently binds
+  its Kettle as an Otherwhere Hearth; later crossings are a kettle-centred rite
+  requiring a full coven, a high-strength altar, and substantial altar power.
+  Each crossing atomically swaps the same-coordinate 25 x 25 x 25 volumes in
+  the Overworld and Spirit World, centred horizontally on the Kettle from eight
+  blocks below through sixteen above. Preserve terrain and block entities in
+  both dimensions, move every entity in each exchanged volume, and refuse the
+  rite if any player occupies the destination volume. Implement preflight and
+  persistent recovery so a failed or interrupted crossing cannot eat a home.
 - 2026-07-30: Flame Imp parity was completed against `EntityImp`, `ModelImp`, and `RenderImp`: tameable ownership/defense/home behavior, wild targeting/despawn, source stats and healing, wall-clock affection/power timers, the exact 21-item shiny table and gift odds, fixed four-secret progression, bound spell contracts, 60-minute Demon Heart power, Icy Needle cancellation, combat caps, demon names, no ordinary death loot, exact texture, source punch/body animation, and the wider-not-taller powered render. Live bargain, gift, abandonment, combat, and render QA remains.
 - 2026-07-30: Demon code parity was completed against `EntityDemon`, `ModelDemon`, and `RenderDemon`: source close-melee plus generic fireball AI, village movement, attributes/XP, open-door navigation, spawn Fire Resistance V, Peaceful survival, summoned persistence, Demonic Nightmare cleanup, walking debris, attack timer, triangle-wave gait/body wobble, full-bright render, `0.5` shadow, exact texture, bargains/currencies/escape explosion, player-kill Magma Cream roll, and Arthana-gated Demon Heart chance. Live combat, bargain, drop, and render QA remains.
 - 2026-07-30: Awakened Mandrake code parity closed the remaining source gaps: exact `0.6 x 0.9` body and `0.5` shadow, 90% day / 10% night server-side emergence, the old 20-particle root burst, inherited 32-block pursuit, ordinary wandering, and whole-body walking wobble. The source texture remains byte-identical. Decompiled source confirms the existing Ghast scream/hurt/death family is authentic; there is no custom Mandrake sound asset. Live harvest/contact/render QA remains.

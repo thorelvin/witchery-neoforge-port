@@ -213,6 +213,15 @@ class WitcheryResourceIntegrityTest {
                 "EntityNightmare only drops Mellifluous Hunger through its Spirit World rule");
     }
 
+    @Test
+    void sleepingBodyHasANameAndNoOrdinaryLoot() throws IOException {
+        JsonObject lang = readJson(ASSETS.resolve(Path.of("lang", "en_us.json")));
+        assertEquals("Body", lang.get("entity.witchery.corpse").getAsString());
+        JsonObject loot = readJson(DATA.resolve(Path.of("loot_table", "entities", "corpse.json")));
+        assertEquals(0, loot.getAsJsonArray("pools").size(),
+                "EntityCorpse has no ordinary death-drop pools");
+    }
+
     private static void assertSpecialItemRenderer(String itemId, String rendererType) throws IOException {
         JsonObject root = readJson(ITEM_DEFINITIONS.resolve(itemId + ".json"));
         JsonObject model = root.getAsJsonObject("model");

@@ -547,12 +547,12 @@ public final class SpiritWorldHelper {
         if (corpse == null) return;
         corpse.setOwner(player);
         corpse.setHealth(Math.min(corpse.getMaxHealth(), Math.max(1.0f, player.getHealth())));
-        corpse.setPos(player.getX(), player.getY(), player.getZ());
-        // Facing direction from yaw
-        corpse.setYRot(player.getYRot());
-        corpse.setYBodyRot(player.getYRot());
-        corpse.setYHeadRot(player.getYRot());
-        corpse.setXRot(0f);
+        corpse.snapTo(
+                com.emoniph.witchery.entity.CorpseEntity.sourceSpawnCenter(player.getX()),
+                player.getY(),
+                com.emoniph.witchery.entity.CorpseEntity.sourceSpawnCenter(player.getZ()),
+                0.0F,
+                0.0F);
         sl.addFreshEntity(corpse);
         data.setCorpseUUID(corpse.getUUID());
         LOGGER.debug("[Witchery] Spawned corpse {} for {}", corpse.getUUID(), player.getName().getString());

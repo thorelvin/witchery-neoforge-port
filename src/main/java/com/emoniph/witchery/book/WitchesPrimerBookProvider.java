@@ -1508,8 +1508,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "The world you walk in is not the only world that exists. The Spirit World lies beside it, "
                         + "separated by a boundary that thins around places of power and at the edges of sleep."
                         + "\n\nTo enter, drink a Brew of Sleeping near an altar, or eat an Apple of Sleeping. "
-                        + "You will leave your body behind. It will wait for you — try to come back before "
-                        + "something finds it."));
+                        + "Your prone Body remains at the centre of the entry block with your name, skin, and "
+                        + "entry health. It cannot be pushed and persists until you return. If another player "
+                        + "destroys it, you are torn awake immediately."));
         spirit.add(spotlight(WitcheryItems.BREW_OF_SLEEPING.get(), "Brew of Sleeping",
                 "Carries you across, leaving your inventory behind. Only a few things cross with you — "
                         + "your Icy Needles, your Mutandis, and this very Primer — and a little of what you "

@@ -52,6 +52,14 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Corpse 1.7.10 parity is code-complete pending live QA. Spirit World entry now
+  leaves the source `1.2 x 0.5` persistent Body at the centre of the entry block,
+  carrying the owner's name, UUID, health, and skin. It cannot fall, drift, or
+  be pushed; accepts the source no-op interaction; uses the old `Owner` save key
+  beside modern UUID data; has no ordinary loot; and renders as a motionless
+  prone player with the source `0.9 / 0.25` offset, rotations, and zero shadow.
+  Destroying it while the owner is online still forces that dreamer awake, and
+  normal return removes the Body.
 - Nightmare 1.7.10 parity is code-complete pending live QA. The entity now uses
   the source 0.6 x 1.8 fireproof body, 25 XP, full door/target/village movement
   stack, 16-block victim expiry burst, persistent source victim-name key,
