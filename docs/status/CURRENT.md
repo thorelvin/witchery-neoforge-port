@@ -57,7 +57,8 @@ enough to read before starting work. Long historical deltas belong in
   common behavior covers summoner name/UUID persistence, Spectre obscured state,
   optional suicide timers, source 15-damage incoming caps, undead tag membership,
   source-targeted Dissipate/Revealing hooks, Spectral Stone finalization/owner
-  stamping, and Graveyard Dust strengthening for owned spectral undead.
+  stamping, Graveyard Dust strengthening for owned spectral undead, and the old
+  shared rare Spectral Dust drop for non-temporary spectral undead.
 - Decurse statues were promoted from missing parity to playable exact IDs:
   `witchery:decurseteleport` / Statue of Occluded Summons and
   `witchery:decursedirected` / Statue of Broken Curses now appear in the

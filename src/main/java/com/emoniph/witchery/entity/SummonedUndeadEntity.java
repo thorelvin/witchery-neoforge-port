@@ -4,6 +4,7 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.util.Enslaved;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SpellParticleOption;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -40,6 +42,8 @@ public abstract class SummonedUndeadEntity extends Monster {
     public static final int SOURCE_MAX_DAMAGE = 15;
     public static final float SOURCE_GRAVEYARD_DUST_HEALTH_GAIN = 2.0F;
     public static final float SOURCE_GRAVEYARD_DUST_MAX_HEALTH = 50.0F;
+    public static final int SOURCE_SPECTRAL_DUST_BASE_DROP_BOUND = 4;
+    public static final int SOURCE_SPECTRAL_DUST_MIN_DROP_BOUND = 2;
 
     private static final EntityDataAccessor<String> DATA_SUMMONER =
             SynchedEntityData.defineId(SummonedUndeadEntity.class, EntityDataSerializers.STRING);
@@ -157,6 +161,19 @@ public abstract class SummonedUndeadEntity extends Monster {
     }
 
     @Override
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, source, recentlyHit);
+        if (isTemp()) {
+            return;
+        }
+        int lootingLevel = sourceLootingLevel(level, source);
+        int bound = sourceSpectralDustDropBound(lootingLevel);
+        if (random.nextInt(bound) == 0) {
+            spawnAtLocation(level, new ItemStack(WitcheryItems.SPECTRAL_DUST.get()));
+        }
+    }
+
+    @Override
     public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putString(TAG_SUMMONER, getSummonerName());
@@ -222,5 +239,28 @@ public abstract class SummonedUndeadEntity extends Monster {
     public static float sourceGraveyardDustHealthAfter(float currentMaxHealth) {
         float healed = currentMaxHealth + SOURCE_GRAVEYARD_DUST_HEALTH_GAIN;
         return healed <= SOURCE_GRAVEYARD_DUST_MAX_HEALTH ? healed : currentMaxHealth;
+    }
+
+    public static int sourceSpectralDustDropBound(int lootingLevel) {
+        return Math.max(SOURCE_SPECTRAL_DUST_BASE_DROP_BOUND - Math.max(0, lootingLevel),
+                SOURCE_SPECTRAL_DUST_MIN_DROP_BOUND);
+    }
+
+    public static boolean sourceDropsSpectralDust(boolean temp, int lootingLevel, int roll) {
+        return !temp && roll == 0 && roll < sourceSpectralDustDropBound(lootingLevel);
+    }
+
+    private static int sourceLootingLevel(ServerLevel level, DamageSource source) {
+        ItemStack weapon = source == null ? ItemStack.EMPTY : source.getWeaponItem();
+        if (weapon == null || weapon.isEmpty()) {
+            return 0;
+        }
+        try {
+            return weapon.getEnchantmentLevel(level.registryAccess()
+                    .lookupOrThrow(Registries.ENCHANTMENT)
+                    .getOrThrow(Enchantments.LOOTING));
+        } catch (RuntimeException ignored) {
+            return 0;
+        }
     }
 }

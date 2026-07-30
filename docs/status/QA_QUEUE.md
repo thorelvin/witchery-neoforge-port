@@ -175,6 +175,10 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Use Graveyard Dust on owned spectral undead. It should add 2 max health per
   dust up to the source 50-health cap, heal to the new max, refuse non-owners,
   and avoid consuming dust when already capped or invalid.
+- Kill ordinary Spectre, Banshee, and Poltergeist entities and confirm their
+  Spectral Dust drop is a shared rare one-item roll: about 1-in-4 normally,
+  1-in-3 with Looting I, and capped at 1-in-2 for Looting II+. Temporary
+  spectral undead from timed summons should drop no Spectral Dust.
 - Block the first release space over a ritual cauldron and confirm gas/liquid
   Dog Tongue release chooses a nearby safe space instead of failing immediately.
 

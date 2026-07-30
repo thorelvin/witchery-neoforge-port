@@ -1898,5 +1898,15 @@ class BrewLogicTest {
         assertEquals(49.0F, SummonedUndeadEntity.sourceGraveyardDustHealthAfter(49.0F),
                 "source only heals when the +2 max-health step stays at or below 50");
         assertEquals(50.0F, SummonedUndeadEntity.sourceGraveyardDustHealthAfter(50.0F));
+
+        assertEquals(4, SummonedUndeadEntity.sourceSpectralDustDropBound(0));
+        assertEquals(3, SummonedUndeadEntity.sourceSpectralDustDropBound(1));
+        assertEquals(2, SummonedUndeadEntity.sourceSpectralDustDropBound(2));
+        assertEquals(2, SummonedUndeadEntity.sourceSpectralDustDropBound(5),
+                "source caps the rare-drop roll at one chance in two");
+        assertTrue(SummonedUndeadEntity.sourceDropsSpectralDust(false, 0, 0));
+        assertFalse(SummonedUndeadEntity.sourceDropsSpectralDust(false, 0, 1));
+        assertFalse(SummonedUndeadEntity.sourceDropsSpectralDust(true, 5, 0),
+                "temporary summoned undead do not drop spectral dust");
     }
 }
