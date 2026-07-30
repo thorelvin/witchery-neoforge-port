@@ -295,7 +295,7 @@ The 1.7.10 decompiled source has 46+ entity classes. This tracking table lists t
 | ~~`EntityMirrorFace`~~ | ~~Temporary mirror divination face~~ | Done - exact source role restored as the invulnerable/no-collision ten-second `MirrorFaceEntity`, with the original translucent head model/texture and normal-mirror interaction/speech spawning; it is not a second Mirror World guardian |
 | ~~`EntityDarkMark`~~ | ~~Dark Mark projectile/effect~~ | ✅ Done — `DarkMarkEntity` + `DarkMarkModel`/`DarkMarkRenderer`, conjured by the new **Morsmordre** symbol spell (`EffectRegistry.MORSMORDRE`). 2×2 floating skull-cloud: smoke trail, cackle, wards mobs outward within 10 blocks, despawns after 5 min |
 | ~~`EntityEye`~~ | ~~Eye mob~~ | ✅ Covered as the hidden no-render `ScryingEyeEntity` anchor for Waystone/self Crystal Ball camera scrying. It has no standalone gameplay value beyond feeding the coordinate camera packet. |
-| `EntitySpellEffect` | Spell visual projectile | ✅ Done earlier — `SpellEffectEntity` (Mystic Branch symbol projectile) |
+| ~~`EntitySpellEffect`~~ | ~~Spell visual projectile~~ | Done earlier - `SpellEffectEntity` (Mystic Branch symbol projectile) |
 | ~~`EntityWitchCat` (wild)~~ | ~~Wild witch cat variant~~ | ✅ Covered — `EntityWitchCat` is the cat familiar; the remake implements it as `entity/familiar/CatFamiliarEntity` on the `FamiliarEntity` system. The source's wild-ocelot raw-fish taming is superseded by the remake's familiar-binding flow |
 
 Implementation order: ~~Lilith~~ ✅ → ~~Leonard/Lost Souls~~ ✅ → ~~Village Guard~~ ✅ → ~~Wolfman/WereVillager~~ ✅ → Goblin/Gulg/Mog → remainder.

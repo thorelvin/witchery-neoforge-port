@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-07-13
+Last curated: 2026-07-30
 
 This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in

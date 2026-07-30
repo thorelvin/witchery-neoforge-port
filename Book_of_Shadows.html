@@ -130,9 +130,35 @@ hr { border: none; border-top: 1px solid #c8b888; margin: 2rem 0; }
 a.ch-top { float: right; font-size: 0.66rem; font-weight: normal; letter-spacing: 0.06em; text-transform: uppercase; color: #9a7848; text-decoration: none; margin-top: 0.7rem; }
 a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+.language-switcher { position: fixed; top: 1rem; right: 1rem; z-index: 80; font-family: Georgia, 'Book Antiqua', 'Palatino Linotype', Palatino, serif; }
+.language-switcher__toggle { display: flex; align-items: center; justify-content: center; width: 2.55rem; height: 2.55rem; background: #c0a870; color: #2a1a08; border: 1px solid #8a5a28; border-radius: 50%; box-shadow: 0 1px 5px rgba(40,20,8,0.35); cursor: pointer; font-size: 1.35rem; line-height: 1; list-style: none; user-select: none; }
+.language-switcher__toggle::marker { content: ""; }
+.language-switcher__toggle::-webkit-details-marker { display: none; }
+.language-switcher__toggle:hover,
+.language-switcher__toggle:focus-visible,
+.language-switcher[open] .language-switcher__toggle { background: #8a5a28; color: #f0e6d0; outline: none; }
+.language-switcher__menu { position: absolute; top: calc(100% + 0.45rem); right: 0; min-width: 10.5rem; padding: 0.35rem; background: #c2b58c; border: 1px solid #8a5a28; border-radius: 3px; box-shadow: 0 4px 12px rgba(40,20,8,0.32); }
+.language-switcher__option { display: flex; align-items: center; gap: 0.55rem; width: 100%; border: 0; border-radius: 2px; background: transparent; color: #2a1a08; cursor: pointer; font: inherit; font-size: 0.82rem; line-height: 1.25; padding: 0.45rem 0.55rem; text-align: left; }
+.language-switcher__option:hover,
+.language-switcher__option:focus-visible,
+.language-switcher__option.is-selected { background: #d1cab0; outline: none; }
+.language-switcher__option:disabled { color: #74664b; cursor: not-allowed; opacity: 0.72; }
+.language-switcher__flag { width: 1.6rem; text-align: center; font-size: 1.1rem; line-height: 1; }
+.language-switcher__status { margin-left: auto; font-size: 0.68rem; font-style: italic; }
+
+@media (max-width: 640px) {
+  body { padding: 3.2rem 1rem 3rem; }
+  table { display: block; max-width: 100%; overflow-x: auto; }
+  .two-col { grid-template-columns: minmax(0, 1fr); }
+  .two-col > div { min-width: 0; }
+  .language-switcher { top: 0.65rem; right: 0.65rem; }
+}
+
 /* ── Print ── */
 @media print {
-  #totop, a.ch-top { display: none; }
+  #totop, .language-switcher, a.ch-top { display: none; }
   body { background: white; color: #111; font-size: 11pt; padding: 1.5cm; max-width: none; }
   #cover h1 { color: #333; }
   #toc, .part-header, .two-col > div { background: #f9f9f9; }
@@ -145,6 +171,39 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <body>
 
 <a href="#toc" id="totop" title="Back to Contents">☰ Contents</a>
+
+<details class="language-switcher" data-language-picker>
+  <summary class="language-switcher__toggle" data-language-toggle aria-haspopup="listbox" aria-expanded="false" aria-label="Language: English. Select language" title="Language: English">
+    <span class="language-switcher__flag" data-language-current-flag aria-hidden="true">&#127468;&#127463;</span>
+    <span class="sr-only" data-language-current-label>English</span>
+  </summary>
+  <div class="language-switcher__menu" role="listbox" aria-label="Language">
+    <button class="language-switcher__option is-selected" type="button" data-language-option="en" role="option" aria-selected="true">
+      <span class="language-switcher__flag" aria-hidden="true">&#127468;&#127463;</span>
+      <span>English</span>
+    </button>
+    <button class="language-switcher__option" type="button" role="option" aria-selected="false" aria-disabled="true" disabled>
+      <span class="language-switcher__flag" aria-hidden="true">&#127475;&#127476;</span>
+      <span>Norsk</span>
+      <span class="language-switcher__status">planned</span>
+    </button>
+    <button class="language-switcher__option" type="button" role="option" aria-selected="false" aria-disabled="true" disabled>
+      <span class="language-switcher__flag" aria-hidden="true">&#127465;&#127466;</span>
+      <span>Deutsch</span>
+      <span class="language-switcher__status">planned</span>
+    </button>
+    <button class="language-switcher__option" type="button" role="option" aria-selected="false" aria-disabled="true" disabled>
+      <span class="language-switcher__flag" aria-hidden="true">&#127467;&#127479;</span>
+      <span>Français</span>
+      <span class="language-switcher__status">planned</span>
+    </button>
+    <button class="language-switcher__option" type="button" role="option" aria-selected="false" aria-disabled="true" disabled>
+      <span class="language-switcher__flag" aria-hidden="true">&#127466;&#127480;</span>
+      <span>Español</span>
+      <span class="language-switcher__status">planned</span>
+    </button>
+  </div>
+</details>
 
 <!-- COVER -->
 <div id="cover">
@@ -166,11 +225,12 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <li>The <a href="#ch16">vampire's climb</a> is cut to its full height: <strong>Resist Sun</strong> truly holds back the daylight from the fifth rung, and the late trials — the three-village pilgrimage and the caging and bleeding of villagers — open the eighth and ninth. A <strong>Rite to Remove Vampirism</strong> now offers a coven's cure for the afflicted.</li>
   <li>The <a href="#ch13">living coven</a> stands at last: wandering Coven Witches set you a trial — fetch an ingredient, or slay a creature they conjure and bring back its remains — before swearing to your coven (six at most). The sworn now <strong>fight at your side</strong>, hurling brews at whatever you strike and at any foe that strikes you, and never at you or their sisters; the bond holds across sleep and distance, and the <a href="#ch23">Seer Stone</a> reads your coven's number and any trial set you.</li>
   <li>The <strong><a href="#triggered-curses">triggered curse</a></strong> is woven into the craft. A brew taught with a Zombie Head is no longer drunk or thrown at a body but <em>laid</em> — upon loose items, or upon a button, lever, pressure plate, ladder, or door — to wait, unseen, for the next unwary hand. A trap, patient and faithful.</li>
-  <li>The lesser tools have remembered their old manners: <a href="#polynesia-charm">Polynesia</a> and <a href="#devils-tongue-charm">Devil's Tongue</a> charms bargain with beast and demon, the <a href="#cane-sword">Cane Sword</a> stores a vampire's reserve in the blood itself, the <a href="#brew-bag">Brew Bag</a> takes dye and liquid brews, and bound <strong>Spectral Stones</strong> show which restless thing they hold.</li>
+  <li>The lesser tools have remembered their old manners: <a href="#polynesia-charm">Polynesia</a> and <a href="#devils-tongue-charm">Devil's Tongue</a> charms bargain with beast and demon, the <a href="#cane-sword">Cane Sword</a> stores a vampire's reserve in the blood itself, the <a href="#brew-bag">Brew Bag</a> takes dye and liquid brews, and bound <strong>Spectral Stones</strong> show which restless thing they hold. Spectres, Banshees, and Poltergeists now remember their summoner, answer to Graveyard Dust and Revealing, and share their old rare Spectral Dust drop.</li>
   <li>The Witch's Cauldron has answered its last withholdings: creeping <strong>liquid</strong> brews and drifting <strong>gas</strong>, the brew bucket, casting straight from the pot over <a href="#ch9b">Tongue of Dog</a> with optional <strong>Bound Waystone</strong> targeting, the <strong>Gas Mask</strong> that turns aside foul fumes, and the <strong>Brew of Disease</strong> with the Purified-Milk cure that lifts it.</li>
   <li>A new and uncanny companion: the <strong><a href="#ch7">Creaking familiar</a></strong> of the pale groves, bound by the Rite of the Creakening — still and watchful, moving only when no eye is on it.</li>
   <li>The <a href="#ch23">Crystal Ball</a> truly scries now: hold a Taglock Kit, a Bound Waystone, or a <strong>Blooded Waystone</strong> and the ball bears your sight out for a sustained minute — a real vision that follows a soul or hovers above a waystone's place, spending altar power as it holds. Dropped bound and Blooded Waystones also <a href="#ch18">transpose</a> the living and loose things near them out of an Otherwhere circle.</li>
   <li>Some old mouths have learned to answer back. If local NPC voices are enabled, witches, villagers, village guards, hobgoblins, Leonard, Baba Yaga, Death and other bosses, demons, imps, and stranger reflections may answer nearby speech in their own manner. Their words may guide, warn, gossip, or mock, but the real bargains are still trades, rites, items, and server rules.</li>
+  <li>Mirrors answer in more than one fashion. An ordinary uncleared mirror may call up the old translucent <strong>Mirror Face</strong> for ten seconds when touched empty-handed or addressed with mirror speech; the apparition watches, speaks, and fades without becoming another guardian.</li>
   <li>The earlier printing's additions remain: the <a href="#ch13">spectral coven</a> raised from five remembered tales; the early chapters reordered so the <a href="#ch1">Oven</a> precedes <a href="#ch2">Seeds and Mutandis</a>; the truer <a href="#ch23">Crystal Ball</a> prophecies; the <a href="#ch31">Hellhound and Minedrake</a>; the <a href="#ch12b">Morsmordre</a> glyph; the <a href="#ch34">Specialist Gear</a> chapter; <a href="#ch35">Worldgen &amp; Structures</a>; and the fuller <a href="#appD">Item ID</a> and <a href="#appF">reference-book</a> tables.</li>
 </ul>
 </div>
@@ -1010,7 +1070,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><th>Ingredient</th><th>Source</th><th>Used In (primary)</th></tr>
   <tr><td><strong>Tongue of Dog</strong></td><td>Killed from wolves, tamed dogs, hellhounds. Drop rate increased by the <a href="#boline">Arthana</a>.</td><td>Redstone Soup; ritual casting (Tongue of Dog as a cauldron cast trigger); Rite of Manifestation</td></tr>
   <tr><td><strong>Wool of Bat</strong></td><td>Killed from bats. Drop rate increased by the Arthana.</td><td>Redstone Soup; gas dispersal in Custom Brews; Spirit of Otherwhere brew</td></tr>
-  <tr><td><strong>Spectral Dust</strong></td><td>Dropped by <a href="#spectral-familiar">Spectral Familiars</a>. Rare drop from undead when the Arthana is used.</td><td>Necromantic Stone rite; Spectral Stone rite; Rite of Prior Incarnation; Rite of Manifestation</td></tr>
+  <tr><td><strong>Spectral Dust</strong></td><td>Dropped by <a href="#spectral-familiar">Spectral Familiars</a>. A non-temporary Spectre, Banshee, or Poltergeist also has a shared rare one-dust drop: one chance in four, improved by Looting to at most one in two.</td><td>Necromantic Stone rite; Spectral Stone rite; Rite of Prior Incarnation; Rite of Manifestation</td></tr>
   <tr><td><strong>Hint of Rebirth</strong></td><td>Witches' Oven fume — burn a Spruce Sapling; base fume chance is 30% before funnels.</td><td>Rite of Summoning (Familiar); Rite of Fertility; Demonic Contract: Living Flame</td></tr>
   <tr><td><strong>Drop of Luck</strong></td><td>Witch's Cauldron brew: offer Mandrake Root + Nether Wart + Tear of the Goddess + Refined Evil, then use Mutandis Extremis; costs 6,930 altar power. High-tier crafted item.</td><td>Spectral Familiar summoning rite; Spirit of Otherwhere brew</td></tr>
   <tr><td><strong>Congealed Spirit</strong></td><td>Kettle brew: Brew of Hollow Tears + 5× Subdued Spirit, 2,000 altar power. Subdued Spirits are dropped by Spirit entities in the <a href="#ch20">Spirit World</a> when killed.</td><td>Spectral Stone (scratch method via Rite of Necromancy)</td></tr>
@@ -1073,7 +1133,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Shrieking Fetish</td><td>11×11</td><td>6,000</td><td>Effigy + Attuned Stone + <a href="#necromantic-stone">Necromantic Stone</a> + <a href="#boline">Boline</a> + (3 Spirit, 2 Banshee)</td><td>Screams and disorients nearby entities</td></tr>
   <tr><td>Voodoo Protection Fetish</td><td>11×11</td><td>6,000</td><td>Effigy + Attuned Stone + <a href="#necromantic-stone">Necromantic Stone</a> + <a href="#boline">Boline</a> + (3 Spirit, 1 Banshee, 1 Spectre, 1 Poltergeist)</td><td>Makes Voodoo Protection Poppets endure more hostile poppet pressure nearby</td></tr>
 </table>
-<div class="callout callout-tip">A bound Spectral Stone changes its face: Spectre, Banshee, and Poltergeist stones each show their own old icon, so the stone tells you what it holds before you loose it. Released spirits remember their summoner, will not hunt that owner, and answer to Graveyard Dust strengthening up to 50 health.</div>
+<div class="callout callout-tip">A bound Spectral Stone changes its face: Spectre, Banshee, and Poltergeist stones each show their own old icon, so the stone tells you what it holds before you loose it. Released spirits remember their summoner, will not hunt that owner, and answer to Graveyard Dust strengthening up to 50 health. Non-temporary spirits may leave one Spectral Dust when slain; short-lived summoned spirits do not.</div>
 
 <h3>Transposition Rites (Otherwhere Chalk)</h3>
 <table>
@@ -1629,7 +1689,8 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <div class="callout callout-warn">Do not enter <a href="#ch20">Torment</a> without a confirmed exit plan. The TormentHelper system manages entry and exit, but there is no automatic rescue if you are unprepared. Bring a pre-loaded transposition talisman pointing to a waystone you placed before you went in.</div>
 
 <h3>The Mirror World</h3>
-<p>A dark reflection of the overworld. Deep blue fog (0, 0.03, 0.1); permanently black sky with End rendering; no natural light. The Mirror World contains Demons, reflected structures, and serves as the setting for mirror magic and identity-based rituals. Entry and exit are tied to specific rites.</p>
+<p>A dark reflection of the overworld. Deep blue fog (0, 0.03, 0.1); permanently black sky with End rendering; no natural light. Touching an inhabited mirror carries you into its private reflected room, where your own Reflection guards the way home. Defeat it to clear the mirror and leave safely. Old generated Mirror World chunks are not rewritten when the room design changes, so test this path in a fresh world.</p>
+<p>An ordinary uncleared mirror in the waking world has a quieter answer too. Touch it empty-handed, or address it with nearby mirror speech, and one translucent floating face may appear just outside the glass. It follows a nearby gaze, speaks with the old reflection voice, ignores blows and collision, and fades after ten seconds. It is an apparition, not the Reflection guardian, and cleared mirrors or mirrors already inside the Mirror World will not call it.</p>
 
 <div class="callout callout-also">Spirit World materials &amp; Dream Weavers: <a href="#ch28">Ch 28</a> · The Lord of Torment: <a href="#ch30">Ch 30</a> · Spectral creatures you will meet: <a href="#ch31">Ch 31</a> · Brew of Flowing Spirit (the entry brew): <a href="#appB">App B</a> · Reflection &amp; the Mirror World decoy: <a href="#duplication-grenade">Ch 34</a></div>
 
@@ -2916,6 +2977,80 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <div class="page-footer">
   Book of Shadows — Witchery Rewoven &nbsp;·&nbsp; NeoForge 1.21.11 Edition &nbsp;·&nbsp; Version 15 &nbsp;·&nbsp; Fourteenth Edition &nbsp;·&nbsp; ☽ ✦ ☾
 </div>
+
+<script>
+(function () {
+  const storageKey = "witchery-book-language";
+  const languages = {
+    en: { flag: "\u{1F1EC}\u{1F1E7}", name: "English", lang: "en" }
+  };
+  const picker = document.querySelector("[data-language-picker]");
+  if (!picker) {
+    return;
+  }
+  const currentFlag = picker.querySelector("[data-language-current-flag]");
+  const currentLabel = picker.querySelector("[data-language-current-label]");
+  const currentToggle = picker.querySelector("[data-language-toggle]");
+  const options = Array.from(picker.querySelectorAll("[data-language-option]"));
+
+  function storeLanguage(code) {
+    try {
+      localStorage.setItem(storageKey, code);
+    } catch {
+      return;
+    }
+  }
+
+  function loadLanguage() {
+    try {
+      return localStorage.getItem(storageKey) || "en";
+    } catch {
+      return "en";
+    }
+  }
+
+  function setLanguage(code) {
+    const selectedCode = languages[code] ? code : "en";
+    const language = languages[selectedCode];
+    picker.dataset.selectedLanguage = selectedCode;
+    currentFlag.textContent = language.flag;
+    currentLabel.textContent = language.name;
+    currentToggle.setAttribute("aria-label", "Language: " + language.name + ". Select language");
+    currentToggle.setAttribute("title", "Language: " + language.name);
+    document.documentElement.lang = language.lang;
+    options.forEach(function (option) {
+      const isSelected = option.dataset.languageOption === selectedCode;
+      option.classList.toggle("is-selected", isSelected);
+      option.setAttribute("aria-selected", isSelected ? "true" : "false");
+    });
+    storeLanguage(selectedCode);
+    window.dispatchEvent(new CustomEvent("witchery:languagechange", {
+      detail: { language: selectedCode }
+    }));
+  }
+
+  setLanguage(loadLanguage());
+  picker.addEventListener("toggle", function () {
+    currentToggle.setAttribute("aria-expanded", picker.open ? "true" : "false");
+  });
+  options.forEach(function (option) {
+    option.addEventListener("click", function () {
+      setLanguage(option.dataset.languageOption);
+      picker.removeAttribute("open");
+    });
+  });
+  document.addEventListener("click", function (event) {
+    if (!picker.contains(event.target)) {
+      picker.removeAttribute("open");
+    }
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      picker.removeAttribute("open");
+    }
+  });
+}());
+</script>
 
 </body>
 </html>
