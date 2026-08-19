@@ -84,20 +84,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Can be dyed.
 
 ## Hobgoblin
-- **HP:** Not specified in text
-- **Damage:** Not specified in text
-- **Drops:** Not specified in text
-- **Spawn:** Not specified in text
-- **Behaviour:** Not specified in text
-- **Notes:** Not specified in text
-
-## Hobgoblin
 - **HP:** 20 (x 10)
 - **Damage:** 3
 - **Drops:** Koboldite Dust, items scrounged up by hobgoblins
-- **Spawn:** Forest biomes
-- **Behaviour:** Hostile towards villagers, neutral to players; can be tamed with a lead to gather items or dig for Koboldite Dust
-- **Notes:** Worships gods Gulg and Mog; can be tricked into praying at a Statue of Hobgoblin Patron by witches
+- **Spawn:** One resident in Hobgoblin Huts in forest and swamp biomes
+- **Behaviour:** Neutral to players. A lone Hobgoblin or pair leaves villagers alone; a group of at least three within eight blocks raids villagers and avoids nearby Village Guards. Adults breed near enough village homes under a 35% population cap, and babies grow through vanilla age state. Leashed, pickaxe-equipped Hobgoblins can gather items or mine for Koboldite Dust.
+- **Notes:** Worships gods Gulg and Mog; can be directed to pray at a Statue of Hobgoblin Patron. Player conversation, trade, mining, worship, follow, and guard orders override ambient village behavior.
 
 ## Horned Huntsman
 - **HP:** 400 or 200 hearths
@@ -112,7 +104,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Drops:** Friendly reward interactions after defeat: empty Glass Goblet -> Lilith blood, Garlic -> vampirism cure, Poppy -> vampire level 6 to 7, enchantable item/book -> high-level blessing
 - **Spawn:** The chicken-blood skull rite summons persistent Elle; lead Elle to a large source-shaped lava pool and she transforms into Lilith.
 - **Behaviour:** Opens with invulnerability and healing, regenerates while hostile, caps incoming damage, uses fireballs, spell pressure, fire rain, and can be weakened by reflected large fireballs.
-- **Notes:** Best to deflect her fireballs and bring fire protection or Demonbane support. Her Lilith blood reward refuses werewolves, keeping the vampire and werewolf paths separate.
+- **Notes:** Best to deflect her fireballs and bring fire protection or Demonbane support. Her Lilith blood reward accepts werewolves only when the server's source-default hybrid setting is enabled.
 
 ## Lord of Torment
 - **HP:** 500

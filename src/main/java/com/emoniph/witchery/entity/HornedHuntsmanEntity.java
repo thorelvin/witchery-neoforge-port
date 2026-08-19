@@ -145,7 +145,7 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
                 && getSensing().hasLineOfSight(target)) {
             summonWolf(target);
         }
-        if (getNavigation().isStuck() && tickCount - ticksSinceTeleport > 100) {
+        if (getNavigation().isStuck() && tickCount - ticksSinceTeleport > 200) {
             ticksSinceTeleport = tickCount;
             teleportNear(target);
         }

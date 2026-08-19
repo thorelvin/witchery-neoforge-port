@@ -9,8 +9,8 @@ Transformation cards should warn, orient, and avoid unlocking hidden paths early
 - [triggers: vampire clothing|woven cruor|blood stained wool|vampire top hat|vampire coat] Targeted fact: Vampire clothing begins with Woven Cruor from blood-stained wool; the deeper clothing path belongs to opened transformation lessons.
 
 ## Lycanthropy
-- [triggers: lycanthropy|werewolf|become werewolf|wolf curse|curse of the wolf|full moon] Targeted fact: Lycanthropy is a wolf curse; full moon nights force change unless a Moon Charm helps, while mastery at the Wolf Altar gives more control.
-- [triggers: werewolf powers|wolf form|wolf altar|wolf mastery|howling] Targeted fact: Wolf form brings strength, speed, regeneration, and later howling power; mastery matters and should not be treated as a toy.
+- [triggers: lycanthropy|werewolf|become werewolf|wolf curse|curse of the wolf|full moon] Targeted fact: Lycanthropy is a wolf curse. The Wolf Altar opens ten levels of control. Full moon nights force the wolf shape unless a Moon Charm or strong enough active Wolfsbane effect holds the current form.
+- [triggers: werewolf powers|wolf form|wolf altar|wolf mastery|howling] Targeted fact: Wolf and wolfman forms gain source-scaled speed, strength, jumping, health, resistance, and falling protection; later levels add digging, feeding, pounce trials, distinct howls, pack calls, paralysis, armor rending, and infection.
 - [triggers: cure lycanthropy|remove werewolf|remove wolf curse] Targeted fact: Removing or mastering the wolf curse belongs to opened transformation progression; offer caution and the Wolf Altar lead instead of inventing a cure.
 
 ## Infusions

@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.data.WitcheryPlayerData.WolfForm;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
@@ -64,26 +65,18 @@ public class MoonCharmItem extends Item {
             return;
         }
 
-        if (!data.isWerewolf() || WerewolfShiftUtil.hasWolfsbane(player)
+        if (!data.isWerewolf() || WerewolfShiftUtil.isWolfsbaneActive(player, data)
                 || !WerewolfShiftUtil.canControlTransform(data)) {
             fail(player);
-        } else if (player.isShiftKeyDown() && WerewolfShiftUtil.isTransformed(data)) {
-            // Sneak while transformed: switch between the wolf and wolfman shapes (level 5+).
-            if (!WerewolfShiftUtil.isWolfmanAllowed(data)) {
-                fail(player);
-                player.displayClientMessage(Component.translatable("item.witchery.moon_charm.no_wolfman")
-                        .withStyle(ChatFormatting.GRAY), true);
-            } else {
-                var form = WerewolfShiftUtil.cycleForm(player, data);
-                player.displayClientMessage(Component.translatable(
-                        "item.witchery.moon_charm.form." + form.name().toLowerCase(java.util.Locale.ROOT))
-                        .withStyle(ChatFormatting.GOLD), true);
-            }
         } else {
-            boolean transformed = !WerewolfShiftUtil.isTransformed(data);
-            WerewolfShiftUtil.setTransformed(player, data, transformed, transformed
-                    ? Component.translatable("item.witchery.moon_charm.transformed").withStyle(ChatFormatting.GOLD)
-                    : Component.translatable("item.witchery.moon_charm.restored").withStyle(ChatFormatting.GRAY));
+            WolfForm next = WerewolfProgression.moonCharmNextForm(
+                    data.getWolfForm(), player.isShiftKeyDown(), data.getWerewolfLevel());
+            WerewolfShiftUtil.shiftTo(player, data, next, next == WolfForm.NONE
+                    ? Component.translatable("item.witchery.moon_charm.restored").withStyle(ChatFormatting.GRAY)
+                    : Component.translatable("item.witchery.moon_charm.form."
+                            + next.name().toLowerCase(java.util.Locale.ROOT)).withStyle(ChatFormatting.GOLD));
+            level.playSound(null, player.blockPosition(), SoundEvents.FIRE_EXTINGUISH,
+                    SoundSource.PLAYERS, 1.5F, 1.0F);
         }
 
         EquipmentSlot slot = player.getUsedItemHand() == InteractionHand.OFF_HAND

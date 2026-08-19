@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
@@ -68,7 +69,7 @@ public class VampireBloodItem extends Item {
 
     private static void drinkLilithsBlood(ServerPlayer player, WitcheryPlayerData data) {
         if (!data.isVampire()) {
-            if (data.isWerewolf()) {
+            if (data.isWerewolf() && !WitcheryConfig.ALLOW_VAMPIRE_WOLF_HYBRIDS.get()) {
                 player.displayClientMessage(Component.translatable("rite.witchery.wolf_curse.hybridsnotallow")
                         .withStyle(ChatFormatting.DARK_RED), false);
                 playDrink(player);

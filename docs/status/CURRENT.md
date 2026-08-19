@@ -53,6 +53,27 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Hobgoblin village ecology now follows the audited `EntityGoblin` and
+  `EntityAIGoblinMate` rules. Registered village homes replace old door counts;
+  settled Hobgoblins refresh their village center every 70-119 ticks, remain
+  persistent, and return when they stray beyond the source-scaled home radius.
+  Adults use the 1-in-500, 300-tick courtship and 35% housing cap, producing a
+  vanilla-aged baby with a valid profession variant and putting both parents on
+  the source 6000-tick cooldown. Only packs of three within eight blocks raid
+  villagers or avoid Village Guards, while retaliation alerts nearby kin.
+  Existing conversation, trade, leash mining, worship, follow, and player-guard
+  orders override ambient ecology. Focused JVM tests and
+  `witchery:hobgoblin_village_ecology` pass on the headless GameTest server.
+- Lycanthropy is now source-complete as a level 1-10 survival path. The Wolf
+  Altar enforces the exact three offerings, Horned Huntsman handoff, and five
+  task gates; Moon Charm controls the separately synced/rendered wolf and
+  wolfman forms at levels 2 and 5; full-moon nights, exact stat tables, source
+  equipment shedding, digging, feeding, pounce, howl, taming, armor-rend, and
+  infection rules are live. Wolftrap capture provides the natural initial bite.
+  Progress, distinct howl chunks, and power-howl timing persist across reloads.
+  `/witchery verify lycanthropy`, focused JVM tests, and the registered
+  `witchery:lycanthropy_progression` GameTest cover the contract; live-client
+  form/camera/audio and multiplayer bite combinations remain queued QA.
 - Mirror World's fresh-save source contract is implemented. Its featureless
   biome carries the original 256-block repeating 9 x 9 x 9 lattice, including
   fifteen vertical allocation tiers before each source-spiral step. Source

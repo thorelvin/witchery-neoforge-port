@@ -3,6 +3,7 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.ai.NpcBrainService;
 import com.emoniph.witchery.ai.NpcPersonas;
 import com.emoniph.witchery.blocks.entity.StatueHobgoblinPatronBlockEntity;
+import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.protection.WitcheryProtectionAction;
@@ -44,7 +45,10 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.village.poi.PoiManager;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.entity.npc.villager.Villager;
@@ -63,6 +67,7 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -131,6 +136,11 @@ public class HobgoblinEntity extends AbstractVillager {
     private String commandOwnerName = "";
     @Nullable
     private UUID commandPlayer;
+    private int villageRefreshCooldown;
+    private boolean mating;
+    @Nullable
+    private BlockPos villageHome;
+    private int villageHomeRadius;
 
     public HobgoblinEntity(EntityType<? extends HobgoblinEntity> type, Level level) {
         super(type, level);
@@ -182,19 +192,33 @@ public class HobgoblinEntity extends AbstractVillager {
                         && !isWorking() && super.canContinueToUse();
             }
         });
-        this.goalSelector.addGoal(7, new MeleeAttackGoal(this, 0.8, true));
-        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.6));
-        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 8f));
-        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Villager.class, true) {
+        this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, VillageGuardEntity.class, 12f, 0.8, 0.8) {
             @Override
             public boolean canUse() {
-                return activeFollowPlayer() == null && activeGuardPlayer() == null && super.canUse();
+                return shouldAvoidVillageGuards() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return activeFollowPlayer() == null && activeGuardPlayer() == null && super.canContinueToUse();
+                return shouldAvoidVillageGuards() && super.canContinueToUse();
+            }
+        });
+        this.goalSelector.addGoal(7, new MeleeAttackGoal(this, 0.8, true));
+        this.goalSelector.addGoal(8, new HobgoblinReturnToVillageGoal());
+        this.goalSelector.addGoal(9, new HobgoblinMateGoal());
+        this.goalSelector.addGoal(10, new WaterAvoidingRandomStrollGoal(this, 0.6));
+        this.goalSelector.addGoal(11, new LookAtPlayerGoal(this, Player.class, 8f));
+        this.goalSelector.addGoal(12, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Villager.class, true) {
+            @Override
+            public boolean canUse() {
+                return canRaidVillagers() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return canRaidVillagers() && super.canContinueToUse();
             }
         });
     }
@@ -343,6 +367,33 @@ public class HobgoblinEntity extends AbstractVillager {
 
     public boolean isWorshipping() {
         return this.entityData.get(WORK_STATE) == 2;
+    }
+
+    private boolean canUseVillageEcology() {
+        return !isTrading() && !isLeashed() && !isWorking() && !isWorshipping()
+                && !hasActiveMiningOrder()
+                && activeAttentionPlayer() == null && activeWorshipTarget() == null
+                && activeFollowPlayer() == null && activeGuardPlayer() == null;
+    }
+
+    int nearbyHobgoblinCount(double horizontalRadius, double verticalRadius) {
+        AABB bounds = new AABB(
+                getX() - horizontalRadius, getY() - verticalRadius, getZ() - horizontalRadius,
+                getX() + horizontalRadius, getY() + verticalRadius, getZ() + horizontalRadius);
+        return level().getEntitiesOfClass(HobgoblinEntity.class, bounds, Entity::isAlive).size();
+    }
+
+    boolean hasRaidPack() {
+        return HobgoblinVillageEcology.hasRaidPack(nearbyHobgoblinCount(
+                HobgoblinVillageEcology.PACK_RADIUS, HobgoblinVillageEcology.PACK_RADIUS));
+    }
+
+    boolean canRaidVillagers() {
+        return canUseVillageEcology() && hasRaidPack();
+    }
+
+    boolean shouldAvoidVillageGuards() {
+        return canUseVillageEcology() && hasRaidPack();
     }
 
     private void setWorkingState(int state) {
@@ -688,7 +739,9 @@ public class HobgoblinEntity extends AbstractVillager {
     @Override
     public void tick() {
         super.tick();
-        if (level().isClientSide() || tickCount % 20 != 0) return;
+        if (level().isClientSide()) return;
+        tickVillageMembership();
+        if (tickCount % 20 != 0) return;
         if (!isLeashed()) {
             miningUntil = 0L;
             mineTarget = null;
@@ -713,6 +766,44 @@ public class HobgoblinEntity extends AbstractVillager {
         if (mainHand.is(ItemTags.PICKAXES) && !isWorshipping()) {
             maybeSayMiningComment();
         }
+    }
+
+    private void tickVillageMembership() {
+        if (--villageRefreshCooldown > 0 || !(level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        villageRefreshCooldown = HobgoblinVillageEcology.villageRefreshCooldown(
+                getRandom().nextInt(HobgoblinVillageEcology.VILLAGE_REFRESH_RANDOM_TICKS));
+
+        List<BlockPos> homes = serverLevel.getPoiManager().findAll(
+                holder -> holder.is(PoiTypes.HOME), pos -> true, blockPosition(),
+                HobgoblinVillageEcology.VILLAGE_SEARCH_RADIUS, PoiManager.Occupancy.ANY).toList();
+        if (homes.isEmpty()) {
+            villageHome = null;
+            villageHomeRadius = 0;
+            return;
+        }
+
+        long x = 0L;
+        long y = 0L;
+        long z = 0L;
+        for (BlockPos home : homes) {
+            x += home.getX();
+            y += home.getY();
+            z += home.getZ();
+        }
+        BlockPos center = new BlockPos(
+                (int) Math.round((double) x / homes.size()),
+                (int) Math.round((double) y / homes.size()),
+                (int) Math.round((double) z / homes.size()));
+        int villageRadius = HobgoblinVillageEcology.VILLAGE_SEARCH_RADIUS;
+        for (BlockPos home : homes) {
+            villageRadius = Math.max(villageRadius,
+                    (int) Math.ceil(Math.sqrt(home.distSqr(center))));
+        }
+        villageHome = center;
+        villageHomeRadius = HobgoblinVillageEcology.villageRestrictionRadius(villageRadius);
+        setPersistenceRequired();
     }
 
     private void maybeSayMiningComment() {
@@ -838,6 +929,141 @@ public class HobgoblinEntity extends AbstractVillager {
         }
         level.sendParticles(ParticleTypes.HAPPY_VILLAGER,
                 getX(), getY() + 0.8D, getZ(), 5, 0.25D, 0.25D, 0.25D, 0.02D);
+    }
+
+    private boolean canMateNow() {
+        return getAge() == 0 && getTarget() == null && canUseVillageEcology();
+    }
+
+    boolean hasHobgoblinBreedingCapacity(ServerLevel level) {
+        long homeCount = level.getPoiManager().getCountInRange(
+                holder -> holder.is(PoiTypes.HOME), blockPosition(),
+                HobgoblinVillageEcology.VILLAGE_SEARCH_RADIUS, PoiManager.Occupancy.ANY);
+        int hobgoblinCount = nearbyHobgoblinCount(
+                HobgoblinVillageEcology.VILLAGE_SEARCH_RADIUS, 3.0D);
+        return HobgoblinVillageEcology.hasBreedingCapacity(homeCount, hobgoblinCount);
+    }
+
+    boolean hasVillageHome() {
+        return villageHome != null && villageHomeRadius > 0;
+    }
+
+    private Optional<HobgoblinEntity> nearestAdultMate() {
+        AABB bounds = new AABB(
+                getX() - HobgoblinVillageEcology.PACK_RADIUS, getY() - 3.0D,
+                getZ() - HobgoblinVillageEcology.PACK_RADIUS,
+                getX() + HobgoblinVillageEcology.PACK_RADIUS, getY() + 3.0D,
+                getZ() + HobgoblinVillageEcology.PACK_RADIUS);
+        return level().getEntitiesOfClass(HobgoblinEntity.class, bounds,
+                        candidate -> candidate != this && candidate.isAlive() && candidate.canMateNow())
+                .stream()
+                .min(Comparator.comparingDouble(this::distanceToSqr));
+    }
+
+    void completeMating(ServerLevel level, HobgoblinEntity mate) {
+        if (mate == null || mate.level() != level || !mate.isAlive()) {
+            return;
+        }
+        AgeableMob offspring = getBreedOffspring(level, mate);
+        if (!(offspring instanceof HobgoblinEntity child)) {
+            return;
+        }
+        setAge(HobgoblinVillageEcology.PARENT_COOLDOWN_TICKS);
+        mate.setAge(HobgoblinVillageEcology.PARENT_COOLDOWN_TICKS);
+        child.setAge(HobgoblinVillageEcology.BABY_AGE_TICKS);
+        child.setPos(getX(), getY(), getZ());
+        child.setYRot(getYRot());
+        level.addFreshEntity(child);
+        level.sendParticles(ParticleTypes.HEART,
+                child.getX(), child.getY() + child.getBbHeight() * 0.75D, child.getZ(),
+                8, 0.5D, 0.5D, 0.5D, 0.0D);
+    }
+
+    private final class HobgoblinReturnToVillageGoal extends Goal {
+        HobgoblinReturnToVillageGoal() {
+            setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            return villageHome != null && villageHomeRadius > 0 && canUseVillageEcology()
+                    && position().distanceToSqr(Vec3.atCenterOf(villageHome))
+                    > (double) villageHomeRadius * villageHomeRadius;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return canUse() && !getNavigation().isDone();
+        }
+
+        @Override
+        public void start() {
+            if (villageHome != null) {
+                getNavigation().moveTo(villageHome.getX() + 0.5D, villageHome.getY(),
+                        villageHome.getZ() + 0.5D, 0.6D);
+            }
+        }
+    }
+
+    private final class HobgoblinMateGoal extends Goal {
+        @Nullable
+        private HobgoblinEntity mate;
+        private int matingTimeout;
+
+        HobgoblinMateGoal() {
+            setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (!canMateNow()
+                    || getRandom().nextInt(HobgoblinVillageEcology.MATING_ROLL_BOUND) != 0
+                    || !(level() instanceof ServerLevel serverLevel)
+                    || !hasHobgoblinBreedingCapacity(serverLevel)) {
+                return false;
+            }
+            mate = nearestAdultMate().orElse(null);
+            return mate != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return matingTimeout >= 0 && mate != null && mate.isAlive()
+                    && canMateNow() && mate.canMateNow()
+                    && level() instanceof ServerLevel serverLevel
+                    && hasHobgoblinBreedingCapacity(serverLevel);
+        }
+
+        @Override
+        public void start() {
+            matingTimeout = HobgoblinVillageEcology.MATING_DURATION_TICKS;
+            mating = true;
+        }
+
+        @Override
+        public void stop() {
+            mating = false;
+            mate = null;
+        }
+
+        @Override
+        public void tick() {
+            if (mate == null) {
+                return;
+            }
+            matingTimeout--;
+            getLookControl().setLookAt(mate, 10.0F, 30.0F);
+            if (distanceToSqr(mate) > 2.25D) {
+                getNavigation().moveTo(mate, 0.25D);
+            } else if (matingTimeout == 0 && mate.mating && level() instanceof ServerLevel serverLevel) {
+                completeMating(serverLevel, mate);
+            }
+            if (getRandom().nextInt(35) == 0 && level() instanceof ServerLevel serverLevel) {
+                serverLevel.sendParticles(ParticleTypes.HEART,
+                        getX(), getY() + getBbHeight() * 0.75D, getZ(),
+                        1, 0.25D, 0.25D, 0.25D, 0.0D);
+            }
+        }
     }
 
     private final class PlayerAttentionGoal extends Goal {
@@ -1223,7 +1449,11 @@ public class HobgoblinEntity extends AbstractVillager {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
-        return null;
+        HobgoblinEntity child = WitcheryEntities.HOBGOBLIN.get().create(level, EntitySpawnReason.BREEDING);
+        if (child != null) {
+            child.setProfessionVariant(level.getRandom().nextInt(4));
+        }
+        return child;
     }
 
     @Override

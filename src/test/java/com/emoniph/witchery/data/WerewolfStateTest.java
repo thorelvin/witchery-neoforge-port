@@ -2,6 +2,7 @@ package com.emoniph.witchery.data;
 
 import com.emoniph.witchery.data.WitcheryPlayerData.WolfForm;
 import com.emoniph.witchery.data.WitcheryPlayerData.WolfQuestState;
+import net.minecraft.nbt.NbtOps;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,10 +59,32 @@ class WerewolfStateTest {
     void formRoundTripsAndClearsAtLevelZero() {
         WitcheryPlayerData d = new WitcheryPlayerData();
         d.setWerewolfLevel(5);
+        d.setTransformationLevel(1.0F);
         d.setWolfForm(WolfForm.WOLFMAN);
         assertEquals(WolfForm.WOLFMAN, d.getWolfForm());
+
+        d.setWerewolfLevel(4);
+        assertEquals(WolfForm.WOLF, d.getWolfForm());
+        assertEquals(1.0F, d.getTransformationLevel());
+
         d.setWerewolfLevel(0);
         assertEquals(WolfForm.NONE, d.getWolfForm());
+        assertEquals(0.0F, d.getTransformationLevel());
+    }
+
+    @Test
+    void clearingTheCurseClearsEveryTransformationMarker() {
+        WitcheryPlayerData d = new WitcheryPlayerData();
+        d.setWerewolfLevel(5);
+        d.setTransformationLevel(1.0F);
+        d.setWolfForm(WolfForm.WOLFMAN);
+
+        d.setWerewolf(false);
+
+        assertFalse(d.isWerewolf());
+        assertEquals(0, d.getWerewolfLevel());
+        assertEquals(WolfForm.NONE, d.getWolfForm());
+        assertEquals(0.0F, d.getTransformationLevel());
     }
 
     @Test
@@ -71,5 +94,33 @@ class WerewolfStateTest {
         assertFalse(d.addHowledChunk(42L)); // already counted
         assertTrue(d.addHowledChunk(43L));
         assertEquals(2, d.getHowledChunkCount());
+    }
+
+    @Test
+    void lycanthropyStateSurvivesCodecRoundTrip() {
+        WitcheryPlayerData original = new WitcheryPlayerData();
+        original.setWerewolfLevel(9);
+        original.setTransformationLevel(1.0F);
+        original.setWolfForm(WolfForm.WOLFMAN);
+        original.setWolfQuestState(WolfQuestState.STARTED);
+        original.incrementWolfQuestCounter();
+        original.addHowledChunk(42L);
+        original.addHowledChunk(43L);
+        original.setLastHowl(12000L);
+        original.setLastBoneFind(8000L);
+
+        var tag = WitcheryPlayerData.CODEC.codec().encodeStart(NbtOps.INSTANCE, original).getOrThrow();
+        WitcheryPlayerData restored = WitcheryPlayerData.CODEC.codec()
+                .parse(NbtOps.INSTANCE, tag).getOrThrow();
+
+        assertTrue(restored.isWerewolf());
+        assertEquals(9, restored.getWerewolfLevel());
+        assertEquals(1.0F, restored.getTransformationLevel());
+        assertEquals(WolfForm.WOLFMAN, restored.getWolfForm());
+        assertEquals(WolfQuestState.STARTED, restored.getWolfQuestState());
+        assertEquals(1, restored.getWolfQuestCounter());
+        assertEquals(2, restored.getHowledChunkCount());
+        assertEquals(12000L, restored.getLastHowl());
+        assertEquals(8000L, restored.getLastBoneFind());
     }
 }

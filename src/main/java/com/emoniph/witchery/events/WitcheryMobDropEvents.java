@@ -45,6 +45,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public class WitcheryMobDropEvents {
@@ -141,6 +142,19 @@ public class WitcheryMobDropEvents {
             event.getDrops().add(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(),
                     new ItemStack(WitcheryItems.WITCH_HAND.get())));
         }
+    }
+
+    @SubscribeEvent
+    public static void onLivingExperience(LivingExperienceDropEvent event) {
+        if (hasNoDropsFlag(event.getEntity())) {
+            event.setDroppedExperience(0);
+        }
+    }
+
+    private static boolean hasNoDropsFlag(LivingEntity entity) {
+        return entity.getPersistentData().getBooleanOr(
+                com.emoniph.witchery.brewing.Brews.SUMMONED_NO_DROPS_TAG, false)
+                || entity.getPersistentData().getBooleanOr("WITCNoDrops", false);
     }
 
     private static boolean hasIncompleteObservationsBook(Player player) {

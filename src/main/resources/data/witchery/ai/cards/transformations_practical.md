@@ -18,14 +18,14 @@ Transformation cards should feel dangerous and useful. Give survival knowledge f
 
 ## Werewolf Survival
 - [triggers: werewolf full moon|full moon shift|moon forced shift|wolf moon] Targeted fact: A werewolf is forced to change on full-moon nights; carrying a Moon Charm suppresses automatic moon-shifting.
-- [triggers: werewolf powers|wolf form powers|wolfman powers|werewolf level] Targeted fact: Wolf form brings speed, strength, jump, hunger, and night vision; higher mastery adds digging bones, feeding, pounces, howls, and armor-rending.
-- [triggers: moon charm|make moon charm|wolf charm|control werewolf shift] Targeted fact: The Wolf Altar shapes a Moon Charm from gold for a worthy werewolf; it helps control the change instead of curing the curse.
-- [triggers: wolf altar|use wolf altar|werewolf mastery|wolf god] Targeted fact: The Wolf Altar answers werewolves, not curious villagers; mastery climbs through offerings, hunts, howls, pack-work, and dangerous proofs.
-- [triggers: spread werewolf|infect werewolf|werewolf bite infection|were-villager] Targeted fact: A mastered werewolf can spread the curse with a low-health bite; vampires and existing werewolves reject the infection.
+- [triggers: werewolf powers|wolf form powers|wolfman powers|werewolf level] Targeted fact: Wolf and wolfman forms have distinct source-scaled speed, damage, jump, health, resistance, fall protection, and night vision; higher levels add digging bones, feeding, pounces, howls, and armor rending.
+- [triggers: moon charm|make moon charm|wolf charm|control werewolf shift] Targeted fact: At level 2 the Wolf Altar shapes a Moon Charm from 3 Gold Ingots; normal use switches wolf and human, sneak-use selects wolfman from level 5, and carrying it freezes automatic moon shifts instead of curing the curse.
+- [triggers: wolf altar|use wolf altar|werewolf mastery|wolf god] Targeted fact: The Wolf Altar answers werewolves. Its ten levels require 3 Gold Ingots, 30 Raw Mutton, 10 Tongues of Dog, the Horned Huntsman, airborne kills, distinct night howls, wolf taming, Zombified Piglin kills, and one villager or player kill.
+- [triggers: spread werewolf|infect werewolf|werewolf bite infection|were-villager] Targeted fact: A level-10 transformed werewolf can spread the curse with a near-fatal bite; existing werewolves reject it, full silvered hunter armor protects players, and vampire hybrids follow the server setting, which defaults to allowed.
 
 ## Werewolf Counterplay
 - [triggers: wolftrap|make wolftrap|craft wolftrap|trap werewolf] Targeted fact: A Wolftrap upgrades a Beartrap with Silver Ingot, Wolfsbane Flower, and Null Catalyst; it springs for werewolves and can lure Wolfmen under a full moon.
-- [triggers: wolfsbane werewolf|wolfsbane counter|werewolf weakness|wolf flower] Targeted fact: Wolfsbane burns the beast back; keep it near werewolf work, wolf traps, and anyone pretending the moon has no teeth.
+- [triggers: wolfsbane werewolf|wolfsbane counter|werewolf weakness|wolf flower] Targeted fact: The active Wolfsbane brew effect blocks charm and moon shifting only when its strength meets the werewolf level; the flower itself remains a trap and brewing ingredient.
 - [triggers: silver sword recipe|make silver sword|craft silver sword] Targeted fact: Silver Sword is crafted from Silver Ingots around a Golden Sword; keep one near vampire or werewolf trouble.
 - [triggers: silver bolt recipe|make silver bolt|craft silver bolt] Targeted fact: Silver Bolts are crafted from Silver Ingot and Wooden Bolts; they are crossbow work for transformed creatures.
 - [triggers: silver werewolf|silver vampire|silvered armor|silver hurts vampires|silver hurt werewolves|werewolves and vampires|what does silver do to werewolves|silver do to werewolves|silver and werewolves] Targeted fact: Silver hurts transformed creatures; Silver Swords, Silver Bolts, and silvered hunter gear matter when vampires or werewolves are nearby.

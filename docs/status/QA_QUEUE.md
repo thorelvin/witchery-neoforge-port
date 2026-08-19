@@ -64,6 +64,27 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Confirm `stop` clears mining, worship, follow, guard, and current combat
   orders without clearing the claimed command owner.
 
+### Hobgoblin Village Ecology
+
+- Run `/test run witchery:hobgoblin_village_ecology`; the headless fixture must
+  pass its live two-versus-three pack gate, villager targeting, guard-avoidance
+  gate, parent cooldown, baby age, and profession-variant checks.
+- Place two free adult Hobgoblins near at least nine claimed village beds. Keep
+  villagers and players out of their immediate attention and confirm courtship
+  can eventually produce one baby; both parents should then pause breeding for
+  6000 ticks. Restart while the child is young and confirm age and profession
+  appearance survive and it eventually grows up.
+- With one or two free Hobgoblins inside eight blocks, confirm they do not hunt
+  villagers and do not specially flee a Village Guard. Add a third and confirm
+  the pack may raid villagers but breaks away from a Guard within 12 blocks.
+- Attack one free Hobgoblin and confirm nearby Hobgoblins retaliate. Repeat while
+  one is following, guarding, mining, worshipping, trading, or in conversation;
+  its assigned activity must remain authoritative until direct combat requires
+  retaliation, and ambient village raids must not steal it from the order.
+- Let a Hobgoblin settle among village homes, leave the area, and return. It
+  should remain present and work back toward the village after wandering outside
+  its home radius without creating a continuously loaded chunk.
+
 ### Flame Imp Contracts
 
 - Sign a blank ownership contract with the player's blood, then use it on a
@@ -403,6 +424,33 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   Wolf Altar and confirm the feedback voice is private/source Wolfman Lord, then
   run the Wolftrap lure/capture loop and confirm lure talk plus Lord capture
   voice cues.
+- Run the registered `witchery:lycanthropy_progression` GameTest on a fresh
+  dedicated-server world, then run `/witchery verify lycanthropy` on a normal
+  player at levels 0, 4, 6, and 10. Confirm the fixture reaches level 10 and the
+  verifier reports no registry, task, form, or persistence mismatch.
+- Prove the natural entry path without commands: leave an open Wolftrap beside
+  a Wolf Altar, leash a sheep within eight blocks, wait for a full-moon night,
+  let the lured Wolfman enter the trap, then take one hit. Confirm infection
+  starts at level 1 and survives logout/restart.
+- Climb the live altar path with exact offerings and tasks. Check that short or
+  wrong offerings are never consumed; each counter quest begins only after an
+  altar visit; the Horn is issued once; and every completed task requires a
+  return to the altar before the next level begins.
+- Compare both player forms in first and third person and from a second client.
+  WOLF should be quadruped with the low 0.6 x 0.8 body and WOLFMAN upright;
+  Moon Charm normal/sneak controls, armor/held-item shedding, one-block step,
+  full-moon-night forcing, carried-charm freezing, and strength-gated active
+  Wolfsbane should all agree on both clients.
+- Exercise every perk at its first level: soft-block claw digging and timed bone
+  finds at 3, non-undead kill feeding at 4, airborne hostile kills at 5, 16
+  distinct night-howl chunks at 6, wolfman paralysis at 7, six wild-adult wolf
+  tamings plus temporary wolf packs at 8, Zombified Piglin kills and armor rend
+  at 9, and near-fatal player/villager infection at 10. Restart during the howl
+  cooldown and during the level-6 quest to confirm both persist.
+- Test bite protection/config combinations on two clients: a full silvered
+  hunter set blocks player infection; ordinary armor does not; existing
+  werewolves are immune; `AllowPlayerToPlayerWolfInfection` disables player
+  spread; and `AllowVampireWerewolfHybrids` controls both curse directions.
 - Spawn a Flame Imp with `/witchery spawn flame_imp`; confirm idle/cast audio
   uses the old imp laugh at low volume, with slower/lower powered pitch, and
   hurt/death use the old imp hit/death sounds. Spawn a Demon with

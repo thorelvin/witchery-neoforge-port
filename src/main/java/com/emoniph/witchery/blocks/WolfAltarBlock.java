@@ -6,6 +6,7 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.blocks.entity.WolfAltarBlockEntity;
 import com.emoniph.witchery.init.WitcherySoundEvents;
+import com.emoniph.witchery.item.WerewolfProgression;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
@@ -58,9 +59,6 @@ public class WolfAltarBlock extends BaseEntityBlock {
     private static final int GOLD_REQUIRED = 3;
     private static final int MUTTON_REQUIRED = 30;
     private static final int TONGUE_REQUIRED = 10;
-    /** Per-level quest-counter targets for the counter-driven levels 5→9 (kill/howl/tame/pigmen/person). */
-    private static final int[] COUNTER_TARGET = {0, 0, 0, 0, 0, 10, 16, 6, 30, 1, 0};
-
     public WolfAltarBlock(BlockBehaviour.Properties props) {
         super(props);
         registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
@@ -161,7 +159,7 @@ public class WolfAltarBlock extends BaseEntityBlock {
 
     /** Levels 5→9: advance once the gameplay quest counter reaches the per-level target. */
     private void counterQuest(ServerPlayer player, WitcheryPlayerData data, Level level, BlockPos pos, int wolfLevel) {
-        int target = COUNTER_TARGET[wolfLevel];
+        int target = WerewolfProgression.questTarget(wolfLevel);
         if (data.getWolfQuestCounter() >= target) {
             data.setWolfQuestState(WolfQuestState.COMPLETE);
         }

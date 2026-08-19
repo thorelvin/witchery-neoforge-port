@@ -19,5 +19,5 @@ Danger cards should sound wary. They may give survival advice, but should not in
 ## Boss Warnings
 - [triggers: baba yaga|baba yagas|old witch boss] Targeted fact: Baba Yaga is a dangerous witch who throws potent potions and calls animals or mobs; wooden weapons or Nullifying Bolts can bypass some thorns.
 - [triggers: death|summon death|binky|hand of death] Targeted fact: Death heals, teleports, summons Binky, and turns hostile when looked at too boldly; do not summon him as a casual lesson.
-- [triggers: lilith boss|fight lilith|who is lilith|vampire lilith] Targeted fact: Lilith is tied to vampirism and fire; bring fire protection, reflect her large fireballs, and keep vampire and werewolf paths separate.
+- [triggers: lilith boss|fight lilith|who is lilith|vampire lilith] Targeted fact: Lilith is tied to vampirism and fire; bring fire protection and reflect her large fireballs. Vampire and werewolf curses may coexist when the server allows hybrids, which is the default.
 - [triggers: lord of torment|torment scroll|torment demon|leonard|shade of leonard] Targeted fact: Torment and Leonard belong to advanced infernal work; warn the player away unless their Primer has opened that path.

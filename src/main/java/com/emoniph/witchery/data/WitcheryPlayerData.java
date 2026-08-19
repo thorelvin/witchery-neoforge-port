@@ -336,7 +336,6 @@ public class WitcheryPlayerData {
     private String creaturePowerType = "";
     private int creaturePowerCharges = 0;
     private WerewolfState wws = new WerewolfState();
-    private int howlCooldown = 0;
     private int soaringTicks = 0;
     private int graveTicks = 0;
     private long lastGraveUseGameTime = Long.MIN_VALUE;
@@ -509,7 +508,13 @@ public class WitcheryPlayerData {
     public void setWerewolf(boolean w) {
         this.werewolf = w;
         if (w && wws.level == 0) wws.level = 1;       // source: infection sets werewolfLevel = 1
-        if (!w) { wws.level = 0; wws.form = 0; resetWolfQuest(); wws.howledChunks.clear(); }
+        if (!w) {
+            wws.level = 0;
+            wws.form = 0;
+            transformationLevel = 0.0F;
+            resetWolfQuest();
+            wws.howledChunks.clear();
+        }
     }
     public void setBloodLevel(int b) { this.bloodLevel = Math.clamp(b, 0, 500); }
     public void addBlood(int amount) { setBloodLevel(bloodLevel + amount); }
@@ -698,8 +703,6 @@ public class WitcheryPlayerData {
     public void addCreaturePowerCharges(int n) { this.creaturePowerCharges = Math.min(100, creaturePowerCharges + n); }
     public boolean spendCreaturePowerCharge() { if (creaturePowerCharges <= 0) return false; creaturePowerCharges--; return true; }
     public void clearCreaturePower() { creaturePowerType = ""; creaturePowerCharges = 0; }
-    public int getHowlCooldown() { return howlCooldown; }
-    public void setHowlCooldown(int v) { howlCooldown = Math.max(0, v); }
     public int getPreparedSpellId() { return preparedSpellId; }
     public int getPreparedSpellLevel() { return preparedSpellLevel; }
     public void setPreparedSpell(int id, int level) { this.preparedSpellId = id; this.preparedSpellLevel = level; }
@@ -715,7 +718,13 @@ public class WitcheryPlayerData {
             wws.howledChunks.clear();
         }
         this.werewolf = wws.level > 0;
-        if (wws.level == 0) wws.form = 0;
+        if (wws.level == 0) {
+            wws.form = WolfForm.NONE.ordinal();
+            transformationLevel = 0.0F;
+        } else if (wws.level < 5 && getWolfForm() == WolfForm.WOLFMAN) {
+            wws.form = transformationLevel > 0.01F
+                    ? WolfForm.WOLF.ordinal() : WolfForm.NONE.ordinal();
+        }
     }
     public void increaseWerewolfLevel() { if (wws.level < 10) setWerewolfLevel(wws.level + 1); }
     public WolfForm getWolfForm() { return WolfForm.fromOrdinal(wws.form); }

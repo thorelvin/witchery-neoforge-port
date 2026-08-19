@@ -1,6 +1,8 @@
 package com.emoniph.witchery.client.renderer;
 
 import com.emoniph.witchery.client.model.WerewolfModel;
+import com.emoniph.witchery.client.model.WerewolfWolfModel;
+import com.emoniph.witchery.data.WitcheryPlayerData.WolfForm;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -21,15 +23,19 @@ import net.minecraft.world.entity.player.Player;
  */
 public class WerewolfLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
 
-    private static final Identifier TEXTURE =
+    private static final Identifier WOLFMAN_TEXTURE =
             Identifier.fromNamespaceAndPath("witchery", "textures/entity/wolfman.png");
+    private static final Identifier WOLF_TEXTURE =
+            Identifier.fromNamespaceAndPath("minecraft", "textures/entity/wolf/wolf.png");
 
-    private final WerewolfModel model;
+    private final WerewolfModel wolfmanModel;
+    private final WerewolfWolfModel wolfModel;
 
     public WerewolfLayer(RenderLayerParent<AvatarRenderState, PlayerModel> parent,
                          EntityRendererProvider.Context ctx) {
         super(parent);
-        this.model = new WerewolfModel(ctx.bakeLayer(WerewolfModel.LAYER_LOCATION));
+        this.wolfmanModel = new WerewolfModel(ctx.bakeLayer(WerewolfModel.LAYER_LOCATION));
+        this.wolfModel = new WerewolfWolfModel(ctx.bakeLayer(WerewolfWolfModel.LAYER_LOCATION));
     }
 
     @Override
@@ -43,9 +49,18 @@ public class WerewolfLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
         if (!data.isWerewolf() || data.getTransformationLevel() <= 0.01F) return;
 
         ps.pushPose();
-        ps.scale(1.1f, 1.1f, 1.1f);
-        model.setupAnim(state);
-        collector.submitModelPart(model.root(), ps, RenderTypes.entityCutoutNoCull(TEXTURE), light, OverlayTexture.NO_OVERLAY, null);
+        if (data.getWolfForm() == WolfForm.WOLF) {
+            wolfModel.setupAnim(state);
+            collector.submitModelPart(wolfModel.root(), ps,
+                    RenderTypes.entityCutoutNoCull(WOLF_TEXTURE), light,
+                    OverlayTexture.NO_OVERLAY, null);
+        } else {
+            ps.scale(1.1F, 1.1F, 1.1F);
+            wolfmanModel.setupAnim(state);
+            collector.submitModelPart(wolfmanModel.root(), ps,
+                    RenderTypes.entityCutoutNoCull(WOLFMAN_TEXTURE), light,
+                    OverlayTexture.NO_OVERLAY, null);
+        }
         ps.popPose();
     }
 }

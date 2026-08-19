@@ -22,8 +22,8 @@ public class WitcheryConfig {
     public static final ModConfigSpec.IntValue VAMPIRE_SUNBURN_DAMAGE;
 
     // ── Werewolf ──────────────────────────────────────────────────────────────
-    public static final ModConfigSpec.BooleanValue WEREWOLF_FULL_MOON_ONLY;
-    public static final ModConfigSpec.IntValue WEREWOLF_HOWL_COOLDOWN_SECONDS;
+    public static final ModConfigSpec.BooleanValue ALLOW_PLAYER_TO_PLAYER_WOLF_INFECTION;
+    public static final ModConfigSpec.BooleanValue ALLOW_VAMPIRE_WOLF_HYBRIDS;
 
     public static final ModConfigSpec.IntValue MANTRAP_OPACITY_PERCENT;
 
@@ -97,12 +97,12 @@ public class WitcheryConfig {
         BUILDER.pop();
 
         BUILDER.push("werewolf");
-        WEREWOLF_FULL_MOON_ONLY = BUILDER
-                .comment("If true, wolf form buffs only apply on full moon nights. Default: false (always active)")
-                .define("fullMoonOnly", false);
-        WEREWOLF_HOWL_COOLDOWN_SECONDS = BUILDER
-                .comment("Cooldown in seconds between wolf howls. Default: 60")
-                .defineInRange("howlCooldownSeconds", 60, 5, 600);
+        ALLOW_PLAYER_TO_PLAYER_WOLF_INFECTION = BUILDER
+                .comment("Source AllowPlayerToPlayerWolfInfection. Default: true")
+                .define("AllowPlayerToPlayerWolfInfection", true);
+        ALLOW_VAMPIRE_WOLF_HYBRIDS = BUILDER
+                .comment("Source AllowVampireWerewolfHybrids. Default: true")
+                .define("AllowVampireWerewolfHybrids", true);
         BUILDER.pop();
 
         BUILDER.push("traps");

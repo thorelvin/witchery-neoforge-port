@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcherySoundEvents;
@@ -308,7 +309,7 @@ public class LilithEntity extends Monster implements RangedAttackMob {
 
         // Empty goblet receives Lilith's blood; drinking it applies or feeds the curse.
         if (held.is(WitcheryItems.GLASS_GOBLET.get())) {
-            if (data.isWerewolf()) {
+            if (data.isWerewolf() && !WitcheryConfig.ALLOW_VAMPIRE_WOLF_HYBRIDS.get()) {
                 serverPlayer.displayClientMessage(
                         Component.translatable("rite.witchery.wolf_curse.hybridsnotallow"), false);
                 return InteractionResult.SUCCESS_SERVER;

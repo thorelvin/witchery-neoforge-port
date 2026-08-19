@@ -181,11 +181,11 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** Creative/QA item.
 - **Use:** Hold briefly to cycle werewolf mastery; sneak-use to cycle vampire level.
 - **Stats:** None
-- **Notes:** Not intended for regular survival progression. The remake maps the old werewolf-level side to the current 0-3 mastery model.
+- **Notes:** Not intended for regular survival progression. The werewolf side cycles the live level 0-10 state; survival progression belongs to the Wolf Altar.
 
 ## Creative Bat/Wolf Token
 - **Obtain:** Available through creative mode or similar means.
-- **Use:** Hold briefly to cycle werewolf mastery; sneak-use to cycle vampire level. Vampire level wraps after 10, while werewolf mastery wraps after 3 in the current remake.
+- **Use:** Hold briefly to cycle werewolf level; sneak-use to cycle vampire level. Both paths wrap after level 10.
 - **Stats:** None
 - **Notes:** Not intended for regular play. Use `/witchery status` to confirm the synced player state.
 
@@ -319,7 +319,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** Best Lilith, then right-click friendly Lilith with an empty Glass Goblet to receive a Full Glass Goblet tagged with Lilith's blood. The standalone `liliths_blood` consumable remains exposed as a rare QA/practical item.
 - **Use:** In the current remake, non-vampires drink it to become vampires with practical starting blood, while existing vampires refill to the current 500 cap.
 - **Stats:** Stackable (16), rare.
-- **Notes:** Werewolves are refused to avoid vampire/werewolf hybrids. Friendly Lilith also accepts Garlic to cure vampirism, a Poppy for the level 6->7 mastery boon, or an enchantable item/book for a level-40 blessing.
+- **Notes:** Werewolves are accepted when `AllowVampireWerewolfHybrids` is enabled (the source-default setting) and refused when it is disabled. Friendly Lilith also accepts Garlic to cure vampirism, a Poppy for the level 6->7 mastery boon, or an enchantable item/book for a level-40 blessing.
 
 ## Vampire Feeding
 - **Obtain:** Be a vampire in the current NeoForge remake and empty-hand interact with a living target.
@@ -997,14 +997,14 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Becomes invisible to other players.
 
 ## Moon Charm
-- **Obtain:** In the NeoForge remake, a werewolf can right-click a Wolf Altar with three Gold Nuggets to create one.
-- **Use:** Hold use to toggle werewolf transformation between human and wolf form. Carrying it prevents automatic moon-forced transformation changes, while Wolfsbane carried in the inventory blocks charm use and forces the beast back down.
+- **Obtain:** A level-1 werewolf receives one by offering three Gold Ingots at a Wolf Altar; established werewolves can repeat the same trade for a spare.
+- **Use:** From level 2, hold use to switch wolf and human. From level 5, sneak-use selects wolfman or restores human from wolfman. Carrying it freezes automatic moon shifts, while a strong enough active Wolfsbane effect blocks charm and moon shifting without forcing a form.
 - **Stats:** Stack size 1, durability 49, rare, repairable with Gold Nuggets.
-- **Notes:** Current remake restores the practical transformation-control item path. Exact old wolf/wolfman split and detailed Wolf Altar quest gates remain follow-up work.
+- **Notes:** The source wolf/wolfman state machine, form rendering, level gates, durability, gold-nugget repair, and full ten-level altar path are restored.
 
 ## Wolf Altar
 - **Obtain:** Crafted using specific ingredients including Wolf Heads or Hellhound Heads.
-- **Use:** Used by werewolves to communicate with their god and receive quests. In the NeoForge remake, it grants wolf mastery boons and can temper three Gold Nuggets into a Moon Charm for werewolves. Can be used to bless a wolfman into spreading the curse.
+- **Use:** Runs the complete level 1-10 werewolf path. It accepts three Gold Ingots, 30 Raw Mutton, and 10 Tongues of Dog, issues the Horn of the Hunt, then tracks the five source deeds and grants a Moon Charm. Beside a baited Wolftrap it also enables the natural infectious-Wolfman route.
 - **Stats:** Unknown
 - **Notes:** Required for certain werewolf quests.
 

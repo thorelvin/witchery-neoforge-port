@@ -203,6 +203,34 @@ public class SilverEvents {
                 || entity.getItemBySlot(EquipmentSlot.FEET).is(WitcheryItems.DAWN_HUNTER_BOOTS.get());
     }
 
+    /** Source ItemHunterClothes.isWolfProtectionActive requires all four pieces to be silvered. */
+    public static boolean wearsFullSilveredSet(LivingEntity entity) {
+        return isSilveredHead(entity.getItemBySlot(EquipmentSlot.HEAD))
+                && isSilveredChest(entity.getItemBySlot(EquipmentSlot.CHEST))
+                && isSilveredLegs(entity.getItemBySlot(EquipmentSlot.LEGS))
+                && isSilveredFeet(entity.getItemBySlot(EquipmentSlot.FEET));
+    }
+
+    private static boolean isSilveredHead(ItemStack stack) {
+        return stack.is(WitcheryItems.SILVERED_HUNTER_HAT.get())
+                || stack.is(WitcheryItems.DAWN_HUNTER_HAT.get());
+    }
+
+    private static boolean isSilveredChest(ItemStack stack) {
+        return stack.is(WitcheryItems.SILVERED_HUNTER_COAT.get())
+                || stack.is(WitcheryItems.DAWN_HUNTER_COAT.get());
+    }
+
+    private static boolean isSilveredLegs(ItemStack stack) {
+        return stack.is(WitcheryItems.SILVERED_HUNTER_LEGGINGS.get())
+                || stack.is(WitcheryItems.DAWN_HUNTER_LEGGINGS.get());
+    }
+
+    private static boolean isSilveredFeet(ItemStack stack) {
+        return stack.is(WitcheryItems.SILVERED_HUNTER_BOOTS.get())
+                || stack.is(WitcheryItems.DAWN_HUNTER_BOOTS.get());
+    }
+
     private static boolean wearsGarlickedArmor(LivingEntity entity) {
         return entity.getItemBySlot(EquipmentSlot.HEAD).is(WitcheryItems.DAWN_HUNTER_HAT.get())
                 || entity.getItemBySlot(EquipmentSlot.CHEST).is(WitcheryItems.DAWN_HUNTER_COAT.get())

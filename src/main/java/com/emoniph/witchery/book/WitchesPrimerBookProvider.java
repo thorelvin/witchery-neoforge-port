@@ -1707,6 +1707,20 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         hobgoblin.add(creature("witchery:hobgoblin", "Hobgoblin",
                 "Five trades, each unlocked by the last. Coal into dust; dust and gold into nuggets; work "
                         + "upward. The koboldite at the end is genuinely useful.", 0.85F, -1.0F));
+        hobgoblin.addAll(WitcheryBooks.prose("Village Life",
+                "Hobgoblins recognize village homes. Once one settles near enough beds, it keeps to the "
+                        + "village and will work its way home if it wanders too far. A settled Hobgoblin "
+                        + "also remains part of the village when distant players leave."
+                        + "\n\nThree Hobgoblins within eight blocks form a raiding pack. Only then will they "
+                        + "hunt villagers, and that same pack has the sense to flee a Village Guard. A lone "
+                        + "Hobgoblin or a pair leaves villagers and guards alone unless attacked."));
+        hobgoblin.addAll(WitcheryBooks.prose("Hobgoblin Families",
+                "Two adult Hobgoblins may court for a time and produce a baby when their village has room. "
+                        + "Their population is limited to thirty-five percent of nearby homes: nine beds, "
+                        + "for example, support at most three Hobgoblins."
+                        + "\n\nBabies grow through the ordinary day-and-night passage of time and keep their "
+                        + "own profession markings. Leash work, worship, conversation, following, and guard "
+                        + "orders take precedence over this village life."));
 
         List<BookPageModel<?>> spectral = new ArrayList<>(WitcheryBooks.prose("Spectral Familiar",
                 "The old **Rite of Summoning** did not call an owl, toad, or cat that already lived in the "
@@ -1776,15 +1790,26 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "deeper mastery, and an enchantable item asks for her old blessing."));
 
         List<BookPageModel<?>> lycanthropy = new ArrayList<>(WitcheryBooks.prose("Lycanthropy",
-                "The wolf's curse comes in through a rite, or through the attention of one already afflicted, "
-                        + "and it does not announce itself politely. The full moon forces the change; the rest "
-                        + "of the time you choose — though choosing gets harder as the moon waxes."
-                        + "\n\nIn wolf form the body is stronger, faster, and harder to slow, while the mind "
-                        + "remains your own, more or less. Find the Wolf Altar and tend it. Mastery matters."));
-        lycanthropy.addAll(WitcheryBooks.prose("The Wolf's Gifts",
-                "Strength and speed well beyond a human's in wolf form. Regeneration mends the body. With the "
-                        + "right talisman, a howl becomes a weapon. The Wolf Altar grants mastery from zero to "
-                        + "three — and mastery three is not subtle."));
+                "The curse can pass from an infectious Wolfman. To draw one naturally, leave an open Wolftrap "
+                        + "beside a Wolf Altar, leash a sheep within eight blocks, and wait for a full-moon night. "
+                        + "Once the trap catches it, even one bite can infect a player."
+                        + "\n\nFull-moon nights force the four-legged wolf shape unless a carried Moon Charm "
+                        + "or a strong enough active Wolfsbane effect holds your current form."));
+        lycanthropy.addAll(WitcheryBooks.prose("The Wolf Altar",
+                "The altar advances ten levels. At level 1 offer 3 Gold Ingots; at level 2 offer 30 Raw Mutton; "
+                        + "at level 3 offer 10 Tongues of Dog. At level 4 take its Horn of the Hunt, sound it, "
+                        + "defeat the Horned Huntsman, and return."));
+        lycanthropy.addAll(WitcheryBooks.prose("The Five Trials",
+                "Return before each trial. Pounce-kill 10 hostiles while airborne; howl by night in 16 distinct "
+                        + "chunks; tame 6 wild adult wolves in wolf form; kill 30 Zombified Piglins in wolfman "
+                        + "form; then kill a villager or player in either beast shape. Return after each proof."));
+        lycanthropy.addAll(WitcheryBooks.prose("Forms and Gifts",
+                "Level 2 grants Moon Charm control. Use it normally to switch wolf and human; from level 5, "
+                        + "sneak-use selects wolfman. Wolf form digs soft ground and may find bones from level 3. "
+                        + "Either shape feeds from living kills at level 4."
+                        + "\n\nAt level 7 a wolfman howl paralyses nearby non-werewolves and non-vampires. "
+                        + "At level 8 a wolf howl calls a temporary tamed pack. Level 9 wolfman claws rend armor, "
+                        + "and a level-10 bite may spread the curse to a near-death player or villager."));
 
         cat.withEntries(
                 entry(cat, "transformations/vampirism", "Vampirism", WitcheryItems.BREW_OF_INFECTION.get(), 0, vampirism),

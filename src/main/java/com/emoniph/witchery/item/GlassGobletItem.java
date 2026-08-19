@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.entity.ElleEntity;
 import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
@@ -205,7 +206,7 @@ public class GlassGobletItem extends Item {
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         if (!data.isVampire()) {
-            if (data.isWerewolf()) {
+            if (data.isWerewolf() && !WitcheryConfig.ALLOW_VAMPIRE_WOLF_HYBRIDS.get()) {
                 fail(player, "rite.witchery.wolf_curse.hybridsnotallow");
                 return stack;
             }

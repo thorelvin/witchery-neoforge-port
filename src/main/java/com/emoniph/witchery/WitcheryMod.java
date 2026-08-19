@@ -65,6 +65,8 @@ public class WitcheryMod {
         com.emoniph.witchery.command.OtherwhereHearthGameTests.register(modEventBus);
         com.emoniph.witchery.command.TormentGameTests.register(modEventBus);
         com.emoniph.witchery.command.MirrorWorldGameTests.register(modEventBus);
+        com.emoniph.witchery.command.LycanthropyGameTests.register(modEventBus);
+        com.emoniph.witchery.entity.HobgoblinEcologyGameTests.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, WitcheryConfig.SPEC);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerPayloads);

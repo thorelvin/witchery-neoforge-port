@@ -29,6 +29,7 @@ import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
+import com.emoniph.witchery.item.WerewolfProgression;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
 import com.emoniph.witchery.spiritworld.SpiritLifecycleAudit;
 import com.emoniph.witchery.world.TormentCertification;
@@ -109,7 +110,7 @@ import java.util.Optional;
  * /witchery vampire  [targets] [true|false]
  * /witchery blood    <0-500>
  * /witchery infusion <type>
- * /witchery wolfmastery <0-3>       — set wolf mastery level
+ * /witchery wolfmastery <0-10>      — set werewolf level
  * /witchery soaring [ticks]         — grant soaring brew buff
  * /witchery familiar <type>         — set familiar type (owl/cat/toad/spectral/none)
  * /witchery fullmoon                — advance time to next full-moon midnight
@@ -331,7 +332,9 @@ public class WitcheryCommands {
                         .then(Commands.literal("spirit_lifecycle")
                                 .executes(ctx -> verifySpiritLifecycle(ctx.getSource())))
                         .then(Commands.literal("otherwhere_hearth")
-                                .executes(ctx -> verifyOtherwhereHearth(ctx.getSource()))))
+                                .executes(ctx -> verifyOtherwhereHearth(ctx.getSource())))
+                        .then(Commands.literal("lycanthropy")
+                                .executes(ctx -> verifyLycanthropy(ctx.getSource()))))
 
                 .then(Commands.literal("debug")
                         .then(Commands.literal("brew")
@@ -1081,7 +1084,7 @@ public class WitcheryCommands {
                 + "  wolflevel=" + d.getWerewolfLevel() + "/10"
                 + "  wolfform=" + d.getWolfForm()
                 + "  wolfquest=" + d.getWolfQuestState() + ":" + d.getWolfQuestCounter()
-                + "  howlCooldown=" + tickStr(d.getHowlCooldown());
+                + "  howlCooldown=" + tickStr(remainingHowlCooldown(d));
 
         // ── brew buffs ───────────────────────────────────────────────────
         String brews = "  soaring=" + tickStr(d.getSoaringTicks())
@@ -1236,7 +1239,7 @@ public class WitcheryCommands {
                 + "  Depths:           " + tickStr(d.getDepthsTicks()) + "\n"
                 + "  Grotesque Aura:   " + tickStr(d.getGrotesqueTicks()) + "\n"
                 + "  Ghost Walker:     " + (d.isGhostWalkerActive() ? "active" : "inactive") + "\n"
-                + "  Howl Cooldown:    " + tickStr(d.getHowlCooldown()) + "\n"
+                + "  Howl Cooldown:    " + tickStr(remainingHowlCooldown(d)) + "\n"
                 + "  TormentCooldown:  " + tickStr(d.getTormentPortalCooldown()) + "\n"
                 + "  Infusion:         " + d.getInfusionType()
                 + "  " + d.getInfusionEnergy() + "/" + d.getInfusionMaxEnergy() + "\n"
@@ -1249,6 +1252,11 @@ public class WitcheryCommands {
     /** Formats tick count as "0t" or "Xt (Ys)". */
     private static String tickStr(int t) {
         return t == 0 ? "0t" : t + "t (" + (t / 20) + "s)";
+    }
+
+    private static int remainingHowlCooldown(WitcheryPlayerData data) {
+        return WerewolfProgression.remainingHowlCooldownTicks(
+                System.currentTimeMillis(), data.getLastHowl());
     }
 
     // ── Dimension helpers ─────────────────────────────────────────────────────
@@ -1732,6 +1740,101 @@ public class WitcheryCommands {
             src.sendFailure(Component.literal(" - " + failure));
         }
         return 0;
+    }
+
+    /** Audit the source-backed lycanthropy registry, progression contract, and caller state. */
+    private static int verifyLycanthropy(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        List<String> failures = new ArrayList<>();
+
+        verifyRegistryId(BuiltInRegistries.BLOCK.getKey(WitcheryBlocks.WOLF_ALTAR.get()),
+                "wolf_altar", "Wolf Altar", failures);
+        verifyRegistryId(BuiltInRegistries.ITEM.getKey(WitcheryItems.MOON_CHARM.get()),
+                "moon_charm", "Moon Charm", failures);
+        verifyRegistryId(BuiltInRegistries.ITEM.getKey(WitcheryItems.HORN_OF_THE_HUNT.get()),
+                "horn_of_the_hunt", "Horn of the Hunt", failures);
+        verifyRegistryId(BuiltInRegistries.ENTITY_TYPE.getKey(WitcheryEntities.HORNED_HUNTSMAN.get()),
+                "horned_huntsman", "Horned Huntsman", failures);
+        verifyRegistryId(BuiltInRegistries.ENTITY_TYPE.getKey(WitcheryEntities.WOLFMAN.get()),
+                "wolfman", "Wolfman", failures);
+        verifyRegistryId(BuiltInRegistries.ENTITY_TYPE.getKey(WitcheryEntities.WERE_VILLAGER.get()),
+                "were_villager", "Were-Villager", failures);
+
+        if (WitcheryItems.MOON_CHARM.get().getDefaultInstance().getMaxDamage() != 49) {
+            failures.add("Moon Charm durability is not the source value 49.");
+        }
+        if (WitcheryItems.HORN_OF_THE_HUNT.get().getDefaultInstance().getMaxDamage() != 1) {
+            failures.add("Horn of the Hunt durability is not the source value 1.");
+        }
+
+        int[] expectedTargets = {10, 16, 6, 30, 1};
+        for (int level = 5; level <= 9; level++) {
+            if (WerewolfProgression.questTarget(level) != expectedTargets[level - 5]) {
+                failures.add("Level " + level + " task target is "
+                        + WerewolfProgression.questTarget(level) + ", expected "
+                        + expectedTargets[level - 5] + ".");
+            }
+        }
+        var wolfTen = WerewolfProgression.stats(WitcheryPlayerData.WolfForm.WOLF, 10);
+        var wolfmanFive = WerewolfProgression.stats(WitcheryPlayerData.WolfForm.WOLFMAN, 5);
+        if (wolfTen.speed() != 1.75F || wolfTen.leap() != 1.0D || wolfTen.health() != 12
+                || wolfTen.resistance() != 3.0F || wolfTen.damageCap() != 2.0F) {
+            failures.add("Level-10 wolf stat contract differs from the source table.");
+        }
+        if (wolfmanFive.speed() != 0.2F || wolfmanFive.health() != 20
+                || wolfmanFive.damage() != 4.0F || wolfmanFive.resistance() != 3.0F) {
+            failures.add("Level-5 wolfman stat contract differs from the source table.");
+        }
+
+        int level = data.getWerewolfLevel();
+        boolean transformed = data.getTransformationLevel() > 0.01F;
+        if (data.isWerewolf() != (level > 0)) {
+            failures.add("Player werewolf flag and level disagree.");
+        }
+        if (transformed != (data.getWolfForm() != WitcheryPlayerData.WolfForm.NONE)) {
+            failures.add("Player transformation meter and wolf form disagree.");
+        }
+        if (data.getWolfForm() == WitcheryPlayerData.WolfForm.WOLFMAN
+                && level < WerewolfProgression.WOLFMAN_LEVEL) {
+            failures.add("Player has wolfman form below level five.");
+        }
+        if (level == 6 && data.getWolfQuestState() == WitcheryPlayerData.WolfQuestState.STARTED
+                && data.getWolfQuestCounter() != data.getHowledChunkCount()) {
+            failures.add("Level-six howl counter does not match distinct persisted chunks.");
+        }
+
+        int howlRemaining = WerewolfProgression.remainingHowlCooldownTicks(
+                System.currentTimeMillis(), data.getLastHowl());
+        src.sendSuccess(() -> Component.literal(
+                "Lycanthropy state for " + player.getScoreboardName()
+                        + ": level=" + level + "/10 form=" + data.getWolfForm()
+                        + " quest=" + data.getWolfQuestState() + ":" + data.getWolfQuestCounter()
+                        + " chunks=" + data.getHowledChunkCount()
+                        + " howlCooldown=" + tickStr(howlRemaining)), false);
+
+        if (failures.isEmpty()) {
+            src.sendSuccess(() -> Component.literal(
+                    "Lycanthropy verification passed: altar ladder, form gates, source stat tables,"
+                            + " Huntsman chain, persisted howl state, and player state are consistent.")
+                    .withStyle(ChatFormatting.GREEN), false);
+            return 1;
+        }
+        src.sendFailure(Component.literal(
+                "Lycanthropy verification failed with " + failures.size() + " mismatch(es)."));
+        for (String failure : failures) {
+            src.sendFailure(Component.literal(" - " + failure));
+        }
+        return 0;
+    }
+
+    private static void verifyRegistryId(Identifier actual, String path, String label,
+                                         List<String> failures) {
+        Identifier expected = Identifier.fromNamespaceAndPath(WitcheryMod.MODID, path);
+        if (!expected.equals(actual)) {
+            failures.add(label + " registry id is " + actual + ", expected " + expected + ".");
+        }
     }
 
     /** Dry-run the complete Otherwhere Hearth preflight without spending power or moving anything. */

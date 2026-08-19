@@ -115,6 +115,7 @@ public class WitcheryClient {
         Map.entry(BroomModel.LAYER_LOCATION,           BroomModel::createBodyLayer),
         Map.entry(DeathHandModel.LAYER_LOCATION,       DeathHandModel::createLayer),
         Map.entry(WerewolfModel.LAYER_LOCATION,        WerewolfModel::createBodyLayer),
+        Map.entry(WerewolfWolfModel.LAYER_LOCATION,    WerewolfWolfModel::createBodyLayer),
         Map.entry(WitchHunterModel.LAYER_LOCATION,     WitchHunterModel::createBodyLayer),
         Map.entry(HunterArmorModel.LAYER_LOCATION,     HunterArmorModel::createLayer),
         Map.entry(DeathArmorModel.LAYER_LOCATION,      DeathArmorModel::createLayer),
@@ -586,8 +587,11 @@ public class WitcheryClient {
             data.setBloodPower(payload.bloodPower());
             data.setBloodReserve(payload.bloodReserve());
             data.setWerewolf(payload.werewolf());
+            data.setWerewolfLevel(payload.werewolfLevel());
+            data.setWolfForm(WitcheryPlayerData.WolfForm.fromOrdinal(payload.wolfForm()));
             data.setBloodLevel(payload.bloodLevel());
             data.setTransformationLevel(payload.transformationLevel());
+            target.refreshDimensions();
             if (!payload.familiarUUID().isEmpty()) {
                 try { data.setFamiliarUUID(java.util.UUID.fromString(payload.familiarUUID())); }
                 catch (IllegalArgumentException ignored) {}

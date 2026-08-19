@@ -1571,24 +1571,24 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 
 <table id="wolf-mastery">
   <tr><th>Level</th><th>New Ability / Change</th><th>Unlock Condition</th></tr>
-  <tr><td>1</td><td>Forced transformation during night on a full moon; uncontrolled — attacks everything nearby</td><td>Curse of the Wolf rite (self-curse or inflicted by a level-10 werewolf)</td></tr>
+  <tr><td>1</td><td>Forced four-legged wolf transformation during full-moon nights</td><td>Be bitten by an infectious Wolfman; a Wolftrap beside a Wolf Altar, with a leashed sheep nearby on a full-moon night, provides the natural route</td></tr>
   <tr><td>2</td><td>Control transformation; receive <a href="#moon-charm">Moon Charm</a> (hold to shift in and out of wolf form)</td><td>Right-click a Wolf Altar holding 3 Gold Ingots as a werewolf</td></tr>
   <tr><td>3</td><td>Digging dirt in wolf form occasionally turns up bones</td><td>Offer 30 Raw Mutton at the Wolf Altar</td></tr>
   <tr><td>4</td><td>Feast — killing a non-undead creature in wolf form restores hunger</td><td>Offer 10 Tongues of Dog at the Wolf Altar</td></tr>
   <tr><td>5</td><td>Wolfman Form — an upright hybrid shape, switched into by sneak-using the Moon Charm while transformed</td><td>Kill the Horned Huntsman (sound the Horn of the Hunt the altar gives you)</td></tr>
   <tr><td>6</td><td>Growing bestial vigour (the wolf-form buffs deepen with each level)</td><td>Pounce-kill 10 hostile mobs in beast form — the killing blow must land while you are airborne (jump, then strike as you fall)</td></tr>
-  <tr><td>7</td><td>Wolfman howl paralyses nearby creatures (non-werewolf, non-vampire)</td><td>Howl (in wolf form, by night) in 16 distinct places</td></tr>
-  <tr><td>8</td><td>Wolf howl summons a pack of tamed wolves to your side</td><td>Tame 6 wild wolves while in wolf form</td></tr>
+  <tr><td>7</td><td>Wolfman howl paralyses nearby creatures (non-werewolf, non-vampire)</td><td>Howl in either beast shape, by night, in 16 distinct chunks</td></tr>
+  <tr><td>8</td><td>Wolf howl summons a temporary pack of tamed wolves to your side</td><td>Tame 6 wild adult wolves while in wolf form</td></tr>
   <tr><td>9</td><td>Wolfman strikes rend the victim's armour (damaged, or torn off if unbreakable)</td><td>Kill 30 Zombie Pigmen while in wolfman form</td></tr>
   <tr><td>10</td><td>Spread the Curse of the Werewolf — near-fatal damage to a player or villager in wolf form can infect them</td><td>Kill a friend or villager in wolf form. Config option: AllowPlayerToPlayerWolfInfection</td></tr>
 </table>
 
-<div class="callout callout-tip">The <a href="#moon-charm">Moon Charm</a> is required for voluntary transformation at any time. Hold it and use over about three seconds to shift in or out of wolf form; while it sits anywhere in your inventory the moon can no longer force a shift on you. It refuses to work while you carry Wolfsbane. Without a Moon Charm, the curse forces transformation only on full-moon nights. See <a href="#moon-charm">Ch 34</a> for its full behavior.</div>
+<div class="callout callout-tip">The <a href="#moon-charm">Moon Charm</a> grants voluntary transformation from level 2. Normal use switches wolf and human; from level 5, sneak-use selects wolfman or returns to human. While it sits anywhere in your inventory, automatic moon shifts leave your current form alone. It refuses only while a strong enough active Wolfsbane effect suppresses your level; carrying the flower does not. See <a href="#moon-charm">Ch 34</a> for its full behavior.</div>
 
-<div class="callout callout-warn"><strong>As the craft stands.</strong> What runs true today is the heart of the curse — the change itself, the wolf-form gifts, the howl, your weakness to silver, the standalone <a href="#ch31">Wolfman</a>, and, the part that matters most, full mastery of the change through the Moon Charm. The ten-rung Wolf Altar climb above is where the craft is bound; several of its exact trials and the deeper wolf and wolfman perks are still being cut, so read the later rows as the road ahead rather than ground already walked.</div>
+<div class="callout callout-check"><strong>The whole climb is live.</strong> Every offering and task is server-authoritative, invalid offerings are left untouched, quest counters and distinct howl chunks survive reloads, and returning to the Wolf Altar completes each rung. Use <code>/witchery verify lycanthropy</code> to audit the registry contract and your current state.</div>
 
 <h3>Howling</h3>
-<p>The howl keybind answers with the old wolfman howl. Early howls frighten mobs and call allies; at level 7 the wolfman howl stuns nearby enemies, and at level 8 the wolf howl summons tamed wolves to your side. The howl has a cooldown that ticks down in real time. Do not spam it.</p>
+<p>The howl keybind answers with the old wolfman howl. During the level-6 trial, a night howl in either beast shape records the current chunk without starting the power cooldown. From level 7, a wolfman howl paralyses nearby creatures except werewolves and vampires. From level 8, a wolf howl calls a temporary tamed pack. Power howls have a persisted 60-second cooldown.</p>
 
 <h3>Silver Vulnerability</h3>
 <p>Silver deals substantially increased damage to werewolves — both player-form and mob-type. A <a href="#silver-sword">Silver Sword</a> can two-shot a weakened werewolf that would take six hits from iron. Witch Hunters are equipped accordingly. See <a href="#ch27">Chapter 27</a> for silver crafting.</p>
@@ -1832,7 +1832,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <p>Hobgoblins are small, territorial, and largely reasonable as long as you do not disturb their patron. They live in woodland huts, they trade in koboldite — a curious metal found only through their commerce — and they can be led around with appropriate items, which they find irresistible. The Statue of Hobgoblin Patron is a fine decoration, but right-clicking it has consequences. You have been told.</p>
 
 <h3>Finding Them</h3>
-<p>Hobgoblin Huts generate in forest biomes — 5×5×5 oak plank structures with a minimum 32-block spacing and 1–2 residents each. The loot chest inside contains Koboldite Dust. This is worth finding before you start the trade chain.</p>
+<p>Hobgoblin Huts generate in forests and swamps. The raised designer-built hut keeps one resident Hobgoblin and no loot chest; the resident's trades and labor are the route into Koboldite.</p>
 
 <h3>Five Trades, Each Unlocked in Sequence</h3>
 <ol>
@@ -1844,8 +1844,15 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 </ol>
 <p>The Pentacle at trade 5 is the altar's ×2 multiplicative recharge upgrade — the primary reason to work through this chain. Work upward. The koboldite at the end is genuinely useful.</p>
 
+<h3>Village Packs and Families</h3>
+<p>Hobgoblins recognize nearby village homes and, once settled, keep to the village instead of vanishing when distant players leave. If one wanders too far, village life is a low-priority pull home; conversation, trade, leash work, worship, following, and guard orders still come first.</p>
+
+<p>A lone Hobgoblin or a pair does not hunt villagers. Three Hobgoblins within eight blocks form a raiding pack: only then do they target villagers, and only such a pack has the sense to flee a Village Guard. Strike one and nearby kin may join the retaliation regardless of whether a raid was underway.</p>
+
+<p>Two adults may court for about fifteen seconds and produce a baby when the village has room. Hobgoblins may occupy at most thirty-five percent of nearby homes, rounded down; nine beds therefore support a family of three. Both parents then wait five minutes before breeding again. The child keeps a Hobgoblin profession appearance, survives reload through ordinary age state, and grows naturally.</p>
+
 <h3>Koboldite Dust from Mining</h3>
-<p>Beyond trading: a 15% chance for Koboldite Dust when a Hobgoblin mines a block. A leashed hobgoblin carrying a pickaxe can be ordered in nearby chat to <strong>mine</strong>, <strong>work</strong>, or <strong>dig</strong>. It will look for nearby natural stone, earth, and ore, path to the work, break blocks, wear down its pickaxe, and drop or deposit what it finds. Ask plainly. Goblin patience is not a deep well.</p>
+<p>Beyond trading, each block mined has a 5% chance to yield Koboldite Dust, raised to 8% with a Koboldite Pickaxe. A leashed hobgoblin carrying a pickaxe can be ordered in nearby chat to <strong>mine</strong>, <strong>work</strong>, or <strong>dig</strong>. It will look for nearby natural stone, earth, and ore, path to the work, break blocks, wear down its pickaxe, and drop or deposit what it finds. Ask plainly. Goblin patience is not a deep well.</p>
 
 <p>The same command sense can tell a hobgoblin to <strong>worship</strong> or <strong>pray</strong> at a nearby Patron statue, or to stay, stop, follow, come closer, go away, or guard. Owners and trusted players command; strangers mostly get suspicion.</p>
 
@@ -2398,7 +2405,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <p>Small held or carried trinkets that change how the world treats you.</p>
 
 <h4 id="moon-charm">Moon Charm</h4>
-<p>The werewolf's leash. Hold to use over about three seconds to toggle your <a href="#ch17">werewolf transformation</a> on or off at will — it refuses if you are carrying Wolfsbane, and it damages itself with each attempt. While a Moon Charm sits anywhere in your inventory, the moon can no longer force an automatic shift on you. A werewolf can have a Wolf Altar fashion one from three Gold Nuggets.</p>
+<p>The werewolf's leash, unlocked at level 2. Hold it until it answers: normal use switches wolf and human, while sneak-use selects wolfman from level 5 or restores human shape from wolfman. A strong enough active Wolfsbane effect blocks the attempt, and each attempt wears the charm. Carrying the charm freezes automatic moon shifts without forcing a shape. A werewolf can have a Wolf Altar fashion one from three Gold Ingots.</p>
 
 <h4 id="devils-tongue-charm">Devil's Tongue Charm</h4>
 <p>Hold this charm and Demons largely ignore you — they cannot target you, strike you in melee, or land fireballs, save for a 5% chance the protection fails on any given attempt. Use it on a Demon to open a darker bargain: enchanted books, a guaranteed Demon Heart offer, Spectral Dust, Tongue of Dog, Redstone Soup, and occasional two-Ghast-Tear or two-Ender-Pearl exchanges. Prices use Blaze Rod, Magma Cream, Diamond, Emerald, or Gold Ingot; paying in Blaze Rod or Magma Cream makes the Demon explode after a short warning delay. The uncommon charm has 50 durability, lowers most prices while held, and wears by five durability for every completed bargain.</p>

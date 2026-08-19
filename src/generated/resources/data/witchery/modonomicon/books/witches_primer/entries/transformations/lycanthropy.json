@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The wolf's curse comes in through a rite, or through the attention of one already afflicted, and it does not announce itself politely. The full moon forces the change; the rest of the time you choose — though choosing gets harder as the moon waxes.[#]()",
+      "text": "[#](53341a)The curse can pass from an infectious Wolfman. To draw one naturally, leave an open Wolftrap beside a Wolf Altar, leash a sheep within eight blocks, and wait for a full-moon night. Once the trap catches it, even one bite can infect a player.[#]()",
       "title": "Lycanthropy",
       "use_markdown_in_title": false
     },
@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)In wolf form the body is stronger, faster, and harder to slow, while the mind remains your own, more or less. Find the Wolf Altar and tend it. Mastery matters.[#]()",
+      "text": "[#](53341a)Full-moon nights force the four-legged wolf shape unless a carried Moon Charm or a strong enough active Wolfsbane effect holds your current form.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -38,8 +38,52 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Strength and speed well beyond a human's in wolf form. Regeneration mends the body. With the right talisman, a howl becomes a weapon. The Wolf Altar grants mastery from zero to three — and mastery three is not subtle.[#]()",
-      "title": "The Wolf's Gifts",
+      "text": "[#](53341a)The altar advances ten levels. At level 1 offer 3 Gold Ingots; at level 2 offer 30 Raw Mutton; at level 3 offer 10 Tongues of Dog. At level 4 take its Horn of the Hunt, sound it, defeat the Horned Huntsman, and return.[#]()",
+      "title": "The Wolf Altar",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Return before each trial. Pounce-kill 10 hostiles while airborne; howl by night in 16 distinct chunks; tame 6 wild adult wolves in wolf form; kill 30 Zombified Piglins in wolfman form; then kill a villager or player in either beast shape.[#]()",
+      "title": "The Five Trials",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Return after each proof.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Level 2 grants Moon Charm control. Use it normally to switch wolf and human; from level 5, sneak-use selects wolfman. Wolf form digs soft ground and may find bones from level 3. Either shape feeds from living kills at level 4.[#]()",
+      "title": "Forms and Gifts",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)At level 7 a wolfman howl paralyses nearby non-werewolves and non-vampires. At level 8 a wolf howl calls a temporary tamed pack. Level 9 wolfman claws rend armor, and a level-10 bite may spread the curse to a near-death player or villager.[#]()",
+      "title": " ",
       "use_markdown_in_title": false
     }
   ],

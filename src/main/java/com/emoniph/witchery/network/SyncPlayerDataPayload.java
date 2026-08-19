@@ -18,6 +18,8 @@ public record SyncPlayerDataPayload(
         int bloodPower,
         int bloodReserve,
         boolean werewolf,
+        int werewolfLevel,
+        int wolfForm,
         int bloodLevel,
         float transformationLevel,
         String familiarUUID,
@@ -51,6 +53,8 @@ public record SyncPlayerDataPayload(
                             buf.readInt(),
                             buf.readBoolean(),
                             buf.readInt(),
+                            buf.readInt(),
+                            buf.readInt(),
                             buf.readFloat(),
                             buf.readUtf(),
                             buf.readUtf(),
@@ -77,6 +81,8 @@ public record SyncPlayerDataPayload(
                     buf.writeInt(payload.bloodPower());
                     buf.writeInt(payload.bloodReserve());
                     buf.writeBoolean(payload.werewolf());
+                    buf.writeInt(payload.werewolfLevel());
+                    buf.writeInt(payload.wolfForm());
                     buf.writeInt(payload.bloodLevel());
                     buf.writeFloat(payload.transformationLevel());
                     buf.writeUtf(payload.familiarUUID());
@@ -104,6 +110,8 @@ public record SyncPlayerDataPayload(
                 data.getBloodPower(),
                 data.getBloodReserve(),
                 data.isWerewolf(),
+                data.getWerewolfLevel(),
+                data.getWolfForm().ordinal(),
                 data.getBloodLevel(), data.getTransformationLevel(),
                 data.getFamiliarUUID().map(java.util.UUID::toString).orElse(""),
                 data.getFamiliarType(),
