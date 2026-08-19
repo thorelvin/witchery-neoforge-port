@@ -1,116 +1,85 @@
-# Spirit / Dream World Atmosphere — Source Reference (1.7.10-0.24.1)
+# Spirit / Dream World Atmosphere - Source Reference (1.7.10-0.24.1)
 
-Canonical look-and-feel of the old Witchery **Spirit World** (a.k.a. Dream World), transcribed from
-the decompiled source for parity work. Primary source: `com/emoniph/witchery/dimension/WorldProviderDreamWorld.java`
-(line refs below), plus `worldgen/WitcheryWorldGenerator.java` and the relevant entities.
+Canonical behavior of the old Witchery **Spirit World** (Dream World), transcribed from the
+decompiled source. The primary references are
+`dimension/WorldProviderDreamWorld.java`, `worldgen/WitcheryWorldGenerator.java`,
+`blocks/BlockCotton.java`, `blocks/BlockFlowingSpirit.java`, and the relevant entities.
 
-> Decompiled `1.7.10-0.24.1` is the canonical parity reference (wikis are supplementary).
+> Decompiled `1.7.10-0.24.1` is the parity authority. Wikis are supplementary.
 
-## Sky, fog, horizon, colours
+## Sky, fog, and time
 
-From `WorldProviderDreamWorld`:
+`WorldProviderDreamWorld` defines three fog palettes, scaled by its fixed celestial angle:
 
-- **Fog colour** (`getFogColor` / `func_76562_b`, L154–186) — three palettes by nightmare level, scaled
-  by a day/brightness factor:
-  - **Normal dream:** RGB **(0.8, 0.2, 0.6)** — a bright **pink / magenta-purple** haze.
-  - **Nightmare (level 1):** **(0.0, 1.0, 0.0)** — green.
-  - **Demonic nightmare (level 2):** **(1.0, 0.0, 0.0)** — red.
-  - Brightness factor `var3 = clamp(cos(angle·2π)·2 + 0.5, 0, 1)`; then
-    `R,G ×= var3·0.94 + 0.06` and `B ×= var3·0.91 + 0.09`. The slightly higher **blue floor (0.09)**
-    keeps a cold tint even in darkness.
-- **Horizon = 0.0** (`getHorizon`, L136) — horizon at the very bottom; the fog band fills almost the
-  whole vertical view → an open, bottomless, skyline-less feel.
-- **No stars** (`getStarBrightness` = 0, L103); **no clouds** (`getCloudHeight` = 0, L119);
-  **surface world = true** (renders a sky, L146); **no void particles** (L141).
-- **Time / light** (`calculateCelestialAngle`, L115): normal = **1.0 (≡ noon, bright)**;
-  nightmare = **0.5 (midnight, dark)**. A plain dream is **washed-out perpetual daylight in pink fog**;
-  a nightmare is **perpetual night** (dark green); demonic is dark red.
-- No rain/snow (weather/`canRespawnHere` false, L107); sea level 64 (`func_76557_i`, L132);
-  spawn (100, 50, 0) (`func_76554_h`, L128).
+- Normal dream: RGB `(0.8, 0.2, 0.6)`, a pink-magenta haze.
+- Nightmare: RGB `(0.0, 1.0, 0.0)`, green.
+- Demonic nightmare: RGB `(1.0, 0.0, 0.0)`, red.
+- Brightness is `clamp(cos(angle * 2 PI) * 2 + 0.5, 0, 1)`. Red and green are multiplied by
+  `factor * 0.94 + 0.06`; blue uses `factor * 0.91 + 0.09`.
 
-## Terrain & flora
+The provider does **not** set a custom fog distance. It returns horizon `0.0`, star brightness
+`0.0`, cloud height `0.0`, surface-world rendering `true`, and no void particles. Celestial angle
+is fixed at `1.0` for a normal dream and `0.5` for nightmare or demonic nightmare. Weather still
+runs through the vanilla provider after nightmare state is synchronized; the source does not
+explicitly suppress rain. Respawning there is disabled. Sea level is 64 and the nominal spawn is
+`(100, 50, 0)`.
 
-- Terrain uses the **overworld's chunk generator** (`func_76555_c`, L81) — land shape and biomes mirror
-  the overworld, just under the dream sky.
-- Decoration (`generateDreamworld`, `WitcheryWorldGenerator` L56): sprinkles only **Wispy Cotton**
-  (white wispy plant, ~1 cluster/chunk, skipped 1/4 of chunks).
-- **Flowing Spirit** pools (`BlockFlowingSpirit`, a water-material `BlockFluidClassic`) dot the world as
-  pale spirit pools — also used as a nightmare-chance reducer on entry.
+## Terrain and flora
 
-## Sounds
+- The source asks the Overworld provider for its chunk generator, preserving Overworld-shaped
+  terrain and biome geography.
+- Dream-world decoration adds **only Wispy Cotton**. Flowing Spirit has no natural world generator.
+- In an eligible biome, 75% of chunks attempt one `WorldGenFlowers` patch. The patch makes 64
+  placement attempts from a random X/Z column and a random Y in `[0, surface + 32)`.
+- The old biome exclusions cover ocean, river, mountain, beach, and swamp categories, with jungle
+  explicitly allowed. Cotton uses ordinary bush light and soil survival rules. Its own spread
+  additionally requires a neighboring Flowing Spirit source below it and only spreads onto
+  grass/dirt-family soil.
 
-- **Native spirits are silent** (`EntitySpirit` living/hurt/death sounds all `null`) — eerie, voiceless.
-- **Nightmares** roar: `witchery:mob.nightmare.nightmare_live / _dead / _hit`.
-- **Banshees / Spectres:** `witchery:mob.banshee.banshee_scream` on attack; `spectre_hit` otherwise.
-- **No dimension music/record** and **no ambient wind loop** — the soundscape is just sparse,
-  unsettling mob sounds.
+## Entities and dimension rules
 
-## Atmosphere via gameplay (FX)
+- Native Spirits are silent, passive tameable animals. They use Bone as their food predicate,
+  emit gold particles, do not drown, and naturally despawn. Their source spawn registration covers
+  land biome categories but excludes oceans, rivers, and Mushroom Island.
+- Nightmares are not biome spawns. Periodic nightmare pressure rolls them around their named victim;
+  demonic dreams can also call fireballs and Demons. Nightmares ignore fire, falling, cobwebs, and
+  drowning.
+- Source entity admission rejects Endermen and living classes outside vanilla Minecraft and
+  Witchery while in the Spirit World. Ordinary creature sunlight checks also return false there,
+  so vampires do not burn merely because a peaceful dream uses its daylight angle.
+- Circle magic is blocked. Ender Pearl and Blaze Powder block-harvest drops are removed.
 
-- **Nightmare pressure** (`updatePlayerEffects`, L788+): in a nightmare, nightmares spawn near the
-  player every ~100 ticks; **demonic** rains small/large **fireballs from ~15 blocks up** (chance-based)
-  and spawns **Demons** with `SMOKE` particles + `MOB_WITHER_DEATH` sound.
-- **Entry** leaves the body as an `EntityCorpse` in the overworld; the player arrives with only
-  **Icy Needle + Mutandis** and a gentle upward push (`PacketPushTarget 0, 0.1, 0`).
-- Environmental nightmare modifiers on entry (`sendPlayerToSpiritWorld`, L319+): dream catchers,
-  flowing-spirit pools (−0.1 each, max 3) and wispy cotton (−0.1 each, max 2) reduce nightmare chance;
-  demon hearts (+0.35 each) and fire (+0.1 each) raise it. Demonic requires catcher + pool + heart + RNG.
+## Travel and manifestation
 
-## Net impression
+- Dream entry leaves an `EntityCorpse` body in the waking world and maintains separate waking and
+  dream inventory, health, and hunger state.
+- Entry supplies only Icy Needles and ordinary Mutandis from waking inventory. Normal wake-up restores
+  waking state and transfers the source Spirit materials acquired in the dream.
+- Environmental modifiers near the sleeping body affect nightmare chance: Dream Catchers, Flowing
+  Spirit sources, and Wispy Cotton reduce it; Demon Hearts and fire increase it with source caps.
+- The Rite of Manifestation is prepared in the Overworld. A prepared dreamer crosses a complete
+  2 x 2 Spirit Portal on foot and appears at matching Overworld coordinates with source 51% alpha.
+  Return transfers only Icy Needles and bound fetishes acquired while manifested.
+- Waking dismounts the traveller, extinguishes fire, and uses the nearest safe standing position in
+  the stored return X/Z column when the exact Y is obstructed.
 
-An overworld-shaped land drowned in flat, bottomless **pink-purple fog** with no stars/clouds/sun-disc
-to anchor it, dotted with white wispy cotton and pale spirit pools, eerily quiet except for distant
-nightmare roars and banshee screams — turning to a dark **green** (or hellish **red**) night when a
-nightmare takes hold.
+## Remake mapping (NeoForge 1.21.1)
 
-## modern-remake mapping (NeoForge 1.21.1)
+- `SpiritWorldAtmosphere` reproduces the exact fog-color and celestial-angle calculations.
+- `WitcheryClientEvents.onComputeFogColor` changes fog color only. It deliberately does not replace
+  the mirrored biome sky color or impose a port-only fog range.
+- Client render state fixes the source sun angle, removes stars and sunrise tint, and uses the
+  source-equivalent no-cloud presentation.
+- `dimension/spirit_world.json` combines Overworld noise settings with the Overworld multi-noise
+  biome preset. `dimension_type/spirit_world.json` retains skylight and zero ambient-light lift.
+- `SpiritWorldPlacement` applies the source 75% chunk roll, chooses the randomized X/Z column, then
+  chooses the old Y=0-to-surface-plus-32 seed. The configured patch retains 64 flower attempts.
+- Dedicated biome tags reproduce the source cotton exclusions and native-Spirit land categories.
+- Nightmare pressure, entry chance modifiers, Flowing Spirit behavior, entity admission, harvest
+  restrictions, lifecycle state, and manifestation are implemented in server-side rules.
 
-Source method → modern equivalent for the remake:
+## Live QA still required
 
-- `getFogColor` palettes → `DimensionSpecialEffects.getBrightnessDependentFogColor` (+ a custom
-  `DimensionSpecialEffects` subtype) and/or biome `fog_color`; nightmare/demonic variants need a
-  client-readable nightmare-level signal.
-- `getHorizon` 0 / no stars / no clouds → `DimensionSpecialEffects` (`cloudLevel`,
-  `hasGround`/`skyType`, `isFoggyAt`, custom sky renderer) and dimension_type flags.
-- perpetual day vs nightmare-night (`calculateCelestialAngle`) → dimension_type `fixed_time` or a
-  client celestial-angle override; nightmare needs a darker fixed time.
-- Wispy cotton / flowing-spirit decoration → biome placed features.
-- Silent spirits / nightmare roars / banshee screams → entity `SoundEvents`.
-
-## Remake implementation status (2026-06-19)
-
-Already faithful in the remake:
-
-- `SpiritWorldSpecialEffects` reproduces the exact fog-colour logic (pink/green/red palettes, the
-  `cos·2+0.5` brightness factor, the 0.06/0.09 floors).
-- `WitcheryClientEvents.onExtractLevelRenderState` sets the spirit sky colour, **no clouds**
-  (`NO_CLOUDS`), **no stars** (`starBrightness=0`), no sunrise/sunset tint, and the fixed sun/moon/star
-  angle (dream 1.0, nightmare 0.5). `onComputeFogColor` tints the fog to match.
-- `dimension_type/spirit_world.json` + `worldgen/biome/spirit_world.json` (`fog_color`/`sky_color`
-  `0xCC3399` = the source pink) drive the static base; the biome also places richer flora than source
-  (spirit grass/trees/mushrooms/dead bush + wispy & disturbed cotton).
-
-Fixed 2026-06-19:
-
-- **Nightmare/dream colour was inverted on the client.** `SyncPlayerDataPayload` synced `inSpiritWorld`
-  but not the dream/demonic flags, and `isNightmare()` is `!sw.isDream` with `isDream` defaulting to
-  `false` — so the client always read "nightmare" and rendered the **green** sky/fog for a normal
-  **pink** dream. The payload now also carries `spiritWorldDream` + `demonicNightmare`, applied
-  client-side, so dreams are pink, nightmares green, demonic red. The fog gate was also aligned to the
-  sky's dimension-only check so they can't desync.
-- **Dream entry coordinates now match the source-style mirrored-column flow.** Normal entry and the
-  `/witchery dream` QA command both store the Overworld return point, load the matching Spirit World
-  chunk, keep the player's X/Z, preserve Y when it is safe, and otherwise only nudge Y within that same
-  column to the nearest two-block-tall landing space. `/witchery exit` uses the full Spirit World wake-up
-  helper for those entries.
-- **Fog range is now explicitly shortened.** The source `getFogColor` supplied the three pink/green/red
-  palettes, but modern rendering also needs a fog-distance override; the remake now gives dreams a 52-block
-  fog end, nightmares 40, and demonic nightmares 32 while retaining the source colours.
-- **Dream wildlife is now a requested modern expansion.** Source Witchery reused Overworld generation and
-  allowed peaceful spawns; the remake's fixed Spirit World biome now opens that up beyond sheep/pig/chicken/cow
-  to the broader vanilla passive animal roster across creature, ambient, water, cave-water, and axolotl spawn
-  categories.
-
-Still divergent from source (deliberate / low priority): the remake colours the whole **sky** spirit-pink
-(source only tinted the fog and left a dimmed vanilla sky); the dimension uses one custom biome rather
-than borrowing overworld biomes.
+Unit/resource tests and `/witchery verify spiritworld` cover the deterministic contracts. A real
+client should still verify fog color, fixed daylight/night, weather feel, no-cloud presentation,
+fresh-chunk cotton density, native-Spirit density, portal teardown, and manifested-skin appearance.

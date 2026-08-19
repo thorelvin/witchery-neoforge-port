@@ -1201,7 +1201,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Rite of Imprisonment</td><td>Ritual</td><td>7×7</td><td>500 + 16/sec ongoing</td><td>Slimeball + Redstone Dust</td><td>Prevents mobs inside the circle from leaving. Inverse of Sanctity — use it to contain rather than exclude. Pair the two to create a sealed arena.</td></tr>
   <tr><td>Rite of Beastial Call</td><td>Otherwhere</td><td>15×15</td><td>6,000</td><td>Milk Bucket + Hay Bale + Apple + Raw Beef + Raw Fish + Brown Mushroom + Carrot + Seeds; requires 3 <a href="#ch13">Coven witches</a></td><td>Draws all animals from a wide surrounding area into the circle. If cast near someone's ranch, this will pull their animals. You have been told.</td></tr>
   <tr><td>Rite of Prior Incarnation</td><td>Ritual</td><td>7×7</td><td>0</td><td><a href="#necromantic-stone">Necromantic Stone</a> + Tongue of Dog + Spectral Dust + Bone + Attuned Stone (Charged)</td><td>Recalls items lost on death. Must be cast within 16 blocks of the death location to function.</td></tr>
-  <tr><td>Rite of Manifestation</td><td>Otherwhere</td><td>7×7</td><td>5,000</td><td>Spectral Dust + Mellifluous Hunger + Necromantic Stone + Golden Pickaxe + Gunpowder + Arthana; <a href="#ch13">Coven</a> required</td><td>Sends sleeping beings to the overworld as their dream self for 2.5 minutes. +25 seconds per additional Coven witch present.</td></tr>
+  <tr><td>Rite of Manifestation</td><td>Otherwhere</td><td>7×7</td><td>5,000</td><td>Spectral Dust + Mellifluous Hunger + Necromantic Stone + Golden Pickaxe + Gunpowder + Arthana</td><td>Cast in the Overworld. Consumes all six offerings and grants every player within five blocks 2.5 minutes of manifestation time, plus 25 seconds per nearby Coven witch.</td></tr>
   <tr><td>Rite of Glyphic Transformation</td><td>Any</td><td>Any</td><td>1,000</td><td>Target chalk type + Gypsum + Arthana</td><td>Converts all glyphs in a drawn circle from the current chalk type to another without redrawing. For the lazy, rich witch.</td></tr>
 </table>
 
@@ -1675,11 +1675,18 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <h2 class="chapter" id="ch20">Chapter 20: Other Dimensions<span class="stage stage-late">Late</span> <a href="#toc" class="ch-top">&uarr; Contents</a></h2>
 
 <h3>The Spirit World</h3>
-<p>The world you walk in is not the only world that exists. The <a href="#ch20">Spirit World</a> lies beside it, separated by a boundary that thins around places of power and at the edges of sleep. To enter it, drink a <strong>Brew of Sleeping</strong> near an altar, or eat an <strong>Apple of Sleeping</strong>. You will leave your physical Body behind. Guard it until you return.</p>
+<p>The world you walk in is not the only world that exists. The <a href="#ch20">Spirit World</a> lies beside it, separated by a boundary that thins at the edges of sleep. To enter it, drink a <strong>Brew of Sleeping</strong> or eat an <strong>Apple of Sleeping</strong>. No altar is required. You will leave your physical Body behind. Guard it until you return.</p>
 
-<p>The <a href="#ch20">Spirit World</a> changes its sky and fog with the dream: rose-magenta in gentler sleep, denser and darker through nightmare and demonic nightmare. It has no false ambient-light lift; its celestial light and fog carry the mood. Your physical <strong>Body</strong> (the <code>corpse</code> entity) remains prone at the centre of the entry block, carrying your name, skin, and entry health. Your health and hunger are saved and restored on exit. Natural inhabitants include Spirits and Nightmares, while darker dream events may bring worse company.</p>
+<p>The land mirrors Overworld noise and biome geography at the same coordinates: forests remain forests, rivers remain rivers, and their ordinary vegetation and peaceful wildlife remain recognizable. Wispy Cotton receives its own Spirit-only generation attempts; Flowing Spirit pools do not generate naturally and must be made. Small native Spirits appear on well-lit grass or sand above Y 60 in land biomes, but not oceans, rivers, or Mushroom Fields. Endermen and foreign living creatures cannot remain here. Nightmares are not ordinary biome wildlife; a nightmare dream begins applying periodic victim-bound pressure after arrival, while demonic nightmares may bring fireballs and Demons.</p>
+
+<p>The shared dream changes time and fog: rose-magenta fog and daylight in gentler sleep, green fog and night through a nightmare, and red fog and night through a demonic nightmare. It changes colour, not viewing distance. Ordinary vampires do not burn merely because a peaceful dream is bright. Your physical <strong>Body</strong> (the <code>corpse</code> entity) remains prone at the centre of the entry block, carrying your name, skin, and entry health. Waking and dream inventories, health, and hunger are stored separately and restored on each crossing. Only <strong>Icy Needles</strong> and ordinary <strong>Mutandis</strong> enter with you; Wispy or Disturbed Cotton, Mellifluous Hunger, Flowing Spirit brews, subdued spirits, and Icy Needles may return.</p>
 
 <div class="callout callout-warn">Guard the Body you leave behind. It persists and cannot be pushed away, but another player may kill it while you dream; its destruction tears you awake immediately. A normal return removes it cleanly, and it leaves no loot.</div>
+
+<h3>Manifestation</h3>
+<p>Prepare manifestation before sleeping. In the <strong>Overworld</strong>, cast a small <strong>Otherwhere</strong> circle with Spectral Dust, Mellifluous Hunger, a Necromantic Stone, Golden Pickaxe, Gunpowder, Arthana, and 5,000 altar power. All six offerings are consumed. Every player within five blocks receives 150 seconds of manifestation time, extended by 25 seconds for each nearby Coven witch.</p>
+
+<p>A prepared dreamer may then walk through a correctly framed <strong>Spirit Portal</strong> to appear at the same coordinates in the Overworld as a translucent image of their own skin. Mounted players and vehicles cannot cross. The dream self arrives with only Icy Needles, uses normal world lighting at half opacity, and may carry Icy Needles plus newly acquired bound fetishes back from its current Overworld coordinates when time expires or a Needle is used. All Circle Magic, including another Manifestation rite, is blocked inside the Spirit World.</p>
 
 <h3 id="otherwhere-hearth">The Otherwhere Hearth</h3>
 <div class="lore-pull">A dream carries the witch. A hearth carries everything the witch refuses to leave behind.</div>
@@ -1703,26 +1710,37 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 
 <p>The working examines both volumes before it spends power or changes a block. It refuses an occupied destination, a sleeping dream-traveller, an entity that cannot cross dimensions, an incomplete coven or altar, insufficient altar capacity or charge, protected ground, world-border or build-height overflow, unbreakable blocks, or another bound Otherwhere Hearth.</p>
 
-<div class="callout callout-tip">Both complete structures, the traveller manifest, and full non-player entity snapshots are written to persistent storage before the first block moves. If the server stops during a crossing, the saved working resumes until one complete, charged swap has settled. A missing creature or vehicle can be restored from its record; an absent player is held in the manifest and moved when they return.</div>
+<div class="callout callout-tip">Both complete structures, the traveller manifest, and full non-player entity snapshots are written to persistent storage before the first block moves. If the server stops during a crossing, the saved working resumes until one complete swap has settled, with the travelling altar charged exactly once. A missing creature or vehicle can be restored from its record. The structures may settle while a traveller is offline, but that player remains in the manifest and is delivered to the waiting hearth before the record clears.</div>
 
 <div class="callout callout-warn">A witch carried bodily by an Otherwhere Hearth is not dreaming. Inventory travels with the body, no sleeping Body remains behind, and death in the Spirit World is ordinary death rather than a forced awakening.</div>
 
 <h3>The Torment Dimension</h3>
-<p>A hostile dungeon-dimension. Six levels deep, DFS-maze layout of Torment Stone corridors. Enter through a Torment Portal found in the overworld. The dimension is designed as a gauntlet. The Lord of Torment waits at the bottom — see <a href="#ch30">Chapter 30</a> for preparation.</p>
+<div class="lore-pull">There is no bottom to suffering. There are merely six floors on which to lose the way.</div>
+
+<p><strong>Torment</strong> is a fixed-night dungeon dimension formed from six isolated, source-shaped mazes. Each level is a perfect 31 &times; 31 depth-first maze: every passage eventually connects, but no wall may be mined away. Invisible <strong>Force</strong> forms the walls and ceiling. The floor and portal frame are indestructible <strong>Torment Stone</strong>, deliberately wearing the green Mycelium-top appearance of the old craft, with occasional real Mycelium patches among it.</p>
+
+<p>The intended road begins with a bound Flame Imp. Please it with valuables until its first secrets have been given in order: Hunger, Fear, Anguish, then the <strong>Torment Scroll</strong>. Use that scroll to call the <a href="#ch30">Lord of Torment</a> from a large circle outside Torment. When the Lord falls below half health, all nearby fighters and tracked attackers are drawn into one shared random maze level, where the same encounter resumes at half health.</p>
 
 <table>
   <tr><th>Feature</th><th>Description</th></tr>
-  <tr><td>Torment Stone</td><td>Extremely blast-resistant — tunnelling out is not an option</td></tr>
-  <tr><td>Force Blocks</td><td>Barriers at level transitions; require specific items to pass</td></tr>
-  <tr><td>Refill Chests</td><td>Rare loot caches placed periodically to allow recovery</td></tr>
-  <tr><td>Flame Imps</td><td>Fast fire entities; spawn throughout all levels in numbers</td></tr>
-  <tr><td>Lord of Torment</td><td>Boss at the deepest level — see <a href="#ch30">Chapter 30</a></td></tr>
+  <tr><td>Six maze levels</td><td>Each has one fixed entrance lane, one portal chamber, and a traversable route between them.</td></tr>
+  <tr><td>Force</td><td>Invisible, unbreakable walls and ceilings. Trust the open corridor rather than the visible floor.</td></tr>
+  <tr><td>Torment Stone</td><td>Unbreakable floor, foundation, and portal frame. Its Mycelium-like face is intentional.</td></tr>
+  <tr><td>Refilling Chests</td><td>Exactly three per level. They fill on generation and refill from dungeon supplies only when completely empty after 72,000 ticks, about one real-time hour at normal server speed.</td></tr>
+  <tr><td>Torment Portal</td><td>From within Torment it returns you to the safe place recorded on first entry 95% of the time; the remaining 5% sends you to another random maze level.</td></tr>
+  <tr><td>Lord of Torment</td><td>The second half of the summoned encounter takes place in one shared maze level. Defeat returns only the linked fighters.</td></tr>
 </table>
 
-<div class="callout callout-warn">Do not enter <a href="#ch20">Torment</a> without a confirmed exit plan. The TormentHelper system manages entry and exit, but there is no automatic rescue if you are unprepared. Bring a pre-loaded transposition talisman pointing to a waystone you placed before you went in.</div>
+<div class="callout callout-tip">Your Torment return point is separate from Spirit World travel and remains fixed if a portal sends you deeper. If the linked Lord is defeated while you are disconnected, the release waits and returns you safely when you next join.</div>
+
+<div class="callout callout-warn">The portal provides a reliable chance to leave, not a promise on each crossing. Do not enter without armor, healing, food, and room to survive another maze. Passengers and vehicles cannot use the portal.</div>
 
 <h3>The Mirror World</h3>
-<p>A dark reflection of the overworld. Deep blue fog (0, 0.03, 0.1); permanently black sky with End rendering; no natural light. Touching an inhabited mirror carries you into its private reflected room, where your own Reflection guards the way home. Defeat it to clear the mirror and leave safely. Old generated Mirror World chunks are not rewritten when the room design changes, so test this path in a fresh world.</p>
+<p>A dark reflection of the overworld. Deep blue fog (0, 0.03, 0.1); permanently black sky with End rendering; no natural light or weather. Its source-shaped lattice is 256 blocks high. Every 16-block tier holds a 9 x 9 x 9 chamber, and mirror claims fill fifteen vertical tiers at one X/Z cell before advancing through the old outward spiral.</p>
+<p>Touching an inhabited mirror carries a player into its own stable chamber. The unbreakable mirror inside always returns you safely beside the exact linked source, in whichever dimension it stands, even while the guardian lives. The route survives a disconnect. Break the source and its room link stays in the dropped Mirror: a companion outside may carry that exit anchor, or place it again to reconnect the inner glass.</p>
+<p>Your Reflection has 100 health and wears your skin, armor, strongest hotbar weapon, enchantments, effects, and relevant transformation as an image, not as loot. Every true Reflection yields exactly one Demon Heart. The source mirror clears only when no Reflection remains alive in that chamber; it then stays cleared and does not summon the guardian again.</p>
+<p>Ordinary mirrors also keep their old local tricks. Opposite-facing mirrors can bridge horizontally within 31 blocks, carrying living creatures and dropped items. Cleared mirrors outside the Mirror World can bridge vertically to a same-facing mirror. Inside the Mirror World, an unpaired ordinary mirror may spend 3,000 altar power to move a traveller one to nine blocks forward; it never opens a deeper room. Only players cross dimensions.</p>
+<p>Two spoken mercies remain. <strong>mirror mirror send me home</strong> returns you to your recorded inner mirror and then rests for five minutes. <strong>mirror mirror i give up</strong> abandons the glass for a valid bed or the Overworld spawn and then rests for one hour.</p>
 <p>An ordinary uncleared mirror in the waking world has a quieter answer too. Touch it empty-handed, or address it with nearby mirror speech, and one translucent floating face may appear just outside the glass. It follows a nearby gaze, speaks with the old reflection voice, ignores blows and collision, and fades after ten seconds. It is an apparition, not the Reflection guardian, and cleared mirrors or mirrors already inside the Mirror World will not call it.</p>
 
 <div class="callout callout-also">Spirit World materials &amp; Dream Weavers: <a href="#ch28">Ch 28</a> · The Lord of Torment: <a href="#ch30">Ch 30</a> · Spectral creatures you will meet: <a href="#ch31">Ch 31</a> · Brew and ingredient reference: <a href="#appB">App B</a> · Reflection &amp; the Mirror World decoy: <a href="#duplication-grenade">Ch 34</a></div>
@@ -1989,7 +2007,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <table>
   <tr><th>Item</th><th>Found In</th><th>Processed Into</th><th>Used For</th></tr>
   <tr><td>Wispy Cotton</td><td>Spirit World plant</td><td>Fanciful Thread (<a href="#spinning-wheel">Spinning Wheel</a>: 4× Wispy Cotton + String + Odour of Purity)</td><td>Beneficial Dream Weavers</td></tr>
-  <tr><td>Disturbed Cotton</td><td>Spirit World plant</td><td>Tormented Twine (<a href="#spinning-wheel">Spinning Wheel</a>: 4× Disturbed Cotton + String + Reek of Misfortune)</td><td>Dream Weaver of Nightmares; component in all weavers</td></tr>
+  <tr><td>Disturbed Cotton</td><td>Harvested from Wispy Cotton while the shared Spirit World is in nightmare</td><td>Tormented Twine (<a href="#spinning-wheel">Spinning Wheel</a>: 4× Disturbed Cotton + String + Reek of Misfortune)</td><td>Dream Weaver of Nightmares; component in all weavers</td></tr>
 </table>
 
 <h3>Dream Weaver Variants</h3>
@@ -2118,19 +2136,20 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <h3>The Lord of Torment</h3>
 <div class="lore-pull">He does not guard the maze. He is the maze. And he has been waiting longer than you have been alive.</div>
 
-<p>Found at the deepest level of the Torment Dimension. Required for several endgame crafting paths. The fight demands full preparation.</p>
+<p>Obtain a <strong>Torment Scroll</strong> as the fourth secret gifted by a pleased Flame Imp, then use it to summon the Lord from a large circle outside Torment. He begins as a 500 HP flying boss. Explosions do nothing to him and every accepted blow is capped at 5 damage. He attacks with close strikes, Ignianima, and Soulfire volleys, and may blind a flying target.</p>
+
+<p>At half health the first body vanishes and every nearby fighter or tracked attacker is carried into one shared random Torment level. The same encounter continues there at half health. Killing that second-phase Lord releases only the fighters linked to its session, returning online players at once and holding a safe return for anyone who reconnects later.</p>
 
 <p><strong>Minimum preparation:</strong></p>
 <ul>
   <li>At least one Death Protection Poppet bound to yourself — two is better</li>
   <li>Full enchanted armor (Protection IV + Unbreaking III recommended)</li>
-  <li>Silver Sword for any vampire or werewolf mechanics</li>
   <li>Brews of Absorption and Healing stocked</li>
   <li><a href="#brew-of-soaring">Brew of Soaring</a> for mobility in the corridors</li>
-  <li>A pre-loaded Transposition talisman pointing back to a waystone outside the dimension</li>
+  <li>Food and spare supplies for a portal that may send you into another maze before it sends you home</li>
 </ul>
 
-<p>Specific drops are left undocumented here — that discovery belongs to the craft. The Witches' Primer has the full drop tables when you are ready for them.</p>
+<p><strong>Drops:</strong> Soul of Torment, Demon Heart, and two books carrying random stored enchantments. These feed the late craft, including the Otherwhere Hearth.</p>
 
 <h3>The Shade of Leonard</h3>
 <div class="lore-pull">He does not grant power. He is power. And he has been waiting in the dark between the wicks of candles, patient, patient, patient, until someone was foolish enough to call his name at sufficient volume.</div>
@@ -2244,11 +2263,11 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <table>
   <tr><th>Entity</th><th>Notes</th></tr>
   <tr><td>Demon <code>demon</code></td><td>Summoned via Infernal circles. Player kills roll 0 to 1 + Looting Magma Cream; a held Arthana adds the source Demon Heart chance, while every bargain list includes a Heart offer. The placed Heart gives +100 altar power with cap 2.</td></tr>
-  <tr><td>Nightmare <code>nightmare</code></td><td>100 HP and 4 damage in the Spirit World, but only half a heart outside it. It pursues its named victim without teleporting and bursts away if that victim dies, escapes beyond 16 blocks, or wakes from the nightmare. Before each strike it may tear off one random armor piece; carrying a Charm of Disrupted Dreams or Charm of Fanciful Thinking prevents this. After taking damage it raises a temporary translucent defense, shortened by the Spear of the Huntsman and prevented while standing in Flowing Spirit. It ignores fire, falls, and cobwebs, and drops one Mellifluous Hunger only when slain in the Spirit World, with a Looting chance for a second.</td></tr>
+  <tr><td>Nightmare <code>nightmare</code></td><td>100 HP and 4 damage in the Spirit World, but only half a heart outside it. It pursues its named victim without teleporting and bursts away if that victim dies, escapes beyond 16 blocks, or wakes from the nightmare. Before each strike it may tear off one random armor piece; carrying a Charm of Disrupted Dreams or Charm of Fanciful Thinking prevents this. After taking damage it raises a temporary translucent defense, shortened by the Spear of the Huntsman and prevented while standing in Flowing Spirit. It ignores fire, falls, cobwebs, and drowning, and drops one Mellifluous Hunger only when slain in the Spirit World, with a Looting chance for a second.</td></tr>
   <tr><td>Broom <code>broom</code></td><td>The rideable broom entity. Not a combat entity.</td></tr>
   <tr><td>Soulfire <code>soulfire</code></td><td>Spectral fire entity; ambient hazard in Spirit World.</td></tr>
   <tr><td>Lost Soul <code>lost_soul</code></td><td>The adds the <a href="#ch30">Shade of Leonard</a> spawns in waves below half HP. Leonard is invincible while any Lost Soul lives — kill them first.</td></tr>
-  <tr><td>Reflection <code>reflection</code></td><td>A skin-and-name decoy of a player. Spawned briefly by the <a href="#duplication-grenade">Duplication Grenade</a> and encountered in the Mirror World.</td></tr>
+  <tr><td>Reflection <code>reflection</code></td><td>A 100 HP player-shaped boss that copies the nearest player's skin, equipment, effects, and combat style. Every true Reflection yields one Demon Heart; a room clears only after all Reflections inside it die. The <a href="#duplication-grenade">Duplication Grenade</a> instead creates a separate passive decoy with no loot or completion power.</td></tr>
 </table>
 
 <!-- CH 33 — PVP -->

@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-07-30
+Last curated: 2026-08-19
 
 This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -37,8 +37,9 @@ enough to read before starting work. Long historical deltas belong in
 - In-server QA for the new protection facade: vanilla spawn/build limits plus
   Open Parties and Claims, FTB Chunks, and Common Protection API when installed.
 - In-game QA for recently restored or polished systems: Flame Imp contracts,
-  Vanishing Witch Hut, NBT structures, dream entry/exit, cursed well warnings,
-  and custom brew/ritual edge cases.
+  Vanishing Witch Hut, NBT structures, the source-corrected Spirit World lifecycle,
+  mirrored terrain/spawns/Manifestation visuals, cursed well warnings, and custom
+  brew/ritual edge cases.
 - Source-feel polish on exact-ID items and wearables that are registered but
   still need model, texture, transform, or gameplay verification.
 - Creative-tab and GUI-item polish for promoted exact IDs: hide utility/internal
@@ -52,8 +53,65 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
-- The additive Otherwhere Hearth endgame working is code-complete pending live
-  and restart QA. A 10,000-power six-ingredient Kettle batch permanently binds
+- Mirror World's fresh-save source contract is implemented. Its featureless
+  biome carries the original 256-block repeating 9 x 9 x 9 lattice, including
+  fifteen vertical allocation tiers before each source-spiral step. Source
+  mirrors in any dimension own persisted links; the linked dropped item can be
+  carried and replaced; player route stacks survive reconnects; ordinary mirror
+  bridges carry living entities and items; and both source escape chants work.
+  Reflections copy player state but not loot, every true Reflection yields one
+  Demon Heart, and a chamber clears only after all Reflections inside it die.
+  Duplication Grenades now create a separate passive `mirror_decoy`. Automated
+  layout/resource gates and the normal-server lifecycle fixture cover these
+  rules. The expanded fixture passed fresh on 2026-08-18, including guardian
+  succession and a linked item carried into the Nether. See
+  `docs/reference/MIRROR_WORLD_SOURCE_PARITY.md`; backwards save migration is
+  intentionally deferred, and real-client rendering/atmosphere QA remains.
+- Torment Fresh-Dimension Certification is complete. Generation now derives six
+  deterministic source-shaped 31 x 31 perfect DFS mazes from one cached layout,
+  using invisible Force walls/ceilings and source-correct Torment Stone rather
+  than Bedrock for floors, foundations, and portal frames. Every level has the
+  exact chamber, route, portal axis, and three Refilling Chests; all 18 chests
+  fill initially and use the empty-only 72,000-tick refill rule. `/witchery
+  verify torment` checks every expected block and block entity, layout
+  fingerprints, maze connectivity, routes, and atmosphere resources. A fresh
+  dedicated world and its restart both passed on 2026-08-18. Dedicated-server
+  GameTests also passed structure/refill, exact portal round trip with a
+  dedicated persisted return anchor, and a two-player Lord encounter with one
+  disconnected participant queued and safely released on reconnect. The Lord's
+  source flight, attacks, damage cap, drops, XP, model state, texture, lighting,
+  particles, and audio are restored in code. Only live-client red sky/fog,
+  portal tint, animation, particle, and audio feel remain manual QA.
+- Spirit World completion QA now has dedicated, low-frequency tooling. `/witchery
+  setup otherwhere_hearth` builds a destructive paired-world fixture with the
+  approved volume, rings, bound Kettle, funded altar, coven, stateful blocks,
+  fluids, redstone, pets, hostiles, items, and a ridden vehicle. `/witchery verify
+  otherwhere_hearth` shares the activation block/protection preflight and reports
+  ownership, bounds, route, journal phase, rings, coven, altar charge/capacity,
+  players, entities, and the first world blocker without spending power.
+  `/witchery verify spirit_lifecycle` audits mutually exclusive dream,
+  manifestation, and physical-Hearth player state. JVM coverage now includes
+  journal phase/backward-compatibility invariants, lifecycle-state invariants,
+  and exact dream/nightmare/demonic atmosphere rules. The registered dedicated-
+  server GameTests passed on 2026-08-18 with custom dimensions loaded, proving a
+  bidirectional fake-player round trip with block entities, fluids, redstone,
+  entities on both sides, passenger links, physical-traveller flags, cleared
+  journals, and one measured altar charge per crossing. A forced process kill
+  after the roughly 88 KB prepared journal reached disk also passed restart replay: both
+  structures and all non-player entities converged, the journal remained while
+  the owner was offline, the returning owner arrived in Spirit, the journal
+  cleared, and no second altar charge was taken. The destination-player refusal
+  GameTest likewise passed without mutation or power spend. Those runs fixed
+  dedicated-server client-handler classloading, the 1.21.11 snapshot API call,
+  passenger journalability, canonical cross-dimension entity recovery,
+  deterministic fixture altar funding, and entity-section loading for otherwise
+  unloaded paired chunks. NeoForge's headless GameTest server still loads only
+  the three vanilla dimensions, so real-client multiplayer/offline behavior and
+  claim-adapter execution remain manual gates.
+- The additive Otherwhere Hearth endgame working is code-complete, with live
+  dedicated round-trip, restart-recovery, offline-owner, and destination-refusal
+  GameTests passing; real-client multiplayer and claim QA remain open. A
+  10,000-power six-ingredient Kettle batch permanently binds
   one empty Kettle to its owner. A large Otherwhere ring, medium Ritual ring,
   six coven members, and an in-volume altar with a base 10,000 available power
   then swap the complete same-coordinate 25 x 25 x 25 Overworld/Spirit World

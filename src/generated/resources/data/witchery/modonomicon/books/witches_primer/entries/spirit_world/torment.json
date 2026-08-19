@@ -1,0 +1,98 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "spirit_world",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:soul_of_torment"
+  },
+  "name": "Torment",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Torment is a fixed-night dungeon of six isolated, source-shaped mazes. Each level is a perfect **31 x 31** depth-first maze: every corridor eventually connects, but the way may still be long.[#]()",
+      "title": "Torment",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Invisible, unbreakable **Force** makes the walls and ceiling. Indestructible **Torment Stone** makes the floor, foundation, and portal frame; its green Mycelium-top appearance is deliberate, with occasional real Mycelium mixed in.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:torment_scroll"
+      },
+      "text": "[#](53341a)Please a bound Flame Imp with valuables. Its first four returned secrets are Hunger, Fear, Anguish, and then the Torment Scroll. Use the scroll from a **large circle** outside Torment to summon the Lord of Torment. At half health he draws every nearby fighter and tracked attacker into one shared random maze level, where the fight resumes.[#]()",
+      "title": "The Torment Scroll"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:refilling_chest"
+      },
+      "text": "[#](53341a)Each maze contains exactly three. They fill when the level is generated, then refill from dungeon supplies only while completely empty and after **72,000 ticks**, about one real-time hour at normal server speed. Leaving even one item inside prevents a refill.[#]()",
+      "title": "Refilling Chests"
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A Torment Portal sends you back to the safe position recorded on first entry **95%** of the time. The other **5%** sends you to another random maze level.[#]()",
+      "title": "The Way Home",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)That deeper route keeps the original return point, and Torment travel does not overwrite Spirit World anchors.[#]() [#](53341a)Defeating the linked second-phase Lord returns the fighters in that encounter.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)If one is offline, the release waits and carries that witch home on the next login. Passengers and vehicles cannot enter the portal.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 2,
+  "x": 0,
+  "y": 0
+}

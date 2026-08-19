@@ -303,7 +303,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 ## Rite of Manifestation
 - **Circle:** Large
 - **Ingredients:** None specified
-- **Effect:** Sends sleeping beings to the overworld as their dream self.
+- **Effect:** In the Overworld, grants every player within five blocks 150 seconds of manifestation time, plus 25 seconds per nearby coven witch. A prepared player can later walk through a Spirit Portal in the Spirit World to appear at the same Overworld coordinates as a translucent dream self.
 - **Notes:** Duration increases by 25 seconds for each additional coven witch; Altar Power: 5000.
 
 ## Rite of Moving Earth

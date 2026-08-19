@@ -1080,17 +1080,17 @@ Full compile-clean migration from 1.21.1 (NeoForge 21.1.229) → 1.21.11 (NeoFor
 - Nightmare: 100 HP, spawns during nightmares, teleports to player, respawns, strips armor, drops Mellifluous Hunger
 - Spirit: 20 HP, passive/flees, flying, drops 1 Subdued Spirit
 
-**Torment dimension (confirmed by wiki / old source):**
-- Horizontally aligned mazes. Old 1.7.10 `GenerateMaze.display` uses invisible `Force` for walls/ceilings and vanilla Bedrock for floors/portal frames; Resurrected has a TormentStone naming/art path, but the baseline remake should preserve old mechanics/layout unless intentionally deviating.
-- No vanilla mobs (blaze/magma_cube removed from torment biome spawner)
-- Remaining spawners: witchery:demon, witchery:mandrake_mob
-- Entry: summon Lord of Torment via Torment Scroll (final gift from tamed Flame Imp), fight to 50% HP (250 HP), gets teleported in with player
-- Exit: die → respawn in Overworld, or complete maze → Torment Portal
-- Legacy maze generator restored in the remake; existing generated chunks must be deleted before visual/layout retest.
+**Torment dimension (confirmed against old source):**
+- Direct `GenerateMaze.display` inspection supersedes the earlier Bedrock note: invisible `Force` forms walls/ceilings, while `Torment Stone` forms floors, foundations, and portal frames. Its source block art uses the Mycelium top; rare cells are actual Mycelium.
+- Six deterministic 31 x 31 perfect DFS levels retain the old origin, Y bands, entrance lane, portal chamber, and three Refilling Chests per level.
+- No ordinary natural spawn list. The Lord encounter supplies its own phase-2 boss.
+- Entry: summon the Lord via a Torment Scroll, the fourth fixed secret from a pleased Flame Imp; at 50% HP all nearby or tracked fighters enter one shared random level/session.
+- Exit: an interior Torment Portal has the source 95% return / 5% more-Torment split. Defeating the linked phase-2 Lord returns only that session's participants; offline participants are released on login.
+- `/witchery verify torment` exhaustively certifies geometry, block entities, fingerprints, maze routes, portals, and resources. Fresh generation and restart/reload passed on 2026-08-18.
 
-**Lord of Torment (not yet implemented):**
-- 500 HP boss, fires Slowness fireballs, at 50% HP teleports self+player to Torment
-- Drops: Soul of Torment Demon, Demon Hearts, Miniature Yellow Hearts, enchanted books
+**Lord of Torment (implemented; live-client feel QA remains):**
+- 500 HP flying boss with a 5-damage cap, source attacks/audio/model path, half-health shared-session transfer, persisted participant release, and 80 XP.
+- Drops: Soul of Torment, Demon Heart, and two books with random stored enchantments.
 - Eating Soul of Torment Demon grants ability to send others to Torment
 
 **Flame Imp (not yet implemented):**
@@ -1285,13 +1285,18 @@ private static Identifier resolveSkin(ReflectionEntity entity) {
 ### 2026-05-25 — Mirror World, block rendering, coffin, placement direction
 
 **Custom dimension height must match chunk generator WALL_Y pattern length**
-- `dimension_type` JSON `"height"` must equal `ChunkGenerator.getGenDepth()` and the length of your Y-axis wall pattern. Mirror World uses a 16-element `WALL_Y` array → height=16, logical_height=16, min_y=0.
-- If `height` is left at the overworld default (384), the chunk generator loops 24 times through the 16-element pattern, stacking 24 rooms vertically. Each room in the stack is rendered as geometry → GPU OOM crash within seconds of entering the dimension.
+- Historical note: this described the old remake's single-room implementation and
+  was superseded by the 2026-08-18 source audit. Witchery 0.24.1 deliberately
+  repeats the 16-element wall pattern through a 256-block world. The current
+  generator and dimension type therefore both use height/logical height 256,
+  with fifteen vertical tiers available for source-mirror allocation.
 - Also set `"has_ceiling": true` so the sky renderer doesn't run, and `"has_skylight": false` to prevent sky-light propagation in a fully enclosed space.
 
 **`chunk.getMaxY()` is INCLUSIVE — use `chunk.getMinY() + chunk.getHeight()` for exclusive loop bounds**
 - `ChunkAccess.getMaxY()` returns the highest valid Y coordinate (inclusive), NOT an exclusive upper bound.
-- For 16-tall Mirror World (minY=0, height=16): `getMaxY()` = 15. A loop `for (y = 0; y < 15; y++)` runs y=0..14, skipping the ceiling at y=15.
+- For the current 256-tall Mirror World, the ordinary exclusive bound is 256.
+  Source parity intentionally leaves Y 255 as air because the original generator
+  stopped at Y 254; `MirrorWorldLayout.isGeneratedAir` names that quirk explicitly.
 - Always compute the exclusive upper bound as `chunk.getMinY() + chunk.getHeight()` in custom ChunkGenerators:
   ```java
   int minY = chunk.getMinY();
@@ -1333,9 +1338,11 @@ private static Identifier resolveSkin(ReflectionEntity entity) {
 - Rule of thumb: if your block model's "front" face (e.g. south face = Z=14-16 slab) should face the player who placed it, store `ctx.getHorizontalDirection()` as-is.
 
 **Mirror World debug command entry was landing on top of ceiling, not at floor height (2026-05-25)**
-- `/witchery mirror` calls `findSafeEntry` which scanned from y=200 downward. In a 16-block-tall dimension (y=0 to y=15), y=16+ positions are out-of-range and return AIR. The scan found the CEILING block at y=15 as the first solid with two "air" blocks above it (y=16 and y=17 are out of range = air). So the player was placed at y=16, on top of all the mirror blocks.
+- Historical cause: the former 16-block remake scanned out-of-range air and landed
+  above its only ceiling. The source-parity world is now 256 blocks tall and the
+  command resolves a real allocated room tier instead of relying on that scan.
 - The scan also used the raw overworld X/Z, which in the mirror world can land on a wall block (local x/z 0-3 or 13-15 are solid mirror; only local 4-12 are open).
-- Fix: for Mirror World, skip the scan entirely. Snap to the chunk's guaranteed-open interior centre (`cx*16+8, cz*16+8`) and set Y to `MirrorHelper.ROOM_FLOOR_Y` (the first open block above the floor).
+- Fix: use the room's chunk and section coordinates with `MirrorWorldLayout.roomCenter`.
 - Rule: dimension-specific entry logic should use the known geometry constants from the chunk generator, not a generic scan that assumes standard Minecraft height ranges.
 
 **Anointing Paste: use `useOn()` in the item class, not a `RightClickBlock` event handler (2026-05-25)**

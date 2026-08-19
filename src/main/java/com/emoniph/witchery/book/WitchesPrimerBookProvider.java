@@ -1071,19 +1071,20 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                                 + "raise the grove there instead.\n\nLearn it early if you mean to explore "
                                 + "plantcraft, Ents, or living-wood paths."),
                 rite(cat, "circle_magic/manifestation", "Rite of Manifestation", WitcheryItems.MELLIFLUOUS_HUNGER.get(), 4,
-                        "Not a way into the Spirit World, but the way briefly back out once you are already "
-                                + "there. Draw a small Otherwhere circle in the Spirit World and work the rite "
-                                + "from within. The result is not a body — it is permission to become more "
-                                + "solid for a while.",
+                        "Not a way into the Spirit World, but preparation for briefly returning from it. "
+                                + "Draw a small Otherwhere circle in the Overworld. Every player standing "
+                                + "within five blocks receives the same span of manifestation time, ready "
+                                + "for a later dream journey.",
                         ritualCard("5000", 0, List.of(ringOtherwhere("small")),
                                 WitcheryItems.MELLIFLUOUS_HUNGER.get(), WitcheryItems.SPECTRAL_DUST.get(),
                                 WitcheryItems.NECRO_STONE.get(), Items.GOLDEN_PICKAXE,
                                 WitcheryItems.ARTHANA.get(), Items.GUNPOWDER),
                         "It asks for **Spectral Dust**, **Mellifluous Hunger**, a **Necromantic Stone**, a "
                                 + "**Golden Pickaxe**, an **Arthana**, and **Gunpowder**, plus **5000 altar "
-                                + "power**. The stone and Arthana return.\n\nThen pass through a **Spirit "
-                                + "Portal** to emerge in the Overworld as a ghostly traveler. End it early "
-                                + "with an Icy Needle."),
+                                + "power**. All six offerings are consumed. Nearby coven witches add **25 "
+                                + "seconds** each to the base **150 seconds**.\n\nAfter entering the Spirit World, "
+                                + "pass through a **Spirit Portal** on foot to emerge at the same coordinates "
+                                + "in the Overworld. End it early with an Icy Needle."),
                 rite(cat, "circle_magic/beastial_call", "Rite of Beastial Call", Items.HAY_BLOCK, 5,
                         "A large Otherwhere working that draws animal life into the circle from far across "
                                 + "the countryside — up to a hundred paces and more. Less a summoning than a "
@@ -1512,20 +1513,28 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         List<BookPageModel<?>> spirit = new ArrayList<>(WitcheryBooks.prose("The Spirit World",
                 "The world you walk in is not the only world that exists. The Spirit World lies beside it, "
                         + "separated by a boundary that thins around places of power and at the edges of sleep."
-                        + "\n\nTo enter, drink a Brew of Sleeping near an altar, or eat an Apple of Sleeping. "
+                        + "\n\nTo enter, drink a Brew of Sleeping or eat an Apple of Sleeping. "
                         + "Your prone Body remains at the centre of the entry block with your name, skin, and "
                         + "entry health. It cannot be pushed and persists until you return. If another player "
                         + "destroys it, you are torn awake immediately."));
         spirit.add(spotlight(WitcheryItems.BREW_OF_SLEEPING.get(), "Brew of Sleeping",
                 "Carries you across, leaving your inventory behind. Only a few things cross with you — "
-                        + "your Icy Needles, your Mutandis, and this very Primer — and a little of what you "
-                        + "gather there, the cotton and the spirits, will follow you home."));
+                        + "your Icy Needles and ordinary Mutandis — and a little of what you gather there, "
+                        + "including cotton, Mellifluous Hunger, Flowing Spirit brews, and subdued spirits, "
+                        + "will follow you home."));
         spirit.add(spotlight(WitcheryItems.ICY_NEEDLE.get(), "Icy Needle",
                 "Brings you back at once, used up. Dying also returns you, less comfortably. In emergencies: "
                         + "**/witchery exit**."));
         spirit.add(stationRecipeCard("kettle_brew_of_sleeping", "Kettle: Brew of Sleeping",
                 "Brew it from **Purified Milk**, a **Cookie**, **Brew of Love**, **Whiff of Magic**, an "
                         + "**Icy Needle**, and an **Artichoke** — three bottles per working."));
+        spirit.addAll(WitcheryBooks.prose("The Dreaming Land",
+                "The land follows Overworld terrain and biomes. **Wispy Cotton** alone receives natural "
+                        + "Spirit World generation; Flowing Spirit pools must be made. Native Spirits favor "
+                        + "well-lit grass or sand above Y 60 in land biomes, while Endermen cannot remain."
+                        + "\n\nA gentle dream holds daylight with pink-magenta fog. Nightmares turn the "
+                        + "shared time to night and the fog green, or red when demonic. Fog color changes, "
+                        + "not viewing distance, and peaceful-dream daylight does not burn vampires here."));
 
         List<BookPageModel<?>> hearth = new ArrayList<>(WitcheryBooks.prose("The Otherwhere Hearth",
                 "This additive endgame working carries a settled home bodily between the waking world and "
@@ -1553,8 +1562,65 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "present, or the circles, coven, altar strength, or available power are incomplete."
                         + "\n\nBoth volumes and every non-player traveller are recorded before anything is "
                         + "changed. If the server stops during the crossing, the saved working resumes until "
-                        + "the hearth settles. Witches carried bodily into the Spirit World keep their "
+                        + "the hearth settles and charges the travelling altar exactly once. The structures "
+                        + "may settle while a traveller is offline, but that witch remains in the manifest "
+                        + "and is delivered before the record clears. Witches carried bodily into the Spirit World keep their "
                         + "inventory and face ordinary death there; this is not dream walking."));
+
+        List<BookPageModel<?>> torment = new ArrayList<>(WitcheryBooks.prose("Torment",
+                "Torment is a fixed-night dungeon of six isolated, source-shaped mazes. Each level is a "
+                        + "perfect **31 x 31** depth-first maze: every corridor eventually connects, but the "
+                        + "way may still be long. Invisible, unbreakable **Force** makes the walls and ceiling. "
+                        + "Indestructible **Torment Stone** makes the floor, foundation, and portal frame; its "
+                        + "green Mycelium-top appearance is deliberate, with occasional real Mycelium mixed in."));
+        torment.add(spotlight(WitcheryItems.TORMENT_SCROLL.get(), "The Torment Scroll",
+                "Please a bound Flame Imp with valuables. Its first four returned secrets are Hunger, Fear, "
+                        + "Anguish, and then the Torment Scroll. Use the scroll from a **large circle** outside "
+                        + "Torment to summon the Lord of Torment. At half health he draws every nearby fighter "
+                        + "and tracked attacker into one shared random maze level, where the fight resumes."));
+        torment.add(spotlight(WitcheryItems.REFILLING_CHEST.get(), "Refilling Chests",
+                "Each maze contains exactly three. They fill when the level is generated, then refill from "
+                        + "dungeon supplies only while completely empty and after **72,000 ticks**, about one "
+                        + "real-time hour at normal server speed. Leaving even one item inside prevents a refill."));
+        torment.addAll(WitcheryBooks.prose("The Way Home",
+                "A Torment Portal sends you back to the safe position recorded on first entry **95%** of the "
+                        + "time. The other **5%** sends you to another random maze level. That deeper route keeps "
+                        + "the original return point, and Torment travel does not overwrite Spirit World anchors."
+                        + "\n\nDefeating the linked second-phase Lord returns the fighters in that encounter. If "
+                        + "one is offline, the release waits and carries that witch home on the next login. "
+                        + "Passengers and vehicles cannot enter the portal."));
+
+        List<BookPageModel<?>> mirror = new ArrayList<>(WitcheryBooks.prose("The Mirror World",
+                "Touching an inhabited mirror carries you into that mirror's own **9 x 9 x 9** reflected "
+                        + "room. The dark world is a full 256 blocks high: fifteen chambers are claimed "
+                        + "vertically at each place before the glass seeks the next place in its outward "
+                        + "spiral. Different source mirrors always own different rooms."));
+        mirror.add(spotlight(WitcheryItems.MIRROR.get(), "The Linked Glass",
+                "The unbreakable inner mirror returns you beside its exact source in any dimension, even "
+                        + "before the room is cleared. Break the source and its link remains in the dropped "
+                        + "mirror; a companion outside may carry that exit anchor, or place it again to "
+                        + "reconnect the inner glass."));
+        mirror.addAll(WitcheryBooks.prose("The Reflection",
+                "Your Reflection wears your skin, armor, strongest hotbar weapon, and enchantments as an "
+                        + "image. Every true Reflection yields exactly one **Demon Heart**, but copied gear "
+                        + "is never loot. The source mirror clears only when no Reflection remains alive in "
+                        + "its chamber; after that, the guardian does not return."));
+        mirror.addAll(WitcheryBooks.prose("Walking Lesser Glass",
+                "Ordinary mirrors can bridge to an opposite-facing mirror within 31 blocks, carrying living "
+                        + "creatures and dropped items. A cleared pair outside this world can also bridge "
+                        + "vertically between same-facing mirrors. Inside the Mirror World, an unpaired mirror "
+                        + "may spend **3,000 altar power** to move a traveller one to nine blocks forward. "
+                        + "Only players cross dimensions; an ordinary inner mirror never opens another room."));
+        mirror.addAll(WitcheryBooks.prose("Words for the Lost",
+                "Say **mirror mirror send me home** to return to your recorded inner mirror; that mercy rests "
+                        + "for five minutes after use. Say **mirror mirror i give up** to abandon the glass for "
+                        + "a valid bed or the Overworld spawn; that deeper surrender rests for one hour. Your "
+                        + "ordinary linked return route also survives a disconnect."));
+        mirror.addAll(WitcheryBooks.prose("Faces and False Reflections",
+                "The floating face called by an ordinary uncleared mirror is a brief divination apparition, "
+                        + "not the room guardian. A Duplication Grenade creates a passive ten-second copy that "
+                        + "draws hostile attention without attacking. Neither false image can clear a room or "
+                        + "yield guardian treasure."));
 
         List<BookPageModel<?>> dream = new ArrayList<>(WitcheryBooks.prose("Dream Weavers",
                 "Sleep is not passive, and the spirit world is not a waiting room. A Dream Catcher placed "
@@ -1594,9 +1660,11 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 entry(cat, "spirit_world/spirit_world", "The Spirit World", WitcheryItems.BREW_OF_SLEEPING.get(), 0, spirit),
                 entry(cat, "spirit_world/otherwhere_hearth", "The Otherwhere Hearth",
                         WitcheryItems.OTHERWHERE_HEARTH_BREW.get(), 1, hearth),
-                entry(cat, "spirit_world/dream_weavers", "Dream Weavers", WitcheryItems.DREAM_CATCHER.get(), 2, dream),
-                entry(cat, "spirit_world/crystal_ball", "The Crystal Ball", WitcheryItems.CRYSTAL_BALL.get(), 3, crystal),
-                gatedByItem("guide/obtained/brew_of_flowing_spirit", whatsNext(cat, "spirit_world", 4, "book_creatures", "Witchcraft: Creatures", WitcheryItems.BOOK_CREATURES.get(), "Creatures")));
+                entry(cat, "spirit_world/torment", "Torment", WitcheryItems.SOUL_OF_TORMENT.get(), 2, torment),
+                entry(cat, "spirit_world/mirror_world", "The Mirror World", WitcheryItems.MIRROR.get(), 3, mirror),
+                entry(cat, "spirit_world/dream_weavers", "Dream Weavers", WitcheryItems.DREAM_CATCHER.get(), 4, dream),
+                entry(cat, "spirit_world/crystal_ball", "The Crystal Ball", WitcheryItems.CRYSTAL_BALL.get(), 5, crystal),
+                gatedByItem("guide/obtained/brew_of_flowing_spirit", whatsNext(cat, "spirit_world", 6, "book_creatures", "Witchcraft: Creatures", WitcheryItems.BOOK_CREATURES.get(), "Creatures")));
         return cat;
     }
 

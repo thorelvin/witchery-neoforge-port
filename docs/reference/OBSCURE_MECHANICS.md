@@ -42,14 +42,11 @@ Reported as hidden transformation/ritual, but evidence is weak. Good as an easte
 
 **Confidence:** confirmed late Witchery feature.
 
-Core behavior to eventually remake:
-- Magic mirror bound to a demon.
-- Player can enter mirror.
-- Reflection/demon encounter inside.
-- Claim/control mirror after defeating reflection.
-- Escape failsafe/chant.
-- Taglock/identity disguise features.
-- Mirror teleportation links.
+Fresh-save world behavior is now implemented and audited in
+`docs/reference/MIRROR_WORLD_SOURCE_PARITY.md`: source allocation, linked entry and
+return, Reflection encounters and clearing, carried mirror links, both escape chants,
+and local mirror teleportation. The separate Taglock skin-borrowing and exact
+favorite/fairest follower branches remain open mirror-interaction work.
 
 ### Cauldron custom brews as traps
 

@@ -1,0 +1,140 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "spirit_world",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:mirror"
+  },
+  "name": "The Mirror World",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Touching an inhabited mirror carries you into that mirror's own **9 x 9 x 9** reflected room. The dark world is a full 256 blocks high: fifteen chambers are claimed vertically at each place before the glass seeks the next place in its outward spiral.[#]()",
+      "title": "The Mirror World",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Different source mirrors always own different rooms.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:mirror"
+      },
+      "text": "[#](53341a)The unbreakable inner mirror returns you beside its exact source in any dimension, even before the room is cleared. Break the source and its link remains in the dropped mirror; a companion outside may carry that exit anchor, or place it again to reconnect the inner glass.[#]()",
+      "title": "The Linked Glass"
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Your Reflection wears your skin, armor, strongest hotbar weapon, and enchantments as an image. Every true Reflection yields exactly one **Demon Heart**, but copied gear is never loot.[#]()",
+      "title": "The Reflection",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The source mirror clears only when no Reflection remains alive in its chamber; after that, the guardian does not return.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Ordinary mirrors can bridge to an opposite-facing mirror within 31 blocks, carrying living creatures and dropped items. A cleared pair outside this world can also bridge vertically between same-facing mirrors.[#]()",
+      "title": "Walking Lesser Glass",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Inside the Mirror World, an unpaired mirror may spend **3,000 altar power** to move a traveller one to nine blocks forward. Only players cross dimensions; an ordinary inner mirror never opens another room.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Say **mirror mirror send me home** to return to your recorded inner mirror; that mercy rests for five minutes after use.[#]()",
+      "title": "Words for the Lost",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Say **mirror mirror i give up** to abandon the glass for a valid bed or the Overworld spawn; that deeper surrender rests for one hour. Your ordinary linked return route also survives a disconnect.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)The floating face called by an ordinary uncleared mirror is a brief divination apparition, not the room guardian. A Duplication Grenade creates a passive ten-second copy that draws hostile attention without attacking.[#]()",
+      "title": "Faces and False Reflections",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Neither false image can clear a room or yield guardian treasure.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 3,
+  "x": 0,
+  "y": 0
+}

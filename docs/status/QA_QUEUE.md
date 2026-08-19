@@ -133,6 +133,10 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 ### Dream And Spirit World
 
+- Run `/witchery verify spiritworld` before fresh-chunk testing. It must pass the
+  mirrored-biome, Spirit-only cotton, and native-Spirit spawn wiring audit. During each travel mode, run
+  `/witchery verify spirit_lifecycle`; ordinary dream, nightmare, manifested
+  ghost, and physical-Hearth states must each report `CONSISTENT`.
 - From the Overworld, record F3 coordinates, run `/witchery dream`, and confirm
   Spirit World X/Z match exactly.
 - Y should stay in the same column and only move enough to find a safe landing.
@@ -146,21 +150,69 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   Confirm it has the owner's entry health, drops nothing, and death immediately
   wakes the owner. Log the owner out and confirm non-creative/environmental
   damage cannot destroy the orphaned Body; a creative player still can.
-- Confirm dream, nightmare, and demonic nightmare colors/fog match the current
-  design; normal dreams should read visibly foggy, with nightmares denser.
+- Confirm dream, nightmare, and demonic nightmare fog colors match the source:
+  pink-magenta, green, and red. Fog distance must continue to follow the normal
+  client/render-distance rules rather than becoming shorter in darker dreams.
 - Confirm ordinary passive animals can spawn in Spirit World biomes.
+- Enter with Icy Needles, ordinary Mutandis, Mutandis Extremis, a Witches' Primer,
+  and a marked ordinary item. Only the Needles and ordinary Mutandis should enter;
+  the marked item, Primer, and Extremis must remain in the waking snapshot, while
+  unused Mutandis remains in the saved dream inventory for the next visit. Gather both cottons,
+  Mellifluous Hunger, a Flowing Spirit brew, and both subdued-spirit variants;
+  wake and confirm those materials transfer into the restored waking inventory.
+- In fresh terrain, confirm the Spirit World preserves recognizable same-coordinate
+  Overworld biome geography. A 64-attempt Wispy Cotton patch should be attempted only
+  there in about three of four eligible chunks; randomized Y means an attempted patch
+  is not guaranteed to place cotton. Cotton must obey bush light rules and grass,
+  dirt-family, podzol, or farmland support, while its own spread excludes farmland.
+  Native Spirits should appear in groups of 2-5 only above Y 60 on well-lit grass or
+  sand and in source-equivalent land biomes, never oceans, rivers, or Mushroom Fields.
+  Nightmares must not naturally biome-spawn.
+- Enter a peaceful dream and confirm shared daylight. Switch one true dreamer to a
+  nightmare and confirm shared night, then clear that nightmare and confirm day.
+  A player carried bodily by an Otherwhere Hearth must not affect either state.
+- Harvest Wispy Cotton by hand, automation, and explosion during a shared nightmare;
+  every route should yield Disturbed Cotton. Confirm Flowing Spirit must be a source
+  block to ignite a portal or support cotton spread, and that Ender Pearls and Blaze
+  Powder are removed from block-harvest drops in the Spirit World.
+- Confirm Flowing Spirit moves with its slower source cadence and roughly four-block
+  horizontal reach, extinguishes fire, hydrates farmland, and supports boats without
+  extra ambient particles. Break one cell of an active portal and confirm the entire
+  2 x 2 interior collapses rather than leaving a partial portal.
+- Attempt to bring in an Enderman and a third-party living entity; both should be
+  refused while vanilla and Witchery living entities remain. Confirm ordinary vampire
+  sunlight does not burn players or vampire mobs during peaceful dream daylight.
+- Cast the Rite of Manifestation in the Overworld with all six offerings and 5,000
+  altar power. Confirm all offerings are consumed, every player within five blocks
+  receives 150 seconds plus 25 seconds per nearby coven witch, and circles refuse all
+  casting inside the Spirit World. Walk through a 4 x 4 snow frame with optional
+  corners and a 2 x 2 portal interior; passengers and vehicles must be refused.
+  Confirm the ghost appears at the same Overworld coordinates using the player's skin
+  at about half opacity and normal lighting, arrives with only Icy Needles, can return
+  with those Needles plus a bound fetish acquired while manifested, and returns from
+  its current coordinates on timeout or Icy Needle use.
 - Brew the Otherwhere Hearth ingredients in exact order: Soul of Torment,
   Demon Heart, Brew of Sleeping, Spirit of Otherwhere, Charged Attuned Stone,
   and Drop of Luck. Confirm the Kettle needs 10,000 altar power, yields one
   binding item, binds only while empty and dry, consumes the item, remembers
   its owner through reload, and refuses a second binding or a non-owner.
-- Build a disposable 25 x 25 x 25 test house around the bound Kettle, extending
-  12 blocks horizontally, 8 below, and 16 above. Include inventories, signs,
-  fluids, redstone, villagers, pets, vehicles with passengers, item entities,
-  and hostile mobs in both dimensions. With a large Otherwhere ring, medium
-  Ritual ring, six coven members, and a complete in-volume altar holding at
-  least the scaled 10,000-power cost, confirm both volumes and every entity swap
-  at identical coordinates and a second crossing restores them exactly.
+- In a disposable world with both volumes empty of players, run `/witchery setup
+  otherwhere_hearth`. Stand beside its Kettle and run `/witchery verify
+  otherwhere_hearth`; it must report `READY`. The generated paired 25 x 25 x 25
+  fixture includes contrasting inventories, signs, fluids, redstone, coven,
+  pets, a vehicle/passenger pair, a loose item, a hostile, and destination-side
+  markers. Confirm both volumes and every entity swap at identical coordinates,
+  a second crossing restores them exactly, and the altar loses exactly one
+  scaled crossing cost each way.
+- On an integrated or dedicated dev server where the custom dimensions are
+  loaded, run `/test run witchery:otherwhere_hearth_round_trip`. The registered
+  manual GameTest must pass its bidirectional block-entity, fluid, redstone,
+  entity, passenger, physical-traveller, journal, and exact altar-charge checks.
+  The headless GameTest server cannot satisfy this gate because it creates only
+  the vanilla dimensions. This dedicated-server test passed on 2026-08-18.
+- `/test run witchery:otherwhere_hearth_destination_refusal` passed on a
+  custom-dimension dedicated server on 2026-08-18, proving an occupied target
+  creates no journal, changes no source blocks, and spends no altar power.
 - Separately confirm the Otherwhere Hearth refuses wrong dimensions, incomplete
   rings/coven/altar, insufficient altar capacity or power, an altar outside the
   volume, a destination player, a dream-walking player, an unteleportable
@@ -171,8 +223,69 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   server restart and verify its persisted journal converges to one complete,
   charged swap. Repeat with a travelling player offline; the structures should
   settle, the journal should wait, and that player should cross on login before
-  the journal clears. A physically carried Spirit World player keeps inventory
-  and dies normally rather than waking like a dream traveller.
+  the journal clears. The forced-kill plus
+  `/test run witchery:otherwhere_hearth_recovery_resume` sequence passed on
+  2026-08-18 with both entity manifests, an offline owner, and no second altar
+  charge. Repeat with two real clients before release. A physically carried
+  Spirit World player keeps inventory and dies normally rather than waking like
+  a dream traveller.
+
+### Torment Dimension
+
+- On a fresh disposable world, run `/witchery verify torment`. It must certify
+  six deterministic 31 x 31 perfect mazes, exact Force/Torment Stone geometry,
+  all routes and portal axes, 18 live Refilling Chests, layout fingerprints, and
+  atmosphere resources. Restart that same world and run it again; no fingerprint,
+  route, block, or block-entity result may change. This fresh/reload gate passed
+  on a dedicated server on 2026-08-18.
+- On an integrated or dedicated dev server with custom dimensions loaded, run
+  `/test run witchery:torment_structure_and_refill`, `/test run
+  witchery:torment_portal_round_trip`, and `/test run
+  witchery:torment_multiplayer_boss_reconnect`. These passed on 2026-08-18 and
+  cover initial chest fill, source entry height, dedicated return-anchor
+  persistence, more-Torment routing, safe return, one shared two-player boss
+  session, phase-2 attacks/damage cap/drops, disconnect persistence, and release
+  on reconnect.
+- With a real client, confirm the dimension has a pure red fixed-night sky and
+  red fog with no sun, stars, sunrise, or clouds; Force walls remain invisible;
+  Torment Stone visibly uses the Mycelium-top source art; and the portal is a
+  thin red-tinted plane with flame and ambient/teleport feedback.
+- Fight the Lord through both phases and judge the source model, horn placement,
+  flying movement, punch animation, flame aura, Ignianima and Soulfire volleys,
+  Iron Golem/Ghast combat cues, Torment voice volume/cadence, and the transition
+  and return effects. Repeat with two real clients, including one reconnect, as
+  the final multiplayer feel check.
+
+### Mirror World
+
+- On a fresh disposable world, enter two different inhabited mirrors with two
+  players and run `/witchery verify mirrorworld`. It must report distinct
+  source-owned 9 x 9 x 9 rooms, exact two-way links, one guardian per uncleared
+  room, and consistent cleared state. Restart and run the verifier again. This
+  fresh/restart certificate passed on a dedicated server on 2026-08-18.
+- Run `/test run witchery:mirror_world_lifecycle` on an integrated or dedicated
+  server with custom dimensions loaded. It covers two-player room isolation,
+  persisted routes, owner identity and equipment, one heart per true Reflection,
+  succession while another Reflection remains alive, safe cleared re-entry,
+  killed and expired passive Duplication Grenade decoys, reconnect return, and
+  exact source clearing. The expanded fixture passed on a fresh dedicated world
+  on 2026-08-18, including the linked-item carrier route through the Nether.
+- With a real client, confirm the Reflection uses the entering player's skin,
+  armor, and held items without dropping copies; the inner mirror permits return
+  before guardian defeat; and defeating the guardian prevents its return. Judge
+  deep-blue fixed-dark atmosphere, Mirror Wall flow, portal feedback, movement,
+  and source Reflection audio. Mirror Face apparitions must remain visibly and
+  mechanically distinct from both guardians and passive grenade decoys.
+- With one player inside, have a second player break the inhabited source Mirror,
+  carry its linked item outside Mirror World, then place it elsewhere. Confirm
+  the inner mirror follows the carrier first and reconnects the same room after
+  placement.
+- Verify an ordinary opposite-facing pair carries a mob and dropped item within
+  31 blocks, a cleared vertical pair works outside Mirror World, and an unpaired
+  Mirror World mirror spends exactly 3,000 altar power for its local move.
+- In Mirror World, say `mirror mirror send me home` and `mirror mirror i give up`.
+  Confirm their five-minute and one-hour cooldowns and their entry/bed/spawn
+  destinations. These remain manual chat-path checks.
 
 ### Cursed Blocks And Wells
 

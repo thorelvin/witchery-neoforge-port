@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Not a way into the Spirit World, but the way briefly back out once you are already there. Draw a small Otherwhere circle in the Spirit World and work the rite from within. The result is not a body — it is permission to become more solid for a while.[#]()",
+      "text": "[#](53341a)Not a way into the Spirit World, but preparation for briefly returning from it. Draw a small Otherwhere circle in the Overworld. Every player standing within five blocks receives the same span of manifestation time, ready for a later dream journey.[#]()",
       "title": "Rite of Manifestation",
       "use_markdown_in_title": false
     },
@@ -84,7 +84,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)It asks for **Spectral Dust**, **Mellifluous Hunger**, a **Necromantic Stone**, a **Golden Pickaxe**, an **Arthana**, and **Gunpowder**, plus **5000 altar power**. The stone and Arthana return.[#]()",
+      "text": "[#](53341a)It asks for **Spectral Dust**, **Mellifluous Hunger**, a **Necromantic Stone**, a **Golden Pickaxe**, an **Arthana**, and **Gunpowder**, plus **5000 altar power**. All six offerings are consumed.[#]()",
       "title": "The Working",
       "use_markdown_in_title": false
     },
@@ -95,7 +95,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Then pass through a **Spirit Portal** to emerge in the Overworld as a ghostly traveler. End it early with an Icy Needle.[#]()",
+      "text": "[#](53341a)Nearby coven witches add **25 seconds** each to the base **150 seconds**.[#]() [#](53341a)After entering the Spirit World, pass through a **Spirit Portal** on foot to emerge at the same coordinates in the Overworld. End it early with an Icy Needle.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

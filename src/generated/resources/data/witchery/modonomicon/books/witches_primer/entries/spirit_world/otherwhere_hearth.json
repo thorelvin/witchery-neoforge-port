@@ -140,7 +140,29 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)circles, coven, altar strength, or available power are incomplete.[#]() [#](53341a)Both volumes and every non-player traveller are recorded before anything is changed. If the server stops during the crossing, the saved working resumes until the hearth settles.[#]()",
+      "text": "[#](53341a)circles, coven, altar strength, or available power are incomplete.[#]() [#](53341a)Both volumes and every non-player traveller are recorded before anything is changed.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)If the server stops during the crossing, the saved working resumes until the hearth settles and charges the travelling altar exactly once.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The structures may settle while a traveller is offline, but that witch remains in the manifest and is delivered before the record clears.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
