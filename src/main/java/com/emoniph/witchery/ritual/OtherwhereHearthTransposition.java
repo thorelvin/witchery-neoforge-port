@@ -18,6 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.ProblemReporter;
@@ -27,6 +28,7 @@ import net.minecraft.world.entity.EntityProcessor;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Relative;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -35,9 +37,11 @@ import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,6 +73,11 @@ public final class OtherwhereHearthTransposition {
     public static final int BASE_CROSSING_POWER_COST = 10_000;
     public static final int SNAPSHOT_BLOCK_COUNT = WIDTH * HEIGHT * DEPTH;
 
+    private static final TicketType HEARTH_LOAD_TICKET = new TicketType(
+            2L,
+            TicketType.FLAG_LOADING
+                    | TicketType.FLAG_SIMULATION
+                    | TicketType.FLAG_KEEP_DIMENSION_ACTIVE);
     private static boolean recoveryRunning;
 
     private OtherwhereHearthTransposition() {
@@ -93,6 +102,59 @@ public final class OtherwhereHearthTransposition {
         }
     }
 
+    public record PendingEntityCounts(int toSpirit, int toOverworld, int players) {
+    }
+
+    /** Read-only state returned by the admin verifier. Running an inspection never spends power. */
+    public record Inspection(
+            Volume volume,
+            String sourceDimension,
+            String destinationDimension,
+            String journal,
+            boolean kettlePresent,
+            boolean kettleBound,
+            String kettleOwner,
+            boolean ownerMatches,
+            int mediumRitualVariant,
+            int largeOtherwhereVariant,
+            int covenSize,
+            @Nullable BlockPos altarPos,
+            boolean altarValid,
+            int altarPower,
+            int altarCapacity,
+            int powerCost,
+            List<String> blockers
+    ) {
+        public Inspection {
+            blockers = List.copyOf(blockers);
+        }
+
+        public boolean ready() {
+            return blockers.isEmpty();
+        }
+    }
+
+    private enum BlockProblemKind {
+        FORBIDDEN,
+        OTHER_BOUND_KETTLE,
+        PROTECTED_SOURCE,
+        PROTECTED_DESTINATION
+    }
+
+    private record BlockProblem(BlockProblemKind kind, BlockPos pos) {
+        String describe() {
+            return switch (kind) {
+                case FORBIDDEN -> "Unbreakable block at " + coordinates(pos) + ".";
+                case OTHER_BOUND_KETTLE -> "Another bound Otherwhere Hearth is at "
+                        + coordinates(pos) + ".";
+                case PROTECTED_SOURCE -> "Source protection blocks changes at "
+                        + coordinates(pos) + ".";
+                case PROTECTED_DESTINATION -> "Destination protection blocks changes at "
+                        + coordinates(pos) + ".";
+            };
+        }
+    }
+
     public static Volume volumeFor(BlockPos kettlePos) {
         return new Volume(
                 kettlePos.offset(-HORIZONTAL_RADIUS, -BLOCKS_BELOW, -HORIZONTAL_RADIUS),
@@ -106,6 +168,194 @@ public final class OtherwhereHearthTransposition {
 
     public static boolean destinationIsSpirit(boolean sourceSpirit) {
         return !sourceSpirit;
+    }
+
+    public static boolean hasPendingTransaction(MinecraftServer server) {
+        return OtherwhereHearthSavedData.get(server).hasPending();
+    }
+
+    public static PendingEntityCounts pendingEntityCounts(MinecraftServer server) {
+        OtherwhereHearthSavedData.PendingSwap pending =
+                OtherwhereHearthSavedData.get(server).pending();
+        if (pending == null) {
+            return new PendingEntityCounts(0, 0, 0);
+        }
+        int toSpirit = 0;
+        int toOverworld = 0;
+        int players = 0;
+        for (OtherwhereHearthSavedData.EntityTransfer transfer : pending.entities()) {
+            if (transfer.toSpirit()) {
+                toSpirit++;
+            } else {
+                toOverworld++;
+            }
+            if (transfer.player()) {
+                players++;
+            }
+        }
+        return new PendingEntityCounts(toSpirit, toOverworld, players);
+    }
+
+    public static void loadVolumeForInspection(ServerLevel level, BlockPos kettlePos) {
+        loadChunks(level, volumeFor(kettlePos));
+    }
+
+    public static boolean volumeFits(ServerLevel level, Volume volume) {
+        return withinWorld(level, volume);
+    }
+
+    /**
+     * Performs the same world-facing readiness checks used by activation and returns every cheap
+     * blocker plus the first expensive block/protection blocker. The paired chunks are loaded so
+     * this command is intended for deliberate QA use, not a repeating tick path.
+     */
+    public static Inspection inspect(ServerPlayer player, ServerLevel source, BlockPos kettlePos) {
+        MinecraftServer server = source.getServer();
+        Volume volume = volumeFor(kettlePos);
+        List<String> blockers = new ArrayList<>();
+        OtherwhereHearthSavedData.PendingSwap pending = OtherwhereHearthSavedData.get(server).pending();
+        String journal = pending == null
+                ? "none"
+                : pending.phase().name().toLowerCase(java.util.Locale.ROOT)
+                        + " transaction=" + pending.transactionId()
+                        + " owner=" + pending.ownerName()
+                        + " powerPaid=" + pending.powerPaid()
+                        + " entities=" + pending.entities().size();
+
+        boolean supported = isSupportedDimension(source);
+        if (!supported) {
+            blockers.add("Source dimension is not the Overworld or Spirit World.");
+        }
+
+        boolean sourceSpirit = source.dimension().equals(WitcheryDimensions.SPIRIT_WORLD);
+        ServerLevel spirit = server.getLevel(WitcheryDimensions.SPIRIT_WORLD);
+        ServerLevel destination = sourceSpirit ? server.overworld() : spirit;
+        if (destination == null) {
+            blockers.add("Spirit World destination is unavailable.");
+        }
+        if (pending != null) {
+            blockers.add("A persisted Otherwhere Hearth transaction is still pending.");
+        }
+
+        KettleBlockEntity kettle = source.getBlockEntity(kettlePos) instanceof KettleBlockEntity found
+                ? found : null;
+        boolean kettlePresent = kettle != null;
+        boolean kettleBound = kettlePresent && kettle.isOtherwhereHearthBound();
+        String kettleOwner = kettlePresent ? kettle.getOtherwhereHearthOwnerName() : "";
+        boolean ownerMatches = kettlePresent && kettle.isOtherwhereHearthOwner(player);
+        if (!kettlePresent) {
+            blockers.add("No Kettle block entity is present at the inspected center.");
+        } else if (!kettleBound) {
+            blockers.add("The Kettle is not permanently bound as an Otherwhere Hearth.");
+        } else if (!ownerMatches) {
+            blockers.add("The inspecting player does not own this bound hearth.");
+        }
+
+        BlockPos floorCenter = kettlePos.below();
+        int mediumVariant = RitualCircleDetector.detectVariant(
+                source, floorCenter, RitualCircleDetector.CircleSize.MEDIUM);
+        int largeVariant = RitualCircleDetector.detectVariant(
+                source, floorCenter, RitualCircleDetector.CircleSize.LARGE);
+        if (mediumVariant != 1) {
+            blockers.add("Medium ring must be Ritual chalk (variant 1), found "
+                    + mediumVariant + ".");
+        }
+        if (largeVariant != 2) {
+            blockers.add("Large ring must be Otherwhere chalk (variant 2), found "
+                    + largeVariant + ".");
+        }
+
+        boolean sourceFits = withinWorld(source, volume);
+        boolean destinationFits = destination != null && withinWorld(destination, volume);
+        if (!sourceFits) {
+            blockers.add("The 25x25x25 source volume crosses build height or the world border.");
+        }
+        if (destination != null && !destinationFits) {
+            blockers.add("The 25x25x25 destination volume crosses build height or the world border.");
+        }
+
+        if (destination != null && sourceFits && destinationFits) {
+            // Activation loads both footprints before entity and altar discovery. Match that order
+            // so an unloaded edge chunk cannot produce a false coven or altar blocker here.
+            loadChunks(source, volume);
+            loadChunks(destination, volume);
+        }
+
+        int covenSize = source.getEntitiesOfClass(
+                Entity.class, volume.entityBounds(),
+                entity -> entity instanceof CovenMember && volume.entityBounds().contains(entity.position())
+        ).size();
+        if (covenSize < REQUIRED_COVEN_SIZE) {
+            blockers.add("Full coven missing: " + covenSize + "/" + REQUIRED_COVEN_SIZE + ".");
+        }
+
+        AltarBlockEntity altar = AltarPowerSourceLookup.findClosest(source, kettlePos);
+        int powerCost = RitualExecutor.scaleRitualPowerCost(BASE_CROSSING_POWER_COST);
+        BlockPos altarPos = altar == null ? null : altar.getBlockPos();
+        boolean altarValid = altar != null && altar.hasValidStructure();
+        int altarPower = altar == null ? 0 : altar.getPower();
+        int altarCapacity = altar == null ? 0 : altar.getEffectiveMaxPower();
+        if (altar == null || !altarValid) {
+            blockers.add("No complete altar structure is in range.");
+        } else {
+            if (!volume.contains(altarPos)) {
+                blockers.add("The altar at " + coordinates(altarPos) + " lies outside the moving volume.");
+            }
+            if (altarCapacity < powerCost) {
+                blockers.add("Altar capacity is " + altarCapacity + "/" + powerCost + ".");
+            }
+            if (altarPower < powerCost) {
+                blockers.add("Altar charge is " + altarPower + "/" + powerCost + ".");
+            }
+        }
+
+        if (destination != null && sourceFits && destinationFits) {
+            List<ServerPlayer> destinationPlayers = playersIn(destination, volume);
+            if (!destinationPlayers.isEmpty()) {
+                blockers.add("Destination contains player "
+                        + destinationPlayers.getFirst().getScoreboardName() + ".");
+            }
+            for (ServerPlayer sourcePlayer : playersIn(source, volume)) {
+                if (WitcheryAttachments.get(sourcePlayer).isInSpiritWorld()
+                        && !WitcheryAttachments.get(sourcePlayer).isOtherwhereHearthTraveler()) {
+                    blockers.add("Source contains sleeping dream-traveller "
+                            + sourcePlayer.getScoreboardName() + ".");
+                }
+            }
+
+            ServerLevel overworld = server.overworld();
+            if (spirit != null) {
+                Entity unmovable = firstUnmovableEntity(overworld, spirit, volume);
+                if (unmovable != null) {
+                    blockers.add("Entity cannot be journalled and teleported: "
+                            + unmovable.getDisplayName().getString() + ".");
+                }
+            }
+
+            BlockProblem problem = findBlockProblem(player, source, destination, volume, kettlePos);
+            if (problem != null) {
+                blockers.add(problem.describe());
+            }
+        }
+
+        return new Inspection(
+                volume,
+                source.dimension().identifier().toString(),
+                destination == null ? "unavailable" : destination.dimension().identifier().toString(),
+                journal,
+                kettlePresent,
+                kettleBound,
+                kettleOwner,
+                ownerMatches,
+                mediumVariant,
+                largeVariant,
+                covenSize,
+                altarPos,
+                altarValid,
+                altarPower,
+                altarCapacity,
+                powerCost,
+                blockers);
     }
 
     static boolean shouldReplayEntityPosition(boolean preparedPhase, boolean alreadyAtDestination) {
@@ -376,22 +626,42 @@ public final class OtherwhereHearthTransposition {
     private static boolean preflightBlocks(ServerPlayer player, ServerLevel source,
                                            ServerLevel destination, Volume volume,
                                            BlockPos activeKettlePos) {
+        BlockProblem problem = findBlockProblem(player, source, destination, volume, activeKettlePos);
+        if (problem == null) {
+            return true;
+        }
+        return switch (problem.kind()) {
+            case FORBIDDEN -> fail(player, source, activeKettlePos,
+                    "witchery.otherwhere_hearth.forbidden_block",
+                    problem.pos().getX(), problem.pos().getY(), problem.pos().getZ());
+            case OTHER_BOUND_KETTLE -> fail(player, source, activeKettlePos,
+                    "witchery.otherwhere_hearth.other_bound_kettle",
+                    problem.pos().getX(), problem.pos().getY(), problem.pos().getZ());
+            case PROTECTED_SOURCE -> fail(player, source, activeKettlePos,
+                    "witchery.otherwhere_hearth.protected_source",
+                    problem.pos().getX(), problem.pos().getY(), problem.pos().getZ());
+            case PROTECTED_DESTINATION -> fail(player, source, activeKettlePos,
+                    "witchery.otherwhere_hearth.protected_destination",
+                    problem.pos().getX(), problem.pos().getY(), problem.pos().getZ());
+        };
+    }
+
+    @Nullable
+    private static BlockProblem findBlockProblem(ServerPlayer player, ServerLevel source,
+                                                 ServerLevel destination, Volume volume,
+                                                 BlockPos activeKettlePos) {
         for (BlockPos cursor : BlockPos.betweenClosed(volume.min(), volume.max())) {
             BlockPos pos = cursor.immutable();
             BlockState sourceState = source.getBlockState(pos);
             BlockState destinationState = destination.getBlockState(pos);
 
             if (isForbidden(source, pos, sourceState) || isForbidden(destination, pos, destinationState)) {
-                return fail(player, source, activeKettlePos,
-                        "witchery.otherwhere_hearth.forbidden_block",
-                        pos.getX(), pos.getY(), pos.getZ());
+                return new BlockProblem(BlockProblemKind.FORBIDDEN, pos);
             }
 
             if (isForeignBoundKettle(source, pos, activeKettlePos)
                     || isForeignBoundKettle(destination, pos, null)) {
-                return fail(player, source, activeKettlePos,
-                        "witchery.otherwhere_hearth.other_bound_kettle",
-                        pos.getX(), pos.getY(), pos.getZ());
+                return new BlockProblem(BlockProblemKind.OTHER_BOUND_KETTLE, pos);
             }
 
             if (sourceState.isAir() && destinationState.isAir()
@@ -400,18 +670,18 @@ public final class OtherwhereHearthTransposition {
             }
             if (!WitcheryProtectionService.canModifyRemoteBlock(
                     player, source, pos, WitcheryProtectionAction.BLOCK_TRANSFORM)) {
-                return fail(player, source, activeKettlePos,
-                        "witchery.otherwhere_hearth.protected_source",
-                        pos.getX(), pos.getY(), pos.getZ());
+                return new BlockProblem(BlockProblemKind.PROTECTED_SOURCE, pos);
             }
             if (!WitcheryProtectionService.canModifyRemoteBlock(
                     player, destination, pos, WitcheryProtectionAction.BLOCK_TRANSFORM)) {
-                return fail(player, source, activeKettlePos,
-                        "witchery.otherwhere_hearth.protected_destination",
-                        pos.getX(), pos.getY(), pos.getZ());
+                return new BlockProblem(BlockProblemKind.PROTECTED_DESTINATION, pos);
             }
         }
-        return true;
+        return null;
+    }
+
+    private static String coordinates(BlockPos pos) {
+        return pos.getX() + " " + pos.getY() + " " + pos.getZ();
     }
 
     private static boolean isForbidden(ServerLevel level, BlockPos pos, BlockState state) {
@@ -427,7 +697,8 @@ public final class OtherwhereHearthTransposition {
 
     private static CompoundTag capture(ServerLevel level, Volume volume) {
         StructureTemplate template = new StructureTemplate();
-        template.fillFromWorld(level, volume.min(), new Vec3i(WIDTH, HEIGHT, DEPTH), false, null);
+        template.fillFromWorld(
+                level, volume.min(), new Vec3i(WIDTH, HEIGHT, DEPTH), false, List.of());
         CompoundTag snapshot = template.save(new CompoundTag());
         if (snapshot.getListOrEmpty("blocks").size() != SNAPSHOT_BLOCK_COUNT) {
             throw new IllegalStateException("Incomplete structure snapshot");
@@ -515,8 +786,22 @@ public final class OtherwhereHearthTransposition {
 
     private static boolean canJournalAndTeleport(Entity entity, ServerLevel source,
                                                  ServerLevel destination) {
-        return entity.canTeleport(source, destination)
-                && (entity instanceof ServerPlayer || entity.shouldBeSaved());
+        if (!entity.canTeleport(source, destination)) {
+            return false;
+        }
+        if (entity instanceof ServerPlayer) {
+            return true;
+        }
+        try {
+            TagValueOutput output = TagValueOutput.createWithContext(
+                    ProblemReporter.DISCARDING, entity.level().registryAccess());
+            // Passengers and vehicles can intentionally return false from shouldBeSaved() to
+            // prevent vanilla chunk duplication, while saveAsPassenger remains the correct
+            // standalone snapshot contract for this transaction journal.
+            return entity.saveAsPassenger(output);
+        } catch (RuntimeException exception) {
+            return false;
+        }
     }
 
     private static void appendEntityTransfers(
@@ -610,19 +895,9 @@ public final class OtherwhereHearthTransposition {
                 continue;
             }
 
-            if (!teleportEntity(entity, destination, transfer)) {
-                throw new IllegalStateException("Could not move entity " + transfer.entityId());
-            }
-            Entity resolved = transfer.player()
-                    ? server.getPlayerList().getPlayer(transfer.entityId())
-                    : destination.getEntity(transfer.entityId());
+            Entity resolved = teleportEntity(entity, destination, transfer);
             if (resolved == null) {
-                if (transfer.player()) {
-                    allPlayersResolved = false;
-                    continue;
-                }
-                throw new IllegalStateException("Moved entity was not present in destination: "
-                        + transfer.entityId());
+                throw new IllegalStateException("Could not move entity " + transfer.entityId());
             }
             discardDuplicateNonPlayers(server, destination, resolved);
             moved.put(transfer.entityId(), resolved);
@@ -691,7 +966,10 @@ public final class OtherwhereHearthTransposition {
     private static Entity findEntity(MinecraftServer server,
                                      OtherwhereHearthSavedData.EntityTransfer transfer) {
         if (transfer.player()) {
-            return server.getPlayerList().getPlayer(transfer.entityId());
+            ServerPlayer online = server.getPlayerList().getPlayer(transfer.entityId());
+            if (online != null) {
+                return online;
+            }
         }
         ServerLevel destination = transfer.toSpirit()
                 ? server.getLevel(WitcheryDimensions.SPIRIT_WORLD)
@@ -711,17 +989,23 @@ public final class OtherwhereHearthTransposition {
         return null;
     }
 
-    private static boolean teleportEntity(Entity entity, ServerLevel destination,
-                                          OtherwhereHearthSavedData.EntityTransfer transfer) {
+    @Nullable
+    private static Entity teleportEntity(Entity entity, ServerLevel destination,
+                                         OtherwhereHearthSavedData.EntityTransfer transfer) {
         if (entity.level() == destination) {
             entity.teleportTo(transfer.x(), transfer.y(), transfer.z());
             entity.setYRot(transfer.yaw());
             entity.setXRot(transfer.pitch());
-            return true;
+            return entity;
         }
-        return entity.teleportTo(destination,
-                transfer.x(), transfer.y(), transfer.z(),
-                Set.<Relative>of(), transfer.yaw(), transfer.pitch(), false);
+        return entity.teleport(new TeleportTransition(
+                destination,
+                new Vec3(transfer.x(), transfer.y(), transfer.z()),
+                Vec3.ZERO,
+                transfer.yaw(),
+                transfer.pitch(),
+                Set.<Relative>of(),
+                TeleportTransition.DO_NOTHING));
     }
 
     private static void discardDuplicateNonPlayers(MinecraftServer server, ServerLevel destination,
@@ -741,14 +1025,22 @@ public final class OtherwhereHearthTransposition {
     }
 
     private static void loadChunks(ServerLevel level, Volume volume) {
-        int minChunkX = volume.min().getX() >> 4;
-        int maxChunkX = volume.max().getX() >> 4;
-        int minChunkZ = volume.min().getZ() >> 4;
-        int maxChunkZ = volume.max().getZ() >> 4;
-        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
-            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
-                level.getChunk(chunkX, chunkZ, ChunkStatus.FULL, true);
+        BlockPos center = volume.min().offset(HORIZONTAL_RADIUS, 0, HORIZONTAL_RADIUS);
+        ChunkPos centerChunk = new ChunkPos(center);
+        level.getChunkSource().addTicketWithRadius(HEARTH_LOAD_TICKET, centerChunk, 1);
+        try {
+            int minChunkX = volume.min().getX() >> 4;
+            int maxChunkX = volume.max().getX() >> 4;
+            int minChunkZ = volume.min().getZ() >> 4;
+            int maxChunkZ = volume.max().getZ() >> 4;
+            for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+                for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+                    level.getChunk(chunkX, chunkZ, ChunkStatus.FULL, true);
+                }
             }
+            level.waitForEntities(centerChunk, 1);
+        } finally {
+            level.getChunkSource().removeTicketWithRadius(HEARTH_LOAD_TICKET, centerChunk, 1);
         }
     }
 

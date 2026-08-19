@@ -6,6 +6,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -164,73 +166,157 @@ public class WitcheryPlayerData {
         ).apply(i, WerewolfState::new));
     }
 
-    /** Nested record for Spirit World state — keeps the main CODEC under the 16-field DFU limit. */
+    /** One return step for a player travelling through ordinary or nested Mirror World rooms. */
+    public record MirrorRoute(String sourceDimension, long sourceMirrorPos, int destinationRoomIndex) {
+        public static final Codec<MirrorRoute> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.STRING.fieldOf("source_dimension").forGetter(MirrorRoute::sourceDimension),
+                Codec.LONG.fieldOf("source_mirror_pos").forGetter(MirrorRoute::sourceMirrorPos),
+                Codec.INT.fieldOf("destination_room").forGetter(MirrorRoute::destinationRoomIndex)
+        ).apply(i, MirrorRoute::new));
+
+        public BlockPos sourceBlockPos() {
+            return BlockPos.of(sourceMirrorPos);
+        }
+    }
+
+    /** Persisted breadcrumb stack for nested Mirror World travel. */
+    public static class MirrorWorldState {
+        public final List<MirrorRoute> routes = new ArrayList<>();
+
+        public MirrorWorldState() {}
+
+        private MirrorWorldState(List<MirrorRoute> routes) {
+            this.routes.addAll(routes);
+        }
+
+        public MirrorWorldState copy() {
+            return new MirrorWorldState(routes);
+        }
+
+        public static final Codec<MirrorWorldState> CODEC = RecordCodecBuilder.create(i -> i.group(
+                MirrorRoute.CODEC.listOf().fieldOf("routes").forGetter(s -> s.routes)
+        ).apply(i, MirrorWorldState::new));
+    }
+
+    /** Separate mortal and dream-side inventories/vitals used while spirit walking. */
+    public static class DreamStorageState {
+        public String overworldInventorySnbt = "";
+        public String spiritInventorySnbt = "";
+        public float overworldHealth = 20f;
+        public int overworldFood = 20;
+        public float overworldSat = 5f;
+        public float spiritHealth = 20f;
+        public int spiritFood = 20;
+        public float spiritSat = 5f;
+        public boolean spiritVitalsInitialized = false;
+
+        public DreamStorageState() {}
+
+        private DreamStorageState(String overworldInventorySnbt, String spiritInventorySnbt,
+                                  float overworldHealth, int overworldFood, float overworldSat,
+                                  float spiritHealth, int spiritFood, float spiritSat,
+                                  boolean spiritVitalsInitialized) {
+            this.overworldInventorySnbt = overworldInventorySnbt == null ? "" : overworldInventorySnbt;
+            this.spiritInventorySnbt = spiritInventorySnbt == null ? "" : spiritInventorySnbt;
+            this.overworldHealth = Math.max(1f, overworldHealth);
+            this.overworldFood = Math.clamp(overworldFood, 0, 20);
+            this.overworldSat = Math.max(0f, overworldSat);
+            this.spiritHealth = Math.max(1f, spiritHealth);
+            this.spiritFood = Math.clamp(spiritFood, 0, 20);
+            this.spiritSat = Math.max(0f, spiritSat);
+            this.spiritVitalsInitialized = spiritVitalsInitialized;
+        }
+
+        public DreamStorageState copy() {
+            return new DreamStorageState(overworldInventorySnbt, spiritInventorySnbt,
+                    overworldHealth, overworldFood, overworldSat,
+                    spiritHealth, spiritFood, spiritSat, spiritVitalsInitialized);
+        }
+
+        public static final Codec<DreamStorageState> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.STRING.fieldOf("overworld_inventory").forGetter(s -> s.overworldInventorySnbt),
+                Codec.STRING.fieldOf("spirit_inventory").forGetter(s -> s.spiritInventorySnbt),
+                Codec.FLOAT.fieldOf("overworld_health").forGetter(s -> s.overworldHealth),
+                Codec.INT.fieldOf("overworld_food").forGetter(s -> s.overworldFood),
+                Codec.FLOAT.fieldOf("overworld_saturation").forGetter(s -> s.overworldSat),
+                Codec.FLOAT.fieldOf("spirit_health").forGetter(s -> s.spiritHealth),
+                Codec.INT.fieldOf("spirit_food").forGetter(s -> s.spiritFood),
+                Codec.FLOAT.fieldOf("spirit_saturation").forGetter(s -> s.spiritSat),
+                Codec.BOOL.fieldOf("spirit_vitals_initialized").forGetter(s -> s.spiritVitalsInitialized)
+        ).apply(i, DreamStorageState::new));
+    }
+
+    /** Nested record for Spirit World and cross-dimension transit state. */
     public static class SpiritWorldState {
         public boolean isDream = false;
-        public String inventorySnbt = "";
-        public float savedHealth = 20f;
-        public int savedFood = 20;
-        public float savedSat = 5f;
+        public DreamStorageState dreamStorage = new DreamStorageState();
         public String corpseUUID = "";
         public boolean manifestedGhost = false;
         public int manifestationTime = 0;
         public boolean manifestationSkipTick = false;
-        public long manifestationReturnPos = Long.MIN_VALUE;
         public int wakingNightmareLevel = 0;
         public boolean otherwhereHearthTraveler = false;
+        public long tormentReturnPos = Long.MIN_VALUE;
+        public String tormentReturnDimension = "";
+        public String tormentSession = "";
+        public MirrorWorldState mirrorWorld = new MirrorWorldState();
 
         public SpiritWorldState() {}
 
-        private SpiritWorldState(boolean isDream, String inventorySnbt,
-                                 float savedHealth, int savedFood, float savedSat,
+        private SpiritWorldState(boolean isDream, DreamStorageState dreamStorage,
                                  String corpseUUID, boolean manifestedGhost,
                                  int manifestationTime, boolean manifestationSkipTick,
-                                 long manifestationReturnPos, int wakingNightmareLevel,
-                                 boolean otherwhereHearthTraveler) {
+                                  int wakingNightmareLevel,
+                                  boolean otherwhereHearthTraveler, long tormentReturnPos,
+                                  String tormentReturnDimension, String tormentSession,
+                                  MirrorWorldState mirrorWorld) {
             this.isDream = isDream;
-            this.inventorySnbt = inventorySnbt;
-            this.savedHealth = savedHealth;
-            this.savedFood = savedFood;
-            this.savedSat = savedSat;
+            this.dreamStorage = dreamStorage == null ? new DreamStorageState() : dreamStorage.copy();
             this.corpseUUID = corpseUUID == null ? "" : corpseUUID;
             this.manifestedGhost = manifestedGhost;
             this.manifestationTime = Math.max(0, manifestationTime);
             this.manifestationSkipTick = manifestationSkipTick;
-            this.manifestationReturnPos = manifestationReturnPos;
             this.wakingNightmareLevel = Math.max(0, wakingNightmareLevel);
             this.otherwhereHearthTraveler = otherwhereHearthTraveler;
+            this.tormentReturnPos = tormentReturnPos;
+            this.tormentReturnDimension = tormentReturnDimension == null ? "" : tormentReturnDimension;
+            this.tormentSession = tormentSession == null ? "" : tormentSession;
+            this.mirrorWorld = mirrorWorld == null ? new MirrorWorldState() : mirrorWorld.copy();
         }
 
         public SpiritWorldState copy() {
             return new SpiritWorldState(
                     isDream,
-                    inventorySnbt,
-                    savedHealth,
-                    savedFood,
-                    savedSat,
+                    dreamStorage,
                     corpseUUID,
                     manifestedGhost,
                     manifestationTime,
                     manifestationSkipTick,
-                    manifestationReturnPos,
                     wakingNightmareLevel,
-                    otherwhereHearthTraveler);
+                    otherwhereHearthTraveler,
+                    tormentReturnPos,
+                    tormentReturnDimension,
+                    tormentSession,
+                    mirrorWorld);
         }
 
         public static final Codec<SpiritWorldState> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.BOOL.optionalFieldOf("is_dream", false).forGetter(s -> s.isDream),
-            Codec.STRING.optionalFieldOf("inventory_snbt", "").forGetter(s -> s.inventorySnbt),
-            Codec.FLOAT.optionalFieldOf("saved_health", 20f).forGetter(s -> s.savedHealth),
-            Codec.INT.optionalFieldOf("saved_food", 20).forGetter(s -> s.savedFood),
-            Codec.FLOAT.optionalFieldOf("saved_sat", 5f).forGetter(s -> s.savedSat),
+            DreamStorageState.CODEC.fieldOf("dream_storage").forGetter(s -> s.dreamStorage),
             Codec.STRING.optionalFieldOf("corpse_uuid", "").forGetter(s -> s.corpseUUID),
             Codec.BOOL.optionalFieldOf("manifested_ghost", false).forGetter(s -> s.manifestedGhost),
             Codec.INT.optionalFieldOf("manifest_time", 0).forGetter(s -> s.manifestationTime),
             Codec.BOOL.optionalFieldOf("manifest_skip_tick", false).forGetter(s -> s.manifestationSkipTick),
-            Codec.LONG.optionalFieldOf("manifest_return_pos", Long.MIN_VALUE).forGetter(s -> s.manifestationReturnPos),
             Codec.INT.optionalFieldOf("waking_nightmare_level", 0).forGetter(s -> s.wakingNightmareLevel),
             Codec.BOOL.optionalFieldOf("otherwhere_hearth_traveler", false)
-                    .forGetter(s -> s.otherwhereHearthTraveler)
+                    .forGetter(s -> s.otherwhereHearthTraveler),
+            Codec.LONG.optionalFieldOf("torment_return_pos", Long.MIN_VALUE)
+                    .forGetter(s -> s.tormentReturnPos),
+            Codec.STRING.optionalFieldOf("torment_return_dim", "")
+                    .forGetter(s -> s.tormentReturnDimension),
+            Codec.STRING.optionalFieldOf("torment_session", "")
+                    .forGetter(s -> s.tormentSession),
+            MirrorWorldState.CODEC.fieldOf("mirror_world").forGetter(s -> s.mirrorWorld)
         ).apply(i, SpiritWorldState::new));
     }
 
@@ -471,7 +557,9 @@ public class WitcheryPlayerData {
     public boolean isInSpiritWorld() { return inSpiritWorld; }
     public boolean isSpiritWorldDream() { return sw.isDream; }
     public boolean isOtherwhereHearthTraveler() { return sw.otherwhereHearthTraveler; }
-    public String getSavedInventorySnbt() { return sw.inventorySnbt; }
+    public String getSavedInventorySnbt() { return sw.dreamStorage.overworldInventorySnbt; }
+    public String getOverworldInventorySnbt() { return sw.dreamStorage.overworldInventorySnbt; }
+    public String getSpiritInventorySnbt() { return sw.dreamStorage.spiritInventorySnbt; }
 
     public void setReturnPos(BlockPos pos, ResourceKey<Level> dimension) {
         this.returnPos = pos.asLong();
@@ -483,13 +571,88 @@ public class WitcheryPlayerData {
         this.returnDimension = "";
     }
 
+    public Optional<BlockPos> getTormentReturnPos() {
+        return sw.tormentReturnPos == Long.MIN_VALUE
+                ? Optional.empty() : Optional.of(BlockPos.of(sw.tormentReturnPos));
+    }
+
+    public String getTormentReturnDimension() {
+        return sw.tormentReturnDimension;
+    }
+
+    public Optional<UUID> getTormentSession() {
+        if (sw.tormentSession.isBlank()) return Optional.empty();
+        try {
+            return Optional.of(UUID.fromString(sw.tormentSession));
+        } catch (IllegalArgumentException ignored) {
+            return Optional.empty();
+        }
+    }
+
+    public void setTormentReturn(BlockPos pos, ResourceKey<Level> dimension, UUID session) {
+        sw.tormentReturnPos = pos.asLong();
+        sw.tormentReturnDimension = dimension.identifier().toString();
+        sw.tormentSession = session == null ? "" : session.toString();
+    }
+
+    public void setTormentSession(UUID session) {
+        sw.tormentSession = session == null ? "" : session.toString();
+    }
+
+    public void clearTormentReturn() {
+        sw.tormentReturnPos = Long.MIN_VALUE;
+        sw.tormentReturnDimension = "";
+        sw.tormentSession = "";
+    }
+
+    public int getMirrorRouteDepth() {
+        return sw.mirrorWorld.routes.size();
+    }
+
+    public Optional<MirrorRoute> getCurrentMirrorRoute() {
+        List<MirrorRoute> routes = sw.mirrorWorld.routes;
+        return routes.isEmpty() ? Optional.empty() : Optional.of(routes.getLast());
+    }
+
+    public List<MirrorRoute> getMirrorRoutes() {
+        return List.copyOf(sw.mirrorWorld.routes);
+    }
+
+    public void pushMirrorRoute(BlockPos sourceMirror, ResourceKey<Level> sourceDimension,
+                                int destinationRoomIndex) {
+        MirrorRoute route = new MirrorRoute(
+                sourceDimension.identifier().toString(), sourceMirror.asLong(), destinationRoomIndex);
+        if (getCurrentMirrorRoute().filter(route::equals).isEmpty()) {
+            sw.mirrorWorld.routes.add(route);
+        }
+    }
+
+    public Optional<MirrorRoute> popMirrorRoute() {
+        return sw.mirrorWorld.routes.isEmpty()
+                ? Optional.empty() : Optional.of(sw.mirrorWorld.routes.removeLast());
+    }
+
+    public void clearMirrorRoutes() {
+        sw.mirrorWorld.routes.clear();
+    }
+
     public void setInSpiritWorld(boolean v) { this.inSpiritWorld = v; }
     public void setSpiritWorldIsDream(boolean v) { sw.isDream = v; }
     public void setOtherwhereHearthTraveler(boolean value) { sw.otherwhereHearthTraveler = value; }
-    public void setSavedInventorySnbt(String snbt) { sw.inventorySnbt = snbt == null ? "" : snbt; }
-    public float getSavedHealth() { return sw.savedHealth; }
-    public int getSavedFoodLevel() { return sw.savedFood; }
-    public float getSavedSaturation() { return sw.savedSat; }
+    public void setSavedInventorySnbt(String snbt) { setOverworldInventorySnbt(snbt); }
+    public void setOverworldInventorySnbt(String snbt) {
+        sw.dreamStorage.overworldInventorySnbt = snbt == null ? "" : snbt;
+    }
+    public void setSpiritInventorySnbt(String snbt) {
+        sw.dreamStorage.spiritInventorySnbt = snbt == null ? "" : snbt;
+    }
+    public float getSavedHealth() { return sw.dreamStorage.overworldHealth; }
+    public int getSavedFoodLevel() { return sw.dreamStorage.overworldFood; }
+    public float getSavedSaturation() { return sw.dreamStorage.overworldSat; }
+    public float getSpiritHealth() { return sw.dreamStorage.spiritHealth; }
+    public int getSpiritFoodLevel() { return sw.dreamStorage.spiritFood; }
+    public float getSpiritSaturation() { return sw.dreamStorage.spiritSat; }
+    public boolean hasSpiritVitals() { return sw.dreamStorage.spiritVitalsInitialized; }
 
     public Optional<UUID> getCorpseUUID() {
         if (sw.corpseUUID.isEmpty()) return Optional.empty();
@@ -506,26 +669,27 @@ public class WitcheryPlayerData {
     public boolean shouldSkipManifestationTick() { return sw.manifestationSkipTick; }
     public void setSkipManifestationTick(boolean v) { sw.manifestationSkipTick = v; }
 
-    public Optional<BlockPos> getManifestationReturnPos() {
-        if (sw.manifestationReturnPos == Long.MIN_VALUE) return Optional.empty();
-        return Optional.of(BlockPos.of(sw.manifestationReturnPos));
-    }
-
-    public void setManifestationReturnPos(BlockPos pos) {
-        sw.manifestationReturnPos = pos == null ? Long.MIN_VALUE : pos.asLong();
-    }
-
     public void clearManifestationState() {
-        sw.manifestedGhost = false;
+        clearManifestedGhostState();
         sw.manifestationTime = 0;
+    }
+
+    public void clearManifestedGhostState() {
+        sw.manifestedGhost = false;
         sw.manifestationSkipTick = false;
-        sw.manifestationReturnPos = Long.MIN_VALUE;
     }
 
     public void saveSpiritWorldVitals(float health, int food, float saturation) {
-        sw.savedHealth = Math.max(1f, health);
-        sw.savedFood = Math.clamp(food, 0, 20);
-        sw.savedSat = Math.max(0f, saturation);
+        sw.dreamStorage.overworldHealth = Math.max(1f, health);
+        sw.dreamStorage.overworldFood = Math.clamp(food, 0, 20);
+        sw.dreamStorage.overworldSat = Math.max(0f, saturation);
+    }
+
+    public void saveSpiritVitals(float health, int food, float saturation) {
+        sw.dreamStorage.spiritHealth = Math.max(1f, health);
+        sw.dreamStorage.spiritFood = Math.clamp(food, 0, 20);
+        sw.dreamStorage.spiritSat = Math.max(0f, saturation);
+        sw.dreamStorage.spiritVitalsInitialized = true;
     }
 
     public String getCreaturePowerType() { return creaturePowerType; }
@@ -599,7 +763,7 @@ public class WitcheryPlayerData {
     public int getWakingNightmareLevel() { return sw.wakingNightmareLevel; }
     public boolean hasWakingNightmare() { return sw.wakingNightmareLevel > 0; }
     public void setWakingNightmareLevel(int level) { sw.wakingNightmareLevel = Math.max(0, level); }
-    public boolean isNightmare() { return !sw.isDream; }
+    public boolean isNightmare() { return inSpiritWorld && !sw.isDream; }
     public long getLastNightmareKillGameTime() { return lastNightmareKillGameTime; }
     public void setLastNightmareKillGameTime(long t) { this.lastNightmareKillGameTime = t; }
     public long getWitchHunterTriggerGameTime() { return witchHunterTriggerGameTime; }

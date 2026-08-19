@@ -239,6 +239,10 @@ public class WitcheryClient {
         // The salt line reuses the redstone-dust models; tint their (red) dust white so it reads as salt.
         event.register((state, level, pos, tintIndex) -> tintIndex == 0 ? 0xFFFFFF : -1,
                 WitcheryBlocks.SALT_LINE.get());
+        // Source BlockTormentPortal multiplies its animated portal texture by 0xFF0022.
+        event.register((state, level, pos, tintIndex) -> tintIndex == 0
+                        ? com.emoniph.witchery.world.TormentAtmosphere.PORTAL_RGB : -1,
+                WitcheryBlocks.TORMENT_PORTAL.get());
     }
 
     public static void registerItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
@@ -546,6 +550,7 @@ public class WitcheryClient {
         event.registerEntityRenderer(WitcheryEntities.FLYING_MONKEY.get(),   FlyingMonkeyRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.CORPSE.get(),          CorpseRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.REFLECTION.get(),      ReflectionRenderer::new);
+        event.registerEntityRenderer(WitcheryEntities.MIRROR_DECOY.get(),    com.emoniph.witchery.client.renderer.MirrorDecoyRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.MIRROR_FACE.get(),     MirrorFaceRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.ELLE.get(),            ElleRenderer::new);
         event.registerEntityRenderer(WitcheryEntities.LILITH.get(),          LilithRenderer::new);

@@ -15,12 +15,10 @@ import com.emoniph.witchery.blocks.FumeFunnelBlock;
 import com.emoniph.witchery.blocks.KettleBlock;
 import com.emoniph.witchery.blocks.PlacedItemBlock;
 import com.emoniph.witchery.blocks.SpinningWheelBlock;
-import com.emoniph.witchery.blocks.TormentPortalBlock;
 import com.emoniph.witchery.blocks.WickerBundleBlock;
 import com.emoniph.witchery.blocks.WitchesOvenBlock;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.blocks.entity.PlacedItemBlockEntity;
-import com.emoniph.witchery.blocks.entity.RefillingChestBlockEntity;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.CovenWitchEntity;
@@ -32,10 +30,14 @@ import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
+import com.emoniph.witchery.spiritworld.SpiritLifecycleAudit;
+import com.emoniph.witchery.world.TormentCertification;
 import com.emoniph.witchery.world.TormentHelper;
+import com.emoniph.witchery.world.MirrorWorldCertification;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.ritual.RitualCircleDetector;
 import com.emoniph.witchery.ritual.RitualExecutor;
+import com.emoniph.witchery.ritual.OtherwhereHearthTransposition;
 import com.emoniph.witchery.predictions.Predictions;
 import com.emoniph.witchery.world.WitcheryStructureData;
 import com.emoniph.witchery.worldgen.WitchWellPiece;
@@ -62,6 +64,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Items;
@@ -69,7 +72,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -322,8 +324,14 @@ public class WitcheryCommands {
                 .then(Commands.literal("verify")
                         .then(Commands.literal("torment")
                                 .executes(ctx -> verifyTorment(ctx.getSource())))
+                        .then(Commands.literal("mirrorworld")
+                                .executes(ctx -> verifyMirrorWorld(ctx.getSource())))
                         .then(Commands.literal("spiritworld")
-                                .executes(ctx -> verifySpiritWorld(ctx.getSource()))))
+                                .executes(ctx -> verifySpiritWorld(ctx.getSource())))
+                        .then(Commands.literal("spirit_lifecycle")
+                                .executes(ctx -> verifySpiritLifecycle(ctx.getSource())))
+                        .then(Commands.literal("otherwhere_hearth")
+                                .executes(ctx -> verifyOtherwhereHearth(ctx.getSource()))))
 
                 .then(Commands.literal("debug")
                         .then(Commands.literal("brew")
@@ -410,6 +418,8 @@ public class WitcheryCommands {
                                 .executes(ctx -> setupStations(ctx.getSource())))
                         .then(Commands.literal("rite")
                                 .executes(ctx -> setupRite(ctx.getSource())))
+                        .then(Commands.literal("otherwhere_hearth")
+                                .executes(ctx -> setupOtherwhereHearth(ctx.getSource())))
                         .then(Commands.literal("cursed_well")
                                 .executes(ctx -> setupCursedWell(ctx.getSource())))
                         .then(Commands.literal("vanishing_hut")
@@ -1271,13 +1281,13 @@ public class WitcheryCommands {
         }
 
         if (dim.equals(WitcheryDimensions.MIRROR_WORLD)) {
-            // Mirror World is only 16 blocks tall (y=0-15). Scanning from y=200 finds the
-            // CEILING (y=15) first because y=16+ are out-of-range air, placing the player
-            // on top of all mirror blocks (y=16). Instead, snap to the chunk's guaranteed-open
-            // interior centre (local 8,8 is always air) and use the known floor height.
             int cx = referencePos.getX() >> 4;
             int cz = referencePos.getZ() >> 4;
-            return new double[]{ cx * 16 + 8.5, com.emoniph.witchery.world.MirrorHelper.ROOM_FLOOR_Y, cz * 16 + 8.5 };
+            int sectionY = Math.clamp(Math.floorDiv(referencePos.getY(), 16), 0,
+                    com.emoniph.witchery.world.MirrorWorldLayout.ALLOCATED_VERTICAL_ROOMS - 1);
+            return new double[]{ cx * 16 + 8.5,
+                    com.emoniph.witchery.world.MirrorWorldLayout.roomFloorY(sectionY),
+                    cz * 16 + 8.5 };
         }
 
         return new double[]{ 0.5, 64, 0.5 };
@@ -1629,22 +1639,69 @@ public class WitcheryCommands {
             return 0;
         }
 
-        loadTormentFootprintChunks(torment);
-
         java.util.List<String> failures = new java.util.ArrayList<>();
         verifyTormentDimensionSettings(torment, failures);
-        for (int level = 0; level < TormentHelper.NUM_LEVELS; level++) {
-            verifyTormentLevel(torment, level, failures);
+        TormentCertification.Report report = TormentCertification.audit(torment);
+        failures.addAll(report.failures());
+
+        for (TormentCertification.LevelReport level : report.levels()) {
+            src.sendSuccess(() -> Component.literal(
+                    "Torment L" + level.level() + " fingerprint=" + level.fingerprint()
+                            + " columns=" + level.passageColumns() + " passage/"
+                            + level.wallColumns() + " wall"
+                            + " chests=" + level.filledChests() + "/" + level.foundChests() + " filled"
+                            + " route=" + (level.entryToPortalRoute() ? "pass" : "FAIL")), false);
         }
 
         if (failures.isEmpty()) {
             src.sendSuccess(() -> Component.literal(
-                    "Torment verification passed for all 6 levels: legacy Force/Bedrock maze, portal chamber, 3 chest rooms, and red navigable atmosphere look correct."),
+                    "Torment certification passed for all 6 levels: " + report.chestCount()
+                            + " Refilling Chests, exact Force/Torment Stone geometry, portal chambers,"
+                            + " entry routes, and dimension atmosphere are correct."),
                     false);
             return 1;
         }
 
         src.sendFailure(Component.literal("Torment verification failed with " + failures.size() + " mismatch(es)."));
+        for (String failure : failures) {
+            src.sendFailure(Component.literal(" - " + failure));
+        }
+        return 0;
+    }
+
+    /** Server-side room geometry, ownership, portal-link, and guardian audit. */
+    private static int verifyMirrorWorld(CommandSourceStack src) {
+        ServerLevel mirrorWorld = src.getServer().getLevel(WitcheryDimensions.MIRROR_WORLD);
+        if (mirrorWorld == null) {
+            src.sendFailure(Component.literal("Mirror World dimension is not loaded."));
+            return 0;
+        }
+
+        java.util.List<String> failures = new java.util.ArrayList<>();
+        verifyMirrorWorldDimensionSettings(mirrorWorld, failures);
+        MirrorWorldCertification.Report report = MirrorWorldCertification.audit(mirrorWorld);
+        failures.addAll(report.failures());
+
+        for (MirrorWorldCertification.RoomReport room : report.rooms()) {
+            String label = room.index() < 0 ? "probe" : "room " + room.index();
+            src.sendSuccess(() -> Component.literal(
+                    "Mirror " + label + " chunk=" + room.chunkX() + "," + room.chunkZ()
+                            + " blocks=" + room.checkedBlocks()
+                            + " guardians=" + room.guardians()
+                            + " state=" + (room.cleared() ? "cleared" : "uncleared")
+                            + " links=" + (room.linksValid() ? "pass" : "FAIL")), false);
+        }
+
+        if (failures.isEmpty()) {
+            src.sendSuccess(() -> Component.literal(
+                    "Mirror World certification passed: " + report.allocatedRoomCount()
+                            + " allocated room(s), deterministic 9x9x9 geometry, unique source links,"
+                            + " exact guardian ownership, and consistent cleared state."), false);
+            return 1;
+        }
+
+        src.sendFailure(Component.literal(
+                "Mirror World verification failed with " + failures.size() + " mismatch(es)."));
         for (String failure : failures) {
             src.sendFailure(Component.literal(" - " + failure));
         }
@@ -1661,11 +1718,11 @@ public class WitcheryCommands {
 
         java.util.List<String> failures = new java.util.ArrayList<>();
         verifySpiritWorldDimensionSettings(spiritWorld, failures);
-        verifySpiritWorldBiomeData(spiritWorld, failures);
+        verifySpiritWorldResourceData(spiritWorld, failures);
 
         if (failures.isEmpty()) {
             src.sendSuccess(() -> Component.literal(
-                    "Spirit World verification passed: fixed biome, expanded dream wildlife, native Spirit spawns, and vegetation/cotton feature wiring are loaded."),
+                    "Spirit World verification passed: mirrored Overworld biomes, Spirit-only cotton generation, and native Spirit spawns are loaded."),
                     false);
             return 1;
         }
@@ -1677,16 +1734,112 @@ public class WitcheryCommands {
         return 0;
     }
 
-    private static void loadTormentFootprintChunks(ServerLevel torment) {
-        int minChunkX = Math.floorDiv(TormentHelper.STRUCTURE_MIN_X, 16);
-        int maxChunkX = Math.floorDiv(TormentHelper.STRUCTURE_MAX_X, 16);
-        int minChunkZ = Math.floorDiv(TormentHelper.STRUCTURE_MIN_Z, 16);
-        int maxChunkZ = Math.floorDiv(TormentHelper.STRUCTURE_MAX_Z, 16);
-        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
-            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
-                torment.getChunk(chunkX, chunkZ);
-            }
+    /** Dry-run the complete Otherwhere Hearth preflight without spending power or moving anything. */
+    private static int verifyOtherwhereHearth(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        if (!(player.level() instanceof ServerLevel level)) {
+            return 0;
         }
+        var kettle = findNearbyKettle(player, level, 16);
+        if (kettle == null) {
+            src.sendFailure(Component.literal(
+                    "No Kettle found within 16 blocks. Stand beside the hearth and retry."));
+            return 0;
+        }
+
+        OtherwhereHearthTransposition.Inspection inspection =
+                OtherwhereHearthTransposition.inspect(player, level, kettle.getBlockPos());
+        String owner = inspection.kettleOwner().isBlank() ? "unbound" : inspection.kettleOwner();
+        src.sendSuccess(() -> Component.literal(
+                "Otherwhere Hearth @ " + coordinates(kettle.getBlockPos())
+                        + "\n  volume=" + coordinates(inspection.volume().min())
+                        + " to " + coordinates(inspection.volume().max())
+                        + "\n  route=" + inspection.sourceDimension() + " -> "
+                        + inspection.destinationDimension()
+                        + "\n  journal=" + inspection.journal()), false);
+        src.sendSuccess(() -> Component.literal(
+                "  kettle=" + (inspection.kettleBound() ? "bound" : "unbound")
+                        + " owner=" + owner
+                        + " ownerMatches=" + inspection.ownerMatches()
+                        + "\n  rings=medium-ritual:" + inspection.mediumRitualVariant()
+                        + " large-otherwhere:" + inspection.largeOtherwhereVariant()
+                        + " coven=" + inspection.covenSize() + "/"
+                        + OtherwhereHearthTransposition.REQUIRED_COVEN_SIZE
+                        + "\n  altar="
+                        + (inspection.altarPos() == null ? "missing" : coordinates(inspection.altarPos()))
+                        + " valid=" + inspection.altarValid()
+                        + " power=" + inspection.altarPower() + "/" + inspection.altarCapacity()
+                        + " cost=" + inspection.powerCost()), false);
+
+        if (inspection.ready()) {
+            src.sendSuccess(() -> Component.literal(
+                    "READY: activation preflight passes. No power or world state was changed.")
+                    .withStyle(ChatFormatting.GREEN), false);
+            return 1;
+        }
+
+        src.sendFailure(Component.literal(
+                "NOT READY: " + inspection.blockers().size() + " blocker(s); dry-run changed nothing."));
+        for (String blocker : inspection.blockers()) {
+            src.sendFailure(Component.literal("  - " + blocker));
+        }
+        return 0;
+    }
+
+    /** Audit mutually exclusive dream, manifestation, and physical Hearth travel state. */
+    private static int verifySpiritLifecycle(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = src.getPlayerOrException();
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        boolean inSpiritDimension = player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD);
+        SpiritLifecycleAudit.Snapshot snapshot = new SpiritLifecycleAudit.Snapshot(
+                inSpiritDimension,
+                data.isInSpiritWorld(),
+                data.isOtherwhereHearthTraveler(),
+                data.isManifestedGhost(),
+                data.getReturnPos().isPresent(),
+                !data.getReturnDimension().isBlank(),
+                !data.getOverworldInventorySnbt().isEmpty(),
+                data.getManifestationTime());
+        List<String> violations = SpiritLifecycleAudit.violations(snapshot);
+
+        String mode = data.isOtherwhereHearthTraveler() ? "physical-hearth"
+                : data.isManifestedGhost() ? "manifested-ghost"
+                : data.isInSpiritWorld() ? (data.isSpiritWorldDream() ? "dream" : "nightmare")
+                : "awake";
+        String corpse = data.getCorpseUUID().map(uuid -> {
+            for (ServerLevel level : src.getServer().getAllLevels()) {
+                Entity entity = level.getEntity(uuid);
+                if (entity != null) {
+                    return uuid + " loaded in " + level.dimension().identifier();
+                }
+            }
+            return uuid + " not loaded";
+        }).orElse("none");
+        src.sendSuccess(() -> Component.literal(
+                "Spirit lifecycle for " + player.getScoreboardName()
+                        + "\n  mode=" + mode + " dimension=" + player.level().dimension().identifier()
+                        + "\n  dream=" + data.isInSpiritWorld()
+                        + " peaceful=" + data.isSpiritWorldDream()
+                        + " demonic=" + data.isDemonicNightmare()
+                        + " hearthTraveller=" + data.isOtherwhereHearthTraveler()
+                        + " manifested=" + data.isManifestedGhost()
+                        + "\n  wakingReturn=" + data.getReturnDimension() + " "
+                        + data.getReturnPos().map(WitcheryCommands::coordinates).orElse("none")
+                        + "\n  manifestation=" + data.getManifestationTime() + "s"
+                        + "\n  corpse=" + corpse), false);
+
+        if (violations.isEmpty()) {
+            src.sendSuccess(() -> Component.literal("CONSISTENT: lifecycle state has no contradictions.")
+                    .withStyle(ChatFormatting.GREEN), false);
+            return 1;
+        }
+        src.sendFailure(Component.literal("INCONSISTENT: " + violations.size() + " lifecycle violation(s)."));
+        for (String violation : violations) {
+            src.sendFailure(Component.literal("  - " + violation));
+        }
+        return 0;
     }
 
     private static void verifyTormentDimensionSettings(ServerLevel torment, java.util.List<String> failures) {
@@ -1703,8 +1856,8 @@ public class WitcheryCommands {
 
         JsonObject dimensionJson = readTormentDataJson(torment, "dimension_type/torment.json", failures);
         if (dimensionJson != null) {
-            if (!dimensionJson.has("fixed_time") || dimensionJson.get("fixed_time").getAsLong() != 6000L) {
-                failures.add("Torment dimension JSON fixed_time should stay 6000.");
+            if (!dimensionJson.has("fixed_time") || dimensionJson.get("fixed_time").getAsLong() != 18000L) {
+                failures.add("Torment dimension JSON fixed_time should stay 18000 so server gameplay remains nocturnal.");
             }
             if (!dimensionJson.has("effects") || !"minecraft:overworld".equals(dimensionJson.get("effects").getAsString())) {
                 failures.add("Torment dimension JSON effects should stay minecraft:overworld.");
@@ -1722,6 +1875,71 @@ public class WitcheryCommands {
                 }
                 if (!effectsJson.has("sky_color") || effectsJson.get("sky_color").getAsInt() != 13127760) {
                     failures.add("Torment biome JSON sky_color should stay 13127760.");
+                }
+            }
+        }
+    }
+
+    private static void verifyMirrorWorldDimensionSettings(ServerLevel mirrorWorld,
+                                                           java.util.List<String> failures) {
+        var type = mirrorWorld.dimensionType();
+        if (type.hasSkyLight()) {
+            failures.add("Mirror World dimension type unexpectedly has skylight.");
+        }
+        if (!type.hasCeiling()) {
+            failures.add("Mirror World dimension type lost its ceiling.");
+        }
+        if (Math.abs(type.ambientLight() - 0.1F) > 0.0001F) {
+            failures.add("Mirror World ambient light should be 0.1 but was " + type.ambientLight() + ".");
+        }
+        if (type.minY() != 0 || type.height() != 16 || type.logicalHeight() != 16) {
+            failures.add("Mirror World vertical bounds should be minY=0, height=16, logicalHeight=16.");
+        }
+
+        JsonObject typeJson = readWitcheryDataJson(
+                mirrorWorld, "dimension_type/mirror_world.json", "Mirror World", failures);
+        if (typeJson != null) {
+            verifyJsonInt(typeJson, "fixed_time", 18000, "Mirror World fixed_time", failures);
+            verifyJsonInt(typeJson, "min_y", 0, "Mirror World min_y", failures);
+            verifyJsonInt(typeJson, "height", 16, "Mirror World height", failures);
+            verifyJsonInt(typeJson, "logical_height", 16, "Mirror World logical_height", failures);
+            if (!typeJson.has("effects")
+                    || !"minecraft:the_end".equals(typeJson.get("effects").getAsString())) {
+                failures.add("Mirror World dimension effects should stay minecraft:the_end.");
+            }
+        }
+
+        JsonObject dimensionJson = readWitcheryDataJson(
+                mirrorWorld, "dimension/mirror_world.json", "Mirror World", failures);
+        if (dimensionJson != null) {
+            if (!dimensionJson.has("type")
+                    || !"witchery:mirror_world".equals(dimensionJson.get("type").getAsString())) {
+                failures.add("Mirror World dimension should use witchery:mirror_world type.");
+            }
+            JsonObject generator = dimensionJson.getAsJsonObject("generator");
+            if (generator == null || !generator.has("type")
+                    || !"witchery:mirror_world".equals(generator.get("type").getAsString())) {
+                failures.add("Mirror World dimension should use witchery:mirror_world generator.");
+            } else {
+                JsonObject biomeSource = generator.getAsJsonObject("biome_source");
+                if (biomeSource == null || !biomeSource.has("biome")
+                        || !"witchery:mirror_world".equals(biomeSource.get("biome").getAsString())) {
+                    failures.add("Mirror World generator should use the featureless witchery:mirror_world biome.");
+                }
+            }
+        }
+
+        JsonObject biomeJson = readWitcheryDataJson(
+                mirrorWorld, "worldgen/biome/mirror_world.json", "Mirror World", failures);
+        if (biomeJson != null) {
+            if (!biomeJson.has("features")) {
+                failures.add("Mirror World biome is missing its empty feature steps.");
+            } else {
+                for (var step : biomeJson.getAsJsonArray("features")) {
+                    if (!step.isJsonArray() || !step.getAsJsonArray().isEmpty()) {
+                        failures.add("Mirror World biome must stay featureless so the Void start platform cannot overwrite rooms.");
+                        break;
+                    }
                 }
             }
         }
@@ -1766,80 +1984,147 @@ public class WitcheryCommands {
                 }
                 JsonObject biomeSourceJson = generatorJson.getAsJsonObject("biome_source");
                 if (biomeSourceJson == null) {
-                    failures.add("Spirit World generator is missing its fixed biome source.");
-                } else if (!biomeSourceJson.has("biome") || !"witchery:spirit_world".equals(biomeSourceJson.get("biome").getAsString())) {
-                    failures.add("Spirit World generator should use the fixed witchery:spirit_world biome.");
+                    failures.add("Spirit World generator is missing its mirrored biome source.");
+                } else {
+                    if (!biomeSourceJson.has("type")
+                            || !"minecraft:multi_noise".equals(biomeSourceJson.get("type").getAsString())) {
+                        failures.add("Spirit World biome source should use minecraft:multi_noise.");
+                    }
+                    if (!biomeSourceJson.has("preset")
+                            || !"minecraft:overworld".equals(biomeSourceJson.get("preset").getAsString())) {
+                        failures.add("Spirit World biome source should mirror the minecraft:overworld preset.");
+                    }
                 }
             }
         }
     }
 
-    private static void verifySpiritWorldBiomeData(ServerLevel spiritWorld, java.util.List<String> failures) {
-        JsonObject biomeJson = readWitcheryDataJson(spiritWorld, "worldgen/biome/spirit_world.json", "Spirit World", failures);
-        if (biomeJson == null) {
-            return;
+    private static void verifySpiritWorldResourceData(ServerLevel spiritWorld,
+                                                      java.util.List<String> failures) {
+        JsonObject cottonPlacement = readWitcheryDataJson(
+                spiritWorld, "worldgen/placed_feature/wispy_cotton.json", "Spirit World", failures);
+        if (cottonPlacement != null) {
+            if (!cottonPlacement.has("feature")
+                    || !"witchery:wispy_cotton".equals(cottonPlacement.get("feature").getAsString())) {
+                failures.add("Wispy Cotton placement should use witchery:wispy_cotton.");
+            }
+            boolean hasSpiritFilter = false;
+            boolean hasBiomeFilter = false;
+            boolean hasHeightmap = false;
+            java.util.List<String> placementOrder = new java.util.ArrayList<>();
+            if (cottonPlacement.has("placement") && cottonPlacement.get("placement").isJsonArray()) {
+                for (var element : cottonPlacement.getAsJsonArray("placement")) {
+                    if (!element.isJsonObject() || !element.getAsJsonObject().has("type")) {
+                        continue;
+                    }
+                    String type = element.getAsJsonObject().get("type").getAsString();
+                    placementOrder.add(type);
+                    hasSpiritFilter |= "witchery:spirit_world".equals(type);
+                    hasBiomeFilter |= "minecraft:biome".equals(type);
+                    hasHeightmap |= "minecraft:heightmap".equals(type);
+                }
+            }
+            if (!hasSpiritFilter) {
+                failures.add("Wispy Cotton placement is missing the Spirit-only 75% chunk filter.");
+            }
+            if (!hasBiomeFilter) {
+                failures.add("Wispy Cotton placement is missing its biome filter.");
+            }
+            if (placementOrder.isEmpty()
+                    || !"witchery:spirit_world".equals(placementOrder.get(0))
+                    || placementOrder.contains("minecraft:in_square")) {
+                failures.add("Wispy Cotton must keep its chunk roll and randomized patch seed in the source-order modifier.");
+            }
+            if (hasHeightmap) {
+                failures.add("Wispy Cotton must use the source random vertical seed instead of a heightmap placement.");
+            }
         }
 
-        JsonObject effectsJson = biomeJson.getAsJsonObject("effects");
-        if (effectsJson == null) {
-            failures.add("Spirit World biome JSON is missing its effects object.");
-        } else {
-            verifyJsonInt(effectsJson, "fog_color", 13382553, "Spirit World biome fog_color", failures);
-            verifyJsonInt(effectsJson, "sky_color", 13382553, "Spirit World biome sky_color", failures);
-            verifyJsonInt(effectsJson, "grass_color", 9027656, "Spirit World biome grass_color", failures);
-            verifyJsonInt(effectsJson, "foliage_color", 8371292, "Spirit World biome foliage_color", failures);
+        JsonObject cottonModifier = readWitcheryDataJson(
+                spiritWorld, "neoforge/biome_modifier/spirit_world_wispy_cotton.json",
+                "Spirit World", failures);
+        if (cottonModifier != null) {
+            verifyJsonString(cottonModifier, "type", "neoforge:add_features",
+                    "Spirit World cotton biome modifier type", failures);
+            verifyJsonString(cottonModifier, "biomes", "#witchery:wispy_cotton_spawns",
+                    "Spirit World cotton biome tag", failures);
+            verifyJsonString(cottonModifier, "features", "witchery:wispy_cotton",
+                    "Spirit World cotton feature", failures);
+            verifyJsonString(cottonModifier, "step", "vegetal_decoration",
+                    "Spirit World cotton generation step", failures);
         }
 
-        for (String type : java.util.List.of(
-                "minecraft:armadillo",
-                "minecraft:bee",
-                "minecraft:camel",
-                "minecraft:cat",
-                "minecraft:chicken",
-                "minecraft:cow",
-                "minecraft:donkey",
-                "minecraft:fox",
-                "minecraft:frog",
-                "minecraft:goat",
-                "minecraft:horse",
-                "minecraft:llama",
-                "minecraft:mooshroom",
-                "minecraft:mule",
-                "minecraft:ocelot",
-                "minecraft:panda",
-                "minecraft:parrot",
-                "minecraft:pig",
-                "minecraft:polar_bear",
-                "minecraft:rabbit",
-                "minecraft:sheep",
-                "minecraft:skeleton_horse",
-                "minecraft:sniffer",
-                "minecraft:strider",
-                "minecraft:tadpole",
-                "minecraft:turtle",
-                "minecraft:wolf",
-                "minecraft:zombie_horse")) {
-            verifyBiomeSpawner(biomeJson, "creature", type, failures);
+        JsonObject cottonBiomes = readWitcheryDataJson(
+                spiritWorld, "tags/worldgen/biome/wispy_cotton_spawns.json",
+                "Spirit World", failures);
+        if (cottonBiomes != null) {
+            java.util.Set<String> included = jsonStringSet(cottonBiomes, "values");
+            java.util.Set<String> removed = jsonStringSet(cottonBiomes, "remove");
+            if (!included.equals(java.util.Set.of("#minecraft:is_overworld"))) {
+                failures.add("Wispy Cotton biomes should begin with every Overworld biome.");
+            }
+            java.util.Set<String> expectedRemoved = java.util.Set.of(
+                    "#minecraft:is_ocean", "#minecraft:is_river", "#minecraft:is_mountain",
+                    "#minecraft:is_beach", "minecraft:swamp", "minecraft:mangrove_swamp");
+            if (!removed.equals(expectedRemoved)) {
+                failures.add("Wispy Cotton biomes should exclude source-equivalent ocean, river, mountain, beach, and swamp biomes.");
+            }
         }
-        verifyBiomeSpawner(biomeJson, "ambient", "minecraft:bat", failures);
-        verifyBiomeSpawner(biomeJson, "ambient", "witchery:spirit", failures);
-        verifyBiomeSpawner(biomeJson, "water_creature", "minecraft:dolphin", failures);
-        verifyBiomeSpawner(biomeJson, "water_creature", "minecraft:squid", failures);
-        verifyBiomeSpawner(biomeJson, "water_ambient", "minecraft:cod", failures);
-        verifyBiomeSpawner(biomeJson, "water_ambient", "minecraft:pufferfish", failures);
-        verifyBiomeSpawner(biomeJson, "water_ambient", "minecraft:salmon", failures);
-        verifyBiomeSpawner(biomeJson, "water_ambient", "minecraft:tropical_fish", failures);
-        verifyBiomeSpawner(biomeJson, "underground_water_creature", "minecraft:glow_squid", failures);
-        verifyBiomeSpawner(biomeJson, "axolotls", "minecraft:axolotl", failures);
 
-        verifyBiomeFeature(biomeJson, "witchery:spirit_grass", failures);
-        verifyBiomeFeature(biomeJson, "witchery:spirit_tall_grass", failures);
-        verifyBiomeFeature(biomeJson, "witchery:spirit_mushrooms", failures);
-        verifyBiomeFeature(biomeJson, "witchery:spirit_dead_bush", failures);
-        verifyBiomeFeature(biomeJson, "witchery:spirit_tree", failures);
-        verifyBiomeFeature(biomeJson, "witchery:wispy_cotton", failures);
-        // Disturbed Cotton intentionally has no worldgen (source parity): it is only obtained by
-        // harvesting Wispy Cotton during a nightmare, and the wispy block shows its disturbed art then.
+        JsonObject cottonFeature = readWitcheryDataJson(
+                spiritWorld, "worldgen/configured_feature/wispy_cotton.json",
+                "Spirit World", failures);
+        if (cottonFeature != null) {
+            JsonObject config = cottonFeature.getAsJsonObject("config");
+            if (config == null) {
+                failures.add("Wispy Cotton configured feature is missing its random-patch configuration.");
+            } else {
+                verifyJsonInt(config, "tries", 64, "Wispy Cotton patch attempts", failures);
+            }
+            java.util.Set<String> support = configuredCottonSupport(cottonFeature);
+            java.util.Set<String> expectedSupport = java.util.Set.of(
+                    "minecraft:grass_block", "minecraft:dirt", "minecraft:coarse_dirt",
+                    "minecraft:podzol", "minecraft:farmland");
+            if (!support.equals(expectedSupport)) {
+                failures.add("Wispy Cotton worldgen support should stay limited to source-equivalent bush soils.");
+            }
+        }
+
+        JsonObject spiritModifier = readWitcheryDataJson(
+                spiritWorld, "neoforge/biome_modifier/spirit_world_spirits.json",
+                "Spirit World", failures);
+        if (spiritModifier != null) {
+            verifyJsonString(spiritModifier, "type", "neoforge:add_spawns",
+                    "Spirit spawn biome modifier type", failures);
+            verifyJsonString(spiritModifier, "biomes", "#witchery:spirit_spawns",
+                    "Spirit spawn biome tag", failures);
+            JsonObject spawner = spiritModifier.getAsJsonObject("spawners");
+            if (spawner == null) {
+                failures.add("Spirit spawn biome modifier is missing its spawner.");
+            } else {
+                verifyJsonString(spawner, "type", "witchery:spirit",
+                        "Spirit spawn entity", failures);
+                verifyJsonInt(spawner, "weight", 1, "Spirit spawn weight", failures);
+                verifyJsonInt(spawner, "minCount", 2, "Spirit spawn minimum group", failures);
+                verifyJsonInt(spawner, "maxCount", 5, "Spirit spawn maximum group", failures);
+            }
+        }
+
+        JsonObject spiritBiomes = readWitcheryDataJson(
+                spiritWorld, "tags/worldgen/biome/spirit_spawns.json",
+                "Spirit World", failures);
+        if (spiritBiomes != null) {
+            java.util.Set<String> included = jsonStringSet(spiritBiomes, "values");
+            java.util.Set<String> removed = jsonStringSet(spiritBiomes, "remove");
+            if (!included.equals(java.util.Set.of("#minecraft:is_overworld"))) {
+                failures.add("Spirit spawn biomes should begin with every Overworld biome.");
+            }
+            java.util.Set<String> expectedRemoved = java.util.Set.of(
+                    "#minecraft:is_ocean", "#minecraft:is_river", "minecraft:mushroom_fields");
+            if (!removed.equals(expectedRemoved)) {
+                failures.add("Spirit spawn biomes should exclude source-equivalent ocean, river, and mushroom biomes.");
+            }
+        }
     }
 
     private static void verifyJsonInt(JsonObject json, String key, int expected, String label, java.util.List<String> failures) {
@@ -1848,163 +2133,35 @@ public class WitcheryCommands {
         }
     }
 
-    private static void verifyBiomeSpawner(JsonObject biomeJson, String category, String type, java.util.List<String> failures) {
-        JsonObject spawnersJson = biomeJson.getAsJsonObject("spawners");
-        if (spawnersJson == null || !spawnersJson.has(category)) {
-            failures.add("Spirit World biome is missing " + category + " spawners.");
-            return;
-        }
-        for (var element : spawnersJson.getAsJsonArray(category)) {
-            if (element.isJsonObject()) {
-                JsonObject entry = element.getAsJsonObject();
-                if (entry.has("type") && type.equals(entry.get("type").getAsString())) {
-                    return;
-                }
-            }
-        }
-        failures.add("Spirit World biome is missing " + type + " in the " + category + " spawn bucket.");
-    }
-
-    private static void verifyBiomeFeature(JsonObject biomeJson, String feature, java.util.List<String> failures) {
-        if (!biomeJson.has("features")) {
-            failures.add("Spirit World biome is missing its feature step list.");
-            return;
-        }
-        for (var stepElement : biomeJson.getAsJsonArray("features")) {
-            if (!stepElement.isJsonArray()) {
-                continue;
-            }
-            for (var featureElement : stepElement.getAsJsonArray()) {
-                if (featureElement.isJsonPrimitive() && feature.equals(featureElement.getAsString())) {
-                    return;
-                }
-            }
-        }
-        failures.add("Spirit World biome is missing placed feature " + feature + ".");
-    }
-
-    private static void verifyTormentLevel(ServerLevel torment, int level, java.util.List<String> failures) {
-        int mazeY = TormentHelper.getMazeY(level);
-        int standingY = TormentHelper.getStandingY(level);
-        BlockPos entryPos = TormentHelper.getEntryPos(level);
-        BlockPos portalLower = TormentHelper.getPortalLowerPos(level);
-        long seed = torment.getSeed();
-
-        verifyStateAt(torment, new BlockPos(TormentHelper.ORIGIN_X, mazeY, TormentHelper.ORIGIN_Z),
-                state -> state.is(WitcheryBlocks.FORCE.get()),
-                "Level " + level + " must keep Force walls on the outer maze border.", failures);
-        verifyStateAt(torment, new BlockPos(TormentHelper.ORIGIN_X, mazeY + 5, TormentHelper.ORIGIN_Z),
-                state -> state.is(WitcheryBlocks.FORCE.get()),
-                "Level " + level + " must keep Force ceilings on the outer maze border.", failures);
-
-        var sampleForce = torment.getBlockState(new BlockPos(TormentHelper.ORIGIN_X, mazeY + 5, TormentHelper.ORIGIN_Z));
-        if (sampleForce.is(WitcheryBlocks.FORCE.get())) {
-            if (sampleForce.getRenderShape() != RenderShape.INVISIBLE) {
-                failures.add("Level " + level + " Force ceiling is no longer invisible.");
-            }
-            if (sampleForce.getLightBlock() != 0) {
-                failures.add("Level " + level + " Force ceiling no longer has light block 0.");
-            }
-            if (!sampleForce.propagatesSkylightDown()) {
-                failures.add("Level " + level + " Force ceiling no longer propagates skylight.");
-            }
-        }
-
-        verifyStateAt(torment, entryPos.below(),
-                state -> state.is(Blocks.BEDROCK),
-                "Level " + level + " entry foundation must be Bedrock.", failures);
-        verifyStateAt(torment, new BlockPos(entryPos.getX(), mazeY, entryPos.getZ()),
-                state -> state.is(Blocks.BEDROCK) || state.is(Blocks.MYCELIUM),
-                "Level " + level + " entry floor must be Bedrock or rare Mycelium.", failures);
-        verifyStateAt(torment, entryPos,
-                net.minecraft.world.level.block.state.BlockState::isAir,
-                "Level " + level + " entry standing space must stay open.", failures);
-        verifyStateAt(torment, entryPos.above(),
-                net.minecraft.world.level.block.state.BlockState::isAir,
-                "Level " + level + " entry headroom must stay open.", failures);
-        verifyStateAt(torment, new BlockPos(entryPos.getX(), standingY + 4, entryPos.getZ()),
-                state -> state.is(WitcheryBlocks.FORCE.get()),
-                "Level " + level + " entry lane must keep a Force ceiling.", failures);
-
-        verifyStateAt(torment, portalLower,
-                state -> state.is(WitcheryBlocks.TORMENT_PORTAL.get())
-                        && state.hasProperty(TormentPortalBlock.AXIS)
-                        && state.getValue(TormentPortalBlock.AXIS) == Direction.Axis.X,
-                "Level " + level + " portal lower block is missing from the old chamber.", failures);
-        verifyStateAt(torment, portalLower.above(),
-                state -> state.is(WitcheryBlocks.TORMENT_PORTAL.get())
-                        && state.hasProperty(TormentPortalBlock.AXIS)
-                        && state.getValue(TormentPortalBlock.AXIS) == Direction.Axis.X,
-                "Level " + level + " portal upper block is missing from the old chamber.", failures);
-        verifyStateAt(torment, portalLower.above(2),
-                state -> state.is(Blocks.BEDROCK),
-                "Level " + level + " portal top frame must be Bedrock.", failures);
-        verifyStateAt(torment, portalLower.west(),
-                state -> state.is(Blocks.BEDROCK),
-                "Level " + level + " portal west frame must be Bedrock.", failures);
-        verifyStateAt(torment, portalLower.east(),
-                state -> state.is(Blocks.BEDROCK),
-                "Level " + level + " portal east frame must be Bedrock.", failures);
-        verifyStateAt(torment, new BlockPos(TormentHelper.PORTAL_X, standingY, TormentHelper.PORTAL_Z - 3),
-                net.minecraft.world.level.block.state.BlockState::isAir,
-                "Level " + level + " portal chamber should stay open three blocks before the portal.", failures);
-        verifyStateAt(torment, new BlockPos(TormentHelper.PORTAL_X - 3, standingY, TormentHelper.PORTAL_Z - 5),
-                net.minecraft.world.level.block.state.BlockState::isAir,
-                "Level " + level + " portal chamber west side should stay open.", failures);
-        verifyStateAt(torment, new BlockPos(TormentHelper.PORTAL_X + 3, standingY, TormentHelper.PORTAL_Z - 5),
-                net.minecraft.world.level.block.state.BlockState::isAir,
-                "Level " + level + " portal chamber east side should stay open.", failures);
-
-        int totalChestCount = 0;
-        int tormentStoneCount = 0;
-        for (int x = TormentHelper.STRUCTURE_MIN_X; x <= TormentHelper.STRUCTURE_MAX_X; x++) {
-            for (int z = TormentHelper.STRUCTURE_MIN_Z; z <= TormentHelper.STRUCTURE_MAX_Z; z++) {
-                for (int y = mazeY - 1; y <= mazeY + 5; y++) {
-                    if (torment.getBlockState(new BlockPos(x, y, z)).is(WitcheryBlocks.TORMENT_STONE.get())) {
-                        tormentStoneCount++;
-                    }
-                }
-
-                if (torment.getBlockState(new BlockPos(x, mazeY, z)).is(WitcheryBlocks.REFILLING_CHEST.get())) {
-                    totalChestCount++;
-                }
-            }
-        }
-
-        verifyStateAt(torment, getTormentLeftChestPos(seed, level),
-                state -> state.is(WitcheryBlocks.REFILLING_CHEST.get()),
-                "Level " + level + " left chest room lost its Refilling Chest.", failures);
-        verifyRefillingChestBlockEntity(torment, getTormentLeftChestPos(seed, level), level, "left", failures);
-        verifyStateAt(torment, getTormentCenterChestPos(level),
-                state -> state.is(WitcheryBlocks.REFILLING_CHEST.get()),
-                "Level " + level + " center chest room lost its Refilling Chest.", failures);
-        verifyRefillingChestBlockEntity(torment, getTormentCenterChestPos(level), level, "center", failures);
-        verifyStateAt(torment, getTormentRightChestPos(seed, level),
-                state -> state.is(WitcheryBlocks.REFILLING_CHEST.get()),
-                "Level " + level + " right chest room lost its Refilling Chest.", failures);
-        verifyRefillingChestBlockEntity(torment, getTormentRightChestPos(seed, level), level, "right", failures);
-
-        if (tormentStoneCount > 0) {
-            failures.add("Level " + level + " still contains " + tormentStoneCount + " Torment Stone block(s) inside the legacy maze footprint.");
-        }
-        if (totalChestCount != 3) {
-            failures.add("Level " + level + " should have exactly 3 floor-level Refilling Chests, but found " + totalChestCount + ".");
+    private static void verifyJsonString(JsonObject json, String key, String expected, String label,
+                                         java.util.List<String> failures) {
+        if (!json.has(key) || !expected.equals(json.get(key).getAsString())) {
+            failures.add(label + " should stay " + expected + ".");
         }
     }
 
-    private static void verifyRefillingChestBlockEntity(ServerLevel level, BlockPos pos, int tormentLevel,
-                                                        String room, java.util.List<String> failures) {
-        if (level.getBlockState(pos).is(WitcheryBlocks.REFILLING_CHEST.get())
-                && !(level.getBlockEntity(pos) instanceof RefillingChestBlockEntity)) {
-            failures.add("Level " + tormentLevel + " " + room + " Refilling Chest is missing its block entity renderer/storage.");
+    private static java.util.Set<String> jsonStringSet(JsonObject json, String key) {
+        java.util.Set<String> values = new java.util.HashSet<>();
+        if (json.has(key) && json.get(key).isJsonArray()) {
+            for (var element : json.getAsJsonArray(key)) {
+                if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isString()) {
+                    values.add(element.getAsString());
+                }
+            }
         }
+        return values;
     }
 
-    private static void verifyStateAt(ServerLevel level, net.minecraft.core.BlockPos pos,
-                                      java.util.function.Predicate<net.minecraft.world.level.block.state.BlockState> predicate,
-                                      String message, java.util.List<String> failures) {
-        if (!predicate.test(level.getBlockState(pos))) {
-            failures.add(message + " Found " + BuiltInRegistries.BLOCK.getKey(level.getBlockState(pos).getBlock()) + " at " + pos + ".");
+    private static java.util.Set<String> configuredCottonSupport(JsonObject configuredFeature) {
+        try {
+            JsonObject feature = configuredFeature.getAsJsonObject("config")
+                    .getAsJsonObject("feature");
+            JsonObject predicate = feature.getAsJsonArray("placement")
+                    .get(0).getAsJsonObject()
+                    .getAsJsonObject("predicate");
+            return jsonStringSet(predicate, "blocks");
+        } catch (IllegalStateException | NullPointerException | IndexOutOfBoundsException ex) {
+            return java.util.Set.of();
         }
     }
 
@@ -2026,28 +2183,6 @@ public class WitcheryCommands {
             failures.add("Could not read " + label + " data resource " + resourceId + ": " + ex.getMessage());
             return null;
         }
-    }
-
-    private static BlockPos getTormentLeftChestPos(long seed, int level) {
-        return new BlockPos(TormentHelper.ORIGIN_X + 3, TormentHelper.getMazeY(level),
-                TormentHelper.ORIGIN_Z + TormentHelper.MAZE_SIZE + chestShift(seed, level, 0));
-    }
-
-    private static BlockPos getTormentCenterChestPos(int level) {
-        return new BlockPos(TormentHelper.ENTRY_X, TormentHelper.getMazeY(level), TormentHelper.ORIGIN_Z + TormentHelper.MAZE_SIZE);
-    }
-
-    private static BlockPos getTormentRightChestPos(long seed, int level) {
-        return new BlockPos(TormentHelper.ORIGIN_X + TormentHelper.MAZE_SIZE * 2 - 3, TormentHelper.getMazeY(level),
-                TormentHelper.ORIGIN_Z + TormentHelper.MAZE_SIZE + chestShift(seed, level, 1));
-    }
-
-    private static int chestShift(long seed, int level, int index) {
-        long h = seed ^ ((long) level * 0x632be59bd9b4e019L) ^ ((long) index * 0x85157af5L);
-        h ^= h >>> 33;
-        h *= 0xff51afd7ed558ccdL;
-        h ^= h >>> 33;
-        return (int) Math.floorMod(h, 11L) - 5;
     }
 
     /** Give a witchery item by registry path name. */
@@ -2119,13 +2254,25 @@ public class WitcheryCommands {
 
     private static com.emoniph.witchery.blocks.entity.KettleBlockEntity findNearbyKettle(
             ServerPlayer p, ServerLevel sl) {
+        return findNearbyKettle(p, sl, 8);
+    }
+
+    private static com.emoniph.witchery.blocks.entity.KettleBlockEntity findNearbyKettle(
+            ServerPlayer p, ServerLevel sl, int radius) {
         var center = p.blockPosition();
+        com.emoniph.witchery.blocks.entity.KettleBlockEntity nearest = null;
+        double nearestDistance = Double.MAX_VALUE;
         for (var bp : net.minecraft.core.BlockPos.betweenClosed(
-                center.offset(-8, -4, -8), center.offset(8, 4, 8))) {
-            if (sl.getBlockEntity(bp) instanceof com.emoniph.witchery.blocks.entity.KettleBlockEntity k)
-                return k;
+                center.offset(-radius, -4, -radius), center.offset(radius, 4, radius))) {
+            if (sl.getBlockEntity(bp) instanceof com.emoniph.witchery.blocks.entity.KettleBlockEntity kettle) {
+                double distance = bp.distSqr(center);
+                if (distance < nearestDistance) {
+                    nearest = kettle;
+                    nearestDistance = distance;
+                }
+            }
         }
-        return null;
+        return nearest;
     }
 
     private static int setupStations(CommandSourceStack src)
@@ -2160,6 +2307,11 @@ public class WitcheryCommands {
                 "Cleared a 71x17 pad in front and placed white, golden, otherwhere, and infernal small/medium/large rite rings."),
                 false);
         return 1;
+    }
+
+    private static int setupOtherwhereHearth(CommandSourceStack src)
+            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        return OtherwhereHearthQaFixture.setup(src);
     }
 
     private static int setupCursedWell(CommandSourceStack src)
@@ -2984,6 +3136,10 @@ public class WitcheryCommands {
         for (BlockPos pos : BlockPos.betweenClosed(minX, minY, minZ, maxX, maxY, maxZ)) {
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
         }
+    }
+
+    private static String coordinates(BlockPos pos) {
+        return pos.getX() + " " + pos.getY() + " " + pos.getZ();
     }
 
     // ── Shared ────────────────────────────────────────────────────────────────

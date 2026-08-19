@@ -38,7 +38,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public final class SpiritWorldHelper {
 
@@ -47,23 +49,20 @@ public final class SpiritWorldHelper {
     /**
      * Items that always stay with the player when entering the Spirit World (not stripped).
      * Source ({@code WorldProviderDreamWorld.sendPlayerToSpiritWorld}) carries the Icy Needle
-     * and Mutandis in; the port also keeps Mutandis Extremis and — as a deliberate addition —
-     * the Witches' Primer, so the player can read the guide while dreaming.
+     * and ordinary Mutandis into the dream.
      */
-    private static boolean isAlwaysCarried(ItemStack stack) {
+    static boolean isAlwaysCarried(ItemStack stack) {
         return stack.is(WitcheryItems.ICY_NEEDLE.get())
-                || stack.is(WitcheryItems.MUTANDIS.get())
-                || stack.is(WitcheryItems.MUTANDIS_EXTREMIS.get())
-                || stack.is(WitcheryItems.WITCHES_PRIMER.get());
+                || stack.is(WitcheryItems.MUTANDIS.get());
     }
 
     /**
      * Items that transfer back to the Overworld on exit. Source
      * ({@code WorldProviderDreamWorld.returnPlayerToOverworld}) returns Wispy Cotton, Disturbed
      * Cotton, Mellifluous Hunger, Icy Needle, Brew of Flowing Spirit and Subdued Spirit; the port
-     * also returns the Subdued Village Spirit and the brought-in Witches' Primer.
+     * also returns the split Subdued Village Spirit variant.
      */
-    private static boolean isTransferable(ItemStack stack) {
+    static boolean isTransferable(ItemStack stack) {
         Item it = stack.getItem();
         return it == WitcheryItems.ICY_NEEDLE.get()
                 || it == WitcheryItems.WISPY_COTTON.get()
@@ -71,18 +70,7 @@ public final class SpiritWorldHelper {
                 || it == WitcheryItems.MELLIFLUOUS_HUNGER.get()
                 || WitcheryItems.isBrewOfFlowingSpirit(stack)
                 || it == WitcheryItems.SUBDUED_SPIRIT.get()
-                || it == WitcheryItems.SUBDUED_VILLAGE_SPIRIT.get()
-                || it == WitcheryItems.WITCHES_PRIMER.get();
-    }
-
-    /**
-     * Items that are both kept on entry and carried back on exit (Icy Needle, Witches' Primer).
-     * These must be excluded from the saved Overworld snapshot: the live copy is re-added from the
-     * transferable list on exit, so leaving it in the snapshot too would duplicate it. Excluding it
-     * means the player returns with the actual leftover count (e.g. only the unused needles).
-     */
-    private static boolean isCarriedRoundTrip(ItemStack stack) {
-        return isAlwaysCarried(stack) && isTransferable(stack);
+                || it == WitcheryItems.SUBDUED_VILLAGE_SPIRIT.get();
     }
 
     private SpiritWorldHelper() {}
@@ -104,7 +92,7 @@ public final class SpiritWorldHelper {
         ServerLevel sw = ((net.minecraft.server.level.ServerLevel) player.level()).getServer().getLevel(WitcheryDimensions.SPIRIT_WORLD);
         if (sw == null) return;
 
-        data.clearManifestationState();
+        data.clearManifestedGhostState();
         data.setOtherwhereHearthTraveler(false);
         data.setReturnPos(player.blockPosition(), player.level().dimension());
 
@@ -120,27 +108,28 @@ public final class SpiritWorldHelper {
                 player.getFoodData().getFoodLevel(),
                 player.getFoodData().getSaturationLevel());
 
-        // Reset to full health/hunger in Spirit World
-        player.setHealth(player.getMaxHealth());
-        player.getFoodData().setFoodLevel(20);
-        player.getFoodData().setSaturation(5f);
+        if (data.hasSpiritVitals()) {
+            player.setHealth(Math.min(data.getSpiritHealth(), player.getMaxHealth()));
+            player.getFoodData().setFoodLevel(data.getSpiritFoodLevel());
+            player.getFoodData().setSaturation(data.getSpiritSaturation());
+            player.getFoodData().eat(16, 0.8F);
+        }
 
         // Spawn sleeping corpse in the player's current dimension
         spawnCorpse(player, data);
 
-        saveAndStripInventory(player, data);
+        exchangeIntoSpiritInventory(player, data);
 
         double[] pos = prepareSpiritWorldEntry(sw, player);
+        player.stopRiding();
         player.teleportTo(sw, pos[0], (double)(pos[1]), pos[2], java.util.Set.<net.minecraft.world.entity.Relative>of(), player.getYRot(), player.getXRot(), false);
 
         if (!nightmare.isNightmare) {
             player.displayClientMessage(Component.literal("You drift into a peaceful dream..."), false);
         } else if (nightmare.isDemonic) {
             player.displayClientMessage(Component.literal("A demonic nightmare engulfs you..."), false);
-            spawnNightmare(player, sw, pos);
         } else {
             player.displayClientMessage(Component.literal("A nightmare closes in around you..."), false);
-            spawnNightmare(player, sw, pos);
         }
 
         sync(player, data);
@@ -152,13 +141,34 @@ public final class SpiritWorldHelper {
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         if (!data.isInSpiritWorld()) return;
 
+        if (data.isManifestedGhost()) {
+            returnGhostPlayerToSpiritWorld(player);
+            if (data.isManifestedGhost()) {
+                return;
+            }
+        }
+
+        Optional<List<SlottedStack>> overworldInventory = decodeInventory(
+                data.getOverworldInventorySnbt(), player.getInventory().getContainerSize());
+        if (data.getOverworldInventorySnbt().isEmpty() || overworldInventory.isEmpty()) {
+            LOGGER.error("[Witchery] Refusing to wake {} because the Overworld inventory snapshot is missing or invalid",
+                    player.getName().getString());
+            player.displayClientMessage(Component.translatable("witchery.spirit_world.inventory_restore_failed"), false);
+            return;
+        }
+
         // Remove the sleeping corpse from the world
         removeCorpse(player, data);
 
-        // Collect transferable items before restoring overworld inventory
-        List<ItemStack> transferable = collectTransferable(player);
+        List<ItemStack> transferable = extractMatching(player.getInventory(), SpiritWorldHelper::isTransferable);
+        data.setSpiritInventorySnbt(encodeInventory(player.getInventory()));
+        replaceInventory(player.getInventory(), overworldInventory.get());
+        data.setOverworldInventorySnbt("");
 
-        restoreInventory(player, data);
+        data.saveSpiritVitals(
+                Math.max(10.0F, player.getHealth()),
+                player.getFoodData().getFoodLevel(),
+                player.getFoodData().getSaturationLevel());
 
         // Restore overworld vitals
         player.setHealth(Math.min(data.getSavedHealth(), player.getMaxHealth()));
@@ -178,19 +188,40 @@ public final class SpiritWorldHelper {
         data.setSpiritWorldIsDream(false);
         data.setOtherwhereHearthTraveler(false);
         data.setDemonicNightmare(false);
-        data.clearManifestationState();
+        data.clearManifestedGhostState();
         data.clearReturnPos();
         sync(player, data);
 
         ServerLevel returnLevel = resolveReturnLevel(player, returnDimStr);
-        if (returnPos != null) {
-            player.teleportTo(returnLevel, returnPos.getX() + 0.5, (double)(returnPos.getY()), returnPos.getZ() + 0.5, java.util.Set.<net.minecraft.world.entity.Relative>of(), player.getYRot(), player.getXRot(), false);
-        } else {
-            BlockPos spawn = new net.minecraft.core.BlockPos(0, 64, 0);
-            player.teleportTo(returnLevel, spawn.getX() + 0.5, (double)(spawn.getY()), spawn.getZ() + 0.5, java.util.Set.<net.minecraft.world.entity.Relative>of(), player.getYRot(), player.getXRot(), false);
-        }
+        BlockPos returnAnchor = returnPos != null ? returnPos : new BlockPos(0, 64, 0);
+        BlockPos safeReturn = findNearestSafeStandingPos(returnLevel, returnAnchor);
+        player.stopRiding();
+        player.clearFire();
+        player.teleportTo(returnLevel, safeReturn.getX() + 0.5, safeReturn.getY(), safeReturn.getZ() + 0.5,
+                java.util.Set.<net.minecraft.world.entity.Relative>of(), player.getYRot(), player.getXRot(), false);
 
         player.displayClientMessage(Component.literal("You wake up."), false);
+    }
+
+    public static void recoverInvalidSpiritState(ServerPlayer player) {
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        removeCorpse(player, data);
+        data.setInSpiritWorld(false);
+        data.setSpiritWorldIsDream(false);
+        data.setOtherwhereHearthTraveler(false);
+        data.setDemonicNightmare(false);
+        data.clearManifestationState();
+        data.setOverworldInventorySnbt("");
+        data.clearReturnPos();
+
+        ServerLevel overworld = ((ServerLevel) player.level()).getServer().getLevel(Level.OVERWORLD);
+        if (overworld != null && player.level() != overworld) {
+            BlockPos target = findNearestSafeStandingPos(overworld, player.blockPosition());
+            player.teleportTo(overworld, target.getX() + 0.5D, target.getY(), target.getZ() + 0.5D,
+                    Set.of(), player.getYRot(), player.getXRot(), false);
+        }
+        player.displayClientMessage(Component.translatable("witchery.spirit_world.invalid_state_recovered"), false);
+        sync(player, data);
     }
 
     public static boolean canManifest(ServerPlayer player) {
@@ -214,9 +245,17 @@ public final class SpiritWorldHelper {
 
         data.setManifestedGhost(true);
         data.setSkipManifestationTick(true);
-        data.setManifestationReturnPos(player.blockPosition());
 
-        BlockPos target = findSafeStandingPos(overworld, player.blockPosition());
+        List<ItemStack> carried = extractMatching(player.getInventory(),
+                SpiritWorldHelper::isManifestationOutwardItem);
+        data.setSpiritInventorySnbt(encodeInventory(player.getInventory()));
+        player.getInventory().clearContent();
+        addToInventory(player, carried);
+        data.saveSpiritVitals(player.getHealth(), player.getFoodData().getFoodLevel(),
+                player.getFoodData().getSaturationLevel());
+
+        BlockPos target = findNearestSafeStandingPos(overworld, player.blockPosition());
+        player.stopRiding();
         player.teleportTo(overworld,
                 target.getX() + 0.5,
                 target.getY(),
@@ -239,11 +278,24 @@ public final class SpiritWorldHelper {
             return;
         }
 
-        BlockPos anchor = data.getManifestationReturnPos().orElse(new BlockPos(0, 65, 0));
-        BlockPos target = findSafeStandingPos(spiritWorld, anchor);
-        data.setManifestedGhost(false);
-        data.setSkipManifestationTick(false);
-        data.setManifestationReturnPos(null);
+        Optional<List<SlottedStack>> spiritInventory = decodeInventory(
+                data.getSpiritInventorySnbt(), player.getInventory().getContainerSize());
+        if (spiritInventory.isEmpty()) {
+            LOGGER.error("[Witchery] Refusing to return manifested ghost {} because the Spirit inventory snapshot is invalid",
+                    player.getName().getString());
+            player.displayClientMessage(Component.translatable("witchery.spirit_world.inventory_restore_failed"), false);
+            return;
+        }
+
+        BlockPos anchor = player.blockPosition();
+        BlockPos target = findNearestSafeStandingPos(spiritWorld, anchor);
+        List<ItemStack> returningItems = extractMatching(player.getInventory(),
+                SpiritWorldHelper::isManifestationReturnItem);
+        replaceInventory(player.getInventory(), spiritInventory.get());
+        data.setSpiritInventorySnbt("");
+        addToInventory(player, returningItems);
+        data.clearManifestedGhostState();
+        player.stopRiding();
         player.teleportTo(spiritWorld,
                 target.getX() + 0.5,
                 target.getY(),
@@ -274,13 +326,14 @@ public final class SpiritWorldHelper {
                             && catcher.getWeave() == DreamWeaveType.NIGHTMARES) {
                         nightmareCatcherFound = true;
                     }
-                } else if (bs.is(WitcheryBlocks.FLOWING_SPIRIT.get())) {
+                } else if (bs.is(WitcheryBlocks.FLOWING_SPIRIT.get())
+                        && bs.getValue(net.minecraft.world.level.block.LiquidBlock.LEVEL) == 0) {
                     flowingSpirits++;
                 } else if (bs.is(WitcheryBlocks.WISPY_COTTON.get())) {
                     wispyCottons++;
                 } else if (bs.is(WitcheryBlocks.DEMON_HEART.get())) {
                     demonHearts++;
-                } else if (bs.is(Blocks.FIRE) || bs.is(Blocks.SOUL_FIRE)) {
+                } else if (bs.is(Blocks.FIRE)) {
                     fires++;
                 }
             }
@@ -299,22 +352,41 @@ public final class SpiritWorldHelper {
 
         // Demonic Nightmare: needs nightmare + NIGHTMARES catcher + flowing spirit + demon heart
         boolean isDemonic = isNightmare && nightmareCatcherFound && flowingSpirits > 0 && demonHearts > 0
-                && player.level().random.nextDouble() < demonHearts * 0.35 + fires * 0.10;
+                && player.level().random.nextDouble() < sourceDemonicChance(demonHearts, fires);
 
         return new NightmareResult(isNightmare, isDemonic);
     }
 
+    static double sourceDemonicChance(int demonHearts, int fires) {
+        return Math.min(Math.max(demonHearts, 0), 2) * 0.35
+                + Math.min(Math.max(fires, 0), 3) * 0.10;
+    }
+
     // ── Inventory ────────────────────────────────────────────────────────────
 
-    private static void saveAndStripInventory(ServerPlayer player, WitcheryPlayerData data) {
+    private static void exchangeIntoSpiritInventory(ServerPlayer player, WitcheryPlayerData data) {
         Inventory inv = player.getInventory();
-        // Serialize inventory using ItemStack.CODEC
+        List<ItemStack> carried = extractMatching(inv, SpiritWorldHelper::isAlwaysCarried);
+        data.setOverworldInventorySnbt(encodeInventory(inv));
+
+        Optional<List<SlottedStack>> spiritInventory = decodeInventory(
+                data.getSpiritInventorySnbt(), inv.getContainerSize());
+        if (spiritInventory.isEmpty()) {
+            LOGGER.warn("[Witchery] Discarding invalid Spirit inventory snapshot for {}",
+                    player.getName().getString());
+            inv.clearContent();
+        } else {
+            replaceInventory(inv, spiritInventory.get());
+        }
+        data.setSpiritInventorySnbt("");
+        addToInventory(player, carried);
+    }
+
+    private static String encodeInventory(Inventory inv) {
         net.minecraft.nbt.ListTag invList = new net.minecraft.nbt.ListTag();
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
-            // Round-trip items (Icy Needle, Primer) are re-added from the transferable list on exit,
-            // so they must not also be restored from this snapshot or they would be duplicated.
-            if (!stack.isEmpty() && !isCarriedRoundTrip(stack)) {
+            if (!stack.isEmpty()) {
                 net.minecraft.nbt.CompoundTag itemTag = new net.minecraft.nbt.CompoundTag();
                 itemTag.putByte("Slot", (byte) i);
                 net.minecraft.nbt.Tag saved2 = ItemStack.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, stack).result().orElse(null);
@@ -324,46 +396,47 @@ public final class SpiritWorldHelper {
         }
         net.minecraft.nbt.CompoundTag wrapper = new net.minecraft.nbt.CompoundTag();
         wrapper.put("inv", invList);
-        data.setSavedInventorySnbt(wrapper.toString());
-
-        for (int i = 0; i < inv.getContainerSize(); i++) {
-            ItemStack stack = inv.getItem(i);
-            if (!stack.isEmpty() && !isAlwaysCarried(stack)) {
-                inv.setItem(i, ItemStack.EMPTY);
-            }
-        }
+        return wrapper.toString();
     }
 
-    private static void restoreInventory(ServerPlayer player, WitcheryPlayerData data) {
-        String snbt = data.getSavedInventorySnbt();
-        if (snbt.isEmpty()) return;
+    private static Optional<List<SlottedStack>> decodeInventory(String snbt, int inventorySize) {
+        if (snbt == null || snbt.isEmpty()) {
+            return Optional.of(List.of());
+        }
         try {
             net.minecraft.nbt.CompoundTag wTag = net.minecraft.nbt.TagParser.parseCompoundFully(snbt);
             net.minecraft.nbt.ListTag invList = wTag.getListOrEmpty("inv");
-            player.getInventory().clearContent();
+            List<SlottedStack> decoded = new ArrayList<>(invList.size());
             for (int i = 0; i < invList.size(); i++) {
                 net.minecraft.nbt.CompoundTag itemTag = invList.getCompound(i).orElse(null);
                 if (itemTag == null) continue;
                 int slot = itemTag.getByte("Slot").orElse((byte)0) & 0xFF;
-                if (itemTag.contains("tag")) {
-                    ItemStack.CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE, itemTag.get("tag"))
-                        .result().ifPresent(s -> player.getInventory().setItem(slot, s));
+                if (slot >= inventorySize || !itemTag.contains("tag")) {
+                    return Optional.empty();
                 }
+                Optional<ItemStack> stack = ItemStack.CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE, itemTag.get("tag")).result();
+                if (stack.isEmpty()) return Optional.empty();
+                decoded.add(new SlottedStack(slot, stack.get()));
             }
+            return Optional.of(decoded);
         } catch (Exception e) {
-            LOGGER.warn("[Witchery] Failed to restore Spirit World inventory for {}: {}",
-                    player.getName().getString(), e.getMessage());
+            LOGGER.warn("[Witchery] Failed to decode Spirit World inventory: {}", e.getMessage());
+            return Optional.empty();
         }
-        data.setSavedInventorySnbt("");
     }
 
-    /** Collect transferable items from the player's current (Spirit) inventory before restoring Overworld. */
-    private static List<ItemStack> collectTransferable(ServerPlayer player) {
-        Inventory inv = player.getInventory();
+    private static void replaceInventory(Inventory inv, List<SlottedStack> stacks) {
+        inv.clearContent();
+        for (SlottedStack slotted : stacks) {
+            inv.setItem(slotted.slot(), slotted.stack().copy());
+        }
+    }
+
+    private static List<ItemStack> extractMatching(Inventory inv, Predicate<ItemStack> predicate) {
         List<ItemStack> result = new ArrayList<>();
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack s = inv.getItem(i);
-            if (!s.isEmpty() && isTransferable(s)) {
+            if (!s.isEmpty() && predicate.test(s)) {
                 result.add(s.copy());
                 inv.setItem(i, ItemStack.EMPTY);
             }
@@ -371,11 +444,34 @@ public final class SpiritWorldHelper {
         return result;
     }
 
+    private static void addToInventory(ServerPlayer player, List<ItemStack> stacks) {
+        for (ItemStack stack : stacks) {
+            ItemStack remaining = stack.copy();
+            if (!player.getInventory().add(remaining) && !remaining.isEmpty()) {
+                player.drop(remaining, false);
+            }
+        }
+    }
+
+    private static boolean isBoundFetish(ItemStack stack) {
+        return com.emoniph.witchery.blocks.entity.FetishBlockEntity.isBoundFetish(stack);
+    }
+
+    static boolean isManifestationOutwardItem(ItemStack stack) {
+        return stack.is(WitcheryItems.ICY_NEEDLE.get());
+    }
+
+    static boolean isManifestationReturnItem(ItemStack stack) {
+        return isManifestationOutwardItem(stack) || isBoundFetish(stack);
+    }
+
+    private record SlottedStack(int slot, ItemStack stack) {}
+
     // ── Nightmare spawning ────────────────────────────────────────────────────
 
-    /** Initial nightmare spawn when entering Spirit World with nightmare state. */
+    /** Source spawn ring used by both Spirit World and waking-nightmare pressure. */
     public static void spawnNightmare(ServerPlayer player, ServerLevel sw, double[] pos) {
-        spawnNightmare(player, sw, pos, 4.0D, 8.0D);
+        spawnNightmare(player, sw, pos, 2.0D, 6.0D);
     }
 
     private static void spawnNightmare(ServerPlayer player, ServerLevel level, double[] pos,
@@ -438,6 +534,10 @@ public final class SpiritWorldHelper {
             spawnNightmare(player, level,
                     new double[]{player.getX(), player.getY(), player.getZ()}, 2.0D, 6.0D);
         }
+    }
+
+    public static boolean shouldTickWakingNightmare(long tickCount) {
+        return tickCount % 20L == 0L;
     }
 
     // ── Position ─────────────────────────────────────────────────────────────
@@ -515,14 +615,26 @@ public final class SpiritWorldHelper {
         }
     }
 
-    private static BlockPos findSafeStandingPos(ServerLevel level, BlockPos anchor) {
+    private static BlockPos findNearestSafeStandingPos(ServerLevel level, BlockPos anchor) {
         level.getChunk(anchor.getX() >> 4, anchor.getZ() >> 4, ChunkStatus.FULL, true);
-        for (int y = Math.min(level.getMaxY() - 2, 200); y >= level.getMinY(); y--) {
-            BlockPos pos = new BlockPos(anchor.getX(), y, anchor.getZ());
-            if (!level.getBlockState(pos).isAir()
-                    && level.getBlockState(pos.above()).isAir()
-                    && level.getBlockState(pos.above().above()).isAir()) {
-                return pos.above();
+        int minFeetY = level.getMinY() + 1;
+        int maxFeetY = level.getMaxY() - 2;
+        int startY = Mth.clamp(anchor.getY(), minFeetY, maxFeetY);
+        BlockPos start = new BlockPos(anchor.getX(), startY, anchor.getZ());
+        if (isValidEntryPos(level, start)) {
+            return start;
+        }
+        int maxOffset = Math.max(maxFeetY - startY, startY - minFeetY);
+        for (int offset = 1; offset <= maxOffset; offset++) {
+            int upY = startY + offset;
+            if (upY <= maxFeetY) {
+                BlockPos up = new BlockPos(anchor.getX(), upY, anchor.getZ());
+                if (isValidEntryPos(level, up)) return up;
+            }
+            int downY = startY - offset;
+            if (downY >= minFeetY) {
+                BlockPos down = new BlockPos(anchor.getX(), downY, anchor.getZ());
+                if (isValidEntryPos(level, down)) return down;
             }
         }
         return new BlockPos(anchor.getX(), Math.max(level.getSeaLevel() + 1, 65), anchor.getZ());

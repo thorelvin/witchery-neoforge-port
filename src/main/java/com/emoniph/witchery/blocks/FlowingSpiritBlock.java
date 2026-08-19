@@ -2,8 +2,11 @@ package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.FlameImpEntity;
+import com.emoniph.witchery.entity.LeonardEntity;
+import com.emoniph.witchery.entity.LilithEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.NightmareEntity;
+import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryFluids;
@@ -38,7 +41,9 @@ public class FlowingSpiritBlock extends LiquidBlock {
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
 
-        if (level.isClientSide() || oldState.is(state.getBlock()) || !level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
+        if (level.isClientSide() || oldState.is(state.getBlock())
+                || !level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
+                || state.getValue(LEVEL) != 0) {
             return;
         }
 
@@ -85,8 +90,13 @@ public class FlowingSpiritBlock extends LiquidBlock {
         return livingEntity.getType().is(EntityTypeTags.UNDEAD)
                 || livingEntity instanceof DemonEntity
                 || livingEntity instanceof FlameImpEntity
+                || livingEntity instanceof LeonardEntity
+                || livingEntity instanceof LilithEntity
                 || livingEntity instanceof LordOfTormentEntity
                 || livingEntity instanceof NightmareEntity
+                || livingEntity instanceof net.minecraft.world.entity.player.Player player
+                    && (WitcheryAttachments.get(player).isVampire()
+                        || WitcheryAttachments.get(player).hasGraveBrew())
                 || livingEntity.getType() == EntityType.BLAZE
                 || livingEntity.getType() == EntityType.GHAST
                 || livingEntity.getType() == EntityType.MAGMA_CUBE

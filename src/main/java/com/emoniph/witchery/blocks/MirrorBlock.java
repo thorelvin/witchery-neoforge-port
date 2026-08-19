@@ -4,6 +4,7 @@ import com.emoniph.witchery.blocks.entity.MirrorBlockEntity;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
 import com.emoniph.witchery.ai.NpcBrainService;
 import com.emoniph.witchery.entity.MirrorFaceEntity;
+import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
@@ -25,6 +26,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -62,7 +64,7 @@ import org.jetbrains.annotations.Nullable;
  *   UNBREAKABLE — true for the inner Mirror World copy (cannot be broken by players)
  *
  * Walking through the mirror face from outside teleports to the Mirror World room.
- * Walking through from inside the Mirror World returns to the Overworld.
+ * Walking through the linked inner mirror returns to the source dimension.
  */
 public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlock {
 
@@ -75,16 +77,16 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
     // Thin-slab shapes: slab is pressed against the named wall.
     // NORTH wall = low-Z side (z=0-4), SOUTH wall = high-Z side (z=12-16),
     // WEST wall  = low-X side (x=0-4), EAST wall  = high-X side (x=12-16).
-    private static final VoxelShape NORTH = Block.box(0,  0, 0, 16, 16,  4);
-    private static final VoxelShape SOUTH = Block.box(0,  0, 12, 16, 16, 16);
-    private static final VoxelShape WEST  = Block.box(0,  0, 0,  4, 16, 16);
-    private static final VoxelShape EAST  = Block.box(12, 0, 0, 16, 16, 16);
-
-    // Entry zone shapes (slightly thinner) for walk-through detection
-    private static final VoxelShape NORTH_ENTRY = Block.box(0,  0, 0, 16, 16,  3);
-    private static final VoxelShape SOUTH_ENTRY = Block.box(0,  0, 13, 16, 16, 16);
-    private static final VoxelShape WEST_ENTRY  = Block.box(0,  0, 0,  3, 16, 16);
-    private static final VoxelShape EAST_ENTRY  = Block.box(13, 0, 0, 16, 16, 16);
+    private static final double COLLISION_DEPTH = 2.4D;
+    private static final double SELECTION_DEPTH = 5.12D;
+    private static final VoxelShape NORTH_COLLISION = Block.box(0, 0, 0, 16, 16, COLLISION_DEPTH);
+    private static final VoxelShape SOUTH_COLLISION = Block.box(0, 0, 16 - COLLISION_DEPTH, 16, 16, 16);
+    private static final VoxelShape WEST_COLLISION = Block.box(0, 0, 0, COLLISION_DEPTH, 16, 16);
+    private static final VoxelShape EAST_COLLISION = Block.box(16 - COLLISION_DEPTH, 0, 0, 16, 16, 16);
+    private static final VoxelShape NORTH_SELECTION = Block.box(0, 0, 0, 16, 16, SELECTION_DEPTH);
+    private static final VoxelShape SOUTH_SELECTION = Block.box(0, 0, 16 - SELECTION_DEPTH, 16, 16, 16);
+    private static final VoxelShape WEST_SELECTION = Block.box(0, 0, 0, SELECTION_DEPTH, 16, 16);
+    private static final VoxelShape EAST_SELECTION = Block.box(16 - SELECTION_DEPTH, 0, 0, 16, 16, 16);
 
     public MirrorBlock(BlockBehaviour.Properties props) {
         super(props);
@@ -104,7 +106,9 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        Direction facing = ctx.getHorizontalDirection();
+        Direction clickedFace = ctx.getClickedFace();
+        Direction facing = clickedFace.getAxis().isHorizontal()
+                ? clickedFace : ctx.getHorizontalDirection().getOpposite();
         BlockPos pos = ctx.getClickedPos();
         Level level = ctx.getLevel();
         if (pos.getY() < level.getMaxY() - 1
@@ -119,37 +123,42 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
         BlockPos top = pos.above();
         level.setBlockAndUpdate(top, state.setValue(PART, BedPart.HEAD));
+        if (level instanceof ServerLevel serverLevel
+                && level.getBlockEntity(pos) instanceof MirrorBlockEntity mirror && mirror.hasRoom()) {
+            MirrorHelper.reconnectSourceMirror(serverLevel, pos, mirror);
+        }
     }
 
     // ── Shapes ───────────────────────────────────────────────────────────────
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return shapeFor(state.getValue(FACING));
+        return selectionShapeFor(state.getValue(FACING));
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return shapeFor(state.getValue(FACING));
+        return collisionShapeFor(state.getValue(FACING));
     }
 
-    private static VoxelShape shapeFor(Direction facing) {
+    private static VoxelShape collisionShapeFor(Direction facing) {
         return switch (facing) {
-            case NORTH -> NORTH;
-            case SOUTH -> SOUTH;
-            case WEST  -> WEST;
-            default    -> EAST;
+            case NORTH -> NORTH_COLLISION;
+            case SOUTH -> SOUTH_COLLISION;
+            case WEST  -> WEST_COLLISION;
+            default    -> EAST_COLLISION;
         };
     }
 
-    private static VoxelShape entryShapeFor(Direction facing) {
+    private static VoxelShape selectionShapeFor(Direction facing) {
         return switch (facing) {
-            case NORTH -> NORTH_ENTRY;
-            case SOUTH -> SOUTH_ENTRY;
-            case WEST  -> WEST_ENTRY;
-            default    -> EAST_ENTRY;
+            case NORTH -> NORTH_SELECTION;
+            case SOUTH -> SOUTH_SELECTION;
+            case WEST  -> WEST_SELECTION;
+            default    -> EAST_SELECTION;
         };
     }
 
@@ -173,7 +182,7 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
 
         BlockPos footPos = state.getValue(PART) == BedPart.HEAD ? pos.below() : pos;
         if (!(level.getBlockEntity(footPos) instanceof MirrorBlockEntity mirror)
-                || !mirror.hasRoom() || mirror.isDemonKilled()) {
+                || mirror.isDemonKilled()) {
             failCharge(serverLevel, footPos, player, "witchery.mirror.duplication.no_reflection");
             return InteractionResult.SUCCESS;
         }
@@ -226,7 +235,12 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
         BlockState footState = level.getBlockState(footPos);
         boolean mirrorWorld = WitcheryDimensions.isMirrorWorld(level);
         boolean unbreakable = footState.hasProperty(UNBREAKABLE) && footState.getValue(UNBREAKABLE);
-        String speech = mirrorRightClickSpeech(serverLevel, footPos, player, mirrorWorld, unbreakable);
+        if (mirrorWorld || unbreakable
+                || level.getBlockEntity(footPos) instanceof MirrorBlockEntity mirror
+                && mirror.isDemonKilled()) {
+            return InteractionResult.CONSUME;
+        }
+        String speech = mirrorRightClickSpeech(serverLevel, footPos, player);
         player.displayClientMessage(NpcBrainService.speechComponent("Mirror", 0x55FFFF, speech), false);
         showMirrorFace(serverLevel, footPos);
         serverLevel.playSound(null, footPos, WitcherySoundEvents.MOB_REFLECTION_SPEECH.get(),
@@ -257,14 +271,7 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
         return MirrorFaceEntity.show(level, footPos, footState.getValue(FACING));
     }
 
-    private static String mirrorRightClickSpeech(ServerLevel level, BlockPos footPos, Player player,
-                                                 boolean mirrorWorld, boolean unbreakable) {
-        if (mirrorWorld && unbreakable) {
-            return "The way home waits behind the silver, " + player.getName().getString() + ".";
-        }
-        if (mirrorWorld) {
-            return "A deeper room clouds the glass. It is listening.";
-        }
+    private static String mirrorRightClickSpeech(ServerLevel level, BlockPos footPos, Player player) {
         if (level.getBlockEntity(footPos) instanceof MirrorBlockEntity mirror && mirror.hasRoom()) {
             if (mirror.isDemonKilled()) {
                 return "Only your own face answers. The dangerous one is gone.";
@@ -277,42 +284,141 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
                               InsideBlockEffectApplier effectApplier, boolean isMoved) {
-        if (level.isClientSide() || !(entity instanceof ServerPlayer player)) return;
+        if (level.isClientSide() || !(level instanceof ServerLevel serverLevel)
+                || entity instanceof MirrorFaceEntity
+                || !(entity instanceof LivingEntity || entity instanceof ItemEntity)
+                || entity.tickCount % 5 != 1) return;
 
         // Only trigger from the FOOT half to avoid double-fire
         if (state.getValue(PART) != BedPart.FOOT) return;
 
-        // Cooldown via player's persistent data
-        var cd = player.getPersistentData();
-        long lastTeleport = cd.getLong("MirrorTeleportCooldown").orElse(0L);
-        if (level.getGameTime() - lastTeleport < 40) return;
+        // Commit the cooldown only after a successful crossing.
+        var data = entity.getPersistentData();
+        long lastTeleport = data.getLong("MirrorTeleportCooldown").orElse(Long.MIN_VALUE);
+        if (lastTeleport != Long.MIN_VALUE && level.getGameTime() - lastTeleport < 60) return;
 
         // Check entity is in the entry zone
         Direction facing = state.getValue(FACING);
-        VoxelShape entryZone = entryShapeFor(facing);
+        VoxelShape entryZone = selectionShapeFor(facing);
         Vec3 epos = entity.position();
         double lx = epos.x - pos.getX();
         double ly = epos.y - pos.getY();
         double lz = epos.z - pos.getZ();
         if (!entryZone.bounds().inflate(0.1).contains(lx, ly, lz)) return;
 
-        cd.putLong("MirrorTeleportCooldown", level.getGameTime());
+        if (entity instanceof LivingEntity living
+                && Direction.fromYRot(living.getYRot()) != facing.getOpposite()) return;
 
-        ServerLevel serverLevel = (ServerLevel) level;
+        boolean inMirrorWorld = WitcheryDimensions.isMirrorWorld(level);
+        boolean unbreakable = state.getValue(UNBREAKABLE);
+        MirrorBlockEntity mirror = MirrorHelper.getMirrorBlockEntity(serverLevel, pos);
+        boolean crossed = false;
 
-        if (WitcheryDimensions.isMirrorWorld(level)) {
-            if (state.getValue(UNBREAKABLE)) {
-                // Unbreakable entry mirror → exit back to the linked dimension/position
-                MirrorHelper.exitMirrorWorld(player, serverLevel, pos);
-            } else {
-                // Regular mirror placed inside mirror world → descend into a new room
-                MirrorHelper.enterDeepMirrorRoom(player, serverLevel, pos);
+        if (!unbreakable && mirror != null) {
+            if (inMirrorWorld || mirror.isDemonKilled()) {
+                crossed = tryHorizontalBridge(serverLevel, pos, facing, entity);
             }
-        } else {
-            MirrorHelper.enterMirrorWorld(player, serverLevel, pos);
+            if (!crossed && inMirrorWorld) {
+                crossed = tryPoweredLocalTravel(serverLevel, pos, facing, entity);
+            } else if (!crossed && mirror.isDemonKilled()) {
+                crossed = tryVerticalBridge(serverLevel, pos, facing, entity);
+            }
         }
 
-        level.playSound(null, pos, SoundEvents.PORTAL_TRIGGER, SoundSource.BLOCKS, 0.5f, 1.0f);
+        if (!crossed && inMirrorWorld && entity instanceof ServerPlayer player) {
+            if (unbreakable) {
+                // Unbreakable entry mirror → exit back to the linked dimension/position
+                crossed = MirrorHelper.exitMirrorWorld(player, serverLevel, pos);
+            } else {
+                // Ordinary mirrors in this dimension only provide local bridges.
+                crossed = false;
+            }
+        } else if (!crossed && !inMirrorWorld && entity instanceof ServerPlayer player) {
+            crossed = MirrorHelper.enterMirrorWorld(player, serverLevel, pos);
+        }
+
+        if (crossed) {
+            data.putLong("MirrorTeleportCooldown", level.getGameTime());
+            level.playSound(null, pos, SoundEvents.PORTAL_TRIGGER, SoundSource.BLOCKS, 0.5f, 1.0f);
+        }
+    }
+
+    private static boolean tryHorizontalBridge(ServerLevel level, BlockPos sourceFoot,
+                                               Direction facing, Entity entity) {
+        Direction travel = facing.getOpposite();
+        for (int distance = 1; distance < 32; distance++) {
+            BlockPos check = sourceFoot.relative(travel, distance);
+            BlockState target = level.getBlockState(check);
+            if (!target.is(WitcheryBlocks.MIRROR.get())) continue;
+            BlockPos targetFoot = target.getValue(PART) == BedPart.HEAD ? check.below() : check;
+            BlockState targetFootState = level.getBlockState(targetFoot);
+            if (targetFootState.getValue(FACING) == facing.getOpposite()) {
+                return teleportWithinLevel(entity, targetFoot, targetFootState.getValue(FACING),
+                        targetFoot.getY(), false);
+            }
+        }
+        return false;
+    }
+
+    private static boolean tryPoweredLocalTravel(ServerLevel level, BlockPos sourceFoot,
+                                                  Direction facing, Entity entity) {
+        Direction travel = facing.getOpposite();
+        int topY = sourceFoot.getY() + 1;
+        for (int distance = 1; distance < 10; distance++) {
+            BlockPos destination = sourceFoot.relative(travel, distance).atY(topY);
+            if (!level.getBlockState(destination).isAir()
+                    || !level.getBlockState(destination.below()).isAir()) continue;
+
+            int chunkX = Math.floorDiv(destination.getX(), 16);
+            int sectionY = com.emoniph.witchery.world.MirrorWorldLayout.sectionY(destination.getY());
+            int chunkZ = Math.floorDiv(destination.getZ(), 16);
+            BlockPos roomEntry = com.emoniph.witchery.world.MirrorWorldLayout.innerMirrorTop(
+                    chunkX, sectionY, chunkZ);
+            boolean occupiedEntry = level.getBlockState(roomEntry).is(WitcheryBlocks.MIRROR.get())
+                    && level.getBlockState(roomEntry).getValue(UNBREAKABLE);
+            boolean ownEntry = entity instanceof ServerPlayer player
+                    && WitcheryAttachments.get(player).getCurrentMirrorRoute()
+                    .map(route -> com.emoniph.witchery.world.MirrorWorldLayout.roomForIndex(
+                            route.destinationRoomIndex()))
+                    .map(room -> com.emoniph.witchery.world.MirrorWorldLayout.innerMirrorTop(
+                            room.chunkX(), room.sectionY(), room.chunkZ()))
+                    .filter(destination::equals).isPresent();
+            if (occupiedEntry && !ownEntry) return false;
+
+            AltarBlockEntity altar = AltarPowerSourceLookup.findClosest(level, sourceFoot);
+            if (altar == null || !altar.consumePower(3000)) return false;
+            return teleportWithinLevel(entity, destination, travel, destination.getY(), false);
+        }
+        return false;
+    }
+
+    private static boolean tryVerticalBridge(ServerLevel level, BlockPos sourceFoot,
+                                              Direction facing, Entity entity) {
+        for (int verticalDirection : new int[]{1, -1}) {
+            for (int distance = 2; distance < 16; distance++) {
+                BlockPos check = sourceFoot.offset(0, verticalDirection * distance, 0);
+                BlockState target = level.getBlockState(check);
+                if (!target.is(WitcheryBlocks.MIRROR.get())) continue;
+                BlockPos targetFoot = target.getValue(PART) == BedPart.HEAD ? check.below() : check;
+                BlockState targetFootState = level.getBlockState(targetFoot);
+                if (targetFootState.getValue(FACING) == facing) {
+                    return teleportWithinLevel(entity, targetFoot, facing, targetFoot.getY(), true);
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean teleportWithinLevel(Entity entity, BlockPos destination,
+                                                Direction emergeFacing, double y,
+                                                boolean reversePlayer) {
+        double x = destination.getX() + 0.5D + emergeFacing.getStepX() * 0.7D;
+        double z = destination.getZ() + 0.5D + emergeFacing.getStepZ() * 0.7D;
+        entity.teleportTo(x, y, z);
+        if (reversePlayer && entity instanceof ServerPlayer player) {
+            player.setYRot(player.getYRot() + 180.0F);
+        }
+        return true;
     }
 
     // ── Breaking ─────────────────────────────────────────────────────────────
@@ -341,6 +447,20 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         BedPart part = state.getValue(PART);
         BlockPos other = part == BedPart.FOOT ? pos.above() : pos.below();
+        BlockPos foot = part == BedPart.HEAD ? pos.below() : pos;
+        if (!level.isClientSide() && level instanceof ServerLevel serverLevel
+                && !state.getValue(UNBREAKABLE)
+                && level.getBlockEntity(foot) instanceof MirrorBlockEntity mirror) {
+            MirrorHelper.disconnectSourceMirror(serverLevel, mirror);
+            if (!player.getAbilities().instabuild) {
+                ItemStack drop = new ItemStack(WitcheryItems.MIRROR.get());
+                drop.set(net.minecraft.core.component.DataComponents.BLOCK_ENTITY_DATA,
+                        net.minecraft.world.item.component.TypedEntityData.of(
+                                WitcheryBlockEntities.MIRROR.get(),
+                                mirror.saveCustomOnly(level.registryAccess())));
+                Block.popResource(level, foot, drop);
+            }
+        }
         BlockState otherState = level.getBlockState(other);
         if (otherState.is(this) && otherState.getValue(PART) != part) {
             level.setBlock(other, Blocks.AIR.defaultBlockState(), 35);

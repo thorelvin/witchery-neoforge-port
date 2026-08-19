@@ -30,6 +30,8 @@ import com.emoniph.witchery.item.WerewolfShiftUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.ritual.OtherwhereHearthTransposition;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
+import com.emoniph.witchery.world.TormentHelper;
+import com.emoniph.witchery.world.TormentReleaseData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -106,6 +108,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @EventBusSubscriber
 @SuppressWarnings({"deprecation", "removal"})
@@ -116,8 +119,10 @@ public class WitcheryPlayerEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             giveFirstJoinPrimer(player);
             syncKnownRecipeGuideAdvancements(player);
-            syncToClient(player);
             OtherwhereHearthTransposition.recover(player.level().getServer());
+            TormentHelper.releaseIfDefeated(player);
+            player.level().getServer().execute(() -> reconcileSpiritLifecycle(player));
+            syncToClient(player);
         }
     }
 
@@ -134,11 +139,45 @@ public class WitcheryPlayerEvents {
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            if (!event.getTo().equals(WitcheryDimensions.SPIRIT_WORLD)) {
-                WitcheryAttachments.get(player).setOtherwhereHearthTraveler(false);
+            if (!event.getTo().equals(WitcheryDimensions.MIRROR_WORLD)
+                    && WitcheryAttachments.get(player).getMirrorRouteDepth() > 0) {
+                WitcheryAttachments.get(player).clearMirrorRoutes();
             }
+            player.level().getServer().execute(() -> reconcileSpiritLifecycle(player));
             syncToClient(player);
         }
+    }
+
+    private static void reconcileSpiritLifecycle(ServerPlayer player) {
+        if (player.isRemoved()) return;
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        boolean inSpiritDimension = player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD);
+        boolean hasMortalSnapshot = !data.getOverworldInventorySnbt().isEmpty();
+
+        if (inSpiritDimension) {
+            if (data.isOtherwhereHearthTraveler() || data.isInSpiritWorld() && hasMortalSnapshot) {
+                syncToClient(player);
+                return;
+            }
+            SpiritWorldHelper.recoverInvalidSpiritState(player);
+            return;
+        }
+
+        if (data.isOtherwhereHearthTraveler()) {
+            data.setOtherwhereHearthTraveler(false);
+        }
+        if (data.isInSpiritWorld() && !data.isManifestedGhost()) {
+            if (hasMortalSnapshot) {
+                SpiritWorldHelper.exit(player);
+            } else {
+                SpiritWorldHelper.recoverInvalidSpiritState(player);
+            }
+            return;
+        }
+        if (data.isManifestedGhost() && !data.isInSpiritWorld()) {
+            data.clearManifestationState();
+        }
+        syncToClient(player);
     }
 
     @SubscribeEvent
@@ -151,8 +190,15 @@ public class WitcheryPlayerEvents {
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            if (!player.level().dimension().equals(WitcheryDimensions.MIRROR_WORLD)) {
+                WitcheryAttachments.get(player).clearMirrorRoutes();
+            }
             if (!player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
                 WitcheryAttachments.get(player).setOtherwhereHearthTraveler(false);
+            }
+            if (!player.level().dimension().equals(WitcheryDimensions.TORMENT)
+                    && WitcheryAttachments.get(player).getTormentReturnPos().isPresent()) {
+                TormentHelper.abandonSession(player);
             }
             syncToClient(player);
         }
@@ -178,7 +224,9 @@ public class WitcheryPlayerEvents {
             return;
         }
         if (!player.level().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
-                || data.isOtherwhereHearthTraveler()) return;
+                || data.isOtherwhereHearthTraveler()
+                || !data.isInSpiritWorld()
+                || data.getOverworldInventorySnbt().isEmpty()) return;
         event.setCanceled(true);
         player.setHealth(1.0f);
         SpiritWorldHelper.exit(player);
@@ -352,7 +400,7 @@ public class WitcheryPlayerEvents {
             if (currentLevel.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
                 dataEveryTick.setWakingNightmareLevel(0);
                 syncToClient(player);
-            } else {
+            } else if (SpiritWorldHelper.shouldTickWakingNightmare(player.tickCount)) {
                 SpiritWorldHelper.tickWakingNightmare(player, currentLevel, dataEveryTick);
             }
         }
@@ -496,38 +544,27 @@ public class WitcheryPlayerEvents {
 
     @SubscribeEvent
     public static void onLordOfTormentDefeated(LivingDeathEvent event) {
-        if (!(event.getEntity() instanceof LordOfTormentEntity)) return;
+        if (!(event.getEntity() instanceof LordOfTormentEntity lord)) return;
         if (!(event.getEntity().level() instanceof ServerLevel level)) return;
         if (!level.dimension().equals(WitcheryDimensions.TORMENT)) return;
 
+        UUID sessionId = lord.getTormentSessionId();
+        Set<UUID> participants = lord.getTormentParticipants();
+        if (sessionId != null && !participants.isEmpty()) {
+            TormentReleaseData.get(level.getServer()).release(sessionId, participants);
+        }
+
         for (ServerPlayer player : new ArrayList<>(level.players())) {
-            WitcheryPlayerData data = WitcheryAttachments.get(player);
-            Optional<BlockPos> returnPos = data.getReturnPos();
-            String returnDim = data.getReturnDimension();
+            boolean linkedSession = sessionId != null
+                    && participants.contains(player.getUUID())
+                    && WitcheryAttachments.get(player).getTormentSession()
+                    .filter(sessionId::equals).isPresent();
+            if (sessionId != null && !linkedSession) continue;
 
-            if (returnPos.isPresent() && !returnDim.isEmpty()) {
-                ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, Identifier.parse(returnDim));
-                ServerLevel destination = level.getServer().getLevel(key);
-                if (destination != null) {
-                    BlockPos pos = returnPos.get();
-                    player.teleportTo(destination, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
-                            java.util.Set.of(), player.getYRot(), player.getXRot(), false);
-                    data.clearReturnPos();
-                    syncToClient(player);
-                    player.displayClientMessage(Component.translatable("witchery.lord_of_torment.defeated")
-                            .withStyle(ChatFormatting.DARK_PURPLE), false);
-                    continue;
-                }
-            }
-
-            ServerLevel overworld = level.getServer().getLevel(Level.OVERWORLD);
-            if (overworld != null) {
-                BlockPos spawn = new BlockPos(0, 64, 0);
-                player.teleportTo(overworld, spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5,
-                        java.util.Set.of(), 0f, 0f, false);
-                player.displayClientMessage(Component.translatable("witchery.lord_of_torment.defeated")
-                        .withStyle(ChatFormatting.DARK_PURPLE), false);
-            }
+            TormentHelper.returnFromTorment(player);
+            syncToClient(player);
+            player.displayClientMessage(Component.translatable("witchery.lord_of_torment.defeated")
+                    .withStyle(ChatFormatting.DARK_PURPLE), false);
         }
     }
 

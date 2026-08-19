@@ -4,26 +4,21 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.player.PlayerModel;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 /**
- * First-pass manifested ghost presentation.
- * Reuses the live posed player model and draws a dedicated translucent
- * ghost overlay so manifested travelers stop looking fully mortal.
+ * Draws the live player skin at the source's 51% manifested-ghost opacity.
  */
 public class ManifestedGhostLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
-
-    private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath("witchery", "textures/entity/manifested_ghost.png");
+    static final float SOURCE_ALPHA = 0.51F;
 
     public ManifestedGhostLayer(RenderLayerParent<AvatarRenderState, PlayerModel> parent) {
         super(parent);
@@ -37,12 +32,10 @@ public class ManifestedGhostLayer extends RenderLayer<AvatarRenderState, PlayerM
         if (!(entity instanceof Player player)) return;
         if (!WitcheryAttachments.get(player).isManifestedGhost()) return;
 
-        poseStack.pushPose();
-        poseStack.scale(1.01f, 1.01f, 1.01f);
-        // Full-bright so the ghost is visible in darkness; translucent renders the
-        // overlay with the ghost texture alpha
-        collector.submitModelPart(this.getParentModel().root(), poseStack,
-                RenderTypes.entityTranslucent(TEXTURE), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, null);
-        poseStack.popPose();
+        int tint = ARGB.colorFromFloat(SOURCE_ALPHA, 1.0F, 1.0F, 1.0F);
+        collector.submitModel(this.getParentModel(), state, poseStack,
+                RenderTypes.entityTranslucent(state.skin.body().texturePath()), light,
+                LivingEntityRenderer.getOverlayCoords(state, 0.0F), tint, null,
+                state.outlineColor, null);
     }
 }

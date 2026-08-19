@@ -274,7 +274,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<SpiritEntity>> SPIRIT =
             ENTITY_TYPES.register("spirit", () ->
                     EntityType.Builder.of(SpiritEntity::new, MobCategory.AMBIENT)
-                            .sized(0.5F, 0.5F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "spirit"))));
+                            .sized(0.25F, 0.25F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "spirit"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.CorpseEntity>> CORPSE =
             ENTITY_TYPES.register("corpse", () ->
@@ -377,8 +377,14 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.ReflectionEntity>> REFLECTION =
             ENTITY_TYPES.register("reflection", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.ReflectionEntity::new, MobCategory.MONSTER)
-                            .sized(0.6F, 1.95F).clientTrackingRange(12)
+                            .sized(0.6F, 1.8F).clientTrackingRange(12).fireImmune()
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "reflection"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.MirrorDecoyEntity>> MIRROR_DECOY =
+            ENTITY_TYPES.register("mirror_decoy", () ->
+                    EntityType.Builder.of(com.emoniph.witchery.entity.MirrorDecoyEntity::new, MobCategory.MISC)
+                            .sized(0.6F, 1.8F).clientTrackingRange(12)
+                            .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "mirror_decoy"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.MirrorFaceEntity>> MIRROR_FACE =
             ENTITY_TYPES.register("mirror_face", () ->
@@ -412,8 +418,9 @@ public class WitcheryEntities {
                         .is(net.minecraft.tags.BlockTags.ANIMALS_SPAWNABLE_ON),
                 RegisterSpawnPlacementsEvent.Operation.OR);
 
-        // Spirit World — spirit orb floats freely
-        event.register(SPIRIT.get(),        SpawnPlacementTypes.NO_RESTRICTIONS,  Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.Mob::checkMobSpawnRules,    RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(SPIRIT.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpiritEntity::checkSpiritSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
 
         // Ground mobs — humanoids and ground-walkers
         event.register(COVEN_WITCH.get(),   SpawnPlacementTypes.ON_GROUND,        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.monster.Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
@@ -473,6 +480,7 @@ public class WitcheryEntities {
         event.put(FLYING_MONKEY.get(),    com.emoniph.witchery.entity.FlyingMonkeyEntity.createAttributes().build());
         event.put(CORPSE.get(),           com.emoniph.witchery.entity.CorpseEntity.createAttributes().build());
         event.put(REFLECTION.get(),       com.emoniph.witchery.entity.ReflectionEntity.createAttributes().build());
+        event.put(MIRROR_DECOY.get(),     com.emoniph.witchery.entity.MirrorDecoyEntity.createAttributes().build());
         event.put(MIRROR_FACE.get(),      com.emoniph.witchery.entity.MirrorFaceEntity.createAttributes().build());
         event.put(ELLE.get(),             ElleEntity.createAttributes().build());
         event.put(LILITH.get(),           LilithEntity.createAttributes().build());

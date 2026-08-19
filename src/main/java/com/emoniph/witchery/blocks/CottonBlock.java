@@ -1,21 +1,17 @@
 package com.emoniph.witchery.blocks;
 
-import com.emoniph.witchery.data.WitcheryPlayerData;
-import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
-import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -32,7 +28,13 @@ public class CottonBlock extends BushBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT) || state.is(Blocks.STONE);
+        return isSourcePlacementSupport(state);
+    }
+
+    @Override
+    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        return hasSourceBushLight(level.getRawBrightness(pos, 0), level.canSeeSky(pos))
+                && super.canSurvive(state, level, pos);
     }
 
     @Override
@@ -58,35 +60,24 @@ public class CottonBlock extends BushBlock {
             }
         }
 
-        BlockPos candidate = pos;
+        BlockPos center = pos;
+        BlockPos candidate = randomSpreadCandidate(center, random);
         for (int i = 0; i < 4; i++) {
-            BlockPos next = candidate.offset(random.nextInt(3) - 1, random.nextInt(2) - random.nextInt(2), random.nextInt(3) - 1);
-            if (canSpreadTo(level, next)) {
-                candidate = next;
+            if (canSpreadTo(level, candidate)) {
+                center = candidate;
             }
+            candidate = randomSpreadCandidate(center, random);
         }
 
         if (canSpreadTo(level, candidate)) {
-            level.setBlock(candidate, defaultBlockState(), 3);
+            level.setBlock(candidate, defaultBlockState(), Block.UPDATE_CLIENTS);
         }
     }
 
-    @Override
-    public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state,
-                              net.minecraft.world.level.block.entity.BlockEntity blockEntity,
-                              net.minecraft.world.item.ItemStack tool) {
-        if (!shouldDropDisturbedCotton(level, player)) {
-            super.playerDestroy(level, player, pos, state, blockEntity, tool);
-            return;
-        }
-
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-
-        player.awardStat(Stats.BLOCK_MINED.get(this));
-        player.causeFoodExhaustion(0.005F);
-        popResource(serverLevel, pos, WitcheryItems.DISTURBED_COTTON.get().getDefaultInstance());
+    private static BlockPos randomSpreadCandidate(BlockPos center, RandomSource random) {
+        return center.offset(random.nextInt(3) - 1,
+                random.nextInt(2) - random.nextInt(2),
+                random.nextInt(3) - 1);
     }
 
     private boolean canSourceSpread(ServerLevel level, BlockPos pos) {
@@ -95,27 +86,34 @@ public class CottonBlock extends BushBlock {
 
     private boolean canSpreadTo(LevelReader level, BlockPos pos) {
         return level.isEmptyBlock(pos)
-                && isCottonSpreadSupport(level.getBlockState(pos.below()))
+                && isSourceSpreadSupport(level.getBlockState(pos.below()))
                 && canSurvive(defaultBlockState(), level, pos);
     }
 
-    private boolean isCottonSpreadSupport(BlockState state) {
-        return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT);
+    static boolean isSourcePlacementSupport(BlockState state) {
+        return isSourceSpreadSupport(state) || state.is(Blocks.FARMLAND);
+    }
+
+    static boolean isSourceSpreadSupport(BlockState state) {
+        return state.is(Blocks.GRASS_BLOCK)
+                || state.is(Blocks.DIRT)
+                || state.is(Blocks.COARSE_DIRT)
+                || state.is(Blocks.PODZOL);
+    }
+
+    static boolean hasSourceBushLight(int rawBrightness, boolean canSeeSky) {
+        return rawBrightness >= 8 || canSeeSky;
     }
 
     private boolean hasFlowingSpiritBelowNeighbor(LevelReader level, BlockPos pos) {
         BlockPos below = pos.below();
-        return level.getBlockState(below.north()).is(WitcheryBlocks.FLOWING_SPIRIT.get())
-                || level.getBlockState(below.south()).is(WitcheryBlocks.FLOWING_SPIRIT.get())
-                || level.getBlockState(below.east()).is(WitcheryBlocks.FLOWING_SPIRIT.get())
-                || level.getBlockState(below.west()).is(WitcheryBlocks.FLOWING_SPIRIT.get());
+        return isFlowingSpiritSource(level.getBlockState(below.north()))
+                || isFlowingSpiritSource(level.getBlockState(below.south()))
+                || isFlowingSpiritSource(level.getBlockState(below.east()))
+                || isFlowingSpiritSource(level.getBlockState(below.west()));
     }
 
-    private boolean shouldDropDisturbedCotton(Level level, Player player) {
-        if (!level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
-            return false;
-        }
-        WitcheryPlayerData data = WitcheryAttachments.get(player);
-        return data.isNightmare();
+    static boolean isFlowingSpiritSource(BlockState state) {
+        return state.is(WitcheryBlocks.FLOWING_SPIRIT.get()) && state.getValue(LiquidBlock.LEVEL) == 0;
     }
 }

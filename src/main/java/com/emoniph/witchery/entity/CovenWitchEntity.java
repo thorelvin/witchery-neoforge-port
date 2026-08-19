@@ -345,6 +345,9 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         if (hand != InteractionHand.MAIN_HAND) {
             return InteractionResult.PASS;
         }
+        if (level().dimension().equals(com.emoniph.witchery.init.WitcheryDimensions.SPIRIT_WORLD)) {
+            return level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+        }
         if (!isAlive() || isTrading()) {
             return level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
         }

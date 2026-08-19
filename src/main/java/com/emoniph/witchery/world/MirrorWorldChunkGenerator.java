@@ -32,7 +32,8 @@ import java.util.concurrent.CompletableFuture;
  *   y local 6–14         → open (9 blocks)
  *   y local 15           → ceiling (mirror_wall)
  *
- * Entry point per room at (chunkX*16+8, 7, chunkZ*16+8).
+ * Fifteen vertical room tiers are available for source-mirror allocation in each chunk.
+ * The inner mirror occupies local (4, 7-8, 8) in its allocated tier.
  */
 public class MirrorWorldChunkGenerator extends ChunkGenerator {
 
@@ -40,10 +41,6 @@ public class MirrorWorldChunkGenerator extends ChunkGenerator {
             inst.group(
                     BiomeSource.CODEC.fieldOf("biome_source").forGetter(ChunkGenerator::getBiomeSource)
             ).apply(inst, MirrorWorldChunkGenerator::new));
-
-    // 1 = mirror_wall, 0 = open
-    private static final int[] WALL_XZ = {1,1,1,1, 0,0,0,0,0,0,0,0,0, 1,1,1};
-    private static final int[] WALL_Y  = {1,1,1,1,1,1, 0,0,0,0,0,0,0,0,0, 1};
 
     public MirrorWorldChunkGenerator(BiomeSource biomeSource) {
         super(biomeSource);
@@ -73,12 +70,8 @@ public class MirrorWorldChunkGenerator extends ChunkGenerator {
 
         for (int lx = 0; lx < 16; lx++) {
             for (int lz = 0; lz < 16; lz++) {
-                boolean xOpen = WALL_XZ[lx] == 0;
-                boolean zOpen = WALL_XZ[lz] == 0;
                 for (int y = minY; y < maxY; y++) {
-                    int ly = ((y % 16) + 16) % 16;
-                    boolean yOpen = WALL_Y[ly] == 0;
-                    BlockState bs = (xOpen && zOpen && yOpen) ? air : wall;
+                    BlockState bs = MirrorWorldLayout.isGeneratedAir(lx, y, lz) ? air : wall;
                     chunk.setBlockState(new BlockPos(baseX + lx, y, baseZ + lz), bs, 0);
                 }
             }
@@ -94,7 +87,7 @@ public class MirrorWorldChunkGenerator extends ChunkGenerator {
     public void spawnOriginalMobs(WorldGenRegion region) {}
 
     @Override
-    public int getGenDepth() { return 16; }
+    public int getGenDepth() { return MirrorWorldLayout.WORLD_HEIGHT; }
 
     @Override
     public int getSeaLevel() { return 0; }
@@ -105,7 +98,7 @@ public class MirrorWorldChunkGenerator extends ChunkGenerator {
     @Override
     public int getBaseHeight(int x, int z, Heightmap.Types heightmapType,
                              LevelHeightAccessor level, RandomState randomState) {
-        return 7;
+        return MirrorWorldLayout.WORLD_HEIGHT;
     }
 
     @Override

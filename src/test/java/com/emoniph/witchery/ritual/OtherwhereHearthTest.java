@@ -2,6 +2,7 @@ package com.emoniph.witchery.ritual;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -102,5 +103,105 @@ class OtherwhereHearthTest {
         assertEquals(Optional.of(vehicleId), restored.entities().getFirst().vehicleId());
         assertEquals("minecraft:armor_stand",
                 restored.entities().getFirst().entitySnapshot().getStringOr("id", ""));
+    }
+
+    @Test
+    void inspectionIsReadyOnlyWithoutBlockersAndCopiesTheDiagnosticList() {
+        List<String> mutableBlockers = new java.util.ArrayList<>();
+        OtherwhereHearthTransposition.Inspection ready = new OtherwhereHearthTransposition.Inspection(
+                OtherwhereHearthTransposition.volumeFor(BlockPos.ZERO),
+                "minecraft:overworld",
+                "witchery:spirit_world",
+                "none",
+                true,
+                true,
+                "Morgan",
+                true,
+                1,
+                2,
+                6,
+                new BlockPos(2, 0, 2),
+                true,
+                20_000,
+                60_000,
+                10_000,
+                mutableBlockers);
+
+        mutableBlockers.add("late mutation");
+        assertTrue(ready.ready());
+        assertTrue(ready.blockers().isEmpty());
+
+        OtherwhereHearthTransposition.Inspection blocked = new OtherwhereHearthTransposition.Inspection(
+                ready.volume(), ready.sourceDimension(), ready.destinationDimension(), ready.journal(),
+                ready.kettlePresent(), ready.kettleBound(), ready.kettleOwner(), ready.ownerMatches(),
+                ready.mediumRitualVariant(), ready.largeOtherwhereVariant(), ready.covenSize(),
+                ready.altarPos(), ready.altarValid(), ready.altarPower(), ready.altarCapacity(),
+                ready.powerCost(), List.of("destination occupied"));
+        assertFalse(blocked.ready());
+    }
+
+    @Test
+    void waitingTransitionPreservesTheCommittedChargeAndOriginalSnapshots() {
+        OtherwhereHearthSavedData.PendingSwap prepared = pendingWithSinglePassenger();
+        OtherwhereHearthSavedData.PendingSwap paid = prepared.withPowerPaid();
+        OtherwhereHearthSavedData.PendingSwap waiting = paid.waitingForPlayers();
+
+        assertFalse(prepared.powerPaid());
+        assertTrue(paid.powerPaid());
+        assertTrue(waiting.powerPaid());
+        assertEquals(OtherwhereHearthSavedData.Phase.PREPARED, paid.phase());
+        assertEquals(OtherwhereHearthSavedData.Phase.WAITING_FOR_PLAYERS, waiting.phase());
+        assertEquals(prepared.transactionId(), waiting.transactionId());
+        assertEquals(prepared.entities(), waiting.entities());
+        assertEquals("waking", waiting.overworldSnapshot().getStringOr("marker", ""));
+        assertEquals("spirit", waiting.spiritSnapshot().getStringOr("marker", ""));
+        assertNotSame(prepared.overworldSnapshot(), waiting.overworldSnapshot());
+        assertNotSame(prepared.spiritSnapshot(), waiting.spiritSnapshot());
+    }
+
+    @Test
+    void legacyPreparedJournalDefaultsToUnpaidAndPrepared() {
+        OtherwhereHearthSavedData.PendingSwap pending = pendingWithSinglePassenger();
+        CompoundTag encoded = (CompoundTag) OtherwhereHearthSavedData.PendingSwap.CODEC
+                .encodeStart(NbtOps.INSTANCE, pending)
+                .getOrThrow();
+        encoded.remove("power_paid");
+        encoded.remove("phase");
+
+        OtherwhereHearthSavedData.PendingSwap restored = OtherwhereHearthSavedData.PendingSwap.CODEC
+                .parse(NbtOps.INSTANCE, encoded)
+                .getOrThrow();
+        assertFalse(restored.powerPaid());
+        assertEquals(OtherwhereHearthSavedData.Phase.PREPARED, restored.phase());
+        assertEquals(pending.overworldSnapshot(), restored.overworldSnapshot());
+        assertEquals(pending.spiritSnapshot(), restored.spiritSnapshot());
+    }
+
+    private static OtherwhereHearthSavedData.PendingSwap pendingWithSinglePassenger() {
+        CompoundTag overworld = new CompoundTag();
+        overworld.putString("marker", "waking");
+        CompoundTag spirit = new CompoundTag();
+        spirit.putString("marker", "spirit");
+        UUID vehicle = UUID.randomUUID();
+        CompoundTag entity = new CompoundTag();
+        entity.putString("id", "minecraft:villager");
+        return new OtherwhereHearthSavedData.PendingSwap(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Morgan",
+                new BlockPos(4, 70, 9),
+                new BlockPos(-8, 62, -3),
+                new BlockPos(7, 69, 10),
+                false,
+                10_000,
+                false,
+                OtherwhereHearthSavedData.Phase.PREPARED,
+                overworld,
+                spirit,
+                List.of(new OtherwhereHearthSavedData.EntityTransfer(
+                        UUID.randomUUID(), false, true,
+                        5.5D, 71.0D, 9.5D,
+                        0.0F, 0.0F,
+                        Optional.of(vehicle), entity)));
     }
 }

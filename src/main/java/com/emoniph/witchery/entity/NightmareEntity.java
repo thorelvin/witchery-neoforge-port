@@ -373,6 +373,11 @@ public class NightmareEntity extends Monster {
     }
 
     @Override
+    protected int decreaseAirSupply(int air) {
+        return air;
+    }
+
+    @Override
     public int getAmbientSoundInterval() {
         return super.getAmbientSoundInterval() * 2;
     }

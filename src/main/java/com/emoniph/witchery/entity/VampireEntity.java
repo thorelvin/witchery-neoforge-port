@@ -6,6 +6,7 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcherySoundEvents;
+import com.emoniph.witchery.util.CreatureSunlight;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -154,8 +155,14 @@ public class VampireEntity extends Monster {
     }
 
     private boolean isInSunlight() {
+        if (!CreatureSunlight.dimensionAllowsSunlight(level())) {
+            return false;
+        }
         long dayTime = level().getDayTime() % 24000L;
-        return dayTime < 12300L && level().canSeeSky(blockPosition());
+        BlockPos head = blockPosition().above(net.minecraft.util.Mth.ceil(getBbHeight()));
+        return dayTime < 12000L
+                && level().canSeeSky(head)
+                && !level().isRainingAt(head);
     }
 
     private void smokeParticles() {

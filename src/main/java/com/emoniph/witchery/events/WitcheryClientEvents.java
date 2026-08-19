@@ -17,6 +17,7 @@ import com.emoniph.witchery.item.EarmuffsItem;
 import com.emoniph.witchery.network.BroomControlPayload;
 import com.emoniph.witchery.network.HowlPayload;
 import com.emoniph.witchery.network.VampireUltimatePayload;
+import com.emoniph.witchery.world.TormentAtmosphere;
 import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -33,7 +34,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.FogType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -56,6 +56,7 @@ import java.util.Map;
 public class WitcheryClientEvents {
 
     private static final Map<Integer, PlayerVisibilityState> WEREWOLF_VISIBILITY_OVERRIDES = new HashMap<>();
+    private static final Map<Integer, PlayerVisibilityState> MANIFESTED_VISIBILITY_OVERRIDES = new HashMap<>();
 
     private static boolean lastNightmareLike;
     private static boolean lastBroomControlRiding;
@@ -333,13 +334,25 @@ public class WitcheryClientEvents {
 
     @SubscribeEvent
     public static void onExtractLevelRenderState(ExtractLevelRenderStateEvent event) {
+        if (event.getLevel().dimension().equals(WitcheryDimensions.TORMENT)) {
+            var renderState = event.getRenderState();
+            renderState.customCloudsRenderer = SpiritWorldSpecialEffects.NO_CLOUDS;
+            var sky = renderState.skyRenderState;
+            sky.skyColor = TormentAtmosphere.SKY_RGB;
+            sky.sunriseAndSunsetColor = 0;
+            sky.starBrightness = 0.0F;
+            sky.sunAngle = TormentAtmosphere.FIXED_SUN_ANGLE_RADIANS;
+            sky.moonAngle = TormentAtmosphere.FIXED_SUN_ANGLE_RADIANS;
+            sky.starAngle = TormentAtmosphere.FIXED_SUN_ANGLE_RADIANS;
+            sky.shouldRenderDarkDisc = false;
+            return;
+        }
         if (!event.getLevel().dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) return;
 
         var renderState = event.getRenderState();
         renderState.customCloudsRenderer = SpiritWorldSpecialEffects.NO_CLOUDS;
 
         var sky = renderState.skyRenderState;
-        sky.skyColor = SpiritWorldSpecialEffects.currentSpiritRgb();
         sky.sunriseAndSunsetColor = 0;
         sky.starBrightness = 0.0F;
 
@@ -366,6 +379,29 @@ public class WitcheryClientEvents {
     @SubscribeEvent
     public static void onRenderPlayerSlimPost(RenderPlayerEvent.Post<?> event) {
         com.emoniph.witchery.client.VampireArmorClientExtensions.SLIM_RENDER.set(Boolean.FALSE);
+    }
+
+    @SubscribeEvent
+    public static void onRenderManifestedPlayerPre(RenderPlayerEvent.Pre<?> event) {
+        AvatarRenderState state = event.getRenderState();
+        Minecraft mc = Minecraft.getInstance();
+        Entity entity = mc.level != null ? mc.level.getEntity(state.id) : null;
+        if (entity instanceof Player player && WitcheryAttachments.get(player).isManifestedGhost()) {
+            MANIFESTED_VISIBILITY_OVERRIDES.put(state.id,
+                    new PlayerVisibilityState(state.isInvisible, state.isInvisibleToPlayer));
+            state.isInvisible = true;
+            state.isInvisibleToPlayer = true;
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRenderManifestedPlayerPost(RenderPlayerEvent.Post<?> event) {
+        AvatarRenderState state = event.getRenderState();
+        PlayerVisibilityState original = MANIFESTED_VISIBILITY_OVERRIDES.remove(state.id);
+        if (original != null) {
+            state.isInvisible = original.invisible();
+            state.isInvisibleToPlayer = original.invisibleToPlayer();
+        }
     }
 
     @SubscribeEvent
@@ -441,6 +477,12 @@ public class WitcheryClientEvents {
             event.setBlue(0.1f);
             return;
         }
+        if (mc.level.dimension().equals(WitcheryDimensions.TORMENT)) {
+            event.setRed(TormentAtmosphere.red(TormentAtmosphere.FOG_RGB));
+            event.setGreen(TormentAtmosphere.green(TormentAtmosphere.FOG_RGB));
+            event.setBlue(TormentAtmosphere.blue(TormentAtmosphere.FOG_RGB));
+            return;
+        }
         // Gate on the dimension only, matching onExtractLevelRenderState (the sky). The earlier extra
         // isInSpiritWorld() gate could leave the fog overworld-blue while the sky was already spirit-
         // coloured if that flag had not synced yet.
@@ -450,20 +492,6 @@ public class WitcheryClientEvents {
         event.setRed(color.red());
         event.setGreen(color.green());
         event.setBlue(color.blue());
-    }
-
-    @SubscribeEvent
-    public static void onRenderFog(ViewportEvent.RenderFog event) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || !mc.level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) return;
-        if (event.getType() != FogType.NONE) return;
-
-        SpiritWorldSpecialEffects.SpiritFog fog = SpiritWorldSpecialEffects.currentSpiritFog();
-        float far = Math.min(event.getFarPlaneDistance(), fog.farPlane());
-        float near = Math.min(fog.nearPlane(), far * 0.75F);
-        event.setNearPlaneDistance(near);
-        event.setFarPlaneDistance(far);
-        ((net.neoforged.bus.api.ICancellableEvent) event).setCanceled(true);
     }
 
     /**

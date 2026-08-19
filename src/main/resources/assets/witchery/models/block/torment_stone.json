@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "minecraft:block/nether_bricks"
+    "all": "minecraft:block/mycelium_top"
   }
 }

@@ -202,9 +202,8 @@ public class RitualExecutor {
                 return ActivationResult.MATCHED_FAILED;
             }
 
-            // Circle Magic does not work in the Spirit World; only Rite of Manifestation (spectral_dust) is permitted
-            if (level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
-                    && !ingredient.is(WitcheryItems.SPECTRAL_DUST.get())) {
+            // Source BlockCircle rejects every circle rite in the Dream World.
+            if (level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
                 level.playSound(null, floorCenter, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
                 player.displayClientMessage(Component.translatable("witchery.rite.wrongdimension"), false);
                 return ActivationResult.MATCHED_FAILED;
@@ -2092,10 +2091,9 @@ public class RitualExecutor {
     }
 
     private static boolean riteOfManifestationDream(Player player, Level level, BlockPos center) {
-        if (!(player instanceof ServerPlayer sp)) return false;
-        WitcheryPlayerData data = WitcheryAttachments.get(sp);
-        if (!data.isInSpiritWorld() || !level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)) {
-            sp.displayClientMessage(Component.translatable("witchery.ritual.manifestation.unavailable"), false);
+        if (!(player instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl)) return false;
+        if (!level.dimension().equals(Level.OVERWORLD)) {
+            sp.displayClientMessage(Component.translatable("witchery.rite.wrongdimension"), false);
             return false;
         }
         Optional<ManifestationOfferings> offerings = findManifestationOfferings(level, center);
@@ -2104,24 +2102,38 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.ritual.manifestation.support"), false);
             return false;
         }
-        if (!(level instanceof ServerLevel sl) || !consumeNearbyRitualAltarPower(sl, center, 16, 5000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            sp.displayClientMessage(Component.translatable("witchery.ritual.manifestation.no_power"), false);
+        List<ServerPlayer> targets = infusionTargets(sl, center, 5);
+        if (targets.isEmpty()) {
+            sp.displayClientMessage(Component.translatable("witchery.ritual.manifestation.unavailable"), false);
             return false;
         }
 
         int covenSize = countNearbyCovenWitches(level, center);
         int duration = 150 + covenSize * 25;
-        consumeOfferedItem(offerings.get().spectralDust());
-        consumeOfferedItem(offerings.get().mellifluousHunger());
-        consumeOfferedItem(offerings.get().goldenPickaxe());
-        consumeOfferedItem(offerings.get().gunpowder());
-        data.setManifestationTime(duration);
-        data.setSkipManifestationTick(false);
-        sp.displayClientMessage(Component.translatable("witchery.ritual.manifestation.duration", duration), false);
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 5000,
+                "witchery.ritual.manifestation.no_power")
+                .offer(offerings.get().spectralDust())
+                .offer(offerings.get().mellifluousHunger())
+                .offer(offerings.get().necroStone())
+                .offer(offerings.get().goldenPickaxe())
+                .offer(offerings.get().arthana())
+                .offer(offerings.get().gunpowder());
+        if (!transaction.commit(player)) {
+            return false;
+        }
+
+        for (ServerPlayer target : targets) {
+            WitcheryPlayerData data = WitcheryAttachments.get(target);
+            data.setManifestationTime(duration);
+            data.setSkipManifestationTick(false);
+            PacketDistributor.sendToPlayer(target, SyncPlayerDataPayload.from(target, data));
+            target.displayClientMessage(Component.translatable(
+                    "witchery.ritual.manifestation.duration", duration), false);
+        }
         success(player, level, center, "witchery.ritual.manifestation.success",
                 SoundEvents.ENDERMAN_TELEPORT, 1.8f, 3, 60);
-        WitcheryMod.LOGGER.info("Rite of Manifestation: {} prepared {} seconds of ghost travel.", sp.getName().getString(), duration);
+        WitcheryMod.LOGGER.info("Rite of Manifestation: {} prepared {} players for {} seconds of ghost travel.",
+                sp.getName().getString(), targets.size(), duration);
         return true;
     }
 

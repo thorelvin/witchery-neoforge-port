@@ -8,7 +8,6 @@ import com.emoniph.witchery.init.WitcheryEntityTags;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -19,7 +18,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -46,8 +44,6 @@ public class SunGrenadeEntity extends ThrowableProjectile
     private static final double ACTIVE_UNDEAD_RADIUS = 1.0;
     private static final double FINAL_XZ_RADIUS = 3.0;
     private static final double FINAL_Y_RADIUS = 2.0;
-    private static final int DUPLICATION_DECOY_TICKS = 20 * 10;
-    private static final double DUPLICATION_ATTENTION_RADIUS = 12.0;
 
     private boolean impacted;
     private boolean lightBlockPlaced;
@@ -228,24 +224,18 @@ public class SunGrenadeEntity extends ThrowableProjectile
 
     private void spawnDuplicationDecoy(ServerLevel level) {
         Entity owner = getOwner();
-        ReflectionEntity reflection = new ReflectionEntity(WitcheryEntities.REFLECTION.get(), level);
-        reflection.snapTo(getX(), getY(), getZ(), getYRot(), 0.0F);
+        MirrorDecoyEntity decoy = new MirrorDecoyEntity(WitcheryEntities.MIRROR_DECOY.get(), level);
+        decoy.snapTo(getX(), getY(), getZ(), getYRot(), 0.0F);
 
         if (owner instanceof ServerPlayer player
                 && (duplicationOwnerUUID == null || duplicationOwnerUUID.equals(player.getUUID()))) {
-            reflection.setOwner(player);
+            decoy.setOwner(player);
         } else {
-            reflection.setOwnerIdentity(duplicationOwnerUUID, resolvedDuplicationOwnerName(owner));
+            decoy.setOwner(duplicationOwnerUUID, resolvedDuplicationOwnerName(owner));
         }
 
-        String displayName = resolvedDuplicationOwnerName(owner);
-        if (!displayName.isEmpty()) {
-            reflection.setCustomName(Component.literal(displayName));
-        }
-        reflection.setTemporaryDecoy(DUPLICATION_DECOY_TICKS);
-
-        if (level.addFreshEntity(reflection)) {
-            attractAttention(level, reflection, owner);
+        if (level.addFreshEntity(decoy)) {
+            decoy.attractAttention();
             level.sendParticles(ParticleTypes.POOF, getX(), getY() + 0.5, getZ(), 24, 0.35, 0.45, 0.35, 0.02);
             level.sendParticles(ParticleTypes.WITCH, getX(), getY() + 0.5, getZ(), 16, 0.4, 0.5, 0.4, 0.03);
         }
@@ -345,24 +335,6 @@ public class SunGrenadeEntity extends ThrowableProjectile
         level.playSound(null, blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.18F, 1.9F);
         level.sendParticles(ParticleTypes.END_ROD, getX(), getY() + 0.05D, getZ(),
                 8, 0.18D, 0.18D, 0.18D, 0.03D);
-    }
-
-    private void attractAttention(ServerLevel level, ReflectionEntity reflection, Entity owner) {
-        UUID ownerUuid = duplicationOwnerUUID;
-        if (ownerUuid == null && owner != null) {
-            ownerUuid = owner.getUUID();
-        }
-
-        AABB box = reflection.getBoundingBox().inflate(DUPLICATION_ATTENTION_RADIUS, 6.0, DUPLICATION_ATTENTION_RADIUS);
-        for (Mob mob : level.getEntitiesOfClass(Mob.class, box)) {
-            if (mob == reflection || mob.isAlliedTo(reflection) || !mob.canAttack(reflection)) {
-                continue;
-            }
-            LivingEntity target = mob.getTarget();
-            if (target == null || ownerUuid != null && target.getUUID().equals(ownerUuid)) {
-                mob.setTarget(reflection);
-            }
-        }
     }
 
     private String resolvedDuplicationOwnerName(Entity owner) {

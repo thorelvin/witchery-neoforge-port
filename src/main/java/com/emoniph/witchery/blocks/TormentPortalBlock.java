@@ -74,22 +74,24 @@ public class TormentPortalBlock extends Block {
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier _effectApplier, boolean _isMoved) {
-        if (level.isClientSide() || !(entity instanceof ServerPlayer player)) return;
+        if (level.isClientSide() || !(entity instanceof ServerPlayer player)
+                || player.isPassenger() || player.isVehicle()) return;
 
         var data = WitcheryAttachments.get(player);
         if (data.getTormentPortalCooldown() > 0) return;
-        data.setTormentPortalCooldown(100);
 
+        boolean moved;
         if (level.dimension().equals(WitcheryDimensions.TORMENT)) {
             // Inside Torment: 95 % exit, 5 % more Torment
             if (level.random.nextFloat() < 0.95f) {
-                TormentHelper.returnFromTorment(player);
+                moved = TormentHelper.returnFromTorment(player);
             } else {
-                TormentHelper.sendToTorment(player, level.random.nextInt(TormentHelper.NUM_LEVELS));
+                moved = TormentHelper.sendToTorment(player, level.random.nextInt(TormentHelper.NUM_LEVELS));
             }
         } else {
-            TormentHelper.sendToTorment(player, level.random.nextInt(TormentHelper.NUM_LEVELS));
+            moved = TormentHelper.sendToTorment(player, level.random.nextInt(TormentHelper.NUM_LEVELS));
         }
+        if (moved) data.setTormentPortalCooldown(100);
     }
 
     @Override

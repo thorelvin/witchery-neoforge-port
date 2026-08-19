@@ -5,12 +5,8 @@ import com.emoniph.witchery.init.WitcheryFluids;
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,6 +16,12 @@ import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 
 public abstract class SpiritFluid extends BaseFlowingFluid {
+    public static final int SOURCE_DENSITY = 500;
+    public static final int SOURCE_VISCOSITY = 2000;
+    static final int SOURCE_SLOPE_DISTANCE = 4;
+    static final int SOURCE_LEVEL_DECREASE = 2;
+    static final int SOURCE_TICK_RATE = 10;
+
     protected SpiritFluid() {
         super(new BaseFlowingFluid.Properties(
                 WitcheryFluids.FLOWING_SPIRIT_TYPE,
@@ -27,9 +29,9 @@ public abstract class SpiritFluid extends BaseFlowingFluid {
                 WitcheryFluids.FLOWING_SPIRIT_FLOWING)
                 .bucket(WitcheryItems.BUCKET_SPIRIT)
                 .block(WitcheryBlocks.FLOWING_SPIRIT)
-                .slopeFindDistance(4)
-                .levelDecreasePerBlock(1)
-                .tickRate(5)
+                .slopeFindDistance(SOURCE_SLOPE_DISTANCE)
+                .levelDecreasePerBlock(SOURCE_LEVEL_DECREASE)
+                .tickRate(SOURCE_TICK_RATE)
                 .explosionResistance(100.0F));
     }
 
@@ -47,22 +49,6 @@ public abstract class SpiritFluid extends BaseFlowingFluid {
     protected boolean canBeReplacedWith(FluidState state, BlockGetter level, BlockPos pos, Fluid fluid,
                                         Direction direction) {
         return false;
-    }
-
-    @Override
-    public void animateTick(Level level, BlockPos pos, FluidState state, RandomSource random) {
-        if (random.nextInt(4) != 0) {
-            return;
-        }
-        double y = pos.getY() + Math.max(0.05D, state.getOwnHeight()) + 0.02D;
-        level.addParticle(new DustParticleOptions(0xB7F4D2, 0.65F),
-                pos.getX() + random.nextDouble(), y, pos.getZ() + random.nextDouble(),
-                0.0D, 0.015D, 0.0D);
-        if (random.nextInt(3) == 0) {
-            level.addParticle(ParticleTypes.WITCH,
-                    pos.getX() + random.nextDouble(), y, pos.getZ() + random.nextDouble(),
-                    0.0D, 0.0D, 0.0D);
-        }
     }
 
     public static final class Source extends SpiritFluid {

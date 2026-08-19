@@ -17,28 +17,32 @@ import org.jetbrains.annotations.Nullable;
 public class MirrorBlockEntity extends BlockEntity {
 
     private int roomChunkX = Integer.MIN_VALUE;
+    private int roomSectionY = Integer.MIN_VALUE;
     private int roomChunkZ = Integer.MIN_VALUE;
     private boolean demonKilled = false;
 
     @Nullable private BlockPos linkedPos = null;
     @Nullable private String linkedDim   = null;
+    private boolean connected = true;
 
     public MirrorBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.MIRROR.get(), pos, state);
     }
 
     public boolean hasRoom() {
-        return roomChunkX != Integer.MIN_VALUE;
+        return roomChunkX != Integer.MIN_VALUE && roomSectionY != Integer.MIN_VALUE
+                && roomChunkZ != Integer.MIN_VALUE;
     }
 
-    public void setRoom(int cx, int cz) {
+    public void setRoom(int cx, int sectionY, int cz) {
         roomChunkX = cx;
+        roomSectionY = sectionY;
         roomChunkZ = cz;
         setChanged();
     }
 
     public int[] getRoom() {
-        return new int[]{ roomChunkX, roomChunkZ };
+        return new int[]{ roomChunkX, roomSectionY, roomChunkZ };
     }
 
     public boolean isDemonKilled() { return demonKilled; }
@@ -62,6 +66,15 @@ public class MirrorBlockEntity extends BlockEntity {
         setChanged();
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+        setChanged();
+    }
+
     // ── NBT ──────────────────────────────────────────────────────────────────
 
     @Override
@@ -69,9 +82,11 @@ public class MirrorBlockEntity extends BlockEntity {
         super.saveAdditional(tag);
         if (hasRoom()) {
             tag.putInt("RoomCX", roomChunkX);
+            tag.putInt("RoomY", roomSectionY);
             tag.putInt("RoomCZ", roomChunkZ);
         }
         tag.putBoolean("DemonKilled", demonKilled);
+        tag.putBoolean("Connected", connected);
         if (linkedPos != null) {
             tag.putLong("LinkedPos", linkedPos.asLong());
         }
@@ -86,9 +101,11 @@ public class MirrorBlockEntity extends BlockEntity {
         int cx = tag.getIntOr("RoomCX", Integer.MIN_VALUE);
         if (cx != Integer.MIN_VALUE) {
             roomChunkX = cx;
+            roomSectionY = tag.getIntOr("RoomY", Integer.MIN_VALUE);
             roomChunkZ = tag.getIntOr("RoomCZ", Integer.MIN_VALUE);
         }
         demonKilled = tag.getBooleanOr("DemonKilled", false);
+        connected = tag.getBooleanOr("Connected", true);
         long linkedPosLong = tag.getLongOr("LinkedPos", Long.MIN_VALUE);
         if (linkedPosLong != Long.MIN_VALUE) {
             linkedPos = BlockPos.of(linkedPosLong);

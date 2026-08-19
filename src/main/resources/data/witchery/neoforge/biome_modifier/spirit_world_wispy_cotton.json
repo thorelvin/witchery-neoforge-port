@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#witchery:wispy_cotton_spawns",
+  "features": "witchery:wispy_cotton",
+  "step": "vegetal_decoration"
+}

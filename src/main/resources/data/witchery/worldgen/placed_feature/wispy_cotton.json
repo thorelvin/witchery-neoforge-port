@@ -1,17 +1,9 @@
 {
   "feature": "witchery:wispy_cotton",
-  "_comment": "Source WitcheryWorldGenerator.generateDreamworld only attempts one WorldGenFlowers patch in ~75% of dream chunks, but it starts from a random Y between 0 and surface+32, so most of the 64 flower tries miss the surface. Modern heightmap placement is far more reliable, so keep this sparse instead of using 48 guaranteed surface tries.",
+  "_comment": "Source WitcheryWorldGenerator.generateDreamworld attempts one 64-position WorldGenFlowers patch in 75% of eligible Spirit World chunks. The custom modifier supplies the dimension gate, chunk roll, randomized X/Z column, and randomized vertical seed in source order.",
   "placement": [
     {
-      "type": "minecraft:rarity_filter",
-      "chance": 2
-    },
-    {
-      "type": "minecraft:in_square"
-    },
-    {
-      "type": "minecraft:heightmap",
-      "heightmap": "WORLD_SURFACE_WG"
+      "type": "witchery:spirit_world"
     },
     {
       "type": "minecraft:biome"

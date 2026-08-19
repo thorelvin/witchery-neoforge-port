@@ -2,6 +2,7 @@ package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.worldgen.TreeClearancePlacement;
+import com.emoniph.witchery.worldgen.SpiritWorldPlacement;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -15,4 +16,7 @@ public final class WitcheryPlacementModifiers {
 
     public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<TreeClearancePlacement>> TREE_CLEARANCE =
             PLACEMENT_MODIFIERS.register("tree_clearance", () -> () -> TreeClearancePlacement.CODEC);
+
+    public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<SpiritWorldPlacement>> SPIRIT_WORLD =
+            PLACEMENT_MODIFIERS.register("spirit_world", () -> () -> SpiritWorldPlacement.CODEC);
 }

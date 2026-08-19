@@ -6,6 +6,7 @@ import com.emoniph.witchery.entity.SpectreEntity;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -283,6 +284,17 @@ public class FetishBlockEntity extends BlockEntity {
         ItemStack stack = new ItemStack(block);
         CustomData.update(DataComponents.CUSTOM_DATA, stack, this::writeItemData);
         return stack;
+    }
+
+    public static boolean isBoundFetish(ItemStack stack) {
+        if (stack == null || stack.isEmpty()
+                || !(stack.is(WitcheryItems.FETISH_SCARECROW.get())
+                || stack.is(WitcheryItems.FETISH_TRENT_EFFIGY.get())
+                || stack.is(WitcheryItems.FETISH_WITCHS_LADDER.get()))) {
+            return false;
+        }
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        return tag.getIntOr(ITEM_EFFECT_TAG, tag.getIntOr(SOURCE_EFFECT_TAG, EFFECT_NONE)) > EFFECT_NONE;
     }
 
     private void writeItemData(CompoundTag tag) {

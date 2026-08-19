@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level;
 import com.emoniph.witchery.item.VampireClothingUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.util.VampireCage;
+import com.emoniph.witchery.util.CreatureSunlight;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -544,7 +545,7 @@ public class VampireEvents {
     private static boolean isInSunlight(ServerPlayer player) {
         // Source CreatureUtil.isInSunlight gates on the dimension actually having a sun (func_76569_d);
         // skyless dimensions like the Nether/End have no sunlight even where the heightmap is open.
-        if (!player.level().dimensionType().hasSkyLight()) return false;
+        if (!CreatureSunlight.dimensionAllowsSunlight(player.level())) return false;
         if (player.level().getDayTime() % 24000 >= 12000) return false;
         BlockPos head = player.blockPosition().above();
         if (!player.level().canSeeSky(head)) return false;

@@ -32,7 +32,7 @@ import java.util.Random;
  */
 public class RefillingChestBlockEntity extends ChestBlockEntity {
 
-    private static final long REFILL_TICKS = 72000L;
+    public static final long REFILL_TICKS = 72000L;
     private static final String LIFE_TICKS_TAG = "WITCLifeTicks";
     private static final String RESURRECTED_LIFE_TICKS_TAG = "WitcheryLifeTicks";
     private static final String LEGACY_COOLDOWN_TAG = "RefillCooldown";
@@ -58,16 +58,16 @@ public class RefillingChestBlockEntity extends ChestBlockEntity {
     }
 
     private void tryRefill(Level level, BlockPos pos) {
-        if (!level.dimension().equals(WitcheryDimensions.TORMENT)) {
-            return;
-        }
-        if (!isEmpty()) {
-            return;
-        }
-        if (lifeTicks % REFILL_TICKS != 0L) {
-            return;
-        }
+        if (!shouldRefill(level.dimension().equals(WitcheryDimensions.TORMENT), isEmpty(), lifeTicks)) return;
         fillFromLootTable(level, pos);
+    }
+
+    public static boolean shouldRefill(boolean inTorment, boolean empty, long lifeTicks) {
+        return inTorment && empty && lifeTicks % REFILL_TICKS == 0L;
+    }
+
+    public long getLifeTicks() {
+        return lifeTicks;
     }
 
     private void fillFromLootTable(Level level, BlockPos pos) {

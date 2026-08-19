@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#witchery:spirit_spawns",
+  "spawners": {
+    "type": "witchery:spirit",
+    "weight": 1,
+    "minCount": 2,
+    "maxCount": 5
+  }
+}

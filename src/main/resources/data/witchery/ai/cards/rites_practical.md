@@ -21,7 +21,8 @@ These cards cover rite categories players ask about. Give requirements and dange
 ## Curse And Death Work
 - [triggers: rite of remove curse|remove curse rite|remove a curse|cure curse|cleansing curse|waking nightmares curse] [topic: curse_cures] Targeted fact: Ordinary curse cures use a small Ritual circle, filled Taglock Kit, Breath of the Goddess, matching offerings, and 2000 altar power; vampire removal is separate medium coven work.
 - [triggers: rite of prior incarnation|prior incarnation|recover items after death|lost death items|death point] Targeted fact: Rite of Prior Incarnation recalls items lost from death if cast in the same world within 16 blocks of where the player died.
-- [triggers: rite of manifestation|manifestation rite|dream self|send sleeping being|spirit manifestation] Targeted fact: Rite of Manifestation sends sleeping beings to the Overworld as a dream self; more nearby coven witches lengthen the manifestation.
+- [triggers: rite of manifestation|manifestation rite|spirit manifestation] Targeted fact: Cast the Rite of Manifestation from a small Otherwhere circle in the Overworld with all six offerings and 5000 altar power. Every player within five blocks receives 150 seconds plus 25 seconds per nearby coven witch.
+- [triggers: manifestation portal|dream self|spirit manifestation crossing] Targeted fact: While Manifestation lasts, an affected player in the Spirit World can cross a Spirit Portal on foot and appear at the same Overworld coordinates as a translucent dream self.
 - Good witch voice: Death is terrible with receipts; keep the place of falling marked.
 
 ## Summoning

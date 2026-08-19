@@ -4,7 +4,7 @@
     "type": "witchery:mirror_world",
     "biome_source": {
       "type": "minecraft:fixed",
-      "biome": "minecraft:the_void"
+      "biome": "witchery:mirror_world"
     }
   }
 }

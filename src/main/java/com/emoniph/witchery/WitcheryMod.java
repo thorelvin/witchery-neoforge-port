@@ -62,6 +62,9 @@ public class WitcheryMod {
         WitcheryStructures.POOL_ELEMENT_TYPES.register(modEventBus);
         WitcheryChunkGenerators.CHUNK_GENERATORS.register(modEventBus);
         WitcheryPlacementModifiers.PLACEMENT_MODIFIERS.register(modEventBus);
+        com.emoniph.witchery.command.OtherwhereHearthGameTests.register(modEventBus);
+        com.emoniph.witchery.command.TormentGameTests.register(modEventBus);
+        com.emoniph.witchery.command.MirrorWorldGameTests.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, WitcheryConfig.SPEC);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerPayloads);
@@ -101,20 +104,37 @@ public class WitcheryMod {
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {
-        event.registrar("1")
-                .playToClient(
-                        SyncPlayerDataPayload.TYPE,
-                        SyncPlayerDataPayload.STREAM_CODEC,
-                        WitcheryClient::handleSyncPlayerData)
-                .playToClient(
-                        OpenObservationsBookPayload.TYPE,
-                        OpenObservationsBookPayload.STREAM_CODEC,
-                        WitcheryClient::handleOpenObservationsBook)
-                .playToClient(
-                        ScryingCameraPayload.TYPE,
-                        ScryingCameraPayload.STREAM_CODEC,
-                        WitcheryClient::handleScryingCamera)
-                .playToServer(
+        var registrar = event.registrar("1");
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
+            registrar.playToClient(
+                    SyncPlayerDataPayload.TYPE,
+                    SyncPlayerDataPayload.STREAM_CODEC,
+                    WitcheryClient::handleSyncPlayerData);
+            registrar.playToClient(
+                    OpenObservationsBookPayload.TYPE,
+                    OpenObservationsBookPayload.STREAM_CODEC,
+                    WitcheryClient::handleOpenObservationsBook);
+            registrar.playToClient(
+                    ScryingCameraPayload.TYPE,
+                    ScryingCameraPayload.STREAM_CODEC,
+                    WitcheryClient::handleScryingCamera);
+        } else {
+            // Keep protocol registration symmetric without resolving client-only handler classes.
+            registrar.playToClient(
+                    SyncPlayerDataPayload.TYPE,
+                    SyncPlayerDataPayload.STREAM_CODEC,
+                    (payload, context) -> { });
+            registrar.playToClient(
+                    OpenObservationsBookPayload.TYPE,
+                    OpenObservationsBookPayload.STREAM_CODEC,
+                    (payload, context) -> { });
+            registrar.playToClient(
+                    ScryingCameraPayload.TYPE,
+                    ScryingCameraPayload.STREAM_CODEC,
+                    (payload, context) -> { });
+        }
+
+        registrar.playToServer(
                         HowlPayload.TYPE,
                         HowlPayload.STREAM_CODEC,
                         HowlPayload::handleOnServer)

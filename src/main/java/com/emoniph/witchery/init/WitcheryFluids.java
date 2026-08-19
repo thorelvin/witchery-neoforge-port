@@ -33,9 +33,12 @@ public class WitcheryFluids {
             "flowing_spirit",
             () -> new FluidType(FluidType.Properties.create()
                     .descriptionId("fluid_type.witchery.flowing_spirit")
+                    .density(SpiritFluid.SOURCE_DENSITY)
+                    .viscosity(SpiritFluid.SOURCE_VISCOSITY)
                     .canConvertToSource(false)
-                    .canExtinguish(false)
-                    .supportsBoating(false)));
+                    .canExtinguish(true)
+                    .canHydrate(true)
+                    .supportsBoating(true)));
 
     public static final DeferredHolder<Fluid, SpiritFluid.Source> FLOWING_SPIRIT_SOURCE =
             FLUIDS.register("flowing_spirit", SpiritFluid.Source::new);

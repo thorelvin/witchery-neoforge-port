@@ -23,8 +23,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Old Witchery formed a 2x2 Spirit Portal inside a 4x4 snow-block frame.
- * Full manifestation travel is still a separate player-state feature, but the
- * portal structure itself can already behave like the original block again.
+ * A prepared Spirit World walker can use the completed portal to manifest.
  */
 public class SpiritPortalBlock extends Block {
 
@@ -70,7 +69,7 @@ public class SpiritPortalBlock extends Block {
             return;
         }
 
-        if (SpiritWorldHelper.canManifest(player)) {
+        if (!player.isPassenger() && !player.isVehicle() && SpiritWorldHelper.canManifest(player)) {
             SpiritWorldHelper.manifestPlayerInOverworldAsGhost(player);
         }
     }
@@ -127,7 +126,8 @@ public class SpiritPortalBlock extends Block {
 
         for (int width = 0; width < 2; width++) {
             for (int height = 0; height < 2; height++) {
-                level.setBlock(origin.offset(stepX * width, height, stepZ * width), defaultBlockState(), 3);
+                level.setBlock(origin.offset(stepX * width, height, stepZ * width),
+                        defaultBlockState(), Block.UPDATE_CLIENTS);
             }
         }
 
@@ -153,6 +153,9 @@ public class SpiritPortalBlock extends Block {
     private boolean matchesPortalFrame(LevelReader level, BlockPos origin, int stepX, int stepZ, boolean allowPortalInterior) {
         for (int width = -1; width <= 2; width++) {
             for (int height = -1; height <= 2; height++) {
+                if (isFrameCorner(width, height)) {
+                    continue;
+                }
                 boolean frame = width == -1 || width == 2 || height == -1 || height == 2;
                 BlockPos checkPos = origin.offset(stepX * width, height, stepZ * width);
                 BlockState checkState = level.getBlockState(checkPos);
@@ -161,14 +164,20 @@ public class SpiritPortalBlock extends Block {
                     if (!checkState.is(Blocks.SNOW_BLOCK)) {
                         return false;
                     }
-                } else if (!checkState.isAir()
-                        && !checkState.is(WitcheryBlocks.FLOWING_SPIRIT.get())
-                        && !(allowPortalInterior && checkState.is(this))) {
+                } else if (allowPortalInterior) {
+                    if (!checkState.is(this)) {
+                        return false;
+                    }
+                } else if (!checkState.isAir() && !checkState.is(WitcheryBlocks.FLOWING_SPIRIT.get())) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    static boolean isFrameCorner(int width, int height) {
+        return (width == -1 || width == 2) && (height == -1 || height == 2);
     }
 
     private boolean hasEastWestPortalAxis(BlockGetter level, BlockPos pos) {

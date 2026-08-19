@@ -11,7 +11,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 /** Lord of Torment model — ported from ModelLordOfTorment (128×128). */
-public class LordOfTormentModel extends EntityModel<net.minecraft.client.renderer.entity.state.LivingEntityRenderState> {
+public class LordOfTormentModel extends EntityModel<LordOfTormentModel.LordOfTormentRenderState> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(Identifier.fromNamespaceAndPath("witchery", "lord_of_torment"), "main");
@@ -101,7 +101,7 @@ public class LordOfTormentModel extends EntityModel<net.minecraft.client.rendere
     }
 
         @Override
-    public void setupAnim(LivingEntityRenderState state) {
+    public void setupAnim(LordOfTormentRenderState state) {
         float limbSwing = state.walkAnimationPos;
         float limbSwingAmount = state.walkAnimationSpeed;
         float ageInTicks = state.ageInTicks;
@@ -125,8 +125,7 @@ public class LordOfTormentModel extends EntityModel<net.minecraft.client.rendere
         leftArm2.zRot  =  swayC;  leftArm2.xRot  += swayS;
 
         // Wing flap — spread when moving, slow wave when idle
-        boolean moving = false; // ).horizontalDistanceSqr() > 0.001;
-        if (moving) {
+        if (state.moving) {
             wingsLeft.yRot  =  0.4f;
             wingsRight.yRot = -0.4f;
         } else {
@@ -136,9 +135,8 @@ public class LordOfTormentModel extends EntityModel<net.minecraft.client.rendere
         }
 
         // Attack animation
-        int at = /* entity call removed */ 0; // );
-        if (at > 0) {
-            float t = smoothstep((float) at, 15.0f);
+        if (state.attackTimer > 0.0F) {
+            float t = smoothstep(state.attackTimer, 15.0f);
             rightArm1.xRot = -1.5f + 0.8f * t;
             leftArm1.xRot  = -1.5f + 0.8f * t;
             rightArm1.zRot = -(- 1.5f + 1.5f * t);
@@ -151,5 +149,10 @@ public class LordOfTormentModel extends EntityModel<net.minecraft.client.rendere
     /** Mirrors original func_78172_a: triangle wave normalised to [-1, 1]. */
     private static float smoothstep(float timer, float period) {
         return (Math.abs(timer % period - period * 0.5f) - period * 0.25f) / (period * 0.25f);
+    }
+
+    public static class LordOfTormentRenderState extends LivingEntityRenderState {
+        public float attackTimer;
+        public boolean moving;
     }
 }

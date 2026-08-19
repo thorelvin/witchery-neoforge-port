@@ -10,7 +10,7 @@ public enum DreamWeaveType {
     //                id  dream effect                 nightmare effect               dur   amp
     FLEET_FOOT   (0, MobEffects.SPEED,       MobEffects.SLOWNESS, 7200, 0),
     IRON_ARM     (1, MobEffects.HASTE,            MobEffects.MINING_FATIGUE,      7200, 0),
-    FASTING      (2, MobEffects.SATURATION,           MobEffects.POISON,            4800, 0),
+    FASTING      (2, MobEffects.SATURATION,           MobEffects.HUNGER,            4800, 0),
     NIGHTMARES   (3, MobEffects.WEAKNESS,             MobEffects.BLINDNESS,         1200, 0),
     INTENSITY    (4, MobEffects.NIGHT_VISION,         MobEffects.BLINDNESS,          300, 0);
 
@@ -63,6 +63,10 @@ public enum DreamWeaveType {
             case NIGHTMARES -> "item.witchery.weave_nightmares";
             case INTENSITY -> "item.witchery.weave_intensity";
         };
+    }
+
+    net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect> nightmareEffect() {
+        return nightmare;
     }
 
     public @Nullable static DreamWeaveType fromId(int id) {

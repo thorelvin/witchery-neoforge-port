@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:is_overworld"
+  ],
+  "remove": [
+    "#minecraft:is_ocean",
+    "#minecraft:is_river",
+    "#minecraft:is_mountain",
+    "#minecraft:is_beach",
+    "minecraft:swamp",
+    "minecraft:mangrove_swamp"
+  ]
+}

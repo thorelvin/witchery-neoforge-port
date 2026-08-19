@@ -7,6 +7,7 @@ import com.emoniph.witchery.ai.NpcPersonas;
 import com.emoniph.witchery.blocks.LeechChestBlock;
 import com.emoniph.witchery.blocks.MirrorBlock;
 import com.emoniph.witchery.config.WitcheryConfig;
+import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.BabaYagaEntity;
 import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.entity.DemonEntity;
@@ -16,11 +17,13 @@ import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.ReflectionEntity;
 import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcheryBlocks;
+import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.protection.WitcheryProtectionService;
 import com.emoniph.witchery.world.MirrorHelper;
+import com.emoniph.witchery.world.MirrorWorldLayout;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -34,6 +37,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
@@ -50,6 +54,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @EventBusSubscriber(modid = WitcheryMod.MODID)
@@ -720,27 +725,18 @@ public final class NpcBrainEvents {
 
     private static boolean handleMirrorChant(ServerLevel level, ServerPlayer player, String message) {
         String normalized = normalize(message);
-        if (!normalized.startsWith("mirror mirror")) {
+        if (!WitcheryDimensions.isMirrorWorld(level) || !normalized.startsWith("mirror mirror")) {
             return false;
         }
+        if (normalized.startsWith("mirror mirror send me home")) {
+            return returnToEntryMirror(level, player);
+        }
+        if (normalized.startsWith("mirror mirror i give up")) {
+            return giveUpMirrorWorld(level, player);
+        }
+
         BlockPos mirrorPos = findNearestMirror(level, player, 12.0, false);
-        if (mirrorPos == null) {
-            return false;
-        }
-        if (WitcheryDimensions.isMirrorWorld(level)
-                && containsAny(normalized, "send me home", "go home", "take me home", "let me out")) {
-            BlockPos exitMirror = findNearestMirror(level, player, 16.0, true);
-            if (exitMirror != null) {
-                mirrorSpeech(level, player, "Then step through, " + player.getName().getString()
-                        + ". The way home still has your shape.");
-                MirrorHelper.exitMirrorWorld(player, level, exitMirror);
-                playMirrorCue(level, exitMirror);
-            } else {
-                mirrorSpeech(level, player, "No home-facing glass answers you.");
-                playMirrorCue(level, mirrorPos);
-            }
-            return true;
-        }
+        if (mirrorPos == null) return false;
         if (containsAny(normalized, "fairest", "on the wall", "who is fair", "who is the fair")) {
             mirrorSpeech(level, player, "You are fairest here, " + player.getName().getString()
                     + ", because no wiser face stayed to compete.");
@@ -749,6 +745,64 @@ public final class NpcBrainEvents {
         }
         mirrorSpeech(level, player, "The mirror listens, but only some names open doors.");
         playMirrorCue(level, mirrorPos);
+        return true;
+    }
+
+    private static boolean returnToEntryMirror(ServerLevel level, ServerPlayer player) {
+        Optional<WitcheryPlayerData.MirrorRoute> route =
+                com.emoniph.witchery.init.WitcheryAttachments.get(player).getCurrentMirrorRoute();
+        if (route.isEmpty()) return false;
+        if (!claimMirrorEscapeCooldown(level, player, "MirrorEscape1", 20L * 60L * 5L)) {
+            return true;
+        }
+        MirrorWorldLayout.RoomCoordinates room = MirrorWorldLayout.roomForIndex(
+                route.get().destinationRoomIndex());
+        BlockPos landing = MirrorWorldLayout.innerMirrorFoot(
+                room.chunkX(), room.sectionY(), room.chunkZ()).relative(net.minecraft.core.Direction.EAST);
+        player.teleportTo(landing.getX() + 0.5D, landing.getY(), landing.getZ() + 0.5D);
+        player.setYRot(270.0F);
+        playMirrorCue(level, landing);
+        return true;
+    }
+
+    private static boolean giveUpMirrorWorld(ServerLevel level, ServerPlayer player) {
+        ServerLevel destination = null;
+        BlockPos target = null;
+        ServerPlayer.RespawnConfig respawn = player.getRespawnConfig();
+        if (respawn != null && respawn.respawnData() != null) {
+            var data = respawn.respawnData();
+            if (data.dimension().equals(level.dimension()) || data.dimension().equals(Level.OVERWORLD)) {
+                destination = level.getServer().getLevel(data.dimension());
+                target = data.pos();
+            }
+        }
+        if (destination == null) {
+            destination = level.getServer().getLevel(Level.OVERWORLD);
+            if (destination != null) target = destination.getLevelData().getRespawnData().pos();
+        }
+        if (destination == null || target == null) return false;
+        if (!claimMirrorEscapeCooldown(level, player, "MirrorEscape2", 20L * 60L * 60L)) {
+            return true;
+        }
+        BlockPos landing = MirrorHelper.findSafeLanding(destination, target, 8);
+        if (landing == null) landing = target;
+        player.teleportTo(destination, landing.getX() + 0.5D, landing.getY(), landing.getZ() + 0.5D,
+                Set.of(), player.getYRot(), player.getXRot(), false);
+        WitcheryAttachments.get(player).clearMirrorRoutes();
+        return true;
+    }
+
+    private static boolean claimMirrorEscapeCooldown(ServerLevel level, ServerPlayer player,
+                                                     String key, long duration) {
+        long now = level.getGameTime();
+        long last = player.getPersistentData().getLong(key).orElse(Long.MIN_VALUE);
+        if (last != Long.MIN_VALUE && now - last < duration) {
+            long seconds = Math.max(1L, (duration - (now - last)) / 20L);
+            player.displayClientMessage(Component.translatable(
+                    "witchery.mirror.escape_cooldown", seconds), false);
+            return false;
+        }
+        player.getPersistentData().putLong(key, now);
         return true;
     }
 
