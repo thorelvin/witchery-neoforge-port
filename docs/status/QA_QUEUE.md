@@ -331,6 +331,18 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   shapes.
 - Retest gas/liquid brews for tint persistence, lifetime, source/flow behavior,
   deterministic contact refresh, and Gas Mask protection.
+- Compose Ice World with level-five capacity, Ender Eye, and Gunpowder. A base
+  splash should use a source radius of 3 and convert the old scaled filled sphere
+  (effective radius 5); repeat with Wood Ash/Cocoa Beans/Wispy Cotton Extent and
+  confirm effective radii 6/8/9. Test wooden doors, stairs, slabs, fences, gates,
+  pressure plates, all stockade wood variants, terrain, logs, planks, and leaves.
+  Facing, half, hinge, open, powered, waterlogged, connection, and stockade `up`
+  state should survive where the target supports it.
+- Repeat Ice World at a claim boundary and beside a filled chest, Bedrock, world
+  border, build-height edge, and unloaded chunk. Allowed blocks should convert;
+  protected, block-entity, unbreakable, out-of-bounds, and unloaded positions
+  should remain untouched. Also release it with Tongue of Dog and from moving
+  brew liquid to verify ritual and reduced-radius adjacent pulse delivery.
 - Apply ordinary curable effects plus Witchery source-incurable effects, then
   test Reek Cure Buffs, Purified Milk Cure Debuffs, Skeleton Skull Steal Buffs,
   and Creeper Head Spread Affliction. Ordinary curable effects should clear,

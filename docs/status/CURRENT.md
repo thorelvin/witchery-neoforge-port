@@ -38,8 +38,8 @@ enough to read before starting work. Long historical deltas belong in
   Open Parties and Claims, FTB Chunks, and Common Protection API when installed.
 - In-game QA for recently restored or polished systems: Flame Imp contracts,
   Vanishing Witch Hut, NBT structures, the source-corrected Spirit World lifecycle,
-  mirrored terrain/spawns/Manifestation visuals, cursed well warnings, and custom
-  brew/ritual edge cases.
+  mirrored terrain/spawns/Manifestation visuals, cursed well warnings, the complete
+  Ice World area conversion, and other custom brew/ritual edge cases.
 - Source-feel polish on exact-ID items and wearables that are registered but
   still need model, texture, transform, or gameplay verification.
 - Creative-tab and GUI-item polish for promoted exact IDs: hide utility/internal

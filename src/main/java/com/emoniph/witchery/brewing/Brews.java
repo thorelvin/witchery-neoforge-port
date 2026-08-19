@@ -137,7 +137,7 @@ public final class Brews {
             ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
             HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST, AIR_HIKE, PULL,
             FELL_TREE, LILIFY, BLIGHT, RAISE_LAND, SPROUT, PLANT,
-            TRANSPOSE, RAISE_DEAD, SPREAD_DEBUFFS
+            TRANSPOSE, RAISE_DEAD, SPREAD_DEBUFFS, ICE_WORLD
         }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
@@ -432,6 +432,9 @@ public final class Brews {
         register(Items.CREEPER_HEAD, Ingredient.action(Ingredient.BrewAction.SPREAD_DEBUFFS,
                 8, 2000, 0x4E9331,
                 "witchery.brew.spreaddebuffs", null));
+        register(Items.ENDER_EYE, Ingredient.action(Ingredient.BrewAction.ICE_WORLD,
+                5, 2000, 0x9DDFF5,
+                "witchery.brew.iceworld", null));
         register(WitcheryItems.WOLFSBANE_FLOWER.get(), Ingredient.effect(WitcheryMobEffects.WOLFSBANE,
                 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x67FA11, 0, 1));
         register(Items.SNOWBALL, Ingredient.effect(WitcheryMobEffects.SNOW_TRAIL,
@@ -1590,6 +1593,8 @@ public final class Brews {
                 plantSeeds(level, blockImpact, blockRadius, strength, source);
             } else if (action.action() == Ingredient.BrewAction.RAISE_DEAD) {
                 raiseDead(level, blockImpact, strength, source, ritualised);
+            } else if (action.action() == Ingredient.BrewAction.ICE_WORLD) {
+                IceWorldConversion.convertArea(level, blockImpact, blockRadius, source);
             }
         }
     }
@@ -1638,6 +1643,26 @@ public final class Brews {
                 applyBlockImpactEffects(level, target, weakEffects, source, ritualised, covenSize);
             }
         }
+    }
+
+    /**
+     * Source ritual {@code DispersalGas}: each sampled gas position has a one-percent chance to apply
+     * unpenalised block actions/effects with radius one. Ordinary thrown gas never calls this path.
+     */
+    public static void tickRitualGasBlockPulse(ServerLevel level, BlockPos gasPos, List<Item> items, Entity source,
+                                               int covenSize) {
+        Resolution resolved = resolveBrew(items);
+        if ((resolved.actions.isEmpty() && resolved.effects.isEmpty())
+                || !sourceRitualGasBlockPulse(level.random.nextDouble())) {
+            return;
+        }
+        applyBlockImpactActions(level, Vec3.atCenterOf(gasPos), gasPos, Direction.UP, resolved.actions, source,
+                SOURCE_ADJACENT_BLOCK_PULSE_RADIUS, true, covenSize);
+        applyBlockImpactEffects(level, gasPos, resolved.effects, source, true, covenSize);
+    }
+
+    public static boolean sourceRitualGasBlockPulse(double randomRoll) {
+        return randomRoll < SOURCE_ADJACENT_BLOCK_PULSE_CHANCE;
     }
 
     private static List<ActionApplication> actionsOfType(List<ActionApplication> actions, Ingredient.BrewAction type) {

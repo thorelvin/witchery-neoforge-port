@@ -154,6 +154,62 @@
       "title": "Brew: Drought Bucket"
     },
     {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:ender_eye",
+          "x": 27,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:gunpowder",
+          "x": 43,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:glass_bottle",
+          "x": 59,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:splash_brew_bottle",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Open level-five capacity, stir an Ender Eye, then add Gunpowder. The impact remakes nearby terrain and wooden fixtures as Snow, Packed Ice, and the Perpetual Ice family; Extent ingredients widen the frozen sphere.[#]()",
+      "title": "Brew: Ice World Splash"
+    },
+    {
       "type": "witchery:item_reference",
       "anchor": "",
       "condition": {
@@ -754,12 +810,12 @@
           "text": "[#](53341a)**Creeper Head** - Spread Affliction (level 8, 2000 power).[#]()"
         },
         {
-          "item": "witchery:golden_heart",
-          "text": "[#](53341a)**Golden Heart** - Animal Attraction / inverted: Animal Repulsion (level 4, 500 power).[#]()"
+          "item": "minecraft:ender_eye",
+          "text": "[#](53341a)**Ender Eye** - Iceworld (level 5, 2000 power).[#]()"
         },
         {
-          "item": "witchery:reek_of_misfortune",
-          "text": "[#](53341a)**Reek of Misfortune** - Cure Buffs (level 2, 250 power, sneak-stir).[#]()"
+          "item": "witchery:golden_heart",
+          "text": "[#](53341a)**Golden Heart** - Animal Attraction / inverted: Animal Repulsion (level 4, 500 power).[#]()"
         }
       ],
       "text": "",
@@ -772,6 +828,10 @@
         "type": "modonomicon:none"
       },
       "rows": [
+        {
+          "item": "witchery:reek_of_misfortune",
+          "text": "[#](53341a)**Reek of Misfortune** - Cure Buffs (level 2, 250 power, sneak-stir).[#]()"
+        },
         {
           "item": "witchery:purified_milk",
           "text": "[#](53341a)**Purified Milk** - Cure Debuffs (level 2, 200 power, sneak-stir).[#]()"
@@ -791,10 +851,6 @@
         {
           "item": "minecraft:ice",
           "text": "[#](53341a)**Ice** - Demonbane (level 5, 500 power).[#]()"
-        },
-        {
-          "item": "witchery:silver_deposits",
-          "text": "[#](53341a)**Silver Deposits** - Harm Werewolves (level 4, 1000 power).[#]()"
         }
       ],
       "text": "",
@@ -807,6 +863,10 @@
         "type": "modonomicon:none"
       },
       "rows": [
+        {
+          "item": "witchery:silver_deposits",
+          "text": "[#](53341a)**Silver Deposits** - Harm Werewolves (level 4, 1000 power).[#]()"
+        },
         {
           "item": "minecraft:skeleton_skull",
           "text": "[#](53341a)**Skeleton Skull** - Steal Buffs (level 6, 100 power).[#]()"

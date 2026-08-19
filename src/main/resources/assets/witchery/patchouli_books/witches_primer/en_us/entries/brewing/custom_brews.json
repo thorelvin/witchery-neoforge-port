@@ -23,6 +23,10 @@
     },
     {
       "type": "patchouli:text",
+      "text": "$(l)Ice World$() is a level-five working carried by an $(l)Ender Eye$(). Give the cauldron enough capacity, add the eye, then Gunpowder, and throw the finished brew at a build.$(br2)The impact remakes nearby earth, stone, timber, doors, stairs, slabs, fences, gates, plates, and stockades in the Perpetual Ice family. Extent reagents widen the sphere."
+    },
+    {
+      "type": "patchouli:text",
       "text": "A single cauldron holds only so much intent - eight reagents at most before the water grows too muddled to take more.$(br2)So pour off what you have made, rinse the bowl with fresh water, and begin the next working. A careful witch keeps her bottles labelled; the brew will tell you its true name if you but read it."
     }
   ]

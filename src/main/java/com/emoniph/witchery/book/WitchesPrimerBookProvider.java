@@ -111,6 +111,14 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 WitcheryItems.BREW_BUCKET.get(), 1,
                 List.of(Items.NETHER_WART, WitcheryItems.TEAR_OF_GODDESS.get(),
                         WitcheryItems.WITCHES_SALT.get(), WitcheryItems.WORMWOOD.get(), Items.BUCKET)));
+        pages.add(vesselRecipe("Brew: Ice World Splash",
+                "Open level-five capacity, stir an Ender Eye, then add Gunpowder. The impact remakes nearby "
+                        + "terrain and wooden fixtures as Snow, Packed Ice, and the Perpetual Ice family; "
+                        + "Extent ingredients widen the frozen sphere.",
+                WitcheryItems.SPLASH_BREW_BOTTLE.get(), 1,
+                List.of(WitcheryItems.MANDRAKE_ROOT.get(), Items.NETHER_WART,
+                        WitcheryItems.TEAR_OF_GODDESS.get(), Items.ENDER_EYE,
+                        Items.GUNPOWDER, Items.GLASS_BOTTLE)));
 
         referenceSection(pages, "Capacity",
                 "Capacity ingredients widen the brew before an effect or action can fit.",

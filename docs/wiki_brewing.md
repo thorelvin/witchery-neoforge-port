@@ -348,9 +348,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Brew of Ice World
 - **Type:** Potion
-- **Recipe:** Witch's Cauldron (Altar Power: 2000)
-- **Effect:** Converts the area it targets into ice blocks and creates new ice items like Ice Doors, Ice Stockades, Ice Fences, Ice Pressure Plates.
-- **Notes:** The Effect is the final stage of brewing; ingredients for Capacity, Power, Duration, Modifier, and Dispersal must be added first.
+- **Recipe:** Witch's Cauldron; level-five capacity, Ender Eye effect (Altar Power: 2000), then a non-drinking dispersal such as Gunpowder.
+- **Effect:** Converts the old scaled filled sphere around a block impact into Snow, Packed Ice, and the Perpetual Ice construction family, including Ice Doors, Stockades, Fences, Gates, Stairs, Slabs, and Pressure Plates.
+- **Notes:** Extent increases the source dispersal radius before the Ice World 1.5x scale is applied. Claims, block entities, unbreakable blocks, unloaded chunks, world borders, and build limits are skipped.
 
 ## Brew of Ill Fitting
 - **Type:** Potion

@@ -1398,6 +1398,30 @@ class BrewLogicTest {
     }
 
     @Test
+    void enderEyeRestoresSourceIceWorldAction() {
+        Brews.bootstrap();
+        List<Item> level5 = withCapacity(List.of(Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(),
+                WitcheryItems.DIAMOND_VAPOUR.get()), Items.ENDER_EYE);
+
+        assertFalse(Brews.canAdd(level4(), Items.ENDER_EYE),
+                "source Ice World requires level-5 capacity");
+        assertTrue(Brews.canAdd(withCapacity(List.of(Items.NETHER_WART,
+                WitcheryItems.TEAR_OF_GODDESS.get(),
+                WitcheryItems.DIAMOND_VAPOUR.get())), Items.ENDER_EYE),
+                "the level-6 capacity route admits Ice World");
+        assertTrue(Brews.blockedByCapacity(List.of(Items.ENDER_EYE)),
+                "under-capacity Ice World resolves inertly");
+
+        List<Brews.ActionApplication> actions = Brews.buildActions(level5);
+        assertEquals(1, actions.size(), "Ender Eye resolves as Ice World");
+        assertEquals(Brews.Ingredient.BrewAction.ICE_WORLD, actions.get(0).action());
+        assertEquals("witchery.brew.iceworld", actions.get(0).nameKey());
+        assertEquals(2300, Brews.powerCost(level5),
+                "capacity ingredients plus Ice World's source 2000 altar power");
+    }
+
+    @Test
     void leonardDemonbaneWeaknessUsesSourceGateAndCap() {
         assertFalse(LeonardEntity.sourceDemonbaneWeaknessCanHurt(200.0F, 500.0F),
                 "source Leonard weakness does not hurt at exactly 40 percent health");

@@ -160,6 +160,15 @@ public class BrewFluidBlockEntity extends BlockEntity {
                 ritualised, ritualCovenSize);
     }
 
+    /** Source ritual gas may occasionally apply the brew to terrain at each sampled cloud position. */
+    public void applyRitualGasBlockPulse(ServerLevel serverLevel) {
+        if (!ritualised || contents.isEmpty()) {
+            return;
+        }
+        Brews.tickRitualGasBlockPulse(serverLevel, worldPosition, contents.items(), findThrower(serverLevel),
+                ritualCovenSize);
+    }
+
     @Nullable
     private Entity findThrower(ServerLevel serverLevel) {
         if (throwerUuid != null) {

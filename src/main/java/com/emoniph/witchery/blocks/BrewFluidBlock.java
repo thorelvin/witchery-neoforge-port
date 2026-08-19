@@ -146,6 +146,7 @@ public abstract class BrewFluidBlock extends BaseEntityBlock {
             return;
         }
         applyGasContactPulse(level, pos, brew, runTicks);
+        brew.applyRitualGasBlockPulse(level);
 
         if (distance >= expansion) {
             int duration = brew.getDuration();

@@ -295,4 +295,12 @@ class BrewActionMathTest {
         assertEquals(0, Brews.pulsePenalisedStrength(1));
         assertEquals(4, Brews.pulsePenalisedStrength(5));
     }
+
+    @Test
+    void ritualGasBlockPulseUsesTheSourceOnePercentThreshold() {
+        assertTrue(Brews.sourceRitualGasBlockPulse(0.0D));
+        assertTrue(Brews.sourceRitualGasBlockPulse(0.009999D));
+        assertFalse(Brews.sourceRitualGasBlockPulse(0.01D));
+        assertFalse(Brews.sourceRitualGasBlockPulse(0.5D));
+    }
 }
