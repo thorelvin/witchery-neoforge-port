@@ -1,0 +1,18 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "witchery:bark_belt_base",
+        "dyeable": { "color_when_undyed": 6968628 }
+      },
+      { "texture": "witchery:bark_belt_overlay" }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "witchery:bark_belt_base",
+        "dyeable": { "color_when_undyed": 6968628 }
+      },
+      { "texture": "witchery:bark_belt_overlay" }
+    ]
+  }
+}

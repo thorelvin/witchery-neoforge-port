@@ -68,6 +68,7 @@ public class WitcheryClientEvents {
         com.emoniph.witchery.client.SymbolDrawState.clientTick();
         com.emoniph.witchery.client.ScryingCameraState.clientTick();
         com.emoniph.witchery.client.WoodenScannerPoseHarness.clientTick();
+        com.emoniph.witchery.client.LegacyModelParityHarness.clientTick();
         applySwimmingBoost();
         syncBroomControls();
         refreshCottonOnNightmareChange();
@@ -161,6 +162,7 @@ public class WitcheryClientEvents {
     public static void onRenderFramePost(RenderFrameEvent.Post event) {
         com.emoniph.witchery.client.ScryingCameraState.afterRenderFrame();
         com.emoniph.witchery.client.WoodenScannerPoseHarness.afterRenderFrame();
+        com.emoniph.witchery.client.LegacyModelParityHarness.afterRenderFrame();
     }
 
     @SubscribeEvent
@@ -361,24 +363,6 @@ public class WitcheryClientEvents {
         sky.moonAngle = sourceAngle;
         sky.starAngle = sourceAngle;
         sky.shouldRenderDarkDisc = event.getCamera().position().y < 0.0D;
-    }
-
-    /**
-     * Vampire clothing ships slim-arm models/textures, but vanilla armor is slim-agnostic so the armor
-     * model hook can't see the player's skin. Stash the slim flag for the duration of this player's render
-     * (cleared in Post) so {@link com.emoniph.witchery.client.VampireArmorClientExtensions} can pick the
-     * slim model + texture. Non-player wearers never fire this event and default to wide, which is correct.
-     */
-    @SubscribeEvent
-    public static void onRenderPlayerSlimPre(RenderPlayerEvent.Pre<?> event) {
-        boolean slim = event.getRenderState().skin.model()
-                == net.minecraft.world.entity.player.PlayerModelType.SLIM;
-        com.emoniph.witchery.client.VampireArmorClientExtensions.SLIM_RENDER.set(slim);
-    }
-
-    @SubscribeEvent
-    public static void onRenderPlayerSlimPost(RenderPlayerEvent.Post<?> event) {
-        com.emoniph.witchery.client.VampireArmorClientExtensions.SLIM_RENDER.set(Boolean.FALSE);
     }
 
     @SubscribeEvent

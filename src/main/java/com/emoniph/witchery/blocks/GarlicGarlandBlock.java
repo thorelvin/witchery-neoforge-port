@@ -1,8 +1,10 @@
 package com.emoniph.witchery.blocks;
 
+import com.emoniph.witchery.blocks.entity.GarlicGarlandBlockEntity;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntityTags;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,9 +14,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -29,14 +34,15 @@ import org.jetbrains.annotations.Nullable;
  * Garlic Garland - a decoration that repels vampires who touch it.
  * Recipe: 5 garlic + 3 string.
  */
-public class GarlicGarlandBlock extends Block {
+public class GarlicGarlandBlock extends BaseEntityBlock {
 
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
-    private static final VoxelShape DEFAULT_SHAPE = Block.box(0.0, 0.0, 15.2, 16.0, 16.0, 16.0);
-    private static final VoxelShape NORTH_SHAPE = Block.box(0.0, 0.0, 15.2, 16.0, 16.0, 16.0);
-    private static final VoxelShape SOUTH_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 0.8);
-    private static final VoxelShape WEST_SHAPE = Block.box(15.2, 0.0, 0.0, 16.0, 16.0, 16.0);
-    private static final VoxelShape EAST_SHAPE = Block.box(0.0, 0.0, 0.0, 0.8, 16.0, 16.0);
+    public static final MapCodec<GarlicGarlandBlock> CODEC = simpleCodec(GarlicGarlandBlock::new);
+    private static final VoxelShape DEFAULT_SHAPE = Block.box(1.6, 12.8, 13.6, 14.4, 16.0, 16.0);
+    private static final VoxelShape NORTH_SHAPE = DEFAULT_SHAPE;
+    private static final VoxelShape SOUTH_SHAPE = Block.box(1.6, 12.8, 0.0, 14.4, 16.0, 2.4);
+    private static final VoxelShape WEST_SHAPE = Block.box(13.6, 12.8, 1.6, 16.0, 16.0, 14.4);
+    private static final VoxelShape EAST_SHAPE = Block.box(0.0, 12.8, 1.6, 2.4, 16.0, 14.4);
     private static final double REPEL_RADIUS = 6.0;
     private static final double REPEL_RADIUS_FOURTH = REPEL_RADIUS * REPEL_RADIUS * REPEL_RADIUS * REPEL_RADIUS;
     private static final double REPEL_SCALE = REPEL_RADIUS * REPEL_RADIUS * REPEL_RADIUS;
@@ -44,6 +50,11 @@ public class GarlicGarlandBlock extends Block {
     public GarlicGarlandBlock(BlockBehaviour.Properties props) {
         super(props);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -70,6 +81,10 @@ public class GarlicGarlandBlock extends Block {
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
         Direction facing = state.hasProperty(FACING) ? state.getValue(FACING) : Direction.NORTH;
+        return sourceShape(facing);
+    }
+
+    static VoxelShape sourceShape(Direction facing) {
         return switch (facing) {
             case NORTH -> NORTH_SHAPE;
             case SOUTH -> SOUTH_SHAPE;
@@ -87,6 +102,16 @@ public class GarlicGarlandBlock extends Block {
     @Override
     public VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
         return getShape(state, level, pos, CollisionContext.empty());
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new GarlicGarlandBlockEntity(pos, state);
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.INVISIBLE;
     }
 
     @Override

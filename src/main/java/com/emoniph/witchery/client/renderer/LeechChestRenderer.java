@@ -25,6 +25,7 @@ public class LeechChestRenderer implements BlockEntityRenderer<LeechChestBlockEn
     public static class State extends BlockEntityRenderState {
         public float yaw;
         public float lidAngle;
+        public int sacCount;
     }
 
     public LeechChestRenderer(BlockEntityRendererProvider.Context ctx) {
@@ -41,6 +42,7 @@ public class LeechChestRenderer implements BlockEntityRenderer<LeechChestBlockEn
         Direction facing = be.getBlockState().getValue(LeechChestBlock.FACING);
         state.yaw = facing.toYRot();
         state.lidAngle = be.getOpenNess(partialTick);
+        state.sacCount = be.getStoredPlayerCountForRender();
     }
 
     @Override
@@ -52,6 +54,7 @@ public class LeechChestRenderer implements BlockEntityRenderer<LeechChestBlockEn
         ps.mulPose(Axis.YP.rotationDegrees(state.yaw));
         ps.translate(-0.5, -0.5, -0.5);
         model.setLidAngle(state.lidAngle);
+        model.setSacCount(state.sacCount);
         collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         ps.popPose();
     }

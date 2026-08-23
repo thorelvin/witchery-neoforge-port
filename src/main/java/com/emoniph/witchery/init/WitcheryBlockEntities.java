@@ -33,6 +33,9 @@ public class WitcheryBlockEntities {
             BLOCK_ENTITIES.register("crystal_ball", () -> new BlockEntityType<>(CrystalBallBlockEntity::new, Set.of(WitcheryBlocks.CRYSTAL_BALL.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DreamCatcherBlockEntity>> DREAM_CATCHER =
             BLOCK_ENTITIES.register("dream_catcher", () -> new BlockEntityType<>(DreamCatcherBlockEntity::new, Set.of(WitcheryBlocks.DREAM_CATCHER.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GarlicGarlandBlockEntity>> GARLIC_GARLAND =
+            BLOCK_ENTITIES.register("garlic_garland", () -> new BlockEntityType<>(GarlicGarlandBlockEntity::new,
+                    Set.of(WitcheryBlocks.GARLIC_GARLAND.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FumeFunnelBlockEntity>> FUME_FUNNEL =
             BLOCK_ENTITIES.register("fume_funnel", () -> new BlockEntityType<>(FumeFunnelBlockEntity::new,
                     Set.of(WitcheryBlocks.FUME_FUNNEL.get(), WitcheryBlocks.FILTERED_FUME_FUNNEL.get())));

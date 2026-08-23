@@ -1,20 +1,5 @@
 {
-  "render_type": "minecraft:cutout",
-  "ambientocclusion": false,
   "textures": {
-    "garland": "witchery:block/garlic_garland",
-    "particle": "witchery:block/garlic_garland"
-  },
-  "elements": [
-    {
-      "name": "source_wall_garland",
-      "from": [0.0, 0.0, 15.75],
-      "to": [16.0, 16.0, 15.75],
-      "shade": false,
-      "faces": {
-        "north": { "uv": [0, 0, 16, 16], "texture": "#garland" },
-        "south": { "uv": [16, 0, 0, 16], "texture": "#garland" }
-      }
-    }
-  ]
+    "particle": "witchery:item/garlic_garland"
+  }
 }

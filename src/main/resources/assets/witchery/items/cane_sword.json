@@ -1,6 +1,17 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/cane_sword"
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": ["gui", "ground", "fixed", "on_shelf", "head"],
+        "model": { "type": "minecraft:model", "model": "witchery:item/cane_sword" }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:special",
+      "base": "witchery:item/cane_sword_in_hand_base",
+      "model": { "type": "witchery:cane_sword_held" }
+    }
   }
 }

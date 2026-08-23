@@ -42,7 +42,7 @@ public class LordOfTormentModel extends EntityModel<LordOfTormentModel.LordOfTor
 
         // Head (0,0) — skull + beard tendrils + nose + horns
         PartDefinition head = root.addOrReplaceChild("head",
-                CubeListBuilder.create()
+                CubeListBuilder.create().mirror()
                     .texOffs(0,  0).addBox(-4, -8, -4, 8, 8, 8)   // skull
                     .texOffs(34, 0).addBox(-3,  0, -4, 1, 7, 1)   // beard1
                     .texOffs(34, 0).addBox(-2,  0, -5, 1, 5, 1)   // beard2

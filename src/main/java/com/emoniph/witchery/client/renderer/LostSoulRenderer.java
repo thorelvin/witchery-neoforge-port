@@ -11,20 +11,21 @@ import net.minecraft.resources.Identifier;
 
 public class LostSoulRenderer extends MobRenderer<LostSoulEntity, LostSoulRenderer.LostSoulRenderState, LostSoulModel> {
 
-    private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath("witchery", "textures/entity/lost_soul.png");
+    static final float SOURCE_SHADOW_RADIUS = 0.0F;
+    static final float SOURCE_PRE_BASE_TRANSLATE_Y = -0.1073125F;
+    static final Identifier TEXTURE =
+            Identifier.fromNamespaceAndPath("witchery", "textures/entity/spirit.png");
 
-    // ARGB tints per soul type
-    private static final int TINT_GREEN = 0xCC40FF40;
-    private static final int TINT_RED   = 0xCCFF4040;
-    private static final int TINT_BLACK = 0xCC303030;
+    private static final int TINT_RED = 0x99FF0000;
+    private static final int TINT_GREEN = 0x9900FF00;
+    private static final int TINT_BLUE = 0x990000FF;
 
     public static class LostSoulRenderState extends LivingEntityRenderState {
         public int soulType = LostSoulEntity.GREEN;
     }
 
     public LostSoulRenderer(EntityRendererProvider.Context ctx) {
-        super(ctx, new LostSoulModel(ctx.bakeLayer(LostSoulModel.LAYER_LOCATION)), 0.0F);
+        super(ctx, new LostSoulModel(ctx.bakeLayer(LostSoulModel.LAYER_LOCATION)), SOURCE_SHADOW_RADIUS);
     }
 
     @Override
@@ -48,15 +49,20 @@ public class LostSoulRenderer extends MobRenderer<LostSoulEntity, LostSoulRender
 
     @Override
     protected int getModelTint(LostSoulRenderState state) {
-        return switch (state.soulType) {
-            case LostSoulEntity.RED   -> TINT_RED;
-            case LostSoulEntity.BLACK -> TINT_BLACK;
-            default                   -> TINT_GREEN;
+        return sourceTint(state.soulType);
+    }
+
+    static int sourceTint(int soulType) {
+        return switch (soulType) {
+            case 1 -> TINT_GREEN;
+            case 2 -> TINT_BLUE;
+            default -> TINT_RED;
         };
     }
 
     @Override
     protected void scale(LostSoulRenderState state, PoseStack ps) {
+        ps.translate(0.0F, SOURCE_PRE_BASE_TRANSLATE_Y, 0.0F);
         ps.scale(0.5F, 0.5F, 0.5F);
     }
 }

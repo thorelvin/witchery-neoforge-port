@@ -19,11 +19,11 @@ public class FlameImpModel extends EntityModel<FlameImpModel.FlameImpRenderState
     private final ModelPart rightArm, leftArm;
     private final ModelPart rightLeg, leftLeg;
     private final ModelPart chest;
-    private final ModelPart wingRight, wingLeft;
 
     public static class FlameImpRenderState extends LivingEntityRenderState {
         public float attackProgress;
         public boolean powered;
+        public boolean riding;
     }
 
     public FlameImpModel(ModelPart root) {
@@ -35,8 +35,6 @@ public class FlameImpModel extends EntityModel<FlameImpModel.FlameImpRenderState
         this.rightLeg = root.getChild("right_leg");
         this.leftLeg  = root.getChild("left_leg");
         this.chest    = root.getChild("chest");
-        this.wingRight = root.getChild("wing_right");
-        this.wingLeft  = root.getChild("wing_left");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -84,14 +82,6 @@ public class FlameImpModel extends EntityModel<FlameImpModel.FlameImpRenderState
                 CubeListBuilder.create().texOffs(33, 48).addBox(-1.5f, 0, -1.5f, 3, 6, 3),
                 PartPose.offset(1.5f, 18, 0));
 
-        // Wings (23,21) zero-depth planes, pivot (-2,10,-1) and (2,10,-1)
-        root.addOrReplaceChild("wing_right",
-                CubeListBuilder.create().texOffs(23, 21).addBox(0, 0, 0, 14, 21, 0),
-                PartPose.offsetAndRotation(-2, 10, -1, 0.3047198f, -0.6698132f, -0.6283185f));
-        root.addOrReplaceChild("wing_left",
-                CubeListBuilder.create().texOffs(23, 21).addBox(0, 0, 0, 14, 21, 0),
-                PartPose.offsetAndRotation(2, 10, -1, -0.3047198f, 3.8114066f, 0.6283185f));
-
         return LayerDefinition.create(mesh, 64, 64);
     }
 
@@ -109,14 +99,35 @@ public class FlameImpModel extends EntityModel<FlameImpModel.FlameImpRenderState
         // Arm swing
         rightArm.xRot = Mth.cos(limbSwing * 0.6662f + Mth.PI) * 2.0f * limbSwingAmount * 0.5f;
         leftArm.xRot  = Mth.cos(limbSwing * 0.6662f)           * 2.0f * limbSwingAmount * 0.5f;
-        rightArm.zRot = 0; leftArm.zRot = 0;
+        rightArm.yRot = 0.0F;
+        leftArm.yRot = 0.0F;
+        rightArm.zRot = 0.0F;
+        leftArm.zRot = 0.0F;
+        rightArm.x = -5.0F;
+        leftArm.x = 5.0F;
+        rightArm.z = 0.0F;
+        leftArm.z = 0.0F;
 
         // Leg swing
         rightLeg.xRot = Mth.cos(limbSwing * 0.6662f)           * 1.4f * limbSwingAmount;
         leftLeg.xRot  = Mth.cos(limbSwing * 0.6662f + Mth.PI)  * 1.4f * limbSwingAmount;
-        rightLeg.yRot = 0; leftLeg.yRot = 0;
+        rightLeg.yRot = 0.0F;
+        leftLeg.yRot = 0.0F;
+
+        if (state.riding) {
+            rightArm.xRot -= Mth.PI / 5.0F;
+            leftArm.xRot -= Mth.PI / 5.0F;
+            rightLeg.xRot = -Mth.TWO_PI / 5.0F;
+            leftLeg.xRot = -Mth.TWO_PI / 5.0F;
+            rightLeg.yRot = Mth.PI / 10.0F;
+            leftLeg.yRot = -Mth.PI / 10.0F;
+        }
 
         applyAttackSwing(state.attackProgress);
+
+        body.xRot = 0.0F;
+        rightLeg.z = 0.1F;
+        leftLeg.z = 0.1F;
 
         // Idle arm sway
         float swayC = Mth.cos(ageInTicks * 0.09f) * 0.05f + 0.05f;
@@ -127,10 +138,6 @@ public class FlameImpModel extends EntityModel<FlameImpModel.FlameImpRenderState
     }
 
     private void applyAttackSwing(float swingProgress) {
-        if (swingProgress <= 0.0F) {
-            return;
-        }
-
         body.yRot = Mth.sin(Mth.sqrt(swingProgress) * Mth.PI * 2.0F) * 0.2F;
         rightArm.z = Mth.sin(body.yRot) * 5.0F;
         rightArm.x = -Mth.cos(body.yRot) * 5.0F;

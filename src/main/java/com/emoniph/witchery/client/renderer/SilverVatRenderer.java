@@ -79,9 +79,7 @@ public class SilverVatRenderer
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector,
                        CameraRenderState cameraState) {
         poseStack.pushPose();
-        poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
-        poseStack.translate(0.0F, -1.0F, 0.0F);
+        applySourcePose(poseStack);
 
         for (ModelPart part : model.bodyParts()) {
             submitPart(part, poseStack, collector, state.lightCoords);
@@ -101,6 +99,12 @@ public class SilverVatRenderer
         poseStack.popPose();
     }
 
+    static void applySourcePose(PoseStack poseStack) {
+        poseStack.translate(0.5F, 0.5F, 0.5F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        poseStack.translate(0.0F, -1.0F, 0.0F);
+    }
+
     private static void submitPart(ModelPart part, PoseStack poseStack,
                                    SubmitNodeCollector collector, int lightCoords) {
         collector.submitModelPart(part, poseStack, RenderTypes.entityCutout(TEXTURE),
@@ -110,9 +114,13 @@ public class SilverVatRenderer
     public static void submitLiquid(ModelPart liquid, PoseStack poseStack,
                                     SubmitNodeCollector collector, int lightCoords) {
         poseStack.pushPose();
-        poseStack.scale(0.75F, 1.0F, 0.75F);
+        applyLiquidScale(poseStack);
         collector.submitModelPart(liquid, poseStack, RenderTypes.entityTranslucent(LIQUID_TEXTURE),
                 lightCoords, OverlayTexture.NO_OVERLAY, null, LIQUID_COLOR, null);
         poseStack.popPose();
+    }
+
+    static void applyLiquidScale(PoseStack poseStack) {
+        poseStack.scale(0.75F, 1.0F, 0.75F);
     }
 }

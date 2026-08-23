@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/crystal_ball"
+    "type": "minecraft:special",
+    "base": "witchery:item/crystal_ball",
+    "model": {
+      "type": "witchery:crystal_ball"
+    }
   }
 }

@@ -23,9 +23,13 @@ public final class GrotesqueLayer<S extends LivingEntityRenderState, M extends E
     public static final ContextKey<OverlayStatus> OVERLAY_STATUS =
             new ContextKey<>(Identifier.fromNamespaceAndPath("witchery", "grotesque_overlay"));
 
-    private static final Identifier TEXTURE =
+    static final Identifier TEXTURE =
             Identifier.fromNamespaceAndPath("witchery", "textures/entity/demon.png");
-    private static final int INVISIBLE_TINT = 0x26FFFFFF;
+    static final float LEGACY_BASE_DELTA_Y = -0.0068125F;
+    static final float SOURCE_EFFECT_SCALE = 1.01F;
+    static final float SOURCE_MODEL_TRANSLATE_Y = 0.735F;
+    static final float SOURCE_MODEL_SCALE = 1.3F;
+    static final int INVISIBLE_TINT = 0x26FFFFFF;
 
     private final GrotesqueModel model;
 
@@ -38,14 +42,7 @@ public final class GrotesqueLayer<S extends LivingEntityRenderState, M extends E
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, int light,
                        S state, float yRot, float xRot) {
         OverlayStatus status = state.getRenderData(OVERLAY_STATUS);
-        if (status == null
-                || !GrotesqueMobEffect.isOverlayActive(status.effectActive(), status.fixedAuraActive())) {
-            return;
-        }
-
-        // The fixed player style was hidden with its owner; the potion overlay retained
-        // the source renderer's 15% alpha visibility when the local viewer could see it.
-        if (state.isInvisibleToPlayer || (state.isInvisible && !status.effectActive())) {
+        if (!shouldRender(status, state.isInvisible, state.isInvisibleToPlayer)) {
             return;
         }
         RenderType renderType = state.isInvisible
@@ -54,15 +51,32 @@ public final class GrotesqueLayer<S extends LivingEntityRenderState, M extends E
         int tint = state.isInvisible ? INVISIBLE_TINT : -1;
 
         poseStack.pushPose();
-        if (status.effectActive()) {
-            poseStack.scale(1.01F, 1.01F, 1.01F);
-        }
-        poseStack.translate(0.0F, 0.735F, 0.0F);
-        poseStack.scale(1.3F, 1.3F, 1.3F);
+        applySourceTransform(poseStack, status.effectActive());
         this.model.setupAnim(state);
         collector.submitModelPart(this.model.root(), poseStack, renderType, light,
                 LivingEntityRenderer.getOverlayCoords(state, 0.0F), null, tint, null);
         poseStack.popPose();
+    }
+
+    static boolean shouldRender(OverlayStatus status, boolean invisible, boolean invisibleToPlayer) {
+        if (status == null
+                || !GrotesqueMobEffect.isOverlayActive(status.effectActive(), status.fixedAuraActive())
+                || invisibleToPlayer) {
+            return false;
+        }
+        // The fixed player style was hidden with its owner; the potion overlay retained
+        // the source renderer's 15% alpha visibility when the local viewer could see it.
+        return !invisible || status.effectActive();
+    }
+
+    static void applySourceTransform(PoseStack poseStack, boolean effectActive) {
+        // LivingEntityRenderer has already applied modern Minecraft's -1.501 model base.
+        poseStack.translate(0.0F, LEGACY_BASE_DELTA_Y, 0.0F);
+        if (effectActive) {
+            poseStack.scale(SOURCE_EFFECT_SCALE, SOURCE_EFFECT_SCALE, SOURCE_EFFECT_SCALE);
+        }
+        poseStack.translate(0.0F, SOURCE_MODEL_TRANSLATE_Y, 0.0F);
+        poseStack.scale(SOURCE_MODEL_SCALE, SOURCE_MODEL_SCALE, SOURCE_MODEL_SCALE);
     }
 
     public record OverlayStatus(boolean effectActive, boolean fixedAuraActive) {}

@@ -2,6 +2,8 @@ package com.emoniph.witchery.client.renderer;
 
 import com.emoniph.witchery.client.model.DemonEntityModel;
 import com.emoniph.witchery.entity.DemonEntity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -32,5 +34,19 @@ public class DemonEntityRenderer extends MobRenderer<DemonEntity, DemonEntityMod
     @Override
     public Identifier getTextureLocation(DemonEntityModel.DemonRenderState state) {
         return TEXTURE;
+    }
+
+    @Override
+    protected void setupRotations(DemonEntityModel.DemonRenderState state, PoseStack poseStack,
+                                  float bodyRot, float scale) {
+        super.setupRotations(state, poseStack, bodyRot, scale);
+        applySourceWalkingRoll(poseStack, state.walkAnimationPos, state.walkAnimationSpeed);
+    }
+
+    static void applySourceWalkingRoll(PoseStack poseStack, float walkPosition, float walkSpeed) {
+        if (walkSpeed >= 0.01F) {
+            float roll = 6.5F * DemonEntityModel.triangleWave(walkPosition + 6.0F, 13.0F);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(roll));
+        }
     }
 }

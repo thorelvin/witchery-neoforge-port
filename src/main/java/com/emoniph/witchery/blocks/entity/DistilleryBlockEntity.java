@@ -9,7 +9,9 @@ import com.emoniph.witchery.init.WitcheryRecipeTypes;
 import com.emoniph.witchery.menu.DistilleryMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -61,6 +63,7 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
     private int powerLevel = 0;
     private int pendingPowerScaled = 0;
     private int scanCooldown = 0;
+    private int lastSyncedJarCount = -1;
     // Live readout of the powering altar, sampled each tick for the GUI power gauge/tooltip.
     private int altarPower = 0;
     private int altarMaxPower = 0;
@@ -124,6 +127,7 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
+        be.syncJarCountIfChanged();
 
         boolean changed = false;
         Optional<RecipeHolder<DistilleryRecipe>> recipe = getRecipe(serverLevel, be);
@@ -380,6 +384,24 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    private void syncJarCountIfChanged() {
+        int jarCount = Math.min(4, getItem(SLOT_JARS).getCount());
+        if (jarCount == lastSyncedJarCount) {
+            return;
+        }
+        lastSyncedJarCount = jarCount;
+        setChanged();
+        if (level != null) {
+            BlockState state = getBlockState();
+            level.sendBlockUpdated(worldPosition, state, state, 3);
+        }
     }
 
     @Override

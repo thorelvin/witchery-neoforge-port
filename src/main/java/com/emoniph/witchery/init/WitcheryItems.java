@@ -90,6 +90,10 @@ public class WitcheryItems {
             witchesRobesMaterial("ruby_slippers");
     public static final net.minecraft.world.item.equipment.ArmorMaterial SEEPING_SHOES_MATERIAL =
             witchesRobesMaterial("seeping_shoes");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial BITING_BELT_MATERIAL =
+            witchesRobesMaterial("biting_belt");
+    public static final net.minecraft.world.item.equipment.ArmorMaterial BARK_BELT_MATERIAL =
+            witchesRobesMaterial("bark_belt");
     public static final net.minecraft.world.item.equipment.ArmorMaterial TWISTING_BAND_MATERIAL =
             twistingBandMaterial("twisting_band");
     public static final net.minecraft.world.item.equipment.ArmorMaterial MOGS_QUIVER_MATERIAL =
@@ -516,10 +520,10 @@ public class WitcheryItems {
                             net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)));
     public static final DeferredItem<Item> EARMUFFS = ITEMS.register("earmuffs", WitcheryItems::earmuffs);
     public static final DeferredItem<Item> BITING_BELT = ITEMS.register("biting_belt", id ->
-            new BitingBeltItem(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+            new BitingBeltItem(itemProps(id).humanoidArmor(BITING_BELT_MATERIAL,
                     net.minecraft.world.item.equipment.ArmorType.LEGGINGS)));
     public static final DeferredItem<Item> BARK_BELT = ITEMS.register("bark_belt", id ->
-            new BarkBeltItem(itemProps(id).humanoidArmor(net.minecraft.world.item.equipment.ArmorMaterials.LEATHER,
+            new BarkBeltItem(itemProps(id).humanoidArmor(BARK_BELT_MATERIAL,
                     net.minecraft.world.item.equipment.ArmorType.LEGGINGS)));
     public static final DeferredItem<Item> WOVEN_CRUOR = ITEMS.registerSimpleItem("woven_cruor");
     public static final DeferredItem<Item> VAMPIRE_TOP_HAT = ITEMS.register("vampire_top_hat", id ->

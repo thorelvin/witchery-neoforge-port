@@ -23,19 +23,19 @@ public class EarmuffsModel extends Model.Simple {
         PartDefinition root = mesh.getRoot();
 
         root.addOrReplaceChild("band_top",
-                CubeListBuilder.create().texOffs(46, 38).mirror().addBox(-4.0F, -10.0F, -0.5F, 8.0F, 1.0F, 1.0F),
+                CubeListBuilder.create().texOffs(46, 38).addBox(-4.0F, -10.0F, -0.5F, 8.0F, 1.0F, 1.0F),
                 PartPose.ZERO);
         root.addOrReplaceChild("ear_right",
-                CubeListBuilder.create().texOffs(33, 32).mirror().addBox(-6.0F, -6.0F, -2.0F, 2.0F, 4.0F, 4.0F),
+                CubeListBuilder.create().texOffs(33, 32).addBox(-6.0F, -6.0F, -2.0F, 2.0F, 4.0F, 4.0F),
                 PartPose.ZERO);
         root.addOrReplaceChild("ear_left",
-                CubeListBuilder.create().texOffs(33, 32).mirror().addBox(4.0F, -6.0F, -2.0F, 2.0F, 4.0F, 4.0F),
+                CubeListBuilder.create().texOffs(33, 32).addBox(4.0F, -6.0F, -2.0F, 2.0F, 4.0F, 4.0F),
                 PartPose.ZERO);
         root.addOrReplaceChild("band_left",
-                CubeListBuilder.create().texOffs(46, 32).mirror().addBox(4.0F, -10.0F, -0.5F, 1.0F, 4.0F, 1.0F),
+                CubeListBuilder.create().texOffs(46, 32).addBox(4.0F, -10.0F, -0.5F, 1.0F, 4.0F, 1.0F),
                 PartPose.ZERO);
         root.addOrReplaceChild("band_right",
-                CubeListBuilder.create().texOffs(46, 32).mirror().addBox(-5.0F, -10.0F, -0.5F, 1.0F, 4.0F, 1.0F),
+                CubeListBuilder.create().texOffs(46, 32).addBox(-5.0F, -10.0F, -0.5F, 1.0F, 4.0F, 1.0F),
                 PartPose.ZERO);
 
         return LayerDefinition.create(mesh, 64, 64);

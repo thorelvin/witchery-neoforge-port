@@ -1,5 +1,6 @@
 package com.emoniph.witchery.client.model;
 
+import java.util.List;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -8,91 +9,81 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 
-import java.util.List;
-
-/**
- * Bowl shape matching BlockBloodCrucible AABB: x=4..12, y=0..5, z=4..12 (in MC pixel coords).
- * Texture: 32×64.
- * Rendered with the standard 180° Z-flip pose (same as Kettle/Chalice).
- */
+/** Exact 1.7.10 Blood Crucible body plus an equivalent full-sprite liquid plane. */
 public class BloodCrucibleModel extends Model.Simple {
-
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             Identifier.fromNamespaceAndPath("witchery", "blood_crucible"), "main");
+    public static final ModelLayerLocation LIQUID_LAYER_LOCATION = new ModelLayerLocation(
+            Identifier.fromNamespaceAndPath("witchery", "blood_crucible"), "liquid");
 
     private final List<ModelPart> bodyParts;
     private final ModelPart blood;
 
-    public BloodCrucibleModel(ModelPart root) {
-        super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutoutNoCull);
-        bodyParts = List.of(
-                root.getChild("front_wall"),
-                root.getChild("back_wall"),
-                root.getChild("left_wall"),
-                root.getChild("right_wall"),
-                root.getChild("bottom")
-        );
-        blood = root.getChild("blood");
+    public BloodCrucibleModel(ModelPart root, ModelPart liquidRoot) {
+        super(root, RenderTypes::entityCutoutNoCull);
+        this.bodyParts = List.of(
+                root.getChild("left_lower"),
+                root.getChild("right_lower"),
+                root.getChild("front_lower"),
+                root.getChild("front_upper"),
+                root.getChild("right_upper"),
+                root.getChild("bottom"),
+                root.getChild("back_lower"),
+                root.getChild("back_upper"),
+                root.getChild("left_upper"));
+        this.blood = liquidRoot.getChild("blood");
+        this.blood.xScale = 0.375F;
+        this.blood.zScale = 0.375F;
     }
 
-    public Iterable<ModelPart> bodyParts() { return bodyParts; }
-    public ModelPart blood() { return blood; }
-
-    /**
-     * UV layout (texture 32×64):
-     *   front/back walls (8,5,1): 18w × 7h each → rows 0-6, 7-13
-     *   left/right walls  (1,5,6): 14w × 17h each → rows 14-30 at x=0, x=14
-     *   bottom            (6,1,6): 24w × 13h → row 31
-     *   blood             (6,0,6): 24w × 12h → row 44  (top face only visible, 6×6 at u+6)
-     *
-     * Coord system (renderer applies: translate(0.5,0.5,0.5), rotateZ(180°), translate(0,-1,0)):
-     *   Block x = 0.5 - model_x/16
-     *   Block y = 1.5 - model_y/16
-     *   Block z = 0.5 + model_z/16
-     */
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
 
-        // Front wall: block z=4..5, x=4..12, y=0..5
-        // model x=-4..4 (8 wide), model y=19..24 (5 tall), model z=-4..-3 (1 deep)
-        // world_z = 0.5 + model_z/16 → outer face at z=0.25 (=4/16), inner at z=0.3125 (=5/16)
-        root.addOrReplaceChild("front_wall",
-                CubeListBuilder.create().texOffs(0, 0).addBox(0, 0, 0, 8, 5, 1),
-                PartPose.offset(-4f, 19f, -4f));
+        add(root, "left_lower", 17, 11, 2.0F, -2.0F, -2.0F, 1, 1, 4);
+        add(root, "right_lower", 17, 11, -3.0F, -2.0F, -2.0F, 1, 1, 4);
+        add(root, "front_lower", 17, 19, -3.0F, -2.0F, -3.0F, 6, 1, 1);
+        add(root, "front_upper", 0, 17, -3.5F, -5.0F, -4.0F, 7, 3, 1);
+        add(root, "right_upper", 0, 6, -4.0F, -5.0F, -3.7F, 1, 3, 7);
+        add(root, "bottom", 0, 0, -2.0F, -1.0F, -2.0F, 4, 1, 4);
+        add(root, "back_lower", 17, 19, -3.0F, -2.0F, 2.0F, 6, 1, 1);
+        add(root, "back_upper", 0, 17, -3.5F, -5.0F, 3.0F, 7, 3, 1);
+        add(root, "left_upper", 0, 6, 3.0F, -5.0F, -3.5F, 1, 3, 7);
 
-        // Back wall: block z=11..12
-        // model z=3..4
-        root.addOrReplaceChild("back_wall",
-                CubeListBuilder.create().texOffs(0, 7).addBox(0, 0, 0, 8, 5, 1),
-                PartPose.offset(-4f, 19f, 3f));
+        return LayerDefinition.create(mesh, 32, 32);
+    }
 
-        // Left wall: block x=4..5, z=5..11
-        // model x=3..4 (1 wide), model z=-3..3 (6 deep)
-        root.addOrReplaceChild("left_wall",
-                CubeListBuilder.create().texOffs(0, 14).addBox(0, 0, 0, 1, 5, 6),
-                PartPose.offset(3f, 19f, -3f));
+    public static LayerDefinition createLiquidLayer() {
+        MeshDefinition mesh = new MeshDefinition();
+        mesh.getRoot().addOrReplaceChild("blood", CubeListBuilder.create().texOffs(0, 0)
+                        .addBox(0.0F, 0.0F, 0.0F, 16, 0, 16),
+                PartPose.offset(-3.0F, 0.0F, -3.0F));
+        return LayerDefinition.create(mesh, 16, 16);
+    }
 
-        // Right wall: block x=11..12, z=5..11
-        // model x=-4..-3
-        root.addOrReplaceChild("right_wall",
-                CubeListBuilder.create().texOffs(14, 14).addBox(0, 0, 0, 1, 5, 6),
-                PartPose.offset(-4f, 19f, -3f));
+    private static void add(PartDefinition root, String name, int u, int v,
+                            float x, float y, float z, int width, int height, int depth) {
+        root.addOrReplaceChild(name, CubeListBuilder.create().texOffs(u, v)
+                        .addBox(x, y, z, width, height, depth),
+                LegacyModelTransforms.render(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F));
+    }
 
-        // Bottom: block x=5..11, y=0..1, z=5..11
-        // model x=-3..3, y=23..24, z=-3..3
-        root.addOrReplaceChild("bottom",
-                CubeListBuilder.create().texOffs(0, 31).addBox(0, 0, 0, 6, 1, 6),
-                PartPose.offset(-3f, 23f, -3f));
+    public List<ModelPart> bodyParts() {
+        return bodyParts;
+    }
 
-        // Blood liquid (flat): rendered at max-fill position, translated down by renderer for partial levels
-        // model x=-3..3, y=20 (flat), z=-3..3
-        root.addOrReplaceChild("blood",
-                CubeListBuilder.create().texOffs(0, 44).addBox(0, 0, 0, 6, 0, 6),
-                PartPose.offset(-3f, 20f, -3f));
+    public ModelPart blood() {
+        return blood;
+    }
 
-        return LayerDefinition.create(mesh, 32, 64);
+    public void setBloodPercent(float percentFilled) {
+        blood.y = BloodCrucibleModel.bloodModelY(percentFilled);
+    }
+
+    static float bloodModelY(float percentFilled) {
+        return -1.6F - 3.2F * percentFilled;
     }
 }

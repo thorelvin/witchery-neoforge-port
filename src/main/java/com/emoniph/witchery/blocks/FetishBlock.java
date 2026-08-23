@@ -31,6 +31,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +43,7 @@ public class FetishBlock extends BaseEntityBlock {
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
-    private static final VoxelShape SHAPE = Block.box(4, 0, 4, 12, 16, 12);
+    private static final VoxelShape SHAPE = Block.box(3.2, 0, 3.2, 12.8, 16, 12.8);
 
     public FetishBlock(BlockBehaviour.Properties p) {
         super(p);
@@ -62,6 +63,16 @@ public class FetishBlock extends BaseEntityBlock {
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
         return SHAPE;
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+        if (state.is(WitcheryBlocks.FETISH_WITCHS_LADDER.get())) {
+            return Shapes.empty();
+        }
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        return blockEntity instanceof FetishBlockEntity fetish && fetish.isSpectral()
+                ? Shapes.empty() : SHAPE;
     }
 
     @Nullable @Override

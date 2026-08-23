@@ -12,102 +12,144 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
-public class HornedHuntsmanModel extends EntityModel<LivingEntityRenderState> {
+/** Exact port of Witchery 1.7.10's {@code ModelHornedAvatar}. */
+public final class HornedHuntsmanModel extends EntityModel<HornedHuntsmanModel.HuntsmanRenderState> {
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(Identifier.fromNamespaceAndPath("witchery", "horned_huntsman"), "main");
 
     private final ModelPart head;
-    private final ModelPart neck;
-    private final ModelPart leftArm;
     private final ModelPart rightArm;
-    private final ModelPart leftLeg;
+    private final ModelPart leftArm;
     private final ModelPart rightLeg;
+    private final ModelPart rightShin;
+    private final ModelPart rightFoot;
+    private final ModelPart leftLeg;
+    private final ModelPart leftShin;
+    private final ModelPart leftFoot;
 
     public HornedHuntsmanModel(ModelPart root) {
         super(root);
-        ModelPart body = root.getChild("body");
-        this.neck = body.getChild("neck");
-        this.head = neck.getChild("head");
-        this.leftArm = body.getChild("left_arm");
-        this.rightArm = body.getChild("right_arm");
-        this.leftLeg = body.getChild("left_leg");
-        this.rightLeg = body.getChild("right_leg");
+        this.head = root.getChild("head");
+        this.rightArm = root.getChild("right_arm");
+        this.leftArm = root.getChild("left_arm");
+        this.rightLeg = root.getChild("right_leg");
+        this.rightShin = rightLeg.getChild("right_shin");
+        this.rightFoot = rightShin.getChild("right_foot");
+        this.leftLeg = root.getChild("left_leg");
+        this.leftShin = leftLeg.getChild("left_shin");
+        this.leftFoot = leftShin.getChild("left_foot");
     }
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
 
-        PartDefinition body = root.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(0, 22).addBox(-6.0F, 0.0F, -2.5F, 12.0F, 16.0F, 5.0F),
-                PartPose.offset(0.0F, -11.0F, 0.0F));
-
-        PartDefinition neck = body.addOrReplaceChild("neck",
-                CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, (float) (-Math.PI / 12.0), 0.0F, 0.0F));
-
-        PartDefinition head = neck.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -7.0F, -10.0F, 8.0F, 8.0F, 14.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.87266463F, 0.0F, 0.0F));
-
-        head.addOrReplaceChild("antler_right",
-                CubeListBuilder.create().texOffs(45, 0).addBox(-12.0F, -18.0F, 0.0F, 11.0F, 13.0F, 1.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.5009095F, 0.0F, 0.0F));
-
-        head.addOrReplaceChild("antler_left",
-                CubeListBuilder.create().texOffs(45, 0).mirror().addBox(1.0F, -18.0F, 0.0F, 11.0F, 13.0F, 1.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.5009095F, 0.0F, 0.0F));
-
-        body.addOrReplaceChild("moss",
-                CubeListBuilder.create().texOffs(0, 43).addBox(-6.0F, 16.0F, -2.5F, 12.0F, 5.0F, 5.0F),
+        PartDefinition head = root.addOrReplaceChild("head",
+                CubeListBuilder.create().texOffs(4, 112)
+                        .addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F),
+                PartPose.offset(0.0F, -16.0F, 0.0F));
+        head.addOrReplaceChild("horns",
+                CubeListBuilder.create().texOffs(0, 88)
+                        .addBox(-10.0F, -24.0F, 0.0F, 20.0F, 17.0F, 0.0F),
                 PartPose.ZERO);
 
-        PartDefinition rightArm = body.addOrReplaceChild("right_arm",
-                CubeListBuilder.create().texOffs(34, 22).addBox(-5.0F, -2.0F, -2.5F, 5.0F, 19.0F, 5.0F),
-                PartPose.offset(-6.0F, 2.0F, 0.0F));
-        rightArm.addOrReplaceChild("right_claws",
-                CubeListBuilder.create().texOffs(54, 22).addBox(-5.0F, 17.0F, -2.5F, 5.0F, 4.0F, 5.0F),
+        root.addOrReplaceChild("body",
+                CubeListBuilder.create().texOffs(12, 61)
+                        .addBox(-6.0F, 0.0F, -3.0F, 12.0F, 8.0F, 6.0F),
+                PartPose.offset(0.0F, -8.0F, 0.0F));
+        root.addOrReplaceChild("chest",
+                CubeListBuilder.create().texOffs(0, 43)
+                        .addBox(0.0F, 0.0F, 0.0F, 20.0F, 8.0F, 10.0F),
+                PartPose.offset(-10.0F, -16.0F, -5.0F));
+        root.addOrReplaceChild("hips",
+                CubeListBuilder.create().texOffs(8, 75)
+                        .addBox(-7.0F, 0.0F, -4.0F, 14.0F, 4.0F, 8.0F),
                 PartPose.ZERO);
 
-        PartDefinition leftArm = body.addOrReplaceChild("left_arm",
-                CubeListBuilder.create().texOffs(34, 22).mirror().addBox(0.0F, -2.0F, -2.5F, 5.0F, 19.0F, 5.0F),
-                PartPose.offset(6.0F, 2.0F, 0.0F));
-        leftArm.addOrReplaceChild("left_claws",
-                CubeListBuilder.create().texOffs(54, 22).mirror().addBox(0.0F, 17.0F, -2.5F, 5.0F, 4.0F, 5.0F),
-                PartPose.ZERO);
+        PartDefinition rightArm = root.addOrReplaceChild("right_arm",
+                CubeListBuilder.create().texOffs(72, 50)
+                        .addBox(-4.0F, -2.0F, -2.0F, 4.0F, 13.0F, 4.0F),
+                PartPose.offset(-10.0F, -13.0F, 0.0F));
+        PartDefinition rightForearm = rightArm.addOrReplaceChild("right_forearm",
+                CubeListBuilder.create().texOffs(68, 67)
+                        .addBox(-3.0F, 0.0F, -3.0F, 6.0F, 14.0F, 6.0F),
+                PartPose.offsetAndRotation(-2.0F, 10.0F, 0.0F,
+                        -(float) Math.PI / 6.0F, 0.0F, 0.0F));
+        rightForearm.addOrReplaceChild("spear",
+                CubeListBuilder.create().mirror()
+                        .texOffs(61, 14).addBox(-0.5F, -30.0F, -0.5F, 1.0F, 50.0F, 1.0F)
+                        .texOffs(60, 8).addBox(-1.5F, -35.0F, 0.0F, 3.0F, 6.0F, 0.0F)
+                        .texOffs(60, 5).addBox(0.0F, -35.0F, -1.5F, 0.0F, 6.0F, 3.0F),
+                PartPose.offsetAndRotation(0.0F, 12.0F, 0.0F, 1.5F, 0.0F, 0.0F));
 
-        PartDefinition rightLeg = body.addOrReplaceChild("right_leg",
-                CubeListBuilder.create().texOffs(34, 46).mirror().addBox(-2.5F, 0.0F, -2.5F, 5.0F, 10.0F, 5.0F),
-                PartPose.offset(-3.0F, 16.0F, 0.0F));
-        rightLeg.addOrReplaceChild("right_lower_leg",
-                CubeListBuilder.create().texOffs(54, 41).mirror().addBox(-2.5F, 7.0F, 2.5F, 5.0F, 12.0F, 5.0F),
-                PartPose.ZERO);
+        PartDefinition leftArm = root.addOrReplaceChild("left_arm",
+                CubeListBuilder.create().texOffs(72, 50)
+                        .addBox(0.0F, -2.0F, -2.0F, 4.0F, 13.0F, 4.0F),
+                PartPose.offset(10.0F, -13.0F, 0.0F));
+        leftArm.addOrReplaceChild("left_forearm",
+                CubeListBuilder.create().texOffs(68, 67)
+                        .addBox(-3.0F, 0.0F, -3.0F, 6.0F, 14.0F, 6.0F),
+                PartPose.offsetAndRotation(2.0F, 10.0F, 0.0F,
+                        -(float) Math.PI / 6.0F, 0.0F, 0.0F));
 
-        PartDefinition leftLeg = body.addOrReplaceChild("left_leg",
-                CubeListBuilder.create().texOffs(34, 46).addBox(-2.5F, 0.0F, -2.5F, 5.0F, 10.0F, 5.0F),
-                PartPose.offset(3.0F, 16.0F, 0.0F));
-        leftLeg.addOrReplaceChild("left_lower_leg",
-                CubeListBuilder.create().texOffs(54, 41).addBox(-2.5F, 7.0F, 2.5F, 5.0F, 12.0F, 5.0F),
-                PartPose.ZERO);
+        PartDefinition rightLeg = root.addOrReplaceChild("right_leg",
+                CubeListBuilder.create().texOffs(72, 0)
+                        .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 10.0F, 4.0F),
+                PartPose.offsetAndRotation(-4.0F, 3.0F, -1.0F,
+                        (float) Math.PI / 6.0F, 0.0F, 0.0F));
+        PartDefinition rightShin = rightLeg.addOrReplaceChild("right_shin",
+                CubeListBuilder.create().texOffs(68, 14)
+                        .addBox(-3.0F, -2.0F, -3.0F, 6.0F, 14.0F, 6.0F),
+                PartPose.offsetAndRotation(0.0F, 10.0F, 0.0F, -0.9F, 0.0F, 0.0F));
+        rightShin.addOrReplaceChild("right_foot",
+                CubeListBuilder.create().texOffs(69, 34)
+                        .addBox(-2.0F, 0.0F, -5.0F, 4.0F, 3.0F, 7.0F),
+                PartPose.offsetAndRotation(0.0F, 10.0F, 0.0F, 0.5F, 0.0F, 0.0F));
 
-        return LayerDefinition.create(mesh, 128, 64);
+        PartDefinition leftLeg = root.addOrReplaceChild("left_leg",
+                CubeListBuilder.create().texOffs(72, 0)
+                        .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 10.0F, 4.0F),
+                PartPose.offsetAndRotation(4.0F, 3.0F, -1.0F,
+                        (float) Math.PI / 6.0F, 0.0F, 0.0F));
+        PartDefinition leftShin = leftLeg.addOrReplaceChild("left_shin",
+                CubeListBuilder.create().texOffs(68, 14)
+                        .addBox(-3.0F, -2.0F, -3.0F, 6.0F, 14.0F, 6.0F),
+                PartPose.offsetAndRotation(0.0F, 10.0F, 0.0F, -0.9F, 0.0F, 0.0F));
+        leftShin.addOrReplaceChild("left_foot",
+                CubeListBuilder.create().texOffs(69, 34)
+                        .addBox(-2.0F, 0.0F, -5.0F, 4.0F, 3.0F, 7.0F),
+                PartPose.offsetAndRotation(0.0F, 10.0F, 0.0F, 0.5F, 0.0F, 0.0F));
+
+        return LayerDefinition.create(mesh, 128, 128);
     }
 
     @Override
-    public void setupAnim(LivingEntityRenderState state) {
-        head.yRot = state.yRot * Mth.DEG_TO_RAD;
-        head.xRot = state.xRot * Mth.DEG_TO_RAD + 0.4365F;
-        neck.xRot = (float) (-Math.PI / 12.0);
-        neck.yRot = 0.0F;
+    public void setupAnim(HuntsmanRenderState state) {
+        this.head.yRot = state.yRot * Mth.DEG_TO_RAD;
+        this.head.xRot = state.xRot * Mth.DEG_TO_RAD;
 
-        float wave = triangleWave(state.walkAnimationPos, 13.0F) * state.walkAnimationSpeed;
-        leftLeg.xRot = wave * -1.3F - (float) (Math.PI / 9.0);
-        rightLeg.xRot = wave * 1.3F - (float) (Math.PI / 9.0);
-        leftArm.xRot = wave * -0.3F;
-        rightArm.xRot = -leftArm.xRot;
+        float gait = triangleWave(state.walkAnimationPos, 13.0F) * state.walkAnimationSpeed;
+        this.leftLeg.xRot = -1.3F * gait + 0.5F;
+        this.rightLeg.xRot = 1.3F * gait + 0.5F;
+        this.leftShin.xRot = 0.8F * (this.rightLeg.xRot - 0.5F) - 1.0F;
+        this.rightShin.xRot = 0.8F * (this.leftLeg.xRot - 0.5F) - 1.0F;
+        this.leftFoot.xRot = Math.max(1.4F * (this.leftLeg.xRot - 0.5F) + 0.5F, 0.2F);
+        this.rightFoot.xRot = Math.max(1.4F * (this.rightLeg.xRot - 0.5F) + 0.5F, 0.2F);
+        this.leftLeg.yRot = 0.0F;
+        this.rightLeg.yRot = 0.0F;
+
+        float armWave = triangleWave(state.walkAnimationPos, 13.0F);
+        this.leftArm.xRot = (-0.2F - 1.5F * armWave) * state.walkAnimationSpeed * 0.2F;
+        this.rightArm.xRot = state.attackTimer > 0
+                ? -2.0F + 1.5F * triangleWave(state.attackTimer - state.partialTick, 10.0F)
+                : (-0.2F + 1.5F * armWave) * state.walkAnimationSpeed * 0.2F;
     }
 
-    private static float triangleWave(float angle, float limit) {
+    public static float triangleWave(float angle, float limit) {
         return (Math.abs(angle % limit - limit * 0.5F) - limit * 0.25F) / (limit * 0.25F);
+    }
+
+    public static final class HuntsmanRenderState extends LivingEntityRenderState {
+        public int attackTimer;
     }
 }

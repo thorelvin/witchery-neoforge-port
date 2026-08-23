@@ -41,12 +41,16 @@ public class WitchesOvenRenderer implements BlockEntityRenderer<WitchesOvenBlock
     @Override
     public void submit(State state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
         ps.pushPose();
-        ps.translate(0.5, 0.5, 0.5);
-        ps.mulPose(Axis.ZP.rotationDegrees(180));
-        ps.translate(0, -1, 0);
-        ps.mulPose(Axis.YP.rotationDegrees(state.yaw));
+        applySourcePose(ps, state.yaw);
         collector.submitModelPart(model.root(), ps, net.minecraft.client.renderer.rendertype.RenderTypes.entityCutout(TEXTURE),
                 state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         ps.popPose();
+    }
+
+    static void applySourcePose(PoseStack ps, float yaw) {
+        ps.translate(0.5, 0.5, 0.5);
+        ps.mulPose(Axis.ZP.rotationDegrees(180));
+        ps.translate(0, -1, 0);
+        ps.mulPose(Axis.YP.rotationDegrees(yaw));
     }
 }

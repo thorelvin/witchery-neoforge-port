@@ -15,6 +15,10 @@ public class DemonHeartBlockEntity extends BlockEntity {
         super(WitcheryBlockEntities.DEMON_HEART.get(), pos, state);
     }
 
+    public long getTicks() {
+        return ticks;
+    }
+
     public static void clientTick(Level level, BlockPos pos, BlockState state, DemonHeartBlockEntity blockEntity) {
         blockEntity.ticks = blockEntity.ticks >= Long.MAX_VALUE ? 1L : blockEntity.ticks + 1L;
         if (blockEntity.ticks % 25L != 0L) {

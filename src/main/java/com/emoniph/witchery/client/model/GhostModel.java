@@ -20,6 +20,7 @@ public class GhostModel extends EntityModel<GhostModel.GhostRenderState> {
 
     public static class GhostRenderState extends LivingEntityRenderState {
         public boolean screaming;
+        public boolean obscured;
     }
 
     public static final ModelLayerLocation LAYER_BANSHEE =
@@ -30,7 +31,6 @@ public class GhostModel extends EntityModel<GhostModel.GhostRenderState> {
             new ModelLayerLocation(Identifier.fromNamespaceAndPath("witchery", "poltergeist"), "main");
 
     private final ModelPart head;
-    private final ModelPart body;
     private final ModelPart rightArm;
     private final ModelPart leftArm;
     private final ModelPart mouth;
@@ -39,7 +39,6 @@ public class GhostModel extends EntityModel<GhostModel.GhostRenderState> {
     public GhostModel(ModelPart root, boolean reachingArms) {
         super(root);
         this.head = root.getChild("head");
-        this.body = root.getChild("body");
         this.rightArm = root.getChild("right_arm");
         this.leftArm = root.getChild("left_arm");
         this.mouth = this.head.getChild("mouth");
@@ -100,8 +99,5 @@ public class GhostModel extends EntityModel<GhostModel.GhostRenderState> {
         leftArm.yRot = 0.0F;
         rightArm.zRot = !reachingArms && state.screaming ? 1.0F : 0.0F;
         leftArm.zRot = !reachingArms && state.screaming ? -1.0F : 0.0F;
-
-        body.xRot = 0.0F;
-        body.y = Mth.sin(ageInTicks * 0.05F) * 0.5F;
     }
 }

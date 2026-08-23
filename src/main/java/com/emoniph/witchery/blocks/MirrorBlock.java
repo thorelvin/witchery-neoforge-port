@@ -39,7 +39,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -74,9 +77,7 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
     public static final EnumProperty<BedPart>  PART        = BlockStateProperties.BED_PART;
     public static final BooleanProperty        UNBREAKABLE = BooleanProperty.create("unbreakable");
 
-    // Thin-slab shapes: slab is pressed against the named wall.
-    // NORTH wall = low-Z side (z=0-4), SOUTH wall = high-Z side (z=12-16),
-    // WEST wall  = low-X side (x=0-4), EAST wall  = high-X side (x=12-16).
+    // Source metadata names the direction that the reflective face looks toward.
     private static final double COLLISION_DEPTH = 2.4D;
     private static final double SELECTION_DEPTH = 5.12D;
     private static final VoxelShape NORTH_COLLISION = Block.box(0, 0, 0, 16, 16, COLLISION_DEPTH);
@@ -136,29 +137,29 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return selectionShapeFor(state.getValue(FACING));
+        return sourceSelectionShape(state.getValue(FACING));
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return collisionShapeFor(state.getValue(FACING));
+        return sourceCollisionShape(state.getValue(FACING));
     }
 
-    private static VoxelShape collisionShapeFor(Direction facing) {
+    static VoxelShape sourceCollisionShape(Direction facing) {
         return switch (facing) {
-            case NORTH -> NORTH_COLLISION;
-            case SOUTH -> SOUTH_COLLISION;
-            case WEST  -> WEST_COLLISION;
-            default    -> EAST_COLLISION;
+            case NORTH -> SOUTH_COLLISION;
+            case SOUTH -> NORTH_COLLISION;
+            case WEST  -> EAST_COLLISION;
+            default    -> WEST_COLLISION;
         };
     }
 
-    private static VoxelShape selectionShapeFor(Direction facing) {
+    static VoxelShape sourceSelectionShape(Direction facing) {
         return switch (facing) {
-            case NORTH -> NORTH_SELECTION;
-            case SOUTH -> SOUTH_SELECTION;
-            case WEST  -> WEST_SELECTION;
-            default    -> EAST_SELECTION;
+            case NORTH -> SOUTH_SELECTION;
+            case SOUTH -> NORTH_SELECTION;
+            case WEST  -> EAST_SELECTION;
+            default    -> WEST_SELECTION;
         };
     }
 
@@ -299,7 +300,7 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
 
         // Check entity is in the entry zone
         Direction facing = state.getValue(FACING);
-        VoxelShape entryZone = selectionShapeFor(facing);
+        VoxelShape entryZone = sourceSelectionShape(facing);
         Vec3 epos = entity.position();
         double lx = epos.x - pos.getX();
         double ly = epos.y - pos.getY();
@@ -480,7 +481,27 @@ public class MirrorBlock extends HorizontalDirectionalBlock implements EntityBlo
         return null;
     }
 
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+            Level level, BlockState state, BlockEntityType<T> type) {
+        if (!level.isClientSide() || state.getValue(PART) != BedPart.FOOT) {
+            return null;
+        }
+        if (type != WitcheryBlockEntities.MIRROR.get()) {
+            return null;
+        }
+        return (tickLevel, tickPos, tickState, blockEntity) ->
+                MirrorBlockEntity.clientTick(
+                        tickLevel, tickPos, tickState, (MirrorBlockEntity) blockEntity);
+    }
+
     // ── Rendering ────────────────────────────────────────────────────────────
+
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.INVISIBLE;
+    }
 
     @Override
     protected boolean skipRendering(BlockState state, BlockState adjacentState, Direction side) {

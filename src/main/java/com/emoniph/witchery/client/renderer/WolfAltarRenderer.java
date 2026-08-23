@@ -18,18 +18,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
-/**
- * Renders the Wolf Altar as the source wolf-god statue (decompiled {@code RenderStatueWerewolf}).
- * The base transform matches the other ported statues (centre, flip, face); the three figures are then
- * submitted with the source's independent scaling — the upright wolfman at ×0.7 and each flanking wolf
- * at ×0.5 about its own pivot — while the plinth slabs draw at ×1.
- */
 public class WolfAltarRenderer implements BlockEntityRenderer<WolfAltarBlockEntity, WolfAltarRenderer.State> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/block/wolfaltar.png");
+    private static final Identifier TEXTURE =
+            Identifier.fromNamespaceAndPath("witchery", "textures/block/wolfaltar.png");
     private final WolfAltarModel model;
 
-    public WolfAltarRenderer(BlockEntityRendererProvider.Context ctx) {
-        this.model = new WolfAltarModel(ctx.bakeLayer(WolfAltarModel.LAYER_LOCATION));
+    public WolfAltarRenderer(BlockEntityRendererProvider.Context context) {
+        this.model = new WolfAltarModel(context.bakeLayer(WolfAltarModel.LAYER_LOCATION));
     }
 
     public static class State extends BlockEntityRenderState {
@@ -37,53 +32,77 @@ public class WolfAltarRenderer implements BlockEntityRenderer<WolfAltarBlockEnti
     }
 
     @Override
-    public State createRenderState() { return new State(); }
+    public State createRenderState() {
+        return new State();
+    }
 
     @Override
-    public void extractRenderState(WolfAltarBlockEntity be, State state, float partialTick,
+    public void extractRenderState(WolfAltarBlockEntity blockEntity, State state, float partialTick,
                                    Vec3 cameraPos, ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderer.super.extractRenderState(be, state, partialTick, cameraPos, overlay);
-        var blockState = be.getBlockState();
+        BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTick, cameraPos, overlay);
+        var blockState = blockEntity.getBlockState();
         if (blockState.hasProperty(WolfAltarBlock.FACING)) {
             state.facing = blockState.getValue(WolfAltarBlock.FACING);
         }
     }
 
     @Override
-    public void submit(State state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        poseStack.pushPose();
+        applySourceWorldPose(poseStack, state.facing);
+        submitModel(model, poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY);
+        poseStack.popPose();
+    }
+
+    static void applySourceWorldPose(PoseStack poseStack, Direction facing) {
+        poseStack.translate(0.5F, 0.5F, 0.5F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        poseStack.translate(0.0F, -1.0F, 0.0F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(sourceRotation(facing)));
+    }
+
+    public static void applySourceItemPose(PoseStack poseStack) {
+        poseStack.translate(0.5F, 0.5F, 0.5F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        poseStack.translate(0.0F, -1.0F, 0.0F);
+        poseStack.scale(0.6F, 0.6F, 0.6F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+        poseStack.translate(0.0F, 1.5F, 0.0F);
+    }
+
+    static float sourceRotation(Direction facing) {
+        return switch (facing) {
+            case NORTH -> 0.0F;
+            case EAST -> 90.0F;
+            case SOUTH -> 180.0F;
+            case WEST -> 270.0F;
+            default -> throw new IllegalArgumentException("Wolf altars require a horizontal facing");
+        };
+    }
+
+    public static void submitModel(WolfAltarModel model, PoseStack poseStack,
+                                   SubmitNodeCollector collector, int light, int overlay) {
         RenderType renderType = RenderTypes.entityCutout(TEXTURE);
-        int light = state.lightCoords;
-        int overlay = OverlayTexture.NO_OVERLAY;
 
-        ps.pushPose();
-        ps.translate(0.5, 0.5, 0.5);
-        ps.mulPose(Axis.ZP.rotationDegrees(180));
-        ps.translate(0, -1, 0);
-        ps.mulPose(Axis.YP.rotationDegrees(-state.facing.toYRot()));
+        poseStack.pushPose();
+        WolfAltarModel.scaleAboutPivot(poseStack, 0.0F, 3.1F, 0.0F, 0.7F);
+        collector.submitModelPart(model.bipedBody(), poseStack, renderType, light, overlay, null);
+        poseStack.popPose();
 
-        // Upright wolfman ×0.7 about its body pivot.
-        ps.pushPose();
-        WolfAltarModel.scaleAboutPivot(ps, 0.0F, 3.1F, 0.0F, 0.7F);
-        collector.submitModelPart(model.bipedBody(), ps, renderType, light, overlay, null);
-        ps.popPose();
+        collector.submitModelPart(model.shape37(), poseStack, renderType, light, overlay, null);
+        collector.submitModelPart(model.shape1_2(), poseStack, renderType, light, overlay, null);
+        collector.submitModelPart(model.shape1(), poseStack, renderType, light, overlay, null);
 
-        // Plinth slabs at full scale.
-        collector.submitModelPart(model.shape37(), ps, renderType, light, overlay, null);
-        collector.submitModelPart(model.shape1_2(), ps, renderType, light, overlay, null);
-        collector.submitModelPart(model.shape1(), ps, renderType, light, overlay, null);
-        collector.submitModelPart(model.shape1_1(), ps, renderType, light, overlay, null);
+        poseStack.pushPose();
+        WolfAltarModel.scaleAboutPivot(poseStack, -5.0F, 14.0F, 3.5F, 0.5F);
+        collector.submitModelPart(model.wolfBody(), poseStack, renderType, light, overlay, null);
+        poseStack.popPose();
 
-        // Two flanking wolves ×0.5 about their pivots.
-        ps.pushPose();
-        WolfAltarModel.scaleAboutPivot(ps, -5.0F, 14.0F, 3.5F, 0.5F);
-        collector.submitModelPart(model.wolfBody(), ps, renderType, light, overlay, null);
-        ps.popPose();
+        collector.submitModelPart(model.shape1_1(), poseStack, renderType, light, overlay, null);
 
-        ps.pushPose();
-        WolfAltarModel.scaleAboutPivot(ps, 5.5F, 14.0F, -2.0F, 0.5F);
-        collector.submitModelPart(model.wolfBody1(), ps, renderType, light, overlay, null);
-        ps.popPose();
-
-        ps.popPose();
+        poseStack.pushPose();
+        WolfAltarModel.scaleAboutPivot(poseStack, 5.5F, 14.0F, -2.0F, 0.5F);
+        collector.submitModelPart(model.wolfBody1(), poseStack, renderType, light, overlay, null);
+        poseStack.popPose();
     }
 }

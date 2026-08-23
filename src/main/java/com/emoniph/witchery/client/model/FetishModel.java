@@ -16,20 +16,21 @@ public class FetishModel extends Model.Simple {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             Identifier.fromNamespaceAndPath("witchery", "fetish"), "main");
 
-    private final List<ModelPart> parts;
+    private final List<ModelPart> untintedParts;
+    private final List<ModelPart> tintedParts;
 
     public FetishModel(ModelPart root) {
         super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
-        parts = List.of(
+        untintedParts = List.of(
             root.getChild("pole_vertical"),
             root.getChild("pole_horizontal"),
-            root.getChild("head"),
             root.getChild("head_inner"),
-            root.getChild("body"),
-            root.getChild("arm_left"),
             root.getChild("arm_left_inner"),
-            root.getChild("arm_right"),
             root.getChild("arm_right_inner")
+        );
+        tintedParts = List.of(
+            root.getChild("head"), root.getChild("body"),
+            root.getChild("arm_left"), root.getChild("arm_right")
         );
     }
 
@@ -79,4 +80,11 @@ public class FetishModel extends Model.Simple {
         return LayerDefinition.create(mesh, 64, 64);
     }
 
+    public List<ModelPart> untintedParts() {
+        return untintedParts;
     }
+
+    public List<ModelPart> tintedParts() {
+        return tintedParts;
+    }
+}

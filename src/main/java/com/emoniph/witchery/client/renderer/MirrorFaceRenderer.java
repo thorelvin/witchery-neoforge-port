@@ -12,12 +12,16 @@ import net.minecraft.resources.Identifier;
 
 public class MirrorFaceRenderer
         extends MobRenderer<MirrorFaceEntity, LivingEntityRenderState, MirrorFaceModel> {
-    private static final Identifier TEXTURE =
+    static final float SOURCE_SHADOW_RADIUS = 0.0F;
+    static final float SOURCE_MODEL_SCALE = 0.75F;
+    static final float SOURCE_PRE_BASE_TRANSLATE_Y = -0.0820625F;
+    static final Identifier TEXTURE =
             Identifier.fromNamespaceAndPath("witchery", "textures/entity/mirrorface.png");
-    private static final int SOURCE_ALPHA_WHITE = 0xCCFFFFFF;
+    static final int SOURCE_ALPHA_WHITE = 0xCCFFFFFF;
 
     public MirrorFaceRenderer(EntityRendererProvider.Context context) {
-        super(context, new MirrorFaceModel(context.bakeLayer(MirrorFaceModel.LAYER_LOCATION)), 0.0F);
+        super(context, new MirrorFaceModel(context.bakeLayer(MirrorFaceModel.LAYER_LOCATION)),
+                SOURCE_SHADOW_RADIUS);
     }
 
     @Override
@@ -45,7 +49,8 @@ public class MirrorFaceRenderer
 
     @Override
     protected void scale(LivingEntityRenderState state, PoseStack poseStack) {
-        poseStack.scale(0.75F, 0.75F, 0.75F);
-        poseStack.translate(0.0F, 0.4F, 0.0F);
+        // Rebase source T(-1.5078125) * S(0.75) * T(0.4) around modern T(-1.501).
+        poseStack.translate(0.0F, SOURCE_PRE_BASE_TRANSLATE_Y, 0.0F);
+        poseStack.scale(SOURCE_MODEL_SCALE, SOURCE_MODEL_SCALE, SOURCE_MODEL_SCALE);
     }
 }

@@ -67,16 +67,7 @@ public class WolfHeadRenderer implements BlockEntityRenderer<WolfHeadBlockEntity
     @Override
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         poseStack.pushPose();
-        if (state.facing == Direction.UP) {
-            poseStack.translate(0.5F, 0.0F, 0.5F);
-        } else {
-            poseStack.translate(
-                    0.5F - (float) state.facing.getStepX() * 0.25F,
-                    0.25F,
-                    0.5F - (float) state.facing.getStepZ() * 0.25F);
-        }
-        poseStack.scale(-1.0F, -1.0F, 1.0F);
-        poseStack.mulPose(Axis.YP.rotationDegrees(state.yaw));
+        applySourcePose(poseStack, state.facing, state.yaw);
         model.resetPose();
         collector.submitModelPart(
                 model.root(),
@@ -86,5 +77,21 @@ public class WolfHeadRenderer implements BlockEntityRenderer<WolfHeadBlockEntity
                 OverlayTexture.NO_OVERLAY,
                 null);
         poseStack.popPose();
+    }
+
+    static void applySourcePose(PoseStack poseStack, Direction facing, float yaw) {
+        if (facing == Direction.UP) {
+            poseStack.translate(0.5F, 0.0F, 0.5F);
+        } else {
+            switch (facing) {
+                case NORTH -> poseStack.translate(0.5F, 0.25F, 0.74F);
+                case SOUTH -> poseStack.translate(0.5F, 0.25F, 0.26F);
+                case WEST -> poseStack.translate(0.74F, 0.25F, 0.5F);
+                case EAST -> poseStack.translate(0.26F, 0.25F, 0.5F);
+                default -> throw new IllegalArgumentException("Mounted heads cannot face down");
+            }
+        }
+        poseStack.scale(-1.0F, -1.0F, 1.0F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
     }
 }

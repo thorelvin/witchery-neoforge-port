@@ -65,22 +65,19 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
         }
         GraphicsPreset graphicsPreset = Minecraft.getInstance().options.graphicsPreset().get();
         state.spinHeldItem = graphicsPreset == GraphicsPreset.FANCY || graphicsPreset == GraphicsPreset.FABULOUS;
-        state.rotation = state.spinHeldItem && beLevel != null
-                ? ((beLevel.getGameTime() + partialTick) * 2.5f) % 360.0f
+        state.rotation = state.spinHeldItem
+                ? sourceHeldItemRotation(System.currentTimeMillis())
                 : 0.0f;
         Direction facing = be.getBlockState().hasProperty(GrassperBlock.FACING)
                 ? be.getBlockState().getValue(GrassperBlock.FACING)
                 : Direction.NORTH;
-        state.blockRotation = facing.getOpposite().toYRot();
+        state.blockRotation = sourceRotation(facing);
     }
 
     @Override
     public void submit(State state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
         ps.pushPose();
-        ps.translate(0.5, 0.5, 0.5);
-        ps.mulPose(Axis.ZP.rotationDegrees(180));
-        ps.translate(0.0, -1.0, 0.0);
-        ps.mulPose(Axis.YP.rotationDegrees(state.blockRotation));
+        applySourcePose(ps, state.blockRotation);
         collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords,
                 net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, null);
         ps.popPose();
@@ -97,5 +94,26 @@ public class GrassperRenderer implements BlockEntityRenderer<GrassperBlockEntity
                     net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, 0);
             ps.popPose();
         }
+    }
+
+    static void applySourcePose(PoseStack ps, float rotation) {
+        ps.translate(0.5, 0.5, 0.5);
+        ps.mulPose(Axis.ZP.rotationDegrees(180));
+        ps.translate(0.0, -1.0, 0.0);
+        ps.mulPose(Axis.YP.rotationDegrees(rotation));
+    }
+
+    static float sourceRotation(Direction facing) {
+        return switch (facing) {
+            case NORTH -> 0.0F;
+            case EAST -> 90.0F;
+            case SOUTH -> 180.0F;
+            case WEST -> 270.0F;
+            default -> throw new IllegalArgumentException("Grasspers require a horizontal facing");
+        };
+    }
+
+    static float sourceHeldItemRotation(long millis) {
+        return ((float) millis / 3000.0F * 300.0F) / 2.0F;
     }
 }

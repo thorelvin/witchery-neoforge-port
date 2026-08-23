@@ -1,7 +1,5 @@
 package com.emoniph.witchery.client.model;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -10,9 +8,9 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
+
+import java.util.List;
 
 public class DistilleryModel extends Model.Simple {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
@@ -27,6 +25,7 @@ public class DistilleryModel extends Model.Simple {
     private final ModelPart frameLeft;
     private final ModelPart frameRight;
     private final ModelPart frameBase;
+    private final List<ModelPart> bottles;
 
     public DistilleryModel(ModelPart root) {
         super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
@@ -39,6 +38,18 @@ public class DistilleryModel extends Model.Simple {
         this.frameLeft = root.getChild("frame_left");
         this.frameRight = root.getChild("frame_right");
         this.frameBase = root.getChild("frame_base");
+        this.bottles = List.of(
+                root.getChild("bottle1"),
+                root.getChild("bottle2"),
+                root.getChild("bottle3"),
+                root.getChild("bottle4"));
+    }
+
+    public void setJarCount(int count) {
+        int visibleCount = Math.max(0, Math.min(bottles.size(), count));
+        for (int i = 0; i < bottles.size(); i++) {
+            bottles.get(i).visible = i < visibleCount;
+        }
     }
 
     // UV and geometry ported 1:1 from ModelDistillery (64x64 texture sheet)
@@ -83,7 +94,22 @@ public class DistilleryModel extends Model.Simple {
                 CubeListBuilder.create().texOffs(22, 0).addBox(0f, 0f, 0f, 16, 1, 5),
                 PartPose.offset(-8f, 23f, -8f));
 
+        root.addOrReplaceChild("bottle1", bottleBuilder(),
+                PartPose.offset(-7, 16, -7));
+        root.addOrReplaceChild("bottle2", bottleBuilder(),
+                PartPose.offsetAndRotation(-3.3F, 16, -7, 0.0174533F, 0, 0));
+        root.addOrReplaceChild("bottle3", bottleBuilder(),
+                PartPose.offset(0.4F, 16, -7));
+        root.addOrReplaceChild("bottle4", bottleBuilder(),
+                PartPose.offset(4, 16, -7));
+
         return LayerDefinition.create(mesh, 64, 64);
     }
 
+    private static CubeListBuilder bottleBuilder() {
+        return CubeListBuilder.create().mirror()
+                .texOffs(52, 26).addBox(0, 2, 0, 3, 3, 3)
+                .texOffs(60, 24).addBox(1, 1, 1, 1, 1, 1)
+                .texOffs(56, 21).addBox(0.5F, 0, 0.5F, 2, 1, 2);
     }
+}

@@ -1,11 +1,21 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/brew_bag",
-    "tints": [
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
       {
-        "type": "witchery:brew_bag_color"
+        "when": ["gui", "ground", "fixed", "on_shelf", "head"],
+        "model": {
+          "type": "minecraft:model",
+          "model": "witchery:item/brew_bag",
+          "tints": [{ "type": "witchery:brew_bag_color" }]
+        }
       }
-    ]
+    ],
+    "fallback": {
+      "type": "minecraft:special",
+      "base": "witchery:item/brew_bag_in_hand_base",
+      "model": { "type": "witchery:brew_bag_held" }
+    }
   }
 }

@@ -71,7 +71,7 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
         state.bottleCount = Math.min(2, be.bottleCount());
         state.level = be.getLevel();
         state.bePos = be.getBlockPos();
-        state.liquidFrame = 0;
+        state.liquidFrame = liquidFrame(state.level == null ? 0L : state.level.getGameTime());
         state.renderCrossbar = state.level == null
                 || !state.level.getBlockState(state.bePos.above()).isFaceSturdy(state.level, state.bePos.above(), Direction.DOWN);
         state.liquidShade = state.brewing ? 0.5F : 1.0F;
@@ -80,10 +80,7 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
     @Override
     public void submit(KettleRenderState state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
         ps.pushPose();
-        ps.translate(0.5, 0.5, 0.5);
-        ps.mulPose(Axis.ZP.rotationDegrees(180.0F));
-        ps.translate(0.0F, -1.0F, 0.0F);
-        ps.mulPose(Axis.YP.rotationDegrees(state.yaw));
+        applySourcePose(ps, state.yaw);
 
         for (var part : model.bodyParts()) {
             collector.submitModelPart(part, ps, RenderTypes.entityCutoutNoCull(TEXTURE),
@@ -120,7 +117,18 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
         }
     }
 
-    private static float liquidYOffset(int waterLevel) {
+    static void applySourcePose(PoseStack ps, float yaw) {
+        ps.translate(0.5, 0.5, 0.5);
+        ps.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        ps.translate(0.0F, -1.0F, 0.0F);
+        ps.mulPose(Axis.YP.rotationDegrees(yaw));
+    }
+
+    static int liquidFrame(long gameTime) {
+        return (int) ((gameTime / 20L) & 3L);
+    }
+
+    static float liquidYOffset(int waterLevel) {
         return switch (Math.max(1, Math.min(KettleBlockEntity.MAX_WATER_LEVEL, waterLevel))) {
             case 1 -> 2.0F / 16.0F;
             case 2 -> 1.0F / 16.0F;
@@ -138,9 +146,9 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
             color = 0x3757C3;
             shade = 1.0F;
         }
-        float red = ((color >>> 16) & 0xFF) / 255.0F * shade;
-        float green = ((color >>> 8) & 0xFF) / 255.0F * shade;
-        float blue = (color & 0xFF) / 255.0F * shade;
+        float red = ((color >>> 16) & 0xFF) / 256.0F * shade;
+        float green = ((color >>> 8) & 0xFF) / 256.0F * shade;
+        float blue = (color & 0xFF) / 256.0F * shade;
         return ARGB.colorFromFloat(1.0F, red, green, blue);
     }
 

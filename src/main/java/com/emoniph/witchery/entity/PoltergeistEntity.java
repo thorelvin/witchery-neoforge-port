@@ -28,6 +28,8 @@ import net.minecraft.world.level.pathfinder.PathType;
 
 /** Poltergeist - mischievous summoned undead that hurls objects at players. */
 public class PoltergeistEntity extends SummonedUndeadEntity implements RangedAttackMob {
+    private int attackTimer;
+
     public PoltergeistEntity(EntityType<? extends PoltergeistEntity> type, Level level) {
         super(type, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
@@ -66,6 +68,8 @@ public class PoltergeistEntity extends SummonedUndeadEntity implements RangedAtt
 
     @Override
     public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        attackTimer = 15;
+        level().broadcastEntityEvent(this, (byte) 4);
         ThrownEgg egg = new ThrownEgg(level(), this, new ItemStack(Items.EGG));
         double dx = target.getX() - getX();
         double dy = target.getY(0.33) - egg.getY();
@@ -74,6 +78,20 @@ public class PoltergeistEntity extends SummonedUndeadEntity implements RangedAtt
         level().playSound(null, blockPosition(), SoundEvents.EGG_THROW, SoundSource.HOSTILE, 0.5f, 1f);
         level().addFreshEntity(egg);
     }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (attackTimer > 0) attackTimer--;
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == 4) attackTimer = 15;
+        else super.handleEntityEvent(id);
+    }
+
+    public int getAttackTimer() { return attackTimer; }
 
     @Override
     public boolean isOnFire() {

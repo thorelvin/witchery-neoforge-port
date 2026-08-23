@@ -4,6 +4,9 @@ import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -38,8 +41,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Hellhound — a fire-immune infernal hound. Port of EntityHellhound (1.7.10-0.24.1).
@@ -56,12 +61,24 @@ import net.minecraft.world.level.storage.ValueOutput;
  * is summon-/egg-spawnable, matching how the port surfaces other infernal mobs.
  */
 public class HellhoundEntity extends Monster {
+    private static final EntityDataAccessor<Boolean> DATA_CONVERTING =
+            SynchedEntityData.defineId(HellhoundEntity.class, EntityDataSerializers.BOOLEAN);
 
     /** &ge;0 while converting to a Wolf; counts down each server tick. */
     private int conversionTime = -1;
+    private boolean wetForShake;
+    private boolean shaking;
+    private float shakeAnim;
+    private float shakeAnimOld;
 
     public HellhoundEntity(EntityType<? extends HellhoundEntity> type, Level level) {
         super(type, level);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_CONVERTING, false);
     }
 
     // ── Attributes ────────────────────────────────────────────────────────────
@@ -115,6 +132,79 @@ public class HellhoundEntity extends Monster {
                     getY() + 0.5 + random.nextDouble() * (getBbHeight() - 0.1),
                     getZ() - w * 0.35 + random.nextDouble() * w * 0.7,
                     0.0, 0.0, 0.0);
+        }
+        updateShakeAnimation();
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (!level().isClientSide() && wetForShake && !shaking && !isPathFinding() && onGround()) {
+            shaking = true;
+            shakeAnim = 0.0F;
+            shakeAnimOld = 0.0F;
+            level().broadcastEntityEvent(this, (byte) 8);
+        }
+    }
+
+    private void updateShakeAnimation() {
+        if (!isAlive()) {
+            return;
+        }
+        if (isInWaterOrRain()) {
+            wetForShake = true;
+            if (shaking && !level().isClientSide()) {
+                level().broadcastEntityEvent(this, (byte) 56);
+                cancelShake();
+            }
+            return;
+        }
+        if (!shaking) {
+            return;
+        }
+
+        if (shakeAnim == 0.0F) {
+            playSound(SoundEvents.WOLF_SHAKE, getSoundVolume(),
+                    (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+            gameEvent(GameEvent.ENTITY_ACTION);
+        }
+        shakeAnimOld = shakeAnim;
+        shakeAnim += 0.05F;
+        if (shakeAnimOld >= 2.0F) {
+            wetForShake = false;
+            cancelShake();
+            return;
+        }
+
+        if (shakeAnim > 0.4F) {
+            int count = (int) (net.minecraft.util.Mth.sin((shakeAnim - 0.4F) * (float) Math.PI) * 7.0F);
+            Vec3 movement = getDeltaMovement();
+            for (int i = 0; i < count; i++) {
+                float xOffset = (random.nextFloat() * 2.0F - 1.0F) * getBbWidth() * 0.5F;
+                float zOffset = (random.nextFloat() * 2.0F - 1.0F) * getBbWidth() * 0.5F;
+                level().addParticle(ParticleTypes.SPLASH,
+                        getX() + xOffset, getY() + 0.8F, getZ() + zOffset,
+                        movement.x, movement.y, movement.z);
+            }
+        }
+    }
+
+    private void cancelShake() {
+        shaking = false;
+        shakeAnim = 0.0F;
+        shakeAnimOld = 0.0F;
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == 8) {
+            shaking = true;
+            shakeAnim = 0.0F;
+            shakeAnimOld = 0.0F;
+        } else if (id == 56) {
+            cancelShake();
+        } else {
+            super.handleEntityEvent(id);
         }
     }
 
@@ -171,6 +261,7 @@ public class HellhoundEntity extends Monster {
 
     private void startConversion(int time) {
         conversionTime = time;
+        entityData.set(DATA_CONVERTING, true);
         removeEffect(MobEffects.WEAKNESS);
         addEffect(new MobEffectInstance(MobEffects.STRENGTH, time,
                 Math.max(0, level().getDifficulty().getId() - 1)));
@@ -215,7 +306,15 @@ public class HellhoundEntity extends Monster {
     }
 
     public boolean isConverting() {
-        return conversionTime >= 0;
+        return entityData.get(DATA_CONVERTING);
+    }
+
+    public float getBodyRollAngle(float partialTick, float offset) {
+        float progress = (net.minecraft.util.Mth.lerp(partialTick, shakeAnimOld, shakeAnim) + offset) / 1.8F;
+        progress = net.minecraft.util.Mth.clamp(progress, 0.0F, 1.0F);
+        return net.minecraft.util.Mth.sin(progress * (float) Math.PI)
+                * net.minecraft.util.Mth.sin(progress * (float) Math.PI * 11.0F)
+                * 0.15F * (float) Math.PI;
     }
 
     // ── Drops ─────────────────────────────────────────────────────────────────
@@ -254,5 +353,6 @@ public class HellhoundEntity extends Monster {
     public void readAdditionalSaveData(ValueInput in) {
         super.readAdditionalSaveData(in);
         conversionTime = in.getIntOr("ConversionTime", -1);
+        entityData.set(DATA_CONVERTING, conversionTime >= 0);
     }
 }

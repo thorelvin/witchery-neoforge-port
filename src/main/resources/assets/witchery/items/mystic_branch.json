@@ -1,6 +1,17 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/mystic_branch"
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": ["gui", "ground", "fixed", "on_shelf", "head"],
+        "model": { "type": "minecraft:model", "model": "witchery:item/mystic_branch" }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:special",
+      "base": "witchery:item/mystic_branch_in_hand_base",
+      "model": { "type": "witchery:mystic_branch_held" }
+    }
   }
 }

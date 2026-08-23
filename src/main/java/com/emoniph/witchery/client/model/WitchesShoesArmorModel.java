@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.resources.Identifier;
 
 /**
- * Source-style Witchery footwear model from {@code ModelWitchesClothes(0.45F, false)}.
+ * Source-style Witchery footwear model. Source selects its 0.61 chest model for armor type 3.
  */
 public class WitchesShoesArmorModel extends HumanoidModel<HumanoidRenderState> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
@@ -22,7 +22,7 @@ public class WitchesShoesArmorModel extends HumanoidModel<HumanoidRenderState> {
     }
 
     public static LayerDefinition createLayer() {
-        MeshDefinition mesh = HumanoidModel.createMesh(new CubeDeformation(0.45F), 0.0F);
+        MeshDefinition mesh = HumanoidModel.createMesh(new CubeDeformation(0.61F), 0.0F);
         return LayerDefinition.create(mesh, 128, 64);
     }
 }

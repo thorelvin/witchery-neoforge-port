@@ -10,7 +10,6 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
 
 /**
  * Mindrake model — ported from ModelMindrake (1.7.10-0.24.1). A little turnip-rooted creature:
@@ -21,13 +20,11 @@ public class MindrakeModel extends EntityModel<LivingEntityRenderState> {
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(Identifier.fromNamespaceAndPath("witchery", "mindrake"), "main");
 
-    private final ModelPart leaves;
     private final ModelPart legLeft;
     private final ModelPart legRight;
 
     public MindrakeModel(ModelPart root) {
         super(root);
-        this.leaves   = root.getChild("leaves");
         this.legLeft  = root.getChild("leg_left");
         this.legRight = root.getChild("leg_right");
     }
@@ -57,15 +54,7 @@ public class MindrakeModel extends EntityModel<LivingEntityRenderState> {
 
     @Override
     public void setupAnim(LivingEntityRenderState state) {
-        float swing  = state.walkAnimationPos;
-        float amount = Math.min(state.walkAnimationSpeed, 1.0F);
-
-        // Stubby waddle
-        legLeft.xRot  = Mth.cos(swing * 0.6662F) * 1.4F * amount;
-        legRight.xRot = Mth.cos(swing * 0.6662F + Mth.PI) * 1.4F * amount;
-
-        // Leaves sway gently with the look yaw and a slow idle bob
-        leaves.yRot = state.yRot * Mth.DEG_TO_RAD * 0.5F;
-        leaves.zRot = Mth.sin(state.ageInTicks * 0.08F) * 0.06F;
+        this.legLeft.xRot = 0.0F;
+        this.legRight.xRot = 0.0F;
     }
 }

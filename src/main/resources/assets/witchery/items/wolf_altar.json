@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/wolf_altar"
+    "type": "minecraft:special",
+    "base": "witchery:item/wolf_altar",
+    "model": {
+      "type": "witchery:wolf_altar"
+    }
   }
 }

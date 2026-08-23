@@ -29,7 +29,9 @@ public class LeonardRenderer extends MobRenderer<LeonardEntity, LeonardModel.Leo
     @Override
     public void extractRenderState(LeonardEntity entity, LeonardModel.LeonardRenderState state, float partialTick) {
         super.extractRenderState(entity, state, partialTick);
-        state.attackTimer = entity.getAttackTimer();
+        state.attackTimer = Math.max(0.0F, entity.getAttackTimer() - partialTick);
+        state.attackProgress = entity.getAttackAnim(partialTick);
+        state.riding = entity.isPassenger();
         state.lightCoords = LightTexture.FULL_BRIGHT; // source full-bright shade glow
     }
 

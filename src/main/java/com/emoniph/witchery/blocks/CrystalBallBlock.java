@@ -108,7 +108,7 @@ public class CrystalBallBlock extends BaseEntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
+    public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {

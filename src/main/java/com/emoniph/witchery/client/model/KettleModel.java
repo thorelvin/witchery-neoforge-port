@@ -81,48 +81,48 @@ public class KettleModel extends Model.Simple {
         PartDefinition root = mesh.getRoot();
 
         root.addOrReplaceChild("side_front",
-                mirrored(0, 0).addBox(0f, 0f, 0f, 9, 6, 1),
+                cube(0, 0).addBox(0f, 0f, 0f, 9, 6, 1),
                 PartPose.offset(-5f, 18f, -5f));
 
         root.addOrReplaceChild("side_back",
-                mirrored(0, 0).addBox(0f, 0f, 0f, 9, 6, 1),
+                cube(0, 0).addBox(0f, 0f, 0f, 9, 6, 1),
                 PartPose.offset(-4f, 18f, 4f));
 
         root.addOrReplaceChild("side_left",
-                mirrored(0, 0).addBox(0f, 0f, 0f, 9, 6, 1),
+                cube(0, 0).addBox(0f, 0f, 0f, 9, 6, 1),
                 PartPose.offsetAndRotation(-5f, 18f, 5f, 0f, 1.570796f, 0f));
 
         root.addOrReplaceChild("side_right",
-                mirrored(0, 0).addBox(0f, 0f, 0f, 9, 6, 1),
+                cube(0, 0).addBox(0f, 0f, 0f, 9, 6, 1),
                 PartPose.offsetAndRotation(4f, 18f, 4f, 0f, 1.570796f, 0f));
 
         root.addOrReplaceChild("side_bottom",
-                mirrored(13, 0).addBox(0f, 0f, 0f, 8, 1, 8),
+                cube(13, 0).addBox(0f, 0f, 0f, 8, 1, 8),
                 PartPose.offset(-4f, 23f, -4f));
 
         root.addOrReplaceChild("crossbar",
-                mirrored(0, 10).addBox(-4f, 0f, 0f, 24, 2, 2),
+                cube(0, 10).addBox(-4f, 0f, 0f, 24, 2, 2),
                 PartPose.offset(-8f, 8.05f, -1f));
 
         for (int i = 0; i < 8; i++) {
             int u = i < 4 ? i * 16 - 8 : (i - 4) * 16 - 8;
             int v = i < 4 ? 16 : 32;
             root.addOrReplaceChild("liquid_" + i,
-                    mirrored(u, v).addBox(0f, 0f, 0f, 8, 0, 8),
+                    cube(u, v).addBox(0f, 0f, 0f, 8, 0, 8),
                     PartPose.offset(-4f, 20f, -4f));
         }
 
         root.addOrReplaceChild("chain_lf",
-                mirrored(0, 15).addBox(0f, -0.5f, 0f, 11, 1, 0),
+                cube(0, 15).addBox(0f, -0.5f, 0f, 11, 1, 0),
                 PartPose.offsetAndRotation(0f, 9f, 0f, 0f, -2.75f, -1.1f));
         root.addOrReplaceChild("chain_lb",
-                mirrored(0, 15).addBox(0f, -0.5f, 0f, 11, 1, 0),
+                cube(0, 15).addBox(0f, -0.5f, 0f, 11, 1, 0),
                 PartPose.offsetAndRotation(0f, 9f, 0f, 0f, 0.4f, 1.1f));
         root.addOrReplaceChild("chain_rf",
-                mirrored(0, 15).addBox(0f, -0.5f, 0f, 11, 1, 0),
+                cube(0, 15).addBox(0f, -0.5f, 0f, 11, 1, 0),
                 PartPose.offsetAndRotation(0f, 9f, 0f, 0f, 0.4f, 2.05f));
         root.addOrReplaceChild("chain_rb",
-                CubeListBuilder.create().texOffs(0, 15).addBox(0f, -0.5f, 0f, 11, 1, 0),
+                cube(0, 15).addBox(0f, -0.5f, 0f, 11, 1, 0),
                 PartPose.offsetAndRotation(0f, 9f, 0f, 0f, -0.4f, 1.1f));
 
         root.addOrReplaceChild("bottle1", bottleBuilder(),
@@ -133,8 +133,8 @@ public class KettleModel extends Model.Simple {
         return LayerDefinition.create(mesh, 64, 64);
     }
 
-    private static CubeListBuilder mirrored(int u, int v) {
-        return CubeListBuilder.create().mirror().texOffs(u, v);
+    private static CubeListBuilder cube(int u, int v) {
+        return CubeListBuilder.create().texOffs(u, v);
     }
 
     private static CubeListBuilder bottleBuilder() {

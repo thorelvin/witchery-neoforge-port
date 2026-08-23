@@ -1,51 +1,80 @@
 {
   "model": {
-    "type": "minecraft:range_dispatch",
-    "property": "witchery:hand_bow_charged",
-    "entries": [
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
       {
-        "threshold": 1.0,
-        "model": {
-          "type": "minecraft:model",
-          "model": "witchery:item/charged_crossbow"
-        }
+        "when": ["gui", "ground", "fixed", "on_shelf", "head"],
+        "model": { "type": "minecraft:model", "model": "witchery:item/crossbow_pistol" }
       }
     ],
     "fallback": {
       "type": "minecraft:range_dispatch",
-      "property": "witchery:hand_bow_pulling",
+      "property": "witchery:hand_bow_charged",
       "entries": [
         {
           "threshold": 1.0,
           "model": {
             "type": "minecraft:range_dispatch",
-            "property": "witchery:hand_bow_pull",
+            "property": "witchery:hand_bow_pulling",
             "entries": [
               {
-                "threshold": 0.5,
+                "threshold": 1.0,
                 "model": {
-                  "type": "minecraft:model",
-                  "model": "witchery:item/crossbow_pulling_1"
-                }
-              },
-              {
-                "threshold": 0.75,
-                "model": {
-                  "type": "minecraft:model",
-                  "model": "witchery:item/crossbow_pulling_2"
+                  "type": "minecraft:special",
+                  "base": "witchery:item/hand_bow_in_hand_base",
+                  "model": { "type": "witchery:hand_bow_held", "stage": 2, "pulling": true }
                 }
               }
             ],
             "fallback": {
-              "type": "minecraft:model",
-              "model": "witchery:item/crossbow_pulling_0"
+              "type": "minecraft:special",
+              "base": "witchery:item/hand_bow_in_hand_base",
+              "model": { "type": "witchery:hand_bow_held", "stage": 2 }
             }
           }
         }
       ],
       "fallback": {
-        "type": "minecraft:model",
-        "model": "witchery:item/crossbow_pistol"
+        "type": "minecraft:range_dispatch",
+        "property": "witchery:hand_bow_pulling",
+        "entries": [
+          {
+            "threshold": 1.0,
+            "model": {
+              "type": "minecraft:range_dispatch",
+              "property": "witchery:hand_bow_pull",
+              "entries": [
+                {
+                  "threshold": 0.3,
+                  "model": {
+                    "type": "minecraft:special",
+                    "base": "witchery:item/hand_bow_in_hand_base",
+                    "model": { "type": "witchery:hand_bow_held", "stage": 1, "pulling": true }
+                  }
+                },
+                {
+                  "threshold": 0.55,
+                  "model": {
+                    "type": "minecraft:special",
+                    "base": "witchery:item/hand_bow_in_hand_base",
+                    "model": { "type": "witchery:hand_bow_held", "stage": 2, "pulling": true }
+                  }
+                }
+              ],
+              "fallback": {
+                "type": "minecraft:special",
+                "base": "witchery:item/hand_bow_in_hand_base",
+                "model": { "type": "witchery:hand_bow_held", "stage": 0, "pulling": true }
+              }
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:special",
+          "base": "witchery:item/hand_bow_in_hand_base",
+          "model": { "type": "witchery:hand_bow_held", "stage": 0 }
+        }
       }
     }
   }

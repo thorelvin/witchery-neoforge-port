@@ -74,6 +74,8 @@ public class FetishBlockEntity extends BlockEntity {
 
     private int effectType  = EFFECT_NONE;
     private int alarmMode   = MODE_OFF;
+    private int color;
+    private boolean spectral;
     private Direction facing = Direction.NORTH;
     private final List<String> knownPlayers = new ArrayList<>();
 
@@ -84,6 +86,8 @@ public class FetishBlockEntity extends BlockEntity {
     private static final String SOURCE_ALARM_MODE_TAG = "AlarmMode";
     private static final String SOURCE_KNOWN_PLAYERS_TAG = "KnownPlayers";
     private static final String SOURCE_PLAYER_NAME_TAG = "PlayerName";
+    private static final String SOURCE_COLOR_TAG = "BlockColor";
+    private static final String SOURCE_SPECTRAL_TAG = "Spectral";
 
     // Transient: not saved to disk
     private boolean lastRaiseAlarm = false;
@@ -245,6 +249,18 @@ public class FetishBlockEntity extends BlockEntity {
 
     public int getEffectType()  { return effectType; }
     public int getAlarmMode()   { return alarmMode; }
+    public int getColor() { return color; }
+    public boolean isSpectral() { return spectral; }
+
+    public void setColor(int color) {
+        this.color = Mth.clamp(color, 0, 15);
+        setChanged();
+    }
+
+    public void setSpectral(boolean spectral) {
+        this.spectral = spectral;
+        setChanged();
+    }
 
     public void setEffectType(int type) {
         this.effectType = type;
@@ -269,6 +285,8 @@ public class FetishBlockEntity extends BlockEntity {
     public void loadFromItemData(CompoundTag tag) {
         effectType = tag.getIntOr(ITEM_EFFECT_TAG, tag.getIntOr(SOURCE_EFFECT_TAG, EFFECT_NONE));
         alarmMode = tag.getIntOr(ITEM_ALARM_MODE_TAG, tag.getIntOr(SOURCE_ALARM_MODE_TAG, MODE_OFF));
+        color = Mth.clamp(tag.getIntOr(SOURCE_COLOR_TAG, 0), 0, 15);
+        spectral = tag.getBooleanOr(SOURCE_SPECTRAL_TAG, false);
         knownPlayers.clear();
         readKnownPlayerStrings(tag.getListOrEmpty(ITEM_KNOWN_PLAYERS_TAG));
         if (knownPlayers.isEmpty()) {
@@ -302,6 +320,8 @@ public class FetishBlockEntity extends BlockEntity {
         tag.putInt(ITEM_ALARM_MODE_TAG, alarmMode);
         tag.putInt(SOURCE_EFFECT_TAG, effectType);
         tag.putInt(SOURCE_ALARM_MODE_TAG, alarmMode);
+        tag.putInt(SOURCE_COLOR_TAG, color);
+        tag.putBoolean(SOURCE_SPECTRAL_TAG, spectral);
         if (!knownPlayers.isEmpty()) {
             ListTag players = new ListTag();
             for (String name : knownPlayers) {
@@ -397,6 +417,8 @@ public class FetishBlockEntity extends BlockEntity {
         super.saveAdditional(tag);
         tag.putInt(SOURCE_EFFECT_TAG, effectType);
         tag.putInt(SOURCE_ALARM_MODE_TAG, alarmMode);
+        tag.putInt(SOURCE_COLOR_TAG, color);
+        tag.putBoolean(SOURCE_SPECTRAL_TAG, spectral);
         tag.putString("Facing", facing.getName());
         tag.putLong("LastActivation", lastActivationTime);
         if (!knownPlayers.isEmpty()) {
@@ -416,6 +438,8 @@ public class FetishBlockEntity extends BlockEntity {
         super.loadAdditional(tag);
         effectType        = tag.getIntOr(SOURCE_EFFECT_TAG, 0);
         alarmMode = tag.getIntOr(SOURCE_ALARM_MODE_TAG, MODE_OFF);
+        color = Mth.clamp(tag.getIntOr(SOURCE_COLOR_TAG, 0), 0, 15);
+        spectral = tag.getBooleanOr(SOURCE_SPECTRAL_TAG, false);
         lastActivationTime = tag.getLongOr("LastActivation", 0L);
         facing = Direction.byName(tag.getStringOr("Facing", "north"));
         if (facing == null || facing.getAxis() == Direction.Axis.Y) facing = Direction.NORTH;
@@ -436,6 +460,8 @@ public class FetishBlockEntity extends BlockEntity {
     public CompoundTag getUpdateTag(HolderLookup.Provider reg) {
         CompoundTag tag = new CompoundTag();
         tag.putInt(SOURCE_EFFECT_TAG, effectType);
+        tag.putInt(SOURCE_COLOR_TAG, color);
+        tag.putBoolean(SOURCE_SPECTRAL_TAG, spectral);
         return tag;
     }
 

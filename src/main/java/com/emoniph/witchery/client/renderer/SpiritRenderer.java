@@ -11,11 +11,13 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 
 public class SpiritRenderer extends MobRenderer<SpiritEntity, LivingEntityRenderState, SpiritModel> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/entity/spirit.png");
-    private static final int SOURCE_ALPHA_WHITE = 0x99FFFFFF;
+    static final float SOURCE_SHADOW_RADIUS = 0.0F;
+    static final float SOURCE_PRE_BASE_TRANSLATE_Y = -0.1073125F;
+    static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("witchery", "textures/entity/spirit.png");
+    static final int SOURCE_ALPHA_WHITE = 0x99FFFFFF;
 
     public SpiritRenderer(EntityRendererProvider.Context ctx) {
-        super(ctx, new SpiritModel(ctx.bakeLayer(SpiritModel.LAYER_LOCATION)), 0.0F);
+        super(ctx, new SpiritModel(ctx.bakeLayer(SpiritModel.LAYER_LOCATION)), SOURCE_SHADOW_RADIUS);
     }
     @Override public LivingEntityRenderState createRenderState() { return new LivingEntityRenderState(); }
     @Override public Identifier getTextureLocation(net.minecraft.client.renderer.entity.state.LivingEntityRenderState state) { return TEXTURE; }
@@ -32,7 +34,7 @@ public class SpiritRenderer extends MobRenderer<SpiritEntity, LivingEntityRender
 
     @Override
     protected void scale(LivingEntityRenderState state, PoseStack ps) {
-        ps.translate(0.0F, 0.65F, 0.0F);
+        ps.translate(0.0F, SOURCE_PRE_BASE_TRANSLATE_Y, 0.0F);
         ps.scale(0.5F, 0.5F, 0.5F);
     }
 }

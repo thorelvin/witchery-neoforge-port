@@ -1,0 +1,18 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "witchery:biting_belt_base",
+        "dyeable": { "color_when_undyed": 2628115 }
+      },
+      { "texture": "witchery:biting_belt_overlay" }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "witchery:biting_belt_base",
+        "dyeable": { "color_when_undyed": 2628115 }
+      },
+      { "texture": "witchery:biting_belt_overlay" }
+    ]
+  }
+}

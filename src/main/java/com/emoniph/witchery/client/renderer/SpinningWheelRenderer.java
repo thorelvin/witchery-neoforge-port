@@ -24,6 +24,8 @@ public class SpinningWheelRenderer implements BlockEntityRenderer<SpinningWheelB
 
     public static class State extends BlockEntityRenderState {
         public float yaw;
+        public boolean spinning;
+        public long elapsedMillis;
     }
 
     public SpinningWheelRenderer(BlockEntityRendererProvider.Context ctx) {
@@ -39,16 +41,24 @@ public class SpinningWheelRenderer implements BlockEntityRenderer<SpinningWheelB
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, offset, crumbling);
         Direction facing = be.getBlockState().getValue(SpinningWheelBlock.FACING);
         state.yaw = facing.getOpposite().toYRot();
+        state.spinning = be.isSpinningForRender();
+        state.elapsedMillis = System.currentTimeMillis();
     }
 
     @Override
     public void submit(State state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
         ps.pushPose();
+        applySourcePose(ps, state.yaw);
+        model.setupAnimation(state.spinning, state.elapsedMillis);
+        collector.submitModelPart(model.root(), ps, RenderTypes.entityCutoutNoCull(TEXTURE),
+                state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        ps.popPose();
+    }
+
+    static void applySourcePose(PoseStack ps, float yaw) {
         ps.translate(0.5, 0.5, 0.5);
         ps.mulPose(Axis.ZP.rotationDegrees(180));
         ps.translate(0, -1, 0);
-        ps.mulPose(Axis.YP.rotationDegrees(state.yaw));
-        collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
-        ps.popPose();
+        ps.mulPose(Axis.YP.rotationDegrees(yaw));
     }
 }

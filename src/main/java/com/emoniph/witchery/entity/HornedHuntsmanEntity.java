@@ -171,12 +171,22 @@ public class HornedHuntsmanEntity extends Monster implements RangedAttackMob {
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
         attackTimer = 10;
+        level.broadcastEntityEvent(this, (byte) 4);
         DamageSource source = damageSources().mobAttack(this);
         target.hurt(source, MIN_MELEE_DAMAGE + random.nextInt(MELEE_DAMAGE_ROLL));
         setLastHurtMob(target);
         target.setDeltaMovement(target.getDeltaMovement().add(0.0, 0.4, 0.0));
         playSound(SoundEvents.IRON_GOLEM_ATTACK, 1.0F, 1.0F);
         return true;
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == 4) {
+            attackTimer = 10;
+        } else {
+            super.handleEntityEvent(id);
+        }
     }
 
     @Override

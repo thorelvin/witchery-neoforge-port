@@ -17,6 +17,8 @@ public class StatueGoddessModel extends Model.Simple {
             Identifier.fromNamespaceAndPath("witchery", "statue_goddess"), "main");
 
     private final List<ModelPart> parts;
+    private final ModelPart rightArm;
+    private final ModelPart leftArm;
 
     public StatueGoddessModel(ModelPart root) {
         super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
@@ -31,6 +33,8 @@ public class StatueGoddessModel extends Model.Simple {
             root.getChild("dress_lower"),
             root.getChild("dress_middle")
         );
+        rightArm = root.getChild("right_arm");
+        leftArm = root.getChild("left_arm");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -77,4 +81,12 @@ public class StatueGoddessModel extends Model.Simple {
         return LayerDefinition.create(mesh, 64, 64);
     }
 
+    public void setupSourcePose() {
+        leftArm.xRot = -0.6F;
+        leftArm.yRot = -0.6F;
+        leftArm.zRot = -0.1F;
+        rightArm.xRot = -0.6F;
+        rightArm.yRot = 0.6F;
+        rightArm.zRot = 0.1F;
     }
+}

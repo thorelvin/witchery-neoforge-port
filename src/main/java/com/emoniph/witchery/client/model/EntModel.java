@@ -5,6 +5,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
@@ -90,10 +91,12 @@ public class EntModel extends EntityModel<EntModel.EntRenderState> {
                 CubeListBuilder.create().mirror().texOffs(56, 130).addBox(0, 0, 0, 32, 16, 32),
                 PartPose.offset(-16, -58, -16));
         root.addOrReplaceChild("leaves_base_inner",
-                CubeListBuilder.create().mirror().texOffs(24, 59).addBox(0, 0, 0, 56, 14, 56),
+                CubeListBuilder.create().mirror().texOffs(24, 59)
+                        .addBox(0, 0, 0, 56, 14, 56, CubeDeformation.NONE, 0.25F, 0.125F),
                 PartPose.offset(-28, -41, -28));
         root.addOrReplaceChild("leaves_top_inner",
-                CubeListBuilder.create().mirror().texOffs(108, 14).addBox(0, 0, 0, 28, 14, 28),
+                CubeListBuilder.create().mirror().texOffs(108, 14)
+                        .addBox(0, 0, 0, 28, 14, 28, CubeDeformation.NONE, 0.25F, 0.125F),
                 PartPose.offset(-14, -57, -14));
 
         return LayerDefinition.create(mesh, 256, 256);

@@ -16,12 +16,9 @@ import net.minecraft.resources.Identifier;
  * Ported from original ModelMandrake (witchery-1.7.10-0.24.1).
  */
 public class MandrakeEntityModel extends EntityModel<LivingEntityRenderState> {
-    private static final float SOURCE_BODY_SWAY_RADIANS = 6.5F * ((float) Math.PI / 180.0F);
-
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(Identifier.fromNamespaceAndPath("witchery", "mandrake_mob"), "main");
 
-    private final ModelPart root;
     private final ModelPart head;
     private final ModelPart rightArm;
     private final ModelPart leftArm;
@@ -30,7 +27,6 @@ public class MandrakeEntityModel extends EntityModel<LivingEntityRenderState> {
 
     public MandrakeEntityModel(ModelPart root) {
         super(root);
-        this.root = root;
         this.head = root.getChild("head");
         this.rightArm = root.getChild("right_arm");
         this.leftArm = root.getChild("left_arm");
@@ -63,17 +59,17 @@ public class MandrakeEntityModel extends EntityModel<LivingEntityRenderState> {
                 PartPose.ZERO);
 
         root.addOrReplaceChild("right_arm",
-                CubeListBuilder.create().mirror().texOffs(37, 0).addBox(-1, 0, -0.5f, 1, 3, 1),
+                CubeListBuilder.create().texOffs(37, 0).addBox(-1, 0, -0.5f, 1, 3, 1),
                 PartPose.offsetAndRotation(-2, 17, 0, 0, 0, 1.047198F));
         root.addOrReplaceChild("left_arm",
-                CubeListBuilder.create().mirror().texOffs(37, 0).addBox(0, 0, -0.5f, 1, 3, 1),
+                CubeListBuilder.create().texOffs(37, 0).addBox(0, 0, -0.5f, 1, 3, 1),
                 PartPose.offsetAndRotation(2, 17, 0, 0, 0, -1.047198F));
 
         root.addOrReplaceChild("right_leg",
-                CubeListBuilder.create().mirror().texOffs(27, 18).addBox(-1, 0, -1, 2, 3, 2),
+                CubeListBuilder.create().texOffs(27, 18).addBox(-1, 0, -1, 2, 3, 2),
                 PartPose.offset(-1, 21, 0));
         root.addOrReplaceChild("left_leg",
-                CubeListBuilder.create().mirror().texOffs(27, 18).addBox(-1, 0, -1, 2, 3, 2),
+                CubeListBuilder.create().texOffs(27, 18).addBox(-1, 0, -1, 2, 3, 2),
                 PartPose.offset(1, 21, 0));
 
         return LayerDefinition.create(mesh, 64, 32);
@@ -86,9 +82,6 @@ public class MandrakeEntityModel extends EntityModel<LivingEntityRenderState> {
 
         head.xRot = 0.0F;
         head.yRot = 0.0F;
-        root.zRot = limbSwingAmount >= 0.01F
-                ? SOURCE_BODY_SWAY_RADIANS * triangleWave(limbSwing + 6.0F, 13.0F)
-                : 0.0F;
         rightLeg.xRot = 0.0F;
         leftLeg.xRot = 0.0F;
 
@@ -98,7 +91,7 @@ public class MandrakeEntityModel extends EntityModel<LivingEntityRenderState> {
         leftArm.xRot = (-0.2F - 1.5F * triangleWave(limbSwing, 13.0F)) * limbSwingAmount;
     }
 
-    private static float triangleWave(float value, float period) {
+    public static float triangleWave(float value, float period) {
         return (Math.abs(value % period - period * 0.5F) - period * 0.25F) / (period * 0.25F);
     }
 }

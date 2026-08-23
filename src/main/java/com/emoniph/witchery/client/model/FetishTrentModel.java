@@ -1,5 +1,6 @@
 package com.emoniph.witchery.client.model;
 
+import java.util.List;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -14,8 +15,17 @@ public class FetishTrentModel extends Model.Simple {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             Identifier.fromNamespaceAndPath("witchery", "fetish_trent"), "main");
 
+    private final List<ModelPart> untintedParts;
+    private final ModelPart face;
+
     public FetishTrentModel(ModelPart root) {
         super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
+        untintedParts = List.of(
+                root.getChild("body"), root.getChild("arm_left"), root.getChild("arm_right"),
+                root.getChild("leg_left_upper"), root.getChild("leg_left_lower"),
+                root.getChild("leg_right_upper"), root.getChild("leg_right_lower"),
+                root.getChild("headdress_1"), root.getChild("headdress_2"), root.getChild("headdress_3"));
+        face = root.getChild("face");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -57,5 +67,13 @@ public class FetishTrentModel extends Model.Simple {
                 PartPose.offsetAndRotation(-1.0F, 13.0F, 0.0F, -0.4461433F, 0.0F, 2.862753F));
 
         return LayerDefinition.create(mesh, 64, 64);
+    }
+
+    public List<ModelPart> untintedParts() {
+        return untintedParts;
+    }
+
+    public ModelPart face() {
+        return face;
     }
 }

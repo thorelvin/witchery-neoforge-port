@@ -43,6 +43,8 @@ public class FlyingMonkeyEntity extends TamableAnimal {
     private static final EntityDataAccessor<Integer> DATA_DYE_COLOR =
             SynchedEntityData.defineId(FlyingMonkeyEntity.class, EntityDataSerializers.INT);
 
+    private int attackTimer;
+
     // Waystone coordinates (0 = none)
     private long waystonePos = 0;
     private String waystoneDim = "";
@@ -145,6 +147,7 @@ public class FlyingMonkeyEntity extends TamableAnimal {
     @Override
     public void tick() {
         super.tick();
+        if (attackTimer > 0) attackTimer--;
         if (level().isClientSide() || !isCarrying || waystonePos == 0) return;
         if (!isTame()) return;
 
@@ -183,6 +186,21 @@ public class FlyingMonkeyEntity extends TamableAnimal {
             waystoneDim = "";
         }
     }
+
+    @Override
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
+        attackTimer = 10;
+        level.broadcastEntityEvent(this, (byte) 4);
+        return super.doHurtTarget(level, target);
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == 4) attackTimer = 10;
+        else super.handleEntityEvent(id);
+    }
+
+    public int getAttackTimer() { return attackTimer; }
 
     @Override
     public boolean isFood(ItemStack stack) { return stack.is(Items.BEEF) || stack.is(Items.PORKCHOP); }

@@ -44,7 +44,7 @@ public class DeathArmorClientExtensions implements IClientItemExtensions {
         return equippable != null ? equippable.slot() : EquipmentSlot.CHEST;
     }
 
-    private static void applySlotVisibility(DeathArmorModel model, EquipmentSlot slot) {
+    static void applySlotVisibility(DeathArmorModel model, EquipmentSlot slot) {
         model.setAllVisible(false);
         switch (slot) {
             case HEAD -> {

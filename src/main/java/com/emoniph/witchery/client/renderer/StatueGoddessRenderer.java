@@ -45,11 +45,36 @@ public class StatueGoddessRenderer implements BlockEntityRenderer<StatueGoddessB
     @Override
     public void submit(State state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
         ps.pushPose();
+        applySourceWorldPose(ps, state.facing);
+        model.setupSourcePose();
+        collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords,
+                OverlayTexture.NO_OVERLAY, null);
+        ps.popPose();
+    }
+
+    static void applySourceWorldPose(PoseStack ps, Direction facing) {
         ps.translate(0.5, 0.5, 0.5);
         ps.mulPose(Axis.ZP.rotationDegrees(180));
         ps.translate(0, -1, 0);
-        ps.mulPose(Axis.YP.rotationDegrees(-state.facing.toYRot()));
-        collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
-        ps.popPose();
+        ps.mulPose(Axis.YP.rotationDegrees(sourceRotation(facing)));
+    }
+
+    public static void applySourceItemPose(PoseStack ps) {
+        ps.translate(0.5F, 0.5F, 0.5F);
+        ps.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        ps.translate(0.0F, -1.0F, 0.0F);
+        ps.scale(0.6F, 0.6F, 0.6F);
+        ps.mulPose(Axis.YP.rotationDegrees(180.0F));
+        ps.translate(0.0F, 1.5F, 0.0F);
+    }
+
+    static float sourceRotation(Direction facing) {
+        return switch (facing) {
+            case NORTH -> 0.0F;
+            case EAST -> 90.0F;
+            case SOUTH -> 180.0F;
+            case WEST -> 270.0F;
+            default -> throw new IllegalArgumentException("Goddess statues require a horizontal facing");
+        };
     }
 }

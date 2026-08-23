@@ -37,11 +37,9 @@ public class NecromancerRobeArmorModel extends HumanoidModel<HumanoidRenderState
 
         CubeDeformation shoulderDeformation = new CubeDeformation(sourceScale + 0.1F);
         root.getChild("right_arm").addOrReplaceChild("shoulder_plate", CubeListBuilder.create()
-                        .mirror()
                         .texOffs(61, 32).addBox(0.0F, 0.0F, 0.0F, 5, 1, 6, shoulderDeformation),
                 PartPose.offset(-4.0F, -2.0F, -3.0F));
         root.getChild("left_arm").addOrReplaceChild("shoulder_plate", CubeListBuilder.create()
-                        .mirror()
                         .texOffs(61, 39).addBox(0.0F, 0.0F, 0.0F, 5, 1, 6, shoulderDeformation),
                 PartPose.offset(0.0F, -2.0F, -3.0F));
 

@@ -1,6 +1,5 @@
 package com.emoniph.witchery.client.model;
 
-import com.emoniph.witchery.entity.BroomEntity;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -8,7 +7,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
 
 /**
  * Broom model — faithfully ported from ModelBroom.java (1.7.10 original).
@@ -89,7 +87,7 @@ public class BroomModel extends EntityModel<net.minecraft.client.renderer.entity
                 CubeListBuilder.create().texOffs(0, 12).addBox(-0.5f, -0.5f, 0f, 1, 1, 9),
                 PartPose.offsetAndRotation(-1f, 11f, 9f, -0.0743572f, -0.1487144f, 0f));
         root.addOrReplaceChild("bristle9",
-                CubeListBuilder.create().texOffs(0, 12).addBox(-0.5333f, -0.5f, 0f, 1, 1, 9),
+                CubeListBuilder.create().texOffs(0, 12).addBox(-0.5333334F, -0.5F, 0.0F, 1, 1, 9),
                 PartPose.offsetAndRotation(0f, 12f, 9f, -0.1858931f, 0f, 0f));
 
         return LayerDefinition.create(mesh, 32, 32);
@@ -97,23 +95,15 @@ public class BroomModel extends EntityModel<net.minecraft.client.renderer.entity
 
         @Override
     public void setupAnim(LivingEntityRenderState state) {
-        float limbSwing = state.walkAnimationPos;
-        float limbSwingAmount = state.walkAnimationSpeed;
-        float ageInTicks = state.ageInTicks;
-        float netHeadYaw = state.yRot;
-        float headPitch = state.xRot;
-        float speed = limbSwingAmount;
-        float sway = Mth.sin(ageInTicks * 0.05f) * 0.03f;
-        handle.zRot = sway;
-        float bristleSway = Mth.sin(ageInTicks * 0.08f + 0.5f) * 0.04f * (1f + speed * 2f);
-        bristle1.zRot = bristleSway;
-        bristle2.zRot = -bristleSway;
-        bristle3.zRot = bristleSway * 0.7f;
-        bristle4.zRot = bristleSway * 0.5f;
-        bristle5.zRot = -bristleSway * 0.7f;
-        bristle6.zRot = bristleSway * 0.3f;
-        bristle7.zRot = -bristleSway * 0.4f;
-        bristle8.zRot = bristleSway * 0.6f;
-        bristle9.zRot = -bristleSway * 0.5f;
+        handle.zRot = 0.0F;
+        bristle1.zRot = 0.0F;
+        bristle2.zRot = 0.0F;
+        bristle3.zRot = 0.0F;
+        bristle4.zRot = 0.0F;
+        bristle5.zRot = 0.0F;
+        bristle6.zRot = 0.0F;
+        bristle7.zRot = 0.0F;
+        bristle8.zRot = 0.0F;
+        bristle9.zRot = 0.0F;
     }
 }

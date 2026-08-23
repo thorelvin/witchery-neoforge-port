@@ -15,56 +15,71 @@ public class BeartrapModel extends Model.Simple {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             Identifier.fromNamespaceAndPath("witchery", "beartrap"), "main");
 
-    private static final float CLOSED_JAW_ROTATION = 1.309F;
+    private static final float CLOSED_JAW_ROTATION = 1.2F;
+    private static final float OPEN_PLATE_Y = 23.2F;
+    private static final float CLOSED_PLATE_Y = 23.8F;
 
-    private final ModelPart northSide;
-    private final ModelPart southSide;
+    private final ModelPart plate;
+    private final ModelPart armFront;
+    private final ModelPart armBack;
 
     public BeartrapModel(ModelPart root) {
         super(root, RenderTypes::entityCutout);
-        ModelPart body = root.getChild("body");
-        this.northSide = body.getChild("north_side");
-        this.southSide = body.getChild("south_side");
+        this.plate = root.getChild("plate");
+        this.armFront = root.getChild("arm_front");
+        this.armBack = root.getChild("arm_back");
     }
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
 
-        PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
-                .texOffs(11, 4).addBox(3.0F, -2.0F, -1.0F, 2.0F, 2.0F, 2.0F)
-                .texOffs(11, 4).addBox(-5.0F, -2.0F, -1.0F, 2.0F, 2.0F, 2.0F)
-                .texOffs(1, 19).addBox(-2.0F, -2.0F, -2.0F, 4.0F, 1.0F, 4.0F)
-                .texOffs(4, 5).addBox(-3.0F, -1.0F, -0.5F, 6.0F, 1.0F, 1.0F),
-                PartPose.offset(0.0F, 24.0F, 0.0F));
+        root.addOrReplaceChild("plate", CubeListBuilder.create().texOffs(1, 0)
+                        .addBox(-2.0F, -1.5F, -2.0F, 4, 1, 4),
+                LegacyModelTransforms.render(0.0F, 24.0F, 0.0F, 0.0F, 0.0F, 0.0F));
+        root.addOrReplaceChild("base", CubeListBuilder.create().texOffs(0, 20)
+                        .addBox(-5.0F, -1.0F, -0.5F, 10, 1, 1),
+                LegacyModelTransforms.render(0.0F, 23.99F, 0.0F, 0.0F, 0.0F, 0.0F));
+        root.addOrReplaceChild("disk_left", CubeListBuilder.create().texOffs(19, 3)
+                        .addBox(3.7F, -2.0F, -1.0F, 1, 2, 2),
+                LegacyModelTransforms.render(0.0F, 24.0F, 0.0F, 0.0F, 0.0F, 0.0F));
+        root.addOrReplaceChild("disk_right", CubeListBuilder.create().texOffs(19, 3)
+                        .addBox(-4.7F, -2.0F, -1.0F, 1, 2, 2),
+                LegacyModelTransforms.render(0.0F, 24.0F, 0.0F, 0.0F, 0.0F, 0.0F));
 
-        PartDefinition northSide = body.addOrReplaceChild("north_side", CubeListBuilder.create()
-                .texOffs(4, 13).addBox(-4.5F, -1.0F, -7.0F, 9.0F, 1.0F, 0.0F)
-                .texOffs(1, 6).addBox(-4.5F, 0.0F, -7.0F, 9.0F, 1.0F, 1.0F),
-                PartPose.offset(0.0F, -1.0F, 0.0F));
-        northSide.addOrReplaceChild("north_cube_1",
-                CubeListBuilder.create().texOffs(1, 6).addBox(-0.5F, -0.5F, -0.5F, 5.0F, 1.0F, 1.0F),
-                PartPose.offsetAndRotation(-4.0F, 0.5F, -5.5F, 0.0F, -1.5708F, 0.0F));
-        northSide.addOrReplaceChild("north_cube_2",
-                CubeListBuilder.create().texOffs(1, 6).addBox(-0.5F, -0.5F, -0.5F, 5.0F, 1.0F, 1.0F),
-                PartPose.offsetAndRotation(4.0F, 0.5F, -5.5F, 0.0F, -1.5708F, 0.0F));
+        PartDefinition armFront = root.addOrReplaceChild("arm_front", CubeListBuilder.create().texOffs(0, 9)
+                        .addBox(-4.5F, -1.0F, -7.0F, 9, 1, 1),
+                LegacyModelTransforms.render(0.0F, 23.99F, 0.0F, 0.0F, 0.0F, 0.0F));
+        addJawChildren(armFront, "front", -7.0F, -6.0F);
 
-        PartDefinition southSide = body.addOrReplaceChild("south_side", CubeListBuilder.create()
-                .texOffs(4, 13).addBox(-4.5F, -1.0F, 7.0F, 9.0F, 1.0F, 0.0F)
-                .texOffs(1, 6).addBox(-4.5F, 0.0F, 6.0F, 9.0F, 1.0F, 1.0F),
-                PartPose.offset(0.0F, -1.0F, 0.0F));
-        southSide.addOrReplaceChild("south_cube_1",
-                CubeListBuilder.create().texOffs(3, 6).addBox(0.5F, -0.5F, -0.5F, 5.0F, 1.0F, 1.0F),
-                PartPose.offsetAndRotation(-4.0F, 0.5F, 0.5F, 0.0F, -1.5708F, 0.0F));
-        southSide.addOrReplaceChild("south_cube_2",
-                CubeListBuilder.create().texOffs(4, 6).addBox(1.5F, -0.5F, -0.5F, 5.0F, 1.0F, 1.0F),
-                PartPose.offsetAndRotation(4.0F, 0.5F, -0.5F, 0.0F, -1.5708F, 0.0F));
+        PartDefinition armBack = root.addOrReplaceChild("arm_back", CubeListBuilder.create().texOffs(0, 9)
+                        .addBox(-4.5F, -1.0F, 6.0F, 9, 1, 1),
+                LegacyModelTransforms.render(0.0F, 23.99F, 0.0F, 0.0F, 0.0F, 0.0F));
+        addJawChildren(armBack, "back", 6.0F, 0.0F);
 
         return LayerDefinition.create(mesh, 32, 32);
     }
 
+    private static void addJawChildren(PartDefinition arm, String suffix, float toothZ, float railZ) {
+        arm.addOrReplaceChild("arm_right_" + suffix, CubeListBuilder.create().texOffs(0, 12)
+                        .addBox(-4.5F, -1.0F, railZ, 1, 1, 6),
+                PartPose.ZERO);
+        arm.addOrReplaceChild("arm_left_" + suffix, CubeListBuilder.create().texOffs(0, 12)
+                        .addBox(3.5F, -1.0F, railZ, 1, 1, 6),
+                PartPose.ZERO);
+
+        float[] toothX = {-4.5F, -2.5F, -0.5F, 1.5F, 3.5F};
+        for (int i = 0; i < toothX.length; i++) {
+            arm.addOrReplaceChild("arm_tooth_" + (i + 1) + "_" + suffix,
+                    CubeListBuilder.create().texOffs(0, 0)
+                            .addBox(toothX[i], -2.0F, toothZ, 1, 1, 1),
+                    PartPose.ZERO);
+        }
+    }
+
     public void setClosed(boolean closed) {
-        northSide.xRot = closed ? -CLOSED_JAW_ROTATION : 0.0F;
-        southSide.xRot = closed ? CLOSED_JAW_ROTATION : 0.0F;
+        plate.y = closed ? CLOSED_PLATE_Y : OPEN_PLATE_Y;
+        armFront.xRot = closed ? -CLOSED_JAW_ROTATION : 0.0F;
+        armBack.xRot = closed ? CLOSED_JAW_ROTATION : 0.0F;
     }
 }

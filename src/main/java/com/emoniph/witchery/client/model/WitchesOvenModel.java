@@ -68,25 +68,25 @@ public class WitchesOvenModel extends Model.Simple {
 
         // Each leg has a horizontal foot and a vertical post, matching original UV (0,0) and (0,2)
         root.addOrReplaceChild("leg_back_right",
-                CubeListBuilder.create()
+                CubeListBuilder.create().mirror()
                         .texOffs(0, 0).addBox(-2f, 0f, 0f, 2, 1, 1)
                         .texOffs(0, 2).addBox(-3f, 0f, 0f, 1, 3, 1),
                 PartPose.offset(-5f, 21f, -7f));
 
         root.addOrReplaceChild("leg_front_right",
-                CubeListBuilder.create()
+                CubeListBuilder.create().mirror()
                         .texOffs(0, 0).addBox(-2f, 0f, 0f, 2, 1, 1)
                         .texOffs(0, 2).addBox(-3f, 0f, 0f, 1, 3, 1),
                 PartPose.offset(-5f, 21f, 6f));
 
         root.addOrReplaceChild("leg_back_left",
-                CubeListBuilder.create()
+                CubeListBuilder.create().mirror()
                         .texOffs(0, 0).addBox(0f, 0f, 0f, 2, 1, 1)
                         .texOffs(0, 2).addBox(2f, 0f, 0f, 1, 3, 1),
                 PartPose.offset(5f, 21f, -7f));
 
         root.addOrReplaceChild("leg_front_left",
-                CubeListBuilder.create()
+                CubeListBuilder.create().mirror()
                         .texOffs(0, 0).addBox(0f, 0f, 0f, 2, 1, 1)
                         .texOffs(0, 2).addBox(2f, 0f, 0f, 1, 3, 1),
                 PartPose.offset(5f, 21f, 6f));

@@ -31,13 +31,28 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public class WitcheryEntities {
 
+    static final float SOURCE_DEFAULT_WIDTH = 0.6F;
+    static final float SOURCE_DEFAULT_HEIGHT = 1.8F;
+    static final float SOURCE_OWL_WIDTH = 0.6F;
+    static final float SOURCE_OWL_HEIGHT = 0.8F;
+    static final float SOURCE_OCELOT_WIDTH = 0.6F;
+    static final float SOURCE_OCELOT_HEIGHT = 0.8F;
+    static final float SOURCE_TOAD_WIDTH = 0.8F;
+    static final float SOURCE_TOAD_HEIGHT = 0.8F;
+    static final float SOURCE_HOBGOBLIN_WIDTH = 0.6F;
+    static final float SOURCE_HOBGOBLIN_HEIGHT = 0.95F;
+    static final float SOURCE_SPIRIT_WIDTH = 0.25F;
+    static final float SOURCE_SPIRIT_HEIGHT = 0.25F;
+    static final float SOURCE_ACTIVE_SPELL_EFFECT_WIDTH = 1.0F;
+    static final float SOURCE_ACTIVE_SPELL_EFFECT_HEIGHT = 1.0F;
+
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(Registries.ENTITY_TYPE, WitcheryMod.MODID);
 
     public static final DeferredHolder<EntityType<?>, EntityType<OwlFamiliarEntity>> OWL =
             ENTITY_TYPES.register("owl", () ->
                     EntityType.Builder.of(OwlFamiliarEntity::new, MobCategory.CREATURE)
-                            .sized(0.5F, 0.8F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "owl"))));
+                            .sized(SOURCE_OWL_WIDTH, SOURCE_OWL_HEIGHT).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "owl"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<RavenEntity>> RAVEN =
             ENTITY_TYPES.register("raven", () ->
@@ -53,7 +68,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<CatFamiliarEntity>> FAMILIAR_CAT =
             ENTITY_TYPES.register("familiar_cat", () ->
                     EntityType.Builder.of(CatFamiliarEntity::new, MobCategory.CREATURE)
-                            .sized(0.6F, 0.7F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "familiar_cat"))));
+                            .sized(SOURCE_OCELOT_WIDTH, SOURCE_OCELOT_HEIGHT).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "familiar_cat"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SpectralFamiliarEntity>> SPECTRAL_FAMILIAR =
             ENTITY_TYPES.register("spectral_familiar", () ->
@@ -63,7 +78,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<ToadFamiliarEntity>> TOAD =
             ENTITY_TYPES.register("toad", () ->
                     EntityType.Builder.of(ToadFamiliarEntity::new, MobCategory.CREATURE)
-                            .sized(0.7F, 0.5F).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "toad"))));
+                            .sized(SOURCE_TOAD_WIDTH, SOURCE_TOAD_HEIGHT).clientTrackingRange(8).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "toad"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ParasyticLouseEntity>> PARASYTIC_LOUSE =
             ENTITY_TYPES.register("parasytic_louse", () ->
@@ -100,7 +115,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<WitchHunterEntity>> WITCH_HUNTER =
             ENTITY_TYPES.register("witch_hunter", () ->
                     EntityType.Builder.of(WitchHunterEntity::new, MobCategory.MONSTER)
-                            .sized(0.6F, 1.95F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "witch_hunter"))));
+                            .sized(SOURCE_DEFAULT_WIDTH, SOURCE_DEFAULT_HEIGHT).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "witch_hunter"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ThrownCatEntity>> THROWN_CAT =
             ENTITY_TYPES.register("thrown_cat", () ->
@@ -130,7 +145,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<PoltergeistEntity>> POLTERGEIST =
             ENTITY_TYPES.register("poltergeist", () ->
                     EntityType.Builder.of(PoltergeistEntity::new, MobCategory.MONSTER)
-                            .sized(0.6F, 1.5F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "poltergeist"))));
+                            .sized(SOURCE_DEFAULT_WIDTH, SOURCE_DEFAULT_HEIGHT).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "poltergeist"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<TreefydEntity>> TREEFYD =
             ENTITY_TYPES.register("treefyd", () ->
@@ -160,19 +175,19 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.IllusionEntity.Creeper>> ILLUSION_CREEPER =
             ENTITY_TYPES.register("illusion_creeper", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.IllusionEntity.Creeper::new, MobCategory.MONSTER)
-                            .sized(0.6F, 1.7F).clientTrackingRange(10).updateInterval(2).noSave().noSummon()
+                            .sized(SOURCE_DEFAULT_WIDTH, SOURCE_DEFAULT_HEIGHT).clientTrackingRange(10).updateInterval(2).noSave().noSummon()
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "illusion_creeper"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.IllusionEntity.Spider>> ILLUSION_SPIDER =
             ENTITY_TYPES.register("illusion_spider", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.IllusionEntity.Spider::new, MobCategory.MONSTER)
-                            .sized(1.4F, 0.9F).clientTrackingRange(10).updateInterval(2).noSave().noSummon()
+                            .sized(SOURCE_DEFAULT_WIDTH, SOURCE_DEFAULT_HEIGHT).clientTrackingRange(10).updateInterval(2).noSave().noSummon()
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "illusion_spider"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.IllusionEntity.Zombie>> ILLUSION_ZOMBIE =
             ENTITY_TYPES.register("illusion_zombie", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.IllusionEntity.Zombie::new, MobCategory.MONSTER)
-                            .sized(0.6F, 1.95F).clientTrackingRange(10).updateInterval(2).noSave().noSummon()
+                            .sized(SOURCE_DEFAULT_WIDTH, SOURCE_DEFAULT_HEIGHT).clientTrackingRange(10).updateInterval(2).noSave().noSummon()
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "illusion_zombie"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<MandrakeEntity>> MANDRAKE_MOB =
@@ -198,7 +213,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<DeathEntity>> DEATH =
             ENTITY_TYPES.register("death", () ->
                     EntityType.Builder.of(DeathEntity::new, MobCategory.MONSTER)
-                            .sized(0.6F, 1.95F).clientTrackingRange(16).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "death"))));
+                            .sized(0.6F, 1.8F).clientTrackingRange(16).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "death"))));
 
     // ── Flame Imp ─────────────────────────────────────────────────────────────
 
@@ -240,7 +255,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.SpellEffectEntity>> SPELL_EFFECT =
             ENTITY_TYPES.register("spell_effect", () ->
                     EntityType.Builder.<com.emoniph.witchery.entity.SpellEffectEntity>of(com.emoniph.witchery.entity.SpellEffectEntity::new, MobCategory.MISC)
-                            .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10)
+                            .sized(SOURCE_ACTIVE_SPELL_EFFECT_WIDTH, SOURCE_ACTIVE_SPELL_EFFECT_HEIGHT).clientTrackingRange(4).updateInterval(10)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "spell_effect"))));
 
     // ── Flying Monkey (M10) ───────────────────────────────────────────────────
@@ -255,14 +270,14 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EgassyEntity>> EGASSY =
             ENTITY_TYPES.register("egassy", () ->
                     EntityType.Builder.of(EgassyEntity::new, MobCategory.CREATURE)
-                            .sized(0.6F, 1.95F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "egassy"))));
+                            .sized(SOURCE_DEFAULT_WIDTH, SOURCE_DEFAULT_HEIGHT).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "egassy"))));
 
     // ── Hobgoblin (M9) ────────────────────────────────────────────────────────
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.HobgoblinEntity>> HOBGOBLIN =
             ENTITY_TYPES.register("hobgoblin", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.HobgoblinEntity::new, MobCategory.CREATURE)
-                            .sized(0.6F, 1.8F).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "hobgoblin"))));
+                            .sized(SOURCE_HOBGOBLIN_WIDTH, SOURCE_HOBGOBLIN_HEIGHT).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "hobgoblin"))));
 
     // ── M25b — Spirit World entities ──────────────────────────────────────────
 
@@ -289,7 +304,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.VillageGuardEntity>> VILLAGE_GUARD =
             ENTITY_TYPES.register("village_guard", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.VillageGuardEntity::new, MobCategory.CREATURE)
-                            .sized(0.6F, 1.95F).clientTrackingRange(10)
+                            .sized(0.6F, 1.8F).clientTrackingRange(10)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "village_guard"))));
 
     // ── Bolt — witch-hunter crossbow projectile ───────────────────────────────
@@ -319,7 +334,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.VampireEntity>> VAMPIRE =
             ENTITY_TYPES.register("vampire", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.VampireEntity::new, MobCategory.MONSTER)
-                            .sized(0.6F, 1.95F).clientTrackingRange(10)
+                            .sized(0.6F, 1.8F).clientTrackingRange(10)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "vampire"))));
 
     // ── Baba Yaga — boss witch ────────────────────────────────────────────────
@@ -327,7 +342,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.BabaYagaEntity>> BABA_YAGA =
             ENTITY_TYPES.register("baba_yaga", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.BabaYagaEntity::new, MobCategory.MONSTER)
-                            .sized(0.6F, 1.95F).clientTrackingRange(16)
+                            .sized(SOURCE_DEFAULT_WIDTH, SOURCE_DEFAULT_HEIGHT).clientTrackingRange(16)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "baba_yaga"))));
 
     // ── Wolfman + Were-Villager — werewolf mob chain ──────────────────────────
@@ -341,7 +356,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.WereVillagerEntity>> WERE_VILLAGER =
             ENTITY_TYPES.register("were_villager", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.WereVillagerEntity::new, MobCategory.CREATURE)
-                            .sized(0.6F, 1.95F).clientTrackingRange(10)
+                            .sized(SOURCE_DEFAULT_WIDTH, SOURCE_DEFAULT_HEIGHT).clientTrackingRange(10)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "were_villager"))));
 
     // ── Shade of Leonard + Lost Souls — Leonard boss chain ───────────────────
@@ -349,13 +364,13 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.LeonardEntity>> LEONARD =
             ENTITY_TYPES.register("leonard", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.LeonardEntity::new, MobCategory.MONSTER)
-                            .sized(0.6F, 1.95F).fireImmune().clientTrackingRange(16)
+                            .sized(0.6F, 1.8F).fireImmune().clientTrackingRange(16)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "leonard"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.LostSoulEntity>> LOST_SOUL =
             ENTITY_TYPES.register("lost_soul", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.LostSoulEntity::new, MobCategory.MONSTER)
-                            .sized(0.5F, 0.5F).clientTrackingRange(8)
+                            .sized(SOURCE_SPIRIT_WIDTH, SOURCE_SPIRIT_HEIGHT).clientTrackingRange(8)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "lost_soul"))));
 
     // ── Elle + Lilith — vampire patron chain ─────────────────────────────────
@@ -363,7 +378,7 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<ElleEntity>> ELLE =
             ENTITY_TYPES.register("elle", () ->
                     EntityType.Builder.of(ElleEntity::new, MobCategory.CREATURE)
-                            .sized(0.6F, 1.95F).clientTrackingRange(10)
+                            .sized(SOURCE_DEFAULT_WIDTH, SOURCE_DEFAULT_HEIGHT).clientTrackingRange(10)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "elle"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LilithEntity>> LILITH =

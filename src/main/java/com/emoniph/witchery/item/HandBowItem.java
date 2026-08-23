@@ -35,6 +35,15 @@ import java.util.Set;
  */
 public class HandBowItem extends Item {
 
+    public enum LoadedBolt {
+        NONE,
+        STAKE,
+        DRAINING,
+        HOLY,
+        SPLITTING,
+        SILVER
+    }
+
     private static final int TICKS_TO_LOAD = 10;
     private static final int MAX_DRAW_TICKS = 20;
     private static final float BOLT_SPEED = 3.0F;
@@ -63,6 +72,17 @@ public class HandBowItem extends Item {
 
     public static boolean hasLoadedBolt(ItemStack stack) {
         return getBoltType(TAG_CURRENT, stack) != NO_BOLT;
+    }
+
+    public static LoadedBolt loadedBolt(ItemStack stack) {
+        return switch (getBoltType(TAG_CURRENT, stack)) {
+            case BOLT_STAKE -> LoadedBolt.STAKE;
+            case BOLT_NULLIFYING -> LoadedBolt.DRAINING;
+            case BOLT_BONE -> LoadedBolt.HOLY;
+            case BOLT_SPLITTING -> LoadedBolt.SPLITTING;
+            case BOLT_SILVER -> LoadedBolt.SILVER;
+            default -> LoadedBolt.NONE;
+        };
     }
 
     @Override

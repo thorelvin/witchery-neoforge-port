@@ -138,7 +138,7 @@ public class DreamCatcherBlock extends BaseEntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
+    public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
 
     private static void dropStoredWeave(Level level, BlockPos pos) {
         if (level.isClientSide()) {

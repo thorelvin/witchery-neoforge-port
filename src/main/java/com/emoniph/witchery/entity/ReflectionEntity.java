@@ -88,6 +88,7 @@ public class ReflectionEntity extends Monster implements RangedAttackMob {
     private int guardianRoomIndex = -1;
     private boolean completionHandled;
     private boolean rangedTask;
+    private int attackTimer;
 
     public ReflectionEntity(EntityType<? extends ReflectionEntity> type, Level level) {
         super(type, level);
@@ -196,6 +197,7 @@ public class ReflectionEntity extends Monster implements RangedAttackMob {
     @Override
     public void tick() {
         super.tick();
+        if (attackTimer > 0) attackTimer--;
         if (level().isClientSide()) return;
 
         bossEvent.setProgress(getHealth() / getMaxHealth());
@@ -324,6 +326,8 @@ public class ReflectionEntity extends Monster implements RangedAttackMob {
 
     @Override
     public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        attackTimer = 10;
+        level().broadcastEntityEvent(this, (byte) 4);
         ItemStack held = getMainHandItem();
         if (held.is(WitcheryItems.MYSTIC_BRANCH.get())) {
             if (random.nextBoolean()) castMirrorSpell(target);
@@ -332,6 +336,16 @@ public class ReflectionEntity extends Monster implements RangedAttackMob {
         } else if (held.getItem() instanceof BowItem) {
             fireArrow(target, distanceFactor);
         }
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == 4) attackTimer = 10;
+        else super.handleEntityEvent(id);
+    }
+
+    public int getAttackTimer() {
+        return attackTimer;
     }
 
     private void castMirrorSpell(LivingEntity target) {

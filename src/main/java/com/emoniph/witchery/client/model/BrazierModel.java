@@ -13,15 +13,11 @@ public class BrazierModel extends Model.Simple {
             Identifier.fromNamespaceAndPath("witchery", "brazier"), "main");
 
     private final List<ModelPart> structureParts;
-    private final List<ModelPart> contentParts;
+    private final ModelPart ash;
 
     public BrazierModel(ModelPart root) {
         super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
-        this.contentParts = List.of(
-            root.getChild("content1"),
-            root.getChild("content2"),
-            root.getChild("content3")
-        );
+        this.ash = root.getChild("ash");
         structureParts = List.of(
             root.getChild("leg1"), root.getChild("leg2"), root.getChild("leg3"), root.getChild("leg4"),
             root.getChild("foot1"), root.getChild("foot2"), root.getChild("foot3"), root.getChild("foot4"),
@@ -51,10 +47,9 @@ public class BrazierModel extends Model.Simple {
         // Center foot ring
         root.addOrReplaceChild("foot_base", CubeListBuilder.create().texOffs(6,0).addBox(-1.5f,-0.5f,-1.5f,3,1,3), PartPose.offset(0,21f,0));
 
-        // Pan
-        root.addOrReplaceChild("content1",  CubeListBuilder.create().texOffs(24,0).addBox(-0.55f,-0.12f,-0.45f,1.1f,0.35f,0.9f), PartPose.offset(-0.9f,9.2f,-0.55f));
-        root.addOrReplaceChild("content2",  CubeListBuilder.create().texOffs(24,0).addBox(-0.5f,-0.12f,-0.55f,1.0f,0.3f,1.1f), PartPose.offset(0.75f,9.23f,-0.1f));
-        root.addOrReplaceChild("content3",  CubeListBuilder.create().texOffs(24,0).addBox(-0.6f,-0.12f,-0.45f,1.2f,0.32f,0.9f), PartPose.offset(-0.05f,9.18f,0.8f));
+        // Pan and source ash plane.
+        root.addOrReplaceChild("ash", CubeListBuilder.create().texOffs(0,20)
+                .addBox(-2.5f,0,-2.5f,5,0,5), PartPose.offset(0,9.7f,0));
         root.addOrReplaceChild("pan_base",  CubeListBuilder.create().texOffs(6,5) .addBox(-3f,0,-3f,6,1,6), PartPose.offset(0,9.95f,0));
         root.addOrReplaceChild("pan_side1", CubeListBuilder.create().texOffs(5,12).addBox(-0.5f,-0.5f,-3f,1,1,6), PartPose.offset(3f,9.5f,0));
         root.addOrReplaceChild("pan_side2", CubeListBuilder.create().texOffs(4,26).addBox(-3f,-0.5f,-0.5f,6,1,1), PartPose.offset(0,9.5f,3f));
@@ -68,7 +63,8 @@ public class BrazierModel extends Model.Simple {
         return structureParts;
     }
 
-    public List<ModelPart> contentParts(int ingredientCount) {
-        return contentParts.subList(0, Math.min(contentParts.size(), Math.max(0, ingredientCount)));
+    public void setIngredientCount(int ingredientCount) {
+        ash.visible = ingredientCount > 0;
+        ash.y = 9.7F - Math.max(0, ingredientCount - 1) * 0.1F;
     }
 }

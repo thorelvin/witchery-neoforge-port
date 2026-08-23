@@ -197,7 +197,7 @@ public class BrazierBlock extends BaseEntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
+    public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {

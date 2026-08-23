@@ -25,10 +25,9 @@ public class WitchesHatArmorModel extends HumanoidModel<HumanoidRenderState> {
     }
 
     public static LayerDefinition createLayer() {
-        MeshDefinition mesh = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+        MeshDefinition mesh = HumanoidModel.createMesh(new CubeDeformation(0.61F), 0.0F);
         PartDefinition root = mesh.getRoot();
-        PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.ZERO);
-        root.addOrReplaceChild("hat", CubeListBuilder.create(), PartPose.ZERO);
+        PartDefinition head = root.getChild("head");
 
         head.addOrReplaceChild("witches_hat", CubeListBuilder.create().mirror()
                         .texOffs(0, 49).addBox(-7.0F, -7.0F, -7.0F, 14, 1, 14)

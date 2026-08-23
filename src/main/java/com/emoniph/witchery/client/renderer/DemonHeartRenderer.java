@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -20,7 +21,7 @@ import org.jspecify.annotations.Nullable;
 
 public class DemonHeartRenderer implements BlockEntityRenderer<DemonHeartBlockEntity, DemonHeartRenderer.State> {
     private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath("witchery", "textures/block/demon_heart_model.png");
+            Identifier.fromNamespaceAndPath("witchery", "textures/block/demon_heart.png");
 
     private final DemonHeartModel model;
 
@@ -44,29 +45,25 @@ public class DemonHeartRenderer implements BlockEntityRenderer<DemonHeartBlockEn
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, offset, crumbling);
         BlockState blockState = be.getBlockState();
         state.facingYaw = blockState.hasProperty(DemonHeartBlock.FACING)
-                ? blockState.getValue(DemonHeartBlock.FACING).toYRot()
+                ? sourceRotation(blockState.getValue(DemonHeartBlock.FACING))
                 : 0.0F;
-        state.ticks = be.getLevel() != null ? be.getLevel().getGameTime() : 0L;
+        state.ticks = be.getTicks();
     }
 
     @Override
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         poseStack.pushPose();
-        poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
-        poseStack.scale(0.7F, 0.7F, 0.7F);
-        poseStack.mulPose(Axis.YP.rotationDegrees(state.facingYaw));
-        poseStack.translate(0.1F, -0.9F, -0.15F);
+        applySourcePose(poseStack, state.facingYaw);
 
         for (var part : model.staticParts()) {
             collector.submitModelPart(part, poseStack, RenderTypes.entityCutoutNoCull(TEXTURE),
                     state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         }
 
-        double pulse = 0.165D * (7.0D + 0.25D * Math.sin(0.25132741228718347D * state.ticks));
+        float pulse = sourcePulse(state.ticks);
         poseStack.pushPose();
         poseStack.translate(0.0F, 1.0F, 0.0F);
-        poseStack.scale((float) pulse, (float) pulse, (float) pulse);
+        poseStack.scale(pulse, pulse, pulse);
         poseStack.translate(0.0F, -1.0F, 0.0F);
         for (var part : model.pulseParts()) {
             collector.submitModelPart(part, poseStack, RenderTypes.entityCutoutNoCull(TEXTURE),
@@ -75,5 +72,27 @@ public class DemonHeartRenderer implements BlockEntityRenderer<DemonHeartBlockEn
         poseStack.popPose();
 
         poseStack.popPose();
+    }
+
+    static void applySourcePose(PoseStack poseStack, float facingYaw) {
+        poseStack.translate(0.5F, 0.5F, 0.5F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        poseStack.scale(0.7F, 0.7F, 0.7F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(facingYaw));
+        poseStack.translate(0.1F, -0.9F, -0.15F);
+    }
+
+    static float sourceRotation(Direction facing) {
+        return switch (facing) {
+            case NORTH -> 0.0F;
+            case EAST -> 90.0F;
+            case SOUTH -> 180.0F;
+            case WEST -> 270.0F;
+            default -> throw new IllegalArgumentException("Demon hearts require a horizontal facing");
+        };
+    }
+
+    static float sourcePulse(long ticks) {
+        return (float) (0.165D * (7.0D + 0.25D * Math.sin(0.25132741228718347D * ticks)));
     }
 }

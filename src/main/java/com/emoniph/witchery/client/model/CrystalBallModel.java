@@ -16,14 +16,17 @@ public class CrystalBallModel extends Model.Simple {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             Identifier.fromNamespaceAndPath("witchery", "crystal_ball"), "main");
 
-    private final List<ModelPart> parts;
+    private final List<ModelPart> baseParts;
+    private final ModelPart globeInner;
+    private final ModelPart globeMiddle;
+    private final ModelPart globeOuter;
 
     public CrystalBallModel(ModelPart root) {
         super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
-        parts = List.of(
-            root.getChild("base_bottom"), root.getChild("base_middle"), root.getChild("base_top"),
-            root.getChild("globe_inner"), root.getChild("globe_middle"), root.getChild("globe_outer")
-        );
+        baseParts = List.of(root.getChild("base_bottom"), root.getChild("base_middle"), root.getChild("base_top"));
+        globeInner = root.getChild("globe_inner");
+        globeMiddle = root.getChild("globe_middle");
+        globeOuter = root.getChild("globe_outer");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -40,4 +43,19 @@ public class CrystalBallModel extends Model.Simple {
         return LayerDefinition.create(mesh, 32, 32);
     }
 
+    public List<ModelPart> baseParts() {
+        return baseParts;
     }
+
+    public ModelPart globeInner() {
+        return globeInner;
+    }
+
+    public ModelPart globeMiddle() {
+        return globeMiddle;
+    }
+
+    public ModelPart globeOuter() {
+        return globeOuter;
+    }
+}

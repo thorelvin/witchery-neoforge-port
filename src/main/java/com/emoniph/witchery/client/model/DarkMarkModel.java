@@ -33,7 +33,7 @@ public class DarkMarkModel extends EntityModel<LivingEntityRenderState> {
         PartDefinition root = mesh.getRoot();
 
         root.addOrReplaceChild("skull",
-                CubeListBuilder.create()
+                CubeListBuilder.create().mirror()
                         .texOffs(0, 0).addBox(-8.0F, -12.0F, -8.0F, 16, 12, 16)
                         .texOffs(0, 29).addBox(-5.0F, 0.0F, -8.0F, 10, 4, 12),
                 PartPose.offset(0.0F, 20.0F, 0.0F));
@@ -43,7 +43,7 @@ public class DarkMarkModel extends EntityModel<LivingEntityRenderState> {
 
     @Override
     public void setupAnim(LivingEntityRenderState state) {
-        // Slow, ominous rotation.
-        skull.yRot = (state.ageInTicks * 0.01F) % Mth.TWO_PI;
+        skull.yRot = state.yRot * Mth.DEG_TO_RAD;
+        skull.xRot = state.xRot * Mth.DEG_TO_RAD;
     }
 }

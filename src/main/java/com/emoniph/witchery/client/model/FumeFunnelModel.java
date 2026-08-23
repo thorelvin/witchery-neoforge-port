@@ -54,7 +54,7 @@ public class FumeFunnelModel extends Model.Simple {
         root.addOrReplaceChild("base",         CubeListBuilder.create().texOffs(0,51) .addBox(0,0,0,12,1,12),  PartPose.offset(-6f,23f,-6f));
         root.addOrReplaceChild("body",         CubeListBuilder.create().texOffs(4,27) .addBox(0,0,0,10,11,10), PartPose.offset(-5f,12f,-5f));
         root.addOrReplaceChild("tube_left",    CubeListBuilder.create().texOffs(1,18) .addBox(0,0,0,5,2,2),    PartPose.offset(-10f,17f,-1f));
-        root.addOrReplaceChild("tube_right",   CubeListBuilder.create().texOffs(1,18) .addBox(0,1,0,5,2,2),    PartPose.offset(5f,18f,1f));
+        root.addOrReplaceChild("tube_right",   CubeListBuilder.create().texOffs(1,18) .addBox(0,0,0,5,2,2),    PartPose.offset(5f,18f,1f));
         root.addOrReplaceChild("pipe_top2",    CubeListBuilder.create().texOffs(0,0)  .addBox(0,0,0,1,1,6),    PartPose.offset(-4f,8f,-3f));
         root.addOrReplaceChild("pipe_top3",    CubeListBuilder.create().texOffs(0,0)  .addBox(0,0,0,11,1,1),   PartPose.offset(-3f,8f,-3f));
         root.addOrReplaceChild("pipe_top4",    CubeListBuilder.create().texOffs(0,0)  .addBox(0,0,0,1,11,1),   PartPose.offset(7f,9f,-3f));

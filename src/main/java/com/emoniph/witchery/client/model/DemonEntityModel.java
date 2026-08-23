@@ -20,7 +20,6 @@ public class DemonEntityModel extends EntityModel<DemonEntityModel.DemonRenderSt
 
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(Identifier.fromNamespaceAndPath("witchery", "demon"), "main");
-    private final ModelPart rootPart;
     private final ModelPart head;
     private final ModelPart body;
     private final ModelPart rightArm;
@@ -35,7 +34,6 @@ public class DemonEntityModel extends EntityModel<DemonEntityModel.DemonRenderSt
 
     public DemonEntityModel(ModelPart root) {
         super(root);
-        this.rootPart  = root;
         this.head      = root.getChild("head");
         this.body      = root.getChild("body");
         this.rightArm  = root.getChild("right_arm");
@@ -122,10 +120,6 @@ public class DemonEntityModel extends EntityModel<DemonEntityModel.DemonRenderSt
         rightArm.xRot = state.attackTimer > 0.0F
                 ? -2.0F + 1.5F * triangleWave(state.attackTimer, 10.0F)
                 : (-0.2F + 1.5F * gait) * limbSwingAmount;
-        rootPart.zRot = limbSwingAmount >= 0.01F
-                ? 6.5F * Mth.DEG_TO_RAD * triangleWave(limbSwing + 6.0F, 13.0F)
-                : 0.0F;
-
         wingRight.xRot = WING_X_ROT;
         wingRight.yRot = WING_Y_ROT;
         wingRight.zRot = WING_Z_ROT;
@@ -134,7 +128,7 @@ public class DemonEntityModel extends EntityModel<DemonEntityModel.DemonRenderSt
         wingLeft.zRot = -WING_Z_ROT;
     }
 
-    private static float triangleWave(float value, float period) {
+    public static float triangleWave(float value, float period) {
         return (Math.abs(value % period - period * 0.5F) - period * 0.25F) / (period * 0.25F);
     }
 

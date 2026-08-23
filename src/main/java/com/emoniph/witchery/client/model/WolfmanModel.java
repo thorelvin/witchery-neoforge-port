@@ -5,136 +5,243 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
-/**
- * Wolfman model — ported from ModelWolfman (1.7.10-0.24.1).
- * 64×64 texture. Double-jointed hind legs, tail, wolf head with ears and snout.
- */
+/** Source-exact port of Witchery 0.24.1 {@code ModelWolfman}. */
 public class WolfmanModel extends EntityModel<WolfmanRenderer.WolfmanRenderState> {
-
-    // NOTE: must NOT be "wolfman/main" — that is already taken by WerewolfModel (player render layer).
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(Identifier.fromNamespaceAndPath("witchery", "wolfman_entity"), "main");
+
+    private static final float BODY_X_ROT = 0.4098033F;
+    private static final float LEG_X_ROT = -0.4098033F;
+    private static final float TAIL_X_ROT = 0.59184116F;
 
     private final ModelPart headMain;
     private final ModelPart bodyUpper;
     private final ModelPart armLeft;
     private final ModelPart armRight;
     private final ModelPart legLeftUpper;
-    private final ModelPart legLeftLower;
     private final ModelPart legRightUpper;
-    private final ModelPart legRightLower;
     private final ModelPart tail;
 
     public WolfmanModel(ModelPart root) {
         super(root);
-        this.headMain     = root.getChild("head_main");
-        this.bodyUpper    = root.getChild("body_upper");
-        this.armLeft      = root.getChild("arm_left");
-        this.armRight     = root.getChild("arm_right");
+        this.headMain = root.getChild("head_main");
+        this.bodyUpper = root.getChild("body_upper");
+        this.armLeft = root.getChild("arm_left");
+        this.armRight = root.getChild("arm_right");
         this.legLeftUpper = root.getChild("leg_left_upper");
-        this.legRightUpper= root.getChild("leg_right_upper");
-        // Children accessed via parents for animation
-        ModelPart bodyUpperChild = this.bodyUpper;
-        this.tail          = bodyUpperChild.getChild("tail");
-        this.legLeftLower  = this.legLeftUpper.getChild("leg_left_lower");
-        this.legRightLower = this.legRightUpper.getChild("leg_right_lower");
+        this.legRightUpper = root.getChild("leg_right_upper");
+        this.tail = root.getChild("tail");
     }
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
 
-        // Head — wolf snout, ears, main skull (all in one builder matching 1.7.10 ModelRenderer multi-box)
         root.addOrReplaceChild("head_main",
                 CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-3, -6, -2, 6, 6, 4, new CubeDeformation(0.05f))
-                        .texOffs(16, 14).addBox(-3, -8, 1, 2, 2, 1)   // left ear
-                        .texOffs(16, 14).addBox(1, -8, 1, 2, 2, 1)    // right ear
-                        .texOffs(0, 10).addBox(-1.5f, -3.1f, -5, 3, 3, 4), // snout
-                PartPose.offset(0, 0, -2));
+                        .texOffs(0, 0).addBox(-3.0F, -6.0F, -2.0F, 6.0F, 6.0F, 4.0F,
+                                new CubeDeformation(0.05F))
+                        .texOffs(16, 14).addBox(-3.0F, -8.0F, 1.0F, 2.0F, 2.0F, 1.0F)
+                        .texOffs(16, 14).addBox(1.0F, -8.0F, 1.0F, 2.0F, 2.0F, 1.0F)
+                        .texOffs(0, 10).addBox(-1.5F, -3.1F, -5.0F, 3.0F, 3.0F, 4.0F),
+                PartPose.offset(0.0F, 0.0F, -2.0F));
 
-        // Body — upper torso leans forward; lower torso and tail are children
         PartDefinition bodyUpper = root.addOrReplaceChild("body_upper",
-                CubeListBuilder.create().texOffs(0, 35).addBox(-5, 0, -3.9f, 10, 7, 8),
-                PartPose.offsetAndRotation(0, -0.1f, -2, 0.4098033f, 0, 0));
-
+                CubeListBuilder.create().texOffs(0, 35)
+                        .addBox(-5.0F, 0.0F, -3.9F, 10.0F, 7.0F, 8.0F),
+                PartPose.offsetAndRotation(0.0F, -0.1F, -2.0F, BODY_X_ROT, 0.0F, 0.0F));
         bodyUpper.addOrReplaceChild("body_lower",
-                CubeListBuilder.create().texOffs(3, 50).addBox(-4, 2, -2.3f, 8, 7, 5),
-                PartPose.offset(0, 5, -1.5f));
+                CubeListBuilder.create().texOffs(3, 50)
+                        .addBox(-4.0F, 2.0F, -2.3F, 8.0F, 7.0F, 5.0F),
+                PartPose.offset(0.0F, 5.0F, -1.5F));
 
-        bodyUpper.addOrReplaceChild("tail",
-                CubeListBuilder.create().texOffs(55, 52).addBox(-1, 0, -1, 2, 10, 2),
-                PartPose.offsetAndRotation(0, 11.9f, 3.6f, 0.59184116f, 0, 0));
+        root.addOrReplaceChild("tail",
+                CubeListBuilder.create().texOffs(55, 52)
+                        .addBox(-1.0F, 0.0F, -1.0F, 2.0F, 10.0F, 2.0F),
+                PartPose.offsetAndRotation(0.0F, 11.9F, 3.6F, TAIL_X_ROT, 0.0F, 0.0F));
 
-        // Arms (attached to body, not children)
-        root.addOrReplaceChild("arm_left",
-                CubeListBuilder.create().texOffs(38, 46).mirror().addBox(-1, -2, -2, 4, 14, 4),
-                PartPose.offset(6, 2, 0));
-
-        root.addOrReplaceChild("arm_right",
-                CubeListBuilder.create().texOffs(38, 46).addBox(-3, -2, -2, 4, 14, 4),
-                PartPose.offset(-5.8f, 2, 0));
-
-        // Hind legs — double-jointed: upper at hip, lower as child bending backwards
         PartDefinition legLeftUpper = root.addOrReplaceChild("leg_left_upper",
-                CubeListBuilder.create().texOffs(38, 0).mirror().addBox(-2, 0, -2, 4, 7, 4),
-                PartPose.offsetAndRotation(2, 12, 0, -0.4098033f, 0, 0));
+                CubeListBuilder.create().texOffs(38, 0).mirror()
+                        .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 7.0F, 4.0F),
+                PartPose.offsetAndRotation(2.0F, 12.0F, 0.0F, LEG_X_ROT, 0.0F, 0.0F));
         legLeftUpper.addOrReplaceChild("leg_left_lower",
-                CubeListBuilder.create().texOffs(38, 13).addBox(-2, 3.5f, 2, 4, 8, 4),
+                CubeListBuilder.create().texOffs(38, 13)
+                        .addBox(-2.0F, 3.5F, 2.0F, 4.0F, 8.0F, 4.0F),
                 PartPose.ZERO);
 
         PartDefinition legRightUpper = root.addOrReplaceChild("leg_right_upper",
-                CubeListBuilder.create().texOffs(38, 0).addBox(-2, 0, -2, 4, 7, 4),
-                PartPose.offsetAndRotation(-2, 12, 0, -0.4098033f, 0, 0));
+                CubeListBuilder.create().texOffs(38, 0)
+                        .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 7.0F, 4.0F),
+                PartPose.offsetAndRotation(-2.0F, 12.0F, 0.0F, LEG_X_ROT, 0.0F, 0.0F));
         legRightUpper.addOrReplaceChild("leg_right_lower",
-                CubeListBuilder.create().texOffs(38, 13).addBox(-2, 3.5f, 2, 4, 8, 4),
+                CubeListBuilder.create().texOffs(38, 13)
+                        .addBox(-2.0F, 3.5F, 2.0F, 4.0F, 8.0F, 4.0F),
                 PartPose.ZERO);
+
+        root.addOrReplaceChild("arm_left",
+                CubeListBuilder.create().texOffs(38, 46).mirror()
+                        .addBox(-1.0F, -2.0F, -2.0F, 4.0F, 14.0F, 4.0F),
+                PartPose.offset(6.0F, 2.0F, 0.0F));
+        root.addOrReplaceChild("arm_right",
+                CubeListBuilder.create().texOffs(38, 46)
+                        .addBox(-3.0F, -2.0F, -2.0F, 4.0F, 14.0F, 4.0F),
+                PartPose.offset(-5.8F, 2.0F, 0.0F));
 
         return LayerDefinition.create(mesh, 64, 64);
     }
 
-    // ── Animation ─────────────────────────────────────────────────────────────
-
     @Override
     public void setupAnim(WolfmanRenderer.WolfmanRenderState state) {
-        float limbSwing  = state.walkAnimationPos;
+        float limbSwing = state.walkAnimationPos;
         float limbAmount = state.walkAnimationSpeed;
-        float age        = state.ageInTicks;
-        float yaw        = state.yRot * Mth.DEG_TO_RAD;
-        float pitch      = state.xRot * Mth.DEG_TO_RAD;
+        float age = state.ageInTicks;
 
-        // Head tracks target
-        headMain.yRot = yaw;
-        headMain.xRot = pitch;
+        headMain.x = 0.0F;
+        headMain.y = 0.0F;
+        headMain.z = -2.0F;
+        headMain.xRot = state.xRot * Mth.DEG_TO_RAD;
+        headMain.yRot = state.yRot * Mth.DEG_TO_RAD;
+        headMain.zRot = 0.0F;
 
-        // Arms swing opposite to each other and to the legs
-        armLeft.xRot  =  Mth.cos(limbSwing * 0.6662f + Mth.PI) * 2.0f * limbAmount * 0.5f;
-        armRight.xRot =  Mth.cos(limbSwing * 0.6662f)           * 2.0f * limbAmount * 0.5f;
-        armLeft.zRot  =  0;
-        armRight.zRot =  0;
+        bodyUpper.x = 0.0F;
+        bodyUpper.y = -0.1F;
+        bodyUpper.z = -2.0F;
+        bodyUpper.xRot = BODY_X_ROT;
+        bodyUpper.yRot = 0.0F;
+        bodyUpper.zRot = 0.0F;
 
-        // Hind leg upper swing — more aggressive than a biped (1.4× scale)
-        float legSwingL = Mth.cos(limbSwing * 0.6662f)           * 1.4f * limbAmount;
-        float legSwingR = Mth.cos(limbSwing * 0.6662f + Mth.PI)  * 1.4f * limbAmount;
-        legLeftUpper.xRot  = -0.4098033f + legSwingL;
-        legRightUpper.xRot = -0.4098033f + legSwingR;
+        armLeft.x = 6.0F;
+        armLeft.y = 2.0F;
+        armLeft.z = 0.0F;
+        armLeft.yRot = 0.0F;
+        armLeft.zRot = 0.0F;
+        armRight.x = -5.8F;
+        armRight.y = 2.0F;
+        armRight.z = 0.0F;
+        armRight.yRot = 0.0F;
+        armRight.zRot = 0.0F;
 
-        // Lower leg bends inversely (digitigrade gait)
-        legLeftLower.xRot  = Math.max(0, -legSwingL * 0.6f);
-        legRightLower.xRot = Math.max(0, -legSwingR * 0.6f);
-
-        // Tail wags idly
-        tail.xRot = 0.59184116f + Mth.sin(age * 0.1f) * 0.15f;
-
-        // Attack animation — arms lunge forward
-        if (state.attackTime > 0) {
-            float t = state.attackTime / 10.0f;
-            armLeft.xRot  -= Mth.PI * 0.5f * t;
-            armRight.xRot -= Mth.PI * 0.5f * t;
+        if (state.attackTimer > 0.0F) {
+            armRight.xRot = -2.0F + 1.5F * triangleWave(state.attackTimer, 10.0F);
+            armLeft.xRot = -1.0F + 0.9F * triangleWave(state.attackTimer, 10.0F);
+        } else {
+            armRight.xRot = Mth.cos(limbSwing * 0.6662F + Mth.PI) * limbAmount;
+            armLeft.xRot = Mth.cos(limbSwing * 0.6662F) * limbAmount;
         }
+
+        legRightUpper.x = -2.0F;
+        legRightUpper.y = 12.0F;
+        legRightUpper.z = 0.1F;
+        legRightUpper.xRot = Math.max(LEG_X_ROT
+                + Mth.cos(limbSwing * 0.6662F) * 1.4F * limbAmount, -0.8F);
+        legRightUpper.yRot = 0.0F;
+        legRightUpper.zRot = 0.0F;
+        legLeftUpper.x = 2.0F;
+        legLeftUpper.y = 12.0F;
+        legLeftUpper.z = 0.1F;
+        legLeftUpper.xRot = Math.max(LEG_X_ROT
+                + Mth.cos(limbSwing * 0.6662F + Mth.PI) * 1.4F * limbAmount, -0.8F);
+        legLeftUpper.yRot = 0.0F;
+        legLeftUpper.zRot = 0.0F;
+
+        if (state.sourceSitting) {
+            armRight.xRot -= Mth.PI / 5.0F;
+            armLeft.xRot -= Mth.PI / 5.0F;
+            legRightUpper.xRot = -Mth.PI * 2.0F / 5.0F;
+            legLeftUpper.xRot = -Mth.PI * 2.0F / 5.0F;
+            legRightUpper.yRot = Mth.PI / 10.0F;
+            legLeftUpper.yRot = -Mth.PI / 10.0F;
+        }
+
+        if (state.heldItemLeft != 0) {
+            armLeft.xRot = armLeft.xRot * 0.5F - Mth.PI / 10.0F * state.heldItemLeft;
+        }
+        if (state.heldItemRight != 0) {
+            armRight.xRot = armRight.xRot * 0.5F - Mth.PI / 10.0F * state.heldItemRight;
+        }
+
+        float attackProgress = state.attackProgress;
+        if (attackProgress > -9990.0F) {
+            float bodyYaw = Mth.sin(Mth.sqrt(attackProgress) * Mth.TWO_PI) * 0.2F;
+            bodyUpper.yRot = bodyYaw;
+            armRight.z = Mth.sin(bodyYaw) * 5.0F;
+            armRight.x = -Mth.cos(bodyYaw) * 5.0F;
+            armLeft.z = -Mth.sin(bodyYaw) * 5.0F;
+            armLeft.x = Mth.cos(bodyYaw) * 5.0F;
+            armRight.yRot += bodyYaw;
+            armLeft.yRot += bodyYaw;
+            armLeft.xRot += bodyYaw;
+
+            float eased = 1.0F - attackProgress;
+            eased *= eased;
+            eased *= eased;
+            eased = 1.0F - eased;
+            float swing = Mth.sin(eased * Mth.PI);
+            float headCompensation = Mth.sin(attackProgress * Mth.PI)
+                    * -(headMain.xRot - 0.7F) * 0.75F;
+            armRight.xRot -= swing * 1.2F + headCompensation;
+            armRight.yRot += bodyYaw * 2.0F;
+            armRight.zRot = Mth.sin(attackProgress * Mth.PI) * -0.4F;
+        }
+
+        if (state.sourceCrouching) {
+            bodyUpper.xRot = 0.5F;
+            armRight.xRot += 0.4F;
+            armLeft.xRot += 0.4F;
+            legRightUpper.z = 4.0F;
+            legLeftUpper.z = 4.0F;
+            legRightUpper.y = 9.0F;
+            legLeftUpper.y = 9.0F;
+        } else {
+            bodyUpper.xRot = BODY_X_ROT;
+            bodyUpper.yRot = 0.0F;
+            bodyUpper.zRot = 0.0F;
+        }
+
+        tail.x = 0.0F;
+        tail.y = 11.9F;
+        tail.z = 3.6F;
+        tail.xRot = TAIL_X_ROT;
+        tail.yRot = 0.0F;
+        tail.zRot = 0.0F;
+        if (limbAmount > 0.1F) {
+            tail.xRot += limbAmount - 0.1F;
+            tail.zRot += 0.25F * Mth.cos(age * 0.09F) + 0.05F;
+        } else {
+            tail.zRot += 0.15F * Mth.cos(age * 0.09F) + 0.05F;
+        }
+
+        addSourceArmIdle(age);
+        if (state.aimedBow) {
+            armRight.zRot = 0.0F;
+            armLeft.zRot = 0.0F;
+            armRight.yRot = -0.1F + headMain.yRot;
+            armLeft.yRot = 0.5F + headMain.yRot;
+            armRight.xRot = -Mth.HALF_PI + headMain.xRot;
+            armLeft.xRot = -Mth.HALF_PI + headMain.xRot;
+            addSourceArmIdle(age);
+        }
+    }
+
+    private void addSourceArmIdle(float age) {
+        float roll = Mth.cos(age * 0.09F) * 0.05F + 0.05F;
+        float pitch = Mth.sin(age * 0.067F) * 0.05F;
+        armRight.zRot += roll;
+        armLeft.zRot -= roll;
+        armRight.xRot += pitch;
+        armLeft.xRot -= pitch;
+    }
+
+    static float triangleWave(float value, float period) {
+        return (Math.abs(value % period - period * 0.5F) - period * 0.25F)
+                / (period * 0.25F);
     }
 }

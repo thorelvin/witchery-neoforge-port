@@ -87,6 +87,9 @@ public class WitcheryClient {
         Map.entry(ChaliceModel.LAYER_LOCATION,         ChaliceModel::createBodyLayer),
         Map.entry(CrystalBallModel.LAYER_LOCATION,     CrystalBallModel::createBodyLayer),
         Map.entry(DreamCatcherModel.LAYER_LOCATION,    DreamCatcherModel::createBodyLayer),
+        Map.entry(GarlicGarlandModel.LAYER_LOCATION,  GarlicGarlandModel::createBodyLayer),
+        Map.entry(MirrorModel.LAYER_LOCATION,          MirrorModel::createBodyLayer),
+        Map.entry(SpectralFamiliarModel.LAYER_LOCATION, SpectralFamiliarModel::createBodyLayer),
         Map.entry(FumeFunnelModel.LAYER_LOCATION,      FumeFunnelModel::createBodyLayer),
         Map.entry(GrassperModel.LAYER_LOCATION,        GrassperModel::createBodyLayer),
         Map.entry(PlacedModonomiconBookModel.LAYER_LOCATION, PlacedModonomiconBookModel::createBodyLayer),
@@ -94,8 +97,7 @@ public class WitcheryClient {
         Map.entry(LeechChestModel.LAYER_LOCATION,      LeechChestModel::createBodyLayer),
         Map.entry(FetishModel.LAYER_LOCATION,          FetishModel::createBodyLayer),
         Map.entry(FetishTrentModel.LAYER_LOCATION,     FetishTrentModel::createBodyLayer),
-        Map.entry(CoffinModel.HEAD_LAYER_LOCATION,     CoffinModel::createHeadLayer),
-        Map.entry(CoffinModel.BOTTOM_LAYER_LOCATION,   CoffinModel::createBottomLayer),
+        Map.entry(CoffinModel.LAYER_LOCATION,          CoffinModel::createBodyLayer),
         Map.entry(DemonHeartModel.LAYER_LOCATION,      DemonHeartModel::createBodyLayer),
         Map.entry(AlluringSkullModel.LAYER_LOCATION,   AlluringSkullModel::createBodyLayer),
         Map.entry(com.emoniph.witchery.client.model.WolfHeadModel.LAYER_LOCATION, com.emoniph.witchery.client.model.WolfHeadModel::createBodyLayer),
@@ -106,15 +108,23 @@ public class WitcheryClient {
         Map.entry(SilverVatModel.LIQUID_LAYER_LOCATION, SilverVatModel::createLiquidLayer),
         Map.entry(com.emoniph.witchery.client.model.WolfAltarModel.LAYER_LOCATION, com.emoniph.witchery.client.model.WolfAltarModel::createBodyLayer),
         Map.entry(OwlModel.LAYER_LOCATION,             OwlModel::createBodyLayer),
+        Map.entry(OwlModel.BABY_LAYER_LOCATION,        OwlModel::createBabyLayer),
         Map.entry(RavenModel.LAYER_LOCATION,           RavenModel::createBodyLayer),
         Map.entry(ToadModel.LAYER_LOCATION,            ToadModel::createBodyLayer),
+        Map.entry(ToadModel.BABY_LAYER_LOCATION,       ToadModel::createBabyLayer),
         Map.entry(EarmuffsModel.LAYER_LOCATION,        EarmuffsModel::createBodyLayer),
         Map.entry(ParasyticLouseModel.LAYER_LOCATION,  ParasyticLouseModel::createBodyLayer),
         Map.entry(FlyingMonkeyModel.LAYER_LOCATION,    FlyingMonkeyModel::createBodyLayer),
         Map.entry(CatFamiliarModel.LAYER_LOCATION,     CatFamiliarModel::createBodyLayer),
+        Map.entry(CatFamiliarModel.BABY_LAYER_LOCATION, CatFamiliarModel::createBabyLayer),
         Map.entry(BroomModel.LAYER_LOCATION,           BroomModel::createBodyLayer),
         Map.entry(DeathHandModel.LAYER_LOCATION,       DeathHandModel::createLayer),
-        Map.entry(WerewolfModel.LAYER_LOCATION,        WerewolfModel::createBodyLayer),
+        Map.entry(BrewBottleModel.LAYER_LOCATION,      BrewBottleModel::createLayer),
+        Map.entry(CaneSwordModel.LAYER_LOCATION,       CaneSwordModel::createLayer),
+        Map.entry(HandBowModel.LAYER_LOCATION,         HandBowModel::createLayer),
+        Map.entry(HuntsmanSpearModel.LAYER_LOCATION,   HuntsmanSpearModel::createLayer),
+        Map.entry(MysticBranchModel.LAYER_LOCATION,    MysticBranchModel::createLayer),
+        Map.entry(LegacyBipedModel.LAYER_LOCATION,    LegacyBipedModel::createBodyLayer),
         Map.entry(WerewolfWolfModel.LAYER_LOCATION,    WerewolfWolfModel::createBodyLayer),
         Map.entry(WitchHunterModel.LAYER_LOCATION,     WitchHunterModel::createBodyLayer),
         Map.entry(HunterArmorModel.LAYER_LOCATION,     HunterArmorModel::createLayer),
@@ -124,6 +134,9 @@ public class WitcheryClient {
         Map.entry(BabasHatArmorModel.LAYER_LOCATION,   BabasHatArmorModel::createLayer),
         Map.entry(NecromancerRobeArmorModel.LAYER_LOCATION, NecromancerRobeArmorModel::createLayer),
         Map.entry(WitchesShoesArmorModel.LAYER_LOCATION, WitchesShoesArmorModel::createLayer),
+        Map.entry(WitchesBeltArmorModel.LAYER_LOCATION, WitchesBeltArmorModel::createLayer),
+        Map.entry(BarkGrowthModel.TALL_UV_LAYER, BarkGrowthModel::createTallUvLayer),
+        Map.entry(BarkGrowthModel.WIDE_UV_LAYER, BarkGrowthModel::createWideUvLayer),
         Map.entry(TwistingBandArmorModel.LAYER_LOCATION, TwistingBandArmorModel::createLayer),
         Map.entry(MogsQuiverArmorModel.LAYER_LOCATION, MogsQuiverArmorModel::createLayer),
         Map.entry(GulgsGirdleArmorModel.LAYER_LOCATION, GulgsGirdleArmorModel::createLayer),
@@ -142,10 +155,13 @@ public class WitcheryClient {
         Map.entry(HornedHuntsmanModel.LAYER_LOCATION,  HornedHuntsmanModel::createBodyLayer),
         Map.entry(DeathEntityModel.LAYER_LOCATION,     DeathEntityModel::createBodyLayer),
         Map.entry(FlameImpModel.LAYER_LOCATION,        FlameImpModel::createBodyLayer),
+        Map.entry(FlameImpWingModel.LAYER_LOCATION,    FlameImpWingModel::createBodyLayer),
         Map.entry(GrotesqueModel.LAYER_LOCATION,       GrotesqueModel::createBodyLayer),
         Map.entry(EgassyWartLayer.LAYER_LOCATION,      EgassyWartLayer::createLayerDefinition),
         Map.entry(com.emoniph.witchery.client.model.BloodCrucibleModel.LAYER_LOCATION,
                   com.emoniph.witchery.client.model.BloodCrucibleModel::createBodyLayer),
+        Map.entry(com.emoniph.witchery.client.model.BloodCrucibleModel.LIQUID_LAYER_LOCATION,
+                  com.emoniph.witchery.client.model.BloodCrucibleModel::createLiquidLayer),
         Map.entry(LilithModel.LAYER_LOCATION,     LilithModel::createBodyLayer),
         Map.entry(GoblinGulgModel.LAYER_LOCATION,      GoblinGulgModel::createBodyLayer),
         Map.entry(GoblinMogModel.LAYER_LOCATION,       GoblinMogModel::createBodyLayer),
@@ -158,20 +174,17 @@ public class WitcheryClient {
         Map.entry(com.emoniph.witchery.client.model.DarkMarkModel.LAYER_LOCATION,
                   com.emoniph.witchery.client.model.DarkMarkModel::createBodyLayer),
         Map.entry(VillageGuardModel.LAYER_LOCATION,    VillageGuardModel::createBodyLayer),
-        Map.entry(VillageGuardModel.ARMOR_HEAD_LAYER,  VillageGuardModel::createArmorHeadLayer),
         Map.entry(LeonardModel.LAYER_LOCATION,    LeonardModel::createBodyLayer),
         Map.entry(com.emoniph.witchery.client.model.LostSoulModel.LAYER_LOCATION,
                   com.emoniph.witchery.client.model.LostSoulModel::createBodyLayer),
         Map.entry(com.emoniph.witchery.client.model.VampireArmorModel.Variant.MASCULINE.layer,
-                  () -> com.emoniph.witchery.client.model.VampireArmorModel.createLayer(com.emoniph.witchery.client.model.VampireArmorModel.Variant.MASCULINE, false)),
-        Map.entry(com.emoniph.witchery.client.model.VampireArmorModel.Variant.MASCULINE.slimLayer,
-                  () -> com.emoniph.witchery.client.model.VampireArmorModel.createLayer(com.emoniph.witchery.client.model.VampireArmorModel.Variant.MASCULINE, true)),
+                  com.emoniph.witchery.client.model.VampireArmorModel::createLayer),
         Map.entry(com.emoniph.witchery.client.model.VampireArmorModel.Variant.FEMININE.layer,
-                  () -> com.emoniph.witchery.client.model.VampireArmorModel.createLayer(com.emoniph.witchery.client.model.VampireArmorModel.Variant.FEMININE, false)),
-        Map.entry(com.emoniph.witchery.client.model.VampireArmorModel.Variant.FEMININE.slimLayer,
-                  () -> com.emoniph.witchery.client.model.VampireArmorModel.createLayer(com.emoniph.witchery.client.model.VampireArmorModel.Variant.FEMININE, true)),
+                  com.emoniph.witchery.client.model.VampireArmorModel::createLayer),
         Map.entry(com.emoniph.witchery.client.model.VampireArmorModel.Variant.METALLIC.layer,
-                  () -> com.emoniph.witchery.client.model.VampireArmorModel.createLayer(com.emoniph.witchery.client.model.VampireArmorModel.Variant.METALLIC, false))
+                  com.emoniph.witchery.client.model.VampireArmorModel::createLayer),
+        Map.entry(com.emoniph.witchery.client.model.VampireArmorModel.Variant.METALLIC_FEMININE.layer,
+                  com.emoniph.witchery.client.model.VampireArmorModel::createLayer)
     );
 
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -322,8 +335,11 @@ public class WitcheryClient {
         event.registerItem(new com.emoniph.witchery.client.VampireArmorClientExtensions(
                         com.emoniph.witchery.client.model.VampireArmorModel.Variant.METALLIC),
                 com.emoniph.witchery.init.WitcheryItems.VAMPIRE_HELMET.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_CHAIN_COAT.get(),
-                com.emoniph.witchery.init.WitcheryItems.VAMPIRE_CHAIN_COAT_LADIES.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_CHESTPLATE.get(),
+                com.emoniph.witchery.init.WitcheryItems.VAMPIRE_CHESTPLATE.get(),
                 com.emoniph.witchery.init.WitcheryItems.VAMPIRE_LEGGINGS.get(), com.emoniph.witchery.init.WitcheryItems.VAMPIRE_BOOTS.get());
+        event.registerItem(new com.emoniph.witchery.client.VampireArmorClientExtensions(
+                        com.emoniph.witchery.client.model.VampireArmorModel.Variant.METALLIC_FEMININE),
+                com.emoniph.witchery.init.WitcheryItems.VAMPIRE_CHAIN_COAT_LADIES.get());
 
         event.registerItem(new com.emoniph.witchery.client.HunterArmorClientExtensions(),
                 com.emoniph.witchery.init.WitcheryItems.HUNTER_HAT.get(),
@@ -359,6 +375,10 @@ public class WitcheryClient {
                 com.emoniph.witchery.init.WitcheryItems.ICY_SLIPPERS.get(),
                 com.emoniph.witchery.init.WitcheryItems.RUBY_SLIPPERS.get(),
                 com.emoniph.witchery.init.WitcheryItems.SEEPING_SHOES.get());
+
+        event.registerItem(new com.emoniph.witchery.client.WitchesBeltArmorClientExtensions(),
+                com.emoniph.witchery.init.WitcheryItems.BITING_BELT.get(),
+                com.emoniph.witchery.init.WitcheryItems.BARK_BELT.get());
 
         event.registerItem(new com.emoniph.witchery.client.TwistingBandArmorClientExtensions(),
                 com.emoniph.witchery.init.WitcheryItems.TWISTING_BAND.get());
@@ -434,12 +454,31 @@ public class WitcheryClient {
                 ar.addLayer(new ManifestedGhostLayer(ar));
                 ar.addLayer(new MountedBroomInventoryLayer(ar, event.getContext()));
                 ar.addLayer(new EarmuffsLayer(ar, event.getContext()));
+                ar.addLayer(new VampireArmorChainLayer(ar, event.getContext()));
+                addBarkBeltLayer(ar, event.getContext());
                 addGrotesqueLayer(ar, event.getContext());
             }
         }
         for (net.minecraft.world.entity.EntityType<?> entityType : event.getEntityTypes()) {
+            addBarkBeltLayer(event.getRenderer(entityType), event.getContext());
             addGrotesqueLayer(event.getRenderer(entityType), event.getContext());
         }
+    }
+
+    private static void addBarkBeltLayer(
+            net.minecraft.client.renderer.entity.EntityRenderer<?, ?> renderer,
+            net.minecraft.client.renderer.entity.EntityRendererProvider.Context context) {
+        if (renderer instanceof net.minecraft.client.renderer.entity.LivingEntityRenderer<?, ?, ?> livingRenderer
+                && livingRenderer.getModel() instanceof net.minecraft.client.model.HumanoidModel<?>) {
+            addBarkBeltLayerUnchecked(livingRenderer, context);
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void addBarkBeltLayerUnchecked(
+            net.minecraft.client.renderer.entity.LivingEntityRenderer renderer,
+            net.minecraft.client.renderer.entity.EntityRendererProvider.Context context) {
+        renderer.addLayer(new BarkBeltLayer(renderer, context));
     }
 
     private static void addGrotesqueLayer(
@@ -487,6 +526,8 @@ public class WitcheryClient {
         event.registerBlockEntityRenderer(WitcheryBlockEntities.CHALICE.get(),         ChaliceRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.CRYSTAL_BALL.get(),    CrystalBallRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.DREAM_CATCHER.get(),   DreamCatcherRenderer::new);
+        event.registerBlockEntityRenderer(WitcheryBlockEntities.GARLIC_GARLAND.get(),  GarlicGarlandRenderer::new);
+        event.registerBlockEntityRenderer(WitcheryBlockEntities.MIRROR.get(),           MirrorBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.FUME_FUNNEL.get(),     FumeFunnelRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.SPINNING_WHEEL.get(),  SpinningWheelRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.LEECH_CHEST.get(),     LeechChestRenderer::new);

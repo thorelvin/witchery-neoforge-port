@@ -39,6 +39,7 @@ public class FlyingMonkeyModel extends EntityModel<FlyingMonkeyModel.FlyingMonke
     public static class FlyingMonkeyRenderState extends LivingEntityRenderState {
         public boolean landed;
         public boolean sitting;
+        public int attackTimer;
         public int tintColor = -1;
     }
 
@@ -133,6 +134,9 @@ public class FlyingMonkeyModel extends EntityModel<FlyingMonkeyModel.FlyingMonke
         animateTail(ageInTicks, limbSwingAmount);
         this.head.yRot = state.yRot * Mth.DEG_TO_RAD;
         this.head.xRot = state.xRot * Mth.DEG_TO_RAD;
+        if (state.attackTimer > 0) {
+            this.rightArm.xRot = sourceAttackPitch(state.attackTimer, state.yRot);
+        }
     }
 
     private void setLandedPose() {
@@ -207,5 +211,12 @@ public class FlyingMonkeyModel extends EntityModel<FlyingMonkeyModel.FlyingMonke
         } else {
             this.tail.zRot += 3.0F * Mth.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
         }
+    }
+
+    static float sourceAttackPitch(int attackTimer, float netHeadYawDegrees) {
+        float period = 10.0F;
+        float triangle = (Math.abs((attackTimer - netHeadYawDegrees) % period
+                - period * 0.5F) - period * 0.25F) / (period * 0.25F);
+        return -2.0F + 1.5F * triangle;
     }
 }

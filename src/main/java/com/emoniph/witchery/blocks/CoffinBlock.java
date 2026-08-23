@@ -37,6 +37,7 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,8 +59,8 @@ public class CoffinBlock extends HorizontalDirectionalBlock implements EntityBlo
     public static final BooleanProperty        OCCUPIED = BlockStateProperties.OCCUPIED;
     public static final BooleanProperty        OPEN     = BooleanProperty.create("open");
 
-    // Shape: box from y=0..12 (a proper coffin depth)
-    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 12, 16);
+    private static final double SOURCE_BASE_HEIGHT = 7.0D;
+    private static final double SOURCE_WALL_THICKNESS = 0.8D;
 
     public CoffinBlock(BlockBehaviour.Properties props) {
         super(props);
@@ -77,12 +78,15 @@ public class CoffinBlock extends HorizontalDirectionalBlock implements EntityBlo
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return SHAPE;
+        return Shapes.block();
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return SHAPE;
+        if (!state.getValue(OPEN)) {
+            return Shapes.block();
+        }
+        return sourceOpenShape(state.getValue(FACING), state.getValue(PART));
     }
 
     // ── Placement ─────────────────────────────────────────────────────────────
@@ -239,7 +243,11 @@ public class CoffinBlock extends HorizontalDirectionalBlock implements EntityBlo
 
     @Nullable @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return null; // No tick needed
+        if (!level.isClientSide() || type != WitcheryBlockEntities.COFFIN.get()) {
+            return null;
+        }
+        return (tickLevel, tickPos, tickState, blockEntity) ->
+                CoffinBlockEntity.clientTick(tickLevel, tickPos, tickState, (CoffinBlockEntity) blockEntity);
     }
 
     @Override
@@ -276,5 +284,59 @@ public class CoffinBlock extends HorizontalDirectionalBlock implements EntityBlo
     private static boolean hasSolidBlockAbove(Level level, BlockPos pos) {
         BlockPos above = pos.above();
         return level.getBlockState(above).isFaceSturdy(level, above, Direction.DOWN);
+    }
+
+    static VoxelShape sourceOpenShape(Direction facing, BedPart part) {
+        boolean head = part == BedPart.HEAD;
+        boolean north = true;
+        boolean south = true;
+        boolean east = true;
+        boolean west = true;
+        boolean northHinge = false;
+        boolean southHinge = false;
+        boolean eastHinge = false;
+        boolean westHinge = false;
+        switch (facing) {
+            case SOUTH -> {
+                north = !head;
+                south = head;
+                eastHinge = true;
+            }
+            case WEST -> {
+                east = !head;
+                west = head;
+                southHinge = true;
+            }
+            case NORTH -> {
+                south = !head;
+                north = head;
+                westHinge = true;
+            }
+            case EAST -> {
+                west = !head;
+                east = head;
+                northHinge = true;
+            }
+            default -> throw new IllegalArgumentException("Coffins require a horizontal facing");
+        }
+
+        VoxelShape shape = Block.box(0, 0, 0, 16, SOURCE_BASE_HEIGHT, 16);
+        if (north) {
+            shape = Shapes.or(shape, Block.box(0, SOURCE_BASE_HEIGHT, 0, 16,
+                    northHinge ? 32 : 16, SOURCE_WALL_THICKNESS));
+        }
+        if (south) {
+            shape = Shapes.or(shape, Block.box(0, SOURCE_BASE_HEIGHT, 16 - SOURCE_WALL_THICKNESS,
+                    16, southHinge ? 32 : 16, 16));
+        }
+        if (west) {
+            shape = Shapes.or(shape, Block.box(0, SOURCE_BASE_HEIGHT, 0, SOURCE_WALL_THICKNESS,
+                    westHinge ? 32 : 16, 16));
+        }
+        if (east) {
+            shape = Shapes.or(shape, Block.box(16 - SOURCE_WALL_THICKNESS, SOURCE_BASE_HEIGHT, 0,
+                    16, eastHinge ? 32 : 16, 16));
+        }
+        return shape;
     }
 }

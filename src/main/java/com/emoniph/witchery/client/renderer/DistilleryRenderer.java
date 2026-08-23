@@ -24,6 +24,7 @@ public class DistilleryRenderer implements BlockEntityRenderer<DistilleryBlockEn
 
     public static class State extends BlockEntityRenderState {
         public float yaw;
+        public int jarCount;
     }
 
     public DistilleryRenderer(BlockEntityRendererProvider.Context ctx) {
@@ -39,16 +40,22 @@ public class DistilleryRenderer implements BlockEntityRenderer<DistilleryBlockEn
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, offset, crumbling);
         Direction facing = be.getBlockState().getValue(DistilleryBlock.FACING);
         state.yaw = facing.getOpposite().toYRot();
+        state.jarCount = Math.min(4, be.getItem(DistilleryBlockEntity.SLOT_JARS).getCount());
     }
 
     @Override
     public void submit(State state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
         ps.pushPose();
+        applySourcePose(ps, state.yaw);
+        model.setJarCount(state.jarCount);
+        collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        ps.popPose();
+    }
+
+    static void applySourcePose(PoseStack ps, float yaw) {
         ps.translate(0.5, 0.5, 0.5);
         ps.mulPose(Axis.ZP.rotationDegrees(180));
         ps.translate(0, -1, 0);
-        ps.mulPose(Axis.YP.rotationDegrees(state.yaw));
-        collector.submitModelPart(model.root(), ps, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
-        ps.popPose();
+        ps.mulPose(Axis.YP.rotationDegrees(yaw));
     }
 }

@@ -7,7 +7,9 @@ import com.emoniph.witchery.init.WitcheryRecipeTypes;
 import com.emoniph.witchery.menu.SpinningWheelMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -56,6 +58,8 @@ public class SpinningWheelBlockEntity extends BlockEntity implements WorldlyCont
     private int powerLevel = 0;
     private int pendingPowerScaled = 0;
     private int scanCooldown = 0;
+    private boolean lastSyncedSpinning = false;
+    private boolean hasSyncedSpinning = false;
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -114,6 +118,7 @@ public class SpinningWheelBlockEntity extends BlockEntity implements WorldlyCont
             if (changed) {
                 be.setChanged();
             }
+            be.syncSpinningIfChanged();
             return;
         }
 
@@ -136,6 +141,7 @@ public class SpinningWheelBlockEntity extends BlockEntity implements WorldlyCont
             if (changed) {
                 be.setChanged();
             }
+            be.syncSpinningIfChanged();
             return;
         }
 
@@ -147,6 +153,7 @@ public class SpinningWheelBlockEntity extends BlockEntity implements WorldlyCont
                 if (changed) {
                     be.setChanged();
                 }
+                be.syncSpinningIfChanged();
                 return;
             }
             be.pendingPowerScaled -= powerUnits * POWER_SCALE;
@@ -162,6 +169,7 @@ public class SpinningWheelBlockEntity extends BlockEntity implements WorldlyCont
         if (changed) {
             be.setChanged();
         }
+        be.syncSpinningIfChanged();
     }
 
     private static Optional<RecipeHolder<SpinningRecipe>> getRecipe(ServerLevel level, SpinningWheelBlockEntity be) {
@@ -328,10 +336,33 @@ public class SpinningWheelBlockEntity extends BlockEntity implements WorldlyCont
         return spinTotal > 0 ? spinProgress * 24 / spinTotal : 0;
     }
 
+    public boolean isSpinningForRender() {
+        return spinProgress > 0 && spinProgress < spinTotal && powerLevel > 0;
+    }
+
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    private void syncSpinningIfChanged() {
+        boolean spinning = isSpinningForRender();
+        if (hasSyncedSpinning && spinning == lastSyncedSpinning) {
+            return;
+        }
+        hasSyncedSpinning = true;
+        lastSyncedSpinning = spinning;
+        setChanged();
+        if (level != null) {
+            BlockState state = getBlockState();
+            level.sendBlockUpdated(worldPosition, state, state, 3);
+        }
     }
 
     @Override

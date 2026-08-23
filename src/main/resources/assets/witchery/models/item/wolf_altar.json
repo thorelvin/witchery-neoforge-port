@@ -1,1 +1,6 @@
-{"parent":"witchery:block/wolf_altar"}
+{
+  "parent": "witchery:item/entity_machine_base",
+  "textures": {
+    "layer0": "witchery:block/wolfaltar"
+  }
+}

@@ -28,6 +28,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -39,6 +40,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,6 +59,7 @@ public class WolfAltarBlock extends BaseEntityBlock {
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    private static final VoxelShape SOURCE_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 32.0, 16.0);
 
     private static final int GOLD_REQUIRED = 3;
     private static final int MUTTON_REQUIRED = 30;
@@ -83,6 +88,25 @@ public class WolfAltarBlock extends BaseEntityBlock {
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE; // the statue is drawn by WolfAltarRenderer
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SOURCE_SHAPE;
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SOURCE_SHAPE;
+    }
+
+    @Override
+    protected VoxelShape getOcclusionShape(BlockState state) {
+        return Shapes.empty();
+    }
+
+    static VoxelShape sourceShape() {
+        return SOURCE_SHAPE;
     }
 
     @Override

@@ -42,15 +42,19 @@ public class ChaliceRenderer implements BlockEntityRenderer<ChaliceBlockEntity, 
     @Override
     public void submit(State state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
         ps.pushPose();
+        applySourcePose(ps);
+        collector.submitModelPart(model.chalice(), ps, RenderTypes.entityCutoutNoCull(TEXTURE),
+                state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        if (state.filled) {
+            collector.submitModelPart(model.liquid(), ps, RenderTypes.entityCutoutNoCull(TEXTURE),
+                    state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        }
+        ps.popPose();
+    }
+
+    static void applySourcePose(PoseStack ps) {
         ps.translate(0.5, 0.5, 0.5);
         ps.mulPose(Axis.ZP.rotationDegrees(180));
         ps.translate(0, -1, 0);
-        for (var part : model.bodyParts()) {
-            collector.submitModelPart(part, ps, RenderTypes.entityCutoutNoCull(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
-        }
-        if (state.filled) {
-            collector.submitModelPart(model.liquid(), ps, RenderTypes.entityCutoutNoCull(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
-        }
-        ps.popPose();
     }
 }

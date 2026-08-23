@@ -1,52 +1,72 @@
 package com.emoniph.witchery.client.renderer;
 
+import com.emoniph.witchery.client.model.LegacyBipedModel;
 import com.emoniph.witchery.client.model.VillageGuardModel;
 import com.emoniph.witchery.entity.VampireEntity;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.ArmorModelSet;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
 
-/**
- * Vampire renderer — uses the villager-proportion VillageGuardModel (same UV layout
- * as ModelVampire) with the original vampire.png skin texture.
- * HumanoidMobRenderer automatically adds ItemInHandLayer; we add HumanoidArmorLayer
- * so the vampire clothing (coat, legs, boots) renders correctly.
- */
-public class VampireRenderer extends HumanoidMobRenderer<VampireEntity, VampireRenderer.State, VillageGuardModel<VampireRenderer.State>> {
-
+/** Exact 1.7.10 vampire body, pose, renderer anchor, and source texture route. */
+public class VampireRenderer extends HumanoidMobRenderer<VampireEntity, VampireRenderer.State,
+        VillageGuardModel<VampireRenderer.State>> {
+    static final float LEGACY_BASE_DELTA_Y = -0.0068125F;
+    static final float SOURCE_SHADOW_RADIUS = 0.5F;
     private static final Identifier TEXTURE =
             Identifier.fromNamespaceAndPath("witchery", "textures/entity/vampire.png");
 
-    public VampireRenderer(EntityRendererProvider.Context ctx) {
-        super(ctx, new VillageGuardModel<>(ctx.bakeLayer(VillageGuardModel.LAYER_LOCATION)), 0.5F);
-
-        // Head armor: custom 8×8×8 model (stops at y=-2, doesn't cover the face)
-        VillageGuardModel<State> headArmor =
-                new VillageGuardModel<>(ctx.getModelSet().bakeLayer(VillageGuardModel.ARMOR_HEAD_LAYER));
-
-        ArmorModelSet<HumanoidModel<State>> zombieArmor =
-                ArmorModelSet.bake(ModelLayers.ZOMBIE_ARMOR, ctx.getModelSet(),
-                        root -> new HumanoidModel<>(root));
-
-        @SuppressWarnings("unchecked")
-        ArmorModelSet<HumanoidModel<State>> armorSet = new ArmorModelSet<>(
-                headArmor,
-                zombieArmor.chest(),
-                zombieArmor.legs(),
-                zombieArmor.feet()
-        );
-        this.addLayer(new HumanoidArmorLayer<>(this, armorSet, ctx.getEquipmentRenderer()));
+    public VampireRenderer(EntityRendererProvider.Context context) {
+        super(context,
+                new VillageGuardModel<>(context.bakeLayer(VillageGuardModel.LAYER_LOCATION), false),
+                SOURCE_SHADOW_RADIUS);
+        ArmorModelSet<HumanoidModel<State>> armor =
+                ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, context.getModelSet(), HumanoidModel::new);
+        this.addLayer(new HumanoidArmorLayer<>(this, armor, context.getEquipmentRenderer()));
     }
 
-    @Override public State createRenderState() { return new State(); }
+    @Override
+    public State createRenderState() {
+        return new State();
+    }
 
     @Override
-    public Identifier getTextureLocation(State state) { return TEXTURE; }
+    public void extractRenderState(VampireEntity entity, State state, float partialTick) {
+        super.extractRenderState(entity, state, partialTick);
+        state.sourceRiding = entity.isPassenger();
+        state.sourceCrouching = entity.isCrouching();
+        state.swingProgress = entity.getAttackAnim(partialTick);
+        populateHeldItemState(entity.getMainHandItem(), entity.isUsingItem(), state);
+    }
 
-    public static class State extends HumanoidRenderState {}
+    private static void populateHeldItemState(ItemStack heldItem, boolean usingItem, State state) {
+        state.heldItemLeft = 0;
+        state.heldItemRight = heldItem.isEmpty() ? 0 : 1;
+        state.aimedBow = false;
+        if (!heldItem.isEmpty() && usingItem) {
+            ItemUseAnimation animation = heldItem.getUseAnimation();
+            if (animation == ItemUseAnimation.BLOCK) state.heldItemRight = 3;
+            else if (animation == ItemUseAnimation.BOW) state.aimedBow = true;
+        }
+    }
+
+    @Override
+    protected void scale(State state, PoseStack poseStack) {
+        poseStack.translate(0.0F,
+                LEGACY_BASE_DELTA_Y - (state.sourceCrouching ? 0.125F : 0.0F), 0.0F);
+    }
+
+    @Override
+    public Identifier getTextureLocation(State state) {
+        return TEXTURE;
+    }
+
+    public static class State extends LegacyBipedModel.State {
+    }
 }

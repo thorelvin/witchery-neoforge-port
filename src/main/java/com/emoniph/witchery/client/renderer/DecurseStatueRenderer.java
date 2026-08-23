@@ -63,13 +63,37 @@ public class DecurseStatueRenderer
         Identifier texture = state.mandrake ? MANDRAKE_TEXTURE : WOLF_TEXTURE;
 
         poseStack.pushPose();
-        poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
-        poseStack.translate(0.0F, state.mandrake ? -0.255F : -0.26F, 0.0F);
-        poseStack.scale(0.5F, 0.5F, 0.5F);
-        poseStack.mulPose(Axis.YP.rotationDegrees(state.facing.toYRot() + 180.0F));
+        applySourceWorldPose(poseStack, state.facing, state.mandrake);
         collector.submitModelPart(model, poseStack, RenderTypes.entityCutout(texture),
                 state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         poseStack.popPose();
+    }
+
+    static void applySourceWorldPose(PoseStack poseStack, Direction facing, boolean mandrake) {
+        poseStack.translate(0.5F, 0.5F, 0.5F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        poseStack.translate(0.0F, mandrake ? -0.255F : -0.26F, 0.0F);
+        poseStack.scale(0.5F, 0.5F, 0.5F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(sourceRotation(facing)));
+    }
+
+    static void applySourceItemPose(PoseStack poseStack, float verticalOffset) {
+        poseStack.translate(0.5F, 0.5F, 0.5F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        poseStack.translate(0.0F, -verticalOffset, 0.0F);
+        poseStack.scale(0.5F, 0.5F, 0.5F);
+        poseStack.scale(0.6F, 0.6F, 0.6F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+        poseStack.translate(0.0F, 1.5F, 0.0F);
+    }
+
+    static float sourceRotation(Direction facing) {
+        return switch (facing) {
+            case NORTH -> 0.0F;
+            case EAST -> 90.0F;
+            case SOUTH -> 180.0F;
+            case WEST -> 270.0F;
+            default -> throw new IllegalArgumentException("Decurse statues require a horizontal facing");
+        };
     }
 }

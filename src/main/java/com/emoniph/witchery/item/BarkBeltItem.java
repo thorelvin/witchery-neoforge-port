@@ -61,16 +61,22 @@ public class BarkBeltItem extends Item {
     }
 
     public static int getMaxChargeLevel(LivingEntity entity) {
-        int pieces = 0;
-        for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
-            if (isWitcheryClothing(entity.getItemBySlot(slot))) {
-                pieces++;
-            }
-        }
+        return getMaxChargeLevel(
+                entity.getItemBySlot(EquipmentSlot.HEAD),
+                entity.getItemBySlot(EquipmentSlot.CHEST),
+                entity.getItemBySlot(EquipmentSlot.LEGS),
+                entity.getItemBySlot(EquipmentSlot.FEET));
+    }
+
+    public static int getMaxChargeLevel(ItemStack head, ItemStack chest, ItemStack legs, ItemStack feet) {
+        int pieces = (supportsBarkGrowth(head) ? 1 : 0)
+                + (supportsBarkGrowth(chest) ? 1 : 0)
+                + (supportsBarkGrowth(legs) ? 1 : 0)
+                + (supportsBarkGrowth(feet) ? 1 : 0);
         return Math.max(CHARGE_PER_WITCHERY_CLOTHING_PIECE, pieces * CHARGE_PER_WITCHERY_CLOTHING_PIECE);
     }
 
-    private static boolean isWitcheryClothing(ItemStack stack) {
+    public static boolean supportsBarkGrowth(ItemStack stack) {
         return stack.is(WitcheryItems.WITCHES_HAT.get())
                 || WitcheryItems.isWitchesRobe(stack)
                 || stack.is(WitcheryItems.BABAS_HAT.get())
@@ -79,8 +85,7 @@ public class BarkBeltItem extends Item {
                 || stack.is(WitcheryItems.BARK_BELT.get())
                 || WitcheryItems.isIcySlippers(stack)
                 || stack.is(WitcheryItems.RUBY_SLIPPERS.get())
-                || stack.is(WitcheryItems.SEEPING_SHOES.get())
-                || stack.is(WitcheryItems.EARMUFFS.get());
+                || stack.is(WitcheryItems.SEEPING_SHOES.get());
     }
 
     @Override

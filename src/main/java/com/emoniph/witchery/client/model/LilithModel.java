@@ -80,7 +80,7 @@ public class LilithModel extends EntityModel<LilithModel.LilithRenderState> {
                 PartPose.offsetAndRotation(0, 0, 0, -0.22759093f, 0, 0));
         armRight.addOrReplaceChild("arm_right_wing",
                 CubeListBuilder.create().texOffs(0, 13)
-                        .addBox(-1, -19.6f, -12.7f, 1, 30, 4),
+                        .addBox(-1, -19.6f, -12.7f, 0, 30, 4),
                 PartPose.offsetAndRotation(0, 0, 0, 2.5497515f, (float) (-Math.PI / 18), 0));
 
         // Left arm
@@ -94,7 +94,7 @@ public class LilithModel extends EntityModel<LilithModel.LilithRenderState> {
                 PartPose.offsetAndRotation(0, 0, 0, -0.22759093f, 0, 0));
         armLeft.addOrReplaceChild("arm_left_wing",
                 CubeListBuilder.create().texOffs(0, 13).mirror()
-                        .addBox(1, -19.6f, -12.7f, 1, 30, 4),
+                        .addBox(1, -19.6f, -12.7f, 0, 30, 4),
                 PartPose.offsetAndRotation(0, 0, 0, 2.5497515f, (float) (Math.PI / 18), 0));
 
         // Right leg
@@ -124,11 +124,11 @@ public class LilithModel extends EntityModel<LilithModel.LilithRenderState> {
                 PartPose.offset(0, -13.5f, 0));
         head.addOrReplaceChild("horn_right",
                 CubeListBuilder.create().texOffs(52, 30)
-                        .addBox(-7, -12.3f, 0, 6, 10, 1),
+                        .addBox(-7, -12.3f, 0, 6, 10, 0),
                 PartPose.offsetAndRotation(0, 0, 0, -0.18203785f, 0, 0));
         head.addOrReplaceChild("horn_left",
                 CubeListBuilder.create().texOffs(52, 30).mirror()
-                        .addBox(1, -12.3f, 0, 6, 10, 1),
+                        .addBox(1, -12.3f, 0, 6, 10, 0),
                 PartPose.offsetAndRotation(0, 0, 0, -0.18203785f, 0, 0));
         head.addOrReplaceChild("nose",
                 CubeListBuilder.create().texOffs(41, 0)
@@ -188,18 +188,35 @@ public class LilithModel extends EntityModel<LilithModel.LilithRenderState> {
         skirt1.xRot = Math.min(legSwingR, legSwingL);
         skirt2.xRot = Math.max(Math.max(legSwingR, legSwingL), 0.2f);
 
+        if (state.riding) {
+            armRight.xRot += (float) (-Math.PI / 5.0);
+            armLeft.xRot += (float) (-Math.PI / 5.0);
+            legRight.xRot = (float) (-Math.PI * 2.0 / 5.0);
+            legLeft.xRot = (float) (-Math.PI * 2.0 / 5.0);
+            legRight.yRot = (float) (Math.PI / 10.0);
+            legLeft.yRot = (float) (-Math.PI / 10.0);
+        }
+
+        armRight.yRot = 0.0F;
+        armLeft.yRot = 0.0F;
         armRight.zRot += Mth.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
         armLeft.zRot  -= Mth.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
         armRight.xRot += Mth.sin(ageInTicks * 0.067F) * 0.05F;
         armLeft.xRot  -= Mth.sin(ageInTicks * 0.067F) * 0.05F;
 
         if (state.attackTimer > 0) {
-            armRight.xRot = -2.0F;
+            // ModelLilith passed net-head yaw here instead of partial ticks; retain the source quirk.
+            armRight.xRot = -2.0F + 1.5F * triangleWave(state.attackTimer - state.yRot, 10.0F);
         }
+    }
+
+    static float triangleWave(float value, float limit) {
+        return (Math.abs(value % limit - limit * 0.5F) - limit * 0.25F) / (limit * 0.25F);
     }
 
     public static class LilithRenderState extends LivingEntityRenderState {
         public int attackTimer;
         public boolean isFriendly;
+        public boolean riding;
     }
 }

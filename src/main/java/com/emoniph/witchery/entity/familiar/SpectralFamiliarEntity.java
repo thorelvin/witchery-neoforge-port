@@ -95,6 +95,10 @@ public class SpectralFamiliarEntity extends FamiliarEntity {
         return this.activeSearch != null && this.searchPerch != null;
     }
 
+    public boolean isSearchingForOre() {
+        return this.activeSearch != null;
+    }
+
     @Nullable
     public BlockPos getSearchPerch() {
         return this.searchPerch;

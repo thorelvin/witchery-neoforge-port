@@ -1,11 +1,12 @@
 package com.emoniph.witchery.client.renderer;
 
-import com.emoniph.witchery.client.model.WerewolfModel;
+import com.emoniph.witchery.client.model.WolfmanModel;
 import com.emoniph.witchery.client.model.WerewolfWolfModel;
 import com.emoniph.witchery.data.WitcheryPlayerData.WolfForm;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -23,18 +24,22 @@ import net.minecraft.world.entity.player.Player;
  */
 public class WerewolfLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
 
-    private static final Identifier WOLFMAN_TEXTURE =
-            Identifier.fromNamespaceAndPath("witchery", "textures/entity/wolfman.png");
-    private static final Identifier WOLF_TEXTURE =
-            Identifier.fromNamespaceAndPath("minecraft", "textures/entity/wolf/wolf.png");
+    static final Identifier WOLFMAN_TEXTURE =
+            Identifier.fromNamespaceAndPath("witchery", "textures/entity/wolfman_entity.png");
+    static final Identifier WOLF_TEXTURE =
+            Identifier.fromNamespaceAndPath("witchery", "textures/entity/werewolf_wolf.png");
 
-    private final WerewolfModel wolfmanModel;
+    private final WolfmanModel wolfmanModel;
     private final WerewolfWolfModel wolfModel;
+    private final WerewolfWolfModel.WolfRenderState wolfState =
+            new WerewolfWolfModel.WolfRenderState();
+    private final WolfmanRenderer.WolfmanRenderState wolfmanState =
+            new WolfmanRenderer.WolfmanRenderState();
 
     public WerewolfLayer(RenderLayerParent<AvatarRenderState, PlayerModel> parent,
                          EntityRendererProvider.Context ctx) {
         super(parent);
-        this.wolfmanModel = new WerewolfModel(ctx.bakeLayer(WerewolfModel.LAYER_LOCATION));
+        this.wolfmanModel = new WolfmanModel(ctx.bakeLayer(WolfmanModel.LAYER_LOCATION));
         this.wolfModel = new WerewolfWolfModel(ctx.bakeLayer(WerewolfWolfModel.LAYER_LOCATION));
     }
 
@@ -50,17 +55,53 @@ public class WerewolfLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
 
         ps.pushPose();
         if (data.getWolfForm() == WolfForm.WOLF) {
-            wolfModel.setupAnim(state);
+            prepareWolfState(state, player, wolfState);
+            float crouchOffset = wolfState.sourceCrouching && !(player instanceof LocalPlayer)
+                    ? 0.125F : 0.0F;
+            ps.translate(0.0F, WolfmanRenderer.LEGACY_BASE_DELTA_Y - crouchOffset, 0.0F);
+            wolfModel.setupAnim(wolfState);
             collector.submitModelPart(wolfModel.root(), ps,
                     RenderTypes.entityCutoutNoCull(WOLF_TEXTURE), light,
                     OverlayTexture.NO_OVERLAY, null);
         } else {
-            ps.scale(1.1F, 1.1F, 1.1F);
-            wolfmanModel.setupAnim(state);
+            prepareWolfmanState(state, player, wolfmanState);
+            float crouchOffset = wolfmanState.sourceCrouching
+                    ? player instanceof LocalPlayer ? 0.125F : 0.25F
+                    : 0.0F;
+            ps.translate(0.0F, WolfmanRenderer.LEGACY_BASE_DELTA_Y - crouchOffset, 0.0F);
+            wolfmanModel.setupAnim(wolfmanState);
             collector.submitModelPart(wolfmanModel.root(), ps,
                     RenderTypes.entityCutoutNoCull(WOLFMAN_TEXTURE), light,
                     OverlayTexture.NO_OVERLAY, null);
         }
         ps.popPose();
+    }
+
+    static void prepareWolfmanState(AvatarRenderState source, Player player,
+                                    WolfmanRenderer.WolfmanRenderState target) {
+        WolfmanRenderer.copyAnimationState(source, target);
+        target.attackTimer = 0.0F;
+        target.attackProgress = player.getAttackAnim(source.partialTick);
+        target.sourceSitting = player.isPassenger();
+        target.sourceCrouching = player.isCrouching();
+        WolfmanRenderer.populateHeldItemState(player.getMainHandItem(), player.isUsingItem(), target);
+    }
+
+    static void prepareWolfState(AvatarRenderState source, Player player,
+                                 WerewolfWolfModel.WolfRenderState target) {
+        target.walkAnimationPos = source.walkAnimationPos;
+        target.walkAnimationSpeed = source.walkAnimationSpeed;
+        target.ageInTicks = source.ageInTicks;
+        target.yRot = source.yRot;
+        target.xRot = source.xRot;
+        target.partialTick = source.partialTick;
+        target.sourceCrouching = player.isCrouching();
+        target.sitting = player.isPassenger();
+        target.angry = false;
+        target.interestedAngle = 0.0F;
+        target.headShakeAngle = 0.0F;
+        target.upperBodyShakeAngle = 0.0F;
+        target.bodyShakeAngle = 0.0F;
+        target.tailShakeAngle = 0.0F;
     }
 }

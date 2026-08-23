@@ -28,12 +28,11 @@ public class BabasHatArmorModel extends HumanoidModel<HumanoidRenderState> {
     }
 
     public static LayerDefinition createLayer() {
-        MeshDefinition mesh = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+        MeshDefinition mesh = HumanoidModel.createMesh(new CubeDeformation(0.61F), 0.0F);
         PartDefinition root = mesh.getRoot();
-        PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.ZERO);
-        root.addOrReplaceChild("hat", CubeListBuilder.create(), PartPose.ZERO);
+        PartDefinition head = root.getChild("head");
 
-        PartDefinition brim = head.addOrReplaceChild("babas_brim", CubeListBuilder.create().mirror()
+        PartDefinition brim = head.addOrReplaceChild("babas_brim", CubeListBuilder.create()
                         .texOffs(72, 48).addBox(0.0F, 0.0F, 0.0F, 14, 2, 14, new CubeDeformation(0.52F)),
                 PartPose.offset(-7.0F, -8.0F, -7.0F));
         PartDefinition crown = brim.addOrReplaceChild("babas_crown", CubeListBuilder.create()

@@ -41,48 +41,38 @@ public class FumeFunnelRenderer implements BlockEntityRenderer<FumeFunnelBlockEn
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, offset, crumbling);
         var facing = be.getBlockState().getValue(com.emoniph.witchery.blocks.FumeFunnelBlock.FACING);
         state.yaw = facing.getOpposite().toYRot();
-        state.renderWideBody = true;
-        state.renderLeftConnection = false;
-        state.renderRightConnection = false;
-        state.renderChimney = false;
         state.filtered = be.getBlockState().getBlock() instanceof com.emoniph.witchery.blocks.FumeFunnelBlock funnel
                 && funnel.isFiltered();
 
         if (be.getLevel() == null) {
+            applySourceVisibility(state, false, false, false);
             return;
         }
 
         var level = be.getLevel();
         var pos = be.getBlockPos();
-        state.renderChimney = level.getBlockState(pos.below()).getBlock() instanceof com.emoniph.witchery.blocks.WitchesOvenBlock;
-        if (state.renderChimney) {
-            state.renderWideBody = false;
-            return;
-        }
-
-        state.renderLeftConnection = isLinkedOven(level, switch (facing) {
+        boolean chimney = level.getBlockState(pos.below()).getBlock() instanceof com.emoniph.witchery.blocks.WitchesOvenBlock;
+        boolean leftConnection = isLinkedOven(level, switch (facing) {
             case NORTH -> pos.east();
             case SOUTH -> pos.west();
             case WEST -> pos.north();
             case EAST -> pos.south();
             default -> pos;
         });
-        state.renderRightConnection = isLinkedOven(level, switch (facing) {
+        boolean rightConnection = isLinkedOven(level, switch (facing) {
             case NORTH -> pos.west();
             case SOUTH -> pos.east();
             case WEST -> pos.south();
             case EAST -> pos.north();
             default -> pos;
         });
+        applySourceVisibility(state, chimney, leftConnection, rightConnection);
     }
 
     @Override
     public void submit(State state, PoseStack ps, SubmitNodeCollector collector, CameraRenderState camera) {
         ps.pushPose();
-        ps.translate(0.5, 0.5, 0.5);
-        ps.mulPose(Axis.ZP.rotationDegrees(180));
-        ps.translate(0, -1, 0);
-        ps.mulPose(Axis.YP.rotationDegrees(state.yaw));
+        applySourcePose(ps, state.yaw);
 
         if (state.renderWideBody) {
             submitParts(ps, collector, state, model.wideBodyParts());
@@ -101,6 +91,21 @@ public class FumeFunnelRenderer implements BlockEntityRenderer<FumeFunnelBlockEn
         }
 
         ps.popPose();
+    }
+
+    static void applySourcePose(PoseStack ps, float yaw) {
+        ps.translate(0.5, 0.5, 0.5);
+        ps.mulPose(Axis.ZP.rotationDegrees(180));
+        ps.translate(0, -1, 0);
+        ps.mulPose(Axis.YP.rotationDegrees(yaw));
+    }
+
+    static void applySourceVisibility(State state, boolean chimney,
+                                      boolean leftConnection, boolean rightConnection) {
+        state.renderWideBody = !chimney;
+        state.renderChimney = chimney;
+        state.renderLeftConnection = leftConnection;
+        state.renderRightConnection = rightConnection;
     }
 
     private void submitParts(PoseStack ps, SubmitNodeCollector collector, State state, Iterable<net.minecraft.client.model.geom.ModelPart> parts) {

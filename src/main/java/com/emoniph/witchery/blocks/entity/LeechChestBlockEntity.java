@@ -43,6 +43,7 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     private static final String KEY_STORED_PLAYER_COUNT = "StoredPlayerCount";
     private static final String KEY_STORED_PLAYER_UUID = "StoredPlayerUuid";
     private static final String KEY_STORED_PLAYER_NAME = "StoredPlayerName";
+    private static final String KEY_RENDER_STORED_PLAYER_COUNT = "RenderStoredPlayerCount";
     private static final String SOURCE_PLAYERS_KEY = "WITCPlayers";
     private static final String SOURCE_PLAYER_KEY = "Player";
     private static final UUID UNKNOWN_PLAYER_UUID = new UUID(0L, 0L);
@@ -53,6 +54,7 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     private String customName = "";
     private int openCount = 0;
     private int openTimer = 0;
+    private int renderStoredPlayerCount = 0;
 
     // Client-side animation state — openCount is synced from server via handleUpdateTag
     public float lidAngle = 0f;
@@ -331,6 +333,7 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("AnimOpen", openCount > 0 ? 1 : 0);
+        tag.putInt(KEY_RENDER_STORED_PLAYER_COUNT, storedPlayerCount());
         if (!customName.isEmpty()) {
             tag.putString(KEY_CUSTOM_NAME, customName);
         }
@@ -366,6 +369,7 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
         customName = tag.getStringOr(KEY_CUSTOM_NAME, "");
         loadStoredPlayers(tag);
         openCount = tag.getIntOr("AnimOpen", 0);
+        renderStoredPlayerCount = tag.getIntOr(KEY_RENDER_STORED_PLAYER_COUNT, storedPlayerCount());
     }
 
     private void saveStoredPlayers(net.minecraft.world.level.storage.ValueOutput tag) {
@@ -469,6 +473,12 @@ public class LeechChestBlockEntity extends BlockEntity implements Container, Men
             recentPlayerNames.remove(recentPlayerNames.size() - 1);
         }
         return storedCount;
+    }
+
+    public int getStoredPlayerCountForRender() {
+        return level != null && level.isClientSide()
+                ? renderStoredPlayerCount
+                : storedPlayerCount();
     }
 
     private void addStoredPlayer(UUID uuid, String name) {

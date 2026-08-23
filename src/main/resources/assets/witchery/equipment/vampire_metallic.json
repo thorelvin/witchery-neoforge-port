@@ -1,10 +1,14 @@
 {
   "layers": {
     "humanoid": [
-      { "texture": "witchery:vampire_metallic" }
+      {
+        "texture": "witchery:vampirearmor_over_first",
+        "dyeable": { "color_when_undyed": 13369344 }
+      },
+      { "texture": "witchery:vampirearmor_over" }
     ],
     "humanoid_leggings": [
-      { "texture": "witchery:vampire_metallic" }
+      { "texture": "witchery:vampirearmor" }
     ]
   }
 }

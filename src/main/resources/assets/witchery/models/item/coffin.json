@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "witchery:item/entity_machine_base",
   "textures": {
-    "layer0": "witchery:item/coffin"
+    "layer0": "witchery:block/coffin"
   }
 }

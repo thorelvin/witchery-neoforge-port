@@ -43,7 +43,7 @@ public class HunterArmorClientExtensions implements IClientItemExtensions {
         return equippable != null ? equippable.slot() : EquipmentSlot.CHEST;
     }
 
-    private static void applySlotVisibility(HunterArmorModel model, EquipmentSlot slot) {
+    static void applySlotVisibility(HunterArmorModel model, EquipmentSlot slot) {
         model.setAllVisible(false);
         switch (slot) {
             case HEAD -> {
@@ -55,23 +55,13 @@ public class HunterArmorClientExtensions implements IClientItemExtensions {
                 model.rightArm.visible = true;
                 model.leftArm.visible = true;
             }
-            case LEGS -> showLegGroup(model, "legs");
-            case FEET -> showLegGroup(model, "boots");
+            case LEGS, FEET -> {
+                model.rightLeg.visible = true;
+                model.leftLeg.visible = true;
+            }
             default -> {
             }
         }
-    }
-
-    private static void showLegGroup(HunterArmorModel model, String group) {
-        model.rightLeg.visible = true;
-        model.leftLeg.visible = true;
-        setGroupVisible(model.rightLeg, group);
-        setGroupVisible(model.leftLeg, group);
-    }
-
-    private static void setGroupVisible(ModelPart leg, String shownGroup) {
-        leg.getChild("legs").visible = "legs".equals(shownGroup);
-        leg.getChild("boots").visible = "boots".equals(shownGroup);
     }
 
     private static void copyPose(ModelPart from, ModelPart to) {

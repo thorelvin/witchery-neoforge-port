@@ -14,7 +14,11 @@ import net.minecraft.util.Mth;
  * Ported 1:1 from original ModelPoltergeist (witchery-1.7.2-0.19.0).
  * Distinct from GhostModel/Spectre — poltergeist.png uses this UV layout.
  */
-public class PoltergeistModel extends EntityModel<LivingEntityRenderState> {
+public class PoltergeistModel extends EntityModel<PoltergeistModel.PoltergeistRenderState> {
+
+    public static class PoltergeistRenderState extends LivingEntityRenderState {
+        public int attackTimer;
+    }
 
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(Identifier.fromNamespaceAndPath("witchery", "poltergeist"), "main");
@@ -77,7 +81,8 @@ public class PoltergeistModel extends EntityModel<LivingEntityRenderState> {
     }
 
     @Override
-    public void setupAnim(LivingEntityRenderState state) {
+    public void setupAnim(PoltergeistRenderState state) {
+        super.setupAnim(state);
         float limbSwing       = state.walkAnimationPos;
         float limbSwingAmount = state.walkAnimationSpeed;
         float ageInTicks      = state.ageInTicks;
@@ -99,8 +104,37 @@ public class PoltergeistModel extends EntityModel<LivingEntityRenderState> {
         leftArm.zRot   = -sway;
         leftArm2.zRot  =  sway;
 
+        float armBob = Mth.sin(ageInTicks * 0.067F) * 0.05F;
+        rightArm.xRot += armBob;
+        rightArm2.xRot -= armBob;
+        leftArm.xRot -= armBob;
+        leftArm2.xRot += armBob;
+
         float legSwing = Mth.cos(limbSwing * 0.6662f) * 1.4f * limbSwingAmount;
         rightLeg.xRot =  legSwing;
         leftLeg.xRot  = -legSwing;
+        rightLeg.yRot = 0.0F;
+        leftLeg.yRot = 0.0F;
+        rightLeg.y = 12.0F;
+        leftLeg.y = 12.0F;
+        rightLeg.z = 0.1F;
+        leftLeg.z = 0.1F;
+        body.xRot = 0.0F;
+
+        if (state.attackTimer > 0) {
+            float triangle = sourceTriangle(state.attackTimer - state.yRot, 15.0F);
+            float attackX = -1.5F + 0.8F * triangle;
+            rightArm.xRot = attackX;
+            rightArm2.xRot = attackX;
+            leftArm.xRot = attackX;
+            leftArm2.xRot = attackX;
+            rightArm.zRot = -(-1.5F + 1.5F * triangle);
+            leftArm.zRot = -1.5F + 1.5F * triangle;
+        }
+    }
+
+    static float sourceTriangle(float position, float period) {
+        return (Math.abs(position % period - period * 0.5F) - period * 0.25F)
+                / (period * 0.25F);
     }
 }

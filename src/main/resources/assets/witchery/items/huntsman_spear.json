@@ -1,19 +1,17 @@
 {
   "model": {
-    "type": "minecraft:range_dispatch",
-    "property": "witchery:blocking",
-    "entries": [
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
       {
-        "threshold": 1.0,
-        "model": {
-          "type": "minecraft:model",
-          "model": "witchery:item/huntsman_spear"
-        }
+        "when": ["gui", "ground", "fixed", "on_shelf", "head"],
+        "model": { "type": "minecraft:model", "model": "witchery:item/huntsman_spear" }
       }
     ],
     "fallback": {
-      "type": "minecraft:model",
-      "model": "witchery:item/huntsman_spear"
+      "type": "minecraft:special",
+      "base": "witchery:item/huntsman_spear_in_hand_base",
+      "model": { "type": "witchery:huntsman_spear_held" }
     }
   }
 }

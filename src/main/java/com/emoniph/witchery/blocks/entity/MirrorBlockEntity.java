@@ -2,10 +2,14 @@ package com.emoniph.witchery.blocks.entity;
 
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -24,6 +28,8 @@ public class MirrorBlockEntity extends BlockEntity {
     @Nullable private BlockPos linkedPos = null;
     @Nullable private String linkedDim   = null;
     private boolean connected = true;
+    private boolean bottomOccupied;
+    private boolean topOccupied;
 
     public MirrorBlockEntity(BlockPos pos, BlockState state) {
         super(WitcheryBlockEntities.MIRROR.get(), pos, state);
@@ -70,9 +76,44 @@ public class MirrorBlockEntity extends BlockEntity {
         return connected;
     }
 
+    public boolean isBottomOccupied() {
+        return bottomOccupied;
+    }
+
+    public boolean isTopOccupied() {
+        return topOccupied;
+    }
+
     public void setConnected(boolean connected) {
         this.connected = connected;
         setChanged();
+    }
+
+    public static void clientTick(Level level, BlockPos pos, BlockState state, MirrorBlockEntity blockEntity) {
+        if (level.getGameTime() % 10L != 1L) {
+            return;
+        }
+        Direction facing = state.getValue(com.emoniph.witchery.blocks.MirrorBlock.FACING);
+        blockEntity.bottomOccupied = hasLivingEntity(level, sourceDetectionBounds(pos, facing));
+        blockEntity.topOccupied = hasLivingEntity(level, sourceDetectionBounds(pos.above(), facing));
+    }
+
+    static AABB sourceDetectionBounds(BlockPos pos, Direction facing) {
+        return switch (facing) {
+            case NORTH -> new AABB(pos.getX() - 1, pos.getY(), pos.getZ() - 4,
+                    pos.getX() + 2, pos.getY() + 1, pos.getZ() + 1);
+            case SOUTH -> new AABB(pos.getX() - 1, pos.getY(), pos.getZ(),
+                    pos.getX() + 2, pos.getY() + 1, pos.getZ() + 5);
+            case WEST -> new AABB(pos.getX() - 4, pos.getY(), pos.getZ() - 1,
+                    pos.getX() + 1, pos.getY() + 1, pos.getZ() + 2);
+            case EAST -> new AABB(pos.getX(), pos.getY(), pos.getZ() - 1,
+                    pos.getX() + 5, pos.getY() + 1, pos.getZ() + 2);
+            default -> throw new IllegalArgumentException("Mirrors require a horizontal facing");
+        };
+    }
+
+    private static boolean hasLivingEntity(Level level, AABB bounds) {
+        return !level.getEntitiesOfClass(LivingEntity.class, bounds).isEmpty();
     }
 
     // ── NBT ──────────────────────────────────────────────────────────────────
