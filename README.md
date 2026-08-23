@@ -32,17 +32,19 @@ The aim is to restore the *feel* and mechanics of original Witchery first — th
 
 ## Current State
 
-The remake is playable and well beyond prototype stage, but it remains an active parity remake rather than a polished release. Many systems are implemented, and many more are in the "works, needs in-game verification and edge-case parity" phase. Recent work has focused on maturing the native Modonomicon guidebook and placed Primer block, source-style Crystal Ball and Waystone scrying, dropped Waystone transposition parity, Player Compass needle parity, vanilla-shaped custom brew liquids, source-shaped thrown brew transport, gas-brew protection/lifetime parity, Disease brew and disease-block spread parity, Purified Milk disease cleanup, Dog Tongue ritualized cauldron brew release, data-driven triggered cursed blocks, Apothecary villager stability, the Spectral Coven, the Creaking familiar, ritual dispatcher safety, continued village generation stability, local AI NPC personas, boss/demon/flame-imp dialogue polish, lightweight village world reactions, player-appointed village guards, hobgoblin labor depth, claim-aware terrain protection, exact-ID promotion, and source-shaped spectral-undead ownership, Revealing, Graveyard Dust, damage-cap, and drop parity.
+The remake is playable and well beyond prototype stage, but it remains an active parity project rather than a polished public release. The baseline is original Witchery `1.7.10-0.24.1`; community continuations are secondary references when they help bridge modern Minecraft constraints.
 
-Latest QA polish also tightened the everyday surface of the mod: source-shaped brew bottle art is used broadly, composed brew containers keep their contents/power/color stamp when bottled, thrown, debug-given, or scooped back into a Brew Bucket, the live legacy placeholder roster is empty, internal utility blocks and debug-only QA items are hidden from the Witchery creative tab, spawn eggs live in their own Witchery Spawn Eggs tab, Rowan/Alder/Hawthorn leaf items now use combined foliage art with visible berries/flowers instead of runtime tint layers, stockades stack with the lower post changing shape and now expose all nine source wood variants, Death's Hand deploys its scythe as source-style state on the same item with hand-aware held rendering and clearer hit/toggle feedback, Mystic Branch casts answer with named/colored feedback, Leonard's Urn focus casts no longer spend the stored brew and urns can upgrade capacity by combining, Witches Hand Otherwhere movement has cooldown/safe-path feedback, Duplication Grenades can be charged from inhabited mirrors with a Quartz Sphere and altar power, Book of Biomes pages show practical climate stats, Crystal Ball scrying refuses bad foci before charging altar power, brew buckets describe gas vs. liquid correctly, Dream Weavers report placement and wake effects, braziers douse more reliably with water, Beartraps and Wolftraps now play the old `random.click` and `random.mantrap` cues for toggles/snaps, Wolftraps steer their lured Wolfman back toward the bait with source Wolfman lure/capture voices, player werewolf howls and Wolf Altar checks use the old Wolfman clips, Parasytic Lice show their potion bite, Sun Collector/Sun Grenade releases have clearer light cues, the player/shelf compasses answer with small scrying feedback, creative-tab parity now exposes source-style Circle Talisman and Spectral Stone variants, Stockade wood variants, decurse statues with their original mandrake/wolf model-and-texture rendering, Leonard's Urn capacities, plant mine disguises, source-named stale seed ingredient entries, source English names for Belladonna Flower, Wool of Bat, Diamond Vapor, Icy Slippers, Witches Hand, the ladies vampire coats, and Mirror Surface, Torment Scroll/Soul of Torment art, Brew Bag leather tinting, refreshed wolf/hellhound head sprites, Banshee/Dark Mark/Lord of Torment/Leonard source audio plus the old `random.*` sound event surface, and Witchery terrain magic now routes block changes through vanilla and optional claim-mod protection checks.
+Current audited baseline as of **2026-08-23**:
 
-A full 1.7.10 model-coordinate pass now gives the remake one audited transform contract instead of per-renderer visual guesses. Source cube bounds, pivots, hierarchy, mirror timing, `render` versus `renderWithRotation` Euler order, outer renderer matrices, held-item anchors, armor layers, shadows, and entity dimensions are covered by focused tests. Controlled original/port captures cover the high-risk bosses and entities plus Village Guard, Vampire, Spectral Familiar, Garlic Garland, Mirror, and Witch's Cauldron. The cauldron now uses the exact 17-cube source body and source liquid footprint/heights while deliberately retaining the approved grounded splayed feet that reach all four block corners. See [Legacy Model Coordinate Parity](docs/reference/LEGACY_MODEL_COORDINATES.md) for the conversion rules and evidence ledger.
+- **Mechanical parity is broad.** Altars, machines, custom brews, Circle Magic, poppets, infusions, covens, familiars, transformations, major bosses, villages, and all three Witchery dimensions have substantial playable implementations.
+- **Recent brew parity is certified.** Source-shaped projectile routing, filled-Taglock ritual targeting, Ice World conversion, raised-undead ownership, the curable Enslaved effect, owner-safe revenge behavior, and Brew of Love's owned-zombie breeding path are implemented and covered by dedicated tests.
+- **Lycanthropy is mechanically complete.** The full level 1-10 Wolf Altar progression, forms, statistics, abilities, infection route, persistence, verifier, and dedicated progression fixture are live. Vampirism remains playable but still needs broader Blood Power and late-game polish.
+- **Dimension structure and lifecycle work is deep.** Mirror World and Torment have fresh-world and restart certification. Spirit World terrain, dream/nightmare states, Corpse behavior, manifestation, and the endgame Otherwhere Hearth are implemented, with remaining work concentrated in live presentation and multiplayer QA.
+- **Creature parity has advanced substantially.** Demons, Flame Imps, Nightmares, Awakened Mandrakes, spectral undead, the Shade of Leonard, Death, and the Lord of Torment use source-backed behavior and presentation paths. Hobgoblins now have persistent labor, worship, breeding, village, raid, follow, and guard behavior.
+- **Visual parity has an explicit contract.** The legacy model-coordinate audit covers source cubes, pivots, hierarchy, mirror timing, transform order, renderer anchors, held items, armor layers, shadows, and entity dimensions. The Witch's Cauldron keeps one documented custom exception: grounded splayed feet that touch all four block corners.
+- **The old placeholder roster is empty.** Remaining exact-ID work is source-feel polish, live rendering checks, and deeper behavior rather than inert creative-tab stand-ins.
 
-Torment now also has deterministic source-shaped generation, exhaustive fresh-world/reload certification, dedicated return anchors, and multiplayer boss-session recovery instead of relying on a visual spot check.
-
-Mirror World now follows the 0.24.1 source contract on fresh worlds: a 256-block repeating 9 x 9 x 9 lattice allocates fifteen vertical rooms at each X/Z cell before advancing through the original spiral. Source mirrors own stable links in any dimension, carried mirror items preserve those links, local mirror bridges carry living entities and items, both escape chants work, and `/witchery verify mirrorworld` audits room geometry, source/inner links, guardian ownership, and cleared state. A featureless dedicated biome prevents the vanilla Void start platform from overwriting rooms. The expanded lifecycle fixture passed on a fresh dedicated world on 2026-08-18.
-
-Blood-feeding feedback is also back on the old sound surface: vampire bites, Glass Goblet blood transfers and conversion work, Lilith's empty-goblet reward, Vampire Blood, attack bats, hostile vampire villager drains, and Bone Needle white-wool staining use `random.drink`, while full goblets burp on consumption like the source path.
+See [Legacy Model Coordinate Parity](docs/reference/LEGACY_MODEL_COORDINATES.md) for the transform rules and evidence ledger, and [Current Status](docs/status/CURRENT.md) for the compact living handoff.
 
 High-level estimate:
 
@@ -88,7 +90,7 @@ Substantial restored or in-progress systems include:
 
 ## Local AI NPCs
 
-Local AI dialogue is experimental but now integrated enough for playtesting. It is enabled by default in `config/witchery-common.toml` under `[llm]`, but the Windows launcher asks before installing Ollama or downloading model files. The default playtest model is `witchery-eva-qwen2.5-1.5b-q4km-4k`, served locally through Ollama at `http://127.0.0.1:11434`.
+Local AI dialogue is experimental but integrated enough for playtesting. It is **disabled by default** in `config/witchery-common.toml` under `[llm]`; enable it only when the installation intentionally provides a local model sidecar or compatible endpoint. The Windows launcher checks before installing Ollama or downloading model files. The tested playtest model is `witchery-eva-qwen2.5-1.5b-q4km-4k`, served locally through Ollama at `http://127.0.0.1:11434`.
 
 The model is used as a voice and classifier layer, not as game authority. Persona cards under `src/main/resources/data/witchery/ai/cards/` provide compact facts about recipes, brews, rites, mobs, social behavior, and entity-specific lore. The mod still validates output, falls back when needed, and keeps all real mechanics in server code.
 
@@ -98,8 +100,8 @@ Useful AI config keys:
 
 ```toml
 [llm]
-enabled = true
-prewarmEnabled = true
+enabled = false
+prewarmEnabled = false
 provider = "ollama"
 endpoint = "http://127.0.0.1:11434"
 model = "witchery-eva-qwen2.5-1.5b-q4km-4k"
@@ -115,9 +117,9 @@ extraHeaders = ""
 responseFormat = "json_object"
 ```
 
-Set `enabled = false` to disable AI dialogue entirely. The branch keeps
-`enabled = true` and `prewarmEnabled = true` as playtest defaults; release packs
-or servers without a managed model sidecar should set both to `false`.
+Set `enabled = true` to opt into AI dialogue. `prewarmEnabled = true` sends an
+invisible startup request so the first conversation does not pay the model's cold
+start cost. Servers without a managed model sidecar should keep both values false.
 `cancelHandledNpcChat = true` keeps explicit/private NPC-addressed messages out
 of normal multiplayer chat; ambient look-at routing still broadcasts. Keep
 `chatCooldownTicks` lower than `cooldownTicks` if ordinary chat should recover
@@ -135,6 +137,9 @@ Every grimoire has blank pages. Important remaining work includes:
 - Some systems marked "Done" in status docs are implementation slices rather than full old-Witchery parity, especially machines, custom brews, late vampirism, and armor/equipment feel. Lycanthropy's source-backed 1-10 progression and the foundational legacy model-coordinate pass are complete; state-dependent client presentation still needs ordinary play QA. Mirror World and Torment structural/lifecycle checks are complete, while their final client visual/audio feel remains QA.
 - The legacy placeholder map is empty, but promotion is not the same as finished parity. Several exact IDs, aliases, wearables, blocks, and brew paths still need source-feel polish, in-game QA, or deeper behavior.
 - Custom Brew parity is still an evolving area: the composed-brew core, finite moving liquid, brew buckets, colour sync, ordinary and old spell-mode projectile travel, source Gas Mask gas protection, lifetime-scaled moving gas, deterministic moving-fluid contact, Disease brew/block spread, Purified Milk disease cleanup, Dog Tongue ritualized cauldron release, Bound Waystone location targeting, filled-Taglock direct body targeting, persistent Brick/Nether Brick exclusions, triggered item/block curses, the practical source action roster, and raised/bred undead ownership behavior exist. Remaining work is concentrated in obscure serializer/action edges.
+- Vampirism still needs broader Blood Power charges, exact Village Guard side-effect polish, and live multiplayer/camera/audio verification. The full source-backed lycanthropy progression is complete.
+- Machine implementation is broad, but hopper and sided-automation behavior still needs in-game QA across the Kettle, Oven/Funnels, Distillery, Spinning Wheel, Brazier, and Silver Vat.
+- The Otherwhere Hearth is code-complete and restart-safe, but its destructive full-volume swap still needs ordinary live multiplayer, claim-adapter, and restart playtesting before release.
 - The latest active handoff lives in [docs/status/CURRENT.md](docs/status/CURRENT.md), with slice candidates in [docs/status/NEXT_TASKS.md](docs/status/NEXT_TASKS.md) and feature state in [docs/status/FEATURE_MATRIX.md](docs/status/FEATURE_MATRIX.md).
 - Mirror World needs real-client QA for player skin/equipment rendering, atmosphere, movement, particles, and audio. Fresh generation, source allocation order, room isolation, carried links, guardian succession, reconnect routes, local bridge rules, escape chants, and grenade-decoy separation are automated. Backwards migration of the earlier remake's room saves is intentionally deferred.
 - Village additions and the first NBT-backed wild structures are live, but still need cross-biome visual QA, traversal checks, and continued tuning for walls, gatehouses, guard movement, and structure placement.
@@ -170,6 +175,8 @@ Requirements:
 - Java `21` JDK, not a JRE. Use JDK 21 specifically; do not use JDK 25 or 26 for this repo.
 - Minecraft `1.21.11`
 - NeoForge `21.11.42`
+- Modonomicon `1.121.0` at runtime; Gradle resolves it automatically for development.
+- JEI is optional.
 
 Compile and process resources:
 
@@ -182,6 +189,20 @@ On Unix-like shells:
 ```bash
 ./gradlew compileJava processResources
 ```
+
+Run the complete headless test and packaging gate:
+
+```powershell
+.\gradlew.bat test build
+```
+
+```bash
+./gradlew test build
+```
+
+The development JAR is written under `build/libs/`. This repository is still a
+pre-release development project; do not treat a successful local build as a
+finished public release.
 
 Useful dev runs:
 
@@ -235,6 +256,8 @@ Structure goto targets currently include `hobgoblin_hut`, `vanishing_hut`, `cove
 - `/witchery verify mirrorworld` — audits every allocated Mirror room's exact 9 x 9 x 9 geometry, unique source ownership, two-way links, guardian UUID/count, and cleared state. `/test run witchery:mirror_world_lifecycle` exercises the two-player guardian, decoy, reconnect, loot, and safe-return lifecycle on a server with custom dimensions loaded.
 - `/witchery verify otherwhere_hearth` — performs the real Hearth preflight without moving blocks or spending power, reporting bounds, route, journal phase, ownership, rings, coven count, altar position/capacity/charge, destination players, dream travellers, unmovable entities, and the first block/protection failure.
 - `/test run witchery:otherwhere_hearth_round_trip` — runs the destructive bidirectional Hearth GameTest on a normal integrated or dedicated dev server where Witchery's custom dimensions are loaded. The headless GameTest server intentionally skips it because that runner creates only vanilla dimensions. Companion manual tests cover `witchery:otherwhere_hearth_destination_refusal` and the post-restart `witchery:otherwhere_hearth_recovery_resume` stage.
+- `/test run witchery:infernal_ownership_lifecycle`, `/test run witchery:infernal_raised_undead`, and `/test run witchery:infernal_bred_undead` — verify binding/cure/rebinding rules, owner immunity and revenge, raised-undead persistence/no-drop state, parent conversion state, and the ordinary unowned baby path.
+- `/test run witchery:ice_world_area_conversion`, `/test run witchery:lycanthropy_progression`, and `/test run witchery:hobgoblin_village_ecology` — exercise the complete Ice World area action, the level 1-10 werewolf ladder, and source-shaped hobgoblin village behavior.
 - `/witchery vampire`, `/witchery werewolf`, `/witchery blood`, `/witchery infusion`, `/witchery familiar <owl|cat|toad|spectral|creaking|none>`, and `/witchery status` — player-state QA helpers. `/witchery verify lycanthropy` audits the complete altar/form contract and current player state.
 - `/witchery ai status`, `/witchery ai chat <message>`, `/witchery ai memory`, `/witchery ai knowledge <query>`, `/witchery ai probe [prompt]`, `/witchery ai reload`, and `/witchery ai forget [nearest|all|<npc-uuid>]` — local NPC dialogue QA helpers.
 
@@ -253,9 +276,10 @@ Recommended loop — measure twice, cast once:
 1. Check [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md) and [docs/status/CURRENT.md](docs/status/CURRENT.md).
 2. Compare the remake against original/decompiled behavior before choosing a bounded task.
 3. Implement one coherent parity slice or bug fix.
-4. Run `.\gradlew.bat compileJava processResources`.
-5. Update only the docs routed by [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md).
-6. Commit meaningful progress with a clear message.
+4. Run `.\gradlew.bat test build`, plus relevant dedicated-server GameTests for the changed system.
+5. Run `.\gradlew.bat runData` when a generated Primer provider changes, and inspect the generated diff.
+6. Update only the docs routed by [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md).
+7. Commit meaningful progress with a clear message.
 
 Keep unrelated local art experiments, temp folders, or generated scratch files out of parity commits unless the task explicitly includes them.
 
