@@ -25,16 +25,19 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.BrewOfGraveItem;
 import com.emoniph.witchery.item.NecroStoneItem;
+import com.emoniph.witchery.item.TaglockKitItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -122,6 +125,36 @@ class BrewLogicTest {
                 "releasing a live cauldron brew adds the source 250 altar-power ritual cost");
         assertEquals(Brews.powerCost(ritualBrew), Brews.ritualPowerCost(ritualBrew),
                 "if Dog Tongue is already present, ritualPowerCost must not double-charge it");
+    }
+
+    @Test
+    void filledTaglockIsTheSourceFinalEntityRitualTrigger() {
+        Brews.bootstrap();
+        ItemStack empty = new ItemStack(WitcheryItems.BOUND_TAGLOCK_KIT.get());
+        ItemStack filled = TaglockKitItem.filledPlayerTaglock(UUID.randomUUID(), "Target");
+        List<Item> targetBrew = level2(Items.SPIDER_EYE, WitcheryItems.BOUND_TAGLOCK_KIT.get());
+
+        assertFalse(Brews.isRitualEntityTarget(empty), "an unbound kit cannot target a ritual");
+        assertFalse(Brews.canAddAutomatically(level2(Items.SPIDER_EYE), empty),
+                "an unbound target kit must remain outside the cauldron");
+        assertTrue(Brews.isRitualEntityTarget(filled));
+        assertTrue(Brews.canAddAutomatically(level2(Items.SPIDER_EYE), filled),
+                "a filled Taglock may become the source final ingredient");
+        assertTrue(Brews.triggersRitual(targetBrew));
+        assertEquals(Brews.powerCost(level2(Items.SPIDER_EYE))
+                        + Brews.SOURCE_RITUAL_ENTITY_TARGET_POWER_COST,
+                Brews.powerCost(targetBrew), "the filled Taglock adds 1000 altar power to the brew");
+        assertEquals(Brews.powerCost(targetBrew), Brews.ritualPowerCost(targetBrew),
+                "the Taglock trigger replaces rather than duplicates the Dog Tongue trigger cost");
+        assertEquals(Brews.Dispersal.DRINK, Brews.dispersal(targetBrew),
+                "direct entity targeting does not require or mutate a dispersal modifier");
+        assertEquals(Brews.RitualDeliveryResult.SUCCESS,
+                Brews.validateRitualEntityTargetDelivery(targetBrew, true, true),
+                "a valid direct Taglock target bypasses the splash-dispersal requirement");
+        assertEquals(Brews.RitualDeliveryResult.INVALID_TARGET,
+                Brews.validateRitualEntityTargetDelivery(targetBrew, false, true));
+        assertEquals(Brews.RitualDeliveryResult.TARGET_TOO_FAR,
+                Brews.validateRitualEntityTargetDelivery(targetBrew, true, false));
     }
 
     @Test
@@ -1882,6 +1915,26 @@ class BrewLogicTest {
 
         assertEquals(100, Brews.powerCost(List.of(Items.BRICK, Items.NETHER_BRICK)),
                 "Brick and Nether Brick each cost 50 source altar power as target modifiers");
+    }
+
+    @Test
+    void leonardAddsOneSourceRitualMisfortuneRisk() {
+        assertEquals(0, Brews.sourceRitualMisfortuneRisk(true, false, false, false));
+        assertEquals(1, Brews.sourceRitualMisfortuneRisk(true, false, false, false, true),
+                "Leonard adds one risk even when a valid ritual circle is present");
+        assertEquals(4, Brews.sourceRitualMisfortuneRisk(false, false, true, true, true),
+                "missing ritual circles, both infernal rings, and Leonard each add one risk");
+    }
+
+    @Test
+    void ritualMisfortuneUsesSourceAsymmetricVerticalBounds() {
+        net.minecraft.world.phys.AABB bounds = Brews.sourceRitualBackfireBounds(new BlockPos(10, 64, -4));
+        assertEquals(62.0D, bounds.minY);
+        assertEquals(68.0D, bounds.maxY);
+        assertEquals(-5.5D, bounds.minX);
+        assertEquals(26.5D, bounds.maxX);
+        assertEquals(-19.5D, bounds.minZ);
+        assertEquals(12.5D, bounds.maxZ);
     }
 
     @Test

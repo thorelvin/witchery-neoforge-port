@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -97,7 +98,12 @@ public record BrewContents(List<Item> items) {
     }
 
     public Brews.RitualDeliveryResult applyRitualFromCauldron(ServerLevel level, net.minecraft.core.BlockPos center,
-                                                             Entity source) {
+                                                              Entity source) {
         return Brews.applyRitualFromCauldron(level, center, items, source);
+    }
+
+    public Brews.RitualDeliveryResult applyRitualFromCauldron(ServerLevel level, net.minecraft.core.BlockPos center,
+                                                              ItemStack ritualEntityTarget, Entity source) {
+        return Brews.applyRitualFromCauldron(level, center, items, ritualEntityTarget, source);
     }
 }

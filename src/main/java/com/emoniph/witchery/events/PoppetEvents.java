@@ -334,25 +334,29 @@ public class PoppetEvents {
         }
     }
 
-    private static PoppetLocation findFirstBoundPoppet(ServerPlayer player, Predicate<ItemStack> matcher) {
-        if (SilverEvents.wearsFullHunterSet(player)) {
+    private static PoppetLocation findFirstBoundPoppet(LivingEntity target, Predicate<ItemStack> matcher) {
+        if (SilverEvents.wearsFullHunterSet(target)) {
             return null;
         }
 
-        UUID playerUUID = player.getUUID();
-        Inventory inventory = player.getInventory();
-
-        for (int i = 0; i < inventory.getContainerSize(); i++) {
-            ItemStack stack = inventory.getItem(i);
-            if (!stack.isEmpty() && matchesBound(stack, playerUUID) && matcher.test(stack)) {
-                return new PoppetLocation(stack, inventory, null, i);
+        UUID targetUuid = target.getUUID();
+        if (target instanceof ServerPlayer player) {
+            Inventory inventory = player.getInventory();
+            for (int i = 0; i < inventory.getContainerSize(); i++) {
+                ItemStack stack = inventory.getItem(i);
+                if (!stack.isEmpty() && matchesBound(stack, targetUuid) && matcher.test(stack)) {
+                    return new PoppetLocation(stack, inventory, null, i);
+                }
             }
         }
 
-        for (PoppetShelfBlockEntity shelf : PoppetShelfBlockEntity.getActiveShelves(((ServerLevel) player.level()).getServer())) {
+        if (!(target.level() instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+        for (PoppetShelfBlockEntity shelf : PoppetShelfBlockEntity.getActiveShelves(serverLevel.getServer())) {
             for (int i = 0; i < shelf.getContainerSize(); i++) {
                 ItemStack stack = shelf.getItem(i);
-                if (!stack.isEmpty() && matchesBound(stack, playerUUID) && matcher.test(stack)) {
+                if (!stack.isEmpty() && matchesBound(stack, targetUuid) && matcher.test(stack)) {
                     return new PoppetLocation(stack, null, shelf, i);
                 }
             }
@@ -368,11 +372,15 @@ public class PoppetEvents {
         return true;
     }
 
-    public static boolean damageBoundPoppet(ServerPlayer player, Item poppetItem, int amount) {
-        PoppetLocation location = findFirstBoundPoppet(player, stack -> stack.is(poppetItem));
+    public static boolean damageBoundPoppet(LivingEntity target, Item poppetItem, int amount) {
+        PoppetLocation location = findFirstBoundPoppet(target, stack -> stack.is(poppetItem));
         if (location == null) return false;
-        damagePoppet(location, adjustedPoppetDamage(player, poppetItem, amount));
+        damagePoppet(location, adjustedPoppetDamage(target, poppetItem, amount));
         return true;
+    }
+
+    public static boolean triggerRitualVoodooProtection(LivingEntity target) {
+        return damageBoundPoppet(target, WitcheryItems.VOODOO_PROTECTION_POPPET.get(), VOODOO_PROTECTION_DAMAGE);
     }
 
     public static boolean triggerVoodooProtection(ServerPlayer target, Player attacker, ItemStack attackingPoppet) {
@@ -408,12 +416,13 @@ public class PoppetEvents {
         return true;
     }
 
-    private static int adjustedPoppetDamage(ServerPlayer player, Item poppetItem, int amount) {
+    private static int adjustedPoppetDamage(LivingEntity target, Item poppetItem, int amount) {
         if (poppetItem == WitcheryItems.VOODOO_PROTECTION_POPPET.get()
+                && target instanceof Player player
                 && FetishBlockEntity.isNearFetish(player, FetishBlockEntity.EFFECT_VOODOO_PROTECTION)) {
-            if (player.level() instanceof ServerLevel level) {
+            if (target.level() instanceof ServerLevel level) {
                 level.sendParticles(ParticleTypes.WITCH,
-                        player.getX(), player.getY() + 1.0D, player.getZ(),
+                        target.getX(), target.getY() + 1.0D, target.getZ(),
                         8, 0.3D, 0.4D, 0.3D, 0.0D);
             }
             return Math.max(1, amount / 2);

@@ -168,7 +168,7 @@ public class LeonardsUrnItem extends Item {
                 player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.empty"), true);
                 return false;
             }
-            projectile.shootFromSourceThrower(player);
+            projectile.shootFromSourceSpell(player);
             level.addFreshEntity(projectile);
             playUrnCastEffects(level, player);
             player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.cast",

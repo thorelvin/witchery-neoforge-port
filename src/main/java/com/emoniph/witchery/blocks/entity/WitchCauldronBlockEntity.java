@@ -41,10 +41,12 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     private static final String KEY_BREW = "Brew";
     private static final String KEY_COLOR = "Color";
     private static final String KEY_WARNING = "Warning";
+    private static final String KEY_RITUAL_TARGET = "RitualTarget";
     private static final int STIR_INTERVAL = 6;
 
     private final List<Item> ingredients = new ArrayList<>();
     private int color;
+    private ItemStack ritualTarget = ItemStack.EMPTY;
     @Nullable
     private BrewWarningText warningText;
 
@@ -65,19 +67,30 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     }
 
     public void clear() {
-        if (!ingredients.isEmpty() || color != 0 || warningText != null) {
+        if (!ingredients.isEmpty() || color != 0 || warningText != null || !ritualTarget.isEmpty()) {
             ingredients.clear();
             color = 0;
             warningText = null;
+            ritualTarget = ItemStack.EMPTY;
             sync();
         }
     }
 
     public boolean tryAddIngredient(Item item) {
-        if (ingredients.size() >= Brews.MAX_CAPACITY || !Brews.canAdd(ingredients, item)) {
+        return tryAddIngredient(new ItemStack(item));
+    }
+
+    public boolean tryAddIngredient(ItemStack stack) {
+        if (ingredients.size() >= Brews.MAX_CAPACITY
+                || Brews.triggersRitual(ingredients)
+                || !Brews.canAdd(ingredients, stack)) {
             return false;
         }
+        Item item = stack.getItem();
         ingredients.add(item);
+        if (Brews.isRitualEntityTarget(stack)) {
+            ritualTarget = stack.copyWithCount(1);
+        }
         if (BrewWarningMessages.isBindingItem(item) && level instanceof ServerLevel serverLevel) {
             warningText = BrewWarningMessages.findNearby(serverLevel, worldPosition, null).orElse(null);
         }
@@ -99,10 +112,17 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         sync();
     }
 
+    public ItemStack getRitualTarget() {
+        return ritualTarget.copy();
+    }
+
     public void removeIngredients(List<Item> items) {
         boolean changed = false;
         for (Item item : items) {
             changed |= ingredients.remove(item);
+            if (item == ritualTarget.getItem()) {
+                ritualTarget = ItemStack.EMPTY;
+            }
             if (BrewWarningMessages.isBindingItem(item)) {
                 warningText = null;
             }
@@ -126,6 +146,9 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         if (warningText != null && !warningText.isEmpty()) {
             tag.store(KEY_WARNING, BrewWarningText.CODEC, warningText);
         }
+        if (!ritualTarget.isEmpty()) {
+            tag.store(KEY_RITUAL_TARGET, ItemStack.CODEC, ritualTarget);
+        }
         tag.putInt(KEY_COLOR, color);
     }
 
@@ -135,6 +158,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         ingredients.clear();
         tag.read(KEY_BREW, BrewContents.CODEC).ifPresent(contents -> ingredients.addAll(contents.items()));
         warningText = tag.read(KEY_WARNING, BrewWarningText.CODEC).orElse(null);
+        ritualTarget = tag.read(KEY_RITUAL_TARGET, ItemStack.CODEC).orElse(ItemStack.EMPTY);
         color = tag.getIntOr(KEY_COLOR, ingredients.isEmpty() ? 0 : Brews.color(ingredients));
     }
 
@@ -157,10 +181,10 @@ public class WitchCauldronBlockEntity extends BlockEntity {
                 continue;
             }
             ItemStack itemStack = entity.getItem();
-            if (!Brews.canAddAutomatically(be.getIngredients(), itemStack.getItem())) {
+            if (!Brews.canAddAutomatically(be.getIngredients(), itemStack)) {
                 continue;
             }
-            if (!be.tryAddIngredient(itemStack.getItem())) {
+            if (!be.tryAddIngredient(itemStack)) {
                 continue;
             }
             itemStack.shrink(1);

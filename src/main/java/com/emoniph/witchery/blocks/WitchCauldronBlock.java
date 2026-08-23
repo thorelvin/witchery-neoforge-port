@@ -315,7 +315,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof WitchCauldronBlockEntity brewBe)) {
             return InteractionResult.PASS;
         }
-        if (!brewBe.tryAddIngredient(stack.getItem())) {
+        if (!brewBe.tryAddIngredient(stack)) {
             player.displayClientMessage(Component.translatable("witchery.cauldron.brew.cannot_add"), false);
             return InteractionResult.CONSUME;
         }
@@ -355,26 +355,29 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         }
         com.emoniph.witchery.brewing.BrewContents contents =
                 new com.emoniph.witchery.brewing.BrewContents(List.copyOf(brewBe.getIngredients()));
-        Brews.RitualDeliveryResult validation = Brews.validateRitualFromCauldron(serverLevel, pos, contents.items(), player);
+        ItemStack ritualTarget = brewBe.getRitualTarget();
+        Brews.RitualDeliveryResult validation = Brews.validateRitualFromCauldron(
+                serverLevel, pos, contents.items(), ritualTarget, player);
         if (validation != Brews.RitualDeliveryResult.SUCCESS) {
             player.displayClientMessage(Component.translatable(ritualDeliveryFailureKey(validation)), false);
             return InteractionResult.CONSUME;
         }
 
-        int powerCost = Brews.ritualPowerCost(serverLevel, pos, contents.items());
+        int powerCost = Brews.ritualPowerCost(serverLevel, pos, contents.items(), ritualTarget);
         AltarBlockEntity altar = findNearbyAltar(level, pos, CHALK_ALTAR_RADIUS);
         if (altar == null || !altar.hasValidStructure() || altar.getPower() < powerCost || !altar.consumePower(powerCost)) {
             player.displayClientMessage(Component.translatable("witchery.cauldron.brew.ritual.no_power", powerCost), false);
             return InteractionResult.CONSUME;
         }
 
-        Brews.RitualDeliveryResult result = contents.applyRitualFromCauldron(serverLevel, pos, player);
+        Brews.RitualDeliveryResult result = contents.applyRitualFromCauldron(
+                serverLevel, pos, ritualTarget, player);
         if (result != Brews.RitualDeliveryResult.SUCCESS) {
             altar.refundPower(powerCost);
             player.displayClientMessage(Component.translatable(ritualDeliveryFailureKey(result)), false);
             return InteractionResult.CONSUME;
         }
-        if (!player.getAbilities().instabuild) {
+        if (!player.getAbilities().instabuild && !Brews.triggersRitual(contents.items())) {
             stack.shrink(1);
         }
         setFillLevel(state, level, pos, 0);
@@ -467,6 +470,10 @@ public class WitchCauldronBlock extends BaseEntityBlock {
 
     private void collectComposedBrew(com.emoniph.witchery.blocks.entity.WitchCauldronBlockEntity be, BlockState state,
                                      Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
+        if (Brews.triggersRitual(be.getIngredients())) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.brew.ritual.awaiting_release"), false);
+            return;
+        }
         com.emoniph.witchery.brewing.BrewContents contents =
                 new com.emoniph.witchery.brewing.BrewContents(List.copyOf(be.getIngredients()));
         int powerCost = contents.powerCost();
@@ -506,6 +513,10 @@ public class WitchCauldronBlock extends BaseEntityBlock {
      */
     private void collectBrewBucket(com.emoniph.witchery.blocks.entity.WitchCauldronBlockEntity be, BlockState state,
                                    Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
+        if (Brews.triggersRitual(be.getIngredients())) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.brew.ritual.awaiting_release"), false);
+            return;
+        }
         com.emoniph.witchery.brewing.BrewContents contents =
                 new com.emoniph.witchery.brewing.BrewContents(List.copyOf(be.getIngredients()));
         int powerCost = contents.powerCost();

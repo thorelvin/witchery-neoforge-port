@@ -1,5 +1,6 @@
 package com.emoniph.witchery.brewing;
 
+import com.emoniph.witchery.blocks.entity.AreaMarkerBlockEntity;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.effect.DiseasedMobEffect;
 import com.emoniph.witchery.effect.SnowTrailMobEffect;
@@ -19,11 +20,14 @@ import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.events.SilverEvents;
+import com.emoniph.witchery.events.PoppetEvents;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDataComponents;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
+import com.emoniph.witchery.item.PoppetItem;
+import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
 import com.emoniph.witchery.item.WerewolfShiftUtil;
 import com.emoniph.witchery.protection.WitcheryProtectionAction;
@@ -41,7 +45,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -283,6 +286,7 @@ public final class Brews {
     private static final int SOURCE_RITUAL_BACKFIRE_LIGHTNING_PARALYSIS_TICKS = 10 * 20;
     public static final int SOURCE_RITUAL_TRIGGER_POWER_COST = 250;
     public static final int SOURCE_SET_LOCATION_POWER_COST = 100;
+    public static final int SOURCE_RITUAL_ENTITY_TARGET_POWER_COST = 1000;
     public static final int SOURCE_TRIGGERED_RITUAL_ITEM_CHARGES = 1;
     public static final int SOURCE_TRIGGERED_RITUAL_CAT_ITEM_CHARGES = 2;
     private static final double RITUAL_TARGET_OFFERING_RADIUS = 2.0D;
@@ -339,6 +343,20 @@ public final class Brews {
 
         boolean explicit() {
             return offering != null;
+        }
+    }
+
+    private record RitualEntityTarget(LivingEntity entity, RitualDeliveryResult failure) {
+        static RitualEntityTarget target(LivingEntity entity) {
+            return new RitualEntityTarget(entity, RitualDeliveryResult.SUCCESS);
+        }
+
+        static RitualEntityTarget failure(RitualDeliveryResult failure) {
+            return new RitualEntityTarget(null, failure);
+        }
+
+        boolean valid() {
+            return failure == RitualDeliveryResult.SUCCESS;
         }
     }
 
@@ -565,6 +583,9 @@ public final class Brews {
         // Tongue of Dog = source BrewActionRitual trigger. It stays explicit so dropped Tongue of Dog
         // still feeds kettle recipes instead of being swallowed by the auto-stir loop.
         registerExplicit(WitcheryItems.TONGUE_OF_DOG.get(), Ingredient.ritual(SOURCE_RITUAL_TRIGGER_POWER_COST));
+        // A filled Taglock is the source direct-entity ritual trigger and must remain the final ingredient.
+        registerStirrable(WitcheryItems.BOUND_TAGLOCK_KIT.get(),
+                Ingredient.ritual(SOURCE_RITUAL_ENTITY_TARGET_POWER_COST));
     }
 
     private static void register(Item item, Ingredient ingredient) {
@@ -610,6 +631,12 @@ public final class Brews {
 
     public static boolean canAddAutomatically(List<Item> currentItems, Item candidate) {
         return isAutomaticIngredient(candidate) && canAdd(currentItems, candidate);
+    }
+
+    public static boolean canAddAutomatically(List<Item> currentItems, ItemStack candidate) {
+        return !candidate.isEmpty()
+                && isAutomaticIngredient(candidate.getItem())
+                && canAdd(currentItems, candidate);
     }
 
     public static Ingredient get(Item item) {
@@ -731,6 +758,20 @@ public final class Brews {
         };
     }
 
+    public static boolean canAdd(List<Item> currentItems, ItemStack candidate) {
+        if (candidate.isEmpty() || candidate.is(WitcheryItems.BOUND_TAGLOCK_KIT.get())
+                && !isRitualEntityTarget(candidate)) {
+            return false;
+        }
+        return canAdd(currentItems, candidate.getItem());
+    }
+
+    public static boolean isRitualEntityTarget(ItemStack stack) {
+        return !stack.isEmpty()
+                && stack.is(WitcheryItems.BOUND_TAGLOCK_KIT.get())
+                && TaglockKitItem.isFilled(stack);
+    }
+
     public static int powerCost(List<Item> items) {
         return resolveBrew(items).powerCost;
     }
@@ -749,8 +790,16 @@ public final class Brews {
     }
 
     public static int ritualPowerCost(ServerLevel level, BlockPos center, List<Item> items) {
+        return ritualPowerCost(level, center, items, ItemStack.EMPTY);
+    }
+
+    public static int ritualPowerCost(ServerLevel level, BlockPos center, List<Item> items,
+                                      ItemStack ritualEntityTarget) {
         int cost = ritualPowerCost(items);
-        if (dispersal(items) != Dispersal.TRIGGERED && findRitualTargetOffering(level, center).isPresent()) {
+        if (!isRitualEntityTarget(ritualEntityTarget)
+                && !hasRitualEntityTargetIngredient(items)
+                && dispersal(items) != Dispersal.TRIGGERED
+                && findRitualTargetOffering(level, center).isPresent()) {
             cost += SOURCE_SET_LOCATION_POWER_COST;
         }
         return cost;
@@ -916,8 +965,33 @@ public final class Brews {
     }
 
     public static RitualDeliveryResult validateRitualFromCauldron(ServerLevel level, BlockPos center,
-                                                                  List<Item> items, Entity source) {
+                                                                   List<Item> items, Entity source) {
+        return validateRitualFromCauldron(level, center, items, ItemStack.EMPTY, source);
+    }
+
+    public static RitualDeliveryResult validateRitualFromCauldron(ServerLevel level, BlockPos center,
+                                                                   List<Item> items, ItemStack ritualEntityTarget,
+                                                                   Entity source) {
         Resolution resolved = resolveBrew(items);
+        if (containsRitualEntityTargetIngredient(items)) {
+            RitualDeliveryResult preliminary = validateRitualEntityTargetDelivery(
+                    items, isRitualEntityTarget(ritualEntityTarget), true);
+            if (preliminary != RitualDeliveryResult.SUCCESS) {
+                return preliminary;
+            }
+            RitualEntityTarget target = resolveRitualEntityTarget(level, ritualEntityTarget);
+            if (!target.valid()) {
+                return target.failure();
+            }
+            LivingEntity entity = target.entity();
+            if (!(entity.level() instanceof ServerLevel targetLevel)) {
+                return RitualDeliveryResult.INVALID_TARGET;
+            }
+            boolean targetAllowed = sourceRitualTargetAllowed(center, level.dimension(), entity.blockPosition(),
+                    targetLevel.dimension(), sourceRitualCovenSize(level, center),
+                    sourceRitualLeonardPresent(level, center));
+            return validateRitualEntityTargetDelivery(items, true, targetAllowed);
+        }
         Dispersal delivery = dispersal(items);
         RitualDeliveryResult base = validateRitualDelivery(resolved, delivery, true, true);
         if (base != RitualDeliveryResult.SUCCESS) {
@@ -936,6 +1010,19 @@ public final class Brews {
         boolean movingBrewCanPlace = delivery != Dispersal.GAS && delivery != Dispersal.LIQUID
                 || findRitualMovingBrewPlacement(target.level(), center, target, source).isPresent();
         return validateRitualDelivery(resolved, delivery, triggeredItemPresent, movingBrewCanPlace);
+    }
+
+    public static RitualDeliveryResult validateRitualEntityTargetDelivery(List<Item> items,
+                                                                           boolean validTarget,
+                                                                           boolean targetAllowed) {
+        Resolution resolved = resolveBrew(items);
+        if (resolved.effects.isEmpty() && resolved.actions.isEmpty()) {
+            return RitualDeliveryResult.NO_EFFECT;
+        }
+        if (!hasRitualEntityTargetIngredient(items) || !validTarget) {
+            return RitualDeliveryResult.INVALID_TARGET;
+        }
+        return targetAllowed ? RitualDeliveryResult.SUCCESS : RitualDeliveryResult.TARGET_TOO_FAR;
     }
 
     public static RitualDeliveryResult validateRitualDelivery(List<Item> items, boolean triggeredItemPresent,
@@ -963,13 +1050,31 @@ public final class Brews {
 
     public static RitualDeliveryResult applyRitualFromCauldron(ServerLevel level, BlockPos center,
                                                               List<Item> items, Entity source) {
+        return applyRitualFromCauldron(level, center, items, ItemStack.EMPTY, source);
+    }
+
+    public static RitualDeliveryResult applyRitualFromCauldron(ServerLevel level, BlockPos center,
+                                                               List<Item> items, ItemStack ritualEntityTarget,
+                                                               Entity source) {
         Resolution resolved = resolveBrew(items);
-        RitualDeliveryResult validation = validateRitualFromCauldron(level, center, items, source);
+        RitualDeliveryResult validation = validateRitualFromCauldron(
+                level, center, items, ritualEntityTarget, source);
         if (validation != RitualDeliveryResult.SUCCESS) {
             return validation;
         }
-        Dispersal delivery = dispersal(items);
         int covenSize = sourceRitualCovenSize(level, center);
+        if (containsRitualEntityTargetIngredient(items)) {
+            RitualEntityTarget target = resolveRitualEntityTarget(level, ritualEntityTarget);
+            if (!target.valid() || !(target.entity().level() instanceof ServerLevel targetLevel)) {
+                return RitualDeliveryResult.INVALID_TARGET;
+            }
+            if (isRitualEntityTargetProtected(target.entity(), source)) {
+                return RitualDeliveryResult.SUCCESS;
+            }
+            applyRitualEntityInstant(targetLevel, target.entity(), items, resolved, source, covenSize);
+            return RitualDeliveryResult.SUCCESS;
+        }
+        Dispersal delivery = dispersal(items);
         RitualTarget target = resolveRitualTarget(level, center, delivery);
         if (!target.valid()) {
             return target.failure();
@@ -997,6 +1102,25 @@ public final class Brews {
         applyRitualBlockInstant(target.level(), target.pos(), items, resolved, source, covenSize);
         consumeRitualTargetOffering(target);
         return RitualDeliveryResult.SUCCESS;
+    }
+
+    private static RitualEntityTarget resolveRitualEntityTarget(ServerLevel level, ItemStack taglock) {
+        Optional<UUID> uuid = TaglockKitItem.getUUID(taglock);
+        if (uuid.isEmpty() || level.getServer() == null) {
+            return RitualEntityTarget.failure(RitualDeliveryResult.INVALID_TARGET);
+        }
+        return PoppetItem.findLivingEntity(level.getServer(), uuid.get())
+                .filter(LivingEntity::isAlive)
+                .map(RitualEntityTarget::target)
+                .orElseGet(() -> RitualEntityTarget.failure(RitualDeliveryResult.INVALID_TARGET));
+    }
+
+    private static boolean containsRitualEntityTargetIngredient(List<Item> items) {
+        return items.contains(WitcheryItems.BOUND_TAGLOCK_KIT.get());
+    }
+
+    private static boolean hasRitualEntityTargetIngredient(List<Item> items) {
+        return !items.isEmpty() && items.getLast() == WitcheryItems.BOUND_TAGLOCK_KIT.get();
     }
 
     private static RitualTarget resolveRitualTarget(ServerLevel level, BlockPos center, Dispersal delivery) {
@@ -1076,6 +1200,56 @@ public final class Brews {
                 || com.emoniph.witchery.blocks.BrewFluidBlock.canDisplace(existing);
     }
 
+    private static boolean isRitualEntityTargetProtected(LivingEntity target, Entity source) {
+        if (SilverEvents.hasHunterCurseProtection(target)
+                || AreaMarkerBlockEntity.isRitualEntityTargetProtected(target)) {
+            if (source instanceof Player caster) {
+                caster.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+            }
+            return true;
+        }
+        if (!PoppetEvents.triggerRitualVoodooProtection(target)) {
+            return false;
+        }
+        if (target instanceof ServerPlayer targetPlayer) {
+            targetPlayer.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
+        }
+        if (source instanceof Player caster) {
+            caster.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
+        }
+        return true;
+    }
+
+    private static void applyRitualEntityInstant(ServerLevel level, LivingEntity target, List<Item> items,
+                                                  Resolution resolved, Entity source, int covenSize) {
+        for (EffectApplication application : resolved.effects) {
+            if (application.disableEntityTarget()) {
+                continue;
+            }
+            MobEffectInstance effect = application.effect();
+            int strength = sourceRitualEffectiveStrength(effect.getAmplifier(), covenSize);
+            MobEffectInstance ritualEffect = new MobEffectInstance(effect.getEffect(), effect.getDuration(), strength,
+                    effect.isAmbient(), effect.isVisible(), effect.showIcon());
+            applyEffect(target, ritualEffect, source, 1.0D, 1.0D);
+        }
+        for (ActionApplication action : resolved.actions) {
+            if (action.disableEntityTarget()) {
+                continue;
+            }
+            ActionApplication ritualAction = new ActionApplication(action.action(), action.inverted(),
+                    sourceRitualEffectiveStrength(action.strength(), covenSize), action.duration(),
+                    action.noParticles(), action.disableBlockTarget(), action.disableEntityTarget(),
+                    action.strengthCeilingDisabled(), action.nameKey());
+            applyAction(level, target, ritualAction, 1.0D, 1.0D, source, target.position());
+        }
+        level.sendParticles(new DustParticleOptions(color(items), 1.0F),
+                target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ(),
+                24, 0.45D, 0.5D, 0.45D, 0.03D);
+        level.sendParticles(ParticleTypes.WITCH,
+                target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ(),
+                16, 0.4D, 0.45D, 0.4D, 0.04D);
+    }
+
     private static void applyRitualBlockInstant(ServerLevel level, BlockPos center, List<Item> items,
                                                 Resolution resolved, Entity source, int covenSize) {
         double radius = sourceRitualInstantRadius(resolved.extent);
@@ -1131,7 +1305,13 @@ public final class Brews {
     }
 
     public static int sourceRitualMisfortuneRisk(boolean smallRitual, boolean mediumRitual,
-                                                 boolean smallInfernal, boolean mediumInfernal) {
+                                                  boolean smallInfernal, boolean mediumInfernal) {
+        return sourceRitualMisfortuneRisk(smallRitual, mediumRitual, smallInfernal, mediumInfernal, false);
+    }
+
+    public static int sourceRitualMisfortuneRisk(boolean smallRitual, boolean mediumRitual,
+                                                 boolean smallInfernal, boolean mediumInfernal,
+                                                 boolean leonardPresent) {
         int risk = 0;
         if (!smallRitual && !mediumRitual) {
             risk++;
@@ -1140,6 +1320,9 @@ public final class Brews {
             risk++;
         }
         if (mediumInfernal) {
+            risk++;
+        }
+        if (leonardPresent) {
             risk++;
         }
         return risk;
@@ -1198,7 +1381,8 @@ public final class Brews {
     private static int sourceRitualMisfortuneRisk(ServerLevel level, BlockPos center) {
         int small = detectCauldronRingVariant(level, center, RitualCircleDetector.CircleSize.SMALL);
         int medium = detectCauldronRingVariant(level, center, RitualCircleDetector.CircleSize.MEDIUM);
-        return sourceRitualMisfortuneRisk(small == 1, medium == 1, small == 3, medium == 3);
+        return sourceRitualMisfortuneRisk(small == 1, medium == 1, small == 3, medium == 3,
+                sourceRitualLeonardPresent(level, center));
     }
 
     private static int detectCauldronRingVariant(ServerLevel level, BlockPos center,
@@ -1222,7 +1406,7 @@ public final class Brews {
 
     private static void applyRitualBackfireEffect(ServerLevel level, BlockPos center, MobEffectInstance effect) {
         double radiusSq = SOURCE_RITUAL_BACKFIRE_RADIUS * SOURCE_RITUAL_BACKFIRE_RADIUS;
-        AABB bounds = new AABB(center).inflate(SOURCE_RITUAL_BACKFIRE_RADIUS, 2.0D, SOURCE_RITUAL_BACKFIRE_RADIUS);
+        AABB bounds = sourceRitualBackfireBounds(center);
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, bounds)) {
             if (entity.distanceToSqr(center.getX() + 0.5D, entity.getY(), center.getZ() + 0.5D) >= radiusSq
                     || entity instanceof Enemy
@@ -1233,6 +1417,16 @@ public final class Brews {
             removeBeneficialEffects(entity);
             entity.addEffect(new MobEffectInstance(effect));
         }
+    }
+
+    public static AABB sourceRitualBackfireBounds(BlockPos center) {
+        double centerX = center.getX() + 0.5D;
+        double centerZ = center.getZ() + 0.5D;
+        return new AABB(
+                centerX - SOURCE_RITUAL_BACKFIRE_RADIUS, center.getY() - 2.0D,
+                centerZ - SOURCE_RITUAL_BACKFIRE_RADIUS,
+                centerX + SOURCE_RITUAL_BACKFIRE_RADIUS, center.getY() + 4.0D,
+                centerZ + SOURCE_RITUAL_BACKFIRE_RADIUS);
     }
 
     private static void removeBeneficialEffects(LivingEntity entity) {

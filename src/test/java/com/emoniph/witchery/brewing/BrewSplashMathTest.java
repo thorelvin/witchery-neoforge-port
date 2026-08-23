@@ -38,6 +38,10 @@ class BrewSplashMathTest {
         assertEquals(0.75F, ThrownBrewEntity.SOURCE_THROW_VELOCITY, 0.00001F);
         assertEquals(1.0F, ThrownBrewEntity.SOURCE_THROW_INACCURACY, 0.00001F);
         assertEquals(0.05D, ThrownBrewEntity.SOURCE_GRAVITY, 0.00001D);
+        assertEquals(0.0F, ThrownBrewEntity.SOURCE_SPELL_PITCH_OFFSET, 0.00001F);
+        assertEquals(4.0F, ThrownBrewEntity.SOURCE_SPELL_VELOCITY, 0.00001F);
+        assertEquals(0.0D, ThrownBrewEntity.SOURCE_SPELL_GRAVITY, 0.00001D);
+        assertEquals(200, ThrownBrewEntity.SOURCE_MAX_AIR_TICKS);
     }
 
     @Test

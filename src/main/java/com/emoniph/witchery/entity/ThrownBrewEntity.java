@@ -42,7 +42,11 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
     public static final float SOURCE_THROW_PITCH_OFFSET = -20.0F;
     public static final float SOURCE_THROW_VELOCITY = 0.75F;
     public static final float SOURCE_THROW_INACCURACY = 1.0F;
+    public static final float SOURCE_SPELL_PITCH_OFFSET = 0.0F;
+    public static final float SOURCE_SPELL_VELOCITY = 4.0F;
     public static final double SOURCE_GRAVITY = 0.05D;
+    public static final double SOURCE_SPELL_GRAVITY = 0.0D;
+    public static final int SOURCE_MAX_AIR_TICKS = 200;
     private static final double SOURCE_THROW_ORIGIN_BACKSET = 0.16D;
 
     private static final EntityDataAccessor<Integer> BREW_TYPE =
@@ -54,6 +58,8 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
     /** Synced bottle tint so the flying bottle renders in the brew's colour client-side. */
     private static final EntityDataAccessor<Integer> COLOR =
             SynchedEntityData.defineId(ThrownBrewEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> IS_SPELL =
+            SynchedEntityData.defineId(ThrownBrewEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final double SOURCE_CURSE_RADIUS = 2.0;
     private static final int SOURCE_CURSE_CHARGES = 1;
@@ -106,6 +112,7 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
         builder.define(IS_GAS, false);
         builder.define(POWER, 1);
         builder.define(COLOR, 0xFFFFFF);
+        builder.define(IS_SPELL, false);
     }
 
     public int getBrewTypeId() { return entityData.get(BREW_TYPE); }
@@ -116,10 +123,19 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
     public void setPower(int power) { entityData.set(POWER, Math.max(1, Math.min(5, power))); }
     public int getColor() { return entityData.get(COLOR); }
     public void setColor(int color) { entityData.set(COLOR, color); }
+    public boolean isSpell() { return entityData.get(IS_SPELL); }
+    public void setSpell(boolean spell) { entityData.set(IS_SPELL, spell); }
 
     public void shootFromSourceThrower(LivingEntity thrower) {
+        setSpell(false);
         shootFromRotation(thrower, thrower.getXRot(), thrower.getYRot(), SOURCE_THROW_PITCH_OFFSET,
                 SOURCE_THROW_VELOCITY, SOURCE_THROW_INACCURACY);
+    }
+
+    public void shootFromSourceSpell(LivingEntity thrower) {
+        setSpell(true);
+        shootFromRotation(thrower, thrower.getXRot(), thrower.getYRot(), SOURCE_SPELL_PITCH_OFFSET,
+                SOURCE_SPELL_VELOCITY, SOURCE_THROW_INACCURACY);
     }
 
     /** The bottle item the {@link net.minecraft.client.renderer.entity.ThrownItemRenderer} draws in flight. */
@@ -143,6 +159,10 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
     @Override
     public void tick() {
         super.tick();
+        if (!level().isClientSide() && tickCount > SOURCE_MAX_AIR_TICKS) {
+            discard();
+            return;
+        }
         if (level().isClientSide()) {
             int color = brewColor();
             level().addParticle(new DustParticleOptions(color, isGas() ? 1.0F : 0.75F),
@@ -215,6 +235,7 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
         tag.putBoolean("Gas", isGas());
         tag.putInt("Power", getPower());
         tag.putInt("Color", getColor());
+        tag.putBoolean("Spell", isSpell());
     }
 
     @Override
@@ -224,6 +245,7 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
         setGas(tag.getBooleanOr("Gas", isGas()));
         setPower(tag.getIntOr("Power", getPower()));
         setColor(tag.getIntOr("Color", getColor()));
+        setSpell(tag.getBooleanOr("Spell", isSpell()));
         composed = tag.read("Composed", BrewContents.CODEC).orElse(BrewContents.EMPTY);
         warningText = tag.read("BrewWarning", BrewWarningText.CODEC).orElse(null);
         composedDispersal = readComposedDispersal(tag.getStringOr("ComposedDispersal",
@@ -286,7 +308,7 @@ public class ThrownBrewEntity extends ThrowableProjectile implements ItemSupplie
 
     @Override
     protected double getDefaultGravity() {
-        return SOURCE_GRAVITY;
+        return isSpell() ? SOURCE_SPELL_GRAVITY : SOURCE_GRAVITY;
     }
 
     private static void spawnImpactParticles(ServerLevel level, Vec3 pos, int color, boolean gas) {

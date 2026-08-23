@@ -323,6 +323,22 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 ### Custom Brews And Rituals
 
+- Throw a non-empty brew directly from Leonard's Urn and confirm the ordinary
+  arcing trajectory remains. Fire that same Urn slot through a Mystic Branch
+  focus glyph and confirm a fast, straight, zero-drop flight that expires after
+  200 ticks if it never hits.
+- Add a filled Taglock Kit as the final ingredient in a valid cauldron ritual.
+  Confirm the empty kit is rejected, the filled target survives save/reload,
+  later ingredients and bottle/bucket extraction are refused, and Tongue of Dog
+  releases the ritual without consuming another trigger or requiring splash
+  dispersal. Exactly 1,000 altar power should be added to the recipe cost.
+- Repeat the direct ritual against a nearby player and a loaded named mob, then
+  test out-of-range and cross-dimension targets with one witch, a normal coven,
+  a six-witch coven, and Leonard. Verify the existing range and strength caps.
+- Repeat with Hunter armor, an Area Marker ritual shield, and a bound Voodoo
+  Protection Poppet. The protected target should receive no effect while the
+  successful release still spends power and clears the cauldron. Brick should
+  suppress entity delivery; Nether Brick should permit it.
 - Multi-offering rites should not show their visible result until all offerings
   disappear one by one.
 - Leonard cauldron summon: dissolve Nether Wart, Tear of the Goddess, Diamond

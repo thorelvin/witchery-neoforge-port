@@ -55,6 +55,15 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Custom Brew projectile and ritual-target parity is restored. Direct Leonard's
+  Urn throws retain their ordinary arc, while Mystic Branch focus shots use the
+  source 4.0 velocity, zero gravity, and 200-tick lifetime. A filled Taglock Kit
+  can now be the final cauldron ingredient for a direct 1,000-power ritual:
+  later ingredients and bottling are locked, Tongue of Dog releases without a
+  splash requirement, and player or loaded-mob targets use the existing coven,
+  range, Leonard, Hunter armor, Area Marker, Voodoo Poppet, and Brick rules. The
+  target payload persists across saves. Leonard also restores the source +1
+  misfortune risk and asymmetric ritual backfire bounds.
 - Legacy model-coordinate parity is now an explicit tested contract rather than
   a collection of visual approximations. `LegacyModelTransforms` preserves the
   source `ModelRenderer.render`, `renderWithRotation`, and `postRender` matrix

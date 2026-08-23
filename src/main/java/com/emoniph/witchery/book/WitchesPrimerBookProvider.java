@@ -119,6 +119,15 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 List.of(WitcheryItems.MANDRAKE_ROOT.get(), Items.NETHER_WART,
                         WitcheryItems.TEAR_OF_GODDESS.get(), Items.ENDER_EYE,
                         Items.GUNPOWDER, Items.GLASS_BOTTLE)));
+        pages.addAll(WitcheryBooks.prose("Ritual Targets",
+                "A brim-full heated cauldron may release a finished brew when you sneak-use **Tongue of Dog**. "
+                        + "For a living target, add that player or creature's **filled Taglock Kit last**. The "
+                        + "Taglock adds 1,000 altar power, works without a splash ingredient, and prevents "
+                        + "bottling or further stirring. Tongue of Dog then serves only as the release gesture."
+                        + "\n\nDistance grows with a nearby coven; six coven witches remove the same-world limit, "
+                        + "while cross-dimensional targeting also requires the Shade of Leonard. Full Hunter "
+                        + "clothes, a protecting Area Marker, or a bound Voodoo Protection Poppet may absorb the "
+                        + "working after its power is spent."));
 
         referenceSection(pages, "Capacity",
                 "Capacity ingredients widen the brew before an effect or action can fit.",
@@ -201,7 +210,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
             case LIQUID -> "moving liquid dispersal";
             case TRIGGER -> "triggered curse dispersal";
             case WARNING -> "binds nearby spoken warning text";
-            case RITUAL -> "ritual cauldron release trigger";
+            case RITUAL -> ref.item() == WitcheryItems.BOUND_TAGLOCK_KIT.get()
+                    ? "direct living-entity ritual target; add last"
+                    : "ritual cauldron release trigger";
             case COLOR -> "sets bottle colour";
             case DRINK_SPEED -> ref.drinkSpeedModifier() < 0
                     ? "faster drinking" : "slower drinking";
