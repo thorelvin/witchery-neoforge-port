@@ -8,6 +8,7 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.ChatFormatting;
@@ -24,7 +25,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -47,7 +47,6 @@ public class GlassGobletItem extends Item {
     private static final int FILL_MIN_VAMPIRE_LEVEL = 9;
     private static final int FILL_BLOOD_POWER_COST = 125;
     private static final int STARTING_VAMPIRE_BLOOD = 250;
-    private static final int MESMERISE_SLOWNESS_AMPLIFIER = 4;
     private static final int VILLAGER_MAX_BLOOD = 500;
     private static final String TAG_BLOOD_NAME = "witchery_blood_name";
     private static final String TAG_BLOOD_UUID = "witchery_blood_uuid";
@@ -325,10 +324,12 @@ public class GlassGobletItem extends Item {
     }
 
     private static boolean isMesmerised(LivingEntity target) {
-        MobEffectInstance slowness = target.getEffect(MobEffects.SLOWNESS);
-        return slowness != null
-                && slowness.getAmplifier() >= MESMERISE_SLOWNESS_AMPLIFIER
-                && slowness.getDuration() > 20;
+        MobEffectInstance paralysis = target.getEffect(WitcheryMobEffects.PARALYSED);
+        return sourceTransfixState(paralysis != null, paralysis == null ? -1 : paralysis.getAmplifier());
+    }
+
+    static boolean sourceTransfixState(boolean paralysed, int amplifier) {
+        return paralysed && amplifier >= 5;
     }
 
     private static int getVillagerBlood(Villager villager) {

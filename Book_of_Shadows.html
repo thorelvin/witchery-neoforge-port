@@ -212,13 +212,14 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <p class="subtitle">A Complete Guide to the Craft of Witchery Rewoven</p>
   <p class="divider">· · · ✦ · · ·</p>
   <p class="edition">Witchery Rewoven — NeoForge 1.21.11 Edition</p>
-  <p class="version">Version 19 — Eighteenth Edition — The old shapes remember</p>
+  <p class="version">Version 20 — Nineteenth Edition — The blood remembers</p>
 </div>
 
 <div class="callout callout-tip" style="margin-bottom:2.5rem;">
 <strong>What changed in this edition</strong> — old paths are drawn more clearly:
 <ul style="margin-top:0.5rem;margin-bottom:0;">
   <li>The old shapes have remembered their joints and bearings. Bosses, spirits, familiars, village folk, machines, armor, and held tools now stand from their source geometry again. The Witch's Cauldron has its full stepped body and exact water levels, while its approved splayed feet remain grounded and reach all four corners; the Hand of Death lies forward and palm-down in its wielder's grasp.</li>
+  <li>The <a href="#ch16"><strong>vampire's Blood Power</strong></a> has remembered its complete working: the five source icons beside the hotbar, slot-one selection, mortal blood beneath the gaze, Mesmerise and its vision toggle, stacked Speed, one compact flying Bat form, and the charged Storm, Swarm, and Return Home ultimates. Refused ultimates no longer waste their charge.</li>
   <li>The additive endgame <a href="#otherwhere-hearth"><strong>Otherwhere Hearth</strong></a> now lets a full coven carry a settled home bodily between the Overworld and Spirit World. An expensive Kettle batch permanently binds the hearth; each later crossing uses a large Otherwhere ring, medium Ritual ring, and high-strength altar to exchange both same-coordinate 25-block cubes, with persisted recovery guarding the house if a crossing is interrupted.</li>
   <li>The sleeping <strong>Body</strong> left behind by Spirit Walking has remembered its old shape: broad and prone at the centre of the entry block, wearing its owner's name and skin, unable to drift or be pushed, and casting no shadow. It persists while its witch dreams, vanishes on a normal return, leaves no loot, and wakes its owner by force if destroyed.</li>
   <li>The <a href="#ch31">Nightmare</a> hunts by the old laws again: no false teleport, a named victim and sixteen-block tether, armor torn away before the blow, a visible defense veil broken by Flowing Spirit, and only Mellifluous Hunger left behind in the Spirit World. The <a href="#ch19">Curse of Waking Nightmare</a> once more persists outside dreams until its victim crosses into the Spirit World or finds a proper cure.</li>
@@ -1476,19 +1477,22 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <!-- CH 16 -->
 <h2 class="chapter" id="ch16">Chapter 16: Vampirism<span class="stage stage-late">Late</span> <a href="#toc" class="ch-top">&uarr; Contents</a></h2>
 
-<p>There are those who choose this path, and those who have it chosen for them. Either way, the nature of vampirism is not subtle: you are sustained by blood, strengthened by it, and diminished without it. Your blood level determines your power. A vampire at full blood is formidable. A vampire running dry is considerably less so.</p>
+<p>There are those who choose this path, and those who have it chosen for them. Either way, the nature of vampirism is not subtle: blood sustains you, feeds your active powers, and buys time beneath the sun. A vampire with a full reserve is formidable. A vampire running dry is considerably less so.</p>
 
 <p>The act of feeding is deliberately unmistakable: a bite, a filled goblet, or a bat's stolen mouthful answers with the old wet drink cue, while an emptied full goblet ends with the inelegant little burp the old craft allowed.</p>
 
 <h3>Abilities</h3>
-<p>Vampires access abilities by scrolling below slot 1 on the hotbar.</p>
+<p>Stand on hotbar slot 1, then press the slot-1 key again or use the mouse wheel to cycle through the powers your current level has unlocked. Their original icons appear beside the hotbar and the vertical blood drops show Blood Power. Use the selected power to activate it; Drink and Mesmerise act on the living creature beneath your gaze.</p>
 <table>
   <tr><th>Ability</th><th>Blood Cost</th><th>Effect</th></tr>
-  <tr><td>Bite</td><td>None</td><td>Drain blood from a target. Passively shows their blood level when close. Draining more than half damages them.</td></tr>
-  <tr><td>Night Vision</td><td>None (toggle)</td><td>Permanent night vision while active. Free to maintain.</td></tr>
-  <tr><td>Speed</td><td>Blood</td><td>Burst of speed and jump height. Scales with vampirism level.</td></tr>
-  <tr><td>Bat Form</td><td>Blood</td><td>Transforms into 3 bats; can fly and pass through 1×1 gaps. Useful for infiltration. No world interaction while transformed.</td></tr>
+  <tr><td>Drink Blood (level 1)</td><td>None</td><td>Drain Villagers, Village Guards, living creatures, or mortal players. Creatures grant 2 Blood Power only up to one quarter of capacity. Awake human victims yield less; sleeping players and sleeping or mesmerised Villagers yield the full bite. Mortal players hold 500 human blood and recover 2 every 40 ticks. Villagers, Guards, and mortal players show four source blood drops beneath the crosshair whenever a vampire targets them. Werewolf blood burns the vampire instead.</td></tr>
+  <tr><td>Mesmerise (level 2)</td><td>50</td><td>Paralyse a Villager, Village Guard, or player; Werevillagers resist the gaze. Duration rises with vampire level and three light clothing pieces add 3 seconds. At level 8 the victim is lured toward the vampire. Sneak-use toggles free vampire vision.</td></tr>
+  <tr><td>Speed (level 4)</td><td>10</td><td>Begin with Speed III and Jump II for 10 seconds. Repeated uses double the current speed stage and add 3 seconds where vampire mastery permits.</td></tr>
+  <tr><td>Bat Form (level 7)</td><td>50 to enter; 1 every 40 ticks</td><td>Become one compact bat proxy with a 0.3 × 0.6 body, survival flight, no fall damage, and greatly reduced attack power. Leaving is free; running out of Blood Power returns you automatically.</td></tr>
+  <tr><td>Ultimate (level 10)</td><td>1 Crucible charge on success</td><td>Call 5–15 minutes of storm, summon 15 owned Attack Bats, or return safely to bed, world spawn, or a nearby village. Rain already falling, Spirit World travel, or another failed precondition preserves the charge.</td></tr>
 </table>
+
+<div class="callout callout-tip">All active powers share the old ten-tick pause between activations. The selected power clears when you move to another hotbar slot; return to slot 1 to choose again.</div>
 
 <p>Vampirism is a 10-level progression system. Each level increases your maximum blood pool and unlocks a new ability. Progression is gated behind specific conditions — feeding alone is not enough. The full unlock path:</p>
 
@@ -1500,15 +1504,15 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>4</td><td>1,500</td><td>Speed</td><td>Survive 4 consecutive nights without dying while carrying Observations of an Immortal (including all Torn Pages)</td></tr>
   <tr><td>5</td><td>1,750</td><td>Resist Sun (survive longer in direct daylight)</td><td>Burn yourself 10 times with Sun Grenades during nighttime</td></tr>
   <tr><td>6</td><td>2,000</td><td>Smash Stone (mine stone blocks bare-handed)</td><td>Kill 20 Blazes</td></tr>
-  <tr><td>7</td><td>2,250</td><td>Batswarm Form (fly as 3 bats; no world interaction)</td><td>Perform Creatures of the Night rite again; give Lilith a Poppy instead of the normal offering</td></tr>
+  <tr><td>7</td><td>2,250</td><td>Bat Form (one compact bat proxy with survival flight)</td><td>Perform Creatures of the Night rite again; give Lilith a Poppy instead of the normal offering</td></tr>
   <tr><td>8</td><td>2,500</td><td>Mesmerize (control a target's movement briefly)</td><td>Walk (or fly, as bats) through three distinct villages</td></tr>
-  <tr><td>9</td><td>3,250</td><td>Create Vampires (infect willing or captured targets)</td><td>Trap 5 Villagers and drain each to approximately 250–280 blood (roughly half their pool)</td></tr>
-  <tr><td>10</td><td>3,500</td><td>Blood Power: Call Storm, Teleport, Bat Swarm (active abilities); Zombie Respect (passive — undead ignore you)</td><td>Use Create Vampires on a Villager or Village Guard</td></tr>
+  <tr><td>9</td><td>2,750</td><td>Create Vampires (infect willing or captured targets)</td><td>Trap 5 Villagers and drain each to approximately 250–280 blood (roughly half their pool)</td></tr>
+  <tr><td>10</td><td>3,000</td><td>Blood Power: Call Storm, Return Home, or Summon Swarm; Zombie Respect (passive — undead ignore you)</td><td>Use Create Vampires on a Villager or Village Guard</td></tr>
 </table>
 
 <div class="callout callout-check">Levels 1–4 are the core progression available from early vampirism. Levels 5–10 unlock powerful endgame abilities but require significant investment. Level 10 in particular requires sacrificing a villager or guard — this action is irreversible and may trigger Witch Hunter spawns.</div>
 
-<div class="callout callout-warn"><strong>As the craft stands.</strong> The whole ladder above is now cut, rung by rung. The early steps rise as you meet their conditions; Lilith's friendly quests carry vampire induction and the 6→7 step; the <strong>three-village pilgrimage</strong> opens the 7→8 gate; <strong>caging and bleeding five villagers</strong> to the half-mark opens 8→9; and the <a href="#blood-crucible">Blood Crucible</a> seats the level-10 choice. <strong>Resist Sun</strong> is real (see below), and a beast slain near your altar still feeds your charges. What remains is feel and final testing at the high end, not missing rungs.</div>
+<div class="callout callout-warn"><strong>As the craft stands.</strong> The progression gates and the complete selectable Blood Power ladder are live. Lilith's friendly quests carry vampire induction and the 6→7 step; the <strong>three-village pilgrimage</strong> opens the 7→8 gate; <strong>caging and bleeding five villagers</strong> to the half-mark opens 8→9; and the <a href="#blood-crucible">Blood Crucible</a> seats the level-10 choice. <strong>Resist Sun</strong> is real (see below), and a beast slain near your altar still feeds your charges. A few non-Blood-Power level-perk edges, the old Observations screen, Guard consequences, and live multiplayer presentation remain under work.</div>
 
 <div class="callout callout-tip"><strong>On undoing the curse.</strong> Vampirism need not be forever. Beyond Lilith's mercy there is the <strong>Rite to Remove Vampirism</strong> — a grim working that demands a full coven of six, a witch among them mastering the curse through a cat familiar, and a great draught of altar power. Lay a filled <a href="#ch14">taglock</a> of the afflicted in a Medium Ritual circle alongside Breath of the Goddess, a Silver Sword, Garlic, a Diamond, and a Brew of Love. Three times in four the dark gift is drawn out and the victim made mortal again; the fourth time the rite simply fails to take, harming no one. The bound soul must be within sixty paces of the circle.</div>
 
@@ -1529,13 +1533,13 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <p>Shift-right-click to open the lid. Right-click to enter and sleep. The coffin sleeps through the day and wakes you at nightfall — solving the vampire's core survival problem without any potions or planning required. Taglock Kits can still be gathered from a coffin, the same as a bed. Guard your coffin accordingly.</p>
 
 <h3 id="blood-crucible">The Blood Crucible</h3>
-<p>A stone-brick basin that holds blood power outside your own body. A vampire fills it by interacting with it, pouring stored blood into the crucible, and it is the seat of the level-10 <em>ultimate</em> choice: at maximum vampirism you select your endgame specialisation here. The Farm ultimate, in particular, is chosen by placing a written book in the crucible. In creative the fullness check is bypassed; in survival the crucible must actually be full before it will accept the selection.</p>
+<p>A stone-brick basin that holds blood power outside your own body. A vampire fills it by interacting with it, pouring stored blood into the crucible, and it is the seat of the level-10 <em>ultimate</em> choice: Water Artichoke binds Call Storm, Wool of Bat binds Summon Swarm, and a written book binds Return Home. A successful binding grants five charges. In creative the fullness check is bypassed; in survival the crucible must actually be full before it will accept the selection.</p>
 
 <div class="callout callout-recipe">
   <strong>Blood Crucible:</strong> a stone-brick shaped recipe (stone-sound, stone-material block). Place it where you intend to anchor your endgame — it is unbreakable in the sense that matters: do not lose track of where you set it.
 </div>
 
-<div class="callout callout-tip">The crucible is a vampire's only way to bank blood power for the level-10 selection. Fill it before you attempt the ultimate, and keep it somewhere defensible — see the <a href="#ch33">PvP chapter</a> for why a known, fixed blood store is a liability if an enemy finds it.</div>
+<div class="callout callout-tip">Fill the crucible before choosing an ultimate, then watch the darkened ultimate icon: it cannot answer when no charge remains. Failed preconditions preserve charges, so a storm already in progress or an unsafe homeward route costs nothing.</div>
 
 <h3 id="vampire-armor">Vampire Armory</h3>
 <p>Vampire armor is not purchased or found — it is crafted by upgrading fashionable civilian pieces with iron. The process works in two steps: first craft the Dress/Top Hat base items, then reinforce them with Iron Ingots. The result is armor that sits somewhere between leather and chain in protection, styled appropriately for the condition.</p>
@@ -1560,7 +1564,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <p>Vampire garments split into a <em>light</em> (cosmetic dress) set and a <em>medium</em> (reinforced chain) set, and wearing matched pieces grants bonuses beyond their armor value:</p>
 <ul>
   <li><strong>Two light pieces</strong> — your Bite draws 50% more blood per feed.</li>
-  <li><strong>Three light pieces</strong> — your sneak-right-click Mesmerise on a villager or player lasts 8 seconds instead of 5.</li>
+  <li><strong>Three light pieces</strong> — select Mesmerise and use it on a villager, guard, or player; the trance gains 3 seconds beyond its level-scaled duration.</li>
   <li><strong>Fire survival</strong> — lethal fire damage can leave a vampire at 1 health instead of killing: a 25% basic save from three light or two medium pieces, rising to a 75% save with all four light pieces.</li>
 </ul>
 <p>The light/medium set-bonus lines are printed on the garments' tooltips. Because the daylight problem never goes away, the fire save is the bonus most vampires build toward first.</p>

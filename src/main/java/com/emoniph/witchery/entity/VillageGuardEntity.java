@@ -232,8 +232,8 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
     }
 
     public int takeBlood(int quantity, LivingEntity attacker) {
-        MobEffectInstance slowness = getEffect(MobEffects.SLOWNESS);
-        boolean transfixed = slowness != null && slowness.getAmplifier() >= MESMERISE_SLOWNESS_AMPLIFIER;
+        MobEffectInstance paralysis = getEffect(com.emoniph.witchery.init.WitcheryMobEffects.PARALYSED);
+        boolean transfixed = paralysis != null && paralysis.getAmplifier() >= MESMERISE_SLOWNESS_AMPLIFIER;
         int blood = getBlood();
         int adjustedQuantity = (int) Math.ceil(quantity * 0.66F);
         int remaining = Math.max(blood - adjustedQuantity, 0);

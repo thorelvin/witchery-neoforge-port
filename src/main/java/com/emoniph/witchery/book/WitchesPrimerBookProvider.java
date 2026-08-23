@@ -1791,12 +1791,33 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "There are those who choose this path and those who have it chosen for them. Either way, the "
                         + "nature of vampirism is not subtle: you are sustained by blood, strengthened by it, "
                         + "and diminished without it."
-                        + "\n\nDrain blood from living creatures by right-clicking them. A vampire at full "
-                        + "blood is formidable; one running dry is much less so."));
+                        + "\n\nBlood Power is the red-drop reserve beside the hotbar. Stand on hotbar slot 1, "
+                        + "then press its key again or use the mouse wheel to cycle the powers your level has "
+                        + "unlocked. Use the selected power to invoke it; Drink and Mesmerise act on the living "
+                        + "creature beneath your gaze."));
         vampirism.addAll(WitcheryBooks.prose("What the Blood Gives",
-                "Speed, strength, and reach all scale with your blood level. Night vision is always yours, "
-                        + "and your bite takes blood from the living. You resist most damage, and you can "
-                        + "sleep through daylight in a coffin — its own kind of grace."));
+                "A well-fed vampire is swift, strong, and keen-eyed. Drink is free from the first level and "
+                        + "draws blood from Villagers, Village Guards, living creatures, and mortal players. Mortals hold "
+                        + "500 human blood, recover two every forty ticks, and yield less while awake than while "
+                        + "sleeping. Villagers yield a full bite while sleeping or mesmerised. Werewolf blood "
+                        + "burns the drinker instead."
+                        + "\n\nThe source blood-drop display beneath the crosshair shows what remains in a "
+                        + "Villager, Village Guard, or mortal player whenever a vampire holds them in view."));
+        vampirism.addAll(WitcheryBooks.prose("The Five Powers",
+                "Level 1: **Drink**, free. Level 2: **Mesmerise**, 50 Blood Power; use it on a Villager, "
+                        + "Village Guard, or player, or sneak-use it to toggle vampire vision. Level 4: "
+                        + "**Speed**, 10 power; repeated uses double the current burst where mastery permits."
+                        + "\n\nLevel 7: **Bat Form**, 50 power to enter and one power every forty ticks to "
+                        + "remain. You become one compact flying bat and return freely. Level 10: **Ultimate**, "
+                        + "which spends a Blood Crucible charge only when its working succeeds. All activations "
+                        + "share the old ten-tick pause."));
+        vampirism.addAll(WitcheryBooks.prose("The Three Ultimates",
+                "**Call Storm** refuses an already-raining sky, then brings five to fifteen minutes of rain and "
+                        + "thunder. **Summon Swarm** calls fifteen owned Attack Bats. **Return Home** carries you "
+                        + "to your bed or world spawn, or to a nearby village when you are already close to home; "
+                        + "it refuses the Spirit World."
+                        + "\n\nChoose the ultimate at a full Blood Crucible. Each successful invocation spends "
+                        + "one of its charges; a refused invocation leaves the charge untouched."));
         vampirism.addAll(WitcheryBooks.prose("What the Blood Costs",
                 "Sunlight burns; direct daylight is a constant danger. Silver wounds heal slowly and hurt "
                         + "more. Witch Hunters treat you as a professional priority. Blood drains constantly — "

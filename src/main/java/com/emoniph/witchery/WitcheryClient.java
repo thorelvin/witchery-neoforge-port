@@ -451,6 +451,7 @@ public class WitcheryClient {
             net.minecraft.client.renderer.entity.player.AvatarRenderer<?> ar = event.getPlayerRenderer(skin);
             if (ar != null) {
                 ar.addLayer(new WerewolfLayer(ar, event.getContext()));
+                ar.addLayer(new com.emoniph.witchery.client.renderer.VampireBatLayer(ar, event.getContext()));
                 ar.addLayer(new ManifestedGhostLayer(ar));
                 ar.addLayer(new MountedBroomInventoryLayer(ar, event.getContext()));
                 ar.addLayer(new EarmuffsLayer(ar, event.getContext()));
@@ -627,6 +628,12 @@ public class WitcheryClient {
             data.setVampireLevel(payload.vampireLevel());
             data.setBloodPower(payload.bloodPower());
             data.setBloodReserve(payload.bloodReserve());
+            data.setHumanBlood(payload.humanBlood());
+            data.setSelectedVampirePower(WitcheryPlayerData.VampirePower.fromOrdinal(payload.selectedVampirePower()));
+            data.setVampireUltimate(WitcheryPlayerData.VampireUltimate.fromOrdinal(payload.vampireUltimate()),
+                    payload.vampireUltimateCharges());
+            data.setVampireVisionActive(payload.vampireVisionActive());
+            data.setVampireBatForm(payload.vampireBatForm());
             data.setWerewolf(payload.werewolf());
             data.setWerewolfLevel(payload.werewolfLevel());
             data.setWolfForm(WitcheryPlayerData.WolfForm.fromOrdinal(payload.wolfForm()));
@@ -651,6 +658,20 @@ public class WitcheryClient {
             data.setSpiritWorldIsDream(payload.spiritWorldDream());
             data.setDemonicNightmare(payload.demonicNightmare());
             data.setGrotesqueTicks(payload.grotesqueTicks());
+        });
+    }
+
+    public static void handleSyncVampireTargetBlood(
+            com.emoniph.witchery.network.SyncVampireTargetBloodPayload payload,
+            IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.level == null) return;
+            Entity entity = mc.level.getEntity(payload.entityId());
+            if (entity instanceof net.minecraft.world.entity.npc.villager.Villager villager) {
+                villager.getPersistentData().putInt("witchery_villager_blood",
+                        Math.clamp(payload.blood(), 0, 500));
+            }
         });
     }
 

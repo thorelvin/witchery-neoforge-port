@@ -28,6 +28,7 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.GlassGobletItem;
 import com.emoniph.witchery.item.WerewolfShiftUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import com.emoniph.witchery.network.SyncVampireTargetBloodPayload;
 import com.emoniph.witchery.ritual.OtherwhereHearthTransposition;
 import com.emoniph.witchery.spiritworld.SpiritWorldHelper;
 import com.emoniph.witchery.world.TormentHelper;
@@ -210,6 +211,11 @@ public class WitcheryPlayerEvents {
                 && event.getTarget() instanceof ServerPlayer target) {
             PacketDistributor.sendToPlayer(viewer,
                     SyncPlayerDataPayload.from(target, WitcheryAttachments.get(target)));
+        } else if (event.getEntity() instanceof ServerPlayer viewer
+                && event.getTarget() instanceof Villager villager) {
+            PacketDistributor.sendToPlayer(viewer, new SyncVampireTargetBloodPayload(
+                    villager.getId(),
+                    villager.getPersistentData().getIntOr("witchery_villager_blood", 500)));
         }
     }
 

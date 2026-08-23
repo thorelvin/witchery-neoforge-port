@@ -58,6 +58,40 @@ public class WitcheryPlayerData {
         ).apply(i, InfusionChargeState::new));
     }
 
+    public enum VampirePower {
+        NONE(0, 0, 0),
+        DRINK(0, 0, 1),
+        MESMERIZE(50, 0, 2),
+        SPEED(10, 0, 4),
+        BAT(50, 1, 7),
+        ULTIMATE(50, 0, 10);
+
+        private static final int[] MAX_POWER_BY_LEVEL = {0, 1, 2, 2, 3, 3, 3, 4, 4, 4, 5};
+
+        private final int initialCost;
+        private final int upkeepCost;
+        private final int unlockLevel;
+
+        VampirePower(int initialCost, int upkeepCost, int unlockLevel) {
+            this.initialCost = initialCost;
+            this.upkeepCost = upkeepCost;
+            this.unlockLevel = unlockLevel;
+        }
+
+        public int initialCost() { return initialCost; }
+        public int upkeepCost() { return upkeepCost; }
+        public int unlockLevel() { return unlockLevel; }
+
+        public static VampirePower fromOrdinal(int ordinal) {
+            VampirePower[] values = values();
+            return ordinal >= 0 && ordinal < values.length ? values[ordinal] : NONE;
+        }
+
+        public static int maxOrdinalForLevel(int level) {
+            return MAX_POWER_BY_LEVEL[Math.clamp(level, 0, MAX_POWER_BY_LEVEL.length - 1)];
+        }
+    }
+
     public enum VampireUltimate {
         NONE, STORM, SWARM, FARM;
         public static VampireUltimate fromOrdinal(int i) {
@@ -74,6 +108,8 @@ public class WitcheryPlayerData {
         public int ultimateCharges = 0;
         public int bloodPower = 0;
         public int bloodReserve = 0;
+        public int humanBlood = 0;
+        public boolean batForm = false;
         // Max level the player can reach without quest-gating items; 10 = uncapped during dev.
         public int levelCap = 10;
         public int questCounter = 0;
@@ -83,7 +119,8 @@ public class WitcheryPlayerData {
         public VampireState() {}
 
         private VampireState(boolean vampire, int level, int ultimate, int ultimateCharges,
-                             int bloodPower, int bloodReserve, int levelCap, int questCounter,
+                             int bloodPower, int bloodReserve, int humanBlood, boolean batForm,
+                             int levelCap, int questCounter,
                              java.util.List<Long> visitedVillages) {
             this.vampire = vampire;
             this.level = Math.clamp(level, 0, 10);
@@ -91,6 +128,8 @@ public class WitcheryPlayerData {
             this.ultimateCharges = Math.max(0, ultimateCharges);
             this.bloodPower = Math.max(0, bloodPower);
             this.bloodReserve = Math.clamp(bloodReserve, 0, 250);
+            this.humanBlood = Math.clamp(humanBlood, 0, 500);
+            this.batForm = batForm && this.vampire && this.level >= VampirePower.BAT.unlockLevel();
             this.levelCap = Math.clamp(levelCap, 1, 10);
             this.questCounter = Math.max(0, questCounter);
             this.visitedVillages.addAll(visitedVillages);
@@ -103,6 +142,8 @@ public class WitcheryPlayerData {
             Codec.INT.optionalFieldOf("ultimate_charges", 0).forGetter(s -> s.ultimateCharges),
             Codec.INT.optionalFieldOf("blood_power", 0).forGetter(s -> s.bloodPower),
             Codec.INT.optionalFieldOf("blood_reserve", 0).forGetter(s -> s.bloodReserve),
+            Codec.INT.optionalFieldOf("human_blood", 0).forGetter(s -> s.humanBlood),
+            Codec.BOOL.optionalFieldOf("bat_form", false).forGetter(s -> s.batForm),
             Codec.INT.optionalFieldOf("level_cap", 10).forGetter(s -> s.levelCap),
             Codec.INT.optionalFieldOf("quest_counter", 0).forGetter(s -> s.questCounter),
             Codec.LONG.listOf().optionalFieldOf("visited_villages", java.util.List.of()).forGetter(s -> s.visitedVillages)
@@ -324,6 +365,9 @@ public class WitcheryPlayerData {
     private boolean werewolf = false;
     private int bloodLevel = 0;
     private float transformationLevel = 0f;
+    private int selectedVampirePower = VampirePower.NONE.ordinal();
+    private boolean vampireVisionActive = false;
+    private int vampirePowerCooldown = 0;
     private FamiliarState familiar = new FamiliarState();
     private String infusionType = "";
     private InfusionChargeState infusionChargeState = new InfusionChargeState();
@@ -415,8 +459,14 @@ public class WitcheryPlayerData {
     public int getVampireLevel() { return vs.level; }
     public VampireUltimate getVampireUltimate() { return VampireUltimate.fromOrdinal(vs.ultimate); }
     public int getVampireUltimateCharges() { return vs.ultimateCharges; }
+    public VampirePower getSelectedVampirePower() { return VampirePower.fromOrdinal(selectedVampirePower); }
+    public int getMaxAvailableVampirePowerOrdinal() { return VampirePower.maxOrdinalForLevel(vs.level); }
+    public boolean isVampireVisionActive() { return isVampire() && vs.level >= 2 && vampireVisionActive; }
+    public boolean isVampireBatForm() { return isVampire() && vs.batForm; }
+    public int getVampirePowerCooldown() { return vampirePowerCooldown; }
     public boolean isWerewolf() { return werewolf; }
     public int getBloodLevel() { return bloodLevel; }
+    public int getHumanBlood() { return vs.humanBlood; }
     public float getTransformationLevel() { return transformationLevel; }
 
     public Optional<UUID> getFamiliarUUID() {
@@ -436,16 +486,59 @@ public class WitcheryPlayerData {
 
     public void setVampire(boolean v) {
         vs.vampire = v;
-        if (v && vs.level == 0) vs.level = 1;
-        if (!v) { vs.level = 0; vs.bloodPower = 0; vs.bloodReserve = 0; vs.questCounter = 0; }
+        if (v && vs.level == 0) {
+            vs.level = 1;
+            vs.bloodPower = 125;
+        }
+        if (v) vs.humanBlood = 0;
+        if (!v) {
+            vs.level = 0;
+            vs.ultimate = 0;
+            vs.ultimateCharges = 0;
+            vs.bloodPower = 0;
+            vs.bloodReserve = 0;
+            vs.humanBlood = 50;
+            vs.batForm = false;
+            vs.questCounter = 0;
+            vs.visitedVillages.clear();
+            selectedVampirePower = VampirePower.NONE.ordinal();
+            vampireVisionActive = false;
+            vampirePowerCooldown = 0;
+        }
     }
     public void setVampireLevel(int level) {
         int clamped = Math.clamp(level, 0, 10);
         if (clamped != vs.level) {
             vs.level = clamped;
             vs.questCounter = 0;
+            vs.visitedVillages.clear();
             vs.bloodPower = Math.min(vs.bloodPower, getMaxBloodPower());
+            selectedVampirePower = VampirePower.NONE.ordinal();
+            vampirePowerCooldown = 0;
+            if (clamped == 1) vs.bloodPower = 125;
+            if (clamped < VampirePower.BAT.unlockLevel()) vs.batForm = false;
+            if (clamped < VampirePower.MESMERIZE.unlockLevel()) vampireVisionActive = false;
         }
+    }
+    public boolean setSelectedVampirePower(VampirePower power) {
+        VampirePower requested = power == null ? VampirePower.NONE : power;
+        if (!isVampire() || requested.ordinal() > getMaxAvailableVampirePowerOrdinal()) {
+            requested = VampirePower.NONE;
+        }
+        int ordinal = requested.ordinal();
+        boolean changed = selectedVampirePower != ordinal;
+        selectedVampirePower = ordinal;
+        return changed;
+    }
+    public void setVampireVisionActive(boolean active) {
+        vampireVisionActive = active && isVampire() && vs.level >= VampirePower.MESMERIZE.unlockLevel();
+    }
+    public void setVampireBatForm(boolean active) {
+        vs.batForm = active && isVampire() && vs.level >= VampirePower.BAT.unlockLevel();
+    }
+    public void setVampirePowerCooldown(int ticks) { vampirePowerCooldown = Math.max(0, ticks); }
+    public void tickVampirePowerCooldown() {
+        if (vampirePowerCooldown > 0) vampirePowerCooldown--;
     }
     public void setVampireUltimate(VampireUltimate ultimate, int charges) {
         vs.ultimate = ultimate == null ? 0 : ultimate.ordinal();
@@ -469,6 +562,16 @@ public class WitcheryPlayerData {
     public boolean canIncreaseVampireLevel() { return vs.level < vs.levelCap && vs.level < 10; }
     public void setBloodPower(int p) { vs.bloodPower = Math.clamp(p, 0, getMaxBloodPower()); }
     public void addBloodPower(int amount) { setBloodPower(vs.bloodPower + amount); }
+    public void setHumanBlood(int amount) { vs.humanBlood = Math.clamp(amount, 0, 500); }
+    public void giveHumanBlood(int amount) {
+        if (!isVampire() && amount > 0) setHumanBlood(vs.humanBlood + amount);
+    }
+    public int takeHumanBlood(int amount, boolean sleeping) {
+        int requested = sleeping ? Math.max(0, amount) : (int) Math.ceil(Math.max(0, amount) * 0.66F);
+        int taken = Math.min(vs.humanBlood, requested);
+        vs.humanBlood -= taken;
+        return taken;
+    }
     public int getBloodReserve() { return isVampire() ? vs.bloodReserve : 0; }
     public void setBloodReserve(int blood) { vs.bloodReserve = Math.clamp(blood, 0, 250); }
     public void addBloodReserve(int amount) {
@@ -488,8 +591,12 @@ public class WitcheryPlayerData {
         return getBloodPower() - before;
     }
     public boolean spendBloodPower(int amount) {
-        if (vs.bloodPower < amount) return false;
-        setBloodPower(vs.bloodPower - amount);
+        return spendBloodPower(amount, true);
+    }
+    public boolean spendBloodPower(int amount, boolean exact) {
+        int cost = Math.max(0, amount);
+        if (vs.bloodPower < (exact ? cost : 1)) return false;
+        setBloodPower(vs.bloodPower - cost);
         return true;
     }
     public void increaseVampireLevelCap(int cap) {
@@ -781,7 +888,8 @@ public class WitcheryPlayerData {
 
     public void copyFrom(WitcheryPlayerData other, boolean keepOnDeath) {
         this.vs = new VampireState(other.vs.vampire, other.vs.level, other.vs.ultimate, other.vs.ultimateCharges,
-                other.vs.bloodPower, other.vs.bloodReserve, other.vs.levelCap, other.vs.questCounter,
+                other.vs.bloodPower, other.vs.bloodReserve, other.vs.humanBlood, other.vs.batForm,
+                other.vs.levelCap, other.vs.questCounter,
                 other.vs.visitedVillages);
         this.werewolf = other.werewolf;
         this.transformationLevel = other.transformationLevel;

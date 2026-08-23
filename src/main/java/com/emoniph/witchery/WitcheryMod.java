@@ -25,6 +25,7 @@ import com.emoniph.witchery.network.PlacedModonomiconPageTurnPayload;
 import com.emoniph.witchery.network.ScryingCameraPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.network.VampireUltimatePayload;
+import com.emoniph.witchery.network.VampirePowerPayload;
 import com.mojang.logging.LogUtils;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -66,6 +67,7 @@ public class WitcheryMod {
         com.emoniph.witchery.command.TormentGameTests.register(modEventBus);
         com.emoniph.witchery.command.MirrorWorldGameTests.register(modEventBus);
         com.emoniph.witchery.command.LycanthropyGameTests.register(modEventBus);
+        com.emoniph.witchery.command.VampirePowerGameTests.register(modEventBus);
         com.emoniph.witchery.entity.HobgoblinEcologyGameTests.register(modEventBus);
         com.emoniph.witchery.brewing.IceWorldGameTests.register(modEventBus);
         com.emoniph.witchery.item.InfernalOwnershipGameTests.register(modEventBus);
@@ -115,6 +117,10 @@ public class WitcheryMod {
                     SyncPlayerDataPayload.STREAM_CODEC,
                     WitcheryClient::handleSyncPlayerData);
             registrar.playToClient(
+                    com.emoniph.witchery.network.SyncVampireTargetBloodPayload.TYPE,
+                    com.emoniph.witchery.network.SyncVampireTargetBloodPayload.STREAM_CODEC,
+                    WitcheryClient::handleSyncVampireTargetBlood);
+            registrar.playToClient(
                     OpenObservationsBookPayload.TYPE,
                     OpenObservationsBookPayload.STREAM_CODEC,
                     WitcheryClient::handleOpenObservationsBook);
@@ -127,6 +133,10 @@ public class WitcheryMod {
             registrar.playToClient(
                     SyncPlayerDataPayload.TYPE,
                     SyncPlayerDataPayload.STREAM_CODEC,
+                    (payload, context) -> { });
+            registrar.playToClient(
+                    com.emoniph.witchery.network.SyncVampireTargetBloodPayload.TYPE,
+                    com.emoniph.witchery.network.SyncVampireTargetBloodPayload.STREAM_CODEC,
                     (payload, context) -> { });
             registrar.playToClient(
                     OpenObservationsBookPayload.TYPE,
@@ -146,6 +156,10 @@ public class WitcheryMod {
                         VampireUltimatePayload.TYPE,
                         VampireUltimatePayload.STREAM_CODEC,
                         VampireUltimatePayload::handleOnServer)
+                .playToServer(
+                        VampirePowerPayload.TYPE,
+                        VampirePowerPayload.STREAM_CODEC,
+                        VampirePowerPayload::handleOnServer)
                 .playToServer(
                         BroomControlPayload.TYPE,
                         BroomControlPayload.STREAM_CODEC,

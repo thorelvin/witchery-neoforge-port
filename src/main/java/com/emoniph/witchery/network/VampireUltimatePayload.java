@@ -2,6 +2,7 @@ package com.emoniph.witchery.network;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.events.VampireEvents;
+import com.emoniph.witchery.data.WitcheryPlayerData;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -25,7 +26,7 @@ public class VampireUltimatePayload implements CustomPacketPayload {
 
     public static void handleOnServer(VampireUltimatePayload payload, IPayloadContext ctx) {
         if (ctx.player() instanceof ServerPlayer player) {
-            VampireEvents.tryActivateSwarmUltimate(player);
+            VampireEvents.handleVampirePowerRequest(player, WitcheryPlayerData.VampirePower.ULTIMATE, true);
         }
     }
 }

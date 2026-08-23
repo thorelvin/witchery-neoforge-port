@@ -558,12 +558,26 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   an appropriate target. Toggling should use the old `random.click` cue, and
   snapping shut should use the old `random.mantrap` cue rather than the
   compatibility `block.bear_trap.*` event names.
-- As a vampire, bite a Villager, Village Guard, animal, player, and caged
-  villager quest target; fill/drink a Glass Goblet, take Lilith's empty-goblet
-  blood reward, consume Vampire Blood, let an Attack Bat feed, and use a Bone
-  Needle as a level-4+ vampire on White Wool. Confirm blood-transfer and wool
-  staining actions use `random.drink`, full goblet consumption burps, and the
-  red dust feedback lands at the victim/reward/block position.
+- As a vampire, stand on hotbar slot 1 and use the slot-1 key and mouse wheel to
+  cycle only the powers unlocked at the current level. Confirm the source icons
+  and Blood Power drops remain aligned at GUI scales 1-4. Activate Mesmerise
+  (50 power) on an ordinary Villager, Village Guard, and player, then confirm a
+  Werevillager resists it. Check its sneaking vision toggle, stacked Speed (10 per use), Bat Form
+  (50 plus one power every 40 ticks), and each charged level-10 ultimate. Failed
+  Storm/Farm preconditions must not consume a charge; Swarm must create 15 bats.
+- In Bat Form, verify the player is one compact bat proxy rather than three,
+  flies in survival, fits the source 0.3 x 0.6 body, loses ordinary attack power,
+  returns to the exact standing position safely, and regains normal dimensions,
+  hands, abilities, and camera behavior on exit.
+- Bite a Villager, Village Guard, passive animal, hostile mob, mortal player, werewolf, and caged
+  villager quest target. An awake mortal player should yield 7 of a normal
+  10-point bite, a sleeping player should yield all 10, their synchronized
+  target-blood drops should fall, and two blood should recover every 40 ticks.
+  Werewolf blood should burn the vampire instead. Also fill/drink a Glass
+  Goblet, take Lilith's empty-goblet blood reward, consume Vampire Blood, let an
+  Attack Bat feed, and use a Bone Needle as a level-4+ vampire on White Wool.
+  Confirm blood work uses `random.drink`, full goblets burp, and red dust lands
+  at the victim/reward/block position.
 - Drain a Village Guard inside a village, then leave it idle with no combat
   target. Its health should slowly recover and its persisted blood should tick
   upward only occasionally; a guard outside a village or actively fighting

@@ -17,6 +17,12 @@ public record SyncPlayerDataPayload(
         int vampireLevel,
         int bloodPower,
         int bloodReserve,
+        int humanBlood,
+        int selectedVampirePower,
+        int vampireUltimate,
+        int vampireUltimateCharges,
+        boolean vampireVisionActive,
+        boolean vampireBatForm,
         boolean werewolf,
         int werewolfLevel,
         int wolfForm,
@@ -51,6 +57,12 @@ public record SyncPlayerDataPayload(
                             buf.readInt(),
                             buf.readInt(),
                             buf.readInt(),
+                            buf.readInt(),
+                            buf.readInt(),
+                            buf.readInt(),
+                            buf.readInt(),
+                            buf.readBoolean(),
+                            buf.readBoolean(),
                             buf.readBoolean(),
                             buf.readInt(),
                             buf.readInt(),
@@ -80,6 +92,12 @@ public record SyncPlayerDataPayload(
                     buf.writeInt(payload.vampireLevel());
                     buf.writeInt(payload.bloodPower());
                     buf.writeInt(payload.bloodReserve());
+                    buf.writeInt(payload.humanBlood());
+                    buf.writeInt(payload.selectedVampirePower());
+                    buf.writeInt(payload.vampireUltimate());
+                    buf.writeInt(payload.vampireUltimateCharges());
+                    buf.writeBoolean(payload.vampireVisionActive());
+                    buf.writeBoolean(payload.vampireBatForm());
                     buf.writeBoolean(payload.werewolf());
                     buf.writeInt(payload.werewolfLevel());
                     buf.writeInt(payload.wolfForm());
@@ -109,6 +127,12 @@ public record SyncPlayerDataPayload(
                 data.getVampireLevel(),
                 data.getBloodPower(),
                 data.getBloodReserve(),
+                data.getHumanBlood(),
+                data.getSelectedVampirePower().ordinal(),
+                data.getVampireUltimate().ordinal(),
+                data.getVampireUltimateCharges(),
+                data.isVampireVisionActive(),
+                data.isVampireBatForm(),
                 data.isWerewolf(),
                 data.getWerewolfLevel(),
                 data.getWolfForm().ordinal(),

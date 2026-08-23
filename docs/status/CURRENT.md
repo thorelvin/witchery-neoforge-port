@@ -55,6 +55,15 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Vampire Blood Power parity is implemented against the 1.7.10 contract. The
+  source `NONE / DRINK / MESMERIZE / SPEED / BAT / ULTIMATE` selection ladder,
+  level gates, costs, partial sunlight spending, ten-tick cooldown, source HUD
+  icons/drops, slot-1 controls, vision toggle, logarithmic Speed stacking,
+  compact flying Bat form and upkeep, and charged Storm/Swarm/Farm ultimates are
+  live. Mortal players now persist and synchronize the old 0-500 human-blood
+  pool, recover two points every 40 ticks, and can be drained by another player.
+  Focused JVM tests and `witchery:vampire_power_activation` cover the contract;
+  multiplayer HUD, camera, and audio feel remain live QA.
 - Infernal ownership parity is complete for raised and bred undead. Binding now
   applies the permanent but curable Enslaved effect without making arbitrary
   mobs persistent; owner immunity survives a cure, while same-world loaded

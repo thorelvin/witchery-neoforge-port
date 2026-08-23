@@ -392,6 +392,28 @@ class WitcheryResourceIntegrityTest {
     }
 
     @Test
+    void vampirePowerHudUsesExactSourceIconsAndDrops() throws IOException, NoSuchAlgorithmException {
+        assertTexture(Path.of("item", "vteeth.png"), 16, 16,
+                "0247fb3caf6456cd8bdb68f1ed5fb9dabd7105ab7aa4555d8ee382e615beb94f");
+        assertTexture(Path.of("item", "veye.png"), 16, 16,
+                "c7104d7c5bf90bcee2ba0aba645888f3ce753ac7523405c81663a7763a9d9c98");
+        assertTexture(Path.of("item", "vspeed.png"), 16, 16,
+                "4dab20216257cede7b4a04281aa6d0f5196b059b011ba5074f774149048b30b3");
+        assertTexture(Path.of("item", "vbat.png"), 16, 16,
+                "893084b8e20a6d33cc8faf1f78e7a39dd5b168f7c76064594b375c05db5ecb44");
+        assertTexture(Path.of("item", "vcoffin.png"), 16, 16,
+                "f394d719ba060711560781f761cf1e05f92b7c5b4aa56445aae6fa1455ae9f07");
+        assertTexture(Path.of("item", "vstorm.png"), 16, 16,
+                "31ce2f962557a3ee6fb84f78342256b69d96db2277fb1990bcd6b3d1d0ddc747");
+        assertTexture(Path.of("item", "vfist.png"), 16, 16,
+                "913d129510e8315f59ddc46a3faeb1b86228f914947c38ce940a21843415dd18");
+        assertTexture(Path.of("gui", "bdrop.png"), 8, 8,
+                "4abba66b9d00fa4d411ff0bbf4e0144ed6ae33072427a8888f9e4c769f77e499");
+        assertTexture(Path.of("gui", "bdropfaded.png"), 8, 8,
+                "659226d76a44a490557dcedf26869191615345348110dcad3572c014194e2fba");
+    }
+
+    @Test
     void garlicGarlandUsesTheExactSourceModelAndInventoryTextures()
             throws IOException, NoSuchAlgorithmException {
         assertTexture(Path.of("block", "garlic_garland.png"), 32, 32,

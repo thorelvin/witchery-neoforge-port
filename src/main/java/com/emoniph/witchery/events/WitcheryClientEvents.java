@@ -16,7 +16,7 @@ import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.EarmuffsItem;
 import com.emoniph.witchery.network.BroomControlPayload;
 import com.emoniph.witchery.network.HowlPayload;
-import com.emoniph.witchery.network.VampireUltimatePayload;
+import com.emoniph.witchery.network.VampirePowerPayload;
 import com.emoniph.witchery.world.TormentAtmosphere;
 import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.resources.Identifier;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.InteractionHand;
@@ -177,6 +178,10 @@ public class WitcheryClientEvents {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null && WitcheryAttachments.get(mc.player).isVampireBatForm()) {
+            event.setCanceled(true);
+            return;
+        }
         if (!(mc.player instanceof AbstractClientPlayer player) || !isUsingWoodenScanner(player)) {
             return;
         }
@@ -295,18 +300,117 @@ public class WitcheryClientEvents {
                 event.getPartialTick().getGameTimeDeltaPartialTick(false));
         com.emoniph.witchery.client.InfusionEnergyHud.render(event.getGuiGraphics());
         com.emoniph.witchery.client.BarkBeltHud.render(event.getGuiGraphics());
+        com.emoniph.witchery.client.VampirePowerHud.render(event.getGuiGraphics());
     }
 
     @SubscribeEvent
     public static void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
-        if (tryVampireUltimate(event.getEntity(), event.getHand())) return;
         tryHowl(event.getEntity(), event.getHand());
     }
 
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (tryVampireUltimate(event.getEntity(), event.getHand())) return;
         tryHowl(event.getEntity(), event.getHand());
+    }
+
+    @SubscribeEvent
+    public static void onVampirePowerHotbarKey(net.neoforged.neoforge.client.event.InputEvent.Key event) {
+        if (event.getAction() != com.mojang.blaze3d.platform.InputConstants.PRESS) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.screen != null) return;
+        var data = WitcheryAttachments.get(mc.player);
+        if (!data.isVampire()) return;
+
+        for (int slot = 0; slot < mc.options.keyHotbarSlots.length; slot++) {
+            if (!mc.options.keyHotbarSlots[slot].matches(event.getKeyEvent())) continue;
+            if (slot == 0 && mc.player.getInventory().getSelectedSlot() == 0) {
+                if (data.getSelectedVampirePower().ordinal() == data.getMaxAvailableVampirePowerOrdinal()) {
+                    selectVampirePower(data, WitcheryPlayerData.VampirePower.NONE);
+                } else {
+                    cycleVampirePower(data, 1);
+                }
+            } else if (slot > 0 && data.getSelectedVampirePower() != WitcheryPlayerData.VampirePower.NONE) {
+                selectVampirePower(data, WitcheryPlayerData.VampirePower.NONE);
+            }
+            return;
+        }
+    }
+
+    @SubscribeEvent
+    public static void onVampirePowerMouseWheel(
+            net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.screen != null || event.getScrollDeltaY() == 0.0D) return;
+        var data = WitcheryAttachments.get(mc.player);
+        if (!data.isVampire()) return;
+
+        int slot = mc.player.getInventory().getSelectedSlot();
+        int power = data.getSelectedVampirePower().ordinal();
+        int max = data.getMaxAvailableVampirePowerOrdinal();
+        if (slot == 0) {
+            if (event.getScrollDeltaY() > 0.0D) {
+                if (power == max) {
+                    selectVampirePower(data, WitcheryPlayerData.VampirePower.NONE);
+                } else {
+                    cycleVampirePower(data, 1);
+                    event.setCanceled(true);
+                }
+            } else if (power > 0) {
+                cycleVampirePower(data, -1);
+                event.setCanceled(true);
+            }
+        } else if (slot == 8 && event.getScrollDeltaY() < 0.0D) {
+            selectVampirePower(data, WitcheryPlayerData.VampirePower.fromOrdinal(max));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onVampirePowerUse(
+            net.neoforged.neoforge.client.event.InputEvent.InteractionKeyMappingTriggered event) {
+        if (!event.isUseItem() || event.getHand() != InteractionHand.MAIN_HAND) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.screen != null) return;
+        var data = WitcheryAttachments.get(mc.player);
+        WitcheryPlayerData.VampirePower power = data.getSelectedVampirePower();
+        if (!data.isVampire() || power == WitcheryPlayerData.VampirePower.NONE) return;
+
+        boolean entityInteraction = mc.hitResult != null
+                && mc.hitResult.getType() == net.minecraft.world.phys.HitResult.Type.ENTITY;
+        if (entityInteraction
+                && (power == WitcheryPlayerData.VampirePower.DRINK
+                || power == WitcheryPlayerData.VampirePower.MESMERIZE)) {
+            return;
+        }
+
+        if (power != WitcheryPlayerData.VampirePower.DRINK) {
+            ClientPacketDistributor.sendToServer(VampirePowerPayload.trigger(power));
+        }
+        event.setSwingHand(false);
+        event.setCanceled(true);
+    }
+
+    private static void cycleVampirePower(WitcheryPlayerData data, int direction) {
+        int max = data.getMaxAvailableVampirePowerOrdinal();
+        int next = Math.clamp(data.getSelectedVampirePower().ordinal() + direction, 0, max);
+        selectVampirePower(data, WitcheryPlayerData.VampirePower.fromOrdinal(next));
+    }
+
+    private static void selectVampirePower(WitcheryPlayerData data, WitcheryPlayerData.VampirePower power) {
+        data.setSelectedVampirePower(power);
+        ClientPacketDistributor.sendToServer(VampirePowerPayload.select(data.getSelectedVampirePower()));
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null && power != WitcheryPlayerData.VampirePower.NONE) {
+            mc.player.displayClientMessage(Component.translatable(vampirePowerTranslation(power, data)), true);
+        }
+    }
+
+    private static String vampirePowerTranslation(WitcheryPlayerData.VampirePower power,
+                                                   WitcheryPlayerData data) {
+        if (power != WitcheryPlayerData.VampirePower.ULTIMATE) {
+            return "witchery.vampirepower." + power.name().toLowerCase(java.util.Locale.ROOT);
+        }
+        return "witchery.vampirepower.ultimate."
+                + data.getVampireUltimate().name().toLowerCase(java.util.Locale.ROOT);
     }
 
     @SubscribeEvent
@@ -412,9 +516,10 @@ public class WitcheryClientEvents {
     private static boolean isWerewolfRenderState(AvatarRenderState state) {
         Minecraft mc = Minecraft.getInstance();
         Entity entity = mc.level != null ? mc.level.getEntity(state.id) : null;
-        return entity instanceof Player player
-                && WitcheryAttachments.get(player).isWerewolf()
-                && WitcheryAttachments.get(player).getTransformationLevel() > 0.01F;
+        if (!(entity instanceof Player player)) return false;
+        var data = WitcheryAttachments.get(player);
+        return data.isVampireBatForm()
+                || data.isWerewolf() && data.getTransformationLevel() > 0.01F;
     }
 
     private static void applySwimmingBoost() {
@@ -434,21 +539,6 @@ public class WitcheryClientEvents {
         if (!player.isShiftKeyDown()) return;
         if (player.getXRot() > -75f) return;
         ClientPacketDistributor.sendToServer(HowlPayload.INSTANCE);
-    }
-
-    private static boolean tryVampireUltimate(Player player, InteractionHand hand) {
-        if (hand != InteractionHand.MAIN_HAND) return false;
-        if (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()) return false;
-        if (!player.isShiftKeyDown()) return false;
-        if (player.getXRot() > -75f) return false;
-        var data = WitcheryAttachments.get(player);
-        if (!data.isVampire()
-                || data.getVampireUltimate() != WitcheryPlayerData.VampireUltimate.SWARM
-                || data.getVampireUltimateCharges() <= 0) {
-            return false;
-        }
-        ClientPacketDistributor.sendToServer(VampireUltimatePayload.INSTANCE);
-        return true;
     }
 
     @SubscribeEvent
