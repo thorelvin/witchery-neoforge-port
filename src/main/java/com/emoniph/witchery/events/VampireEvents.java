@@ -21,10 +21,15 @@ import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.network.SyncVampireTargetBloodPayload;
 import com.emoniph.witchery.util.VampireCage;
 import com.emoniph.witchery.util.CreatureSunlight;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.resources.Identifier;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -43,10 +48,17 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.event.entity.EntityEvent;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -104,6 +116,11 @@ public class VampireEvents {
             Identifier.fromNamespaceAndPath("witchery", "vampire_bat_attack");
     private static final Identifier BAT_STEP_MODIFIER =
             Identifier.fromNamespaceAndPath("witchery", "vampire_bat_step_height");
+    private static final Identifier VAMPIRE_ATTACK_MODIFIER =
+            Identifier.fromNamespaceAndPath("witchery", "vampire_attack_damage");
+    private static final ResourceKey<DamageType> VAMPIRE_FIRE_DAMAGE = ResourceKey.create(
+            Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath("witchery", "vampire_fire"));
+    private static final ThreadLocal<Boolean> BLOOD_DRINK_DAMAGE = ThreadLocal.withInitial(() -> false);
 
     // ── Tick ─────────────────────────────────────────────────────────────────
 
@@ -112,7 +129,7 @@ public class VampireEvents {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         data.tickVampirePowerCooldown();
-        applyBatState(player, data);
+        applyVampireState(player, data);
         int tick = player.tickCount;
         if (!data.isVampire()) {
             if (tick % BLOOD_POWER_INTERVAL == 0 && data.getHumanBlood() < VILLAGER_MAX_BLOOD) {
@@ -126,7 +143,10 @@ public class VampireEvents {
         if (tick % WitcheryConfig.VAMPIRE_BLOOD_DRAIN_INTERVAL.get() == 0) drainBlood(player, data);
         if (tick % WitcheryConfig.VAMPIRE_SUNBURN_CHECK_INTERVAL.get() == 0) checkSunburn(player, data);
         if (tick % EFFECT_INTERVAL == 0)      applyBloodEffects(player, data);
-        if (tick % BLOOD_POWER_INTERVAL == 0) tickBloodPower(player, data);
+        if (tick % BLOOD_POWER_INTERVAL == 0) {
+            tickVampirePhysiology(player);
+            tickBloodPower(player, data);
+        }
         if (tick % SYNC_INTERVAL == 0)
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, SyncPlayerDataPayload.from(player, data));
     }
@@ -179,13 +199,37 @@ public class VampireEvents {
     public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if (player.isCreative()) return;
-        if (!player.level().getBlockState(event.getPos()).is(WitcheryBlocks.GARLIC_GARLAND.get())) return;
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         if (!data.isVampire()) return;
 
-        player.igniteForSeconds(1.0f);
+        BlockState state = player.level().getBlockState(event.getPos());
+        if (state.is(WitcheryBlocks.GARLIC_GARLAND.get())) {
+            player.igniteForSeconds(1.0f);
+            event.setCanceled(true);
+            return;
+        }
+
+        boolean toolHarvestsStone = player.getMainHandItem().isCorrectToolForDrops(
+                Blocks.STONE.defaultBlockState());
+        if (!sourceCanCrushBlock(data.getVampireLevel(), isHumanForm(data), player.isShiftKeyDown(),
+                toolHarvestsStone, player.getFoodData().getFoodLevel(), state)) return;
+
+        if (tryVampireCrush(player, event.getPos(), state)) {
+            player.causeFoodExhaustion(10.0F);
+        }
         event.setCanceled(true);
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onVampireCombatDamage(LivingDamageEvent.Pre event) {
+        if (BLOOD_DRINK_DAMAGE.get() || !event.getSource().is(DamageTypes.PLAYER_ATTACK)
+                || !(event.getSource().getEntity() instanceof ServerPlayer attacker)) return;
+        WitcheryPlayerData data = WitcheryAttachments.get(attacker);
+        if (!sourceCanLaunch(data.getVampireLevel(), isHumanForm(data), attacker.isShiftKeyDown())) return;
+
+        event.getEntity().setDeltaMovement(sourceLaunchMotion(attacker.getLookAngle()));
+        event.getEntity().hurtMarked = true;
     }
 
     // ── Blood power tick ─────────────────────────────────────────────────────
@@ -329,7 +373,7 @@ public class VampireEvents {
 
     private static void bite(ServerPlayer vampire, LivingEntity target, WitcheryPlayerData data) {
         if (isWerewolfTarget(target)) {
-            vampire.hurt(vampire.damageSources().playerAttack(vampire), 4.0F);
+            hurtFromBloodDrinking(vampire, vampire, 4.0F);
             if (vampire.level() instanceof ServerLevel level) {
                 level.sendParticles(ParticleTypes.FLAME,
                         target.getX(), target.getY() + target.getBbHeight() * 0.8D, target.getZ(),
@@ -380,6 +424,22 @@ public class VampireEvents {
                 target.getName(), gained, data.getBloodLevel()), false);
     }
 
+    /** Source vampires breathe indefinitely, shrug off poison, and cannot hide from flame behind Fire Resistance. */
+    static void tickVampirePhysiology(ServerPlayer player) {
+        if (player.isInWater()) {
+            player.setAirSupply(300);
+        }
+        player.removeEffect(MobEffects.POISON);
+        if (player.isOnFire() && player.hasEffect(MobEffects.FIRE_RESISTANCE)
+                && player.level() instanceof ServerLevel level) {
+            player.hurtServer(level, vampireFireDamageSource(level), 2.0F);
+        }
+    }
+
+    static DamageSource vampireFireDamageSource(ServerLevel level) {
+        return level.damageSources().source(VAMPIRE_FIRE_DAMAGE);
+    }
+
     private static void playBloodDrinkFeedback(ServerPlayer vampire, LivingEntity target) {
         if (!(vampire.level() instanceof ServerLevel level)) {
             return;
@@ -398,9 +458,9 @@ public class VampireEvents {
             WitcheryPlayerData targetData = WitcheryAttachments.get(playerTarget);
             int taken = targetData.takeHumanBlood(drinkAmount(vampire), playerTarget.isSleeping());
             if (targetData.getHumanBlood() < VILLAGER_LOW_BLOOD) {
-                playerTarget.hurt(vampire.damageSources().playerAttack(vampire), 1.0F);
+                hurtFromBloodDrinking(vampire, playerTarget, 1.0F);
             } else if (!playerTarget.isSleeping()) {
-                playerTarget.hurt(vampire.damageSources().playerAttack(vampire), 0.1F);
+                hurtFromBloodDrinking(vampire, playerTarget, 0.1F);
             }
             return taken;
         }
@@ -412,14 +472,19 @@ public class VampireEvents {
         }
         if (target instanceof Mob) {
             int gained = bloodValue(vampire, target);
-            target.hurt(vampire.damageSources().playerAttack(vampire), 1.0F);
+            hurtFromBloodDrinking(vampire, target, 1.0F);
             return gained;
         }
         return 0;
     }
 
     private static int drainGuardBlood(ServerPlayer vampire, VillageGuardEntity guard) {
-        return guard.takeBlood(drinkAmount(vampire), vampire);
+        BLOOD_DRINK_DAMAGE.set(true);
+        try {
+            return guard.takeBlood(drinkAmount(vampire), vampire);
+        } finally {
+            BLOOD_DRINK_DAMAGE.remove();
+        }
     }
 
     private static int drainVillagerBlood(ServerPlayer vampire, Villager villager) {
@@ -439,11 +504,20 @@ public class VampireEvents {
                 new SyncVampireTargetBloodPayload(villager.getId(), remaining));
 
         if (remaining < VILLAGER_LOW_BLOOD) {
-            villager.hurt(vampire.damageSources().playerAttack(vampire), 1.3F);
+            hurtFromBloodDrinking(vampire, villager, 1.3F);
         } else if (!knockedOut) {
-            villager.hurt(vampire.damageSources().playerAttack(vampire), 0.1F);
+            hurtFromBloodDrinking(vampire, villager, 0.1F);
         }
         return taken;
+    }
+
+    private static void hurtFromBloodDrinking(ServerPlayer vampire, LivingEntity target, float amount) {
+        BLOOD_DRINK_DAMAGE.set(true);
+        try {
+            target.hurt(vampire.damageSources().playerAttack(vampire), amount);
+        } finally {
+            BLOOD_DRINK_DAMAGE.remove();
+        }
     }
 
     private static int drinkAmount(ServerPlayer vampire) {
@@ -780,7 +854,7 @@ public class VampireEvents {
 
     private static void setBatForm(ServerPlayer vampire, WitcheryPlayerData data, boolean active) {
         data.setVampireBatForm(active);
-        applyBatState(vampire, data);
+        applyVampireState(vampire, data);
         vampire.refreshDimensions();
         if (vampire.level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.SMOKE,
@@ -790,15 +864,24 @@ public class VampireEvents {
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(vampire, SyncPlayerDataPayload.from(vampire, data));
     }
 
-    private static void applyBatState(ServerPlayer vampire, WitcheryPlayerData data) {
+    static void applyVampireState(ServerPlayer vampire, WitcheryPlayerData data) {
         boolean bat = data.isVampireBatForm();
         AttributeInstance attack = vampire.getAttribute(Attributes.ATTACK_DAMAGE);
         if (attack != null) {
             if (bat) {
+                attack.removeModifier(VAMPIRE_ATTACK_MODIFIER);
                 attack.addOrUpdateTransientModifier(new AttributeModifier(BAT_ATTACK_MODIFIER,
                         -1.0D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
             } else {
                 attack.removeModifier(BAT_ATTACK_MODIFIER);
+                double damageBoost = data.isVampire() && isHumanForm(data)
+                        ? sourceVampireDamageBoost(data.getVampireLevel()) : 0.0D;
+                if (damageBoost != 0.0D) {
+                    attack.addOrUpdateTransientModifier(new AttributeModifier(VAMPIRE_ATTACK_MODIFIER,
+                            damageBoost, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+                } else {
+                    attack.removeModifier(VAMPIRE_ATTACK_MODIFIER);
+                }
             }
         }
         AttributeInstance stepHeight = vampire.getAttribute(Attributes.STEP_HEIGHT);
@@ -822,6 +905,39 @@ public class VampireEvents {
         if (oldMayfly != abilities.mayfly || oldFlying != abilities.flying) {
             vampire.onUpdateAbilities();
         }
+    }
+
+    static boolean tryVampireCrush(ServerPlayer player, BlockPos pos, BlockState state) {
+        if (!(player.level() instanceof ServerLevel level)) return false;
+        ItemStack tool = player.getMainHandItem();
+        boolean needsSourceDrops = !player.hasCorrectToolForDrops(state);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (!player.gameMode.destroyBlock(pos)) return false;
+        if (needsSourceDrops) {
+            Block.dropResources(state, level, pos, blockEntity, player, tool);
+        }
+        return true;
+    }
+
+    static double sourceVampireDamageBoost(int vampireLevel) {
+        int level = Math.clamp(vampireLevel, 0, 10);
+        if (level >= 7) return 3.0D;
+        if (level >= 4) return 2.0D;
+        return level >= 1 ? 1.0D : 0.0D;
+    }
+
+    static boolean sourceCanLaunch(int vampireLevel, boolean humanForm, boolean sneaking) {
+        return vampireLevel >= 3 && humanForm && sneaking;
+    }
+
+    static Vec3 sourceLaunchMotion(Vec3 look) {
+        return new Vec3(look.x * 1.8D, 0.9D, look.z * 1.8D);
+    }
+
+    static boolean sourceCanCrushBlock(int vampireLevel, boolean humanForm, boolean sneaking,
+                                       boolean toolHarvestsStone, int foodLevel, BlockState state) {
+        return vampireLevel >= 6 && humanForm && sneaking && !toolHarvestsStone && foodLevel > 0
+                && (state.is(Blocks.STONE) || state.is(Blocks.NETHERRACK) || state.is(Blocks.COBBLESTONE));
     }
 
     private static void alertBloodDrinkingWitnesses(ServerPlayer vampire, LivingEntity victim) {

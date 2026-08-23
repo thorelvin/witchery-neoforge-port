@@ -71,7 +71,40 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)The source blood-drop display beneath the crosshair shows what remains in a Villager, Village Guard, or mortal player whenever a vampire holds them in view.[#]()",
+      "text": "[#](53341a)The source blood-drop display beneath the crosshair shows what remains in a Villager, Village Guard, or mortal player whenever a vampire holds them in view.[#]() [#](53341a)The curse also works without spending Blood Power.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)In human form, level 1 doubles ordinary attack damage, level 4 triples it, and level 7 quadruples it.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)From level 3, a sneaking strike launches its victim; from level 6, sneak-punching Stone, Netherrack, or Cobblestone with an unsuitable tool crushes it at a heavy hunger cost.[#]() [#](53341a)Water cannot steal a vampire's breath and poison cannot hold.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Fire Resistance still cannot hide active flame from the curse.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

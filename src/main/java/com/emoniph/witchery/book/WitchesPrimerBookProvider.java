@@ -1802,7 +1802,13 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "sleeping. Villagers yield a full bite while sleeping or mesmerised. Werewolf blood "
                         + "burns the drinker instead."
                         + "\n\nThe source blood-drop display beneath the crosshair shows what remains in a "
-                        + "Villager, Village Guard, or mortal player whenever a vampire holds them in view."));
+                        + "Villager, Village Guard, or mortal player whenever a vampire holds them in view."
+                        + "\n\nThe curse also works without spending Blood Power. In human form, level 1 "
+                        + "doubles ordinary attack damage, level 4 triples it, and level 7 quadruples it. From "
+                        + "level 3, a sneaking strike launches its victim; from level 6, sneak-punching Stone, "
+                        + "Netherrack, or Cobblestone with an unsuitable tool crushes it at a heavy hunger cost."
+                        + "\n\nWater cannot steal a vampire's breath and poison cannot hold. Fire Resistance "
+                        + "still cannot hide active flame from the curse."));
         vampirism.addAll(WitcheryBooks.prose("The Five Powers",
                 "Level 1: **Drink**, free. Level 2: **Mesmerise**, 50 Blood Power; use it on a Villager, "
                         + "Village Guard, or player, or sneak-use it to toggle vampire vision. Level 4: "

@@ -62,6 +62,8 @@ public class ObservationsBookProvider implements BookSubProvider {
                         "The first hunger fades only after feeding, and the body starts to change."
                                 + "\n\nMesmerised victims can be held still, but draining too deeply has "
                                 + "consequences."
+                                + "\n\nWater no longer steals breath and poison finds no purchase. Flame is less "
+                                + "easily cheated: resistance may hide the burning, but not the curse's pain."
                                 + "\n\nAfter mastery, the vampire begins to sense time, hunger, and sunlight "
                                 + "differently."
                                 + "\n\nSunlight can be collected and turned back on the curse until the burning "
@@ -76,7 +78,8 @@ public class ObservationsBookProvider implements BookSubProvider {
                 .withLocation(0, 2)
                 .withParent(curse)
                 .withPages(WitcheryBooks.prose("Mastery Over Blood",
-                        "Greater strength brings stone-breaking power and a second appeal to Lilith."
+                        "Greater strength comes in three strides. A crouched blow can cast prey away, and later "
+                                + "the bare hand breaks common stone. Then comes a second appeal to Lilith."
                                 + "\n\nA red flower and another filled goblet open the path to higher mastery."
                                 + "\n\nFlight follows; distance and village walls matter less than before."
                                 + "\n\nTransfixed victims can be guided into cages for careful feeding."

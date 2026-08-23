@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Greater strength brings stone-breaking power and a second appeal to Lilith.[#]() [#](53341a)A red flower and another filled goblet open the path to higher mastery.[#]() [#](53341a)Flight follows; distance and village walls matter less than before.[#]()",
+      "text": "[#](53341a)Greater strength comes in three strides. A crouched blow can cast prey away, and later the bare hand breaks common stone. Then comes a second appeal to Lilith.[#]() [#](53341a)A red flower and another filled goblet open the path to higher mastery.[#]()",
       "title": "Mastery Over Blood",
       "use_markdown_in_title": false
     },
@@ -27,7 +27,18 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Transfixed victims can be guided into cages for careful feeding.[#]() [#](53341a)Power over blood becomes power over making new vampires.[#]() [#](53341a)The final note describes a coffin, a goblet, and an unwilling rebirth.[#]()",
+      "text": "[#](53341a)Flight follows; distance and village walls matter less than before.[#]() [#](53341a)Transfixed victims can be guided into cages for careful feeding.[#]() [#](53341a)Power over blood becomes power over making new vampires.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The final note describes a coffin, a goblet, and an unwilling rebirth.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

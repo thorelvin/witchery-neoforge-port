@@ -55,6 +55,14 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- The remaining automatic vampire level perks now follow the 1.7.10 contract:
+  human-form attack damage rises to ×2/×3/×4 at levels 1/4/7, level-3
+  sneaking strikes launch their victim, and level-6 sneaking fist/tool-mismatch
+  hits crush Stone, Netherrack, or Cobblestone for ten exhaustion while keeping
+  ordinary drops. Vampires also refill air underwater, clear Poison every forty
+  ticks, and take the source two armor-bypassing damage when Fire Resistance
+  masks active flame. Focused JVM tests and the dedicated-server
+  `witchery:vampire_passive_perks` fixture pass.
 - Vampire Blood Power parity is implemented against the 1.7.10 contract. The
   source `NONE / DRINK / MESMERIZE / SPEED / BAT / ULTIMATE` selection ladder,
   level gates, costs, partial sunlight spending, ten-tick cooldown, source HUD

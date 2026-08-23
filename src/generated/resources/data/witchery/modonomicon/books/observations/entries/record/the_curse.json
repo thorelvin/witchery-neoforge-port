@@ -16,8 +16,19 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The first hunger fades only after feeding, and the body starts to change.[#]() [#](53341a)Mesmerised victims can be held still, but draining too deeply has consequences.[#]() [#](53341a)After mastery, the vampire begins to sense time, hunger, and sunlight differently.[#]()",
+      "text": "[#](53341a)The first hunger fades only after feeding, and the body starts to change.[#]() [#](53341a)Mesmerised victims can be held still, but draining too deeply has consequences.[#]() [#](53341a)Water no longer steals breath and poison finds no purchase.[#]()",
       "title": "The Curse Takes Hold",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Flame is less easily cheated: resistance may hide the burning, but not the curse's pain.[#]() [#](53341a)After mastery, the vampire begins to sense time, hunger, and sunlight differently.[#]()",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {

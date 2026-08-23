@@ -68,6 +68,7 @@ public class WitcheryMod {
         com.emoniph.witchery.command.MirrorWorldGameTests.register(modEventBus);
         com.emoniph.witchery.command.LycanthropyGameTests.register(modEventBus);
         com.emoniph.witchery.command.VampirePowerGameTests.register(modEventBus);
+        com.emoniph.witchery.events.VampirePassiveGameTests.register(modEventBus);
         com.emoniph.witchery.entity.HobgoblinEcologyGameTests.register(modEventBus);
         com.emoniph.witchery.brewing.IceWorldGameTests.register(modEventBus);
         com.emoniph.witchery.item.InfernalOwnershipGameTests.register(modEventBus);

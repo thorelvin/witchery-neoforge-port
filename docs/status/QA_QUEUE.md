@@ -569,6 +569,17 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   flies in survival, fits the source 0.3 x 0.6 body, loses ordinary attack power,
   returns to the exact standing position safely, and regains normal dimensions,
   hands, abilities, and camera behavior on exit.
+- Run `/test run witchery:vampire_passive_perks`. In live play, confirm human-form
+  attack damage is ×2 at level 1, ×3 at level 4, and ×4 at level 7. At level 3,
+  a sneaking melee hit should set the victim's motion along the vampire's gaze
+  with a fixed upward launch; an ordinary hit must not. At level 6, sneak-punch
+  Stone, Netherrack, and Cobblestone empty-handed and confirm immediate ordinary
+  drops plus ten exhaustion. Gravel, a suitable Stone tool, no food, Bat form,
+  and non-sneaking hits must refuse the shortcut.
+- For vampire physiology, remain submerged through an ordinary drowning cycle,
+  apply Poison, and burn while Fire Resistance is active. Air should refill to
+  300, Poison should clear within forty ticks, and masked flame should still deal
+  two armor-bypassing damage every forty ticks.
 - Bite a Villager, Village Guard, passive animal, hostile mob, mortal player, werewolf, and caged
   villager quest target. An awake mortal player should yield 7 of a normal
   10-point bite, a sleeping player should yield all 10, their synchronized
