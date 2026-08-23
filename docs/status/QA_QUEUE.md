@@ -410,6 +410,15 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 ### Visuals And Creative Tab
 
+- Grow Belladonna, Mandrake, Mindrake, Snowbell, Wormwood, Wolfsbane, and Garlic
+  on farmland, grass, dirt, the same crop, and Wormwood. Established plants should
+  survive in low light but grow only at light level 9 or higher; Snowbell should
+  also survive on podzol and snow. Confirm Water Artichoke breaks without its
+  water support. Bonemeal Mindrake and Wolfsbane one age at a time, compare
+  Mindrake's slower natural growth, sample mature Mindrake harvests for the 25%
+  second bulb, and let mature base Wormwood grow one young upper segment without
+  stacking further from that young segment. Inspect fresh wild Wormwood patches
+  for valid ages and sensible density.
 - Grow several mature Mandrakes and harvest them in daylight, at night, and on
   Peaceful. Day should awaken roughly 9 in 10, night roughly 1 in 10, and
   Peaceful never; awakenings give no crop drop and raise the creature in a
@@ -529,6 +538,14 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   Hobgoblin idle/haggle/hurt/death/trade-yes use the old goblin clips, and
   Gulg/Mog use their source idle voices, zombie-horse hurt, Wither death, and
   Iron Golem footstep cues.
+- Fight Gulg and Mog together and separate them through the 3/6/9/16-block
+  partner bands. Confirm immunity inside 3 blocks, the stepped damage opening,
+  and the 15-damage ceiling. Have Mog shoot grounded and airborne targets to
+  compare arrow speed/damage, and verify Gulg launches on every successful hit.
+  Test fire, water, cobwebs, chunk unload/reload, and blocked/liquid/unsupported
+  teleport destinations. On repeated kills, verify 1-3 Koboldite Nuggets,
+  enchanted chainmail, and roughly 50% signature reward drops; inspect both
+  bosses full-bright and their reward armor in live play.
 - Spawn Nightmare, Spectre, Treefyd, Flying Monkey, and Reflection with
   `/witchery spawn nightmare`, `/witchery spawn spectre`,
   `/witchery spawn treefyd`, `/witchery spawn flying_monkey`, and

@@ -4,16 +4,15 @@ import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-public class WolfsbaneCropBlock extends CropBlock {
+public class WolfsbaneCropBlock extends WitchCropBlock {
 
     public static final IntegerProperty WOLFSBANE_AGE = BlockStateProperties.AGE_7;
 
@@ -36,9 +35,12 @@ public class WolfsbaneCropBlock extends CropBlock {
     protected ItemLike getBaseSeedId() { return WitcheryItems.WOLFSBANE_SEEDS.get(); }
 
     @Override
+    protected int getBonemealAgeIncrease(Level level) {
+        return 1;
+    }
+
+    @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        // Herbalism Primer: tilled farmland only. (1.7.10 BlockWitchCrop also accepted grass/dirt,
-        // but the in-game primer — the canonical herbalism guide — calls for tilled farmland.)
-        return state.is(Blocks.FARMLAND);
+        return WitchCropSoilRules.supports(this, state);
     }
 }

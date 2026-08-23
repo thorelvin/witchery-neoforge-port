@@ -3,7 +3,6 @@ package com.emoniph.witchery.entity;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -25,8 +24,8 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -72,7 +71,7 @@ public class GoblinGulgEntity extends Monster {
                 .add(Attributes.MAX_HEALTH,     400.0)
                 .add(Attributes.MOVEMENT_SPEED,   0.35)
                 .add(Attributes.ATTACK_DAMAGE,     6.0)
-                .add(Attributes.FOLLOW_RANGE,     48.0)
+                .add(Attributes.FOLLOW_RANGE,     50.0)
                 .add(Attributes.ARMOR,             8.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }
@@ -102,7 +101,8 @@ public class GoblinGulgEntity extends Monster {
         goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0));
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
         goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        targetSelector.addGoal(1, new HurtByTargetGoal(this, GoblinMogEntity.class, GoblinGulgEntity.class));
+        targetSelector.addGoal(1, new HurtByTargetGoal(this,
+                HobgoblinEntity.class, GoblinMogEntity.class, GoblinGulgEntity.class));
         // Priority 1 (same as HurtBy) — both target selectors active simultaneously (source parity)
         targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
     }
@@ -178,28 +178,9 @@ public class GoblinGulgEntity extends Monster {
             if (target != null && navigation.isStuck() &&
                     (long) tickCount - ticksSinceTeleport > 200L) {
                 ticksSinceTeleport = tickCount;
-                teleportToward(target);
+                GoblinBossTeleportHelper.teleportToward(this, target);
             }
         }
-    }
-
-    private void teleportToward(Entity target) {
-        Vec3 dir = new Vec3(getX() - target.getX(), 0, getZ() - target.getZ()).normalize();
-        double range = 16.0;
-        double nx = getX() + (random.nextDouble() - 0.5) * 8 - dir.x * range;
-        double ny = getY() + (random.nextInt(16) - 8);
-        double nz = getZ() + (random.nextDouble() - 0.5) * 8 - dir.z * range;
-        boolean ok = tryTeleportTo(nx, ny, nz);
-        if (ok) {
-            playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0f, 1.0f);
-        }
-    }
-
-    private boolean tryTeleportTo(double x, double y, double z) {
-        double ox = getX(), oy = getY(), oz = getZ();
-        setPos(x, y, z);
-        if (!level().noCollision(this)) { setPos(ox, oy, oz); return false; }
-        return true;
     }
 
     // ── Damage — partner-distance scaling ─────────────────────────────────────
@@ -208,13 +189,8 @@ public class GoblinGulgEntity extends Monster {
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (getInvulTimer() > 0) return false; // Invulnerability phase
 
-        double dist = distToNearestMog();
-        if (dist <= 3.0)  return false;        // Immune when Mog adjacent
-        if (dist <= 6.0)  amount *= 0.20f;
-        else if (dist <= 9.0)  amount *= 0.50f;
-        else if (dist <= 16.0) amount *= 0.80f;
-
-        return super.hurtServer(level, source, Math.min(amount, 15.0f));
+        float scaled = GoblinBossContracts.scaledAndCappedDamage(amount, distanceSqrToNearestMog());
+        return scaled > 0.0F && super.hurtServer(level, source, scaled);
     }
 
     // ── Melee — attack scales with distance to Mog ────────────────────────────
@@ -224,17 +200,17 @@ public class GoblinGulgEntity extends Monster {
         attackTimer = 10;
         level.broadcastEntityEvent(this, (byte) 4);
 
-        double dist = distToNearestMog();
-        int force = dist <= 3.0 ? 20 : dist <= 6.0 ? 15 : dist <= 9.0 ? 10 : dist <= 16.0 ? 6 : 4;
+        double distanceSqr = distanceSqrToNearestMog();
+        int force = GoblinBossContracts.gulgDamageForce(distanceSqr);
         float baseDmg = 6 + random.nextInt(force);
-        double yBoost  = dist <= 3.0 ? 1.0 : dist <= 6.0 ? 0.8 : dist <= 9.0 ? 0.5 : dist <= 16.0 ? 0.2 : 0;
 
         boolean hit = false;
         if (target instanceof net.minecraft.world.entity.LivingEntity lt) {
             hit = lt.hurtServer(level, level.damageSources().mobAttack(this), baseDmg);
         }
-        if (hit && yBoost > 0 && target instanceof LivingEntity le) {
-            le.setDeltaMovement(le.getDeltaMovement().add(0, yBoost, 0));
+        if (hit && target instanceof LivingEntity le) {
+            le.setDeltaMovement(le.getDeltaMovement().add(0,
+                    GoblinBossContracts.gulgLaunch(distanceSqr), 0));
         }
         playSound(SoundEvents.IRON_GOLEM_HURT, 1.0f, 1.0f);
         return hit;
@@ -248,10 +224,10 @@ public class GoblinGulgEntity extends Monster {
 
     // ── Partner distance helper ───────────────────────────────────────────────
 
-    private double distToNearestMog() {
+    private double distanceSqrToNearestMog() {
         AABB bb = getBoundingBox().inflate(16);
         List<GoblinMogEntity> mogs = level().getEntitiesOfClass(GoblinMogEntity.class, bb);
-        return mogs.stream().mapToDouble(this::distanceTo).min().orElse(Double.MAX_VALUE);
+        return mogs.stream().mapToDouble(this::distanceToSqr).min().orElse(Double.MAX_VALUE);
     }
 
     // ── Drops ─────────────────────────────────────────────────────────────────
@@ -262,12 +238,7 @@ public class GoblinGulgEntity extends Monster {
         spawnAtLocation(level, new ItemStack(WitcheryItems.KOBOLDITE_NUGGET.get(), 1 + random.nextInt(3)));
 
         // Random enchanted iron armor
-        ItemStack armor = switch (random.nextInt(4)) {
-            case 0  -> new ItemStack(Items.IRON_HELMET);
-            case 1  -> new ItemStack(Items.IRON_CHESTPLATE);
-            case 2  -> new ItemStack(Items.IRON_LEGGINGS);
-            default -> new ItemStack(Items.IRON_BOOTS);
-        };
+        ItemStack armor = new ItemStack(GoblinBossContracts.armorDrop(random.nextInt(4)));
         // Apply basic enchantment via enchanting helper
         net.minecraft.world.item.enchantment.EnchantmentHelper.enchantItem(
                 random, armor, 30, level.registryAccess(), java.util.Optional.empty());
@@ -288,6 +259,36 @@ public class GoblinGulgEntity extends Monster {
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
         playSound(SoundEvents.IRON_GOLEM_STEP, 1.0F, 1.0F);
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level,
+                                        net.minecraft.world.DifficultyInstance difficulty,
+                                        EntitySpawnReason spawnType,
+                                        net.minecraft.world.entity.@org.jetbrains.annotations.Nullable SpawnGroupData spawnGroupData) {
+        setPersistenceRequired();
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
+
+    @Override
+    public void setTarget(LivingEntity target) {
+        if (target != null && GoblinBossContracts.isGoblinKin(target)) return;
+        super.setTarget(target);
+    }
+
+    @Override
+    public boolean canBreatheUnderwater() {
+        return true;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
+
+    @Override
+    public void makeStuckInBlock(BlockState state, Vec3 motionMultiplier) {
+        if (!state.is(Blocks.COBWEB)) super.makeStuckInBlock(state, motionMultiplier);
     }
 
     // ── NBT ───────────────────────────────────────────────────────────────────

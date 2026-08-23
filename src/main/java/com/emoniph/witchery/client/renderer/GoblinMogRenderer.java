@@ -3,6 +3,7 @@ package com.emoniph.witchery.client.renderer;
 import com.emoniph.witchery.client.model.GoblinMogModel;
 import com.emoniph.witchery.entity.GoblinMogEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.Identifier;
@@ -37,6 +38,12 @@ public class GoblinMogRenderer extends MobRenderer<GoblinMogEntity, GoblinMogMod
     protected void scale(GoblinMogModel.MogRenderState state, PoseStack poseStack) {
         poseStack.translate(0.0F, LEGACY_BASE_DELTA_Y - (state.crouching ? 0.125F : 0.0F), 0.0F);
     }
+
+    @Override
+    protected int getBlockLightLevel(GoblinMogEntity entity, BlockPos pos) { return 15; }
+
+    @Override
+    protected int getSkyLightLevel(GoblinMogEntity entity, BlockPos pos) { return 15; }
 
     @Override public Identifier getTextureLocation(GoblinMogModel.MogRenderState state) { return TEXTURE; }
 }

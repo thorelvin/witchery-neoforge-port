@@ -5,8 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -14,7 +12,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 /** Snowbell — 5 stages (0-4). Grows in cold biomes; drops snowbell bulbs. */
-public class SnowbellBlock extends CropBlock {
+public class SnowbellBlock extends WitchCropBlock {
     public static final IntegerProperty SNOWBELL_AGE = BlockStateProperties.AGE_4;
 
     public SnowbellBlock(BlockBehaviour.Properties props) { super(props); }
@@ -32,9 +30,6 @@ public class SnowbellBlock extends CropBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        // Herbalism Primer: tilled earth / farmland only. (1.7.10 BlockWitchCrop also accepted
-        // grass/dirt, but the in-game primer — the canonical herbalism guide — calls for tilled
-        // farmland, so the port follows the primer.)
-        return state.is(Blocks.FARMLAND);
+        return WitchCropSoilRules.supports(this, state);
     }
 }

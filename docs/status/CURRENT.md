@@ -39,7 +39,8 @@ enough to read before starting work. Long historical deltas belong in
 - In-game QA for recently restored or polished systems: Flame Imp contracts,
   Vanishing Witch Hut, NBT structures, the source-corrected Spirit World lifecycle,
   mirrored terrain/spawns/Manifestation visuals, cursed well warnings, the complete
-  Ice World area conversion, and other custom brew/ritual edge cases.
+  Ice World area conversion, Witchery crop growth/worldgen, the paired Gulg/Mog
+  fight, and other custom brew/ritual edge cases.
 - State-dependent source-feel QA for exact-ID items and wearables. Foundational
   model geometry, pivots, transforms, textures, and held/armor routes now have a
   source-coordinate audit; remaining checks are animated, equipped, translucent,
@@ -55,6 +56,19 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Witchery crop parity now has a shared source-soil contract for Belladonna,
+  Mandrake, Mindrake, Snowbell, Wormwood, Wolfsbane, and Garlic; source water
+  support remains mandatory for Water Artichoke. Mindrake/Wolfsbane growth and
+  bonemeal behavior, the mature Mindrake second-bulb chance, and mature-base
+  Wormwood upward extension are restored. A generic configured-feature validator
+  also catches invalid registered block states, including the corrected wild
+  Wormwood age. Focused JVM tests and `witchery:witch_crop_parity` pass.
+- Goblin Gulg and Goblin Mog now implement their source paired-boss contracts:
+  400 health, partner-distance damage bands, a 15-damage cap, Mog's airborne-target
+  arrow speed, Gulg's launch profile, source equipment/drops, persistence,
+  fire/water/web resilience, full-bright rendering, and guarded atomic combat
+  teleports. Focused JVM tests and `witchery:goblin_boss_parity` pass; live combat,
+  reward, and presentation feel remain QA.
 - The remaining automatic vampire level perks now follow the 1.7.10 contract:
   human-form attack damage rises to ×2/×3/×4 at levels 1/4/7, level-3
   sneaking strikes launch their victim, and level-6 sneaking fist/tool-mismatch

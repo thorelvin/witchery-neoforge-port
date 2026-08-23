@@ -2,23 +2,25 @@ package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.neoforged.neoforge.common.CommonHooks;
 
 /**
  * Mindrake crop — grown from a Mindrake Bulb. Unlike the Mandrake crop, harvesting it does not
  * raise a creature; it simply yields bulbs (a bulb left lying on the ground hatches into a Mindrake
  * on its own — see {@code MindrakeEvents}). Grows more slowly than ordinary crops in the source.
  */
-public class MindrakeBlock extends CropBlock {
+public class MindrakeBlock extends WitchCropBlock {
     public static final IntegerProperty MINDRAKE_AGE = BlockStateProperties.AGE_4;
 
     public MindrakeBlock(BlockBehaviour.Properties props) {
@@ -40,9 +42,31 @@ public class MindrakeBlock extends CropBlock {
     protected ItemLike getBaseSeedId() { return WitcheryItems.MINDRAKE_BULB.get(); }
 
     @Override
+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (!level.isAreaLoaded(pos, 1)) return;
+        if (level.getRawBrightness(pos, 0) < 9) return;
+
+        int age = getAge(state);
+        if (age >= getMaxAge()) return;
+        float growthSpeed = sourceGrowthSpeed(getGrowthSpeed(state, level, pos));
+        if (CommonHooks.canCropGrow(level, pos, state,
+                random.nextInt((int) (25.0F / growthSpeed) + 1) == 0)) {
+            level.setBlock(pos, getStateForAge(age + 1), Block.UPDATE_CLIENTS);
+            CommonHooks.fireCropGrowPost(level, pos, state);
+        }
+    }
+
+    @Override
+    protected int getBonemealAgeIncrease(Level level) {
+        return 1;
+    }
+
+    static float sourceGrowthSpeed(float ordinaryGrowthSpeed) {
+        return ordinaryGrowthSpeed / 1.5F;
+    }
+
+    @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        // Herbalism Primer: tilled earth / farmland only (matched to its Mandrake sibling; the primer
-        // table doesn't list Mindrake, but it's the same witch-crop family and player-planted from a bulb).
-        return state.is(Blocks.FARMLAND);
+        return WitchCropSoilRules.supports(this, state);
     }
 }

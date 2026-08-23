@@ -320,13 +320,13 @@ public class WitcheryEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.GoblinGulgEntity>> GOBLIN_GULG =
             ENTITY_TYPES.register("goblin_gulg", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.GoblinGulgEntity::new, MobCategory.MONSTER)
-                            .sized(0.8F, 1.8F).clientTrackingRange(16)
+                            .sized(0.8F, 1.8F).fireImmune().clientTrackingRange(16)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "goblin_gulg"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.emoniph.witchery.entity.GoblinMogEntity>> GOBLIN_MOG =
             ENTITY_TYPES.register("goblin_mog", () ->
                     EntityType.Builder.of(com.emoniph.witchery.entity.GoblinMogEntity::new, MobCategory.MONSTER)
-                            .sized(0.8F, 1.8F).clientTrackingRange(16)
+                            .sized(0.8F, 1.8F).fireImmune().clientTrackingRange(16)
                             .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, net.minecraft.resources.Identifier.fromNamespaceAndPath("witchery", "goblin_mog"))));
 
     // ── Vampire mob ───────────────────────────────────────────────────────────

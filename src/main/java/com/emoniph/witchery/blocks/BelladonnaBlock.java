@@ -5,15 +5,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-public class BelladonnaBlock extends CropBlock {
+public class BelladonnaBlock extends WitchCropBlock {
     // Must NOT be named AGE — that would shadow CropBlock.AGE but createBlockStateDefinition
     // would still reference CropBlock.AGE (static fields are not polymorphic).
     // Override createBlockStateDefinition instead to register this property.
@@ -39,9 +37,6 @@ public class BelladonnaBlock extends CropBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        // Herbalism Primer: tilled earth / farmland only. (1.7.10 BlockWitchCrop also accepted
-        // grass/dirt, but the in-game primer — the canonical herbalism guide — calls for tilled
-        // farmland, so the port follows the primer.)
-        return state.is(Blocks.FARMLAND);
+        return WitchCropSoilRules.supports(this, state);
     }
 }

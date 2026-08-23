@@ -2,11 +2,11 @@ package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.init.WitcheryItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 /** Wormwood — 5 stages (0-4). Key brewing ingredient; seed and product are the same item. */
-public class WormwoodBlock extends CropBlock {
+public class WormwoodBlock extends WitchCropBlock {
     public static final IntegerProperty WORMWOOD_AGE = BlockStateProperties.AGE_4;
 
     public WormwoodBlock(BlockBehaviour.Properties props) { super(props); }
@@ -31,9 +31,28 @@ public class WormwoodBlock extends CropBlock {
     protected ItemLike getBaseSeedId() { return WitcheryItems.WORMWOOD_SEEDS.get(); }
 
     @Override
+    protected boolean isRandomlyTicking(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        super.randomTick(state, level, pos, random);
+        if (!level.isAreaLoaded(pos, 1)) return;
+
+        BlockState below = level.getBlockState(pos.below());
+        if (sourceCanExtend(isMaxAge(state), below.getBlock() instanceof WormwoodBlock,
+                level.isEmptyBlock(pos.above()), level.getRawBrightness(pos, 0))) {
+            level.setBlock(pos.above(), defaultBlockState(), Block.UPDATE_ALL);
+        }
+    }
+
+    static boolean sourceCanExtend(boolean mature, boolean belowWormwood, boolean aboveAir, int brightness) {
+        return mature && !belowWormwood && aboveAir && brightness >= 9;
+    }
+
+    @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        // Herbalism Primer: tilled farmland only. (1.7.10 BlockWitchCrop also accepted grass/dirt,
-        // but the in-game primer — the canonical herbalism guide — calls for tilled farmland.)
-        return state.is(Blocks.FARMLAND);
+        return WitchCropSoilRules.supports(this, state);
     }
 }

@@ -24,9 +24,11 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -65,8 +67,8 @@ public class GoblinMogEntity extends Monster implements RangedAttackMob {
                 .add(Attributes.MAX_HEALTH,     400.0)
                 .add(Attributes.MOVEMENT_SPEED,   0.35)
                 .add(Attributes.ATTACK_DAMAGE,     7.0)
-                .add(Attributes.FOLLOW_RANGE,     48.0)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
+                .add(Attributes.FOLLOW_RANGE,     50.0)
+                .add(Attributes.ARMOR,              5.0);
     }
 
     // ── Synced data ───────────────────────────────────────────────────────────
@@ -90,7 +92,8 @@ public class GoblinMogEntity extends Monster implements RangedAttackMob {
         goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0));
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
         goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        targetSelector.addGoal(1, new HurtByTargetGoal(this, GoblinMogEntity.class, GoblinGulgEntity.class));
+        targetSelector.addGoal(1, new HurtByTargetGoal(this,
+                HobgoblinEntity.class, GoblinMogEntity.class, GoblinGulgEntity.class));
         targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
     }
 
@@ -129,26 +132,9 @@ public class GoblinMogEntity extends Monster implements RangedAttackMob {
             if (target != null && navigation.isStuck() &&
                     (long) tickCount - ticksSinceTeleport > 300L) {
                 ticksSinceTeleport = tickCount;
-                teleportToward(target);
+                GoblinBossTeleportHelper.teleportToward(this, target);
             }
         }
-    }
-
-    private void teleportToward(Entity target) {
-        Vec3 dir = new Vec3(getX() - target.getX(), 0, getZ() - target.getZ()).normalize();
-        double range = 16.0;
-        double nx = getX() + (random.nextDouble() - 0.5) * 8 - dir.x * range;
-        double ny = getY() + (random.nextInt(16) - 8);
-        double nz = getZ() + (random.nextDouble() - 0.5) * 8 - dir.z * range;
-        boolean ok = tryTeleportTo(nx, ny, nz);
-        if (ok) playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0f, 1.0f);
-    }
-
-    private boolean tryTeleportTo(double x, double y, double z) {
-        double ox = getX(), oy = getY(), oz = getZ();
-        setPos(x, y, z);
-        if (!level().noCollision(this)) { setPos(ox, oy, oz); return false; }
-        return true;
     }
 
     // ── Damage — partner-distance scaling ─────────────────────────────────────
@@ -157,13 +143,8 @@ public class GoblinMogEntity extends Monster implements RangedAttackMob {
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (getInvulTimer() > 0) return false;
 
-        double dist = distToNearestGulg();
-        if (dist <= 3.0)  return false;
-        if (dist <= 6.0)  amount *= 0.20f;
-        else if (dist <= 9.0)  amount *= 0.50f;
-        else if (dist <= 16.0) amount *= 0.80f;
-
-        return super.hurtServer(level, source, Math.min(amount, 15.0f));
+        float scaled = GoblinBossContracts.scaledAndCappedDamage(amount, distanceSqrToNearestGulg());
+        return scaled > 0.0F && super.hurtServer(level, source, scaled);
     }
 
     // ── Ranged attack ─────────────────────────────────────────────────────────
@@ -182,11 +163,11 @@ public class GoblinMogEntity extends Monster implements RangedAttackMob {
         double dz = target.getZ() - getZ();
         double flatDist = Math.sqrt(dx * dx + dz * dz) * 0.2;
 
-        // Arrows faster when target is falling/airborne (source parity)
-        double speed = target.isFallFlying() ? 2.5 : 1.5;
-        arrow.shoot(dx * speed, (dy + flatDist) * speed, dz * speed, 1.6F,
+        double speedFactor = GoblinBossContracts.mogArrowSpeedFactor(!target.onGround());
+        arrow.shoot(dx, dy + flatDist, dz, (float) (1.6F * speedFactor),
                 14 - level().getDifficulty().getId() * 4);
-        arrow.setBaseDamage(7 + random.nextInt(15));
+        arrow.setBaseDamage(GoblinBossContracts.mogArrowDamage(
+                power, random.nextGaussian(), level().getDifficulty().getId()));
 
         playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (getRandom().nextFloat() * 0.4F + 0.8F));
         level().addFreshEntity(arrow);
@@ -200,10 +181,10 @@ public class GoblinMogEntity extends Monster implements RangedAttackMob {
 
     // ── Partner distance helper ───────────────────────────────────────────────
 
-    private double distToNearestGulg() {
+    private double distanceSqrToNearestGulg() {
         AABB bb = getBoundingBox().inflate(16);
         List<GoblinGulgEntity> gulgs = level().getEntitiesOfClass(GoblinGulgEntity.class, bb);
-        return gulgs.stream().mapToDouble(this::distanceTo).min().orElse(Double.MAX_VALUE);
+        return gulgs.stream().mapToDouble(this::distanceToSqr).min().orElse(Double.MAX_VALUE);
     }
 
     // ── Drops ─────────────────────────────────────────────────────────────────
@@ -212,12 +193,7 @@ public class GoblinMogEntity extends Monster implements RangedAttackMob {
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         spawnAtLocation(level, new ItemStack(WitcheryItems.KOBOLDITE_NUGGET.get(), 1 + random.nextInt(3)));
 
-        ItemStack armor = switch (random.nextInt(4)) {
-            case 0  -> new ItemStack(Items.IRON_HELMET);
-            case 1  -> new ItemStack(Items.IRON_CHESTPLATE);
-            case 2  -> new ItemStack(Items.IRON_LEGGINGS);
-            default -> new ItemStack(Items.IRON_BOOTS);
-        };
+        ItemStack armor = new ItemStack(GoblinBossContracts.armorDrop(random.nextInt(4)));
         net.minecraft.world.item.enchantment.EnchantmentHelper.enchantItem(
                 random, armor, 30, level.registryAccess(), java.util.Optional.empty());
         spawnAtLocation(level, armor);
@@ -234,8 +210,40 @@ public class GoblinMogEntity extends Monster implements RangedAttackMob {
                                         net.minecraft.world.DifficultyInstance difficulty,
                                         EntitySpawnReason spawnType,
                                         net.minecraft.world.entity.@org.jetbrains.annotations.Nullable SpawnGroupData spawnGroupData) {
+        setPersistenceRequired();
         setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
+
+    @Override
+    public void setTarget(LivingEntity target) {
+        if (target != null && GoblinBossContracts.isGoblinKin(target)) return;
+        super.setTarget(target);
+    }
+
+    @Override
+    public boolean canBreatheUnderwater() {
+        return true;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
+
+    @Override
+    public void makeStuckInBlock(BlockState state, Vec3 motionMultiplier) {
+        if (!state.is(Blocks.COBWEB)) super.makeStuckInBlock(state, motionMultiplier);
+    }
+
+    @Override
+    public ItemEntity spawnAtLocation(ServerLevel level, ItemStack stack, float yOffset) {
+        ItemEntity item = super.spawnAtLocation(level, stack, yOffset);
+        if (item != null && stack.is(Items.BOW)) {
+            item.setPickUpDelay(100);
+            item.lifespan = 100;
+        }
+        return item;
     }
 
     // ── Sounds ────────────────────────────────────────────────────────────────
