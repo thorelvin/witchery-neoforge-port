@@ -371,6 +371,20 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   movement-speed lock; instead they should drop combat targeting and step toward
   the vampire roughly once per second. Check that level-7 vampires and targets
   closer than 1 block or farther than 16 blocks do not trigger the lure.
+- Use Brew of Raising on a valid grave top and inspect the weighted undead. It
+  should be persistent, carry the Enslaved effect and no-drop marker, refuse to
+  target its owner, and answer a real attack on that owner even when loaded more
+  than 50 blocks away in the same dimension. A fully blocked hit should not call
+  it to battle.
+- Cure the Enslaved effect from a bound mob. It should stop answering attacks but
+  still refuse to target its recorded owner; rebinding by that same owner should
+  be a no-op, while a different owner should replace the bond and restore the
+  effect. Ordinary infernal binding must not make a naturally despawning mob
+  persistent.
+- Drink Brew of Love near two adult zombies owned by the drinker. Both parents
+  should become zombie villagers while keeping ownership/effect, equipment,
+  health, target, persistence, and no-drop state. The resulting baby must be a
+  plain unowned, nonpersistent baby zombie with no random spawn equipment.
 - Drink Infused Brew of the Grave, sneak-use a Necromantic Stone on an unowned
   undead mob, and confirm it becomes an owned thrall with witch/green feedback.
   Reuse within exactly 200 ticks should fizzle; after 201+ ticks it should bind

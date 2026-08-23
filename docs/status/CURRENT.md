@@ -55,6 +55,13 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Infernal ownership parity is complete for raised and bred undead. Binding now
+  applies the permanent but curable Enslaved effect without making arbitrary
+  mobs persistent; owner immunity survives a cure, while same-world loaded
+  revenge requires the active effect. Brew of Raising owns persistent no-drop
+  undead, and Brew of Love converts both owned adult zombie parents to zombie
+  villagers while preserving their state and leaving the baby unowned. Three
+  dedicated-server GameTests cover the lifecycle, raising, and breeding routes.
 - Custom Brew projectile and ritual-target parity is restored. Direct Leonard's
   Urn throws retain their ordinary arc, while Mystic Branch focus shots use the
   source 4.0 velocity, zero gravity, and 200-tick lifetime. A filled Taglock Kit

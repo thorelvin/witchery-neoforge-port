@@ -210,6 +210,50 @@
       "title": "Brew: Ice World Splash"
     },
     {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A brim-full heated cauldron may release a finished brew when you sneak-use **Tongue of Dog**. For a living target, add that player or creature's **filled Taglock Kit last**.[#]()",
+      "title": "Ritual Targets",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The Taglock adds 1,000 altar power, works without a splash ingredient, and prevents bottling or further stirring. Tongue of Dog then serves only as the release gesture.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Distance grows with a nearby coven; six coven witches remove the same-world limit, while cross-dimensional targeting also requires the Shade of Leonard.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Full Hunter clothes, a protecting Area Marker, or a bound Voodoo Protection Poppet may absorb the working after its power is spent.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
       "type": "witchery:item_reference",
       "anchor": "",
       "condition": {
@@ -529,6 +573,10 @@
         {
           "item": "witchery:tongue_of_dog",
           "text": "[#](53341a)**Tongue of Dog** - ritual cauldron release trigger (250 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "witchery:bound_taglock_kit",
+          "text": "[#](53341a)**Bound Taglock Kit** - direct living-entity ritual target; add last (1000 power, drop or sneak-stir).[#]()"
         }
       ],
       "text": "",

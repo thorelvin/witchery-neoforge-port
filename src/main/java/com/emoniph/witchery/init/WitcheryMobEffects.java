@@ -105,6 +105,10 @@ public final class WitcheryMobEffects {
     public static final DeferredHolder<MobEffect, MobEffect> DISEASED =
             MOB_EFFECTS.register("diseased", () -> new DiseasedMobEffect(0xB9AD7D));
 
+    /** Source ownership marker; removing it suppresses enslaver-revenge AI but not the ownership tag. */
+    public static final DeferredHolder<MobEffect, MobEffect> ENSLAVED =
+            MOB_EFFECTS.register("enslaved", () -> new SimpleMobEffect(MobEffectCategory.HARMFUL, 0x9F541C));
+
     // ── Shade of Leonard hex kit ──────────────────────────────────────────────
     /** Death Coil — incurable, kills the victim when it expires (cleared if the Shade dies). */
     public static final DeferredHolder<MobEffect, MobEffect> MORTAL_COIL =

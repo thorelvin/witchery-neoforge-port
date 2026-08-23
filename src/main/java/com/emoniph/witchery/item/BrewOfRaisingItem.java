@@ -99,10 +99,10 @@ public class BrewOfRaisingItem extends BrewItem {
         return null;
     }
 
-    private static void raiseUndead(ServerLevel level, BlockPos floor, Player raiser) {
+    static Mob raiseUndead(ServerLevel level, BlockPos floor, Player raiser) {
         BlockPos spawnPos = isSourceGraveFloor(level.getBlockState(floor)) ? floor : floor.above();
         if (!clearForSpawn(level, spawnPos, raiser) || !clearForSpawn(level, spawnPos.above(), raiser)) {
-            return;
+            return null;
         }
 
         level.sendParticles(ParticleTypes.SMOKE,
@@ -111,7 +111,7 @@ public class BrewOfRaisingItem extends BrewItem {
 
         Mob undead = createUndeadCreature(level);
         if (undead == null) {
-            return;
+            return null;
         }
 
         undead.setPos(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.5D, spawnPos.getZ() + 0.5D);
@@ -124,6 +124,7 @@ public class BrewOfRaisingItem extends BrewItem {
             Enslaved.enslave(undead, raiser);
         }
         level.addFreshEntity(undead);
+        return undead;
     }
 
     private static boolean clearForSpawn(ServerLevel level, BlockPos pos, Player raiser) {

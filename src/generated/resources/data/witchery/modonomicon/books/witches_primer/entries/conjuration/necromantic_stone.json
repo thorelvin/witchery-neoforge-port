@@ -54,6 +54,39 @@
       "text": "[#](53341a)It also commands bound undead: use it on a target or on the top of a block to send nearby owned thralls there. After drinking an **Infused Brew of the Grave**, sneak-use the stone on an undead creature to bind it.[#]()",
       "title": " ",
       "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A **Brew of Raising** creates a persistent, lootless undead thrall bearing the curable **Enslaved** effect. It will not attack its owner and, while that effect remains, will answer an attack on the owner from anywhere it is loaded in the same world.[#]()",
+      "title": "Raised and Bred Thralls",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Curing the effect quiets that revenge instinct without erasing the ownership mark.[#]() [#](53341a)A **Brew of Love** used near two adult zombies owned by the drinker turns both parents into zombie villagers without stripping their gear, wounds, or bond.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Their baby is an ordinary unowned baby zombie.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
     }
   ],
   "show_when_any_parent_unlocked": false,

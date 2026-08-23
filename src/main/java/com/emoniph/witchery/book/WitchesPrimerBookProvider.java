@@ -1366,6 +1366,14 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "an Alluring Skull. It also commands bound undead: use it on a target or on the top "
                         + "of a block to send nearby owned thralls there. After drinking an **Infused Brew of "
                         + "the Grave**, sneak-use the stone on an undead creature to bind it."));
+        necro.addAll(WitcheryBooks.prose("Raised and Bred Thralls",
+                "A **Brew of Raising** creates a persistent, lootless undead thrall bearing the curable "
+                        + "**Enslaved** effect. It will not attack its owner and, while that effect remains, "
+                        + "will answer an attack on the owner from anywhere it is loaded in the same world. "
+                        + "Curing the effect quiets that revenge instinct without erasing the ownership mark."
+                        + "\n\nA **Brew of Love** used near two adult zombies owned by the drinker turns both "
+                        + "parents into zombie villagers without stripping their gear, wounds, or bond. Their "
+                        + "baby is an ordinary unowned baby zombie."));
 
         List<BookPageModel<?>> treefyd = new ArrayList<>(WitcheryBooks.prose("Treefyd",
                 "A Treefyd is a wooden guardian raised out of corrupted hedgecraft rather than bred. The "

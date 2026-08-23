@@ -1,12 +1,15 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.util.Enslaved;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.ConversionParams;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.monster.zombie.ZombieVillager;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -19,8 +22,6 @@ import java.util.List;
 public class BrewOfLoveItem extends BrewItem {
     private static final double RADIUS = 4.0D;
     private static final int MAX_VILLAGER_PAIRS = 10;
-    private static final String SOURCE_ENSLAVER_TAG = "WITCEnslaverName";
-    private static final String PORT_ENSLAVER_UUID_TAG = "witchery_enslaver_uuid";
 
     public BrewOfLoveItem(Properties properties) { super(properties); }
 
@@ -46,7 +47,7 @@ public class BrewOfLoveItem extends BrewItem {
         }
 
         pairVillagers(serverLevel, adultVillagers);
-        pairEnslavedZombies(serverLevel, player, enslavedZombies);
+        pairEnslavedZombies(serverLevel, enslavedZombies);
     }
 
     private static void stirAnimalLove(Animal animal, Player player) {
@@ -86,50 +87,60 @@ public class BrewOfLoveItem extends BrewItem {
                 8, 0.5D, 0.5D, 0.5D, 0.0D);
     }
 
-    private static void pairEnslavedZombies(ServerLevel level, Player player, List<Zombie> zombies) {
+    private static void pairEnslavedZombies(ServerLevel level, List<Zombie> zombies) {
         int pairs = Math.min(MAX_VILLAGER_PAIRS, zombies.size() / 2);
         for (int i = 0; i < pairs; i++) {
             Zombie zombie = zombies.get(i * 2);
             Zombie mate = zombies.get(i * 2 + 1);
-            giveZombieBirth(level, player, zombie, mate);
+            giveZombieBirth(level, zombie, mate);
         }
     }
 
-    private static void giveZombieBirth(ServerLevel level, Player player, Zombie zombie, Zombie mate) {
+    static ZombieBirthResult giveZombieBirth(ServerLevel level, Zombie zombie, Zombie mate) {
+        double birthX = mate.getX();
+        double birthY = mate.getY();
+        double birthZ = mate.getZ();
         zombie.setPos(mate.getX(), mate.getY(), mate.getZ());
         level.sendParticles(ParticleTypes.HEART,
                 mate.getX(), mate.getY() + mate.getBbHeight() * 0.75D, mate.getZ(),
                 8, 1.0D, 1.0D, 1.0D, 0.0D);
 
+        ZombieVillager firstParent = asZombieVillager(zombie);
+        ZombieVillager secondParent = asZombieVillager(mate);
         Zombie baby = EntityType.ZOMBIE.create(level, EntitySpawnReason.TRIGGERED);
         if (baby == null) {
-            return;
+            return new ZombieBirthResult(firstParent, secondParent, null);
         }
-        baby.setPos(mate.getX(), mate.getY(), mate.getZ());
-        baby.setYRot(level.random.nextFloat() * 360.0F);
+        baby.setPos(birthX, birthY, birthZ);
+        baby.setYRot(0.0F);
         baby.setXRot(0.0F);
-        baby.finalizeSpawn(level, level.getCurrentDifficultyAt(baby.blockPosition()), EntitySpawnReason.TRIGGERED, null);
         baby.setBaby(true);
-        stampEnslaver(baby, player);
         level.addFreshEntity(baby);
-        level.sendParticles(ParticleTypes.HEART,
-                baby.getX(), baby.getY() + baby.getBbHeight() * 0.75D, baby.getZ(),
-                8, 0.5D, 0.5D, 0.5D, 0.0D);
+        return new ZombieBirthResult(firstParent, secondParent, baby);
+    }
+
+    private static ZombieVillager asZombieVillager(Zombie zombie) {
+        if (zombie instanceof ZombieVillager villager) {
+            return villager;
+        }
+        float health = zombie.getHealth();
+        LivingEntity target = zombie.getTarget();
+        net.minecraft.nbt.CompoundTag persistentData = zombie.getPersistentData().copy();
+        return zombie.convertTo(EntityType.ZOMBIE_VILLAGER,
+                ConversionParams.single(zombie, true, true), EntitySpawnReason.CONVERSION,
+                converted -> {
+                    converted.getPersistentData().merge(persistentData);
+                    converted.setBaby(false);
+                    converted.setHealth(Math.min(health, converted.getMaxHealth()));
+                    if (target != null && target.isAlive()) {
+                        converted.setTarget(target);
+                    }
+                });
     }
 
     private static boolean isEnslavedBy(Zombie zombie, Player player) {
-        String playerName = player.getName().getString();
-        String sourceName = zombie.getPersistentData().getStringOr(SOURCE_ENSLAVER_TAG, "");
-        if (sourceName.equalsIgnoreCase(playerName)) {
-            return true;
-        }
-        return zombie.getPersistentData().getStringOr(PORT_ENSLAVER_UUID_TAG, "").equals(player.getUUID().toString());
+        return Enslaved.isEnslavedBy(zombie, player);
     }
 
-    private static void stampEnslaver(Zombie zombie, Player player) {
-        zombie.getPersistentData().putString(SOURCE_ENSLAVER_TAG, player.getName().getString());
-        zombie.getPersistentData().putString(PORT_ENSLAVER_UUID_TAG, player.getUUID().toString());
-        zombie.setPersistenceRequired();
-        zombie.setTarget(null);
-    }
+    record ZombieBirthResult(ZombieVillager firstParent, ZombieVillager secondParent, Zombie baby) {}
 }

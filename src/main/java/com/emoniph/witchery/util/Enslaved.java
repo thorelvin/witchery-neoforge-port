@@ -12,6 +12,8 @@ import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.entity.LilithEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.ReflectionEntity;
+import com.emoniph.witchery.init.WitcheryMobEffects;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.golem.AbstractGolem;
@@ -23,11 +25,10 @@ import net.minecraft.world.entity.player.Player;
 /**
  * Port of {@code PotionEnslaved}'s static helpers (source
  * {@code com.emoniph.witchery.brewing.potions.PotionEnslaved}). Enslavement is recorded on the mob's
- * persistent data rather than via a {@code MobEffect} so it interoperates with the existing port tags
- * used by {@code BrewOfLoveItem}/{@code BrewOfRaisingItem}: {@link #SOURCE_ENSLAVER_TAG} (player name,
- * source-faithful) plus {@link #PORT_ENSLAVER_UUID_TAG} (UUID, added by the port so a renamed player
- * keeps their thralls). The AI behaviours are driven by {@code EnslavedMobEvents} instead of the
- * source's {@code EntityAIEnslaverHurtByTarget} goal.
+ * persistent data and the source-shaped {@code enslaved} effect: {@link #SOURCE_ENSLAVER_TAG}
+ * (player name, source-faithful) plus {@link #PORT_ENSLAVER_UUID_TAG} (UUID, added by the port so a
+ * renamed player keeps their thralls). The AI behaviours are driven by {@code EnslavedMobEvents}
+ * instead of the source's {@code EntityAIEnslaverHurtByTarget} goal.
  */
 public final class Enslaved {
 
@@ -47,7 +48,9 @@ public final class Enslaved {
     /**
      * Bind {@code mob} to {@code player}. Mirrors source {@code setEnslaverForMob}: a no-op (returns
      * {@code false}) if the mob is already enslaved by this same player, otherwise stamps the tags,
-     * makes the mob persistent, and clears its current target.
+     * applies the permanent but curable source effect, and clears its current target. Persistence is
+     * deliberately left to the creation route: raised undead require it, while ordinary infernal
+     * binding did not make arbitrary mobs persistent in 1.7.10.
      */
     public static boolean enslave(Mob mob, Player player) {
         if (mob == null || player == null || !canBeEnslaved(mob)) {
@@ -58,7 +61,7 @@ public final class Enslaved {
         }
         mob.getPersistentData().putString(SOURCE_ENSLAVER_TAG, player.getName().getString());
         mob.getPersistentData().putString(PORT_ENSLAVER_UUID_TAG, player.getUUID().toString());
-        mob.setPersistenceRequired();
+        mob.addEffect(new MobEffectInstance(WitcheryMobEffects.ENSLAVED, Integer.MAX_VALUE));
         mob.setTarget(null);
         return true;
     }
@@ -78,6 +81,11 @@ public final class Enslaved {
     /** True when {@code mob} is enslaved by anyone. */
     public static boolean isEnslaved(Mob mob) {
         return mob != null && !enslaverName(mob).isEmpty();
+    }
+
+    /** Source revenge AI runs only while the curable Enslaved effect remains active. */
+    public static boolean hasActiveBond(Mob mob) {
+        return isEnslaved(mob) && mob.hasEffect(WitcheryMobEffects.ENSLAVED);
     }
 
     /** The recorded enslaver display name, or empty. */
