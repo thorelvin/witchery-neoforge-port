@@ -55,7 +55,10 @@ public final class WitchCropGameTests {
     private static void cropParity(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         level.setDayTime(1000L);
-        BlockPos origin = helper.absolutePos(new BlockPos(2, 300, 2));
+        BlockPos fixtureBase = helper.absolutePos(new BlockPos(2, 0, 2));
+        int fixtureY = Math.clamp(fixtureBase.getY() + 100,
+                level.getMinY() + 20, level.getMaxY() - 20);
+        BlockPos origin = new BlockPos(fixtureBase.getX(), fixtureY, fixtureBase.getZ());
         List<CropBlock> ordinaryCrops = List.of(
                 WitcheryBlocks.BELLADONNA.get(),
                 WitcheryBlocks.MANDRAKE.get(),

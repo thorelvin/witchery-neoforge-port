@@ -50,6 +50,12 @@ write new notes.
 Update player-facing docs only when behavior, recipes, commands, or discovery
 for players changed. Do not copy every dev-note into them.
 
+## Testing Docs
+
+- [testing/RUNTIME_TEST_HARNESS.md](testing/RUNTIME_TEST_HARNESS.md) - exact
+  resource contracts, dedicated-server GameTests, save/reload smoke, CI
+  artifacts, and manual-only runtime lanes.
+
 ## Reference Docs
 
 - [reference/REMAKE_GUIDE.md](reference/REMAKE_GUIDE.md) - remake workflow.

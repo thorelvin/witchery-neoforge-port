@@ -15,6 +15,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.village.poi.PoiManager;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BedBlock;
@@ -83,19 +85,36 @@ public final class HobgoblinEcologyGameTests {
         guard.discard();
 
         helper.runAfterDelay(40, () -> {
+            boolean acquiredVillager = first.getTarget() instanceof Villager
+                    || second.getTarget() instanceof Villager
+                    || third.getTarget() instanceof Villager;
+            helper.assertTrue(acquiredVillager,
+                    "A live three-Hobgoblin pack must acquire the nearby villager");
+            first.setTarget(null);
+            second.setTarget(null);
+            third.setTarget(null);
+            first.setNoAi(true);
+            second.setNoAi(true);
+            third.setNoAi(true);
+            villager.discard();
+        });
+
+        // The source-shaped village refresh cadence is randomized across 70-119 ticks.
+        // Waiting beyond the maximum also removes POI-registration timing from the fixture.
+        helper.runAfterDelay(130, () -> {
             try {
-                boolean acquiredVillager = first.getTarget() instanceof Villager
-                        || second.getTarget() instanceof Villager
-                        || third.getTarget() instanceof Villager;
-                helper.assertTrue(acquiredVillager,
-                        "A live three-Hobgoblin pack must acquire the nearby villager");
-                helper.assertTrue(first.hasVillageHome() && first.requiresCustomPersistence(),
-                        "Nearby HOME POIs must establish persistent village membership");
+                long nearbyHomes = level.getPoiManager().getCountInRange(
+                        holder -> holder.is(PoiTypes.HOME), first.blockPosition(),
+                        HobgoblinVillageEcology.VILLAGE_SEARCH_RADIUS, PoiManager.Occupancy.ANY);
+                helper.assertTrue(first.hasVillageHome() && first.isPersistenceRequired(),
+                        "Nearby HOME POIs must establish persistent village membership; alive="
+                                + first.isAlive() + ", pos=" + first.blockPosition()
+                                + ", homes=" + nearbyHomes + ", membership=" + first.hasVillageHome()
+                                + ", persistent=" + first.isPersistenceRequired());
 
                 first.setTarget(null);
                 second.setTarget(null);
                 third.setTarget(null);
-                villager.discard();
                 first.completeMating(level, second);
 
                 AABB nursery = new AABB(helper.absolutePos(new BlockPos(0, 1, 0)))

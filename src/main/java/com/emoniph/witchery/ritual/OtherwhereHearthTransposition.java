@@ -762,10 +762,17 @@ public final class OtherwhereHearthTransposition {
 
     private static List<Entity> entitiesIn(ServerLevel level, Volume volume) {
         AABB bounds = volume.entityBounds();
-        return level.getEntitiesOfClass(Entity.class, bounds,
+        List<Entity> entities = new ArrayList<>(level.getEntitiesOfClass(Entity.class, bounds,
                 entity -> !entity.isRemoved()
                         && (bounds.intersects(entity.getBoundingBox())
-                        || bounds.contains(entity.position())));
+                        || bounds.contains(entity.position()))));
+        Set<UUID> selected = entities.stream().map(Entity::getUUID).collect(java.util.stream.Collectors.toSet());
+        for (ServerPlayer player : playersIn(level, volume)) {
+            if (!player.isRemoved() && selected.add(player.getUUID())) {
+                entities.add(player);
+            }
+        }
+        return List.copyOf(entities);
     }
 
     @Nullable
@@ -895,9 +902,30 @@ public final class OtherwhereHearthTransposition {
                 continue;
             }
 
-            Entity resolved = teleportEntity(entity, destination, transfer);
+            boolean stagedHearthEntry = entity instanceof ServerPlayer player
+                    && transfer.toSpirit()
+                    && !WitcheryAttachments.get(player).isOtherwhereHearthTraveler();
+            if (stagedHearthEntry) {
+                updateHearthTravelerState(entity, true);
+            }
+
+            Entity resolved;
+            try {
+                resolved = teleportEntity(entity, destination, transfer);
+            } catch (RuntimeException exception) {
+                if (stagedHearthEntry) {
+                    updateHearthTravelerState(entity, false);
+                }
+                throw exception;
+            }
             if (resolved == null) {
-                throw new IllegalStateException("Could not move entity " + transfer.entityId());
+                if (stagedHearthEntry) {
+                    updateHearthTravelerState(entity, false);
+                }
+                throw new IllegalStateException("Could not move entity " + transfer.entityId()
+                        + "; removed=" + entity.isRemoved()
+                        + ", source=" + entity.level().dimension().identifier()
+                        + ", destination=" + destination.dimension().identifier());
             }
             discardDuplicateNonPlayers(server, destination, resolved);
             moved.put(transfer.entityId(), resolved);
@@ -970,6 +998,13 @@ public final class OtherwhereHearthTransposition {
             if (online != null) {
                 return online;
             }
+            for (ServerLevel level : server.getAllLevels()) {
+                for (ServerPlayer player : level.players()) {
+                    if (player.getUUID().equals(transfer.entityId()) && !player.isRemoved()) {
+                        return player;
+                    }
+                }
+            }
         }
         ServerLevel destination = transfer.toSpirit()
                 ? server.getLevel(WitcheryDimensions.SPIRIT_WORLD)
@@ -997,6 +1032,13 @@ public final class OtherwhereHearthTransposition {
             entity.setYRot(transfer.yaw());
             entity.setXRot(transfer.pitch());
             return entity;
+        }
+        if (entity instanceof ServerPlayer player) {
+            player.teleportTo(
+                    destination,
+                    transfer.x(), transfer.y(), transfer.z(),
+                    Set.<Relative>of(), transfer.yaw(), transfer.pitch(), false);
+            return player.level() == destination ? player : null;
         }
         return entity.teleport(new TeleportTransition(
                 destination,

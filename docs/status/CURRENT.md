@@ -56,6 +56,15 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- The deterministic runtime harness and CI gates are complete. An explicit
+  manifest locks 13 resource-contract classes, 16 exact CI GameTests, and one
+  manual forced-restart fixture. Clean normal-difficulty dedicated servers now
+  run every named test with all Witchery dimensions loaded, require unambiguous
+  per-test success, preserve logs/JSON summaries, and verify a Kettle block
+  entity plus command-storage marker across a real stop/reload. CI uploads build
+  or runtime diagnostics on failure. Building the gate also exposed and fixed
+  the Otherwhere Hearth traveller-state race on Spirit entry and the Lord of
+  Torment's failure to collect nearby non-attacking players.
 - Witchery crop parity now has a shared source-soil contract for Belladonna,
   Mandrake, Mindrake, Snowbell, Wormwood, Wolfsbane, and Garlic; source water
   support remains mandatory for Water Artichoke. Mindrake/Wolfsbane growth and
@@ -177,8 +186,8 @@ enough to read before starting work. Long historical deltas belong in
   manifestation, and physical-Hearth player state. JVM coverage now includes
   journal phase/backward-compatibility invariants, lifecycle-state invariants,
   and exact dream/nightmare/demonic atmosphere rules. The registered dedicated-
-  server GameTests passed on 2026-08-18 with custom dimensions loaded, proving a
-  bidirectional fake-player round trip with block entities, fluids, redstone,
+  server GameTests pass with custom dimensions loaded, proving a bidirectional
+  real-player transfer path with block entities, fluids, redstone,
   entities on both sides, passenger links, physical-traveller flags, cleared
   journals, and one measured altar charge per crossing. A forced process kill
   after the roughly 88 KB prepared journal reached disk also passed restart replay: both
@@ -189,8 +198,9 @@ enough to read before starting work. Long historical deltas belong in
   dedicated-server client-handler classloading, the 1.21.11 snapshot API call,
   passenger journalability, canonical cross-dimension entity recovery,
   deterministic fixture altar funding, and entity-section loading for otherwise
-  unloaded paired chunks. NeoForge's headless GameTest server still loads only
-  the three vanilla dimensions, so real-client multiplayer/offline behavior and
+  unloaded paired chunks. The CI runtime server now loads every Witchery
+  dimension and covers the ordinary two-way transfer plus destination refusal;
+  deliberate process-kill recovery, real-client multiplayer feel, and
   claim-adapter execution remain manual gates.
 - The additive Otherwhere Hearth endgame working is code-complete, with live
   dedicated round-trip, restart-recovery, offline-owner, and destination-refusal

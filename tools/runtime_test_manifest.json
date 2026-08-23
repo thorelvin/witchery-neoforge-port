@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "resource_contract_tests": [
+    "com.emoniph.witchery.book.PlacedModonomiconGeneratedBookTest",
+    "com.emoniph.witchery.resources.LegacyHeldItemResourceTest",
+    "com.emoniph.witchery.resources.WitchCauldronModelTest",
+    "com.emoniph.witchery.resources.WitcheryResourceIntegrityTest",
+    "com.emoniph.witchery.ritual.OtherwhereHearthResourceTest",
+    "com.emoniph.witchery.spiritworld.SpiritWorldResourceParityTest",
+    "com.emoniph.witchery.world.MirrorWorldResourceParityTest",
+    "com.emoniph.witchery.world.TormentResourceParityTest",
+    "com.emoniph.witchery.world.WitcheryStructureDataTest",
+    "com.emoniph.witchery.worldgen.ConfiguredFeatureBlockStateValidationTest",
+    "com.emoniph.witchery.worldgen.NbtStructureTemplateTest",
+    "com.emoniph.witchery.worldgen.StrawManTemplateTest",
+    "com.emoniph.witchery.worldgen.StrawManWorldgenConfigTest"
+  ],
+  "game_tests": [
+    {
+      "id": "witchery:witch_crop_parity",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:goblin_boss_parity",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:ice_world_area_conversion",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:vampire_power_activation",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:vampire_passive_perks",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:lycanthropy_progression",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:hobgoblin_village_ecology",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:infernal_ownership_lifecycle",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:infernal_raised_undead",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:infernal_bred_undead",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:otherwhere_hearth_round_trip",
+      "lane": "ci",
+      "timeout_seconds": 300
+    },
+    {
+      "id": "witchery:otherwhere_hearth_destination_refusal",
+      "lane": "ci",
+      "timeout_seconds": 300
+    },
+    {
+      "id": "witchery:torment_structure_and_refill",
+      "lane": "ci",
+      "timeout_seconds": 300
+    },
+    {
+      "id": "witchery:torment_portal_round_trip",
+      "lane": "ci",
+      "timeout_seconds": 300
+    },
+    {
+      "id": "witchery:torment_multiplayer_boss_reconnect",
+      "lane": "ci",
+      "timeout_seconds": 300
+    },
+    {
+      "id": "witchery:mirror_world_lifecycle",
+      "lane": "ci",
+      "timeout_seconds": 300
+    },
+    {
+      "id": "witchery:otherwhere_hearth_recovery_resume",
+      "lane": "manual_restart",
+      "timeout_seconds": 300,
+      "reason": "Requires a deliberately interrupted round-trip process with a persisted recovery journal."
+    }
+  ],
+  "save_reload": {
+    "block": "witchery:kettle[hanging=true,facing=north]",
+    "position": [
+      0,
+      80,
+      0
+    ],
+    "block_entity_values": {
+      "WaterLevel": 2,
+      "Color": 1193046
+    },
+    "storage": "witchery:runtime_test",
+    "storage_marker": 424242
+  }
+}

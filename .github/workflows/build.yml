@@ -1,10 +1,14 @@
-name: Build
+name: Build and Runtime Tests
 
 on: [push, pull_request]
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,8 +22,70 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Validate runtime test manifest
+        run: python3 tools/runtime_test_harness.py validate
+
+      - name: Run exact resource contracts
+        run: python3 tools/runtime_test_harness.py resource-contracts
+
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --console=plain
+
+      - name: Upload build diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-diagnostics
+          path: |
+            build/reports/
+            build/test-results/
+            build/runtime-test/resource-contracts/
+          if-no-files-found: warn
+          retention-days: 14
+
+  runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Validate runtime test manifest
+        run: python3 tools/runtime_test_harness.py validate
+
+      - name: Run named dedicated-server GameTests
+        run: python3 tools/runtime_test_harness.py game-tests
+
+      - name: Run dedicated-server save/reload smoke
+        run: python3 tools/runtime_test_harness.py save-reload
+
+      - name: Upload runtime diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-test-diagnostics
+          path: build/runtime-test/
+          if-no-files-found: warn
+          retention-days: 14

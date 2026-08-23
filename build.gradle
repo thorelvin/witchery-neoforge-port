@@ -46,6 +46,15 @@ neoForge {
             programArguments.addAll '--nogui'
         }
 
+        runtimeTestServer {
+            server()
+            gameDirectory = project.file(providers.gradleProperty('witcheryRuntimeDir')
+                    .getOrElse('build/runtime-test/server'))
+            systemProperty 'neoforge.enableGameTest', 'true'
+            programArguments.addAll '--nogui'
+            disableIdeRun()
+        }
+
         gameTestServer {
             type = 'gameTestServer'
         }

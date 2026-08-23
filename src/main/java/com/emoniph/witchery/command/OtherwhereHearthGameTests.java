@@ -7,8 +7,6 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.ritual.AltarPowerSourceLookup;
 import com.emoniph.witchery.ritual.OtherwhereHearthTransposition;
-import com.mojang.authlib.GameProfile;
-import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -27,7 +25,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.RegisterGameTestsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -110,7 +107,7 @@ public final class OtherwhereHearthGameTests {
                     net.minecraft.core.Direction.SOUTH);
             // The paired fixture creates entities in a dimension that is not currently ticking.
             // Let both entity indexes publish those additions before exercising the player-paced rite.
-            helper.runAfterDelay(1, () -> startRoundTrip(
+            helper.runAfterDelay(2, () -> startRoundTrip(
                     helper, owner, overworld, spirit, kettlePos, volume));
             activationScheduled = true;
         } finally {
@@ -140,10 +137,18 @@ public final class OtherwhereHearthGameTests {
             helper.assertTrue(preflight.ready(), "Fixture preflight must be ready: " + preflight.blockers());
             helper.assertTrue(initialPower >= cost * 2,
                     "Fixture altar must fund a complete round trip");
+            helper.assertTrue(overworld.players().contains(owner)
+                            && volume.entityBounds().contains(owner.position()),
+                    "Owner must be visible in the source player list and travelling volume; indexed="
+                            + (overworld.getEntity(owner.getUUID()) == owner)
+                            + ", pos=" + owner.position());
 
             helper.assertTrue(OtherwhereHearthTransposition.activate(
                     owner, overworld, kettlePos, sourceKettle), "First crossing must complete");
-            helper.assertTrue(owner.level() == spirit, "Owner must arrive bodily in the Spirit World");
+            helper.assertTrue(owner.level() == spirit,
+                    "Owner must arrive bodily in the Spirit World; sourcePlayers="
+                            + overworld.players().contains(owner) + ", destinationPlayers="
+                            + spirit.players().contains(owner) + ", removed=" + owner.isRemoved());
             helper.assertTrue(WitcheryAttachments.get(owner).isOtherwhereHearthTraveler(),
                     "Physical Spirit traveller flag must be set");
             helper.assertFalse(OtherwhereHearthTransposition.hasPendingTransaction(overworld.getServer()),
@@ -304,18 +309,11 @@ public final class OtherwhereHearthGameTests {
     }
 
     private static ServerPlayer createTestPlayer(ServerLevel level, UUID id, String name) {
-        ServerPlayer player = new FakePlayer(level, new GameProfile(id, name));
-        if (player.connection.getConnection().channel() == null) {
-            new EmbeddedChannel(player.connection.getConnection());
-        }
-        level.addNewPlayer(player);
-        return player;
+        return HeadlessGameTestPlayer.create(level, id, name);
     }
 
     private static void removeTestPlayer(ServerPlayer player) {
-        if (player != null && player.level() instanceof ServerLevel level) {
-            level.removePlayerImmediately(player, Entity.RemovalReason.DISCARDED);
-        }
+        HeadlessGameTestPlayer.remove(player);
     }
 
     private static void assertSourceFixture(GameTestHelper helper, ServerLevel sourceSide,

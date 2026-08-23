@@ -12,8 +12,6 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.world.TormentCertification;
 import com.emoniph.witchery.world.TormentHelper;
 import com.emoniph.witchery.world.TormentReleaseData;
-import com.mojang.authlib.GameProfile;
-import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -34,7 +32,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.RegisterGameTestsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -161,6 +158,7 @@ public final class TormentGameTests {
         helper.assertTrue(torment != null, "Torment dimension must be loaded");
         if (torment == null) return;
 
+        removeTormentTestEntities(torment);
         TormentReleaseData releases = TormentReleaseData.get(overworld.getServer());
         releases.consume(FIRST_PLAYER_ID, null);
         releases.consume(SECOND_PLAYER_ID, null);
@@ -186,7 +184,7 @@ public final class TormentGameTests {
     private static void runMultiplayerBossReconnect(GameTestHelper helper, ServerLevel overworld,
                                                      ServerLevel torment, ServerPlayer first,
                                                      ServerPlayer second, LordOfTormentEntity phase1) {
-        ServerPlayer reconnect = null;
+        boolean continuationScheduled = false;
         try {
             phase1.setHealth(251.0F);
             helper.assertTrue(phase1.hurtServer(overworld,
@@ -202,13 +200,39 @@ public final class TormentGameTests {
                             .filter(session::equals).isPresent(),
                     "Both players must share one persisted encounter session");
 
+            helper.runAfterDelay(1, () -> finishMultiplayerBossReconnect(
+                    helper, overworld, torment, first, second, phase1, session));
+            continuationScheduled = true;
+        } finally {
+            if (!continuationScheduled) {
+                cleanupMultiplayerBossReconnect(overworld, torment, first, second, null, phase1);
+            }
+        }
+    }
+
+    private static void finishMultiplayerBossReconnect(GameTestHelper helper, ServerLevel overworld,
+                                                        ServerLevel torment, ServerPlayer first,
+                                                        ServerPlayer second, LordOfTormentEntity phase1,
+                                                        UUID session) {
+        ServerPlayer reconnect = null;
+        try {
+            AABB tormentBounds = new AABB(
+                    TormentHelper.STRUCTURE_MIN_X, 0, TormentHelper.STRUCTURE_MIN_Z,
+                    TormentHelper.STRUCTURE_MAX_X + 1, 128, TormentHelper.STRUCTURE_MAX_Z + 1);
+            List<LordOfTormentEntity> allPhase2Bosses = torment.getEntitiesOfClass(
+                    LordOfTormentEntity.class, tormentBounds);
             List<LordOfTormentEntity> phase2Bosses = torment.getEntitiesOfClass(
                     LordOfTormentEntity.class,
-                    new AABB(TormentHelper.STRUCTURE_MIN_X, 0, TormentHelper.STRUCTURE_MIN_Z,
-                            TormentHelper.STRUCTURE_MAX_X + 1, 128, TormentHelper.STRUCTURE_MAX_Z + 1),
+                    tormentBounds,
                     boss -> boss.isAlive() && session.equals(boss.getTormentSessionId()));
             helper.assertTrue(phase2Bosses.size() == 1,
-                    "Exactly one linked phase-two Lord must exist, found " + phase2Bosses.size());
+                    "Exactly one linked phase-two Lord must exist, found " + phase2Bosses.size()
+                            + "; all=" + allPhase2Bosses.stream()
+                            .map(boss -> boss.getUUID() + "@" + boss.position()
+                                    + ":alive=" + boss.isAlive()
+                                    + ":removed=" + boss.isRemoved()
+                                    + ":session=" + boss.getTormentSessionId())
+                            .toList());
             LordOfTormentEntity phase2 = phase2Bosses.getFirst();
             helper.assertTrue(Math.abs(phase2.getHealth() - phase2.getMaxHealth() * 0.5F) < 0.01F,
                     "Phase two must begin at half health");
@@ -273,16 +297,23 @@ public final class TormentGameTests {
                     "All participants returning must clear the release queue");
             helper.succeed();
         } finally {
-            removeTestPlayer(first);
-            removeTestPlayer(second);
-            removeTestPlayer(reconnect);
-            phase1.discard();
-            removeTormentTestEntities(torment);
-            TormentReleaseData releases = TormentReleaseData.get(overworld.getServer());
-            releases.consume(FIRST_PLAYER_ID, null);
-            releases.consume(SECOND_PLAYER_ID, null);
-            clearReturnPlatform(overworld);
+            cleanupMultiplayerBossReconnect(overworld, torment, first, second, reconnect, phase1);
         }
+    }
+
+    private static void cleanupMultiplayerBossReconnect(ServerLevel overworld, ServerLevel torment,
+                                                         ServerPlayer first, ServerPlayer second,
+                                                         ServerPlayer reconnect,
+                                                         LordOfTormentEntity phase1) {
+        removeTestPlayer(first);
+        removeTestPlayer(second);
+        removeTestPlayer(reconnect);
+        phase1.discard();
+        removeTormentTestEntities(torment);
+        TormentReleaseData releases = TormentReleaseData.get(overworld.getServer());
+        releases.consume(FIRST_PLAYER_ID, null);
+        releases.consume(SECOND_PLAYER_ID, null);
+        clearReturnPlatform(overworld);
     }
 
     private static String describe(TormentCertification.Report report) {
@@ -291,18 +322,11 @@ public final class TormentGameTests {
     }
 
     private static ServerPlayer createTestPlayer(ServerLevel level, UUID id, String name) {
-        ServerPlayer player = new FakePlayer(level, new GameProfile(id, name));
-        if (player.connection.getConnection().channel() == null) {
-            new EmbeddedChannel(player.connection.getConnection());
-        }
-        level.addNewPlayer(player);
-        return player;
+        return HeadlessGameTestPlayer.create(level, id, name);
     }
 
     private static void removeTestPlayer(ServerPlayer player) {
-        if (player != null && player.level() instanceof ServerLevel level && !player.isRemoved()) {
-            level.removePlayerImmediately(player, Entity.RemovalReason.DISCARDED);
-        }
+        HeadlessGameTestPlayer.remove(player);
     }
 
     private static void prepareReturnPlatform(ServerLevel overworld) {

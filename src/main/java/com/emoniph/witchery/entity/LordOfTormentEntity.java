@@ -211,7 +211,9 @@ public class LordOfTormentEntity extends Monster implements RangedAttackMob {
         AABB bb = new AABB(x - 16, y - 32, z - 16, x + 16, y + 32, z + 16);
 
         // Collect all players to transport (nearby + tracked attackers)
-        List<ServerPlayer> toTransport = new ArrayList<>(serverLevel.getEntitiesOfClass(ServerPlayer.class, bb));
+        List<ServerPlayer> toTransport = new ArrayList<>(serverLevel.players().stream()
+                .filter(player -> bb.intersects(player.getBoundingBox()) || bb.contains(player.position()))
+                .toList());
         for (UUID uuid : attackerUuids) {
             ServerPlayer attacker = serverLevel.getServer().getPlayerList().getPlayer(uuid);
             if (attacker != null && attacker.level() == serverLevel && !toTransport.contains(attacker)) {

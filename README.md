@@ -40,6 +40,7 @@ Current audited baseline as of **2026-08-23**:
 - **Recent brew parity is certified.** Source-shaped projectile routing, filled-Taglock ritual targeting, Ice World conversion, raised-undead ownership, the curable Enslaved effect, owner-safe revenge behavior, and Brew of Love's owned-zombie breeding path are implemented and covered by dedicated tests.
 - **Lycanthropy and the vampire level-perk/Blood Power ladders are mechanically complete.** Lycanthropy has its full level 1-10 Wolf Altar progression, forms, statistics, abilities, infection route, persistence, verifier, and dedicated progression fixture. Vampirism now has its automatic source perks, selectable Blood Power strip, exact power costs and cooldowns, mortal-player blood, Bat flight form, all three charged ultimates, source HUD art, and dedicated passive/activation fixtures.
 - **Dimension structure and lifecycle work is deep.** Mirror World and Torment have fresh-world and restart certification. Spirit World terrain, dream/nightmare states, Corpse behavior, manifestation, and the endgame Otherwhere Hearth are implemented, with remaining work concentrated in live presentation and multiplayer QA.
+- **Runtime verification is deterministic.** CI validates an explicit manifest, runs 13 exact resource contracts, executes 16 named GameTests on a clean dedicated NeoForge server with all Witchery dimensions loaded, and proves Kettle plus command-storage persistence across a real stop/restart cycle.
 - **Creature parity has advanced substantially.** Demons, Flame Imps, Nightmares, Awakened Mandrakes, spectral undead, the Shade of Leonard, Death, the Lord of Torment, and the paired Goblin bosses Gulg and Mog use source-backed behavior and presentation paths. Gulg and Mog now carry their original 400-health partnership, distance-scaled damage reduction, 15-damage cap, launch/arrow specialties, persistence, environmental immunities, equipment, drops, and safe combat teleports. Hobgoblins now have persistent labor, worship, breeding, village, raid, follow, and guard behavior.
 - **Witchery crops follow the old growing rules again.** The herb crops recognize the source soil set, Snowbell keeps its podzol and snow exceptions, Water Artichoke still requires water, Mindrake and Wolfsbane use their original growth/bonemeal tuning, and mature Wormwood grows its young upper segment. Configured-feature block states are validated during tests so invalid crop ages cannot silently break world generation.
 - **Visual parity has an explicit contract.** The legacy model-coordinate audit covers source cubes, pivots, hierarchy, mirror timing, transform order, renderer anchors, held items, armor layers, shadows, and entity dimensions. The Witch's Cauldron keeps one documented custom exception: grounded splayed feet that touch all four block corners.
@@ -169,6 +170,7 @@ Consult [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md) before choosing what to work on
 - [docs/experiments/LLM_NPCS.md](docs/experiments/LLM_NPCS.md) — local AI NPC setup, scope, config, and model notes.
 - [docs/experiments/LLM_NPC_PERSONA_AND_KNOWLEDGE_EXPANSION_PLAN_v3.md](docs/experiments/LLM_NPC_PERSONA_AND_KNOWLEDGE_EXPANSION_PLAN_v3.md) — imported v3 persona/card expansion design notes.
 - [docs/reference/REMAKE_NOTES.md](docs/reference/REMAKE_NOTES.md) — historical implementation notes and reference findings.
+- [docs/testing/RUNTIME_TEST_HARNESS.md](docs/testing/RUNTIME_TEST_HARNESS.md) - exact local/CI runtime gates, artifacts, and manual lanes.
 
 ## Build
 
@@ -192,7 +194,7 @@ On Unix-like shells:
 ./gradlew compileJava processResources
 ```
 
-Run the complete headless test and packaging gate:
+Run the JVM test and packaging gate:
 
 ```powershell
 .\gradlew.bat test build
@@ -201,6 +203,24 @@ Run the complete headless test and packaging gate:
 ```bash
 ./gradlew test build
 ```
+
+Run the complete deterministic runtime gate (Python standard library only):
+
+```powershell
+python tools/runtime_test_harness.py all
+```
+
+```bash
+python3 tools/runtime_test_harness.py all
+```
+
+This validates the exact resource-contract and GameTest manifest, runs all 16
+CI GameTests by name on a clean dedicated server with Witchery's custom
+dimensions loaded, and verifies Kettle/block-entity plus command-storage state
+after a real server stop and reload. Logs and JSON summaries are written under
+`build/runtime-test/`. See the
+[runtime test harness guide](docs/testing/RUNTIME_TEST_HARNESS.md) for focused
+runs, CI behavior, failure artifacts, and manual-only lanes.
 
 The development JAR is written under `build/libs/`. This repository is still a
 pre-release development project; do not treat a successful local build as a
@@ -257,7 +277,7 @@ Structure goto targets currently include `hobgoblin_hut`, `vanishing_hut`, `cove
 - `/witchery verify spiritworld` — audits the loaded Spirit World dimension type, mirrored Overworld biome source, Spirit-only Wispy Cotton placement, and native Spirit spawn wiring. `/witchery verify spirit_lifecycle` separately checks the current player's dream, manifestation, Corpse return, or physical-Hearth state for contradictions.
 - `/witchery verify mirrorworld` — audits every allocated Mirror room's exact 9 x 9 x 9 geometry, unique source ownership, two-way links, guardian UUID/count, and cleared state. `/test run witchery:mirror_world_lifecycle` exercises the two-player guardian, decoy, reconnect, loot, and safe-return lifecycle on a server with custom dimensions loaded.
 - `/witchery verify otherwhere_hearth` — performs the real Hearth preflight without moving blocks or spending power, reporting bounds, route, journal phase, ownership, rings, coven count, altar position/capacity/charge, destination players, dream travellers, unmovable entities, and the first block/protection failure.
-- `/test run witchery:otherwhere_hearth_round_trip` — runs the destructive bidirectional Hearth GameTest on a normal integrated or dedicated dev server where Witchery's custom dimensions are loaded. The headless GameTest server intentionally skips it because that runner creates only vanilla dimensions. Companion manual tests cover `witchery:otherwhere_hearth_destination_refusal` and the post-restart `witchery:otherwhere_hearth_recovery_resume` stage.
+- `/test run witchery:otherwhere_hearth_round_trip` — runs the destructive bidirectional Hearth GameTest. The runtime harness executes it and `witchery:otherwhere_hearth_destination_refusal` automatically on a clean dedicated server with custom dimensions loaded; the deliberately interrupted `witchery:otherwhere_hearth_recovery_resume` stage remains manual.
 - `/test run witchery:infernal_ownership_lifecycle`, `/test run witchery:infernal_raised_undead`, and `/test run witchery:infernal_bred_undead` — verify binding/cure/rebinding rules, owner immunity and revenge, raised-undead persistence/no-drop state, parent conversion state, and the ordinary unowned baby path.
 - `/test run witchery:ice_world_area_conversion`, `/test run witchery:lycanthropy_progression`, `/test run witchery:vampire_power_activation`, `/test run witchery:vampire_passive_perks`, and `/test run witchery:hobgoblin_village_ecology` — exercise the complete Ice World area action, both vampire power/passive contracts, the level 1-10 werewolf ladder, and source-shaped hobgoblin village behavior.
 - `/witchery vampire`, `/witchery werewolf`, `/witchery blood`, `/witchery infusion`, `/witchery familiar <owl|cat|toad|spectral|creaking|none>`, and `/witchery status` — player-state QA helpers. `/witchery verify lycanthropy` audits the complete altar/form contract and current player state.
@@ -267,7 +287,7 @@ Structure goto targets currently include `hobgoblin_hut`, `vanishing_hut`, `cove
 
 Custom dimension chunk generators do not rewrite chunks that already exist on disk. After changing Mirror World or Torment generation code, test with a fresh world or delete the relevant dimension folder under the run save before verifying layout changes.
 
-Torment's fresh-world and restart/reload certification passed on 2026-08-18. The dedicated-server manual GameTests `witchery:torment_structure_and_refill`, `witchery:torment_portal_round_trip`, and `witchery:torment_multiplayer_boss_reconnect` cover generation, chest fill, dedicated return anchors, deeper routing, shared boss sessions, disconnect persistence, drops, and reconnect release. A live client is still required to judge the red sky/fog, portal tint, Lord animation, particles, and audio mix.
+Torment's fresh-world and restart/reload certification passed on 2026-08-18. The CI dedicated-server GameTests `witchery:torment_structure_and_refill`, `witchery:torment_portal_round_trip`, and `witchery:torment_multiplayer_boss_reconnect` cover generation, chest fill, dedicated return anchors, deeper routing, shared boss sessions, disconnect persistence, drops, and reconnect release. A live client is still required to judge the red sky/fog, portal tint, Lord animation, particles, and audio mix.
 
 Mirror World's source audit was refreshed on 2026-08-18. `witchery:mirror_world_lifecycle` passed on a fresh dedicated world with two source mirrors and players, vertically distinct source-order rooms, isolated guardian ownership, copied equipment, one heart per true Reflection, all-Reflection clearing, a linked item carried into the Nether, reconnection, cleared re-entry, killed/expired passive decoys, reconnect return, and final audit. A live client is still required to judge owner skin/equipment rendering, the dark-blue atmosphere, Mirror Wall flow, portal feedback, and Reflection movement/audio.
 
@@ -278,7 +298,7 @@ Recommended loop — measure twice, cast once:
 1. Check [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md) and [docs/status/CURRENT.md](docs/status/CURRENT.md).
 2. Compare the remake against original/decompiled behavior before choosing a bounded task.
 3. Implement one coherent parity slice or bug fix.
-4. Run `.\gradlew.bat test build`, plus relevant dedicated-server GameTests for the changed system.
+4. Run `.\gradlew.bat test build` and `python tools/runtime_test_harness.py all`; use focused exact-ID GameTests while iterating.
 5. Run `.\gradlew.bat runData` when a generated Primer provider changes, and inspect the generated diff.
 6. Update only the docs routed by [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md).
 7. Commit meaningful progress with a clear message.

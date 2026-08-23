@@ -15,8 +15,6 @@ import com.emoniph.witchery.world.MirrorHelper;
 import com.emoniph.witchery.world.MirrorRoomData;
 import com.emoniph.witchery.world.MirrorWorldCertification;
 import com.emoniph.witchery.world.MirrorWorldLayout;
-import com.mojang.authlib.GameProfile;
-import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -40,7 +38,6 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.RegisterGameTestsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -500,18 +497,11 @@ public final class MirrorWorldGameTests {
     }
 
     private static ServerPlayer createTestPlayer(ServerLevel level, UUID id, String name) {
-        ServerPlayer player = new FakePlayer(level, new GameProfile(id, name));
-        if (player.connection.getConnection().channel() == null) {
-            new EmbeddedChannel(player.connection.getConnection());
-        }
-        level.addNewPlayer(player);
-        return player;
+        return HeadlessGameTestPlayer.create(level, id, name);
     }
 
     private static void removeTestPlayer(ServerPlayer player) {
-        if (player != null && player.level() instanceof ServerLevel level && !player.isRemoved()) {
-            level.removePlayerImmediately(player, Entity.RemovalReason.DISCARDED);
-        }
+        HeadlessGameTestPlayer.remove(player);
     }
 
     private static String describe(MirrorWorldCertification.Report report) {

@@ -27,6 +27,7 @@ import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.monster.zombie.ZombieVillager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
@@ -87,10 +88,18 @@ public final class InfernalOwnershipGameTests {
         BlockPos center = helper.absolutePos(CENTER);
         ServerPlayer owner = createTestPlayer(level, center, OWNER_ID, "infernal-owner");
         ServerPlayer rival = createTestPlayer(level, center.offset(2, 0, 0), RIVAL_ID, "infernal-rival");
-        Zombie thrall = spawnZombie(level, center.offset(64, 0, 0));
+        BlockPos thrallPos = center.offset(64, 0, 0);
+        ChunkPos thrallChunk = new ChunkPos(thrallPos);
+        level.setChunkForced(thrallChunk.x, thrallChunk.z, true);
+        Zombie thrall = spawnZombie(level, thrallPos);
         IronGolem attacker = spawnIronGolem(level, center.offset(4, 0, 0));
-        helper.runAfterDelay(1, () -> {
+        helper.runAfterDelay(2, () -> {
             try {
+                helper.assertTrue(level.getEntity(thrall.getUUID()) == thrall,
+                        "The loaded thrall must be indexed before the revenge scan runs; alive="
+                                + thrall.isAlive() + ", removed=" + thrall.isRemoved()
+                                + ", reason=" + thrall.getRemovalReason()
+                                + ", chunkLoaded=" + level.hasChunkAt(thrall.blockPosition()));
                 helper.assertTrue(!thrall.isPersistenceRequired(),
                         "A naturally bindable mob must begin without forced persistence");
                 helper.assertTrue(Enslaved.enslave(thrall, owner), "The first owner binding must succeed");
@@ -111,8 +120,9 @@ public final class InfernalOwnershipGameTests {
                         "A blocked hit that removes no health must not alert thralls");
                 float healthBeforeDamage = owner.getHealth();
                 owner.setHealth(healthBeforeDamage - 2.0F);
-                EnslavedMobEvents.onEnslaverHurt(
-                        new LivingDamageEvent.Post(owner, new DamageContainer(damage, 2.0F)));
+                LivingDamageEvent.Post hurtEvent =
+                        new LivingDamageEvent.Post(owner, new DamageContainer(damage, 2.0F));
+                EnslavedMobEvents.onEnslaverHurt(hurtEvent);
                 helper.assertTrue(owner.getHealth() < healthBeforeDamage,
                         "The lifecycle fixture must model the post-damage health state");
                 helper.assertTrue(thrall.getTarget() == attacker,
@@ -141,6 +151,7 @@ public final class InfernalOwnershipGameTests {
                 discard(attacker);
                 removeTestPlayer(owner);
                 removeTestPlayer(rival);
+                level.setChunkForced(thrallChunk.x, thrallChunk.z, false);
             }
         });
     }
@@ -233,7 +244,9 @@ public final class InfernalOwnershipGameTests {
             throw new IllegalStateException("Unable to create test zombie");
         }
         zombie.snapTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, 0.0F, 0.0F);
-        level.addFreshEntity(zombie);
+        if (!level.addFreshEntity(zombie)) {
+            throw new IllegalStateException("Unable to add test zombie to the server level");
+        }
         return zombie;
     }
 
