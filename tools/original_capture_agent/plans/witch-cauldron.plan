@@ -1,0 +1,22 @@
+# Controlled north-facing view of the original Witchery cauldron TESR.
+OUTPUT C:\claude\witchery\captures\legacy-model-parity\original
+LOAD WitcheryParityClean|Witchery Parity Clean
+WAIT_WORLD 60000
+NO_PAUSE
+CLEAR_SCREEN
+HIDE_GUI true
+GAMMA 1.0
+FOV 70
+THIRD_PERSON 0
+WAIT 3000
+COMMAND /gamerule doDaylightCycle false
+COMMAND /gamerule doMobSpawning false
+COMMAND /time set 6000
+COMMAND /weather clear
+COMMAND /tp 900.5 4 -8.5
+WAIT 1000
+LOOK 0 -2
+COMMAND /setblock 900 5 0 witchery:cauldron 0
+WAIT 1000
+CAPTURE block-witch_cauldron.png
+STOP

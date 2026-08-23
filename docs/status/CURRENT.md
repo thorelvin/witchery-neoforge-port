@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-08-19
+Last curated: 2026-08-23
 
 This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -40,8 +40,10 @@ enough to read before starting work. Long historical deltas belong in
   Vanishing Witch Hut, NBT structures, the source-corrected Spirit World lifecycle,
   mirrored terrain/spawns/Manifestation visuals, cursed well warnings, the complete
   Ice World area conversion, and other custom brew/ritual edge cases.
-- Source-feel polish on exact-ID items and wearables that are registered but
-  still need model, texture, transform, or gameplay verification.
+- State-dependent source-feel QA for exact-ID items and wearables. Foundational
+  model geometry, pivots, transforms, textures, and held/armor routes now have a
+  source-coordinate audit; remaining checks are animated, equipped, translucent,
+  and gameplay-specific states.
 - Creative-tab and GUI-item polish for promoted exact IDs: hide utility/internal
   blocks until their player-facing route is useful, keep item renders legible,
   and prefer source-shaped models/textures over improvised geometry.
@@ -52,6 +54,20 @@ enough to read before starting work. Long historical deltas belong in
   review, packaging, and multiplayer/server checks.
 
 ## Recent High-Signal Changes
+
+- Legacy model-coordinate parity is now an explicit tested contract rather than
+  a collection of visual approximations. `LegacyModelTransforms` preserves the
+  source `ModelRenderer.render`, `renderWithRotation`, and `postRender` matrix
+  orders; the source model inventory, cube graphs, pivots, hierarchies, mirror
+  timing, renderer anchors, dimensions, held-item transforms, armor layers, and
+  shadows were audited across entities, special blocks, equipment, and items.
+  Controlled original/port front-and-rear captures cover the high-risk entity
+  roster plus Village Guard, Vampire, Spectral Familiar, Garlic Garland, Mirror,
+  and Witch's Cauldron. The cauldron body is now the exact transformed 17-cube
+  source model with source liquid footprint/heights; its 12-piece grounded
+  corner-reaching splayed feet remain the approved custom exception. The full
+  JVM suite, post-fix client capture, and dedicated-server boot/shutdown passed.
+  See `docs/reference/LEGACY_MODEL_COORDINATES.md`.
 
 - Hobgoblin village ecology now follows the audited `EntityGoblin` and
   `EntityAIGoblinMate` rules. Registered village homes replace old door counts;
@@ -343,8 +359,10 @@ enough to read before starting work. Long historical deltas belong in
   source sounds, the original `random.*` utility sound event surface, chalk
   drawing through the old `random.chalk` cue, Demon source vanilla sound mix,
   Parasytic Louse payload cues,
-  Sun Collector/Sun Grenade feedback, and compass scrying cues. Manual QA still
-  needs eyes on the Death Hand pose and in-world atmosphere feel.
+  Sun Collector/Sun Grenade feedback, and compass scrying cues. The Hand of
+  Death's forward, palm-down held orientation and outward third-person alignment
+  were approved during the model pass; manual visual work now concentrates on
+  animated equipment states and in-world atmosphere feel.
 - Vampire blood-transfer feedback now follows the source sound surface too:
   player bites, hostile vampire villager drains, Glass Goblet fills/conversions,
   Lilith's empty-goblet reward, Vampire Blood, Attack Bat feeding, and Bone

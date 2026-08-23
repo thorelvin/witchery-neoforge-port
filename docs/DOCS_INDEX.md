@@ -58,6 +58,8 @@ for players changed. Do not copy every dev-note into them.
   research locations.
 - [reference/FX_TECHNIQUES.md](reference/FX_TECHNIQUES.md) - effect/rendering
   implementation notes.
+- [reference/LEGACY_MODEL_COORDINATES.md](reference/LEGACY_MODEL_COORDINATES.md)
+  - exact 1.7.10-to-modern model transform contract and parity audit method.
 - [reference/OBSCURE_MECHANICS.md](reference/OBSCURE_MECHANICS.md) - source
   mechanics worth preserving.
 - [reference/SPIRIT_WORLD_ATMOSPHERE.md](reference/SPIRIT_WORLD_ATMOSPHERE.md)

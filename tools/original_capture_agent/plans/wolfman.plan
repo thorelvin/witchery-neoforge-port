@@ -1,0 +1,24 @@
+# Controlled idle views for the original Wolfman model.
+OUTPUT C:\claude\witchery\captures\legacy-model-parity\original
+LOAD WitcheryParityClean|Witchery Parity Clean
+WAIT_WORLD 60000
+NO_PAUSE
+CLEAR_SCREEN
+HIDE_GUI true
+GAMMA 1.0
+FOV 70
+THIRD_PERSON 0
+WAIT 3000
+COMMAND /gamerule doDaylightCycle false
+COMMAND /gamerule doMobSpawning false
+COMMAND /difficulty 2
+COMMAND /tp 600.5 4 -8.5
+COMMAND /time set 6000
+COMMAND /weather clear
+WAIT 3000
+LOOK 0 0
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityWolfman
+COMMAND /summon witchery.wolfman 600.5 4 0.5 {Silent:1b,FormerProfession:-1,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityWolfman 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityWolfman 600.5 4 0.5 0 0 entity-wolfman-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityWolfman 600.5 4 0.5 180 0 entity-wolfman-yaw180.png

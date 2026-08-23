@@ -1,0 +1,180 @@
+# Controlled two-angle captures for source-model families not covered by the high-risk batch.
+OUTPUT C:\claude\witchery\captures\legacy-model-parity\original
+LOAD WitcheryParityClean|Witchery Parity Clean
+WAIT_WORLD 60000
+NO_PAUSE
+CLEAR_SCREEN
+HIDE_GUI true
+GAMMA 1.0
+FOV 70
+THIRD_PERSON 0
+WAIT 3000
+COMMAND /gamerule doDaylightCycle false
+COMMAND /gamerule doMobSpawning false
+COMMAND /gamemode 1
+COMMAND /time set 6000
+COMMAND /weather clear
+LOOK 0 0
+
+COMMAND /tp 1100.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityMandrake
+COMMAND /summon witchery.mandrake 1100.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityMandrake 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityMandrake 1100.5 4 0.5 0 0 entity-mandrake_mob-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityMandrake 1100.5 4 0.5 180 0 entity-mandrake_mob-yaw180.png
+
+COMMAND /tp 1200.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityTreefyd
+COMMAND /summon witchery.treefyd 1200.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityTreefyd 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityTreefyd 1200.5 4 0.5 0 0 entity-treefyd-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityTreefyd 1200.5 4 0.5 180 0 entity-treefyd-yaw180.png
+
+COMMAND /tp 1300.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityEnt
+COMMAND /summon witchery.ent 1300.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityEnt 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityEnt 1300.5 4 0.5 0 0 entity-ent-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityEnt 1300.5 4 0.5 180 0 entity-ent-yaw180.png
+
+COMMAND /tp 1400.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityOwl
+COMMAND /summon witchery.owl 1400.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityOwl 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityOwl 1400.5 4 0.5 0 0 entity-owl-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityOwl 1400.5 4 0.5 180 0 entity-owl-yaw180.png
+
+COMMAND /tp 1500.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityToad
+COMMAND /summon witchery.toad 1500.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityToad 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityToad 1500.5 4 0.5 0 0 entity-toad-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityToad 1500.5 4 0.5 180 0 entity-toad-yaw180.png
+
+COMMAND /tp 1600.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityWitchCat
+COMMAND /summon witchery.cat 1600.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityWitchCat 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityWitchCat 1600.5 4 0.5 0 0 entity-familiar_cat-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityWitchCat 1600.5 4 0.5 180 0 entity-familiar_cat-yaw180.png
+
+COMMAND /tp 1700.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityParasyticLouse
+COMMAND /summon witchery.louse 1700.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityParasyticLouse 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityParasyticLouse 1700.5 4 0.5 0 0 entity-parasytic_louse-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityParasyticLouse 1700.5 4 0.5 180 0 entity-parasytic_louse-yaw180.png
+
+COMMAND /tp 1800.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityBabaYaga
+COMMAND /summon witchery.babayaga 1800.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityBabaYaga 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityBabaYaga 1800.5 4 0.5 0 0 entity-baba_yaga-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityBabaYaga 1800.5 4 0.5 180 0 entity-baba_yaga-yaw180.png
+
+COMMAND /tp 1900.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityNightmare
+COMMAND /summon witchery.nightmare 1900.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityNightmare 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityNightmare 1900.5 4 0.5 0 0 entity-nightmare-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityNightmare 1900.5 4 0.5 180 0 entity-nightmare-yaw180.png
+
+COMMAND /tp 2000.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntitySpectre
+COMMAND /summon witchery.spectre 2000.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntitySpectre 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntitySpectre 2000.5 4 0.5 0 0 entity-spectre-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntitySpectre 2000.5 4 0.5 180 0 entity-spectre-yaw180.png
+
+COMMAND /tp 2100.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityPoltergeist
+COMMAND /summon witchery.poltergeist 2100.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityPoltergeist 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityPoltergeist 2100.5 4 0.5 0 0 entity-poltergeist-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityPoltergeist 2100.5 4 0.5 180 0 entity-poltergeist-yaw180.png
+
+COMMAND /tp 2200.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityBanshee
+COMMAND /summon witchery.banshee 2200.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityBanshee 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityBanshee 2200.5 4 0.5 0 0 entity-banshee-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityBanshee 2200.5 4 0.5 180 0 entity-banshee-yaw180.png
+
+COMMAND /tp 2300.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntitySpirit
+COMMAND /summon witchery.spirit 2300.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntitySpirit 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntitySpirit 2300.5 4 0.5 0 0 entity-spirit-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntitySpirit 2300.5 4 0.5 180 0 entity-spirit-yaw180.png
+
+COMMAND /tp 2400.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityWitchHunter
+COMMAND /summon witchery.witchhunter 2400.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityWitchHunter 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityWitchHunter 2400.5 4 0.5 0 0 entity-witch_hunter-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityWitchHunter 2400.5 4 0.5 180 0 entity-witch_hunter-yaw180.png
+
+COMMAND /tp 2500.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityDarkMark
+COMMAND /summon witchery.darkmark 2500.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityDarkMark 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityDarkMark 2500.5 4 0.5 0 0 entity-dark_mark-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityDarkMark 2500.5 4 0.5 180 0 entity-dark_mark-yaw180.png
+
+COMMAND /tp 2600.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityMindrake
+COMMAND /summon witchery.mindrake 2600.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityMindrake 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityMindrake 2600.5 4 0.5 0 0 entity-mindrake-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityMindrake 2600.5 4 0.5 180 0 entity-mindrake-yaw180.png
+
+COMMAND /tp 2700.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityGoblin
+COMMAND /summon witchery.goblin 2700.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityGoblin 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityGoblin 2700.5 4 0.5 0 0 entity-hobgoblin-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityGoblin 2700.5 4 0.5 180 0 entity-hobgoblin-yaw180.png
+
+COMMAND /tp 2800.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityGoblinGulg
+COMMAND /summon witchery.goblingulg 2800.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityGoblinGulg 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityGoblinGulg 2800.5 4 0.5 0 0 entity-goblin_gulg-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityGoblinGulg 2800.5 4 0.5 180 0 entity-goblin_gulg-yaw180.png
+
+COMMAND /tp 2900.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityGoblinMog
+COMMAND /summon witchery.goblinmog 2900.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityGoblinMog 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityGoblinMog 2900.5 4 0.5 0 0 entity-goblin_mog-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityGoblinMog 2900.5 4 0.5 180 0 entity-goblin_mog-yaw180.png
+
+COMMAND /tp 3000.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityLostSoul
+COMMAND /summon witchery.lostsoul 3000.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityLostSoul 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityLostSoul 3000.5 4 0.5 0 0 entity-lost_soul-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityLostSoul 3000.5 4 0.5 180 0 entity-lost_soul-yaw180.png
+
+COMMAND /tp 3100.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityLilith
+COMMAND /summon witchery.lilith 3100.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityLilith 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityLilith 3100.5 4 0.5 0 0 entity-lilith-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityLilith 3100.5 4 0.5 180 0 entity-lilith-yaw180.png
+
+COMMAND /tp 3200.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityWingedMonkey
+COMMAND /summon witchery.wingedmonkey 3200.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityWingedMonkey 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityWingedMonkey 3200.5 4 0.5 0 0 entity-flying_monkey-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityWingedMonkey 3200.5 4 0.5 180 0 entity-flying_monkey-yaw180.png
+
+COMMAND /tp 3300.5 4 -8.5
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityMirrorFace
+COMMAND /summon witchery.mirrorface 3300.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityMirrorFace 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityMirrorFace 3300.5 4 0.5 0 0 entity-mirror_face-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityMirrorFace 3300.5 4 0.5 180 0 entity-mirror_face-yaw180.png
+
+STOP

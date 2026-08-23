@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Premain-Class: OriginalWitcheryCaptureAgent
+Agent-Class: OriginalWitcheryCaptureAgent
+Can-Redefine-Classes: false
+Can-Retransform-Classes: false

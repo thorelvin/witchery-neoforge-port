@@ -551,10 +551,6 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Stack normal and ice stockades two high. The lower stockade should switch to
   the stacked/fence-like body, the top should remain pointy, and both should
   damage players and mobs on contact.
-- Wear the full Death set, use Hand of Death to deploy/retract the scythe, and
-  confirm the held model protrudes from the arm, the scythe faces forward, and
-  right-click toggles without losing the base item.
-
 ### Villages And Walls
 
 - Generate multiple villages and confirm walls appear on roughly 40% of villages

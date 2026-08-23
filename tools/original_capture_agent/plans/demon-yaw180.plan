@@ -1,0 +1,22 @@
+# Controlled front view for the original Demon model.
+OUTPUT C:\claude\witchery\captures\legacy-model-parity\original
+LOAD WitcheryParityQA|Witchery Parity QA
+WAIT_WORLD 60000
+NO_PAUSE
+CLEAR_SCREEN
+HIDE_GUI true
+GAMMA 1.0
+FOV 70
+THIRD_PERSON 0
+WAIT 3000
+COMMAND /gamerule doDaylightCycle false
+COMMAND /gamerule doMobSpawning false
+COMMAND /tp 0.5 4 -8.5
+COMMAND /time set 6000
+COMMAND /weather clear
+WAIT 3000
+LOOK 0 0
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityDemon
+COMMAND /summon witchery.demon 0.5 4 0.5 {Silent:1b,Rotation:[180f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityDemon 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityDemon 0.5 4 0.5 180 0 entity-demon-yaw180.png

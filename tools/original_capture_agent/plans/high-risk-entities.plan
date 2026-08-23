@@ -1,0 +1,79 @@
+# Controlled idle views for high-risk original Witchery entity models.
+OUTPUT C:\claude\witchery\captures\legacy-model-parity\original
+LOAD WitcheryParityClean|Witchery Parity Clean
+WAIT_WORLD 60000
+NO_PAUSE
+CLEAR_SCREEN
+HIDE_GUI true
+GAMMA 1.0
+FOV 70
+THIRD_PERSON 0
+WAIT 3000
+COMMAND /gamerule doDaylightCycle false
+COMMAND /gamerule doMobSpawning false
+COMMAND /difficulty 2
+COMMAND /tp 0.5 4 -8.5
+COMMAND /time set 6000
+COMMAND /weather clear
+WAIT 3000
+LOOK 0 0
+
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityImp
+COMMAND /summon witchery.imp 0.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityImp 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityImp 0.5 4 0.5 0 0 entity-flame_imp-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityImp 0.5 4 0.5 180 0 entity-flame_imp-yaw180.png
+
+COMMAND /tp 100.5 4 -8.5
+WAIT 1000
+LOOK 0 0
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityDeath
+COMMAND /summon witchery.death 100.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityDeath 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityDeath 100.5 4 0.5 0 0 entity-death-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityDeath 100.5 4 0.5 180 0 entity-death-yaw180.png
+
+COMMAND /tp 200.5 4 -8.5
+WAIT 1000
+LOOK 0 0
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityLordOfTorment
+COMMAND /summon witchery.lordoftorment 200.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityLordOfTorment 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityLordOfTorment 200.5 4 0.5 0 0 entity-lord_of_torment-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityLordOfTorment 200.5 4 0.5 180 0 entity-lord_of_torment-yaw180.png
+
+COMMAND /tp 300.5 4 -8.5
+WAIT 1000
+LOOK 0 0
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityHellhound
+COMMAND /summon witchery.hellhound 300.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityHellhound 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityHellhound 300.5 4 0.5 0 0 entity-hellhound-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityHellhound 300.5 4 0.5 180 0 entity-hellhound-yaw180.png
+
+COMMAND /tp 400.5 4 -8.5
+WAIT 1000
+LOOK 0 0
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityLeonard
+COMMAND /summon witchery.leonard 400.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityLeonard 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityLeonard 400.5 4 0.5 0 0 entity-leonard-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityLeonard 400.5 4 0.5 180 0 entity-leonard-yaw180.png
+
+COMMAND /tp 500.5 4 -8.5
+WAIT 1000
+LOOK 0 0
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityHornedHuntsman
+COMMAND /summon witchery.hornedHuntsman 500.5 4 0.5 {Silent:1b,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityHornedHuntsman 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityHornedHuntsman 500.5 4 0.5 0 0 entity-horned_huntsman-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityHornedHuntsman 500.5 4 0.5 180 0 entity-horned_huntsman-yaw180.png
+
+COMMAND /tp 600.5 4 -8.5
+WAIT 1000
+LOOK 0 0
+CLEAR_ENTITIES com.emoniph.witchery.entity.EntityWolfman
+COMMAND /summon witchery.wolfman 600.5 4 0.5 {Silent:1b,FormerProfession:-1,Rotation:[0f,0f]}
+WAIT_ENTITY com.emoniph.witchery.entity.EntityWolfman 5000
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityWolfman 600.5 4 0.5 0 0 entity-wolfman-yaw0.png
+STABILIZE_CAPTURE com.emoniph.witchery.entity.EntityWolfman 600.5 4 0.5 180 0 entity-wolfman-yaw180.png
