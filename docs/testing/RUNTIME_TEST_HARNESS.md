@@ -39,12 +39,13 @@ python tools/runtime_test_harness.py all
   classes, and exact equality between registered GameTest IDs and the manifest.
 - `resource-contracts` runs the 13 explicitly listed structural/resource JVM
   tests. A broad Gradle summary cannot silently substitute another test set.
-- `game-tests` starts one clean normal-difficulty dedicated world and runs all 16
+- `game-tests` starts one clean normal-difficulty dedicated world and runs all 22
   CI-lane GameTests sequentially by exact ID. Each command must report exactly
   one completion and the required-tests-passed marker.
-- `save-reload` starts a clean server, places and mutates a Kettle plus command
-  storage marker, flushes and stops, then starts the same world again and checks
-  the block, block-entity values, and marker.
+- `save-reload` starts a clean server, places and mutates a Kettle, Witches'
+  Oven, Distillery, Spinning Wheel, Brazier, and Silver Vat plus a command-storage
+  marker, flushes and stops, then starts the same world again and checks every
+  block, inventory payload, block-entity value, and marker.
 - `all` runs the four gates above in order. Dedicated-server startup and clean
   all-dimensions shutdown are required by the server-backed stages.
 

@@ -22,6 +22,36 @@
       "timeout_seconds": 120
     },
     {
+      "id": "witchery:kettle_hopper_automation",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:witches_oven_hopper_automation",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:distillery_hopper_automation",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:spinning_wheel_hopper_automation",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:brazier_hopper_automation",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:silver_vat_output_automation",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
       "id": "witchery:goblin_boss_parity",
       "lane": "ci",
       "timeout_seconds": 120
@@ -104,16 +134,108 @@
     }
   ],
   "save_reload": {
-    "block": "witchery:kettle[hanging=true,facing=north]",
-    "position": [
-      0,
-      80,
-      0
+    "machines": [
+      {
+        "name": "kettle",
+        "block": "witchery:kettle[hanging=true,facing=north]",
+        "position": [0, 80, 0],
+        "setup_blocks": [
+          {
+            "position": [0, 81, 0],
+            "block": "minecraft:stone"
+          }
+        ],
+        "block_entity_values": {
+          "WaterLevel": 2,
+          "Color": 1193046
+        },
+        "items": [
+          {
+            "slot": 7,
+            "item": "minecraft:glass_bottle",
+            "count": 21,
+            "count_path": "Items[{Slot:7b}].Item.count"
+          }
+        ]
+      },
+      {
+        "name": "witches_oven",
+        "block": "witchery:witches_oven",
+        "position": [3, 80, 0],
+        "items": [
+          {
+            "slot": 4,
+            "item": "witchery:clay_jar",
+            "count": 22,
+            "count_path": "Items[{Slot:4b}].count"
+          }
+        ]
+      },
+      {
+        "name": "distillery",
+        "block": "witchery:distillery",
+        "position": [6, 80, 0],
+        "items": [
+          {
+            "slot": 3,
+            "item": "minecraft:cobblestone",
+            "count": 23,
+            "count_path": "Items[{Slot:3b}].count"
+          }
+        ]
+      },
+      {
+        "name": "spinning_wheel",
+        "block": "witchery:spinning_wheel",
+        "position": [9, 80, 0],
+        "items": [
+          {
+            "slot": 0,
+            "item": "minecraft:string",
+            "count": 24,
+            "count_path": "Items[{Slot:0b}].count"
+          }
+        ]
+      },
+      {
+        "name": "brazier",
+        "block": "witchery:brazier",
+        "position": [12, 80, 0],
+        "items": [
+          {
+            "slot": 0,
+            "item": "minecraft:stick",
+            "count": 1,
+            "count_path": "Items[{Slot:0b}].count"
+          },
+          {
+            "slot": 1,
+            "item": "minecraft:redstone",
+            "count": 1,
+            "count_path": "Items[{Slot:1b}].count"
+          },
+          {
+            "slot": 2,
+            "item": "minecraft:bone",
+            "count": 1,
+            "count_path": "Items[{Slot:2b}].count"
+          }
+        ]
+      },
+      {
+        "name": "silver_vat",
+        "block": "witchery:silver_vat",
+        "position": [15, 80, 0],
+        "items": [
+          {
+            "slot": 0,
+            "item": "witchery:silver_deposits",
+            "count": 25,
+            "count_path": "Item.count"
+          }
+        ]
+      }
     ],
-    "block_entity_values": {
-      "WaterLevel": 2,
-      "Color": 1193046
-    },
     "storage": "witchery:runtime_test",
     "storage_marker": 424242
   }

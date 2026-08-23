@@ -335,7 +335,9 @@ public class DistilleryBlockEntity extends BlockEntity implements WorldlyContain
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        if (slot >= SLOT_OUTPUT_1) {
+        // 1.7.10 used `slot > 3`: the first output slot remained insertable
+        // from a horizontal face, while the other three outputs were protected.
+        if (slot > SLOT_OUTPUT_1) {
             return false;
         }
         if (slot == SLOT_JARS) {

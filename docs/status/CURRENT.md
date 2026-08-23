@@ -57,11 +57,12 @@ enough to read before starting work. Long historical deltas belong in
 ## Recent High-Signal Changes
 
 - The deterministic runtime harness and CI gates are complete. An explicit
-  manifest locks 13 resource-contract classes, 16 exact CI GameTests, and one
+  manifest locks 13 resource-contract classes, 22 exact CI GameTests, and one
   manual forced-restart fixture. Clean normal-difficulty dedicated servers now
   run every named test with all Witchery dimensions loaded, require unambiguous
-  per-test success, preserve logs/JSON summaries, and verify a Kettle block
-  entity plus command-storage marker across a real stop/reload. CI uploads build
+  per-test success, preserve logs/JSON summaries, and verify Kettle, Witches'
+  Oven, Distillery, Spinning Wheel, Brazier, Silver Vat, and command-storage
+  state across a real stop/reload. CI uploads build
   or runtime diagnostics on failure. Building the gate also exposed and fixed
   the Otherwhere Hearth traveller-state race on Spirit entry and the Lord of
   Torment's failure to collect nearby non-attacking players.
@@ -266,8 +267,9 @@ enough to read before starting work. Long historical deltas belong in
   `ModelSilverVat` geometry, including all four item spouts, world spouts hidden
   beside neighboring block entities, the old blue brew surface, and one to eight
   visible source deposit pieces based on the stored stack's eight-item
-  thresholds. Storage, comparator, collection, and adjacent-output mechanics are
-  unchanged; live model and furnace/hopper QA remains.
+  thresholds. Adjacent output growth, exact one-in-five deposit odds, hopper
+  extraction/refusal, and stored inventory reload are dedicated-server
+  certified; only live model, collection, and break-drop feel remain here.
 - Grotesque visual parity now covers both source routes. The fixed Brew of the
   Grotesque keeps its 1200-tick player repulsion timer, while composed Infernal
   Blood applies the three-minute `witchery:grotesque` effect to living targets;

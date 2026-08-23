@@ -432,12 +432,14 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Place a Silver Vat alone, then put block-entity machines against each side one
   at a time. It should use the exact pale source texture, keep its blue bath,
   show all four spouts when clear, and hide only the spout touching each machine.
-  Feed new Gold Ingots into adjacent sided output inventories and verify the
-  one-in-five deposit rolls render one source piece for counts 1-15, two at 16,
-  and up to eight at 64; right-click collection should clear every piece.
+  The adjacent output-growth trigger, one-in-five deposit roll, and hopper
+  routes are dedicated-server certified. In a client, feed new Gold Ingots into
+  an adjacent sided output and verify the resulting deposits render one source
+  piece for counts 1-15, two at 16, and up to eight at 64; right-click
+  collection should clear every piece.
   Check the creative, held, framed, and dropped item forms show all four spouts,
-  the blue bath, and no deposits. Also verify hopper/furnace output detection,
-  comparator strength, break drops, and the nine-deposit Silver Ingot recipe.
+  the blue bath, and no deposits. Also verify comparator presentation, break
+  drops, and the nine-deposit Silver Ingot recipe.
 - Place `witchery:decurseteleport` and `witchery:decursedirected` facing all four
   horizontal directions. Occluded Summons should be the small source-textured
   stone mandrake; Broken Curses should be the source-textured wolf with its low

@@ -112,10 +112,58 @@ def validate_manifest(manifest: dict) -> None:
     save_reload = manifest.get("save_reload")
     if not isinstance(save_reload, dict):
         raise HarnessError("save_reload must be an object")
-    position = save_reload.get("position")
-    if not (isinstance(position, list) and len(position) == 3
-            and all(isinstance(value, int) for value in position)):
-        raise HarnessError("save_reload.position must contain three integers")
+    machines = save_reload.get("machines")
+    if not isinstance(machines, list) or not machines:
+        raise HarnessError("save_reload.machines must be a non-empty array")
+    names: set[str] = set()
+    positions: set[tuple[int, int, int]] = set()
+    for machine in machines:
+        if not isinstance(machine, dict):
+            raise HarnessError("Each save_reload.machines entry must be an object")
+        name = machine.get("name")
+        block = machine.get("block")
+        position = machine.get("position")
+        if not isinstance(name, str) or not name.strip() or name in names:
+            raise HarnessError(f"Invalid or duplicate save/reload machine name: {name!r}")
+        if not isinstance(block, str) or ":" not in block:
+            raise HarnessError(f"Invalid save/reload block for {name}: {block!r}")
+        if not (isinstance(position, list) and len(position) == 3
+                and all(isinstance(value, int) for value in position)):
+            raise HarnessError(f"save_reload machine {name} position must contain three integers")
+        position_key = tuple(position)
+        if position_key in positions:
+            raise HarnessError(f"Duplicate save/reload machine position: {position}")
+        names.add(name)
+        positions.add(position_key)
+
+        values = machine.get("block_entity_values", {})
+        if not isinstance(values, dict) or not all(
+                isinstance(key, str) and isinstance(value, int) for key, value in values.items()):
+            raise HarnessError(f"Invalid block_entity_values for save/reload machine {name}")
+        items = machine.get("items", [])
+        if not isinstance(items, list):
+            raise HarnessError(f"Invalid items for save/reload machine {name}")
+        for item in items:
+            if not isinstance(item, dict):
+                raise HarnessError(f"Invalid item contract for save/reload machine {name}")
+            if not isinstance(item.get("slot"), int) or item["slot"] < 0:
+                raise HarnessError(f"Invalid item slot for save/reload machine {name}")
+            if not isinstance(item.get("item"), str) or ":" not in item["item"]:
+                raise HarnessError(f"Invalid item id for save/reload machine {name}")
+            if not isinstance(item.get("count"), int) or item["count"] <= 0:
+                raise HarnessError(f"Invalid item count for save/reload machine {name}")
+            if not isinstance(item.get("count_path"), str) or not item["count_path"].strip():
+                raise HarnessError(f"Missing item count path for save/reload machine {name}")
+        setup_blocks = machine.get("setup_blocks", [])
+        if not isinstance(setup_blocks, list):
+            raise HarnessError(f"Invalid setup_blocks for save/reload machine {name}")
+        for setup in setup_blocks:
+            if not isinstance(setup, dict) or not isinstance(setup.get("block"), str):
+                raise HarnessError(f"Invalid setup block for save/reload machine {name}")
+            setup_position = setup.get("position")
+            if not (isinstance(setup_position, list) and len(setup_position) == 3
+                    and all(isinstance(value, int) for value in setup_position)):
+                raise HarnessError(f"Invalid setup block position for save/reload machine {name}")
 
 
 def safe_reset_directory(target: Path) -> None:
@@ -432,6 +480,7 @@ def command_must_succeed(server: ServerProcess, command: str,
         "no tests",
         "not found",
         "not loaded",
+        "no items were modified",
     )
     if any(value in lowered for value in failures):
         raise HarnessError(f"Command failed: {command}\nRCON response: {response}")
@@ -439,6 +488,32 @@ def command_must_succeed(server: ServerProcess, command: str,
         raise HarnessError(
             f"Command did not report expected value {expected!r}: {command}\nRCON response: {response}")
     return response
+
+
+def assert_saved_machine_state(server: ServerProcess, machines: list[dict],
+                               storage: str, marker: int) -> None:
+    for machine in machines:
+        x, y, z = machine["position"]
+        command_must_succeed(
+            server,
+            f"execute if block {x} {y} {z} {machine['block']} "
+            f"run data get storage {storage} marker",
+            str(marker),
+        )
+        for key, value in machine.get("block_entity_values", {}).items():
+            command_must_succeed(server, f"data get block {x} {y} {z} {key}", str(value))
+        for item in machine.get("items", []):
+            command_must_succeed(
+                server,
+                f"execute if items block {x} {y} {z} container.{item['slot']} {item['item']} "
+                f"run data get storage {storage} marker",
+                str(marker),
+            )
+            command_must_succeed(
+                server,
+                f"data get block {x} {y} {z} {item['count_path']}",
+                str(item["count"]),
+            )
 
 
 def prepare_runtime_server(work_dir: Path, reset: bool) -> tuple[int, str]:
@@ -535,9 +610,7 @@ def run_save_reload(manifest: dict, startup_timeout: int) -> None:
     work_dir = RUNTIME_ROOT / "save-reload"
     rcon_port, password = prepare_runtime_server(work_dir, reset=True)
     config = manifest["save_reload"]
-    x, y, z = config["position"]
-    block = config["block"]
-    values = config["block_entity_values"]
+    machines = config["machines"]
     storage = config["storage"]
     marker = config["storage_marker"]
     summary: dict = {"status": "failed", "stages": []}
@@ -548,14 +621,26 @@ def run_save_reload(manifest: dict, startup_timeout: int) -> None:
     try:
         first.start()
         first_started = True
-        command_must_succeed(first, f"forceload add {x} {z}")
-        command_must_succeed(first, f"setblock {x} {y + 1} {z} minecraft:stone")
-        command_must_succeed(first, f"setblock {x} {y} {z} {block}")
-        nbt = ",".join(f"{key}:{value}" for key, value in values.items())
-        command_must_succeed(first, f"data merge block {x} {y} {z} {{{nbt}}}")
-        command_must_succeed(first, f"data get block {x} {y} {z} WaterLevel", str(values["WaterLevel"]))
+        for machine in machines:
+            x, y, z = machine["position"]
+            command_must_succeed(first, f"forceload add {x} {z}")
+            for setup in machine.get("setup_blocks", []):
+                setup_x, setup_y, setup_z = setup["position"]
+                command_must_succeed(
+                    first, f"setblock {setup_x} {setup_y} {setup_z} {setup['block']}")
+            command_must_succeed(first, f"setblock {x} {y} {z} {machine['block']}")
+            values = machine.get("block_entity_values", {})
+            if values:
+                nbt = ",".join(f"{key}:{value}" for key, value in values.items())
+                command_must_succeed(first, f"data merge block {x} {y} {z} {{{nbt}}}")
+            for item in machine.get("items", []):
+                command_must_succeed(
+                    first,
+                    f"item replace block {x} {y} {z} container.{item['slot']} "
+                    f"with {item['item']} {item['count']}",
+                )
         command_must_succeed(first, f"data modify storage {storage} marker set value {marker}")
-        command_must_succeed(first, f"data get storage {storage} marker", str(marker))
+        assert_saved_machine_state(first, machines, storage, marker)
         command_must_succeed(first, "save-all flush", "saved")
         first.graceful_stop()
         first_stopped = True
@@ -584,10 +669,10 @@ def run_save_reload(manifest: dict, startup_timeout: int) -> None:
     try:
         second.start()
         second_started = True
-        command_must_succeed(second, f"forceload add {x} {z}")
-        command_must_succeed(second, f"data get block {x} {y} {z} WaterLevel", str(values["WaterLevel"]))
-        command_must_succeed(second, f"data get block {x} {y} {z} Color", str(values["Color"]))
-        command_must_succeed(second, f"data get storage {storage} marker", str(marker))
+        for machine in machines:
+            x, _, z = machine["position"]
+            command_must_succeed(second, f"forceload add {x} {z}")
+        assert_saved_machine_state(second, machines, storage, marker)
         command_must_succeed(second, "save-all flush", "saved")
         second.graceful_stop()
         second_stopped = True
