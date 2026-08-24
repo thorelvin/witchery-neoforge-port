@@ -2,10 +2,13 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -19,15 +22,18 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class ImmortalsObservationsBookItem extends Item {
     public static final String TAG_LEVEL = "Level";
+    public static final String TAG_PAGE_STACK = "pageStack";
     public static final int MAX_LEVEL = 9;
-    public static final int BASE_VISIBLE_PAGES = 6;
-    public static final int TOTAL_PAGES = 16;
+    public static final List<String> PAGE_NAMES = List.of(
+            "toc", "ritual1", "ritual2", "ritual3", "ritual4", "ritual5", "transfix", "knockback",
+            "speed", "resistsun", "smashstone", "bats", "mesmerize", "maker", "maker2", "finalpowers");
+    public static final int TOTAL_PAGES = PAGE_NAMES.size();
+    private static final int[] PAGE_UNLOCK_LEVELS = {0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9};
     private static final String PAGE_KEY_PREFIX = "item.witchery.immortals_observations_book.page_";
     private final String tooltipKey;
 
@@ -43,26 +49,13 @@ public class ImmortalsObservationsBookItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        // Client: open the native Modonomicon "Observations of an Immortal" book (datapack-synced).
         if (level.isClientSide()) {
-            com.emoniph.witchery.client.WitcheryBookOpener.openEntry(
-                    com.emoniph.witchery.book.WitcheryBooks.OBSERVATIONS,
-                    com.emoniph.witchery.book.WitcheryBooks.id("record"),
-                    com.emoniph.witchery.book.WitcheryBooks.id("record/blood_rite"));
             return InteractionResult.SUCCESS;
         }
         if (player instanceof ServerPlayer serverPlayer) {
             player.awardStat(Stats.ITEM_USED.get(this));
-            // Unlocks the next vampire level cap when a vampire reads this book (preserved from the
-            // old level-gated reader; Torn Pages still raise the research level that drives the cap).
-            var data = WitcheryAttachments.get(serverPlayer);
-            if (data.isVampire()) {
-                int newCap = getResearchLevel(stack) + 1;
-                if (newCap > data.getVampireLevelCap()) {
-                    data.increaseVampireLevelCap(newCap);
-                    PacketDistributor.sendToPlayer(serverPlayer, SyncPlayerDataPayload.from(serverPlayer, data));
-                }
-            }
+            PacketDistributor.sendToPlayer(serverPlayer, new OpenObservationsBookPayload(
+                    getResearchLevel(stack), getStoredPage(stack), hand == InteractionHand.OFF_HAND));
         }
         return InteractionResult.SUCCESS_SERVER;
     }
@@ -98,17 +91,60 @@ public class ImmortalsObservationsBookItem extends Item {
     }
 
     public static int getVisiblePages(ItemStack stack) {
-        int level = getResearchLevel(stack);
-        int bonusPage = level >= 8 ? 1 : 0;
-        return Math.min(TOTAL_PAGES, BASE_VISIBLE_PAGES + level + bonusPage);
+        return getVisiblePageCount(getResearchLevel(stack));
     }
 
-    public static List<Component> createReadablePages(int visiblePages) {
-        int clampedPages = Math.max(1, Math.min(TOTAL_PAGES, visiblePages));
-        List<Component> pages = new ArrayList<>(clampedPages);
-        for (int i = 1; i <= clampedPages; i++) {
-            pages.add(Component.translatable(PAGE_KEY_PREFIX + i));
+    public static int getVisiblePageCount(int researchLevel) {
+        int clampedLevel = Math.clamp(researchLevel, 0, MAX_LEVEL);
+        int count = 0;
+        for (int unlockLevel : PAGE_UNLOCK_LEVELS) {
+            if (unlockLevel <= clampedLevel) {
+                count++;
+            }
         }
-        return pages;
+        return count;
+    }
+
+    public static int getPageUnlockLevel(int pageIndex) {
+        return PAGE_UNLOCK_LEVELS[Math.clamp(pageIndex, 0, TOTAL_PAGES - 1)];
+    }
+
+    public static String getPageTranslationKey(int pageIndex) {
+        return PAGE_KEY_PREFIX + (Math.clamp(pageIndex, 0, TOTAL_PAGES - 1) + 1);
+    }
+
+    public static int getStoredPage(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        ListTag pages = tag.getListOrEmpty(TAG_PAGE_STACK);
+        if (pages.isEmpty()) {
+            return 0;
+        }
+        int pageIndex = PAGE_NAMES.indexOf(pages.getStringOr(pages.size() - 1, ""));
+        return Math.clamp(pageIndex, 0, getVisiblePages(stack) - 1);
+    }
+
+    public static void setStoredPage(ItemStack stack, int pageIndex) {
+        int clampedPage = Math.clamp(pageIndex, 0, getVisiblePages(stack) - 1);
+        ListTag pages = new ListTag(clampedPage);
+        for (int index = 1; index <= clampedPage; index++) {
+            pages.add(StringTag.valueOf(PAGE_NAMES.get(index)));
+        }
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.put(TAG_PAGE_STACK, pages));
+    }
+
+    public static void finishReading(ServerPlayer player, ItemStack stack, int pageIndex) {
+        if (!isObservationsBook(stack)) {
+            return;
+        }
+        setStoredPage(stack, pageIndex);
+        var data = WitcheryAttachments.get(player);
+        if (!data.isVampire()) {
+            return;
+        }
+        int newCap = getResearchLevel(stack) + 1;
+        if (newCap > data.getVampireLevelCap()) {
+            data.increaseVampireLevelCap(newCap);
+            PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
+        }
     }
 }

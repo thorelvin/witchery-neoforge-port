@@ -1,7 +1,6 @@
 package com.emoniph.witchery.datagen;
 
 import com.emoniph.witchery.book.CauldronBookProvider;
-import com.emoniph.witchery.book.ObservationsBookProvider;
 import com.emoniph.witchery.book.WitchesPrimerBookProvider;
 import com.klikli_dev.modonomicon.api.datagen.NeoBookProvider;
 import net.minecraft.data.DataGenerator;
@@ -22,7 +21,6 @@ public final class WitcheryDataGenerators {
         DataGenerator generator = event.getGenerator();
         generator.addProvider(true, NeoBookProvider.of(event,
                 new WitchesPrimerBookProvider(),
-                new CauldronBookProvider(),
-                new ObservationsBookProvider()));
+                new CauldronBookProvider()));
     }
 }

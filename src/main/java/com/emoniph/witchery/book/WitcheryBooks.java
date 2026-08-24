@@ -26,9 +26,6 @@ public final class WitcheryBooks {
     public static final Identifier PRIMER = id("witches_primer");
     /** Cauldron Book — brewing in the Witch's Cauldron. */
     public static final Identifier CAULDRON = id("cauldron_book");
-    /** Observations of an Immortal — a vampire's lore book. */
-    public static final Identifier OBSERVATIONS = id("observations");
-
     /** Sepia grimoire ink used for titles and body text across all Witchery books. */
     public static final int INK_COLOR = 0x53341a;
     private static final String INK_HEX = "53341a";

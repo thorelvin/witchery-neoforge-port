@@ -126,9 +126,8 @@ public class WitcheryClientEvents {
 
     /**
      * Close an open guidebook with the <strong>X</strong> key (mirrors Escape). Covers the native
-     * Modonomicon books (Witches' Primer and friends) and the vanilla read-only book screen used for
-     * the Immortal's Observations. Skipped while a text field is focused (e.g. a Modonomicon search
-     * box) so the key still types there.
+     * Modonomicon books (Witches' Primer and friends) and the source-shaped Observations screen.
+     * Skipped while a text field is focused (e.g. a Modonomicon search box) so the key still types.
      */
     @SubscribeEvent
     public static void onBookScreenKeyPressed(net.neoforged.neoforge.client.event.ScreenEvent.KeyPressed.Pre event) {
@@ -147,8 +146,8 @@ public class WitcheryClientEvents {
     }
 
     private static boolean isCloseableBookScreen(net.minecraft.client.gui.screens.Screen screen) {
-        if (screen instanceof net.minecraft.client.gui.screens.inventory.BookViewScreen) {
-            return true; // vanilla read-only book (Immortal's Observations)
+        if (screen instanceof com.emoniph.witchery.client.screen.ObservationsScreen) {
+            return true;
         }
         // Native Modonomicon guidebook screens all live under this gui.book package.
         return screen.getClass().getName().startsWith("com.klikli_dev.modonomicon.client.gui.book.");

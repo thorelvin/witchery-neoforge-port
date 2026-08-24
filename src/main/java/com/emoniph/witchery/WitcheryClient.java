@@ -28,6 +28,7 @@ import com.emoniph.witchery.client.renderer.NightmareRenderer;
 import com.emoniph.witchery.client.renderer.SpiritRenderer;
 import com.emoniph.witchery.client.color.BrewBagTint;
 import com.emoniph.witchery.client.screen.DistilleryScreen;
+import com.emoniph.witchery.client.screen.ObservationsScreen;
 import com.emoniph.witchery.client.screen.SpinningWheelScreen;
 import com.emoniph.witchery.client.screen.WitchesOvenScreen;
 import com.emoniph.witchery.blocks.entity.BrewFluidBlockEntity;
@@ -42,13 +43,11 @@ import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryFluids;
 import com.emoniph.witchery.init.WitcheryMenuTypes;
 import com.emoniph.witchery.init.WitcheryMobEffects;
-import com.emoniph.witchery.item.ImmortalsObservationsBookItem;
 import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import com.emoniph.witchery.network.ScryingCameraPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.entity.Entity;
@@ -676,8 +675,8 @@ public class WitcheryClient {
     }
 
     public static void handleOpenObservationsBook(OpenObservationsBookPayload payload, IPayloadContext ctx) {
-        ctx.enqueueWork(() -> Minecraft.getInstance().setScreen(new BookViewScreen(
-                new BookViewScreen.BookAccess(ImmortalsObservationsBookItem.createReadablePages(payload.visiblePages())))));
+        ctx.enqueueWork(() -> Minecraft.getInstance().setScreen(new ObservationsScreen(
+                payload.researchLevel(), payload.pageIndex(), payload.offhand())));
     }
 
     public static void handleScryingCamera(ScryingCameraPayload payload, IPayloadContext ctx) {

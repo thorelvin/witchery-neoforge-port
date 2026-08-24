@@ -23,6 +23,7 @@ import com.emoniph.witchery.network.HowlPayload;
 import com.emoniph.witchery.network.OpenObservationsBookPayload;
 import com.emoniph.witchery.network.PlacedModonomiconPageTurnPayload;
 import com.emoniph.witchery.network.ScryingCameraPayload;
+import com.emoniph.witchery.network.SyncObservationsBookPayload;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
 import com.emoniph.witchery.network.VampireUltimatePayload;
 import com.emoniph.witchery.network.VampirePowerPayload;
@@ -180,6 +181,10 @@ public class WitcheryMod {
                 .playToServer(
                         com.emoniph.witchery.network.SpellPreparedPayload.TYPE,
                         com.emoniph.witchery.network.SpellPreparedPayload.STREAM_CODEC,
-                        com.emoniph.witchery.network.SpellPreparedPayload::handleOnServer);
+                        com.emoniph.witchery.network.SpellPreparedPayload::handleOnServer)
+                .playToServer(
+                        SyncObservationsBookPayload.TYPE,
+                        SyncObservationsBookPayload.STREAM_CODEC,
+                        SyncObservationsBookPayload::handleOnServer);
     }
 }

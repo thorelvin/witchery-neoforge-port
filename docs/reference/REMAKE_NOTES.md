@@ -480,7 +480,9 @@ Gotchas / decisions (Modonomicon 1.121.0):
   `witchery:guide/*` advancements via `player.getAdvancements().award/revoke(holder, "has_book")`,
   `holder` from `src.getServer().getAdvancements().get(id)`.
 - Primer recipe is now cheap/recoverable: shapeless Book + black dye + feather (was witch_hand+Book).
-- Cauldron Book + Observations stay **standalone** Modonomicon books, outside the chain.
+- The Cauldron Book stays a **standalone** Modonomicon book outside the chain.
+  Observations is also outside the chain, but uses its exact source-shaped standalone
+  markup reader rather than Modonomicon.
 
 Polish pass (same day):
 - **Gating-order fix (the real one).** The reagents `odour_of_purity` / `breath_of_goddess` /

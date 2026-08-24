@@ -57,7 +57,7 @@ enough to read before starting work. Long historical deltas belong in
 ## Recent High-Signal Changes
 
 - The deterministic runtime harness and CI gates are complete. An explicit
-  manifest locks 13 resource-contract classes, 23 exact CI GameTests, and one
+  manifest locks 14 resource-contract classes, 23 exact CI GameTests, and one
   manual forced-restart fixture. Clean normal-difficulty dedicated servers now
   run every named test with all Witchery dimensions loaded, require unambiguous
   per-test success, preserve logs/JSON summaries, and verify Kettle, Witches'
@@ -66,6 +66,14 @@ enough to read before starting work. Long historical deltas belong in
   or runtime diagnostics on failure. Building the gate also exposed and fixed
   the Otherwhere Hearth traveller-state race on Spirit entry and the Lord of
   Torment's failure to collect nearby non-attacking players.
+- Observations of an Immortal now uses its source-shaped standalone reader instead
+  of the temporary Modonomicon route: the byte-identical 192 x 192 book sheet is
+  exposed through a legal lowercase resource path, all 16 literal source markup
+  pages and both sketches render, level 0-9 reveals exactly 6-16 pages, and the
+  source page stack persists on close. The server validates the held book before
+  storing navigation state or advancing the vampire level cap. A focused resource
+  contract covers page names, unlock counts, markup, custom data, and image hashes;
+  three live-client captures cover the title, ritual sketch, and cage sketch.
 - Vampire, Village Guard, and village-consequence parity now share one persisted
   0-500 villager-blood contract. Sleeping villagers recover blood and eventually
   heal; conscious guards witness feeding, defend attacked villagers and exactly

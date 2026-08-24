@@ -3,6 +3,7 @@
   "resource_contract_tests": [
     "com.emoniph.witchery.book.PlacedModonomiconGeneratedBookTest",
     "com.emoniph.witchery.resources.LegacyHeldItemResourceTest",
+    "com.emoniph.witchery.resources.ObservationsBookParityTest",
     "com.emoniph.witchery.resources.WitchCauldronModelTest",
     "com.emoniph.witchery.resources.WitcheryResourceIntegrityTest",
     "com.emoniph.witchery.ritual.OtherwhereHearthResourceTest",

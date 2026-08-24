@@ -328,16 +328,16 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** The old level quest counters, broader guard AI polish, and full 10-level progression are still follow-up work.
 
 ## Observations of an Immortal
-- **Obtain:** Craft from Nether Wart, a Nether Star, a Book, and Garlic using the Resurrected recipe shape.
-- **Use:** Source vampire-progression book. In the current remake it exists as the craftable book item with its original tooltip; readable page state and Torn Page updates are still follow-up work.
+- **Obtain:** Craft from Nether Wart, a Nether Star, a Book, and Garlic, or find it in a Witchery Bookshop.
+- **Use:** Opens the original-style standalone reader. Torn Pages raise the book from level 0 to 9, revealing the literal 16-page source account and its two sketches; closing the book stores your page and advances the vampire level cap through the server-validated source callback.
 - **Stats:** Not stackable.
-- **Notes:** Bookshop chest loot data now includes this book for the future Bookshop structure path.
+- **Notes:** A base book exposes 6 pages; levels 1-7 expose one more each, level 8 exposes two, and level 9 exposes the final page.
 
 ## Torn Page
-- **Obtain:** Source-derived Bookshop chest loot data includes three Torn Page pools.
-- **Use:** Intended to update Observations of an Immortal in the original vampire book loop.
+- **Obtain:** Witchery Bookshops and source-family player kills while carrying an incomplete Observations book; bosses and Witchery special enemies provide guaranteed routes.
+- **Use:** Craft one with an incomplete Observations of an Immortal to copy the book and raise its source `Level` value by one, up to 9.
 - **Stats:** Stackable (64)
-- **Notes:** The custom update recipe and readable book UI are still follow-up work.
+- **Notes:** Uses the original `ingredient.vbookPage` art.
 
 ## Golden Chalk
 - **Obtain:** Crafted from Ritual Chalk, Gold Nuggets, Yellow Dye, and Redstone; also obtainable through the Witch's Cauldron upgrade route.
