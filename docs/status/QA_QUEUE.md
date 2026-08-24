@@ -603,6 +603,10 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   villager quest target. An awake mortal player should yield 7 of a normal
   10-point bite, a sleeping player should yield all 10, their synchronized
   target-blood drops should fall, and two blood should recover every 40 ticks.
+  Let a drained Villager sleep for more than one minute and confirm blood returns
+  in 50-point increments per full minute; after two minutes, health should fill.
+  Feed within sight of a conscious Guard and confirm it attacks the vampire, then
+  repeat while the Guard is paralysed and confirm it does not witness the act.
   Werewolf blood should burn the vampire instead. Also fill/drink a Glass
   Goblet, take Lilith's empty-goblet blood reward, consume Vampire Blood, let an
   Attack Bat feed, and use a Bone Needle as a level-4+ vampire on White Wool.

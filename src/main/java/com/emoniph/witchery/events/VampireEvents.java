@@ -18,9 +18,9 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.level.Level;
 import com.emoniph.witchery.item.VampireClothingUtil;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
-import com.emoniph.witchery.network.SyncVampireTargetBloodPayload;
 import com.emoniph.witchery.util.VampireCage;
 import com.emoniph.witchery.util.CreatureSunlight;
+import com.emoniph.witchery.util.VillagerBlood;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -87,10 +87,9 @@ public class VampireEvents {
     private static final int SYNC_INTERVAL           = 200;
     private static final int MESMERISE_BLOOD_POWER_COST = 50;
     private static final int MESMERISE_MIN_LEVEL        = 2;
-    private static final int VILLAGER_MAX_BLOOD      = 500;
+    private static final int VILLAGER_MAX_BLOOD      = VillagerBlood.MAX;
     private static final int VILLAGER_BLOOD_DRAIN    = 10;
-    private static final int VILLAGER_LOW_BLOOD      = 250;
-    private static final String VILLAGER_BLOOD_TAG   = "witchery_villager_blood";
+    private static final int VILLAGER_LOW_BLOOD      = VillagerBlood.LOW;
 
     // Blood power gained per bite by entity type (source: GenericEvents.java)
     private static final int BP_GAIN_ANIMAL          = 2;
@@ -399,14 +398,14 @@ public class VampireEvents {
 
         // Level 2→3 quest: bite villager 5× when villager blood hits 250-280 range
         if (target instanceof Villager villager && data.getVampireLevel() == 2) {
-            int remaining = villager.getPersistentData().getIntOr(VILLAGER_BLOOD_TAG, VILLAGER_MAX_BLOOD);
+            int remaining = VillagerBlood.get(villager);
             checkVillagerBloodQuest(vampire, data, remaining);
         }
 
         // Level 8→9 quest: bite a caged villager 5× while its blood sits in the 250-280 window.
         if (target instanceof Villager caged && data.getVampireLevel() == 8
                 && isVillagerCaged(vampire.level(), caged.blockPosition())) {
-            int remaining = caged.getPersistentData().getIntOr(VILLAGER_BLOOD_TAG, VILLAGER_MAX_BLOOD);
+            int remaining = VillagerBlood.get(caged);
             checkVillagerBloodQuest(vampire, data, remaining);
         }
 
@@ -488,20 +487,9 @@ public class VampireEvents {
     }
 
     private static int drainVillagerBlood(ServerPlayer vampire, Villager villager) {
-        int desired = drinkAmount(vampire);
-
-        boolean knockedOut = villager.isSleeping() || isVampireTransfixed(villager);
-        if (!knockedOut) {
-            desired = (int) Math.ceil(desired * 0.66F);
-        }
-
-        var tag = villager.getPersistentData();
-        int stored = tag.getIntOr(VILLAGER_BLOOD_TAG, VILLAGER_MAX_BLOOD);
-        int taken = Math.min(Math.max(stored, 0), desired);
-        int remaining = Math.max(0, stored - taken);
-        tag.putInt(VILLAGER_BLOOD_TAG, remaining);
-        PacketDistributor.sendToPlayersTrackingEntity(villager,
-                new SyncVampireTargetBloodPayload(villager.getId(), remaining));
+        boolean knockedOut = VillagerBlood.isKnockedOut(villager);
+        int taken = VillagerBlood.take(villager, drinkAmount(vampire));
+        int remaining = VillagerBlood.get(villager);
 
         if (remaining < VILLAGER_LOW_BLOOD) {
             hurtFromBloodDrinking(vampire, villager, 1.3F);
@@ -940,7 +928,7 @@ public class VampireEvents {
                 && (state.is(Blocks.STONE) || state.is(Blocks.NETHERRACK) || state.is(Blocks.COBBLESTONE));
     }
 
-    private static void alertBloodDrinkingWitnesses(ServerPlayer vampire, LivingEntity victim) {
+    static void alertBloodDrinkingWitnesses(ServerPlayer vampire, LivingEntity victim) {
         if (!(victim instanceof Villager) && !(victim instanceof VillageGuardEntity)) return;
         AABB bounds = victim.getBoundingBox().inflate(16.0D, 8.0D, 16.0D);
         for (VillageGuardEntity guard : victim.level().getEntitiesOfClass(VillageGuardEntity.class, bounds)) {

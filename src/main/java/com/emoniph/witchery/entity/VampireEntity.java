@@ -7,6 +7,7 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.util.CreatureSunlight;
+import com.emoniph.witchery.util.VillagerBlood;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -25,6 +26,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.village.poi.PoiManager;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
@@ -57,6 +60,7 @@ public class VampireEntity extends Monster {
 
     /** Cumulative blood drained from villagers this night. Resets at dawn. */
     private float damageDone = 0.0F;
+    @Nullable private BlockPos villageCenter;
 
     public VampireEntity(EntityType<? extends VampireEntity> type, Level level) {
         super(type, level);
@@ -94,7 +98,7 @@ public class VampireEntity extends Monster {
     }
 
     private boolean isValidVampireTarget(LivingEntity entity) {
-        if (entity instanceof Villager) return true;
+        if (entity instanceof Villager) return villageCenter != null;
         if (entity instanceof Player player) {
             if (!(player instanceof ServerPlayer sp)) return false;
             WitcheryPlayerData data = WitcheryAttachments.get(sp);
@@ -132,6 +136,7 @@ public class VampireEntity extends Monster {
         if (isDay) {
             setTarget(null);
             if (tickCount % 100 == 2) {
+                villageCenter = null;
                 damageDone = 0.0F;
                 if (distanceToSqr(coffinPos.getX(), coffinPos.getY(), coffinPos.getZ()) > 16.0 * 16.0) {
                     smokeParticles();
@@ -141,17 +146,32 @@ public class VampireEntity extends Monster {
             }
         } else {
             // Nighttime: fed enough → go home and fill blood crucible
-            if (damageDone >= 20.0F) {
+            if (damageDone >= 20.0F && villageCenter != null) {
                 setTarget(null);
-                damageDone = 0.0F;
+                villageCenter = null;
                 if (level() instanceof ServerLevel sl) {
                     smokeParticles();
                     teleportTo(coffinPos.getX() + 0.5, coffinPos.getY(), coffinPos.getZ() + 0.5);
                     smokeParticles();
                     fillNearbyBloodCrucible(sl);
                 }
+            } else if (damageDone < 20.0F && villageCenter == null
+                    && tickCount % 500 == 2 && level() instanceof ServerLevel serverLevel) {
+                findVillageToStalk(serverLevel);
             }
         }
+    }
+
+    private void findVillageToStalk(ServerLevel level) {
+        villageCenter = level.getPoiManager().findClosest(
+                holder -> holder.is(PoiTypes.HOME), blockPosition(), 128,
+                PoiManager.Occupancy.ANY).orElse(null);
+        if (villageCenter == null) {
+            return;
+        }
+        smokeParticles();
+        teleportTo(villageCenter.getX() + 0.5D, villageCenter.getY(), villageCenter.getZ() + 0.5D);
+        smokeParticles();
     }
 
     private boolean isInSunlight() {
@@ -193,20 +213,27 @@ public class VampireEntity extends Monster {
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
         if (target instanceof Villager villager) {
-            // 10% chance to drain blood on hit
             if (random.nextInt(10) == 0) {
-                damageDone += 4.0F;
-                heal(4.0F);
-                level.sendParticles(DustParticleOptions.REDSTONE,
-                        villager.getX(), villager.getY() + villager.getBbHeight() * 0.8, villager.getZ(),
-                        8, 0.3, 0.2, 0.3, 0.0D);
-                level.playSound(null, villager.getX(), villager.getY() + villager.getBbHeight() * 0.8D,
-                        villager.getZ(), WitcherySoundEvents.RANDOM_DRINK.get(), SoundSource.HOSTILE, 0.5F, 1.0F);
+                drainVillagerOnBite(level, villager);
             }
-            // Still register the attack
-            return villager.hurtServer(level, damageSources().mobAttack(this), (float) getAttributeValue(Attributes.ATTACK_DAMAGE));
+            return true;
         }
         return super.doHurtTarget(level, target);
+    }
+
+    public int drainVillagerOnBite(ServerLevel level, Villager villager) {
+        damageDone += 4.0F;
+        int taken = VillagerBlood.take(villager, 30);
+        if (taken <= 0) {
+            return 0;
+        }
+        heal(4.0F);
+        level.sendParticles(DustParticleOptions.REDSTONE,
+                villager.getX(), villager.getY() + villager.getBbHeight() * 0.8, villager.getZ(),
+                8, 0.3, 0.2, 0.3, 0.0D);
+        level.playSound(null, villager.getX(), villager.getY() + villager.getBbHeight() * 0.8D,
+                villager.getZ(), WitcherySoundEvents.RANDOM_DRINK.get(), SoundSource.HOSTILE, 0.5F, 1.0F);
+        return taken;
     }
 
     // ── Drops — none ──────────────────────────────────────────────────────────
@@ -282,6 +309,6 @@ public class VampireEntity extends Monster {
         int y = tag.getIntOr("BaseY", (int)getY());
         int z = tag.getIntOr("BaseZ", (int)getZ());
         coffinPos = new BlockPos(x, y, z);
-        damageDone = tag.getIntOr("DamageDone", 0); // stored as int for simplicity
+        damageDone = tag.getFloatOr("DamageDone", 0.0F);
     }
 }

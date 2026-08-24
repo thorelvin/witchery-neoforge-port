@@ -11,6 +11,7 @@ import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import com.emoniph.witchery.util.VillagerBlood;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -47,11 +48,9 @@ public class GlassGobletItem extends Item {
     private static final int FILL_MIN_VAMPIRE_LEVEL = 9;
     private static final int FILL_BLOOD_POWER_COST = 125;
     private static final int STARTING_VAMPIRE_BLOOD = 250;
-    private static final int VILLAGER_MAX_BLOOD = 500;
     private static final String TAG_BLOOD_NAME = "witchery_blood_name";
     private static final String TAG_BLOOD_UUID = "witchery_blood_uuid";
     private static final String TAG_CHICKEN_BLOOD = "witchery_chicken_blood";
-    private static final String VILLAGER_BLOOD_TAG = "witchery_villager_blood";
     private static final int[] RITUAL_STRING_OFFSETS = {
             0, -3, 1, -3, 2, -3, 2, -2, 3, -2, 3, -1, 3, 0, 3, 1, 3, 2, 2, 2,
             2, 3, 1, 3, 0, 3, -1, 3, -2, 3, -2, 2, -3, 2, -3, 1, -3, 0
@@ -123,7 +122,7 @@ public class GlassGobletItem extends Item {
         }
         boolean converted;
         if (target instanceof Villager villager) {
-            converted = tryUseOnTargetForConversion(stack, level, player, villager, getVillagerBlood(villager));
+            converted = tryUseOnTargetForConversion(stack, level, player, villager, VillagerBlood.get(villager));
         } else if (target instanceof VillageGuardEntity guard) {
             converted = tryUseOnTargetForConversion(stack, level, player, guard, guard.getBlood());
         } else {
@@ -330,10 +329,6 @@ public class GlassGobletItem extends Item {
 
     static boolean sourceTransfixState(boolean paralysed, int amplifier) {
         return paralysed && amplifier >= 5;
-    }
-
-    private static int getVillagerBlood(Villager villager) {
-        return villager.getPersistentData().getIntOr(VILLAGER_BLOOD_TAG, VILLAGER_MAX_BLOOD);
     }
 
     private static boolean isCoffinNear(ServerLevel level, BlockPos center) {

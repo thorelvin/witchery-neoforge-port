@@ -233,10 +233,18 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Behaviour:** Hostile towards anyone not in whitelist; can be taught to not wander or attack using a Boline; uses internal whitelist that can be copied from other Treefyds or added with a Taglock Kit
 - **Notes:** Can be permanently boosted with Creeper Heart or Demon Heart
 
+## Village Guard
+- **HP:** 40
+- **Damage:** 4 melee; also uses a bow
+- **Drops:** Guaranteed Leather Tunic, plus equipped armor through normal equipment drops
+- **Spawn:** Witchery village walls and gatehouses; an adult Villager can also be appointed by sneak-using a Bell
+- **Behaviour:** Binds to a nearby village, returns when it strays, defends attacked Villagers and players at exactly +10 village reputation, and treats players at -15 or lower reputation as hostile. Hunts ordinary monsters and Hobgoblins but excludes Creepers and Witch Hunters. A conscious guard that sees a vampire feed attacks the vampire; it does not attack a player merely for being a vampire or werewolf.
+- **Notes:** Killing one costs 5 village reputation. Guards ignore damage from other Guards and Witch Hunters. Type 1 is taller, fireproof, and fires burning arrows. Idle village guards slowly heal and occasionally recover blood. A player-appointed guard can be dismissed with a Bell, restoring its Villager state and current blood.
+
 ## Vampire
-- **HP:** Not specified (Immortal)
-- **Damage:** Not specified (Bite ability deals damage when drinking more than half of a victim's blood)
-- **Drops:** Not specified
-- **Spawn:** Not applicable (Vampirism is an affliction, not a mob)
-- **Behaviour:** Immortal; has 5 abilities: Bite, Night Vision, Speed, Bat Form; uses blood for most abilities
-- **Notes:** Vampires gain increased strength and have access to special abilities such as Bat Form and Speed
+- **HP:** 40
+- **Damage:** 5 against ordinary targets; Villager attacks use blood drain instead of normal melee damage
+- **Drops:** None
+- **Spawn:** Created from a fully drained, paralysed Villager or Village Guard near a Coffin with a vampire-blood Full Glass Goblet
+- **Behaviour:** At night, seeks a village and feeds from Villagers. A successful bite drains 20 blood from an awake Villager or 30 from a sleeping or mesmerised one, heals the Vampire by 4, and counts toward its return quota. It returns to its village after collecting enough blood and abandons the hunt at dawn.
+- **Notes:** The mob is vulnerable to sunlight and silver. Player vampirism is a separate level 1-10 transformation with Blood Power, Drink, Mesmerise, Speed, Bat Form, and Ultimate abilities.

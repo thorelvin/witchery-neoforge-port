@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-08-23
+Last curated: 2026-08-24
 
 This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -57,7 +57,7 @@ enough to read before starting work. Long historical deltas belong in
 ## Recent High-Signal Changes
 
 - The deterministic runtime harness and CI gates are complete. An explicit
-  manifest locks 13 resource-contract classes, 22 exact CI GameTests, and one
+  manifest locks 13 resource-contract classes, 23 exact CI GameTests, and one
   manual forced-restart fixture. Clean normal-difficulty dedicated servers now
   run every named test with all Witchery dimensions loaded, require unambiguous
   per-test success, preserve logs/JSON summaries, and verify Kettle, Witches'
@@ -66,6 +66,18 @@ enough to read before starting work. Long historical deltas belong in
   or runtime diagnostics on failure. Building the gate also exposed and fixed
   the Otherwhere Hearth traveller-state race on Spirit entry and the Lord of
   Torment's failure to collect nearby non-attacking players.
+- Vampire, Village Guard, and village-consequence parity now share one persisted
+  0-500 villager-blood contract. Sleeping villagers recover blood and eventually
+  heal; conscious guards witness feeding, defend attacked villagers and exactly
+  +10 village friends, turn on players at -15 reputation, and impose the old
+  five-point reputation loss when slain. Guards retain the source 40 health,
+  village-return cadence, monster exclusions, friendly-fire immunity, equipment,
+  idle healing/blood recovery, paralysis gate, and tall fireproof type-1 variant.
+  Hostile Vampire mobs now acquire a village at night, drain villager blood without
+  ordinary melee damage, heal only when blood is taken, and return home after their
+  source quota. Reversible Bell conversion preserves current blood in both
+  directions. Focused JVM tests and
+  `witchery:vampire_guard_village_consequences` pass on a dedicated server.
 - Witchery crop parity now has a shared source-soil contract for Belladonna,
   Mandrake, Mindrake, Snowbell, Wormwood, Wolfsbane, and Garlic; source water
   support remains mandatory for Water Artichoke. Mindrake/Wolfsbane growth and
@@ -427,9 +439,6 @@ enough to read before starting work. Long historical deltas belong in
   Lilith's empty-goblet reward, Vampire Blood, Attack Bat feeding, and Bone
   Needle white-wool staining use `random.drink`; drinking full goblets uses
   burp feedback.
-- Village Guards now regain source-style staying power after vampire feeding:
-  an idle guard standing in a village periodically heals and has the old
-  one-in-four chance to recover one point of its persisted `BloodLevel`.
 - Custom Brew curability now respects the old `PotionBase.setIncurable()` gate
   for current Witchery effects across Spread Affliction, Cure Buffs, Cure
   Debuffs, and Steal Buffs. Moonshine, Stout Belly, Gas Mask, Sun Allergy,

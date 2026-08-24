@@ -2,10 +2,12 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.data.WitcheryPlayerData;
+import com.emoniph.witchery.entity.VillageGuardEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcherySoundEvents;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import com.emoniph.witchery.util.VillagerBlood;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -20,7 +22,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.npc.villager.AbstractVillager;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -176,11 +178,10 @@ public class CaneSwordItem extends Item {
 
     private static int bloodReserveValue(LivingEntity killed) {
         if (killed instanceof ServerPlayer player) {
-            return Math.max(50, WitcheryAttachments.get(player).getBloodLevel());
+            return WitcheryAttachments.get(player).getHumanBlood();
         }
-        if (killed instanceof Player || killed instanceof AbstractVillager) {
-            return MAX_BLOOD_RESERVE;
-        }
+        if (killed instanceof Villager villager) return VillagerBlood.get(villager);
+        if (killed instanceof VillageGuardEntity guard) return guard.getBlood();
         return 0;
     }
 

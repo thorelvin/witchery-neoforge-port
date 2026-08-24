@@ -5,8 +5,10 @@ import com.emoniph.witchery.ai.NpcPersonas;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryEntityTags;
+import com.emoniph.witchery.util.VillagerBlood;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -31,6 +33,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.gossip.GossipType;
+import net.minecraft.world.entity.ai.village.poi.PoiManager;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.monster.Witch;
@@ -47,6 +53,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -63,6 +70,10 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
     private static final int VILLAGE_RECOVERY_MIN_TICKS = 70;
     private static final int VILLAGE_RECOVERY_RANDOM_TICKS = 50;
     private static final int MESMERISE_SLOWNESS_AMPLIFIER = 4;
+    private static final int VILLAGE_SEARCH_RADIUS = 32;
+    private static final int VILLAGE_RESTRICTION_RADIUS = 48;
+    private static final int HOSTILE_REPUTATION = -15;
+    private static final int GUARD_DEATH_REPUTATION_PENALTY = 5;
     private static final String ORIGIN_PERSISTENT_DATA_TAG = "witchery_origin_villager_persistent_data";
     private static final String ORIGIN_OFFERS_TAG = "witchery_origin_villager_offers";
 
@@ -126,7 +137,9 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
 
     @Nullable private LivingEntity prevTarget;
     private int shoutCooldown = 0;
-    private int villageRecoveryCooldown = VILLAGE_RECOVERY_MIN_TICKS;
+    private int villageRecoveryCooldown = 0;
+    @Nullable private BlockPos villageCenter;
+    private boolean deathReputationApplied;
     private boolean playerAppointedGuard = false;
     private String originVillagerType = "";
     private String originVillagerProfession = "";
@@ -161,11 +174,10 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 25.0)
+                .add(Attributes.MAX_HEALTH, 40.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.30)
                 .add(Attributes.ATTACK_DAMAGE, 4.0)
-                .add(Attributes.FOLLOW_RANGE, 32.0)
-                .add(Attributes.ARMOR, 4.0);
+                .add(Attributes.FOLLOW_RANGE, 40.0);
     }
 
     // ── Synced data ───────────────────────────────────────────────────────────
@@ -177,8 +189,34 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
         builder.define(BLOOD_LEVEL, MAX_BLOOD);
     }
 
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (GUARD_TYPE.equals(key)) {
+            refreshDimensions();
+        }
+    }
+
+    @Override
+    protected EntityDimensions getDefaultDimensions(Pose pose) {
+        return getGuardType() == 1
+                ? EntityDimensions.scalable(0.72F, 2.34F)
+                : super.getDefaultDimensions(pose);
+    }
+
+    @Override
+    public boolean fireImmune() {
+        return getGuardType() == 1 || super.fireImmune();
+    }
+
     public int getGuardType() { return entityData.get(GUARD_TYPE); }
-    public void setGuardType(int type) { entityData.set(GUARD_TYPE, Math.floorMod(type, 2)); }
+    public void setGuardType(int type) {
+        int clamped = Math.floorMod(type, 2);
+        if (entityData.get(GUARD_TYPE) != clamped) {
+            entityData.set(GUARD_TYPE, clamped);
+            refreshDimensions();
+        }
+    }
     public int getBlood() { return entityData.get(BLOOD_LEVEL); }
     public void setBlood(int blood) { entityData.set(BLOOD_LEVEL, Math.clamp(blood, 0, MAX_BLOOD)); }
     public void giveBlood(int quantity) { setBlood(getBlood() + Math.max(0, quantity)); }
@@ -203,6 +241,7 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
         Component customName = villager.getCustomName();
         originVillagerName = customName == null ? "" : customName.getString();
         originVillagerNameVisible = villager.isCustomNameVisible();
+        setBlood(VillagerBlood.get(villager));
         copyPersistentData(villager.getPersistentData(), getPersistentData(), ORIGIN_PERSISTENT_DATA_TAG);
         saveOriginOffers(villager.getOffers());
     }
@@ -228,6 +267,7 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
             villager.setCustomNameVisible(originVillagerNameVisible);
         }
         restorePersistentData(villager.getPersistentData());
+        VillagerBlood.set(villager, getBlood());
         restoreOriginOffers(villager);
     }
 
@@ -260,28 +300,53 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
         this.swordGoal = new MeleeAttackGoal(this, 1.2, true);
 
         goalSelector.addGoal(1, new FloatGoal(this));
-        goalSelector.addGoal(2, bowGoal);
-        goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8));
-        goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        goalSelector.addGoal(4, bowGoal);
+        goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 0.6, true, 4, () -> true));
+        goalSelector.addGoal(7, new ReturnToVillageGoal());
+        goalSelector.addGoal(8, new OpenDoorGoal(this, true));
+        goalSelector.addGoal(10, new WaterAvoidingRandomStrollGoal(this, 1.0));
+        goalSelector.addGoal(11, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        goalSelector.addGoal(12, new RandomLookAroundGoal(this));
 
-        // HurtByTargetGoal with VillageGuardEntity as alert-ally type:
-        // when this guard is hurt, nearby guards also acquire the attacker as target.
-        targetSelector.addGoal(1, new HurtByTargetGoal(this, VillageGuardEntity.class));
+        targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
         targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(
-                this, LivingEntity.class, 10, false, true, (e, sl) -> isGuardTarget(e)));
+                this, Player.class, 20, true, false,
+                (entity, serverLevel) -> entity instanceof Player player
+                        && isHostileToVillage(player)));
+        targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(
+                this, LivingEntity.class, 10, false, true,
+                (entity, serverLevel) -> isGuardThreat(entity)));
     }
 
-    private boolean isGuardTarget(LivingEntity entity) {
+    private boolean isGuardThreat(LivingEntity entity) {
         if (entity == this || !entity.isAlive()) return false;
         if (entity instanceof VillageGuardEntity || entity instanceof WitchHunterEntity) return false;
-        if (entity instanceof Player player) {
-            if (!(player instanceof ServerPlayer sp)) return false;
-            WitcheryPlayerData data = WitcheryAttachments.get(sp);
-            return data.isVampire() || data.isWerewolf();
-        }
+        if (entity instanceof Player || entity instanceof Creeper) return false;
         return entity instanceof Monster
+                || entity instanceof HobgoblinEntity
                 || entity.getType().is(WitcheryEntityTags.VAMPIRES);
+    }
+
+    public boolean canDefendVillageAgainst(LivingEntity entity) {
+        return entity instanceof Player || isGuardThreat(entity);
+    }
+
+    public boolean isHostileToVillage(Player player) {
+        return hasVillageReputation(player, reputation -> reputation <= HOSTILE_REPUTATION);
+    }
+
+    public boolean protectsVillageFriend(Player player) {
+        return hasVillageReputation(player, reputation -> reputation == 10);
+    }
+
+    private boolean hasVillageReputation(Player player, java.util.function.IntPredicate predicate) {
+        if (villageCenter == null) {
+            return false;
+        }
+        AABB villageBounds = new AABB(villageCenter).inflate(
+                VILLAGE_RESTRICTION_RADIUS, VILLAGE_SEARCH_RADIUS, VILLAGE_RESTRICTION_RADIUS);
+        return level().getEntitiesOfClass(Villager.class, villageBounds).stream()
+                .anyMatch(villager -> predicate.test(villager.getPlayerReputation(player)));
     }
 
     // ── Tick — weapon switch + quote system ───────────────────────────────────
@@ -309,12 +374,46 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
             return;
         }
         villageRecoveryCooldown = sourceVillageRecoveryCooldown(random.nextInt(VILLAGE_RECOVERY_RANDOM_TICKS));
-        if (!(level() instanceof ServerLevel serverLevel) || !serverLevel.isVillage(blockPosition()) || getTarget() != null) {
+        if (!(level() instanceof ServerLevel serverLevel)) {
             return;
         }
+        updateVillageRestriction(serverLevel);
+        if (villageCenter == null || getTarget() != null) return;
         heal(1.0F);
         if (random.nextInt(4) == 0) {
             setBlood(sourceVillageRecoveryBlood(getBlood(), true, false, true));
+        }
+    }
+
+    void updateVillageRestriction(ServerLevel level) {
+        villageCenter = level.getPoiManager().findClosest(
+                holder -> holder.is(PoiTypes.HOME), blockPosition(), VILLAGE_SEARCH_RADIUS,
+                PoiManager.Occupancy.ANY).orElse(null);
+    }
+
+    private final class ReturnToVillageGoal extends Goal {
+        private ReturnToVillageGoal() {
+            setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            return villageCenter != null && getTarget() == null
+                    && villageCenter.distSqr(blockPosition()) > VILLAGE_RESTRICTION_RADIUS * VILLAGE_RESTRICTION_RADIUS;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return villageCenter != null && !getNavigation().isDone()
+                    && villageCenter.distSqr(blockPosition()) > 16.0D;
+        }
+
+        @Override
+        public void start() {
+            if (villageCenter != null) {
+                getNavigation().moveTo(villageCenter.getX() + 0.5D, villageCenter.getY(),
+                        villageCenter.getZ() + 0.5D, 1.0D);
+            }
         }
     }
 
@@ -338,12 +437,12 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
         if (withinSwordRange) {
             setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
             goalSelector.removeGoal(bowGoal);
-            goalSelector.addGoal(2, swordGoal);
+            goalSelector.addGoal(4, swordGoal);
             shout(pick(Q_SWORD), 300);
         } else {
             setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
             goalSelector.removeGoal(swordGoal);
-            goalSelector.addGoal(2, bowGoal);
+            goalSelector.addGoal(4, bowGoal);
         }
     }
 
@@ -351,6 +450,10 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
 
     @Override
     public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        MobEffectInstance paralysis = getEffect(com.emoniph.witchery.init.WitcheryMobEffects.PARALYSED);
+        if (paralysis != null && paralysis.getAmplifier() >= MESMERISE_SLOWNESS_AMPLIFIER) {
+            return;
+        }
         ItemStack arrow = new ItemStack(Items.ARROW);
         var projectile = ProjectileUtil.getMobArrow(this, arrow, distanceFactor, this.getMainHandItem());
         double dx = target.getX() - this.getX();
@@ -358,6 +461,9 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
         double dz = target.getZ() - this.getZ();
         double dist = Math.sqrt(dx * dx + dz * dz) * 0.2;
         projectile.shoot(dx, dy + dist, dz, 1.6F, 14 - this.level().getDifficulty().getId() * 4);
+        if (getGuardType() == 1) {
+            projectile.igniteForSeconds(5.0F);
+        }
         this.playSound(SoundEvents.ARROW_SHOOT, 1.0F,
                 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
         this.level().addFreshEntity(projectile);
@@ -367,11 +473,43 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
 
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
-        boolean hit = super.hurtServer(level, source, Math.min(amount, 9.0F));
+        Entity attacker = source.getEntity();
+        if (attacker instanceof VillageGuardEntity || attacker instanceof WitchHunterEntity) {
+            return false;
+        }
+        boolean hit = super.hurtServer(level, source, amount);
         if (hit && random.nextInt(3) == 0) {
             shout(pick(Q_HURT), 250);
         }
         return hit;
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        if (!deathReputationApplied && level() instanceof ServerLevel) {
+            Entity attacker = source.getEntity();
+            LivingEntity killCredit = getKillCredit();
+            ServerPlayer player = attacker instanceof ServerPlayer directPlayer
+                    ? directPlayer
+                    : killCredit instanceof ServerPlayer creditedPlayer ? creditedPlayer : null;
+            if (player != null) {
+                applyDeathReputation(player);
+            }
+            deathReputationApplied = true;
+        }
+        super.die(source);
+    }
+
+    void applyDeathReputation(ServerPlayer player) {
+        if (villageCenter == null) {
+            return;
+        }
+        AABB villageBounds = new AABB(villageCenter).inflate(
+                VILLAGE_RESTRICTION_RADIUS, VILLAGE_SEARCH_RADIUS, VILLAGE_RESTRICTION_RADIUS);
+        for (Villager villager : level().getEntitiesOfClass(Villager.class, villageBounds)) {
+            villager.getGossips().add(player.getUUID(), GossipType.MINOR_NEGATIVE,
+                    GUARD_DEATH_REPUTATION_PENALTY);
+        }
     }
 
     // ── Quote helpers ─────────────────────────────────────────────────────────
@@ -521,6 +659,12 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
     @Override protected SoundEvent getHurtSound(DamageSource src) { return SoundEvents.VILLAGER_HURT; }
     @Override protected SoundEvent getDeathSound() { return SoundEvents.VILLAGER_DEATH; }
 
+    @Override
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, source, recentlyHit);
+        spawnAtLocation(level, new ItemStack(Items.LEATHER_CHESTPLATE));
+    }
+
     // ── Spawn init ────────────────────────────────────────────────────────────
 
     @Override
@@ -529,13 +673,10 @@ public class VillageGuardEntity extends PathfinderMob implements RangedAttackMob
                                         EntitySpawnReason spawnType,
                                         @Nullable SpawnGroupData spawnGroupData) {
         setGuardType(this.random.nextInt(2));
-        if (this.random.nextInt(5) == 0) setItemSlot(EquipmentSlot.FEET,  new ItemStack(Items.IRON_BOOTS));
-        if (this.random.nextInt(5) == 0) setItemSlot(EquipmentSlot.LEGS,  new ItemStack(Items.IRON_LEGGINGS));
-        if (this.random.nextInt(5) == 0) {
-            setItemSlot(EquipmentSlot.CHEST, new ItemStack(
-                    this.random.nextInt(4) == 0 ? Items.CHAINMAIL_CHESTPLATE : Items.IRON_CHESTPLATE));
-        }
-        if (this.random.nextInt(5) == 0) setItemSlot(EquipmentSlot.HEAD,  new ItemStack(Items.IRON_HELMET));
+        setItemSlot(EquipmentSlot.CHEST, new ItemStack(
+                this.random.nextInt(5) == 0 ? Items.CHAINMAIL_CHESTPLATE : Items.LEATHER_CHESTPLATE));
+        setItemSlot(EquipmentSlot.HEAD, new ItemStack(
+                this.random.nextInt(5) == 0 ? Items.CHAINMAIL_HELMET : Items.LEATHER_HELMET));
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 

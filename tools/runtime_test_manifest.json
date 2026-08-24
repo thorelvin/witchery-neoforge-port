@@ -72,6 +72,11 @@
       "timeout_seconds": 120
     },
     {
+      "id": "witchery:vampire_guard_village_consequences",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
       "id": "witchery:lycanthropy_progression",
       "lane": "ci",
       "timeout_seconds": 180
