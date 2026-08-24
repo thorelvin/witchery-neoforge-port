@@ -8,13 +8,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -297,6 +301,81 @@ class PlacedModonomiconGeneratedBookTest {
                 "Infernal Chalk should have a visual crafting recipe page");
     }
 
+    @Test
+    void generatedCircleMagicCompendiumCoversEveryAuditedSourceRegistration() throws IOException {
+        Path circleRoot = primerRoot().resolve("entries").resolve("circle_magic");
+        Path riteRoot = circleRoot.resolve("rites");
+        List<Path> riteEntries;
+        try (Stream<Path> entries = Files.walk(riteRoot)
+                .filter(path -> path.getFileName().toString().endsWith(".json"))) {
+            riteEntries = entries.toList();
+        }
+        assertEquals(58, riteEntries.size(), "one generated entry should exist per rite family");
+
+        Map<Integer, GeneratedRiteCard> cards = new HashMap<>();
+        int highestFamilySort = -1;
+        for (Path entryPath : riteEntries) {
+            JsonObject entry = readJson(entryPath);
+            assertEquals("circle_magic", entry.get("category").getAsString());
+            highestFamilySort = Math.max(highestFamilySort, entry.get("sort_number").getAsInt());
+            for (var pageElement : entry.getAsJsonArray("pages")) {
+                JsonObject page = pageElement.getAsJsonObject();
+                if (!"witchery:station_recipe".equals(page.get("type").getAsString())) continue;
+                assertTrue(page.has("source_id"), "compendium ritual card must retain its source ID");
+                int sourceId = page.get("source_id").getAsInt();
+                List<String> items = new ArrayList<>();
+                List<Boolean> optional = new ArrayList<>();
+                for (var slotElement : page.getAsJsonArray("slots")) {
+                    JsonObject slot = slotElement.getAsJsonObject();
+                    items.add(slot.get("item").getAsString());
+                    optional.add(slot.has("optional") && slot.get("optional").getAsBoolean());
+                }
+                assertTrue(cards.put(sourceId, new GeneratedRiteCard(items, optional)) == null,
+                        "source registration rendered more than once: " + sourceId);
+            }
+        }
+
+        assertEquals(96, cards.size());
+        assertEquals(java.util.stream.IntStream.rangeClosed(1, 96).boxed().collect(java.util.stream.Collectors.toSet()),
+                cards.keySet());
+        assertEquals(expectedRiteCards(), cards,
+                "generated offering order and optional markers must match canonical compendium metadata");
+
+        int gatheredSort = readJson(circleRoot.resolve("gathered_lives.json")).get("sort_number").getAsInt();
+        int nextSort = readJson(circleRoot.resolve("whats_next.json")).get("sort_number").getAsInt();
+        assertTrue(gatheredSort > highestFamilySort, "hidden Gathered Lives rite should follow the source compendium");
+        assertTrue(nextSort > gatheredSort, "What Comes Next must remain the final Circle Magic entry");
+        String ritesIndex = Files.readString(circleRoot.resolve("rites.json"));
+        assertTrue(ritesIndex.contains("complete compendium follows"));
+        assertTrue(ritesIndex.contains("gold frame"));
+    }
+
+    private static Map<Integer, GeneratedRiteCard> expectedRiteCards() throws IOException {
+        var stream = PlacedModonomiconGeneratedBookTest.class.getResourceAsStream(RitualCompendium.RESOURCE);
+        assertTrue(stream != null, "canonical ritual compendium resource exists");
+        JsonObject root;
+        try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+            root = JsonParser.parseReader(reader).getAsJsonObject();
+        }
+        Map<Integer, GeneratedRiteCard> expected = new HashMap<>();
+        for (var familyElement : root.getAsJsonArray("families")) {
+            for (var variantElement : familyElement.getAsJsonObject().getAsJsonArray("variants")) {
+                JsonObject variant = variantElement.getAsJsonObject();
+                List<String> items = new ArrayList<>();
+                List<Boolean> optional = new ArrayList<>();
+                for (String key : List.of("required", "optional")) {
+                    for (var offeringElement : variant.getAsJsonArray(key)) {
+                        JsonObject offering = offeringElement.getAsJsonObject();
+                        items.add(offering.get("item").getAsString());
+                        optional.add(offering.get("optional").getAsBoolean());
+                    }
+                }
+                expected.put(variant.get("sourceId").getAsInt(), new GeneratedRiteCard(items, optional));
+            }
+        }
+        return expected;
+    }
+
     private static Set<String> entryPaths() throws IOException {
         Set<String> paths = new HashSet<>();
         Path entriesRoot = primerRoot().resolve("entries");
@@ -565,4 +644,6 @@ class PlacedModonomiconGeneratedBookTest {
     private record GuideTarget(String book, String category, String entry) {}
 
     private record EntrySummary(String path, int sortNumber, int pageCount) {}
+
+    private record GeneratedRiteCard(List<String> items, List<Boolean> optional) {}
 }

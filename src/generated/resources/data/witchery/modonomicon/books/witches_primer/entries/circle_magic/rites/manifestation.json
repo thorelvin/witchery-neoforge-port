@@ -1,0 +1,86 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:spectral_dust"
+  },
+  "name": "Rite of Manifestation",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Manifest as a ghost from the Spirit World.[#]() [#](53341a)**Required offerings:** **Spectral Dust**, **Mellifluous Hunger**, **Necromantic Stone**, **Golden Pickaxe**, **Arthana**, **Gunpowder**.[#]()",
+      "title": "Rite of Manifestation",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "purple",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:spectral_dust",
+          "x": 32,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:mellifluous_hunger",
+          "x": 50,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:necro_stone",
+          "x": 68,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "minecraft:golden_pickaxe",
+          "x": 32,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "witchery:arthana",
+          "x": 50,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:gunpowder",
+          "x": 68,
+          "y": 87
+        }
+      ],
+      "source_id": 69,
+      "text": "[#](53341a)**7x7** - **Otherwhere** chalk - **5000** altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 49,
+  "x": 0,
+  "y": 0
+}

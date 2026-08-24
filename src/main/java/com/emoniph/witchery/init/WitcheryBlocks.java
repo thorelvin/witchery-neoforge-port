@@ -120,6 +120,15 @@ public class WitcheryBlocks {
                     .isRedstoneConductor(NEVER)
                     .isSuffocating(NEVER)
                     .isViewBlocking(NEVER));
+    public static final DeferredBlock<BrewFluidHoldBlock> BREW_FLUID_HOLD = registerBlock("brew_fluid_hold",
+            BrewFluidHoldBlock::new,
+            BlockBehaviour.Properties.of()
+                    .noCollision()
+                    .noOcclusion()
+                    .strength(-1.0F, 3_600_000.0F)
+                    .isRedstoneConductor(NEVER)
+                    .isSuffocating(NEVER)
+                    .isViewBlocking(NEVER));
     public static final DeferredBlock<ShadedGlassBlock> SHADED_GLASS = registerBlock("shaded_glass",
             props -> new ShadedGlassBlock(props.mapColor(state -> state.getValue(ShadedGlassBlock.COLOR).getMapColor())
                     .sound(SoundType.GLASS)

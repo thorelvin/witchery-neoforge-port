@@ -1,0 +1,160 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:bound_taglock_kit"
+  },
+  "name": "Waking Nightmare and its Cure",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)This family contains **2 distinct workings**. Each one has its own exact offerings, circles, power, and conditions; use the card belonging to the result you intend.[#]()",
+      "title": "Waking Nightmare and its Cure",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Perform in a storm.[#]() [#](53341a)**Required offerings:** **Bound Taglock Kit**, **Exhale of the Horned One**, **Mellifluous Hunger**, **Tormented Twine**, **Diamond**, **Brew of the Grotesque**.[#]() [#](53341a)**Conditions:** Storm.[#]()",
+      "title": "Curse of Waking Nightmare",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "red",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:bound_taglock_kit",
+          "x": 32,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:exhale_of_horned_one",
+          "x": 50,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:mellifluous_hunger",
+          "x": 68,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:tormented_twine",
+          "x": 32,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:diamond",
+          "x": 50,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_the_grotesque",
+          "x": 68,
+          "y": 87
+        }
+      ],
+      "source_id": 78,
+      "text": "[#](53341a)**11x11** - **Infernal** chalk - **10000** altar power[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Cleanse the taglocked being of nightmares. Things may get worse.[#]() [#](53341a)**Required offerings:** **Bound Taglock Kit**, **Breath of the Goddess**, **Golden Carrot**, **Tormented Twine**, **Brew of Love**.[#]()",
+      "title": "Cure Waking Nightmare",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:bound_taglock_kit",
+          "x": 14,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:breath_of_goddess",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:golden_carrot",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:tormented_twine",
+          "x": 68,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_love",
+          "x": 86,
+          "y": 76
+        }
+      ],
+      "source_id": 79,
+      "text": "[#](53341a)**7x7** - **Ritual** chalk - **2000** altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 51,
+  "x": 0,
+  "y": 0
+}

@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)For these workings, drop the loose offerings into a heated cauldron with water, then use the final trigger item on the vessel. The result rises from the bowl. Powered recipes require a valid altar within eight blocks and consume one water level.[#]()",
+      "text": "[#](53341a)For these workings, use the loose offerings on a heated cauldron with water, then use the final trigger item on the vessel. The result rises from the bowl. Powered recipes require a valid altar within eight blocks and consume one water level.[#]()",
       "title": "Old Craftings",
       "use_markdown_in_title": false
     },
@@ -38,13 +38,13 @@
         },
         {
           "count": 1,
-          "item": "minecraft:egg",
+          "item": "witchery:exhale_of_horned_one",
           "x": 43,
           "y": 2
         },
         {
           "count": 1,
-          "item": "witchery:exhale_of_horned_one",
+          "item": "minecraft:egg",
           "x": 59,
           "y": 2
         },
@@ -55,7 +55,7 @@
           "y": 33
         }
       ],
-      "text": "[#](53341a)Use Exhale of the Horned One last.[#]()",
+      "text": "[#](53341a)Use the Egg last.[#]()",
       "title": "Mutandis"
     },
     {

@@ -52,6 +52,33 @@ class WitchCauldronBlockEntityTest {
         assertTrue(restored.getIngredients().isEmpty());
     }
 
+    @Test
+    void partialBrewVolumePersistsIndependentlyFromVisibleFillLevel() {
+        WitchCauldronBlockEntity original = cauldron();
+        original.setFluidUnits(2875);
+        assertEquals(2575, original.drainFluidUnits(300, 3));
+
+        WitchCauldronBlockEntity restored = cauldron();
+        restored.loadWithComponents(net.minecraft.world.level.storage.TagValueInput.create(
+                net.minecraft.util.ProblemReporter.DISCARDING,
+                RegistryAccess.EMPTY,
+                original.getUpdateTag(RegistryAccess.EMPTY)));
+
+        assertEquals(2575, restored.getFluidUnits(3));
+        restored.clear();
+        assertEquals(2575, restored.getFluidUnits(3), "clearing ingredients does not refill or discard water");
+    }
+
+    @Test
+    void adjustingVisibleLevelsPreservesPartialBottleRemainders() {
+        WitchCauldronBlockEntity cauldron = cauldron();
+        cauldron.setFluidUnits(500);
+
+        assertEquals(1500, cauldron.adjustFluidUnits(1000, 1));
+        assertEquals(500, cauldron.adjustFluidUnits(-1000, 2));
+        assertEquals(0, cauldron.adjustFluidUnits(-1000, 1));
+    }
+
     private static WitchCauldronBlockEntity cauldron() {
         return new WitchCauldronBlockEntity(BlockPos.ZERO,
                 WitcheryBlocks.WITCH_CAULDRON.get().defaultBlockState());

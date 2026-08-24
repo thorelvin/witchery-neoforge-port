@@ -3,13 +3,18 @@ package com.emoniph.witchery.init;
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.effect.AttractProjectilesMobEffect;
 import com.emoniph.witchery.effect.ChilledMobEffect;
+import com.emoniph.witchery.effect.ColorfulMobEffect;
+import com.emoniph.witchery.effect.DarknessAllergyMobEffect;
 import com.emoniph.witchery.effect.DiseasedMobEffect;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
 import com.emoniph.witchery.effect.FeatherFallMobEffect;
 import com.emoniph.witchery.effect.FloatingMobEffect;
 import com.emoniph.witchery.effect.FortuneMobEffect;
 import com.emoniph.witchery.effect.GrotesqueMobEffect;
+import com.emoniph.witchery.effect.HellishAuraMobEffect;
 import com.emoniph.witchery.effect.InsanityMobEffect;
+import com.emoniph.witchery.effect.IllFittingMobEffect;
+import com.emoniph.witchery.effect.LoveMobEffect;
 import com.emoniph.witchery.effect.MoonshineMobEffect;
 import com.emoniph.witchery.effect.MortalCoilMobEffect;
 import com.emoniph.witchery.effect.OverheatingMobEffect;
@@ -19,10 +24,13 @@ import com.emoniph.witchery.effect.PoisonWeaponsMobEffect;
 import com.emoniph.witchery.effect.QueasyMobEffect;
 import com.emoniph.witchery.effect.ReflectProjectilesMobEffect;
 import com.emoniph.witchery.effect.RepellAttackerMobEffect;
+import com.emoniph.witchery.effect.ResizingMobEffect;
 import com.emoniph.witchery.effect.SnowTrailMobEffect;
 import com.emoniph.witchery.effect.StoutBellyMobEffect;
+import com.emoniph.witchery.effect.SpikedMobEffect;
 import com.emoniph.witchery.effect.SunAllergyMobEffect;
 import com.emoniph.witchery.effect.SwimmingMobEffect;
+import com.emoniph.witchery.effect.WakingNightmareMobEffect;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
@@ -123,14 +131,60 @@ public final class WitcheryMobEffects {
     public static final DeferredHolder<MobEffect, MobEffect> OVERHEATING =
             MOB_EFFECTS.register("overheating", () -> new OverheatingMobEffect(0x009999));
 
-    /**
-     * Resizing — registered here as a marker so Leonard's giant phase reads as the source
-     * {@code RESIZING} effect. The full source resizing system (player shrink/grow tiers +
-     * size-based damage multiplier) is a deferred follow-up; Leonard drives his own visible
-     * scale through the {@code minecraft:generic.scale} attribute.
-     */
+    public static final DeferredHolder<MobEffect, MobEffect> COLORFUL =
+            MOB_EFFECTS.register("colorful", () -> new ColorfulMobEffect(0xFFFFFF));
+
+    public static final DeferredHolder<MobEffect, MobEffect> LOVE =
+            MOB_EFFECTS.register("love", () -> new LoveMobEffect(0xE73D51));
+
+    public static final DeferredHolder<MobEffect, MobEffect> BREWING_EXPERTISE =
+            MOB_EFFECTS.register("brewing_expertise", () -> new SimpleMobEffect(MobEffectCategory.BENEFICIAL, 0x63B765));
+
+    public static final DeferredHolder<MobEffect, MobEffect> WAKING_NIGHTMARE =
+            MOB_EFFECTS.register("waking_nightmare", () -> new WakingNightmareMobEffect(0x38264D));
+
+    public static final DeferredHolder<MobEffect, MobEffect> DOUBLE_JUMP =
+            MOB_EFFECTS.register("double_jump", () -> new SimpleMobEffect(MobEffectCategory.BENEFICIAL, 0x5C9C43));
+
+    public static final DeferredHolder<MobEffect, MobEffect> VOLATILITY =
+            MOB_EFFECTS.register("volatility", () -> new SimpleMobEffect(MobEffectCategory.HARMFUL, 0xCB522E));
+
+    public static final DeferredHolder<MobEffect, MobEffect> DARKNESS_ALLERGY =
+            MOB_EFFECTS.register("darkness_allergy", () -> new DarknessAllergyMobEffect(0x241B2B));
+
+    public static final DeferredHolder<MobEffect, MobEffect> ABSORB_MAGIC =
+            MOB_EFFECTS.register("absorb_magic", () -> new SimpleMobEffect(MobEffectCategory.BENEFICIAL, 0x785AC7));
+
+    public static final DeferredHolder<MobEffect, MobEffect> REFLECT_DAMAGE =
+            MOB_EFFECTS.register("reflect_damage", () -> new SimpleMobEffect(MobEffectCategory.BENEFICIAL, 0xC5DFEA));
+
+    public static final DeferredHolder<MobEffect, MobEffect> ILL_FITTING =
+            MOB_EFFECTS.register("ill_fitting", () -> new IllFittingMobEffect(0x4B2148));
+
+    public static final DeferredHolder<MobEffect, MobEffect> REINCARNATE =
+            MOB_EFFECTS.register("reincarnate", () -> new SimpleMobEffect(MobEffectCategory.BENEFICIAL, 0xC6D88A));
+
+    public static final DeferredHolder<MobEffect, MobEffect> KEEP_INVENTORY =
+            MOB_EFFECTS.register("keep_inventory", () -> new SimpleMobEffect(MobEffectCategory.BENEFICIAL, 0xD8EDF2));
+
+    public static final DeferredHolder<MobEffect, MobEffect> KEEP_EFFECTS =
+            MOB_EFFECTS.register("keep_effects", () -> new SimpleMobEffect(MobEffectCategory.BENEFICIAL, 0xA73333));
+
+    public static final DeferredHolder<MobEffect, MobEffect> WRAPPED_IN_VINES =
+            MOB_EFFECTS.register("wrapped_in_vines", () -> new SimpleMobEffect(MobEffectCategory.HARMFUL, 0x3D6B31)
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED,
+                            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "effect.wrapped_in_vines"),
+                            -0.35D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+
+    public static final DeferredHolder<MobEffect, MobEffect> SPIKED =
+            MOB_EFFECTS.register("spiked", () -> new SpikedMobEffect(0x2F7E35));
+
+    public static final DeferredHolder<MobEffect, MobEffect> HELLISH_AURA =
+            MOB_EFFECTS.register("hellish_aura", () -> new HellishAuraMobEffect(0xD84A22));
+
+    /** Source shrink/grow tiers; Leonard can also drive the same visible scale independently. */
     public static final DeferredHolder<MobEffect, MobEffect> RESIZING =
-            MOB_EFFECTS.register("resizing", () -> new SimpleMobEffect(MobEffectCategory.NEUTRAL, 0xC050C0));
+            MOB_EFFECTS.register("resizing", () -> new ResizingMobEffect(0xC050C0));
 
     private static final class SimpleMobEffect extends MobEffect {
         private SimpleMobEffect(MobEffectCategory category, int color) {

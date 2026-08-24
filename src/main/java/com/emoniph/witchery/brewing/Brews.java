@@ -19,11 +19,14 @@ import com.emoniph.witchery.entity.VampireEntity;
 import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
+import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
+import com.emoniph.witchery.entity.familiar.ToadFamiliarEntity;
 import com.emoniph.witchery.events.SilverEvents;
 import com.emoniph.witchery.events.PoppetEvents;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDataComponents;
+import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.PoppetItem;
@@ -46,6 +49,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -56,6 +61,7 @@ import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
@@ -80,7 +86,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -140,7 +149,13 @@ public final class Brews {
             ANIMAL, REMOVE_BUFFS, REMOVE_DEBUFFS, BANE_UNDEAD, BANE_ARTHROPODS, WEAKEN_VAMPIRES, BANE_DEMONS,
             HARM_WEREWOLVES, STEAL_BUFFS, DURATION_BOOST, AIR_HIKE, PULL,
             FELL_TREE, LILIFY, BLIGHT, RAISE_LAND, SPROUT, PLANT,
-            TRANSPOSE, RAISE_DEAD, SPREAD_DEBUFFS, ICE_WORLD
+            TRANSPOSE, RAISE_DEAD, SPREAD_DEBUFFS, ICE_WORLD,
+            HARVEST, TILL, PRUNE, PULVERIZE, TIDE_HOLD, LAVA_HOLD,
+            BAT_BURST, BODEGA, ERODE, LEVEL, WEBS, VINES, THORNS, KNOCKBACK,
+            TREE_OAK, TREE_SPRUCE, TREE_BIRCH, TREE_JUNGLE, TREE_ACACIA, TREE_DARK_OAK,
+            TREE_ROWAN, TREE_ALDER, TREE_HAWTHORN,
+            INFERNO, WASTING, REVEAL, TRANSPOSE_ORE, ICE_SHELL, HELL_GATE, BLAST,
+            POISON_TOAD, DRAIN_MAGIC
         }
 
         static Ingredient effect(Holder<MobEffect> effect, int baseDuration, int ceiling, int color) {
@@ -417,16 +432,26 @@ public final class Brews {
         registerExplicit(Items.BONE_MEAL, Ingredient.action(Ingredient.BrewAction.FERTILIZE,
                 1, 250, 0xEDE8D0,
                 "witchery.brew.fertilization", null));
-        // Nature block-shaping actions (source brewing/action/effect/*). Felling/Lilify use the source
-        // ingredients (String / Lily Pad); Blight uses Dead Bush as a modern stand-in for the source's
-        // ambiguous item id.
+        register(Items.APPLE, Ingredient.action(Ingredient.BrewAction.HARVEST,
+                1, 0, 0xA53D35, "witchery.brew.harvesting", null));
+        register(Blocks.DIRT.asItem(), Ingredient.action(Ingredient.BrewAction.TILL,
+                1, 0, 0x8A5A37, "witchery.brew.tilling", null));
+        register(Items.BROWN_MUSHROOM, Ingredient.action(Ingredient.BrewAction.PRUNE,
+                1, 0, 0x6B4933, "witchery.brew.pruning", null));
+        register(Items.FLINT, Ingredient.action(Ingredient.BrewAction.PULVERIZE,
+                1, 250, 0x777777, "witchery.brew.pulverisation", null));
+        register(Blocks.SAND.asItem(), Ingredient.action(Ingredient.BrewAction.TIDE_HOLD,
+                1, 0, 0xD8C68E, "witchery.brew.tidehold", null));
+        register(Blocks.COBBLESTONE.asItem(), Ingredient.action(Ingredient.BrewAction.LAVA_HOLD,
+                2, 100, 0x6B4A37, "witchery.brew.lavahold", null));
+        // Nature block-shaping actions (source brewing/action/effect/*).
         register(Items.STRING, Ingredient.action(Ingredient.BrewAction.FELL_TREE,
                 1, 0, 0x5B3A1E,
                 "witchery.brew.felling", null));
         register(Items.LILY_PAD, Ingredient.action(Ingredient.BrewAction.LILIFY,
                 1, 200, 0x3C7A2E,
                 "witchery.brew.lilify", null));
-        register(Items.DEAD_BUSH, Ingredient.action(Ingredient.BrewAction.BLIGHT,
+        register(Items.POISONOUS_POTATO, Ingredient.action(Ingredient.BrewAction.BLIGHT,
                 4, 2000, 0x4A3B22,
                 "witchery.brew.blight", null));
         register(Items.QUARTZ, Ingredient.action(Ingredient.BrewAction.RAISE_LAND,
@@ -474,7 +499,7 @@ public final class Brews {
         register(Items.FEATHER, Ingredient.effect(WitcheryMobEffects.FEATHER_FALL, 1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xFFEBD1, 100, 2));
         register(WitcheryItems.BRAMBLE.get(), Ingredient.effect(WitcheryMobEffects.REPELL_ATTACKER,
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x233423, 250, 2));
-        register(Items.IRON_ORE, Ingredient.effect(WitcheryMobEffects.GAS_MASK,
+        register(Items.GRAVEL, Ingredient.effect(WitcheryMobEffects.GAS_MASK,
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x693FBF, 100, 2));
         register(Items.RED_MUSHROOM, Ingredient.effect(WitcheryMobEffects.POISON_WEAPONS,
                 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0x2814C9, 200, 2));
@@ -519,6 +544,87 @@ public final class Brews {
         register(Items.SLIME_BALL, Ingredient.action(Ingredient.BrewAction.PULL,
                 2, 150, 0x8CD66A,
                 "witchery.brew.frogtongue", null));
+
+        // Source level-two and later action roster. Metadata-era ingredients that became distinct
+        // modern items are registered against their exact descendants.
+        register(WitcheryItems.CONCENTRATED_BAT_BALL.get(), Ingredient.action(Ingredient.BrewAction.BAT_BURST,
+                2, 1000, 0x3F3542, "witchery.brew.batburst", null));
+        register(WitcheryItems.OWLETS_WING.get(), Ingredient.action(Ingredient.BrewAction.BODEGA,
+                2, 1000, 0xB6A27A, "witchery.brew.bodega", null));
+        register(WitcheryItems.OIL_OF_VITRIOL.get(), Ingredient.action(Ingredient.BrewAction.ERODE,
+                2, 200, 0xB5DB52, "witchery.brew.erosion", null));
+        register(Blocks.NETHERRACK.asItem(), Ingredient.action(Ingredient.BrewAction.LEVEL,
+                2, 200, 0x7A3029, "witchery.brew.levelling", null));
+        register(WitcheryItems.DENSE_WEB.get(), Ingredient.action(Ingredient.BrewAction.WEBS,
+                2, 200, 0xD9D9D9, "witchery.brew.webs", null));
+        register(Items.VINE, Ingredient.action(Ingredient.BrewAction.VINES,
+                2, 150, 0x3D6B31, "witchery.brew.vines", null));
+        register(Items.CACTUS, Ingredient.action(Ingredient.BrewAction.THORNS,
+                2, 150, 0x2F7E35, "witchery.brew.thorns", null));
+        register(Items.STICK, Ingredient.action(Ingredient.BrewAction.KNOCKBACK,
+                2, 200, 0x79553A, "witchery.brew.knockback", null));
+        register(Items.OAK_SAPLING, treeAction(Ingredient.BrewAction.TREE_OAK, "treeoak"));
+        register(Items.SPRUCE_SAPLING, treeAction(Ingredient.BrewAction.TREE_SPRUCE, "treespruce"));
+        register(Items.BIRCH_SAPLING, treeAction(Ingredient.BrewAction.TREE_BIRCH, "treebirch"));
+        register(Items.JUNGLE_SAPLING, treeAction(Ingredient.BrewAction.TREE_JUNGLE, "treejungle"));
+        register(Items.ACACIA_SAPLING, treeAction(Ingredient.BrewAction.TREE_ACACIA, "treeacacia"));
+        register(Items.DARK_OAK_SAPLING, treeAction(Ingredient.BrewAction.TREE_DARK_OAK, "treedarkoak"));
+        register(WitcheryItems.ROWAN_SAPLING.get(), treeAction(Ingredient.BrewAction.TREE_ROWAN, "treerowan"));
+        register(WitcheryItems.ALDER_SAPLING.get(), treeAction(Ingredient.BrewAction.TREE_ALDER, "treealder"));
+        register(WitcheryItems.HAWTHORN_SAPLING.get(), treeAction(Ingredient.BrewAction.TREE_HAWTHORN, "treehawthorn"));
+        register(WitcheryItems.GLINT_WEED.get(), Ingredient.action(Ingredient.BrewAction.INFERNO,
+                3, 750, 0xF07722, "witchery.brew.inferno", null));
+        register(WitcheryItems.SUBDUED_SPIRIT.get(), Ingredient.action(Ingredient.BrewAction.WASTING,
+                4, 500, 0x6C596E, "witchery.brew.wasting", "witchery.brew.fullness"));
+        register(WitcheryItems.ODOUR_OF_PURITY.get(), Ingredient.action(Ingredient.BrewAction.REVEAL,
+                4, 100, 0xE8E4D7, "witchery.brew.revealing", null));
+        register(Items.IRON_INGOT, Ingredient.action(Ingredient.BrewAction.TRANSPOSE_ORE,
+                4, 2000, 0xB4B4B4, "witchery.brew.transposeore", null));
+        register(WitcheryItems.FROZEN_HEART.get(), Ingredient.action(Ingredient.BrewAction.ICE_SHELL,
+                5, 500, 0x99DDEC, "witchery.brew.iceshell", null));
+        register(WitcheryItems.REFINED_EVIL.get(), Ingredient.action(Ingredient.BrewAction.HELL_GATE,
+                5, 3000, 0x5D1731, "witchery.brew.hellgate", null));
+        register(Items.GOLD_INGOT, Ingredient.action(Ingredient.BrewAction.BLAST,
+                5, 500, 0xE8BD43, "witchery.brew.blast", null));
+        register(Items.SUNFLOWER, Ingredient.action(Ingredient.BrewAction.POISON_TOAD,
+                5, 500, 0xD3B52B, "witchery.brew.poisontoad", null));
+        register(WitcheryItems.CONDENSED_FEAR.get(), Ingredient.action(Ingredient.BrewAction.DRAIN_MAGIC,
+                6, 1000, 0x312542, "witchery.brew.drainmagic", null));
+
+        // Source potion and curse entries omitted by the first composition pass.
+        register(Items.POPPY, Ingredient.effect(WitcheryMobEffects.LOVE,
+                200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xE73D51, 500, 4));
+        register(WitcheryItems.DROP_OF_LUCK.get(), Ingredient.effect(WitcheryMobEffects.BREWING_EXPERTISE,
+                WitcheryMobEffects.INSANITY, 7200, 3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x63B765, 5000, 4));
+        register(WitcheryItems.DISTURBED_COTTON.get(), Ingredient.effect(WitcheryMobEffects.SINKING,
+                3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x990000, 3000, 4));
+        register(WitcheryItems.EMBER_MOSS.get(), Ingredient.effect(WitcheryMobEffects.OVERHEATING,
+                3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x009999, 3000, 4));
+        register(WitcheryItems.MELLIFLUOUS_HUNGER.get(), Ingredient.effect(WitcheryMobEffects.WAKING_NIGHTMARE,
+                3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0x38264D, 10000, 4));
+        register(WitcheryItems.TOE_OF_FROG.get(), Ingredient.effect(WitcheryMobEffects.DOUBLE_JUMP,
+                7200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x5C9C43, 500, 4));
+        register(Items.SHORT_GRASS, Ingredient.effect(WitcheryMobEffects.VOLATILITY,
+                3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0xCB522E, 1000, 4));
+        register(Items.DEAD_BUSH, Ingredient.effect(WitcheryMobEffects.VOLATILITY,
+                3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0xCB522E, 1000, 4));
+        register(Items.SOUL_SAND, Ingredient.effect(WitcheryMobEffects.DARKNESS_ALLERGY,
+                2400, SOURCE_DEFAULT_STRENGTH_CEILING, 0x241B2B, 4000, 4));
+        register(WitcheryItems.WHIFF_OF_MAGIC.get(), Ingredient.effect(WitcheryMobEffects.ABSORB_MAGIC,
+                1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0x785AC7, 2000, 4));
+        register(WitcheryItems.SPECTRAL_DUST.get(), Ingredient.effect(WitcheryMobEffects.REFLECT_DAMAGE,
+                1200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xC5DFEA, 2000, 5));
+        register(WitcheryItems.VOID_BRAMBLE.get(), Ingredient.effect(WitcheryMobEffects.ILL_FITTING,
+                120, SOURCE_DEFAULT_STRENGTH_CEILING, 0x4B2148, 8000, 6));
+        register(WitcheryItems.HINT_OF_REBIRTH.get(), Ingredient.effect(WitcheryMobEffects.REINCARNATE,
+                3600, SOURCE_DEFAULT_STRENGTH_CEILING, 0xC6D88A, 2500, 6));
+        register(Items.EMERALD, Ingredient.effect(WitcheryMobEffects.RESIZING,
+                400, SOURCE_DEFAULT_STRENGTH_CEILING, 0xC050C0, 2500, 6));
+        register(WitcheryItems.FOCUSED_WILL.get(), Ingredient.effect(WitcheryMobEffects.KEEP_INVENTORY,
+                7200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xD8EDF2, 10000, 8));
+        register(WitcheryItems.REDSTONE_SOUP.get(), Ingredient.effect(WitcheryMobEffects.KEEP_EFFECTS,
+                7200, SOURCE_DEFAULT_STRENGTH_CEILING, 0xA73333, 10000, 8));
+        registerColorfulDyes();
 
         // Source capacity modifiers. Mandrake Root remains a hardcoded offering when dropped.
         // Nether Wart and Tear of the Goddess may either auto-stir from drops or be stirred by hand,
@@ -565,7 +671,7 @@ public final class Brews {
         register(WitcheryItems.WISPY_COTTON.get(), Ingredient.modifier(Ingredient.Kind.EXTENT, 3, 150));
         register(WitcheryItems.BELLADONNA.get(), Ingredient.modifier(Ingredient.Kind.LIFETIME, 1, 50));
         register(Items.LAPIS_LAZULI, Ingredient.modifier(Ingredient.Kind.LIFETIME, 2, 100));
-        register(Items.HAY_BLOCK, Ingredient.modifier(Ingredient.Kind.LIFETIME, 3, 150));
+        register(Items.END_STONE, Ingredient.modifier(Ingredient.Kind.LIFETIME, 3, 150));
         registerExplicit(Items.GOLD_NUGGET, Ingredient.modifier(Ingredient.Kind.NO_PARTICLES, 0, 50));
         register(Items.NETHER_BRICK, Ingredient.modifier(Ingredient.Kind.DISABLE_BLOCK_TARGET, 0, 50));
         register(Items.BRICK, Ingredient.modifier(Ingredient.Kind.DISABLE_ENTITY_TARGET, 0, 50));
@@ -586,6 +692,31 @@ public final class Brews {
         // A filled Taglock is the source direct-entity ritual trigger and must remain the final ingredient.
         registerStirrable(WitcheryItems.BOUND_TAGLOCK_KIT.get(),
                 Ingredient.ritual(SOURCE_RITUAL_ENTITY_TARGET_POWER_COST));
+    }
+
+    private static Ingredient treeAction(Ingredient.BrewAction action, String suffix) {
+        return Ingredient.action(action, 2, 200, 0x4C7B37, "witchery.brew." + suffix, null);
+    }
+
+    private static void registerColorfulDyes() {
+        register(Items.RED_DYE, colorful(1));
+        register(Items.GREEN_DYE, colorful(2));
+        register(Items.PURPLE_DYE, colorful(5));
+        register(Items.CYAN_DYE, colorful(6));
+        register(Items.LIGHT_GRAY_DYE, colorful(7));
+        register(Items.GRAY_DYE, colorful(8));
+        register(Items.PINK_DYE, colorful(9));
+        register(Items.LIME_DYE, colorful(10));
+        register(Items.YELLOW_DYE, colorful(11));
+        register(Items.LIGHT_BLUE_DYE, colorful(12));
+        register(Items.MAGENTA_DYE, colorful(13));
+        register(Items.ORANGE_DYE, colorful(14));
+    }
+
+    private static Ingredient colorful(int amplifier) {
+        return new Ingredient(Ingredient.Kind.EFFECT, WitcheryMobEffects.COLORFUL, null, null,
+                1800, 1800, SOURCE_DEFAULT_STRENGTH_CEILING, 0xFFFFFF,
+                amplifier, 0, 0, 0, 1, 0, null, null);
     }
 
     private static void register(Item item, Ingredient ingredient) {
@@ -715,7 +846,9 @@ public final class Brews {
                         Holder<MobEffect> effect = mods.inverted && ing.inverted() != null ? ing.inverted() : ing.effect();
                         int baseDuration = mods.inverted && ing.inverted() != null ? ing.invertedDuration() : ing.baseDuration();
                         int strengthCeiling = mods.strengthCeilingDisabled ? SOURCE_DEFAULT_STRENGTH_CEILING : ing.strengthCeiling();
-                        int amplifier = Math.min(mods.strength, strengthCeiling);
+                        int amplifier = ing.effect().is(WitcheryMobEffects.COLORFUL)
+                                ? ing.modifierCeiling()
+                                : Math.min(mods.strength, strengthCeiling);
                         int duration = baseDuration * (mods.duration + 1);
                         MobEffectInstance instance = new MobEffectInstance(effect, duration, amplifier,
                                 mods.noParticles, true, true);
@@ -1714,6 +1847,41 @@ public final class Brews {
             transposeEntity(level, target, action.strength());
         } else if (action.action() == Ingredient.BrewAction.SPREAD_DEBUFFS) {
             spreadDebuffs(level, target, action.strength(), powerFactor, source);
+        } else if (action.action() == Ingredient.BrewAction.BAT_BURST) {
+            burstBats(level, target.blockPosition(), 1 + action.strength(), powerFactor, source);
+        } else if (action.action() == Ingredient.BrewAction.BODEGA) {
+            summonBodega(level, target, action.strength(), powerFactor, source);
+        } else if (action.action() == Ingredient.BrewAction.ERODE) {
+            erodeEntity(level, target, powerFactor, source);
+        } else if (action.action() == Ingredient.BrewAction.KNOCKBACK) {
+            knockBackEntity(target, action.strength(), powerFactor, impactPos);
+        } else if (action.action() == Ingredient.BrewAction.INFERNO) {
+            target.igniteForSeconds(2 + 2 * action.strength());
+            if (powerFactor >= 1.0D) {
+                spreadInferno(level, target.blockPosition(), action.strength(), source);
+            }
+        } else if (action.action() == Ingredient.BrewAction.WASTING) {
+            applyWasting(target, action.inverted(), action.strength(), action.duration(), durationFactor, source);
+        } else if (action.action() == Ingredient.BrewAction.REVEAL) {
+            revealTarget(target);
+        } else if (action.action() == Ingredient.BrewAction.VINES) {
+            target.addEffect(new MobEffectInstance(WitcheryMobEffects.WRAPPED_IN_VINES,
+                    sourceModifiedActionDuration(1800, action.duration(), durationFactor), action.strength()), source);
+        } else if (action.action() == Ingredient.BrewAction.THORNS) {
+            target.addEffect(new MobEffectInstance(WitcheryMobEffects.SPIKED,
+                    sourceModifiedActionDuration(1800, action.duration(), durationFactor), action.strength()), source);
+        } else if (action.action() == Ingredient.BrewAction.ICE_SHELL) {
+            applyIceShellToEntity(level, target, action.strength(), source);
+        } else if (action.action() == Ingredient.BrewAction.HELL_GATE) {
+            target.addEffect(new MobEffectInstance(WitcheryMobEffects.HELLISH_AURA,
+                    sourceModifiedActionDuration(3600, action.duration(), durationFactor), action.strength()), source);
+        } else if (action.action() == Ingredient.BrewAction.BLAST) {
+            blast(level, target.position(), action.strength(), powerFactor, source);
+        } else if (action.action() == Ingredient.BrewAction.POISON_TOAD) {
+            summonPoisonToads(level, target, action.strength(), source);
+        } else if (action.action() == Ingredient.BrewAction.DRAIN_MAGIC) {
+            com.emoniph.witchery.entity.BoltEntity.reducePowerLevels(target,
+                    (float) (0.25D * (1 + action.strength()) * powerFactor));
         }
     }
 
@@ -1789,8 +1957,478 @@ public final class Brews {
                 raiseDead(level, blockImpact, strength, source, ritualised);
             } else if (action.action() == Ingredient.BrewAction.ICE_WORLD) {
                 IceWorldConversion.convertArea(level, blockImpact, blockRadius, source);
+            } else if (action.action() == Ingredient.BrewAction.HARVEST) {
+                harvestPlants(level, blockImpact, blockRadius, strength, source);
+            } else if (action.action() == Ingredient.BrewAction.TILL) {
+                tillGround(level, blockImpact, blockRadius, strength, source);
+            } else if (action.action() == Ingredient.BrewAction.PRUNE) {
+                prunePlants(level, blockImpact, blockRadius, strength, source);
+            } else if (action.action() == Ingredient.BrewAction.PULVERIZE) {
+                pulverizeTerrain(level, blockImpact, blockRadius, source);
+            } else if (action.action() == Ingredient.BrewAction.TIDE_HOLD) {
+                holdFluids(level, blockImpact, blockRadius + 2, true, action.duration(), source);
+            } else if (action.action() == Ingredient.BrewAction.LAVA_HOLD) {
+                holdFluids(level, blockImpact, blockRadius + 2, false, action.duration(), source);
+            } else if (action.action() == Ingredient.BrewAction.BAT_BURST) {
+                burstBats(level, blockImpact.relative(side), strength, 1.0D, source);
+            } else if (action.action() == Ingredient.BrewAction.ERODE) {
+                erodeTerrain(level, blockImpact, blockRadius, source);
+            } else if (action.action() == Ingredient.BrewAction.LEVEL) {
+                levelTerrain(level, blockImpact, blockRadius, strength, source);
+            } else if (action.action() == Ingredient.BrewAction.WEBS) {
+                placeWebs(level, blockImpact.relative(side), strength, source);
+            } else if (action.action() == Ingredient.BrewAction.VINES) {
+                growVines(level, blockImpact, side, strength, source);
+            } else if (action.action() == Ingredient.BrewAction.THORNS) {
+                growThorns(level, blockImpact.relative(side), strength, source);
+            } else if (isTreeAction(action.action())) {
+                growTree(level, blockImpact, side, action.action(), strength, source);
+            } else if (action.action() == Ingredient.BrewAction.INFERNO) {
+                spreadInferno(level, blockImpact.relative(side), strength, source);
+            } else if (action.action() == Ingredient.BrewAction.TRANSPOSE_ORE) {
+                transposeOres(level, blockImpact, blockRadius, strength, source);
+            } else if (action.action() == Ingredient.BrewAction.ICE_SHELL) {
+                createIceShell(level, blockImpact.relative(side), strength, source);
+            } else if (action.action() == Ingredient.BrewAction.HELL_GATE) {
+                openHellGate(level, blockImpact.relative(side), strength, source, ritualised);
+            } else if (action.action() == Ingredient.BrewAction.BLAST) {
+                blast(level, impactPos, strength, 1.0D, source);
+            } else if (action.action() == Ingredient.BrewAction.POISON_TOAD) {
+                summonPoisonToads(level, blockImpact.relative(side), strength, source);
             }
         }
+    }
+
+    private static void harvestPlants(ServerLevel level, BlockPos center, int radius, int strength, Entity source) {
+        for (BlockPos column : SnowTrailMobEffect.sourceFilledCircle(center, sourceBlockCircleRadius(radius, strength))) {
+            for (int dy = -1; dy <= 1; dy++) {
+                BlockPos pos = column.above(dy);
+                BlockState state = level.getBlockState(pos);
+                if (!(state.getBlock() instanceof BushBlock) || !sourceMayModify(level, pos, source)) {
+                    continue;
+                }
+                Block.dropResources(state, level, pos, level.getBlockEntity(pos), source, ItemStack.EMPTY);
+                level.removeBlock(pos, false);
+            }
+        }
+    }
+
+    private static void tillGround(ServerLevel level, BlockPos center, int radius, int strength, Entity source) {
+        for (BlockPos column : SnowTrailMobEffect.sourceFilledCircle(center, sourceBlockCircleRadius(radius, strength))) {
+            for (int dy = -1; dy <= 1; dy++) {
+                BlockPos pos = column.above(dy);
+                BlockState state = level.getBlockState(pos);
+                boolean eligible = state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT)
+                        || strength > 0 && state.is(Blocks.SAND)
+                        || strength > 1 && state.is(Blocks.NETHERRACK)
+                        || strength > 2 && state.is(Blocks.SOUL_SAND);
+                if (eligible && level.getBlockState(pos.above()).isAir() && sourceMayModify(level, pos, source)) {
+                    level.setBlock(pos, Blocks.FARMLAND.defaultBlockState(), Block.UPDATE_ALL);
+                }
+            }
+        }
+    }
+
+    private static void prunePlants(ServerLevel level, BlockPos center, int radius, int strength, Entity source) {
+        int effective = Math.max(1, radius - 1);
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-effective, -effective, -effective),
+                center.offset(effective, effective, effective))) {
+            if (pos.distSqr(center) > effective * effective || !sourceMayModify(level, pos, source)) {
+                continue;
+            }
+            BlockState state = level.getBlockState(pos);
+            if (!state.is(BlockTags.LEAVES) && !state.is(BlockTags.FLOWERS)
+                    && !state.is(BlockTags.SAPLINGS) && !state.is(Blocks.VINE)
+                    && !(state.getBlock() instanceof BushBlock)) {
+                continue;
+            }
+            Block.dropResources(state, level, pos, level.getBlockEntity(pos), source, ItemStack.EMPTY);
+            level.removeBlock(pos, false);
+        }
+    }
+
+    private static void pulverizeTerrain(ServerLevel level, BlockPos center, int radius, Entity source) {
+        int effective = Math.max(1, radius - 1);
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-effective, -effective, -effective),
+                center.offset(effective, effective, effective))) {
+            if (pos.distSqr(center) > effective * effective || !sourceMayModify(level, pos, source)) {
+                continue;
+            }
+            BlockState state = level.getBlockState(pos);
+            BlockState replacement = state.is(Blocks.STONE) ? Blocks.COBBLESTONE.defaultBlockState()
+                    : state.is(Blocks.COBBLESTONE) ? Blocks.GRAVEL.defaultBlockState()
+                    : state.is(Blocks.GRAVEL) || state.is(Blocks.SANDSTONE) ? Blocks.SAND.defaultBlockState()
+                    : null;
+            if (replacement != null) {
+                level.setBlock(pos, replacement, Block.UPDATE_ALL);
+            } else if (state.is(Blocks.SAND)) {
+                level.removeBlock(pos, false);
+                Block.popResource(level, pos, new ItemStack(Blocks.SAND));
+            }
+        }
+    }
+
+    private static void holdFluids(ServerLevel level, BlockPos center, int radius, boolean water,
+                                   int durationModifiers, Entity source) {
+        int duration = sourceModifiedActionDuration(200, durationModifiers, 1.0D);
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-radius, -radius, -radius),
+                center.offset(radius, radius, radius))) {
+            if (pos.distSqr(center) > radius * radius || !sourceMayModify(level, pos, source)) {
+                continue;
+            }
+            var fluid = level.getFluidState(pos);
+            if (fluid.isEmpty() || water != fluid.is(FluidTags.WATER)) {
+                continue;
+            }
+            boolean heldLava = fluid.is(FluidTags.LAVA);
+            if (!water && !heldLava) {
+                continue;
+            }
+            BlockState held = WitcheryBlocks.BREW_FLUID_HOLD.get().defaultBlockState()
+                    .setValue(com.emoniph.witchery.blocks.BrewFluidHoldBlock.FLUID,
+                            water ? com.emoniph.witchery.blocks.BrewFluidHoldBlock.HeldFluid.WATER
+                                    : com.emoniph.witchery.blocks.BrewFluidHoldBlock.HeldFluid.LAVA)
+                    .setValue(com.emoniph.witchery.blocks.BrewFluidHoldBlock.SOURCE, fluid.isSource());
+            level.setBlock(pos, held, Block.UPDATE_ALL);
+            level.scheduleTick(pos, WitcheryBlocks.BREW_FLUID_HOLD.get(), duration);
+        }
+    }
+
+    private static void burstBats(ServerLevel level, BlockPos center, int strength,
+                                  double powerFactor, Entity source) {
+        int count = (powerFactor >= 1.0D ? 10 : 1) + Math.max(0, strength);
+        for (int i = 0; i < count; i++) {
+            Mob bat = EntityType.BAT.create(level, EntitySpawnReason.MOB_SUMMONED);
+            if (bat == null) {
+                continue;
+            }
+            bat.snapTo(center.getX() + 0.5D, center.getY() + 0.5D, center.getZ() + 0.5D,
+                    level.random.nextFloat() * 360.0F, 0.0F);
+            bat.getPersistentData().putBoolean(SUMMONED_NO_DROPS_TAG, true);
+            level.addFreshEntity(bat);
+        }
+        level.sendParticles(ParticleTypes.EXPLOSION, center.getX() + 0.5D, center.getY() + 0.5D,
+                center.getZ() + 0.5D, 8, 0.7D, 0.7D, 0.7D, 0.05D);
+    }
+
+    private static void summonBodega(ServerLevel level, LivingEntity target, int strength,
+                                     double powerFactor, Entity source) {
+        if (!(source instanceof Player player) || !FamiliarHelper.hasActiveOwlFamiliar(player)
+                || target instanceof OwlFamiliarEntity || level.random.nextDouble() >= Math.min(1.0D, powerFactor)) {
+            return;
+        }
+        int count = (powerFactor >= 1.0D ? 3 + level.random.nextInt(2) : 1) + Math.max(0, strength);
+        for (int i = 0; i < count; i++) {
+            OwlFamiliarEntity owl = WitcheryEntities.OWL.get().create(level, EntitySpawnReason.MOB_SUMMONED);
+            if (owl == null) {
+                continue;
+            }
+            owl.snapTo(target.getX() - 2.0D + level.random.nextInt(5), target.getY() + target.getBbHeight() + 1.0D,
+                    target.getZ() - 2.0D + level.random.nextInt(5), level.random.nextFloat() * 360.0F, 0.0F);
+            owl.setDeltaMovement(target.position().subtract(owl.position()).normalize().scale(0.35D));
+            owl.getPersistentData().putInt("WitcheryBodegaTicks", 400);
+            level.addFreshEntity(owl);
+        }
+    }
+
+    private static void erodeEntity(ServerLevel level, LivingEntity target, double powerFactor, Entity source) {
+        if (level.random.nextInt(Math.max(1, Mth.ceil(5.0D / Math.max(0.01D, powerFactor)))) == 0) {
+            target.hurtServer(level, sourceBaneDamageSource(level, source), Mth.ceil(8.0D * powerFactor));
+        }
+        for (EquipmentSlot slot : List.of(EquipmentSlot.MAINHAND, EquipmentSlot.HEAD, EquipmentSlot.CHEST,
+                EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
+            ItemStack equipment = target.getItemBySlot(slot);
+            if (equipment.isDamageableItem()) {
+                equipment.hurtAndBreak(Mth.ceil((50 + level.random.nextInt(25)) * powerFactor), target, slot);
+            }
+        }
+    }
+
+    private static void erodeTerrain(ServerLevel level, BlockPos center, int radius, Entity source) {
+        int obsidian = 0;
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-radius, -radius, -radius),
+                center.offset(radius, radius, radius))) {
+            if (pos.distSqr(center) > radius * radius || !sourceMayModify(level, pos, source)) {
+                continue;
+            }
+            BlockState state = level.getBlockState(pos);
+            if (state.isAir() || state.hasBlockEntity() || state.getDestroySpeed(level, pos) < 0.0F) {
+                continue;
+            }
+            if (state.is(Blocks.OBSIDIAN)) {
+                obsidian++;
+            }
+            level.removeBlock(pos, false);
+        }
+        if (obsidian > 0) {
+            Block.popResource(level, center, new ItemStack(Blocks.OBSIDIAN, obsidian));
+        }
+    }
+
+    private static void levelTerrain(ServerLevel level, BlockPos center, int radius, int strength, Entity source) {
+        int surfaceY = center.getY();
+        int effective = Math.max(1, radius);
+        Queue<BlockState> reclaimed = new ArrayDeque<>();
+        BlockState fallback = level.getBlockState(center);
+        if (fallback.isAir() || fallback.hasBlockEntity()) {
+            fallback = Blocks.DIRT.defaultBlockState();
+        }
+        for (BlockPos column : SnowTrailMobEffect.sourceFilledCircle(center, effective)) {
+            for (int y = surfaceY + 1; y <= surfaceY + 3 + strength; y++) {
+                BlockPos pos = new BlockPos(column.getX(), y, column.getZ());
+                BlockState state = level.getBlockState(pos);
+                if (!state.isAir() && !state.hasBlockEntity() && state.getDestroySpeed(level, pos) >= 0.0F
+                        && sourceMayModify(level, pos, source)) {
+                    reclaimed.add(sourceLevelMaterial(state));
+                    level.removeBlock(pos, false);
+                }
+            }
+        }
+        for (BlockPos column : SnowTrailMobEffect.sourceFilledCircle(center, effective)) {
+            for (int y = surfaceY; y >= surfaceY - (4 + strength); y--) {
+                BlockPos pos = new BlockPos(column.getX(), y, column.getZ());
+                if (level.getBlockState(pos).canBeReplaced() && sourceMayModify(level, pos, source)) {
+                    level.setBlock(pos, reclaimed.isEmpty() ? fallback : reclaimed.remove(), Block.UPDATE_ALL);
+                }
+            }
+        }
+    }
+
+    private static BlockState sourceLevelMaterial(BlockState state) {
+        if (state.is(Blocks.STONE) || state.is(Blocks.SAND) || state.is(Blocks.SANDSTONE)
+                || state.is(Blocks.NETHERRACK) || state.is(Blocks.END_STONE)) {
+            return state;
+        }
+        return Blocks.DIRT.defaultBlockState();
+    }
+
+    private static void placeWebs(ServerLevel level, BlockPos center, int strength, Entity source) {
+        int radius = Math.min(2, Math.max(0, strength));
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-radius, -radius, -radius),
+                center.offset(radius, radius, radius))) {
+            int manhattan = Math.abs(pos.getX() - center.getX()) + Math.abs(pos.getY() - center.getY())
+                    + Math.abs(pos.getZ() - center.getZ());
+            if (manhattan > radius + 1 || !level.getBlockState(pos).canBeReplaced()
+                    || !sourceMayModify(level, pos, source)) {
+                continue;
+            }
+            level.setBlock(pos, Blocks.COBWEB.defaultBlockState(), Block.UPDATE_ALL);
+        }
+    }
+
+    private static void growVines(ServerLevel level, BlockPos support, Direction side, int strength, Entity source) {
+        if (side.getAxis().isVertical()) {
+            return;
+        }
+        Direction attachment = side.getOpposite();
+        BlockPos pos = support.relative(side);
+        int reach = 3 + strength;
+        for (int y = 0; y > -reach; y--) {
+            BlockPos vinePos = pos.above(y);
+            if (!level.getBlockState(vinePos).canBeReplaced() || !sourceMayModify(level, vinePos, source)) {
+                break;
+            }
+            var property = switch (attachment) {
+                case NORTH -> VineBlock.NORTH;
+                case SOUTH -> VineBlock.SOUTH;
+                case WEST -> VineBlock.WEST;
+                case EAST -> VineBlock.EAST;
+                default -> null;
+            };
+            if (property != null) {
+                BlockState vine = Blocks.VINE.defaultBlockState().setValue(property, true);
+                if (vine.canSurvive(level, vinePos)) {
+                    level.setBlock(vinePos, vine, Block.UPDATE_ALL);
+                }
+            }
+        }
+    }
+
+    private static void growThorns(ServerLevel level, BlockPos center, int strength, Entity source) {
+        BlockPos base = center;
+        while (base.getY() > level.getMinY() && level.getBlockState(base.below()).canBeReplaced()) {
+            base = base.below();
+        }
+        for (int i = 0; i < 3 + strength; i++) {
+            BlockPos pos = base.above(i);
+            if (!level.getBlockState(pos).canBeReplaced() || !sourceMayModify(level, pos, source)) {
+                break;
+            }
+            level.setBlock(pos, Blocks.CACTUS.defaultBlockState(), Block.UPDATE_ALL);
+        }
+    }
+
+    private static boolean isTreeAction(Ingredient.BrewAction action) {
+        return action.ordinal() >= Ingredient.BrewAction.TREE_OAK.ordinal()
+                && action.ordinal() <= Ingredient.BrewAction.TREE_HAWTHORN.ordinal();
+    }
+
+    private static void growTree(ServerLevel level, BlockPos impact, Direction side,
+                                 Ingredient.BrewAction action, int strength, Entity source) {
+        BlockState sapling = treeSapling(action);
+        if (!(sapling.getBlock() instanceof SaplingBlock tree)) {
+            return;
+        }
+        BlockPos pos = impact.relative(side);
+        if (!level.getBlockState(pos).canBeReplaced()) {
+            pos = impact.above();
+        }
+        if (!level.getBlockState(pos).canBeReplaced() || !sourceMayModify(level, pos, source)) {
+            return;
+        }
+        level.setBlock(pos, sapling, Block.UPDATE_ALL);
+        for (int i = 0; i < Math.max(1, strength + 1) && level.getBlockState(pos).getBlock() instanceof SaplingBlock; i++) {
+            tree.advanceTree(level, pos, level.getBlockState(pos), level.random);
+        }
+    }
+
+    private static BlockState treeSapling(Ingredient.BrewAction action) {
+        return switch (action) {
+            case TREE_OAK -> Blocks.OAK_SAPLING.defaultBlockState();
+            case TREE_SPRUCE -> Blocks.SPRUCE_SAPLING.defaultBlockState();
+            case TREE_BIRCH -> Blocks.BIRCH_SAPLING.defaultBlockState();
+            case TREE_JUNGLE -> Blocks.JUNGLE_SAPLING.defaultBlockState();
+            case TREE_ACACIA -> Blocks.ACACIA_SAPLING.defaultBlockState();
+            case TREE_DARK_OAK -> Blocks.DARK_OAK_SAPLING.defaultBlockState();
+            case TREE_ROWAN -> WitcheryBlocks.ROWAN_SAPLING.get().defaultBlockState();
+            case TREE_ALDER -> WitcheryBlocks.ALDER_SAPLING.get().defaultBlockState();
+            case TREE_HAWTHORN -> WitcheryBlocks.HAWTHORN_SAPLING.get().defaultBlockState();
+            default -> Blocks.OAK_SAPLING.defaultBlockState();
+        };
+    }
+
+    private static void knockBackEntity(LivingEntity target, int strength, double powerFactor, Vec3 impactPos) {
+        Vec3 delta = target.position().subtract(impactPos);
+        Vec3 horizontal = new Vec3(delta.x, 0.0D, delta.z);
+        if (horizontal.lengthSqr() < 1.0E-6D) {
+            horizontal = new Vec3(0.0D, 0.0D, 1.0D);
+        }
+        double push = (1.0D + strength * powerFactor) * 0.7D;
+        Vec3 motion = horizontal.normalize().scale(push);
+        target.setDeltaMovement(motion.x, 0.5D + strength * 0.2D, motion.z);
+        target.hurtMarked = true;
+    }
+
+    private static void spreadInferno(ServerLevel level, BlockPos center, int strength, Entity source) {
+        int radius = Math.max(1, strength + 1);
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-radius, -1, -radius),
+                center.offset(radius, 1, radius))) {
+            if (pos.distSqr(center) > radius * radius || !level.getBlockState(pos).canBeReplaced()
+                    || !level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)
+                    || !sourceMayModify(level, pos, source)) {
+                continue;
+            }
+            level.setBlock(pos, Blocks.FIRE.defaultBlockState(), Block.UPDATE_ALL);
+        }
+    }
+
+    private static void applyWasting(LivingEntity target, boolean inverted, int strength,
+                                     int durationModifiers, double durationFactor, Entity source) {
+        int hungerTicks = sourceModifiedActionDuration(400, durationModifiers, durationFactor);
+        int poisonTicks = Math.max(sourceModifiedActionDuration(60, durationModifiers, durationFactor), 40);
+        int amplifier = 1 + strength / 2;
+        if (target instanceof Player player) {
+            if (inverted) {
+                int amount = 6 + 2 * strength;
+                player.getFoodData().eat(amount, amount);
+            } else {
+                int amount = Math.max(1, 10 - strength);
+                if (player.getFoodData().getFoodLevel() > amount) {
+                    player.getFoodData().eat(-amount, 2.0F);
+                }
+                player.addEffect(new MobEffectInstance(MobEffects.HUNGER, hungerTicks, amplifier), source);
+                player.addEffect(new MobEffectInstance(MobEffects.POISON, poisonTicks, 0), source);
+            }
+        } else if (inverted) {
+            target.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 600, strength), source);
+        } else {
+            target.addEffect(new MobEffectInstance(MobEffects.WITHER, hungerTicks, amplifier), source);
+            target.addEffect(new MobEffectInstance(MobEffects.POISON, poisonTicks, 0), source);
+        }
+    }
+
+    private static void revealTarget(LivingEntity target) {
+        target.removeEffect(MobEffects.INVISIBILITY);
+        target.setInvisible(false);
+        target.getPersistentData().remove("WitcheryObscured");
+    }
+
+    private static void transposeOres(ServerLevel level, BlockPos center, int radius, int strength, Entity source) {
+        List<Block> ores = List.of(Blocks.IRON_ORE, Blocks.GOLD_ORE, Blocks.LAPIS_ORE, Blocks.EMERALD_ORE);
+        int maxType = Math.min(strength, ores.size());
+        if (maxType <= 0) {
+            return;
+        }
+        int depth = radius + strength;
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-radius, -depth, -radius),
+                center.offset(radius, radius, radius))) {
+            BlockState state = level.getBlockState(pos);
+            if (!ores.subList(0, maxType).contains(state.getBlock()) || !sourceMayModify(level, pos, source)) {
+                continue;
+            }
+            level.removeBlock(pos, false);
+            Block.popResource(level, center.above(2), new ItemStack(state.getBlock()));
+        }
+    }
+
+    private static void applyIceShellToEntity(ServerLevel level, LivingEntity target, int strength, Entity source) {
+        target.addEffect(new MobEffectInstance(WitcheryMobEffects.CHILLED, 200, strength), source);
+        createIceShell(level, target.blockPosition(), strength, source);
+    }
+
+    private static void createIceShell(ServerLevel level, BlockPos center, int strength, Entity source) {
+        int radius = strength + (strength > 3 ? 2 : 1);
+        int outerSq = radius * radius;
+        int innerSq = Math.max(0, (radius - 1) * (radius - 1));
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-radius, -radius, -radius),
+                center.offset(radius, radius, radius))) {
+            int distance = (int) pos.distSqr(center);
+            if (distance > outerSq || distance < innerSq || !level.getBlockState(pos).canBeReplaced()
+                    || !sourceMayModify(level, pos, source)) {
+                continue;
+            }
+            level.setBlock(pos, WitcheryBlocks.PERPETUAL_ICE.get().defaultBlockState(), Block.UPDATE_ALL);
+        }
+    }
+
+    private static void openHellGate(ServerLevel level, BlockPos center, int strength, Entity source,
+                                     boolean ritualised) {
+        if (!ritualised
+                || !RitualCircleDetector.hasRing(level, center,
+                RitualCircleDetector.CircleSize.MEDIUM)
+                || RitualCircleDetector.detectVariant(level, center,
+                RitualCircleDetector.CircleSize.MEDIUM) != 3) {
+            return;
+        }
+        DemonEntity demon = WitcheryEntities.DEMON.get().create(level, EntitySpawnReason.MOB_SUMMONED);
+        if (demon != null) {
+            demon.snapTo(center.getX() + 0.5D, center.getY() + 1.0D, center.getZ() + 0.5D,
+                    level.random.nextFloat() * 360.0F, 0.0F);
+            level.addFreshEntity(demon);
+        }
+    }
+
+    private static void blast(ServerLevel level, Vec3 pos, int strength, double powerFactor, Entity source) {
+        if (powerFactor < 1.0D && level.random.nextDouble() >= powerFactor * 0.2D) {
+            return;
+        }
+        level.explode(source, pos.x, pos.y, pos.z, Math.max(0.0F, strength),
+                Level.ExplosionInteraction.MOB);
+    }
+
+    private static void summonPoisonToads(ServerLevel level, LivingEntity target, int strength, Entity source) {
+        summonPoisonToads(level, target.blockPosition().above(), strength, source);
+    }
+
+    private static void summonPoisonToads(ServerLevel level, BlockPos pos, int strength, Entity source) {
+        ToadFamiliarEntity toad = WitcheryEntities.TOAD.get().create(level, EntitySpawnReason.MOB_SUMMONED);
+        if (toad == null) {
+            return;
+        }
+        toad.snapTo(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                level.random.nextFloat() * 360.0F, 0.0F);
+        toad.setPoisonousLifetime(60 + Math.max(0, strength) * 40);
+        level.addFreshEntity(toad);
     }
 
     /**

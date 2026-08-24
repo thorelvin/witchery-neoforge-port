@@ -1,0 +1,56 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:brew_of_erosion"
+  },
+  "name": "Rite of Broken Earth",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Part the earth, the position of the foci controls the direction.[#]() [#](53341a)**Required offerings:** **Brew of Erosion**.[#]()",
+      "title": "Rite of Broken Earth",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:brew_of_erosion",
+          "x": 50,
+          "y": 76
+        }
+      ],
+      "source_id": 19,
+      "text": "[#](53341a)**7x7** - **Ritual** chalk - no initial altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 16,
+  "x": 0,
+  "y": 0
+}

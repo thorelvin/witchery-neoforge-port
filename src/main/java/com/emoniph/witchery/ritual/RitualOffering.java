@@ -44,6 +44,20 @@ record RitualOffering(ItemEntity itemEntity, GrassperBlockEntity grassper) {
         }
     }
 
+    ItemStack stack() {
+        if (itemEntity != null) {
+            return itemEntity.getItem();
+        }
+        return grassper != null ? grassper.getItem() : ItemStack.EMPTY;
+    }
+
+    net.minecraft.core.BlockPos blockPosition() {
+        if (itemEntity != null) {
+            return itemEntity.blockPosition();
+        }
+        return grassper != null ? grassper.getBlockPos() : net.minecraft.core.BlockPos.ZERO;
+    }
+
     Level level() {
         if (itemEntity != null) {
             return itemEntity.level();

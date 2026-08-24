@@ -106,6 +106,14 @@ public class WitcheryAttachments {
                             .copyOnDeath()
                             .build());
 
+    /** Source potion-bottling skill (0-100), trained by bottling suitably complex custom brews. */
+    public static final Supplier<AttachmentType<Integer>> BREWING_SKILL =
+            ATTACHMENT_TYPES.register("brewing_skill", () ->
+                    AttachmentType.builder(() -> 0)
+                            .serialize(Codec.INT.fieldOf("value"))
+                            .copyOnDeath()
+                            .build());
+
     /** Bound-familiar state for vanilla {@code minecraft:creaking} mobs. */
     public static final Supplier<AttachmentType<CreakingFamiliarData>> CREAKING_FAMILIAR =
             ATTACHMENT_TYPES.register("creaking_familiar", () ->
@@ -151,5 +159,13 @@ public class WitcheryAttachments {
 
     public static void setGatheredLivesUnlocked(net.minecraft.world.entity.player.Player player) {
         player.setData(GATHERED_LIVES_UNLOCKED.get(), Boolean.TRUE);
+    }
+
+    public static int getBrewingSkill(net.minecraft.world.entity.player.Player player) {
+        return Math.clamp(player.getData(BREWING_SKILL.get()), 0, 100);
+    }
+
+    public static void setBrewingSkill(net.minecraft.world.entity.player.Player player, int skill) {
+        player.setData(BREWING_SKILL.get(), Math.clamp(skill, 0, 100));
     }
 }

@@ -1,0 +1,100 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:redstone_soup"
+  },
+  "name": "Curse of Hell on Earth",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Only works in the Overworld at night, requires 200 power/s.[#]() [#](53341a)**Required offerings:** **Redstone Soup**, **Demon Heart**, **Waystone**, **Nether Star**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
+      "title": "Curse of Hell on Earth",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)**Conditions:** Night, Overworld.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "red",
+          "size": "small"
+        },
+        {
+          "color": "purple",
+          "size": "medium"
+        },
+        {
+          "color": "red",
+          "size": "large"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:redstone_soup",
+          "x": 14,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:demon_heart",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:waystone",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:nether_star",
+          "x": 68,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:bound_waystone",
+          "optional": true,
+          "x": 86,
+          "y": 76
+        }
+      ],
+      "source_id": 39,
+      "text": "[#](53341a)**7x7 + 11x11 + 15x15** - **Infernal / Otherwhere** chalk - **5000** altar power - gold frame: optional[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 29,
+  "x": 0,
+  "y": 0
+}

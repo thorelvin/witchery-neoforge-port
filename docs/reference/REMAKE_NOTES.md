@@ -13,6 +13,23 @@ Current target:
 
 ---
 
+## 2026-08-25 Custom Brew source-registry closeout
+
+- Do not infer completeness from `Brews` alone. The original registry mixes
+  composed ingredients, fixed cauldron recipes, dispersal, curses, ritual
+  targets, and canonical homes such as Shifting Seasons and Leonard summoning.
+  The authoritative fixture extracts all 158 registration sites in source order
+  and records their action class and important constructor arguments.
+- Keep exact liquid volume separate from the cauldron's three visible fill
+  levels. A full pot is 3,000 units and source bottle drains are
+  3000/1500/1000/750/600/500/375/300/200/100. Collapsing partial drains back to
+  the visible block state silently destroys the 4-30 bottle yield tiers.
+- Normal use owns fixed station staging; sneak-use owns explicit composed-brew
+  stirring where an ingredient overlaps. Mark staged item entities so the
+  block entity's automatic stir scan does not consume them into the wrong path.
+- The complete ownership, source hash, yield ladder, station recipes, and test
+  map live in [CUSTOM_BREW_SOURCE_PARITY.md](CUSTOM_BREW_SOURCE_PARITY.md).
+
 ## 2026-06-19 Shade of Leonard — combat/hex/soul parity gotchas
 
 - **`MobEffectInstance.getCures()` is not present** in this NeoForge build (21.11.42). The NeoForge
@@ -282,6 +299,15 @@ Blindness are registered before Summon Witch to match source order, and Rain of 
 before the later large curse routes. Because Blight and Rain are both medium Infernal Redstone Soup
 recipes with shared core items, source order must keep Blight before Rain when both complete sets are
 present.
+
+Follow-up (2026-08-24): the interim fallback notes in slices 1-7 above are superseded. All 93 source
+full-recipe registrations now have exact declarative homes, source full-recipe names are excluded from
+representative-trigger dispatch, and dropped plus Grassper-held stacks use the same distinct-source
+matcher. The other three source registrations remain documented direct adaptations.
+
+The same extracted fixture now generates a canonical 58-family ritual compendium. The Witches' Primer
+turns it into 96 source-tagged cards with exact ring, power, coven, condition, and ordered-offering
+metadata; optional offerings use a gold frame in both the held and placed Modonomicon renderers.
 
 ## 2026-06-10 Staged ritual-sacrifice consumption (one item per 20 ticks, source SacrificeItem)
 

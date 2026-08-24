@@ -15,6 +15,7 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.item.EarmuffsItem;
 import com.emoniph.witchery.network.BroomControlPayload;
+import com.emoniph.witchery.network.DoubleJumpPayload;
 import com.emoniph.witchery.network.HowlPayload;
 import com.emoniph.witchery.network.VampirePowerPayload;
 import com.emoniph.witchery.world.TormentAtmosphere;
@@ -63,6 +64,7 @@ public class WitcheryClientEvents {
     private static boolean lastBroomControlRiding;
     private static boolean lastBroomControlUp;
     private static boolean lastBroomControlDown;
+    private static boolean lastJumpDown;
 
     @SubscribeEvent
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
@@ -71,8 +73,27 @@ public class WitcheryClientEvents {
         com.emoniph.witchery.client.WoodenScannerPoseHarness.clientTick();
         com.emoniph.witchery.client.LegacyModelParityHarness.clientTick();
         applySwimmingBoost();
+        handleDoubleJumpInput();
         syncBroomControls();
         refreshCottonOnNightmareChange();
+    }
+
+    private static void handleDoubleJumpInput() {
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        boolean jumpDown = mc.options.keyJump.isDown();
+        if (player != null
+                && jumpDown
+                && !lastJumpDown
+                && !player.onGround()
+                && !player.isInWater()
+                && !player.isPassenger()
+                && !player.getAbilities().flying
+                && player.hasEffect(WitcheryMobEffects.DOUBLE_JUMP)
+                && mc.getConnection() != null) {
+            ClientPacketDistributor.sendToServer(DoubleJumpPayload.INSTANCE);
+        }
+        lastJumpDown = jumpDown;
     }
 
     private static void syncBroomControls() {

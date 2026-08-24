@@ -1,0 +1,5454 @@
+{
+  "schemaVersion": 1,
+  "source": "WitcheryRecipes.java",
+  "sourceSha256": "2e25c794439becf119691af254e3bb5cc666a42961e27767800668a706a82ca0",
+  "registrationCount": 96,
+  "familyCount": 58,
+  "families": [
+    {
+      "id": "circle_talisman",
+      "title": "Circle Talisman Binding",
+      "icon": "witchery:circle_talisman",
+      "sourceIds": [
+        1,
+        45
+      ],
+      "variants": [
+        {
+          "sourceId": 1,
+          "sourceLine": 2945,
+          "sourceBookIndex": 0,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindcircle",
+          "title": "Rite of Binding",
+          "variantLabel": "Redstone talisman binding",
+          "description": "Pulls the circles into the talisman.",
+          "modernHome": "bind_circle_talisman",
+          "mode": "direct",
+          "power": 1000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.CIRCLE_TALISMAN)",
+              "item": "witchery:circle_talisman",
+              "label": "Circle Talisman",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151137_ax)",
+              "item": "minecraft:redstone",
+              "label": "Redstone",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 45,
+          "sourceLine": 3567,
+          "sourceBookIndex": 0,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindcircleportable",
+          "title": "Rite of Binding",
+          "variantLabel": "Portable talisman binding",
+          "description": "Pulls the circles into the talisman.",
+          "modernHome": "bind_circle_talisman",
+          "mode": "direct",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.CIRCLE_TALISMAN)",
+              "item": "witchery:circle_talisman",
+              "label": "Circle Talisman",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151114_aO)",
+              "item": "minecraft:glowstone_dust",
+              "label": "Glowstone Dust",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "waystone_binding",
+      "title": "Waystone Binding",
+      "icon": "witchery:waystone",
+      "sourceIds": [
+        2,
+        41
+      ],
+      "variants": [
+        {
+          "sourceId": 2,
+          "sourceLine": 2955,
+          "sourceBookIndex": 1,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindwaystone",
+          "title": "Rite of Binding",
+          "variantLabel": "Altar-powered location binding",
+          "description": "Binds the Waystone to the location of the ritual.",
+          "modernHome": "bind_waystone",
+          "mode": "full",
+          "power": 500,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystone.createStack()",
+              "item": "witchery:waystone",
+              "label": "Waystone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+              "item": "witchery:ender_dew",
+              "label": "Ender Dew",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151114_aO)",
+              "item": "minecraft:glowstone_dust",
+              "label": "Glowstone Dust",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 41,
+          "sourceLine": 3505,
+          "sourceBookIndex": 1,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindwaystoneportable",
+          "title": "Rite of Binding",
+          "variantLabel": "Portable location binding",
+          "description": "Binds the Waystone to the location of the ritual.",
+          "modernHome": "bind_waystone_portable",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystone.createStack()",
+              "item": "witchery:waystone",
+              "label": "Waystone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+              "item": "witchery:ender_dew",
+              "label": "Ender Dew",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAshWood.createStack()",
+              "item": "witchery:wood_ash",
+              "label": "Wood Ash",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "attuned_stone_charging",
+      "title": "Attuned Stone Charging",
+      "icon": "witchery:attuned_stone",
+      "sourceIds": [
+        3
+      ],
+      "variants": [
+        {
+          "sourceId": 3,
+          "sourceLine": 2969,
+          "sourceBookIndex": 3,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.chargestone",
+          "title": "Rite of Charging",
+          "variantLabel": "Rite of Charging",
+          "description": "Charges the Attuned Stone.",
+          "modernHome": "charge_stone_small",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            },
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+              "item": "witchery:attuned_stone",
+              "label": "Attuned Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151114_aO)",
+              "item": "minecraft:glowstone_dust",
+              "label": "Glowstone Dust",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151137_ax)",
+              "item": "minecraft:redstone",
+              "label": "Redstone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAshWood.createStack()",
+              "item": "witchery:wood_ash",
+              "label": "Wood Ash",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemQuicklime.createStack()",
+              "item": "witchery:quicklime",
+              "label": "Quicklime",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "infusion_recharge",
+      "title": "Infusion Recharging",
+      "icon": "minecraft:potion",
+      "sourceIds": [
+        4
+      ],
+      "variants": [
+        {
+          "sourceId": 4,
+          "sourceLine": 2988,
+          "sourceBookIndex": 4,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.infusionrecharge",
+          "title": "Rite of Charging",
+          "variantLabel": "Rite of Charging",
+          "description": "Recharge infused power by standing in the circle. Lasts indefinitely, but requires 40 power/s.",
+          "modernHome": "infusion_recharge",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            },
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151068_bn, 1, 8193)",
+              "item": "minecraft:potion",
+              "label": "Potion of Regeneration",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "waystone_transposition",
+      "title": "Waystone Transposition",
+      "icon": "witchery:bound_waystone",
+      "sourceIds": [
+        5,
+        91
+      ],
+      "variants": [
+        {
+          "sourceId": 5,
+          "sourceLine": 2998,
+          "sourceBookIndex": 5,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.teleporttowaystone",
+          "title": "Rite of Transposition",
+          "variantLabel": "Bound Waystone journey",
+          "description": "Teleport to the bound Waystone's location.",
+          "modernHome": "transposition_to_waystone",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 16, 0)",
+              "color": "purple",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 91,
+          "sourceLine": 4341,
+          "sourceBookIndex": 5,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.teleporttowaystone",
+          "title": "Rite of Transposition",
+          "variantLabel": "Blooded Waystone journey",
+          "description": "Teleport to the bound Waystone's location.",
+          "modernHome": "transposition_to_waystone",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 16, 0)",
+              "color": "purple",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystonePlayerBound.createStack()",
+              "item": "witchery:blooded_waystone",
+              "label": "Blooded Waystone",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "entity_transposition",
+      "title": "Entity Transposition",
+      "icon": "witchery:waystone",
+      "sourceIds": [
+        6
+      ],
+      "variants": [
+        {
+          "sourceId": 6,
+          "sourceLine": 3007,
+          "sourceBookIndex": 6,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.teleportentity",
+          "title": "Rite of Transposition",
+          "variantLabel": "Rite of Transposition",
+          "description": "Summon the taglock kit's bound creature or player.",
+          "modernHome": "transposition_entity",
+          "mode": "full",
+          "power": 3000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 28, 0)",
+              "color": "purple",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystone.createStack()",
+              "item": "witchery:waystone",
+              "label": "Waystone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+              "item": "witchery:ender_dew",
+              "label": "Ender Dew",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151036_c)",
+              "item": "minecraft:iron_axe",
+              "label": "Iron Axe",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "ore_transposition",
+      "title": "Ore Transposition",
+      "icon": "minecraft:ender_pearl",
+      "sourceIds": [
+        7
+      ],
+      "variants": [
+        {
+          "sourceId": 7,
+          "sourceLine": 3024,
+          "sourceBookIndex": 7,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.teleportironore",
+          "title": "Rite of Transposition",
+          "variantLabel": "Rite of Transposition",
+          "description": "Transpose iron from the ore below.",
+          "modernHome": "transpose_ores",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 40, 0)",
+              "color": "purple",
+              "size": "large"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151079_bi)",
+              "item": "minecraft:ender_pearl",
+              "label": "Ender Pearl",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151042_j)",
+              "item": "minecraft:iron_ingot",
+              "label": "Iron Ingot",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151065_br)",
+              "item": "minecraft:blaze_powder",
+              "label": "Blaze Powder",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemDiamondVapour.createStack()",
+              "item": "witchery:diamond_vapour",
+              "label": "Diamond Vapor",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "sanctity",
+      "title": "Rite of Sanctity",
+      "icon": "minecraft:feather",
+      "sourceIds": [
+        8
+      ],
+      "variants": [
+        {
+          "sourceId": 8,
+          "sourceLine": 3039,
+          "sourceBookIndex": 8,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.protection",
+          "title": "Rite of Sanctity",
+          "variantLabel": "Rite of Sanctity",
+          "description": "Monsters cannot enter the circle. Lasts indefinitely, but requires 16 power/s.",
+          "modernHome": "sanctity",
+          "mode": "full",
+          "power": 500,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151008_G)",
+              "item": "minecraft:feather",
+              "label": "Feather",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151137_ax)",
+              "item": "minecraft:redstone",
+              "label": "Redstone",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "imprisonment",
+      "title": "Rite of Imprisonment",
+      "icon": "minecraft:slime_ball",
+      "sourceIds": [
+        9
+      ],
+      "variants": [
+        {
+          "sourceId": 9,
+          "sourceLine": 3048,
+          "sourceBookIndex": 9,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.imprisonment",
+          "title": "Rite of Imprisonment",
+          "variantLabel": "Rite of Imprisonment",
+          "description": "Monsters cannot leave the circle. Lasts indefinitely, but requires 16 power/s.",
+          "modernHome": "imprisonment",
+          "mode": "full",
+          "power": 500,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151123_aH)",
+              "item": "minecraft:slime_ball",
+              "label": "Slime Ball",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151137_ax)",
+              "item": "minecraft:redstone",
+              "label": "Redstone",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "protection",
+      "title": "Rites of Protection",
+      "icon": "minecraft:obsidian",
+      "sourceIds": [
+        10,
+        11,
+        12
+      ],
+      "variants": [
+        {
+          "sourceId": 10,
+          "sourceLine": 3057,
+          "sourceBookIndex": 10,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.barrier",
+          "title": "Rite of Protection",
+          "variantLabel": "Monster ward",
+          "description": "Conjure a dome, impenetrable to monsters. Lasts indefinitely, but requires 24 power/s.",
+          "modernHome": "obsidian_barrier_monsters",
+          "mode": "full",
+          "power": 500,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150343_Z)",
+              "item": "minecraft:obsidian",
+              "label": "Obsidian",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151137_ax)",
+              "item": "minecraft:redstone",
+              "label": "Redstone",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        },
+        {
+          "sourceId": 11,
+          "sourceLine": 3070,
+          "sourceBookIndex": 11,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.barrierlarge",
+          "title": "Rite of Protection",
+          "variantLabel": "Universal ward",
+          "description": "Conjure a dome, impenetrable to all. Lasts indefinitely, but requires 28 power/s.",
+          "modernHome": "protection",
+          "mode": "full",
+          "power": 1000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150343_Z)",
+              "item": "minecraft:obsidian",
+              "label": "Obsidian",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151114_aO)",
+              "item": "minecraft:glowstone_dust",
+              "label": "Glowstone Dust",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        },
+        {
+          "sourceId": 12,
+          "sourceLine": 3083,
+          "sourceBookIndex": 12,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.barrierportable",
+          "title": "Rite of Protection",
+          "variantLabel": "Portable ward",
+          "description": "Conjure an impenetrable dome for 60 seconds.",
+          "modernHome": "obsidian_barrier_portable",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150343_Z)",
+              "item": "minecraft:obsidian",
+              "label": "Obsidian",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "earths_wrath",
+      "title": "Rite of Earth's Wrath",
+      "icon": "minecraft:stone",
+      "sourceIds": [
+        13,
+        77
+      ],
+      "variants": [
+        {
+          "sourceId": 13,
+          "sourceLine": 3092,
+          "sourceBookIndex": 13,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.volcano",
+          "title": "Rite of Earth's Wrath",
+          "variantLabel": "Charged-stone volcano",
+          "description": "Raise a volcano. A lava pool must lie below.",
+          "modernHome": "volcano_charged",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 16)",
+              "color": "red",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150348_b)",
+              "item": "minecraft:stone",
+              "label": "Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151064_bs)",
+              "item": "minecraft:magma_cream",
+              "label": "Magma Cream",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151010_B)",
+              "item": "minecraft:golden_sword",
+              "label": "Golden Sword",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 77,
+          "sourceLine": 4101,
+          "sourceBookIndex": 13,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.volcano",
+          "title": "Rite of Earth's Wrath",
+          "variantLabel": "Altar-powered volcano",
+          "description": "Raise a volcano. A lava pool must lie below.",
+          "modernHome": "volcano_powered",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 16)",
+              "color": "red",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150347_e)",
+              "item": "minecraft:cobblestone",
+              "label": "Cobblestone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151064_bs)",
+              "item": "minecraft:magma_cream",
+              "label": "Magma Cream",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151010_B)",
+              "item": "minecraft:golden_sword",
+              "label": "Golden Sword",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "skys_wrath",
+      "title": "Rite of Sky's Wrath",
+      "icon": "minecraft:wooden_sword",
+      "sourceIds": [
+        14,
+        15,
+        16
+      ],
+      "variants": [
+        {
+          "sourceId": 14,
+          "sourceLine": 3106,
+          "sourceBookIndex": 14,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.storm",
+          "title": "Rite of Sky's Wrath",
+          "variantLabel": "Inner storm",
+          "description": "Call a focused lightning storm inside the circle.",
+          "modernHome": "storm_base",
+          "mode": "full",
+          "power": 1000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151041_m)",
+              "item": "minecraft:wooden_sword",
+              "label": "Wooden Sword",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAshWood.createStack()",
+              "item": "witchery:wood_ash",
+              "label": "Wood Ash",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        },
+        {
+          "sourceId": 15,
+          "sourceLine": 3119,
+          "sourceBookIndex": 15,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.stormlarge",
+          "title": "Rite of Sky's Wrath",
+          "variantLabel": "Outer storm",
+          "description": "Call a focused lightning storm outside the circle.",
+          "modernHome": "storm_large",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151052_q)",
+              "item": "minecraft:stone_sword",
+              "label": "Stone Sword",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAshWood.createStack()",
+              "item": "witchery:wood_ash",
+              "label": "Wood Ash",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        },
+        {
+          "sourceId": 16,
+          "sourceLine": 3132,
+          "sourceBookIndex": 16,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.stormportable",
+          "title": "Rite of Sky's Wrath",
+          "variantLabel": "Portable storm",
+          "description": "Call a focused lightning storm outside the circle.",
+          "modernHome": "storm_portable",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151040_l)",
+              "item": "minecraft:iron_sword",
+              "label": "Iron Sword",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAshWood.createStack()",
+              "item": "witchery:wood_ash",
+              "label": "Wood Ash",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "total_eclipse",
+      "title": "Rite of Total Eclipse",
+      "icon": "minecraft:stone_axe",
+      "sourceIds": [
+        17,
+        18
+      ],
+      "variants": [
+        {
+          "sourceId": 17,
+          "sourceLine": 3145,
+          "sourceBookIndex": 17,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_AT_DAY)",
+          "translationKey": "witchery.rite.eclipse",
+          "title": "Rite of Total Eclipse",
+          "variantLabel": "Altar-powered eclipse",
+          "description": "Block out the sun.",
+          "modernHome": "total_eclipse",
+          "mode": "full",
+          "power": 3000,
+          "coven": 0,
+          "conditions": [
+            "Day"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151049_t)",
+              "item": "minecraft:stone_axe",
+              "label": "Stone Axe",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemQuicklime.createStack()",
+              "item": "witchery:quicklime",
+              "label": "Quicklime",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 18,
+          "sourceLine": 3156,
+          "sourceBookIndex": 18,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_AT_DAY)",
+          "translationKey": "witchery.rite.eclipseportable",
+          "title": "Rite of Total Eclipse",
+          "variantLabel": "Portable eclipse",
+          "description": "Block out the sun.",
+          "modernHome": "total_eclipse_portable",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [
+            "Day"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151036_c)",
+              "item": "minecraft:iron_axe",
+              "label": "Iron Axe",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemQuicklime.createStack()",
+              "item": "witchery:quicklime",
+              "label": "Quicklime",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "broken_earth",
+      "title": "Rite of Broken Earth",
+      "icon": "witchery:brew_of_erosion",
+      "sourceIds": [
+        19
+      ],
+      "variants": [
+        {
+          "sourceId": 19,
+          "sourceLine": 3169,
+          "sourceBookIndex": 19,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.partearth",
+          "title": "Rite of Broken Earth",
+          "variantLabel": "Rite of Broken Earth",
+          "description": "Part the earth, the position of the foci controls the direction.",
+          "modernHome": "broken_earth",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfErosion.createStack()",
+              "item": "witchery:brew_of_erosion",
+              "label": "Brew of Erosion",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "moving_earth",
+      "title": "Rite of Moving Earth",
+      "icon": "witchery:brew_of_sprouting",
+      "sourceIds": [
+        20,
+        46,
+        47
+      ],
+      "variants": [
+        {
+          "sourceId": 20,
+          "sourceLine": 3178,
+          "sourceBookIndex": 20,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.raiseearth",
+          "title": "Rite of Moving Earth",
+          "variantLabel": "Small column",
+          "description": "Raise a column of earth.",
+          "modernHome": "raise_column_small",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+              "item": "witchery:brew_of_sprouting",
+              "label": "Brew of Sprouting",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150434_aF)",
+              "item": "minecraft:cactus",
+              "label": "Cactus",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151016_H)",
+              "item": "minecraft:gunpowder",
+              "label": "Gunpowder",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        },
+        {
+          "sourceId": 46,
+          "sourceLine": 3579,
+          "sourceBookIndex": 20,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.raiseearth",
+          "title": "Rite of Moving Earth",
+          "variantLabel": "Medium column",
+          "description": "Raise a column of earth.",
+          "modernHome": "raise_column_medium",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+              "item": "witchery:brew_of_sprouting",
+              "label": "Brew of Sprouting",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150434_aF)",
+              "item": "minecraft:cactus",
+              "label": "Cactus",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151137_ax)",
+              "item": "minecraft:redstone",
+              "label": "Redstone",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 47,
+          "sourceLine": 3590,
+          "sourceBookIndex": 20,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.raiseearth",
+          "title": "Rite of Moving Earth",
+          "variantLabel": "Large column",
+          "description": "Raise a column of earth.",
+          "modernHome": "raise_column_large",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(40, 0, 0)",
+              "color": "white",
+              "size": "large"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+              "item": "witchery:brew_of_sprouting",
+              "label": "Brew of Sprouting",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150434_aF)",
+              "item": "minecraft:cactus",
+              "label": "Cactus",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151114_aO)",
+              "item": "minecraft:glowstone_dust",
+              "label": "Glowstone Dust",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "banishing",
+      "title": "Rite of Banishing",
+      "icon": "minecraft:blaze_powder",
+      "sourceIds": [
+        21,
+        22
+      ],
+      "variants": [
+        {
+          "sourceId": 21,
+          "sourceLine": 3192,
+          "sourceBookIndex": 23,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.banishdemonportable",
+          "title": "Rite of Banishing",
+          "variantLabel": "Portable banishing",
+          "description": "Send nearby Demons back to the Pit.",
+          "modernHome": "banish_demon_charged",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151065_br)",
+              "item": "minecraft:blaze_powder",
+              "label": "Blaze Powder",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystone.createStack()",
+              "item": "witchery:waystone",
+              "label": "Waystone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 22,
+          "sourceLine": 3205,
+          "sourceBookIndex": 24,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.banishdemon",
+          "title": "Rite of Banishing",
+          "variantLabel": "Altar-powered banishing",
+          "description": "Send nearby Demons back to the Pit.",
+          "modernHome": "banish_demon",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151065_br)",
+              "item": "minecraft:blaze_powder",
+              "label": "Blaze Powder",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystone.createStack()",
+              "item": "witchery:waystone",
+              "label": "Waystone",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "demon_summoning",
+      "title": "Demon Summoning",
+      "icon": "witchery:refined_evil",
+      "sourceIds": [
+        23,
+        24
+      ],
+      "variants": [
+        {
+          "sourceId": 23,
+          "sourceLine": 3216,
+          "sourceBookIndex": 25,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.summondemon",
+          "title": "Rite of Summoning",
+          "variantLabel": "Refined Evil path",
+          "description": "Call forth a Demon. The inner area must be clear 7x7x4 blocks!",
+          "modernHome": "summon_demon",
+          "mode": "full",
+          "power": 3000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 40)",
+              "color": "red",
+              "size": "large"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemRefinedEvil.createStack()",
+              "item": "witchery:refined_evil",
+              "label": "Refined Evil",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151065_br)",
+              "item": "minecraft:blaze_powder",
+              "label": "Blaze Powder",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151079_bi)",
+              "item": "minecraft:ender_pearl",
+              "label": "Ender Pearl",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 24,
+          "sourceLine": 3231,
+          "sourceBookIndex": 26,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.summondemonexpensive",
+          "title": "Rite of Summoning",
+          "variantLabel": "Blaze Rod path",
+          "description": "Call forth a Demon. The inner area must be clear 7x7x4 blocks!",
+          "modernHome": "summon_demon_expensive",
+          "mode": "full",
+          "power": 3000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 40)",
+              "color": "red",
+              "size": "large"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemRefinedEvil.createStack()",
+              "item": "witchery:refined_evil",
+              "label": "Refined Evil",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151072_bj)",
+              "item": "minecraft:blaze_rod",
+              "label": "Blaze Rod",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151079_bi)",
+              "item": "minecraft:ender_pearl",
+              "label": "Ender Pearl",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+              "item": "witchery:attuned_stone",
+              "label": "Attuned Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "wither_summoning",
+      "title": "Wither Summoning",
+      "icon": "minecraft:wither_skeleton_skull",
+      "sourceIds": [
+        25,
+        26
+      ],
+      "variants": [
+        {
+          "sourceId": 25,
+          "sourceLine": 3249,
+          "sourceBookIndex": 27,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.summonwither",
+          "title": "Rite of Summoning",
+          "variantLabel": "Diamond Vapour path",
+          "description": "Call forth a Wither. The inner area must be clear 7x7x4 blocks!",
+          "modernHome": "summon_wither",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            },
+            {
+              "sourceExpression": "new Circle(0, 0, 40)",
+              "color": "red",
+              "size": "large"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151144_bL, 1, 1)",
+              "item": "minecraft:wither_skeleton_skull",
+              "label": "Wither Skeleton Skull",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemDiamondVapour.createStack()",
+              "item": "witchery:diamond_vapour",
+              "label": "Diamond Vapor",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151079_bi)",
+              "item": "minecraft:ender_pearl",
+              "label": "Ender Pearl",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 26,
+          "sourceLine": 3265,
+          "sourceBookIndex": 28,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.summonwitherexpensive",
+          "title": "Rite of Summoning",
+          "variantLabel": "Diamond path",
+          "description": "Call forth a Wither. The inner area must be clear 7x7x4 blocks!",
+          "modernHome": "summon_wither_expensive",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            },
+            {
+              "sourceExpression": "new Circle(0, 0, 40)",
+              "color": "red",
+              "size": "large"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151144_bL, 1, 1)",
+              "item": "minecraft:wither_skeleton_skull",
+              "label": "Wither Skeleton Skull",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151045_i)",
+              "item": "minecraft:diamond",
+              "label": "Diamond",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151079_bi)",
+              "item": "minecraft:ender_pearl",
+              "label": "Ender Pearl",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+              "item": "witchery:attuned_stone",
+              "label": "Attuned Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "player_infusions",
+      "title": "Player Infusions",
+      "icon": "witchery:ghost_of_the_light",
+      "sourceIds": [
+        27,
+        28,
+        29,
+        30
+      ],
+      "variants": [
+        {
+          "sourceId": 27,
+          "sourceLine": 3283,
+          "sourceBookIndex": 31,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.infusionlight",
+          "title": "Rite of Infusion",
+          "variantLabel": "Light infusion",
+          "description": "You must stand in the circle.",
+          "modernHome": "infuse_light",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            },
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemGhostOfTheLight.createStack()",
+              "item": "witchery:ghost_of_the_light",
+              "label": "Ghost of the Light",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 28,
+          "sourceLine": 3295,
+          "sourceBookIndex": 32,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.infusionearth",
+          "title": "Rite of Infusion",
+          "variantLabel": "Overworld infusion",
+          "description": "You must stand in the circle.",
+          "modernHome": "infuse_overworld",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            },
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemSoulOfTheWorld.createStack()",
+              "item": "witchery:soul_of_the_world",
+              "label": "Soul of the World",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 29,
+          "sourceLine": 3307,
+          "sourceBookIndex": 33,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.infusionender",
+          "title": "Rite of Infusion",
+          "variantLabel": "Otherwhere infusion",
+          "description": "You must stand in the circle.",
+          "modernHome": "infuse_otherwhere",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 16, 0)",
+              "color": "purple",
+              "size": "small"
+            },
+            {
+              "sourceExpression": "new Circle(0, 28, 0)",
+              "color": "purple",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemSpiritOfOtherwhere.createStack()",
+              "item": "witchery:spirit_of_otherwhere",
+              "label": "Spirit of Otherwhere",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 30,
+          "sourceLine": 3319,
+          "sourceBookIndex": 34,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.infusionhell",
+          "title": "Rite of Infusion",
+          "variantLabel": "Infernal infusion",
+          "description": "You must stand in the circle.",
+          "modernHome": "infuse_infernal",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 16)",
+              "color": "red",
+              "size": "small"
+            },
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemInfernalAnimus.createStack()",
+              "item": "witchery:infernal_animus",
+              "label": "Infernal Animus",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "enchanted_broom",
+      "title": "Enchanted Broom",
+      "icon": "witchery:broom",
+      "sourceIds": [
+        31
+      ],
+      "variants": [
+        {
+          "sourceId": 31,
+          "sourceLine": 3329,
+          "sourceBookIndex": 35,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+          "translationKey": "witchery.rite.infusionsky",
+          "title": "Rite of Infusion",
+          "variantLabel": "Rite of Infusion",
+          "description": "Perform at night.",
+          "modernHome": "enchant_broom",
+          "mode": "full",
+          "power": 3000,
+          "coven": 0,
+          "conditions": [
+            "Night"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            },
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBroom.createStack()",
+              "item": "witchery:broom",
+              "label": "Broom",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemFlyingOintment.createStack()",
+              "item": "witchery:flying_ointment",
+              "label": "Flying Ointment",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "necromantic_stone",
+      "title": "Necromantic Stone",
+      "icon": "witchery:attuned_stone",
+      "sourceIds": [
+        32
+      ],
+      "variants": [
+        {
+          "sourceId": 32,
+          "sourceLine": 3342,
+          "sourceBookIndex": 36,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+          "translationKey": "witchery.rite.necrostone",
+          "title": "Rite of Necromancy",
+          "variantLabel": "Rite of Necromancy",
+          "description": "Creates a Necromantic Stone. Perform at night.",
+          "modernHome": "necromantic_stone",
+          "mode": "full",
+          "power": 1000,
+          "coven": 0,
+          "conditions": [
+            "Night"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+              "item": "witchery:attuned_stone",
+              "label": "Attuned Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151103_aS)",
+              "item": "minecraft:bone",
+              "label": "Bone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151078_bh)",
+              "item": "minecraft:rotten_flesh",
+              "label": "Rotten Flesh",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAshWood.createStack()",
+              "item": "witchery:wood_ash",
+              "label": "Wood Ash",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151040_l)",
+              "item": "minecraft:iron_sword",
+              "label": "Iron Sword",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemSpectralDust.createStack()",
+              "item": "witchery:spectral_dust",
+              "label": "Spectral Dust",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "familiar_summoning",
+      "title": "Familiar Summoning",
+      "icon": "witchery:drop_of_luck",
+      "sourceIds": [
+        33
+      ],
+      "variants": [
+        {
+          "sourceId": 33,
+          "sourceLine": 3361,
+          "sourceBookIndex": 30,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.summonfamiliar",
+          "title": "Rite of Summoning",
+          "variantLabel": "Rite of Summoning",
+          "description": "Summons a familiar to find things. Try giving the familiar a diamond! The inner area must be clear 7x7x4 blocks!",
+          "modernHome": "summon_familiar",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemDropOfLuck.createStack()",
+              "item": "witchery:drop_of_luck",
+              "label": "Drop of Luck",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151147_al)",
+              "item": "minecraft:porkchop",
+              "label": "Porkchop",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151043_k)",
+              "item": "minecraft:gold_ingot",
+              "label": "Gold Ingot",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.ARTHANA)",
+              "item": "witchery:arthana",
+              "label": "Arthana",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "waystone_copying",
+      "title": "Waystone Copying",
+      "icon": "witchery:bound_waystone",
+      "sourceIds": [
+        34,
+        42
+      ],
+      "variants": [
+        {
+          "sourceId": 34,
+          "sourceLine": 3378,
+          "sourceBookIndex": 2,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindwaystonecopy",
+          "title": "Rite of Binding",
+          "variantLabel": "Altar-powered copying",
+          "description": "Binds the Waystone location on one waystone to another waystone.",
+          "modernHome": "bind_waystone_copy",
+          "mode": "full",
+          "power": 500,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystone.createStack()",
+              "item": "witchery:waystone",
+              "label": "Waystone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+              "item": "witchery:ender_dew",
+              "label": "Ender Dew",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151137_ax)",
+              "item": "minecraft:redstone",
+              "label": "Redstone",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 42,
+          "sourceLine": 3519,
+          "sourceBookIndex": 2,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindwaystonecopyportable",
+          "title": "Rite of Binding",
+          "variantLabel": "Portable copying",
+          "description": "Binds the Waystone location on one waystone to another waystone.",
+          "modernHome": "bind_waystone_copy_portable",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystone.createStack()",
+              "item": "witchery:waystone",
+              "label": "Waystone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+              "item": "witchery:ender_dew",
+              "label": "Ender Dew",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemQuicklime.createStack()",
+              "item": "witchery:quicklime",
+              "label": "Quicklime",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "fertility",
+      "title": "Rite of Fertility",
+      "icon": "minecraft:bone_meal",
+      "sourceIds": [
+        35,
+        36
+      ],
+      "variants": [
+        {
+          "sourceId": 35,
+          "sourceLine": 3395,
+          "sourceBookIndex": 21,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.fertility",
+          "title": "Rite of Fertility",
+          "variantLabel": "Altar-powered fertility",
+          "description": "Makes nearby land fertile. Heals sick villagers.",
+          "modernHome": "fertility",
+          "mode": "full",
+          "power": 3000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Dye.BONE_MEAL.createStack()",
+              "item": "minecraft:bone_meal",
+              "label": "Bone Meal",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemHintOfRebirth.createStack()",
+              "item": "witchery:hint_of_rebirth",
+              "label": "Hint of Rebirth",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemDiamondVapour.createStack()",
+              "item": "witchery:diamond_vapour",
+              "label": "Diamond Vapor",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemQuicklime.createStack()",
+              "item": "witchery:quicklime",
+              "label": "Quicklime",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemGypsum.createStack()",
+              "item": "witchery:gypsum",
+              "label": "Gypsum",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemMutandis.createStack()",
+              "item": "witchery:mutandis",
+              "label": "Mutandis",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 36,
+          "sourceLine": 3414,
+          "sourceBookIndex": 22,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.fertilityportable",
+          "title": "Rite of Fertility",
+          "variantLabel": "Portable fertility",
+          "description": "Makes nearby land fertile. Heals sick villagers.",
+          "modernHome": "portable_fertility",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Dye.BONE_MEAL.createStack()",
+              "item": "minecraft:bone_meal",
+              "label": "Bone Meal",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemHintOfRebirth.createStack()",
+              "item": "witchery:hint_of_rebirth",
+              "label": "Hint of Rebirth",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemDiamondVapour.createStack()",
+              "item": "witchery:diamond_vapour",
+              "label": "Diamond Vapor",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemQuicklime.createStack()",
+              "item": "witchery:quicklime",
+              "label": "Quicklime",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemGypsum.createStack()",
+              "item": "witchery:gypsum",
+              "label": "Gypsum",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemMutandisExtremis.createStack()",
+              "item": "witchery:mutandis_extremis",
+              "label": "Mutandis Extremis",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "blight",
+      "title": "Curse of Blight",
+      "icon": "witchery:attuned_stone_charged",
+      "sourceIds": [
+        37
+      ],
+      "variants": [
+        {
+          "sourceId": 37,
+          "sourceLine": 3431,
+          "sourceBookIndex": 37,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.curseblight",
+          "title": "Curse of Blight",
+          "variantLabel": "Curse of Blight",
+          "description": "Makes nearby land infertile and causes sickness.",
+          "modernHome": "blight",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemRedstoneSoup.createStack()",
+              "item": "witchery:redstone_soup",
+              "label": "Redstone Soup",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemReekOfMisfortune.createStack()",
+              "item": "witchery:reek_of_misfortune",
+              "label": "Reek of Misfortune",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151071_bq)",
+              "item": "minecraft:fermented_spider_eye",
+              "label": "Fermented Spider Eye",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151060_bw)",
+              "item": "minecraft:glistering_melon_slice",
+              "label": "Glistering Melon Slice",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151078_bh)",
+              "item": "minecraft:rotten_flesh",
+              "label": "Rotten Flesh",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151045_i)",
+              "item": "minecraft:diamond",
+              "label": "Diamond",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "blindness",
+      "title": "Curse of Blindness",
+      "icon": "witchery:attuned_stone_charged",
+      "sourceIds": [
+        38
+      ],
+      "variants": [
+        {
+          "sourceId": 38,
+          "sourceLine": 3448,
+          "sourceBookIndex": 38,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.curseblindness",
+          "title": "Curse of Blindness",
+          "variantLabel": "Curse of Blindness",
+          "description": "Makes nearby creatures blind.",
+          "modernHome": "blindness",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 16)",
+              "color": "red",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemRedstoneSoup.createStack()",
+              "item": "witchery:redstone_soup",
+              "label": "Redstone Soup",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemReekOfMisfortune.createStack()",
+              "item": "witchery:reek_of_misfortune",
+              "label": "Reek of Misfortune",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+              "item": "witchery:exhale_of_horned_one",
+              "label": "Exhale of the Horned One",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfInk.createStack()",
+              "item": "witchery:brew_of_ink",
+              "label": "Brew of Ink",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151170_bI)",
+              "item": "minecraft:poisonous_potato",
+              "label": "Poisonous Potato",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151070_bp)",
+              "item": "minecraft:spider_eye",
+              "label": "Spider Eye",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151045_i)",
+              "item": "minecraft:diamond",
+              "label": "Diamond",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "hell_on_earth",
+      "title": "Curse of Hell on Earth",
+      "icon": "witchery:redstone_soup",
+      "sourceIds": [
+        39
+      ],
+      "variants": [
+        {
+          "sourceId": 39,
+          "sourceLine": 3466,
+          "sourceBookIndex": 39,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_OVERWORLD, RitualTraits.ONLY_AT_NIGHT)",
+          "translationKey": "witchery.rite.hellonearth",
+          "title": "Curse of Hell on Earth",
+          "variantLabel": "Curse of Hell on Earth",
+          "description": "Only works in the Overworld at night, requires 200 power/s.",
+          "modernHome": "hell_on_earth",
+          "mode": "full",
+          "power": 5000,
+          "coven": 0,
+          "conditions": [
+            "Night",
+            "Overworld"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 16)",
+              "color": "red",
+              "size": "small"
+            },
+            {
+              "sourceExpression": "new Circle(0, 28, 0)",
+              "color": "purple",
+              "size": "medium"
+            },
+            {
+              "sourceExpression": "new Circle(0, 0, 40)",
+              "color": "red",
+              "size": "large"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemRedstoneSoup.createStack()",
+              "item": "witchery:redstone_soup",
+              "label": "Redstone Soup",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemDemonHeart.createStack()",
+              "item": "witchery:demon_heart",
+              "label": "Demon Heart",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystone.createStack()",
+              "item": "witchery:waystone",
+              "label": "Waystone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151156_bN)",
+              "item": "minecraft:nether_star",
+              "label": "Nether Star",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "witch_summoning",
+      "title": "Witch Summoning",
+      "icon": "witchery:diamond_vapour",
+      "sourceIds": [
+        40
+      ],
+      "variants": [
+        {
+          "sourceId": 40,
+          "sourceLine": 3487,
+          "sourceBookIndex": 29,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.summonwitch",
+          "title": "Rite of Summoning",
+          "variantLabel": "Rite of Summoning",
+          "description": "Summon a witch. The inner area must be clear 7x7x4 blocks!",
+          "modernHome": "summon_witch",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 16)",
+              "color": "red",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemDiamondVapour.createStack()",
+              "item": "witchery:diamond_vapour",
+              "label": "Diamond Vapor",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+              "item": "witchery:exhale_of_horned_one",
+              "label": "Exhale of the Horned One",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151064_bs)",
+              "item": "minecraft:magma_cream",
+              "label": "Magma Cream",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.ARTHANA)",
+              "item": "witchery:arthana",
+              "label": "Arthana",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151071_bq)",
+              "item": "minecraft:fermented_spider_eye",
+              "label": "Fermented Spider Eye",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "natures_power",
+      "title": "Rite of Nature's Power",
+      "icon": "witchery:brew_of_sprouting",
+      "sourceIds": [
+        43
+      ],
+      "variants": [
+        {
+          "sourceId": 43,
+          "sourceLine": 3534,
+          "sourceBookIndex": 22,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.naturespower",
+          "title": "Rite of Nature's Power",
+          "variantLabel": "Rite of Nature's Power",
+          "description": "Release nature on a barren area.",
+          "modernHome": "natures_power",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+              "item": "witchery:brew_of_sprouting",
+              "label": "Brew of Sprouting",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.SAPLING, 1, 0)",
+              "item": "witchery:rowan_sapling",
+              "label": "Rowan Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.SAPLING, 1, 1)",
+              "item": "witchery:alder_sapling",
+              "label": "Alder Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.SAPLING, 1, 2)",
+              "item": "witchery:hawthorn_sapling",
+              "label": "Hawthorn Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150345_g, 1, 0)",
+              "item": "minecraft:oak_sapling",
+              "label": "Oak Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150345_g, 1, 1)",
+              "item": "minecraft:spruce_sapling",
+              "label": "Spruce Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150345_g, 1, 2)",
+              "item": "minecraft:birch_sapling",
+              "label": "Birch Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "prior_incarnation",
+      "title": "Rite of Prior Incarnation",
+      "icon": "witchery:necro_stone",
+      "sourceIds": [
+        44
+      ],
+      "variants": [
+        {
+          "sourceId": 44,
+          "sourceLine": 3552,
+          "sourceBookIndex": 36,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.priorincarnation",
+          "title": "Rite of Prior Incarnation",
+          "variantLabel": "Rite of Prior Incarnation",
+          "description": "Summon a prior incarnation of a player (and their items) near to where they died.",
+          "modernHome": "prior_incarnation",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 16)",
+              "color": "red",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+              "item": "witchery:necro_stone",
+              "label": "Necromantic Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemDogTongue.createStack()",
+              "item": "witchery:tongue_of_dog",
+              "label": "Tongue of Dog",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151103_aS)",
+              "item": "minecraft:bone",
+              "label": "Bone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemSpectralDust.createStack()",
+              "item": "witchery:spectral_dust",
+              "label": "Spectral Dust",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "misfortune",
+      "title": "Misfortune and its Cure",
+      "icon": "witchery:bound_taglock_kit",
+      "sourceIds": [
+        48,
+        49
+      ],
+      "variants": [
+        {
+          "sourceId": 48,
+          "sourceLine": 3601,
+          "sourceBookIndex": 48,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_IN_STROM)",
+          "translationKey": "witchery.rite.cursecreature1",
+          "title": "Curse of Misfortune",
+          "variantLabel": "Curse of Misfortune",
+          "description": "Curse the taglocked being. Perform in a storm.",
+          "modernHome": "curse_creature",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [
+            "Storm"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+              "item": "witchery:exhale_of_horned_one",
+              "label": "Exhale of the Horned One",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151071_bq)",
+              "item": "minecraft:fermented_spider_eye",
+              "label": "Fermented Spider Eye",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151016_H)",
+              "item": "minecraft:gunpowder",
+              "label": "Gunpowder",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewGrotesque.createStack()",
+              "item": "witchery:brew_of_the_grotesque",
+              "label": "Brew of the Grotesque",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 49,
+          "sourceLine": 3619,
+          "sourceBookIndex": 49,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.removecurse1",
+          "title": "Rite of Remove Curse",
+          "variantLabel": "Cure Misfortune",
+          "description": "Cleanse the taglocked being of misfortune. Things may get worse.",
+          "modernHome": "cure_creature",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+              "item": "witchery:breath_of_goddess",
+              "label": "Breath of the Goddess",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151070_bp)",
+              "item": "minecraft:spider_eye",
+              "label": "Spider Eye",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151016_H)",
+              "item": "minecraft:gunpowder",
+              "label": "Gunpowder",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfLove.createStack()",
+              "item": "witchery:brew_of_love",
+              "label": "Brew of Love",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "mystic_branch",
+      "title": "Mystic Branch Infusion",
+      "icon": "witchery:ent_twig",
+      "sourceIds": [
+        50
+      ],
+      "variants": [
+        {
+          "sourceId": 50,
+          "sourceLine": 3637,
+          "sourceBookIndex": 35,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+          "translationKey": "witchery.rite.infusiontree",
+          "title": "Rite of Infusion",
+          "variantLabel": "Rite of Infusion",
+          "description": "Infuse a mystic branch. Perform at night.",
+          "modernHome": "mystic_branch",
+          "mode": "full",
+          "power": 3000,
+          "coven": 0,
+          "conditions": [
+            "Night"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            },
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBranchEnt.createStack()",
+              "item": "witchery:ent_twig",
+              "label": "Ent Twig",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemMysticUnguent.createStack()",
+              "item": "witchery:mystic_unguent",
+              "label": "Mystic Unguent",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "broiling",
+      "title": "Rite of Broiling",
+      "icon": "minecraft:blaze_rod",
+      "sourceIds": [
+        51,
+        58
+      ],
+      "variants": [
+        {
+          "sourceId": 51,
+          "sourceLine": 3650,
+          "sourceBookIndex": 20,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.cookfood",
+          "title": "Rite of Broiling",
+          "variantLabel": "Altar-powered broiling",
+          "description": "Cooks any food placed in the circle. May overcook food.",
+          "modernHome": "cook_item",
+          "mode": "full",
+          "power": 1000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 16)",
+              "color": "red",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151072_bj)",
+              "item": "minecraft:blaze_rod",
+              "label": "Blaze Rod",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAshWood.createStack()",
+              "item": "witchery:wood_ash",
+              "label": "Wood Ash",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151044_h)",
+              "item": "minecraft:coal",
+              "label": "Coal",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 58,
+          "sourceLine": 3766,
+          "sourceBookIndex": 20,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.cookfood",
+          "title": "Rite of Broiling",
+          "variantLabel": "Portable broiling",
+          "description": "Cooks any food placed in the circle. May overcook food.",
+          "modernHome": "cook_item",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 16)",
+              "color": "red",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151072_bj)",
+              "item": "minecraft:blaze_rod",
+              "label": "Blaze Rod",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAshWood.createStack()",
+              "item": "witchery:wood_ash",
+              "label": "Wood Ash",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151065_br)",
+              "item": "minecraft:blaze_powder",
+              "label": "Blaze Powder",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "insanity",
+      "title": "Insanity and its Cure",
+      "icon": "witchery:bound_taglock_kit",
+      "sourceIds": [
+        52,
+        53
+      ],
+      "variants": [
+        {
+          "sourceId": 52,
+          "sourceLine": 3662,
+          "sourceBookIndex": 48,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_IN_STROM)",
+          "translationKey": "witchery.rite.curseinsanity1",
+          "title": "Curse of Insanity",
+          "variantLabel": "Curse of Insanity",
+          "description": "Curse the taglocked being with monster visions. Perform in a storm.",
+          "modernHome": "curse_insanity",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [
+            "Storm"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+              "item": "witchery:exhale_of_horned_one",
+              "label": "Exhale of the Horned One",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151170_bI)",
+              "item": "minecraft:poisonous_potato",
+              "label": "Poisonous Potato",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151102_aT)",
+              "item": "minecraft:sugar",
+              "label": "Sugar",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewGrotesque.createStack()",
+              "item": "witchery:brew_of_the_grotesque",
+              "label": "Brew of the Grotesque",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 53,
+          "sourceLine": 3680,
+          "sourceBookIndex": 49,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.removeinsanity1",
+          "title": "Rite of Remove Curse",
+          "variantLabel": "Cure Insanity",
+          "description": "Cleanse the taglocked being of insanity. Things may get worse.",
+          "modernHome": "cure_insanity",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+              "item": "witchery:breath_of_goddess",
+              "label": "Breath of the Goddess",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151174_bG)",
+              "item": "minecraft:potato",
+              "label": "Potato",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151102_aT)",
+              "item": "minecraft:sugar",
+              "label": "Sugar",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfLove.createStack()",
+              "item": "witchery:brew_of_love",
+              "label": "Brew of Love",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "familiar_binding",
+      "title": "Familiar Binding",
+      "icon": "witchery:tear_of_goddess",
+      "sourceIds": [
+        54
+      ],
+      "variants": [
+        {
+          "sourceId": 54,
+          "sourceLine": 3698,
+          "sourceBookIndex": 1,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindfamiliar",
+          "title": "Rite of Binding",
+          "variantLabel": "Rite of Binding",
+          "description": "Bind a tamed owl, toad or cat as a familiar.",
+          "modernHome": "bind_familiar",
+          "mode": "full",
+          "power": 8000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemTearOfTheGoddess.createStack()",
+              "item": "witchery:tear_of_goddess",
+              "label": "Tear of the Goddess",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemOdourOfPurity.createStack()",
+              "item": "witchery:odour_of_purity",
+              "label": "Odour of Purity",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWhiffOfMagic.createStack()",
+              "item": "witchery:whiff_of_magic",
+              "label": "Whiff of Magic",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151045_i)",
+              "item": "minecraft:diamond",
+              "label": "Diamond",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemInfernalBlood.createStack()",
+              "item": "witchery:infernal_blood",
+              "label": "Demonic Blood",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "familiar_call",
+      "title": "Calling the Familiar",
+      "icon": "witchery:breath_of_goddess",
+      "sourceIds": [
+        55
+      ],
+      "variants": [
+        {
+          "sourceId": 55,
+          "sourceLine": 3716,
+          "sourceBookIndex": 30,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.callfamiliar",
+          "title": "Rite of Summoning",
+          "variantLabel": "Rite of Summoning",
+          "description": "Summon your familiar that has been dismissed or killed.",
+          "modernHome": "call_familiar",
+          "mode": "full",
+          "power": 1000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+              "item": "witchery:breath_of_goddess",
+              "label": "Breath of the Goddess",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemHintOfRebirth.createStack()",
+              "item": "witchery:hint_of_rebirth",
+              "label": "Hint of Rebirth",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWhiffOfMagic.createStack()",
+              "item": "witchery:whiff_of_magic",
+              "label": "Whiff of Magic",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "corrupt_poppet",
+      "title": "Curse of Corrupt Poppet",
+      "icon": "witchery:bound_taglock_kit",
+      "sourceIds": [
+        56
+      ],
+      "variants": [
+        {
+          "sourceId": 56,
+          "sourceLine": 3732,
+          "sourceBookIndex": 50,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.corruptvoodooprotection",
+          "title": "Curse of Corrupt Poppet",
+          "variantLabel": "Curse of Corrupt Poppet",
+          "description": "Destroy voodoo protection of taglocked being. Needs cat familiar.",
+          "modernHome": "corrupt_poppet",
+          "mode": "full",
+          "power": 7000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+              "item": "witchery:exhale_of_horned_one",
+              "label": "Exhale of the Horned One",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.POPPET.antiVoodooPoppet.createStack()",
+              "item": "witchery:voodoo_protection_poppet",
+              "label": "Voodoo Protection Poppet",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151065_br)",
+              "item": "minecraft:blaze_powder",
+              "label": "Blaze Powder",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemSpectralDust.createStack()",
+              "item": "witchery:spectral_dust",
+              "label": "Spectral Dust",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "crystal_ball",
+      "title": "Crystal Ball Infusion",
+      "icon": "witchery:quartz_sphere",
+      "sourceIds": [
+        57
+      ],
+      "variants": [
+        {
+          "sourceId": 57,
+          "sourceLine": 3750,
+          "sourceBookIndex": 35,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+          "translationKey": "witchery.rite.infusionfuture",
+          "title": "Rite of Infusion",
+          "variantLabel": "Rite of Infusion",
+          "description": "Infuse a Crystal Ball to see the future. Perform at night.",
+          "modernHome": "crystal_ball",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [
+            "Night"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemQuartzSphere.createStack()",
+              "item": "witchery:quartz_sphere",
+              "label": "Quartz Sphere",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151043_k)",
+              "item": "minecraft:gold_ingot",
+              "label": "Gold Ingot",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemHappenstanceOil.createStack()",
+              "item": "witchery:happenstance_oil",
+              "label": "Happenstance Oil",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "sinking",
+      "title": "Sinking and its Cure",
+      "icon": "witchery:bound_taglock_kit",
+      "sourceIds": [
+        59,
+        60
+      ],
+      "variants": [
+        {
+          "sourceId": 59,
+          "sourceLine": 3780,
+          "sourceBookIndex": 48,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_IN_STROM)",
+          "translationKey": "witchery.rite.cursesinking1",
+          "title": "Curse of Sinking",
+          "variantLabel": "Curse of Sinking",
+          "description": "Curse the taglocked being with extra weight. Perform in a storm.",
+          "modernHome": "curse_sinking",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [
+            "Storm"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+              "item": "witchery:exhale_of_horned_one",
+              "label": "Exhale of the Horned One",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Dye.INK_SAC.createStack()",
+              "item": "minecraft:ink_sac",
+              "label": "Ink Sac",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151075_bm)",
+              "item": "minecraft:nether_wart",
+              "label": "Nether Wart",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewGrotesque.createStack()",
+              "item": "witchery:brew_of_the_grotesque",
+              "label": "Brew of the Grotesque",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 60,
+          "sourceLine": 3798,
+          "sourceBookIndex": 49,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.removesinking1",
+          "title": "Rite of Remove Curse",
+          "variantLabel": "Cure Sinking",
+          "description": "Cleanse the taglocked being of sinking. Things may get worse.",
+          "modernHome": "cure_sinking",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+              "item": "witchery:breath_of_goddess",
+              "label": "Breath of the Goddess",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Dye.BONE_MEAL.createStack()",
+              "item": "minecraft:bone_meal",
+              "label": "Bone Meal",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151075_bm)",
+              "item": "minecraft:nether_wart",
+              "label": "Nether Wart",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfTheDepths.createStack()",
+              "item": "witchery:brew_of_the_depths",
+              "label": "Brew of the Depths",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "seer_stone",
+      "title": "Seer Stone Infusion",
+      "icon": "witchery:quartz_sphere",
+      "sourceIds": [
+        61
+      ],
+      "variants": [
+        {
+          "sourceId": 61,
+          "sourceLine": 3816,
+          "sourceBookIndex": 35,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+          "translationKey": "witchery.rite.infusionseerstone",
+          "title": "Rite of Infusion",
+          "variantLabel": "Rite of Infusion",
+          "description": "Infuse a stone to communicate in a coven. Perform at night.",
+          "modernHome": "infuse_seer_stone",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [
+            "Night"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemQuartzSphere.createStack()",
+              "item": "witchery:quartz_sphere",
+              "label": "Quartz Sphere",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150343_Z)",
+              "item": "minecraft:obsidian",
+              "label": "Obsidian",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemHappenstanceOil.createStack()",
+              "item": "witchery:happenstance_oil",
+              "label": "Happenstance Oil",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "overheating",
+      "title": "Overheating and its Cure",
+      "icon": "witchery:bound_taglock_kit",
+      "sourceIds": [
+        62,
+        63
+      ],
+      "variants": [
+        {
+          "sourceId": 62,
+          "sourceLine": 3832,
+          "sourceBookIndex": 48,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_IN_STROM)",
+          "translationKey": "witchery.rite.curseoverheating",
+          "title": "Curse of Overheating",
+          "variantLabel": "Curse of Overheating",
+          "description": "Curse the taglocked being to overheat.",
+          "modernHome": "curse_overheating",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [
+            "Storm"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+              "item": "witchery:exhale_of_horned_one",
+              "label": "Exhale of the Horned One",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemInfernalBlood.createStack()",
+              "item": "witchery:infernal_blood",
+              "label": "Demonic Blood",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151072_bj)",
+              "item": "minecraft:blaze_rod",
+              "label": "Blaze Rod",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewGrotesque.createStack()",
+              "item": "witchery:brew_of_the_grotesque",
+              "label": "Brew of the Grotesque",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 63,
+          "sourceLine": 3850,
+          "sourceBookIndex": 49,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.cureoverheating",
+          "title": "Rite of Remove Curse",
+          "variantLabel": "Cure Overheating",
+          "description": "Cleanse the taglocked being of overheating. Things may get worse.",
+          "modernHome": "cure_overheating",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+              "item": "witchery:breath_of_goddess",
+              "label": "Breath of the Goddess",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemIcyNeedle.createStack()",
+              "item": "witchery:icy_needle",
+              "label": "Icy Needle",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151072_bj)",
+              "item": "minecraft:blaze_rod",
+              "label": "Blaze Rod",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfTheDepths.createStack()",
+              "item": "witchery:brew_of_the_depths",
+              "label": "Brew of the Depths",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "shifting_seasons",
+      "title": "Rite of Shifting Seasons",
+      "icon": "minecraft:spider_eye",
+      "sourceIds": [
+        64
+      ],
+      "variants": [
+        {
+          "sourceId": 64,
+          "sourceLine": 3868,
+          "sourceBookIndex": 22,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.climatechange",
+          "title": "Rite of Shifting Seasons",
+          "variantLabel": "Rite of Shifting Seasons",
+          "description": "Pick Biome with biome foci and glowstone. Coven of 4 or more.",
+          "modernHome": "climate_change",
+          "mode": "full",
+          "power": 0,
+          "coven": 4,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(40, 0, 0)",
+              "color": "white",
+              "size": "large"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151070_bp)",
+              "item": "minecraft:spider_eye",
+              "label": "Spider Eye",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemToeOfFrog.createStack()",
+              "item": "witchery:toe_of_frog",
+              "label": "Toe of Frog",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBatWool.createStack()",
+              "item": "witchery:bat_wool",
+              "label": "Wool of Bat",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemDogTongue.createStack()",
+              "item": "witchery:tongue_of_dog",
+              "label": "Tongue of Dog",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemOwletsWing.createStack()",
+              "item": "witchery:owlets_wing",
+              "label": "Owlet's Wing",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+              "item": "witchery:attuned_stone",
+              "label": "Attuned Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "icy_expansion",
+      "title": "Rite of Icy Expansion",
+      "icon": "minecraft:diamond_sword",
+      "sourceIds": [
+        65
+      ],
+      "variants": [
+        {
+          "sourceId": 65,
+          "sourceLine": 3885,
+          "sourceBookIndex": 12,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.iceshell",
+          "title": "Rite of Icy Expansion",
+          "variantLabel": "Rite of Icy Expansion",
+          "description": "Create an icy sphere. Coven of 2 or more.",
+          "modernHome": "ice_shell",
+          "mode": "full",
+          "power": 0,
+          "coven": 2,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151048_u)",
+              "item": "minecraft:diamond_sword",
+              "label": "Diamond Sword",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemFrozenHeart.createStack()",
+              "item": "witchery:frozen_heart",
+              "label": "Frozen Heart",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "raining_toads",
+      "title": "Curse of Raining Toads",
+      "icon": "witchery:attuned_stone_charged",
+      "sourceIds": [
+        66
+      ],
+      "variants": [
+        {
+          "sourceId": 66,
+          "sourceLine": 3898,
+          "sourceBookIndex": 38,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.rainoffrogs",
+          "title": "Curse of Raining Toads",
+          "variantLabel": "Curse of Raining Toads",
+          "description": "Rain poisonous toads. Coven of 1 or more.",
+          "modernHome": "rain_of_toads",
+          "mode": "full",
+          "power": 0,
+          "coven": 1,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemRedstoneSoup.createStack()",
+              "item": "witchery:redstone_soup",
+              "label": "Redstone Soup",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemReekOfMisfortune.createStack()",
+              "item": "witchery:reek_of_misfortune",
+              "label": "Reek of Misfortune",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemToeOfFrog.createStack()",
+              "item": "witchery:toe_of_frog",
+              "label": "Toe of Frog",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151131_as)",
+              "item": "minecraft:water_bucket",
+              "label": "Water Bucket",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBelladonnaFlower.createStack()",
+              "item": "witchery:belladonna",
+              "label": "Belladonna Flower",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "glyphic_transformation",
+      "title": "Glyphic Transformation",
+      "icon": "witchery:gypsum",
+      "sourceIds": [
+        67
+      ],
+      "variants": [
+        {
+          "sourceId": 67,
+          "sourceLine": 3914,
+          "sourceBookIndex": 4,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.glyphictransform",
+          "title": "Rite of Glyphic Transformation",
+          "variantLabel": "Rite of Glyphic Transformation",
+          "description": "Drop chalk of the desired color, 1=small, 2=medium, 3=large.",
+          "modernHome": "glyphic_transformation",
+          "mode": "direct",
+          "power": 1000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemGypsum.createStack()",
+              "item": "witchery:gypsum",
+              "label": "Gypsum",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.ARTHANA)",
+              "item": "witchery:arthana",
+              "label": "Arthana",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "beastial_call",
+      "title": "Rite of Beastial Call",
+      "icon": "minecraft:milk_bucket",
+      "sourceIds": [
+        68
+      ],
+      "variants": [
+        {
+          "sourceId": 68,
+          "sourceLine": 3924,
+          "sourceBookIndex": 7,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.callbeasts",
+          "title": "Rite of Beastial Call",
+          "variantLabel": "Rite of Beastial Call",
+          "description": "Call animals. Coven of 3 or more.",
+          "modernHome": "beastial_call",
+          "mode": "full",
+          "power": 6000,
+          "coven": 3,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 40, 0)",
+              "color": "purple",
+              "size": "large"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Items.field_151117_aB)",
+              "item": "minecraft:milk_bucket",
+              "label": "Milk Bucket",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150407_cf)",
+              "item": "minecraft:hay_block",
+              "label": "Hay Block",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151034_e)",
+              "item": "minecraft:apple",
+              "label": "Apple",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151082_bd)",
+              "item": "minecraft:beef",
+              "label": "Beef",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151115_aP)",
+              "item": "minecraft:cod",
+              "label": "Cod",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150337_Q)",
+              "item": "minecraft:red_mushroom",
+              "label": "Red Mushroom",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151172_bF)",
+              "item": "minecraft:carrot",
+              "label": "Carrot",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151014_N)",
+              "item": "minecraft:wheat_seeds",
+              "label": "Wheat Seeds",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "manifestation",
+      "title": "Rite of Manifestation",
+      "icon": "witchery:spectral_dust",
+      "sourceIds": [
+        69
+      ],
+      "variants": [
+        {
+          "sourceId": 69,
+          "sourceLine": 3950,
+          "sourceBookIndex": 7,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.manifest",
+          "title": "Rite of Manifestation",
+          "variantLabel": "Rite of Manifestation",
+          "description": "Manifest as a ghost from the Spirit World.",
+          "modernHome": "manifestation_dream",
+          "mode": "full",
+          "power": 5000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 16, 0)",
+              "color": "purple",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemSpectralDust.createStack()",
+              "item": "witchery:spectral_dust",
+              "label": "Spectral Dust",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemMellifluousHunger.createStack()",
+              "item": "witchery:mellifluous_hunger",
+              "label": "Mellifluous Hunger",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+              "item": "witchery:necro_stone",
+              "label": "Necromantic Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151005_D)",
+              "item": "minecraft:golden_pickaxe",
+              "label": "Golden Pickaxe",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.ARTHANA)",
+              "item": "witchery:arthana",
+              "label": "Arthana",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151016_H)",
+              "item": "minecraft:gunpowder",
+              "label": "Gunpowder",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "forest",
+      "title": "Rite of the Forest",
+      "icon": "minecraft:oak_sapling",
+      "sourceIds": [
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76
+      ],
+      "variants": [
+        {
+          "sourceId": 70,
+          "sourceLine": 3969,
+          "sourceBookIndex": 22,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.forestation",
+          "title": "Rite of the Forest",
+          "variantLabel": "Oak forest",
+          "description": "Grow a forest, replace the sapling for the desired type.",
+          "modernHome": "forestation_oak",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150345_g, 1, 0)",
+              "item": "minecraft:oak_sapling",
+              "label": "Oak Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+              "item": "witchery:wicker_bundle",
+              "label": "Wicker Bundle",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+              "item": "witchery:brew_of_sprouting",
+              "label": "Brew of Sprouting",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBranchEnt.createStack()",
+              "item": "witchery:ent_twig",
+              "label": "Ent Twig",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        },
+        {
+          "sourceId": 71,
+          "sourceLine": 3987,
+          "sourceBookIndex": 22,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.forestation",
+          "title": "Rite of the Forest",
+          "variantLabel": "Spruce forest",
+          "description": "Grow a forest, replace the sapling for the desired type.",
+          "modernHome": "forestation_spruce",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150345_g, 1, 1)",
+              "item": "minecraft:spruce_sapling",
+              "label": "Spruce Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+              "item": "witchery:wicker_bundle",
+              "label": "Wicker Bundle",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+              "item": "witchery:brew_of_sprouting",
+              "label": "Brew of Sprouting",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBranchEnt.createStack()",
+              "item": "witchery:ent_twig",
+              "label": "Ent Twig",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        },
+        {
+          "sourceId": 72,
+          "sourceLine": 4006,
+          "sourceBookIndex": 22,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.forestation",
+          "title": "Rite of the Forest",
+          "variantLabel": "Birch forest",
+          "description": "Grow a forest, replace the sapling for the desired type.",
+          "modernHome": "forestation_birch",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150345_g, 1, 2)",
+              "item": "minecraft:birch_sapling",
+              "label": "Birch Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+              "item": "witchery:wicker_bundle",
+              "label": "Wicker Bundle",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+              "item": "witchery:brew_of_sprouting",
+              "label": "Brew of Sprouting",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBranchEnt.createStack()",
+              "item": "witchery:ent_twig",
+              "label": "Ent Twig",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        },
+        {
+          "sourceId": 73,
+          "sourceLine": 4025,
+          "sourceBookIndex": 22,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.forestation",
+          "title": "Rite of the Forest",
+          "variantLabel": "Jungle forest",
+          "description": "Grow a forest, replace the sapling for the desired type.",
+          "modernHome": "forestation_jungle",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150345_g, 1, 3)",
+              "item": "minecraft:jungle_sapling",
+              "label": "Jungle Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+              "item": "witchery:wicker_bundle",
+              "label": "Wicker Bundle",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+              "item": "witchery:brew_of_sprouting",
+              "label": "Brew of Sprouting",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBranchEnt.createStack()",
+              "item": "witchery:ent_twig",
+              "label": "Ent Twig",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        },
+        {
+          "sourceId": 74,
+          "sourceLine": 4044,
+          "sourceBookIndex": 22,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.forestation",
+          "title": "Rite of the Forest",
+          "variantLabel": "Rowan forest",
+          "description": "Grow a forest, replace the sapling for the desired type.",
+          "modernHome": "forestation_rowan",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.SAPLING, 1, 0)",
+              "item": "witchery:rowan_sapling",
+              "label": "Rowan Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+              "item": "witchery:wicker_bundle",
+              "label": "Wicker Bundle",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+              "item": "witchery:brew_of_sprouting",
+              "label": "Brew of Sprouting",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBranchEnt.createStack()",
+              "item": "witchery:ent_twig",
+              "label": "Ent Twig",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        },
+        {
+          "sourceId": 75,
+          "sourceLine": 4063,
+          "sourceBookIndex": 22,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.forestation",
+          "title": "Rite of the Forest",
+          "variantLabel": "Alder forest",
+          "description": "Grow a forest, replace the sapling for the desired type.",
+          "modernHome": "forestation_alder",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.SAPLING, 1, 1)",
+              "item": "witchery:alder_sapling",
+              "label": "Alder Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+              "item": "witchery:wicker_bundle",
+              "label": "Wicker Bundle",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+              "item": "witchery:brew_of_sprouting",
+              "label": "Brew of Sprouting",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBranchEnt.createStack()",
+              "item": "witchery:ent_twig",
+              "label": "Ent Twig",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        },
+        {
+          "sourceId": 76,
+          "sourceLine": 4082,
+          "sourceBookIndex": 22,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.forestation",
+          "title": "Rite of the Forest",
+          "variantLabel": "Hawthorn forest",
+          "description": "Grow a forest, replace the sapling for the desired type.",
+          "modernHome": "forestation_hawthorn",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.SAPLING, 1, 2)",
+              "item": "witchery:hawthorn_sapling",
+              "label": "Hawthorn Sapling",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+              "item": "witchery:wicker_bundle",
+              "label": "Wicker Bundle",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+              "item": "witchery:brew_of_sprouting",
+              "label": "Brew of Sprouting",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBranchEnt.createStack()",
+              "item": "witchery:ent_twig",
+              "label": "Ent Twig",
+              "optional": false
+            }
+          ],
+          "optional": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+              "item": "witchery:bound_waystone",
+              "label": "Bound Waystone",
+              "optional": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "waking_nightmare",
+      "title": "Waking Nightmare and its Cure",
+      "icon": "witchery:bound_taglock_kit",
+      "sourceIds": [
+        78,
+        79
+      ],
+      "variants": [
+        {
+          "sourceId": 78,
+          "sourceLine": 4114,
+          "sourceBookIndex": 48,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_IN_STROM)",
+          "translationKey": "witchery.rite.cursenightmare",
+          "title": "Curse of Waking Nightmare",
+          "variantLabel": "Curse of Waking Nightmare",
+          "description": "Perform in a storm.",
+          "modernHome": "curse_waking_nightmare",
+          "mode": "full",
+          "power": 10000,
+          "coven": 0,
+          "conditions": [
+            "Storm"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+              "item": "witchery:exhale_of_horned_one",
+              "label": "Exhale of the Horned One",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemMellifluousHunger.createStack()",
+              "item": "witchery:mellifluous_hunger",
+              "label": "Mellifluous Hunger",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemTormentedTwine.createStack()",
+              "item": "witchery:tormented_twine",
+              "label": "Tormented Twine",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151045_i)",
+              "item": "minecraft:diamond",
+              "label": "Diamond",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewGrotesque.createStack()",
+              "item": "witchery:brew_of_the_grotesque",
+              "label": "Brew of the Grotesque",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 79,
+          "sourceLine": 4133,
+          "sourceBookIndex": 49,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.curenightmare",
+          "title": "Rite of Remove Curse",
+          "variantLabel": "Cure Waking Nightmare",
+          "description": "Cleanse the taglocked being of nightmares. Things may get worse.",
+          "modernHome": "cure_waking_nightmare",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+              "item": "witchery:breath_of_goddess",
+              "label": "Breath of the Goddess",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151150_bK)",
+              "item": "minecraft:golden_carrot",
+              "label": "Golden Carrot",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemTormentedTwine.createStack()",
+              "item": "witchery:tormented_twine",
+              "label": "Tormented Twine",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfLove.createStack()",
+              "item": "witchery:brew_of_love",
+              "label": "Brew of Love",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "infused_brews",
+      "title": "Infused Brews",
+      "icon": "witchery:infused_brew_base",
+      "sourceIds": [
+        80,
+        81
+      ],
+      "variants": [
+        {
+          "sourceId": 80,
+          "sourceLine": 4151,
+          "sourceBookIndex": 35,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.infusebrewsoaring",
+          "title": "Rite of Infusion",
+          "variantLabel": "Brew of Soaring",
+          "description": "Infuse the Brew of Soaring.",
+          "modernHome": "infuse_brew",
+          "mode": "full",
+          "power": 3000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            },
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemInfusionBase.createStack()",
+              "item": "witchery:infused_brew_base",
+              "label": "Infused Brew Base",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBroom.createStack()",
+              "item": "witchery:broom",
+              "label": "Broom",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151008_G)",
+              "item": "minecraft:feather",
+              "label": "Feather",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.ARTHANA)",
+              "item": "witchery:arthana",
+              "label": "Arthana",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 81,
+          "sourceLine": 4170,
+          "sourceBookIndex": 35,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.infusebrewgrave",
+          "title": "Rite of Infusion",
+          "variantLabel": "Brew of the Grave",
+          "description": "Infuse the Brew of the Grave.",
+          "modernHome": "infuse_brew",
+          "mode": "full",
+          "power": 3000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            },
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemInfusionBase.createStack()",
+              "item": "witchery:infused_brew_base",
+              "label": "Infused Brew Base",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151103_aS)",
+              "item": "minecraft:bone",
+              "label": "Bone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWeb.createStack()",
+              "item": "witchery:dense_web",
+              "label": "Dense Web",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+              "item": "witchery:necro_stone",
+              "label": "Necromantic Stone",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "spectral_stone",
+      "title": "Spectral Stone Workings",
+      "icon": "witchery:necro_stone",
+      "sourceIds": [
+        82,
+        83
+      ],
+      "variants": [
+        {
+          "sourceId": 82,
+          "sourceLine": 4189,
+          "sourceBookIndex": 36,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+          "translationKey": "witchery.rite.spectralstone",
+          "title": "Rite of Necromancy",
+          "variantLabel": "Create Spectral Stone",
+          "description": "Infuse a Spectral Stone. Perform at night.",
+          "modernHome": "spectral_stone",
+          "mode": "full",
+          "power": 6000,
+          "coven": 0,
+          "conditions": [
+            "Night"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+              "item": "witchery:necro_stone",
+              "label": "Necromantic Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemCongealedSpirit.createStack()",
+              "item": "witchery:congealed_spirit",
+              "label": "Congealed Spirit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemCondensedFear.createStack()",
+              "item": "witchery:condensed_fear",
+              "label": "Condensed Fear",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemSpectralDust.createStack()",
+              "item": "witchery:spectral_dust",
+              "label": "Spectral Dust",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.BOLINE)",
+              "item": "witchery:boline",
+              "label": "Boline",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 83,
+          "sourceLine": 4208,
+          "sourceBookIndex": 1,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindspectral",
+          "title": "Rite of Binding",
+          "variantLabel": "Bind spectral creatures",
+          "description": "Bind up to three spectral creatures of the same type into a Spectral Stone.",
+          "modernHome": "bind_spectral_stone",
+          "mode": "full",
+          "power": 5000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.SPECTRAL_STONE)",
+              "item": "witchery:spectral_stone",
+              "label": "Spectral Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemSpectralDust.createStack()",
+              "item": "witchery:spectral_dust",
+              "label": "Spectral Dust",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.BOLINE)",
+              "item": "witchery:boline",
+              "label": "Boline",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "fetishes",
+      "title": "Fetish Binding",
+      "icon": "witchery:fetish_scarecrow",
+      "sourceIds": [
+        84,
+        85,
+        86
+      ],
+      "variants": [
+        {
+          "sourceId": 84,
+          "sourceLine": 4222,
+          "sourceBookIndex": 1,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindfetish",
+          "title": "Rite of Binding",
+          "variantLabel": "Scarecrow",
+          "description": "Bind spectral creatures to a Scarecrow, Trent Effigy or Witch's Ladder to create an effect.",
+          "modernHome": "bind_fetish",
+          "mode": "full",
+          "power": 6000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.FETISH_SCARECROW)",
+              "item": "witchery:fetish_scarecrow",
+              "label": "Scarecrow",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+              "item": "witchery:attuned_stone",
+              "label": "Attuned Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+              "item": "witchery:necro_stone",
+              "label": "Necromantic Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.BOLINE)",
+              "item": "witchery:boline",
+              "label": "Boline",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 85,
+          "sourceLine": 4239,
+          "sourceBookIndex": 1,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindfetish",
+          "title": "Rite of Binding",
+          "variantLabel": "Trent Effigy",
+          "description": "Bind spectral creatures to a Scarecrow, Trent Effigy or Witch's Ladder to create an effect.",
+          "modernHome": "bind_fetish",
+          "mode": "full",
+          "power": 6000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.FETISH_TREANT_IDOL)",
+              "item": "witchery:fetish_trent_effigy",
+              "label": "Trent Effigy",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+              "item": "witchery:attuned_stone",
+              "label": "Attuned Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+              "item": "witchery:necro_stone",
+              "label": "Necromantic Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.BOLINE)",
+              "item": "witchery:boline",
+              "label": "Boline",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 86,
+          "sourceLine": 4257,
+          "sourceBookIndex": 1,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindfetish",
+          "title": "Rite of Binding",
+          "variantLabel": "Witch's Ladder",
+          "description": "Bind spectral creatures to a Scarecrow, Trent Effigy or Witch's Ladder to create an effect.",
+          "modernHome": "bind_fetish",
+          "mode": "full",
+          "power": 6000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.FETISH_WITCHS_LADDER)",
+              "item": "witchery:fetish_witchs_ladder",
+              "label": "Witch's Ladder",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+              "item": "witchery:attuned_stone",
+              "label": "Attuned Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+              "item": "witchery:necro_stone",
+              "label": "Necromantic Stone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.BOLINE)",
+              "item": "witchery:boline",
+              "label": "Boline",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "imp_summoning",
+      "title": "Imp Summoning",
+      "icon": "witchery:refined_evil",
+      "sourceIds": [
+        87
+      ],
+      "variants": [
+        {
+          "sourceId": 87,
+          "sourceLine": 4275,
+          "sourceBookIndex": 26,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.summonimp",
+          "title": "Rite of Summoning",
+          "variantLabel": "Rite of Summoning",
+          "description": "Call forth an Imp. The inner area must be clear 7x7x4 blocks!",
+          "modernHome": "summon_imp",
+          "mode": "full",
+          "power": 5000,
+          "coven": 1,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemRefinedEvil.createStack()",
+              "item": "witchery:refined_evil",
+              "label": "Refined Evil",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemInfernalBlood.createStack()",
+              "item": "witchery:infernal_blood",
+              "label": "Demonic Blood",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151079_bi)",
+              "item": "minecraft:ender_pearl",
+              "label": "Ender Pearl",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+              "item": "witchery:attuned_stone",
+              "label": "Attuned Stone",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "blooded_waystone",
+      "title": "Blooded Waystone Binding",
+      "icon": "witchery:waystone",
+      "sourceIds": [
+        88,
+        89
+      ],
+      "variants": [
+        {
+          "sourceId": 88,
+          "sourceLine": 4292,
+          "sourceBookIndex": 1,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindwaystonetoplayer",
+          "title": "Rite of Binding",
+          "variantLabel": "Altar-powered binding",
+          "description": "Create a Blooded Waystone bound to the location of a creature.",
+          "modernHome": "bind_blooded_waystone",
+          "mode": "full",
+          "power": 500,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystone.createStack()",
+              "item": "witchery:waystone",
+              "label": "Waystone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+              "item": "witchery:ender_dew",
+              "label": "Ender Dew",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151123_aH)",
+              "item": "minecraft:slime_ball",
+              "label": "Slime Ball",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151126_ay)",
+              "item": "minecraft:snowball",
+              "label": "Snowball",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 89,
+          "sourceLine": 4309,
+          "sourceBookIndex": 1,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindwaystonetoplayer",
+          "title": "Rite of Binding",
+          "variantLabel": "Portable binding",
+          "description": "Create a Blooded Waystone bound to the location of a creature.",
+          "modernHome": "bind_blooded_waystone_portable",
+          "mode": "full",
+          "power": 0,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWaystone.createStack()",
+              "item": "witchery:waystone",
+              "label": "Waystone",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+              "item": "witchery:ender_dew",
+              "label": "Ender Dew",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151123_aH)",
+              "item": "minecraft:slime_ball",
+              "label": "Slime Ball",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemIcyNeedle.createStack()",
+              "item": "witchery:icy_needle",
+              "label": "Icy Needle",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+              "item": "witchery:attuned_stone_charged",
+              "label": "Attuned Stone (Charged)",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "patron_statue",
+      "title": "Patron Statue Binding",
+      "icon": "witchery:statue_hobgoblin_patron",
+      "sourceIds": [
+        90
+      ],
+      "variants": [
+        {
+          "sourceId": 90,
+          "sourceLine": 4324,
+          "sourceBookIndex": 1,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.bindstatuetoplayer",
+          "title": "Rite of Binding",
+          "variantLabel": "Rite of Binding",
+          "description": "Binds a person in the circle to the statue.",
+          "modernHome": "bind_statue_to_player",
+          "mode": "full",
+          "power": 4000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.STATUE_OF_WORSHIP)",
+              "item": "witchery:statue_hobgoblin_patron",
+              "label": "Hobgoblin Patron Statue",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBelladonnaFlower.createStack()",
+              "item": "witchery:belladonna",
+              "label": "Belladonna Flower",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150328_O)",
+              "item": "minecraft:poppy",
+              "label": "Poppy",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150327_N)",
+              "item": "minecraft:dandelion",
+              "label": "Dandelion",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "wolf_curse",
+      "title": "The Wolf Curse and its Cure",
+      "icon": "witchery:bound_taglock_kit",
+      "sourceIds": [
+        92,
+        93
+      ],
+      "variants": [
+        {
+          "sourceId": 92,
+          "sourceLine": 4350,
+          "sourceBookIndex": 48,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+          "translationKey": "witchery.rite.wolfcurse.book",
+          "title": "Curse of the Wolf",
+          "variantLabel": "Curse of the Wolf",
+          "description": "Perform under a full moon with a full coven.",
+          "modernHome": "curse_of_the_wolf",
+          "mode": "full",
+          "power": 10000,
+          "coven": 6,
+          "conditions": [
+            "Night",
+            "Full moon",
+            "Active cat familiar"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 28)",
+              "color": "red",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+              "item": "witchery:exhale_of_horned_one",
+              "label": "Exhale of the Horned One",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Blocks.WOLFHEAD, 1, 1)",
+              "item": "witchery:hellhound_head",
+              "label": "Hellhound Head",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWolfsbane.createStack()",
+              "item": "witchery:wolfsbane_flower",
+              "label": "Wolfsbane",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151045_i)",
+              "item": "minecraft:diamond",
+              "label": "Diamond",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewGrotesque.createStack()",
+              "item": "witchery:brew_of_the_grotesque",
+              "label": "Brew of the Grotesque",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 93,
+          "sourceLine": 4369,
+          "sourceBookIndex": 49,
+          "sourceTraits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+          "translationKey": "witchery.rite.wolfcure.book",
+          "title": "Rite of Remove Curse",
+          "variantLabel": "Cure Lycanthropy",
+          "description": "Cleanse the taglocked being of lycanthropy.",
+          "modernHome": "cure_wolf",
+          "mode": "full",
+          "power": 10000,
+          "coven": 6,
+          "conditions": [
+            "Night",
+            "Full moon",
+            "Active cat familiar"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+              "item": "witchery:breath_of_goddess",
+              "label": "Breath of the Goddess",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.SILVER_SWORD)",
+              "item": "witchery:silver_sword",
+              "label": "Silver Sword",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemWolfsbane.createStack()",
+              "item": "witchery:wolfsbane_flower",
+              "label": "Wolfsbane",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151045_i)",
+              "item": "minecraft:diamond",
+              "label": "Diamond",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfLove.createStack()",
+              "item": "witchery:brew_of_love",
+              "label": "Brew of Love",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "vampire_cure",
+      "title": "Rite of Remove Vampirism",
+      "icon": "witchery:bound_taglock_kit",
+      "sourceIds": [
+        94
+      ],
+      "variants": [
+        {
+          "sourceId": 94,
+          "sourceLine": 4388,
+          "sourceBookIndex": 49,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.vampirecure.book",
+          "title": "Rite of Remove Curse",
+          "variantLabel": "Rite of Remove Curse",
+          "description": "Cleanse the taglocked being of vampirism.",
+          "modernHome": "remove_vampirism",
+          "mode": "full",
+          "power": 10000,
+          "coven": 6,
+          "conditions": [
+            "Active cat familiar"
+          ],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(16, 0, 0)",
+              "color": "white",
+              "size": "small"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+              "item": "witchery:bound_taglock_kit",
+              "label": "Bound Taglock Kit",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+              "item": "witchery:breath_of_goddess",
+              "label": "Breath of the Goddess",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.SILVER_SWORD)",
+              "item": "witchery:silver_sword",
+              "label": "Silver Sword",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.SEEDS_GARLIC)",
+              "item": "witchery:garlic",
+              "label": "Garlic",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151045_i)",
+              "item": "minecraft:diamond",
+              "label": "Diamond",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfLove.createStack()",
+              "item": "witchery:brew_of_love",
+              "label": "Brew of Love",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    },
+    {
+      "id": "mirror",
+      "title": "Demonic Mirror Workings",
+      "icon": "witchery:brew_of_hollow_tears",
+      "sourceIds": [
+        95,
+        96
+      ],
+      "variants": [
+        {
+          "sourceId": 95,
+          "sourceLine": 4407,
+          "sourceBookIndex": 35,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.infusionmirror",
+          "title": "Rite of Infusion",
+          "variantLabel": "Trap a Demon",
+          "description": "Trap a Demon into a mirror.",
+          "modernHome": "infusion_mirror",
+          "mode": "full",
+          "power": 2000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(28, 0, 0)",
+              "color": "white",
+              "size": "medium"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemBrewOfHollowTears.createStack()",
+              "item": "witchery:brew_of_hollow_tears",
+              "label": "Brew of Hollow Tears",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151043_k)",
+              "item": "minecraft:gold_ingot",
+              "label": "Gold Ingot",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Blocks.field_150410_aZ)",
+              "item": "minecraft:glass_pane",
+              "label": "Glass Pane",
+              "optional": false
+            }
+          ],
+          "optional": []
+        },
+        {
+          "sourceId": 96,
+          "sourceLine": 4422,
+          "sourceBookIndex": 28,
+          "sourceTraits": "EnumSet.noneOf(RitualTraits.class)",
+          "translationKey": "witchery.rite.summonreflection",
+          "title": "Rite of Summoning",
+          "variantLabel": "Release the Reflection",
+          "description": "Call forth the demon from a mirror. The inner area must be clear 7x7x4 blocks!",
+          "modernHome": "summon_reflection",
+          "mode": "full",
+          "power": 5000,
+          "coven": 0,
+          "conditions": [],
+          "circles": [
+            {
+              "sourceExpression": "new Circle(0, 0, 40)",
+              "color": "red",
+              "size": "large"
+            }
+          ],
+          "required": [
+            {
+              "sourceExpression": "new ItemStack(Witchery.Items.MIRROR)",
+              "item": "witchery:mirror",
+              "label": "Mirror",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+              "item": "witchery:ender_dew",
+              "label": "Ender Dew",
+              "optional": false
+            },
+            {
+              "sourceExpression": "new ItemStack(Items.field_151065_br)",
+              "item": "minecraft:blaze_powder",
+              "label": "Blaze Powder",
+              "optional": false
+            },
+            {
+              "sourceExpression": "Witchery.Items.GENERIC.itemQuartzSphere.createStack()",
+              "item": "witchery:quartz_sphere",
+              "label": "Quartz Sphere",
+              "optional": false
+            }
+          ],
+          "optional": []
+        }
+      ]
+    }
+  ]
+}

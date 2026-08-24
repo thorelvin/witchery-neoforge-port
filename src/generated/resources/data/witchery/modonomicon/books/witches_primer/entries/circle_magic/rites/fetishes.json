@@ -1,0 +1,199 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:fetish_scarecrow"
+  },
+  "name": "Fetish Binding",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)This family contains **3 distinct workings**. Each one has its own exact offerings, circles, power, and conditions; use the card belonging to the result you intend.[#]()",
+      "title": "Fetish Binding",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Bind spectral creatures to a Scarecrow, Trent Effigy or Witch's Ladder to create an effect.[#]() [#](53341a)**Required offerings:** **Scarecrow**, **Attuned Stone**, **Necromantic Stone**, **Boline**.[#]()",
+      "title": "Scarecrow",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:fetish_scarecrow",
+          "x": 23,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone",
+          "x": 41,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:necro_stone",
+          "x": 59,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:boline",
+          "x": 77,
+          "y": 76
+        }
+      ],
+      "source_id": 84,
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - **6000** altar power[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Bind spectral creatures to a Scarecrow, Trent Effigy or Witch's Ladder to create an effect.[#]() [#](53341a)**Required offerings:** **Trent Effigy**, **Attuned Stone**, **Necromantic Stone**, **Boline**.[#]()",
+      "title": "Trent Effigy",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:fetish_trent_effigy",
+          "x": 23,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone",
+          "x": 41,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:necro_stone",
+          "x": 59,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:boline",
+          "x": 77,
+          "y": 76
+        }
+      ],
+      "source_id": 85,
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - **6000** altar power[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Bind spectral creatures to a Scarecrow, Trent Effigy or Witch's Ladder to create an effect.[#]() [#](53341a)**Required offerings:** **Witch's Ladder**, **Attuned Stone**, **Necromantic Stone**, **Boline**.[#]()",
+      "title": "Witch's Ladder",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:fetish_witchs_ladder",
+          "x": 23,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone",
+          "x": 41,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:necro_stone",
+          "x": 59,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:boline",
+          "x": 77,
+          "y": 76
+        }
+      ],
+      "source_id": 86,
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - **6000** altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 54,
+  "x": 0,
+  "y": 0
+}

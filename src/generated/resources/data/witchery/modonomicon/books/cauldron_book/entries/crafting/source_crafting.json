@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)The old book also indexed cauldron cooking, Nether Wart, End Stone, Rotten Flesh, and a Player Compass. Those old transmutations are **not accepted by the present cauldron**.[#]()",
+      "text": "[#](53341a)The old book also indexed cauldron cooking, Nether Wart, End Stone, Rotten Flesh, and a Player Compass. These transmutations are live again.[#]()",
       "title": "The Older Index",
       "use_markdown_in_title": false
     },
@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)They remain part of the source record, but this guide will not pretend an unavailable working can be performed.[#]() [#](53341a)The Player Compass has a modern crafting recipe and can also be bound with a filled player Taglock Kit.[#]()",
+      "text": "[#](53341a)**Use** each loose support item on the hot cauldron to offer it safely; sneak-use remains the gesture for stirring a dual-purpose custom-brew ingredient. Use the named trigger last.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -38,9 +38,311 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Chalk, Mutandis, Mutandis Extremis, Drop of Luck, and the Mutating Sprig also keep ordinary recipe bridges for accessibility.[#]()",
+      "text": "[#](53341a)Raw Porkchop, Chicken, Beef, Mutton, and Raw Odd Pork cook directly when used as the trigger. A Witch Hand yields six Rotten Flesh. Every success consumes one water level.[#]()",
       "title": " ",
       "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:diamond_vapour",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:ender_pearl",
+          "x": 27,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:wheat",
+          "x": 43,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:mutandis",
+          "x": 59,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use Mutandis last.[#]()",
+      "title": "Nether Wart"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:stone",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:end_stone",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:mutandis_extremis",
+          "x": 43,
+          "y": 18
+        },
+        {
+          "count": 2,
+          "item": "minecraft:end_stone",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use Mutandis Extremis last; costs 1,800 power.[#]()",
+      "title": "End Stone"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:glowstone_dust",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:blaze_rod",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone_charged",
+          "x": 35,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:snow_block",
+          "x": 51,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_endless_water",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use a Snow Block last; costs 3,000 power.[#]()",
+      "title": "Endless Water"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:brew_of_endless_water"
+      },
+      "text": "[#](53341a)Nether Wart alone gives 5 uses. Add Glowstone Dust for 20, then a Blaze Rod for 50, then a Charged Attuned Stone for the full 100 uses. The Snow Block is always the final trigger.[#]()",
+      "title": "Endless Water Grades"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:glowstone_dust",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:blaze_rod",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone_charged",
+          "x": 35,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:charcoal",
+          "x": 51,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:combustion_brew",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use Charcoal last.[#]()",
+      "title": "Combustion Brew"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:combustion_brew"
+      },
+      "text": "[#](53341a)Mandrake Root alone yields 2,400 burn ticks. Glowstone Dust raises this to 5,000, a Blaze Rod to 10,000, and a Charged Attuned Stone to 50,000. Charcoal is always the final trigger.[#]()",
+      "title": "Combustion Grades"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:witch_hand",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 6,
+          "item": "minecraft:rotten_flesh",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use a Witch Hand last; yields six.[#]()",
+      "title": "Rotten Flesh"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:vine",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:red_mushroom",
+          "x": 35,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:compass",
+          "x": 51,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:player_compass",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use the vanilla Compass last.[#]()",
+      "title": "Player Compass"
     },
     {
       "type": "modonomicon:spotlight",
@@ -52,7 +354,7 @@
         "count": 1,
         "item": "witchery:player_compass"
       },
-      "text": "[#](53341a)Craft the blank compass, then bind it directly to a player or combine it with that player's filled Taglock Kit.[#]()",
+      "text": "[#](53341a)The cauldron yields a blank Player Compass. Bind it directly to a player or combine it with that player's filled Taglock Kit. The modern crafting bridge remains available.[#]()",
       "title": "Player Compass"
     }
   ],

@@ -15,8 +15,10 @@ import com.klikli_dev.modonomicon.api.datagen.book.page.BookPageModel;
 import com.klikli_dev.modonomicon.api.datagen.book.page.BookSpotlightPageModel;
 import com.klikli_dev.modonomicon.book.BookDisplayMode;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 
@@ -314,6 +316,65 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         }
     }
 
+    private static StationRecipePageModel ritualCompendiumCard(RitualCompendium.Variant variant) {
+        List<Ring> rings = variant.circles().stream()
+                .map(circle -> new Ring(circle.color(), circle.size()))
+                .toList();
+        java.util.LinkedHashSet<String> sizes = new java.util.LinkedHashSet<>();
+        java.util.LinkedHashSet<String> chalks = new java.util.LinkedHashSet<>();
+        for (Ring ring : rings) {
+            sizes.add(ringFootprint(ring.size()));
+            chalks.add(chalkName(ring.color()));
+        }
+
+        String setup = rings.isEmpty()
+                ? "**Direct working** - no chalk ring"
+                : "**" + String.join(" + ", sizes) + "** - **" + String.join(" / ", chalks) + "** chalk";
+        String caption = setup
+                + (variant.power() <= 0 ? " - no initial altar power" : " - **" + variant.power() + "** altar power")
+                + (variant.coven() > 0 ? " - **Coven: " + variant.coven() + "**" : "")
+                + (variant.optional().isEmpty() ? "" : " - gold frame: optional");
+
+        StationRecipePageModel page = StationRecipePageModel.create()
+                .withBackground(BG_RITUAL, RITUAL_CANVAS_W, RITUAL_CANVAS_H)
+                .withShowBackground(false)
+                .withText(WitcheryBooks.ink(caption))
+                .withSourceId(variant.sourceId());
+        for (Ring ring : rings) {
+            page.withRing(ring.color(), ring.size());
+        }
+        List<RitualCompendium.Offering> offerings = variant.offerings();
+        int count = offerings.size();
+        if (count <= 5) {
+            addRitualCompendiumOfferingRow(page, offerings, 0, count, RITUAL_OFFERING_SINGLE_Y);
+        } else {
+            int firstRow = Math.min(5, (count + 1) / 2);
+            addRitualCompendiumOfferingRow(page, offerings, 0, firstRow, RITUAL_OFFERING_TOP_Y);
+            addRitualCompendiumOfferingRow(page, offerings, firstRow, count - firstRow, RITUAL_OFFERING_BOTTOM_Y);
+        }
+        if (variant.coven() > 0) {
+            page.withCovenFaces(variant.coven());
+        }
+        return page;
+    }
+
+    private static void addRitualCompendiumOfferingRow(StationRecipePageModel page,
+                                                        List<RitualCompendium.Offering> offerings,
+                                                        int offset, int count, int y) {
+        int pitch = 18;
+        int startX = RITUAL_CANVAS_W / 2 - (count * pitch) / 2 + (pitch - 16) / 2;
+        for (int i = 0; i < count; i++) {
+            RitualCompendium.Offering offering = offerings.get(offset + i);
+            Item item = BuiltInRegistries.ITEM.getOptional(offering.item())
+                    .orElseThrow(() -> new IllegalStateException("Unknown compendium item " + offering.item()));
+            if (offering.optional()) {
+                page.withOptionalSlot(item, 1, startX + i * pitch, y);
+            } else {
+                page.withSlot(item, 1, startX + i * pitch, y);
+            }
+        }
+    }
+
     /**
      * Fixed facing for static creature portraits (degrees). Modonomicon applies this as a Y rotation
      * with {@code rotate=false}; 180° turns the freshly-built entity (default south-facing) to look at
@@ -373,6 +434,45 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         pages.add(recipe);
         pages.addAll(WitcheryBooks.prose("The Working", working));
         return entry(cat, path, name, icon, sort, pages);
+    }
+
+    private BookEntryModel ritualCompendiumEntry(BookCategoryModel cat, RitualCompendium.Family family, int sort) {
+        List<BookPageModel<?>> pages = new ArrayList<>();
+        if (family.variants().size() > 1) {
+            pages.addAll(WitcheryBooks.prose(family.title(),
+                    "This family contains **" + family.variants().size() + " distinct workings**. "
+                            + "Each one has its own exact offerings, circles, power, and conditions; use the "
+                            + "card belonging to the result you intend."));
+        }
+        for (RitualCompendium.Variant variant : family.variants()) {
+            String pageTitle = family.variants().size() == 1 ? family.title() : variant.variantLabel();
+            pages.addAll(WitcheryBooks.prose(pageTitle, ritualCompendiumWorking(variant)));
+            pages.add(ritualCompendiumCard(variant));
+        }
+        Item icon = BuiltInRegistries.ITEM.getOptional(family.icon())
+                .orElseThrow(() -> new IllegalStateException("Unknown compendium icon " + family.icon()));
+        return entry(cat, "circle_magic/rites/" + family.id(), family.title(), icon, sort, pages);
+    }
+
+    private static String ritualCompendiumWorking(RitualCompendium.Variant variant) {
+        StringBuilder text = new StringBuilder(variant.description());
+        text.append("\n\n**Required offerings:** ").append(offeringNames(variant.required())).append('.');
+        if (!variant.optional().isEmpty()) {
+            text.append("\n\n**Optional focus:** ").append(offeringNames(variant.optional()))
+                    .append(". Optional items have a gold frame on the rite card.");
+        }
+        if (!variant.conditions().isEmpty()) {
+            text.append("\n\n**Conditions:** ").append(String.join(", ", variant.conditions())).append('.');
+        }
+        if (variant.coven() > 0) {
+            text.append("\n\n**Coven required:** ").append(variant.coven()).append('.');
+        }
+        return text.toString();
+    }
+
+    private static String offeringNames(List<RitualCompendium.Offering> offerings) {
+        return offerings.stream().map(offering -> "**" + offering.label() + "**")
+                .collect(java.util.stream.Collectors.joining(", "));
     }
 
     /**
@@ -817,181 +917,29 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "The circle gives structure; the ingredient names the working; the altar provides "
                         + "fuel. Some rites also need creatures present — part of the mechanism, not "
                         + "ceremony."
-                        + "\n\nExperimentation is encouraged. The craft does not document all of its own "
-                        + "workings."));
-        rites.addAll(WitcheryBooks.prose("A Selection",
-                "**Infusion** (small) grants a lasting magical nature. **Charging** (small+medium, Attuned "
-                        + "Stone) uses glowstone, redstone, wood ash, and quicklime. **Familiar Binding** "
-                        + "(small) binds a tamed animal. **Forest** (large, any sapling) grows a grove. "
-                        + "**Waystone Binding** and **Transposition** anchor and move you."));
+                        + "\n\nThe complete compendium follows. Search it by a rite, result, condition, or "
+                        + "offering; every working is recorded with its exact circles and costs."));
+        rites.addAll(WitcheryBooks.prose("Reading the Cards",
+                "Each family groups workings that share a purpose. Every variant still has its own card: "
+                        + "circle layers show chalk and size, witch faces show the minimum coven, and live "
+                        + "items show the offerings. A **gold frame** marks an optional focus."));
 
-        cat.withEntries(
-                entry(cat, "circle_magic/chalk", "Chalk", WitcheryItems.CHALK.get(), 0, chalk),
-                entry(cat, "circle_magic/drawing_circles", "Drawing Circles", WitcheryItems.CHALK_GOLDEN.get(), 1, drawing),
-                entry(cat, "circle_magic/rites", "Rites of Power", WitcheryItems.CIRCLE_TALISMAN.get(), 2, rites),
-                rite(cat, "circle_magic/forest", "Rite of the Forest", WitcheryItems.ROWAN_SAPLING.get(), 3,
-                        "A medium working for raising a grove where none stood. Drop the sapling for the "
-                                + "woodland you want at the center, then prepare the rite. Oak, spruce, birch, "
-                                + "jungle, rowan, alder, and hawthorn each answer to their own sapling.",
-                        ritualCard("4000", 0, List.of(ringWhite("medium")),
-                                WitcheryItems.ROWAN_SAPLING.get(), WitcheryItems.WICKER_BUNDLE.get(),
-                                WitcheryItems.BREW_OF_SPROUTING.get(), WitcheryItems.ENT_TWIG.get()),
-                        "Offer a **Wicker Bundle**, a **Brew of Sprouting**, and an **Ent Twig** around the "
-                                + "circle, with at least **4000 altar power**. A bound waystone in range can "
-                                + "raise the grove there instead.\n\nLearn it early if you mean to explore "
-                                + "plantcraft, Ents, or living-wood paths."),
-                rite(cat, "circle_magic/manifestation", "Rite of Manifestation", WitcheryItems.MELLIFLUOUS_HUNGER.get(), 4,
-                        "Not a way into the Spirit World, but preparation for briefly returning from it. "
-                                + "Draw a small Otherwhere circle in the Overworld. Every player standing "
-                                + "within five blocks receives the same span of manifestation time, ready "
-                                + "for a later dream journey.",
-                        ritualCard("5000", 0, List.of(ringOtherwhere("small")),
-                                WitcheryItems.MELLIFLUOUS_HUNGER.get(), WitcheryItems.SPECTRAL_DUST.get(),
-                                WitcheryItems.NECRO_STONE.get(), Items.GOLDEN_PICKAXE,
-                                WitcheryItems.ARTHANA.get(), Items.GUNPOWDER),
-                        "It asks for **Spectral Dust**, **Mellifluous Hunger**, a **Necromantic Stone**, a "
-                                + "**Golden Pickaxe**, an **Arthana**, and **Gunpowder**, plus **5000 altar "
-                                + "power**. All six offerings are consumed. Nearby coven witches add **25 "
-                                + "seconds** each to the base **150 seconds**.\n\nAfter entering the Spirit World, "
-                                + "pass through a **Spirit Portal** on foot to emerge at the same coordinates "
-                                + "in the Overworld. End it early with an Icy Needle."),
-                rite(cat, "circle_magic/beastial_call", "Rite of Beastial Call", Items.HAY_BLOCK, 5,
-                        "A large Otherwhere working that draws animal life into the circle from far across "
-                                + "the countryside — up to a hundred paces and more. Less a summoning than a "
-                                + "lure: it coaxes creatures to answer a call they do not understand, and they "
-                                + "arrive a few at a time over long minutes, not all at once. Be patient, and "
-                                + "have beasts within range to call.",
-                        ritualCard("6000", 3, List.of(ringOtherwhere("large")),
-                                Items.MILK_BUCKET, Items.HAY_BLOCK, Items.APPLE, Items.BEEF, Items.COD,
-                                Items.RED_MUSHROOM, Items.CARROT, Items.WHEAT_SEEDS),
-                        "Offer barn and field bait: a milk bucket, hay bale, apple, beef, cod, red mushroom, "
-                                + "carrot, and seeds, plus **6000 altar power**. It favors pigs, chickens, "
-                                + "cows, sheep, mooshrooms, wolves, and ocelots.\n\n**It demands a coven of "
-                                + "three.** Three witches or more must keep the circle, or the call goes "
-                                + "unanswered and the rite collapses — this is no solitary working. Do not cast "
-                                + "it near a village ranch unless you can explain yourself."),
-                rite(cat, "circle_magic/sky_wrath", "Rite of Sky's Wrath", Items.IRON_SWORD, 6,
-                        "A small-circle storm working for calling lightning where you choose. The inner "
-                                + "branch gathers the storm in the circle, the outer lashes the ground around "
-                                + "it, and the portable branch can be cast far from home without altar power. "
-                                + "A sword laid in the circle is the lightning's focus — the better the blade, "
-                                + "the wider its wrath.",
-                        ritualCard("1000 / 2000", 0, List.of(ringWhite("small")),
-                                Items.IRON_SWORD, WitcheryItems.WOOD_ASH.get(), WitcheryItems.ATTUNED_STONE_CHARGED.get()),
-                        "A **Wooden Sword** and **Wood Ash** call the inner storm (1000 power). A **Stone "
-                                + "Sword** and **Wood Ash** call the outer storm (2000 power). An **Iron "
-                                + "Sword**, **Wood Ash**, and a **Charged Attuned Stone** restore the portable "
-                                + "branch. Any worn blade serves — its edge is spent, not its temper.\n\nA "
-                                + "bound waystone in range moves the storm to its location — safer than "
-                                + "standing under your own lightning."),
-                rite(cat, "circle_magic/sanctity", "Rite of Sanctity", Items.FEATHER, 7,
-                        "A small-circle ward that keeps unwanted creatures out. It does not harm them — it "
-                                + "repels them, making a brief sacred space that beasts and enemies find hard "
-                                + "to cross.",
-                        ritualCard("500", 0, List.of(ringWhite("small")), Items.FEATHER, Items.REDSTONE),
-                        "Offer a **Feather** with **Redstone** on a small circle, with **500 altar power** "
-                                + "ready. Do not confuse it with the Rite of Imprisonment, which has the "
-                                + "opposite effect.\n\nCast "
-                                + "it against panic, interruption, or crowding while you prepare a longer "
-                                + "working. Not permanent, not a wall, but enough to keep the world at a "
-                                + "distance."),
-                rite(cat, "circle_magic/imprisonment", "Rite of Imprisonment", Items.SLIME_BALL, 8,
-                        "The sister-working to Sanctity. Where Sanctity presses creatures away, Imprisonment "
-                                + "draws them back and pens them within the circle. A snare, not a "
-                                + "killing-circle.",
-                        ritualCard("500 (+16/s)", 0, List.of(ringWhite("small")), Items.SLIME_BALL, Items.REDSTONE),
-                        "Offer a **Slime Ball** with **Redstone** on a small circle, with **500 altar "
-                                + "power**. For the safer inverse, study Sanctity.\n\nUseful for holding "
-                                + "sacrificial beasts or summoned nuisances in one patch while you prepare the "
-                                + "next working. Control before destruction."),
-                rite(cat, "circle_magic/broiling", "Rite of Broiling", Items.SUGAR, 9,
-                        "An infernal cooking-working that turns dropped raw food into cooked meals all at "
-                                + "once. Efficient, dramatic, and never entirely gentle — for when a camp of "
-                                + "meat needs preparing faster than any oven.",
-                        ritualCard("1000", 0, List.of(ringInfernal("small")),
-                                Items.SUGAR, WitcheryItems.WOOD_ASH.get(), Items.COAL, Items.BLAZE_POWDER,
-                                WitcheryItems.ATTUNED_STONE_CHARGED.get()),
-                        "Started from a small infernal circle with **Sugar**. The ordinary branch needs "
-                                + "**Wood Ash** and **Coal** (1000 power); the hotter branch needs **Wood "
-                                + "Ash**, **Blaze Powder**, and a **Charged Attuned Stone**.\n\nIt cooks every "
-                                + "raw food in reach. The hotter branch is harsher — some offerings return as "
-                                + "**Charcoal** instead of supper."),
-                rite(cat, "circle_magic/broken_earth", "Rite of Broken Earth", WitcheryItems.BREW_OF_EROSION.get(), 10,
-                        "A small working that tears open the ground beyond the circle — rough, practical "
-                                + "witchcraft for a trench, a hazard, or a sudden gap where there was solid "
-                                + "ground.",
-                        ritualCard("none", 0, List.of(ringWhite("small")), WitcheryItems.BREW_OF_EROSION.get()),
-                        "Offer a **Brew of Erosion** on a small circle; the crevice carves ahead of the "
-                                + "casting point, so choose your direction first.\n\nUse it to disrupt "
-                                + "pursuers, split a battlefield, or make a sudden barrier. Blunt magic — "
-                                + "effective, noisy, and inclined to ruin the ground."),
-                rite(cat, "circle_magic/moving_earth", "Rite of Moving Earth", Items.DIRT, 11,
-                        "Not one neat pillar but a greater sundering — a large working that parts the land "
-                                + "and sends the broken line wandering outward. Where Broken Earth is a "
-                                + "trench, this is a sustained rift.",
-                        ritualCard("none", 0, List.of(ringWhite("large")), Items.DIRT, Items.GRAVEL, Items.SAND),
-                        "Worked from a large circle with **Dirt**, **Gravel**, or **Sand**. It becomes a "
-                                + "staged rite that walks a tearing path away over time, and nearby Coven "
-                                + "Witches widen it.\n\nUse it to divide a field, break pursuit, or command "
-                                + "the earth aside."),
-                rite(cat, "circle_magic/glyphic_transformation", "Rite of Glyphic Transformation", WitcheryItems.CHALK.get(), 12,
-                        "Some witches redraw whole circles by hand; richer or lazier ones persuade the "
-                                + "circle to rewrite itself. This changes an existing ring from one chalk "
-                                + "family to another — it retunes marks already there.",
-                        ritualCard("1000", 0, List.of(ringWhite("medium")),
-                                WitcheryItems.CHALK.get(), WitcheryItems.CHALK_OTHERWHERE.get(),
-                                WitcheryItems.CHALK_INFERNAL.get(), WitcheryItems.GYPSUM.get(), WitcheryItems.ARTHANA.get()),
-                        "Offer the chalk family you want — **Chalk**, **Otherwhere Chalk**, or **Infernal "
-                                + "Chalk** — plus **Gypsum**, an **Arthana**, and **1000 altar power**. The "
-                                + "Arthana returns.\n\nThe amount of dropped chalk decides which ring is "
-                                + "rewritten: one for small, two for medium, three for large."),
-                rite(cat, "circle_magic/natures_power", "Rite of Nature's Power", WitcheryItems.BREW_OF_SPROUTING.get(), 13,
-                        "Not a burst of growth but a sustained medium-circle coaxing, urging the land toward "
-                                + "green abundance over time — fields, moss, saplings, and wild growth.",
-                        ritualCard("none", 0, List.of(ringWhite("medium")),
-                                WitcheryItems.BREW_OF_SPROUTING.get(), WitcheryItems.ROWAN_SAPLING.get(),
-                                WitcheryItems.ALDER_SAPLING.get(), WitcheryItems.HAWTHORN_SAPLING.get(),
-                                Items.OAK_SAPLING, Items.SPRUCE_SAPLING, Items.BIRCH_SAPLING,
-                                WitcheryItems.ATTUNED_STONE_CHARGED.get()),
-                        "Worked from a medium circle with **Brew of Sprouting** and a mixed grove offering — "
-                                + "**Rowan**, **Alder**, **Hawthorn**, **Oak**, **Spruce**, and **Birch "
-                                + "Saplings** — plus a **Charged Attuned Stone** (returned).\n\nIt pulses "
-                                + "outward, greening soil and driving growth. Nearby Coven Witches lengthen "
-                                + "its reach."),
-                rite(cat, "circle_magic/earths_wrath", "Rite of Earth's Wrath", Items.LAVA_BUCKET, 14,
-                        "The circle-working of buried fire made manifest. Where the land below hides a real "
-                                + "lava pool, this rite drags that violence upward and forces the ground into "
-                                + "a fresh volcano. Less control than a bargain with pressure and ruin.",
-                        ritualCard("none", 0, List.of(ringInfernal("small")), Items.LAVA_BUCKET),
-                        "A large staged terrain rite through a **Lava Bucket** trigger; the ground below "
-                                + "must hold a sizable lava pool or it fails. A nearby **Bound Waystone** can "
-                                + "retarget the eruption.\n\nThe cone rises in pulses and opens its vent at "
-                                + "the end. Use it to scar the land or make a place no traveler mistakes for "
-                                + "safe."),
-                rite(cat, "circle_magic/icy_expansion", "Rite of Icy Expansion", WitcheryItems.FROZEN_HEART.get(), 15,
-                        "The witch's answer to drowning. Rather than parting the sea, it grows a hollow "
-                                + "winter shell around the working, pushing liquid away and leaving a "
-                                + "breathing chamber inside.",
-                        ritualCard("none", 2, List.of(ringWhite("small")), WitcheryItems.FROZEN_HEART.get()),
-                        "Worked from a small circle through a **Frozen Heart** trigger, and it needs a coven "
-                                + "of at least two before the shell forms; stronger covens grow it larger."
-                                + "\n\nIt grows in pulses, clearing the inside. Cast it under the ocean or in "
-                                + "flooded caverns for a pocket of winter-made air."),
-                rite(cat, "circle_magic/prior_incarnation", "Rite of Prior Incarnation", WitcheryItems.ATTUNED_STONE_CHARGED.get(), 16,
-                        "A desperate infernal recovery-working for calling back what was lost in death. It "
-                                + "does not reverse the death — it drags your fallen belongings back before "
-                                + "the world scatters them.",
-                        ritualCard("none", 0, List.of(ringInfernal("small")),
-                                WitcheryItems.NECRO_STONE.get(), WitcheryItems.TONGUE_OF_DOG.get(), Items.BONE,
-                                WitcheryItems.SPECTRAL_DUST.get(), WitcheryItems.ATTUNED_STONE_CHARGED.get()),
-                        "Worked on a small infernal circle with a **Necromantic Stone**, **Tongue of Dog**, "
-                                + "**Bone**, **Spectral Dust**, and a **Charged Attuned Stone**. Cast it in "
-                                + "the same world, within **16 blocks** of where you fell.\n\nLoose drops are "
-                                + "pulled toward you, your inventory first. No answer to Keep Inventory or "
-                                + "another world — but the witch's answer to a bad death while the trail is "
-                                + "warm."),
-                gatheredLivesEntry(cat),
-                gatedByItem("guide/obtained/chalk", whatsNext(cat, "circle_magic", 18, "book_burning", "Witchcraft: Conjuration & Fetishes", WitcheryItems.BOOK_BURNING.get(), "Conjuration & Fetishes")));
+        List<BookEntryModel> entries = new ArrayList<>();
+        entries.add(entry(cat, "circle_magic/chalk", "Chalk", WitcheryItems.CHALK.get(), 0, chalk));
+        entries.add(entry(cat, "circle_magic/drawing_circles", "Drawing Circles",
+                WitcheryItems.CHALK_GOLDEN.get(), 1, drawing));
+        entries.add(entry(cat, "circle_magic/rites", "Rites of Power",
+                WitcheryItems.CIRCLE_TALISMAN.get(), 2, rites));
+
+        int sort = 3;
+        for (RitualCompendium.Family family : RitualCompendium.families()) {
+            entries.add(ritualCompendiumEntry(cat, family, sort++));
+        }
+        entries.add(gatheredLivesEntry(cat, sort++));
+        entries.add(gatedByItem("guide/obtained/chalk", whatsNext(cat, "circle_magic", sort,
+                "book_burning", "Witchcraft: Conjuration & Fetishes", WitcheryItems.BOOK_BURNING.get(),
+                "Conjuration & Fetishes")));
+        cat.withEntries(entries.toArray(BookEntryModel[]::new));
         return cat;
     }
 
@@ -1000,7 +948,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
      * the old village story books (advancement {@code guide/gathered_lives}). The short story is the lore
      * reward; the recipe card teaches the Rite of the Gathered Lives.
      */
-    private BookEntryModel gatheredLivesEntry(BookCategoryModel cat) {
+    private BookEntryModel gatheredLivesEntry(BookCategoryModel cat, int sort) {
         List<BookPageModel<?>> pages = new ArrayList<>(WitcheryBooks.prose("The Gathered Lives",
                 "You found them, then — five of the old village tales, copied out in trembling hands and "
                         + "left to yellow in chest and cellar. I felt you reading. A tale is a kind of taglock, "
@@ -1039,7 +987,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "coven a later rite demands, so cast your coven-working while they linger. They keep "
                         + "no altar long — when they fade, simply gather the lives again."));
         return entry(cat, "circle_magic/gathered_lives", "The Spectral Coven",
-                        WitcheryItems.MELLIFLUOUS_HUNGER.get(), 17, pages)
+                        WitcheryItems.MELLIFLUOUS_HUNGER.get(), sort, pages)
                 .withCondition(BookAdvancementConditionModel.create()
                         .withAdvancementId(id("guide/gathered_lives")))
                 .hideWhileLocked(true);

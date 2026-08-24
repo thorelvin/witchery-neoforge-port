@@ -1,0 +1,200 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:ghost_of_the_light"
+  },
+  "name": "Player Infusions",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)This family contains **4 distinct workings**. Each one has its own exact offerings, circles, power, and conditions; use the card belonging to the result you intend.[#]()",
+      "title": "Player Infusions",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)You must stand in the circle.[#]() [#](53341a)**Required offerings:** **Ghost of the Light**.[#]()",
+      "title": "Light infusion",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        },
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:ghost_of_the_light",
+          "x": 50,
+          "y": 76
+        }
+      ],
+      "source_id": 27,
+      "text": "[#](53341a)**7x7 + 11x11** - **Ritual** chalk - **2000** altar power[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)You must stand in the circle.[#]() [#](53341a)**Required offerings:** **Soul of the World**.[#]()",
+      "title": "Overworld infusion",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        },
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:soul_of_the_world",
+          "x": 50,
+          "y": 76
+        }
+      ],
+      "source_id": 28,
+      "text": "[#](53341a)**7x7 + 11x11** - **Ritual** chalk - **4000** altar power[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)You must stand in the circle.[#]() [#](53341a)**Required offerings:** **Spirit of Otherwhere**.[#]()",
+      "title": "Otherwhere infusion",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "purple",
+          "size": "small"
+        },
+        {
+          "color": "purple",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:spirit_of_otherwhere",
+          "x": 50,
+          "y": 76
+        }
+      ],
+      "source_id": 29,
+      "text": "[#](53341a)**7x7 + 11x11** - **Otherwhere** chalk - **4000** altar power[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)You must stand in the circle.[#]() [#](53341a)**Required offerings:** **Infernal Animus**.[#]()",
+      "title": "Infernal infusion",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "red",
+          "size": "small"
+        },
+        {
+          "color": "red",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:infernal_animus",
+          "x": 50,
+          "y": 76
+        }
+      ],
+      "source_id": 30,
+      "text": "[#](53341a)**7x7 + 11x11** - **Infernal** chalk - **4000** altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 21,
+  "x": 0,
+  "y": 0
+}

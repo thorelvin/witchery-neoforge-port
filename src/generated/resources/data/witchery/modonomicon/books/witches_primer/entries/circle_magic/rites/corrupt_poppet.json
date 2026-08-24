@@ -1,0 +1,80 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:bound_taglock_kit"
+  },
+  "name": "Curse of Corrupt Poppet",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Destroy voodoo protection of taglocked being. Needs cat familiar.[#]() [#](53341a)**Required offerings:** **Bound Taglock Kit**, **Exhale of the Horned One**, **Voodoo Protection Poppet**, **Blaze Powder**, **Spectral Dust**.[#]()",
+      "title": "Curse of Corrupt Poppet",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "red",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:bound_taglock_kit",
+          "x": 14,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:exhale_of_horned_one",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:voodoo_protection_poppet",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:blaze_powder",
+          "x": 68,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:spectral_dust",
+          "x": 86,
+          "y": 76
+        }
+      ],
+      "source_id": 56,
+      "text": "[#](53341a)**11x11** - **Infernal** chalk - **7000** altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 39,
+  "x": 0,
+  "y": 0
+}

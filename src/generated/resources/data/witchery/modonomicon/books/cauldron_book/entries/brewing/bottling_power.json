@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Use a **Glass Bottle** on a heated composed brew. Each bottle takes one of the cauldron's three water levels, so a brim-full batch yields three bottles. The ingredient chain remains seasoned in the vessel until the last water level is drawn.[#]()",
+      "text": "[#](53341a)Use a **Glass Bottle** on a heated composed brew. A brim-full cauldron holds 3,000 measures.[#]()",
       "title": "Bottling",
       "use_markdown_in_title": false
     },
@@ -27,7 +27,40 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
+      "text": "[#](53341a)A novice draws all 3,000 into one bottle; practiced bottlers draw progressively smaller measures, yielding 1, 2, 3, 4, 5, 6, 8, 10, 15, or at most 30 bottles. The ingredient chain remains seasoned until too little brew remains for the next bottle.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
       "text": "[#](53341a)Use an empty **Bucket** instead to take the whole batch as one moving Brew Bucket. That empties and clears the cauldron immediately.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Bottling a brew complex enough for your present skill trains mastery from 0 to 100. New yield tiers open at skill 30 and 60; demanding capacity-eight brews carry mastery from 90 to 100. The cauldron announces the 30, 60, and 90 milestones.[#]()",
+      "title": "Bottling Mastery",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)A Witch's Hat, Baba Yaga's Hat, Witches' Robes, Necromancer Robes, **Brewing Expertise**, and an active Owl familiar improve skilled yield in the exact old tiers. A Diamond opens capacity eight but imposes the source two-tier yield penalty.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

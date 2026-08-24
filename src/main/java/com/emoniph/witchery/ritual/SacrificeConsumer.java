@@ -44,6 +44,7 @@ final class SacrificeConsumer {
 
     private static final Map<ResourceKey<Level>, List<Pending>> QUEUES = new HashMap<>();
     private static final Map<ResourceKey<Level>, Set<Integer>> PENDING_IDS = new HashMap<>();
+    private static final Map<ResourceKey<Level>, Set<BlockPos>> PENDING_GRASSPERS = new HashMap<>();
     private static final Map<ResourceKey<Level>, List<Runnable>> DRAIN_CALLBACKS = new HashMap<>();
 
     /** Schedule one offering to pop after the current queue drains (sequential, one per 20 ticks). */
@@ -72,12 +73,22 @@ final class SacrificeConsumer {
             item.setPickUpDelay((int) (popAt - serverLevel.getGameTime()) + 5);
             PENDING_IDS.computeIfAbsent(key, k -> new HashSet<>()).add(item.getId());
         }
+        if (offering.grassper() != null) {
+            PENDING_GRASSPERS.computeIfAbsent(key, k -> new HashSet<>())
+                    .add(offering.grassper().getBlockPos().immutable());
+        }
     }
 
     /** Whether this dropped item is awaiting a staged pop (offering finders skip these). */
     static boolean isPending(Level level, ItemEntity item) {
         Set<Integer> ids = PENDING_IDS.get(level.dimension());
         return ids != null && ids.contains(item.getId());
+    }
+
+    /** Whether this Grassper is already committed to a staged sacrifice. */
+    static boolean isPending(Level level, BlockPos grassperPos) {
+        Set<BlockPos> positions = PENDING_GRASSPERS.get(level.dimension());
+        return positions != null && positions.contains(grassperPos);
     }
 
     /** Whether this dimension still has staged sacrifices waiting to disappear. */
@@ -119,6 +130,7 @@ final class SacrificeConsumer {
         if (queue.isEmpty()) {
             QUEUES.remove(key);
             PENDING_IDS.remove(key);
+            PENDING_GRASSPERS.remove(key);
             runDrainCallbacksIfReady(level, key);
         }
     }
@@ -128,6 +140,7 @@ final class SacrificeConsumer {
         ResourceKey<Level> key = level.dimension();
         List<Pending> queue = QUEUES.remove(key);
         Set<Integer> ids = PENDING_IDS.remove(key);
+        PENDING_GRASSPERS.remove(key);
         if (queue != null) {
             for (Pending pending : queue) {
                 pop(level, pending.offering(), ids);
@@ -160,6 +173,12 @@ final class SacrificeConsumer {
         }
         if (item != null && !item.isAlive()) {
             return; // grabbed/removed already — nothing to pop
+        }
+        if (offering.grassper() != null) {
+            Set<BlockPos> positions = PENDING_GRASSPERS.get(level.dimension());
+            if (positions != null) {
+                positions.remove(offering.grassper().getBlockPos());
+            }
         }
         Vec3 pos = offering.position();
         if (pos != null) {

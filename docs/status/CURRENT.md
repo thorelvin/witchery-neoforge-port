@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-08-24
+Last curated: 2026-08-25
 
 This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -40,7 +40,7 @@ enough to read before starting work. Long historical deltas belong in
   Vanishing Witch Hut, NBT structures, the source-corrected Spirit World lifecycle,
   mirrored terrain/spawns/Manifestation visuals, cursed well warnings, the complete
   Ice World area conversion, Witchery crop growth/worldgen, the paired Gulg/Mog
-  fight, and other custom brew/ritual edge cases.
+  fight, unusual custom-brew effect combinations, and active-rite presentation.
 - State-dependent source-feel QA for exact-ID items and wearables. Foundational
   model geometry, pivots, transforms, textures, and held/armor routes now have a
   source-coordinate audit; remaining checks are animated, equipped, translucent,
@@ -56,8 +56,46 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Custom Brew mechanical parity is closed against the original registry. An
+  extracted, source-hashed fixture locks all 158 registrations and their source
+  order; every action family has a modern owner. The Witch's Cauldron now keeps
+  exact internal fluid volume and restores the original persisted brewing-skill,
+  equipment, Brewing Expertise, Owl-familiar, Diamond-penalty, and
+  1/2/3/4/5/6/8/10/15/30 bottle-yield ladder. The remaining source station
+  recipes are live, including the corrected Egg-last Mutandis route, complex
+  Mutandis/Extremis products, graded Endless Water and Combustion, cooking,
+  Witch's Hand recycling, and Player Compass creation. Focused JVM contracts,
+  the generated Witches' Brews guide, and
+  `witchery:custom_brew_environmental_actions` cover the high-risk behavior;
+  [CUSTOM_BREW_SOURCE_PARITY.md](../reference/CUSTOM_BREW_SOURCE_PARITY.md)
+  holds the complete ownership and verification ledger. The 2026-08-25 closeout
+  passed the full build, all 16 resource contracts, all 25 CI GameTests, and the
+  forced dedicated-server save/reload cycle.
+- Circle Magic recipe and offering parity is closed against the original registry.
+  An extracted, source-hashed fixture locks all 96 registrations: 93 use exact
+  full-recipe definitions and the remaining three use documented native direct
+  paths. Source rites no longer enter representative-trigger fallback dispatch;
+  required and optional offerings now match deterministically across distinct
+  dropped stacks and Grassper-held stacks. Exact JVM contracts and the dedicated
+  `witchery:ritual_offering_sources` server GameTest cover rings, source order,
+  duplicate/optional requirements, mixed sources, staging, and rollback behavior.
+- The Primer's Circle Magic chapter is now a complete generated compendium:
+  58 searchable rite families contain all 96 source registrations exactly once.
+  Each source-tagged card renders its circles, altar power, coven requirement,
+  conditions, and ordered offerings from one canonical resource; optional
+  offerings have a gold frame in both held and placed books. A focused parity
+  contract locks the generated catalog back to the extracted source fixture.
+- The source-facing `witchery:cauldron_book` now opens a dedicated native
+  Modonomicon edition of **Witches' Brews**, separate from the progressive
+  Primer. Four searchable categories and 14 entries cover cauldron setup,
+  ordered brewing and bottling, live capacity/modifier/dispersal reagents,
+  implemented old cauldron craftings, ritual targets/circles/covens, and the
+  current effect/action registry. A registered resource contract maps all 196
+  original markup keys exactly once and requires every live composed-brew
+  ingredient to appear once in the generated reference. Unsupported old
+  transmutations are named honestly instead of being shown as working recipes.
 - The deterministic runtime harness and CI gates are complete. An explicit
-  manifest locks 15 resource-contract classes, 23 exact CI GameTests, and one
+  manifest locks 16 resource-contract classes, 25 exact CI GameTests, and one
   manual forced-restart fixture. Clean normal-difficulty dedicated servers now
   run every named test with all Witchery dimensions loaded, require unambiguous
   per-test success, preserve logs/JSON summaries, and verify Kettle, Witches'

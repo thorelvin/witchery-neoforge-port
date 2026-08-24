@@ -120,7 +120,7 @@ record ExpensiveSummonDemonOfferings(ItemEntity refinedEvil, ItemEntity blazeRod
                                      ItemEntity attunedStone, ItemEntity chargedStone) {}
 
 record HellOnEarthOfferings(ItemEntity redstoneSoup, ItemEntity demonHeart, ItemEntity waystone,
-                            ItemEntity netherStar, Villager villager, ItemEntity boundWaystone,
+                            ItemEntity netherStar, Villager villager, RitualOffering boundWaystone,
                             BlockPos effectCenter, boolean tooFar) {}
 
 record FertilityOfferings(ItemEntity hintOfRebirth, ItemEntity diamondVapour, ItemEntity quicklime,
@@ -149,7 +149,7 @@ record TransposeOresOfferings(ItemEntity enderPearl, ItemEntity ironIngot, ItemE
 
 record RaiseColumnOfferings(ItemEntity brewOfSprouting, ItemEntity cactus, ItemEntity focus) {}
 
-record OptionalWaystoneRelocation(ItemEntity boundWaystone, BlockPos effectCenter, boolean tooFar) {}
+record OptionalWaystoneRelocation(RitualOffering boundWaystone, BlockPos effectCenter, boolean tooFar) {}
 
 enum StormRiteVariant {
     BASE,
@@ -158,7 +158,7 @@ enum StormRiteVariant {
 }
 
 record StormOfferings(ItemEntity weatherFocus, ItemEntity woodAsh, ItemEntity chargedStone,
-                      ItemEntity boundWaystone, BlockPos effectCenter, boolean tooFar) {}
+                      RitualOffering boundWaystone, BlockPos effectCenter, boolean tooFar) {}
 
 record MysticBranchOfferings(ItemEntity entTwig, ItemEntity mysticUnguent) {}
 

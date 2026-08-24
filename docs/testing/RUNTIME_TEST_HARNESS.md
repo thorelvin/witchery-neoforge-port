@@ -37,9 +37,9 @@ python tools/runtime_test_harness.py all
 
 - `validate` checks manifest schema, duplicate entries, resource-test source
   classes, and exact equality between registered GameTest IDs and the manifest.
-- `resource-contracts` runs the 15 explicitly listed structural/resource JVM
+- `resource-contracts` runs the 16 explicitly listed structural/resource JVM
   tests. A broad Gradle summary cannot silently substitute another test set.
-- `game-tests` starts one clean normal-difficulty dedicated world and runs all 23
+- `game-tests` starts one clean normal-difficulty dedicated world and runs all 25
   CI-lane GameTests sequentially by exact ID. Each command must report exactly
   one completion and the required-tests-passed marker.
 - `save-reload` starts a clean server, places and mutates a Kettle, Witches'
@@ -53,6 +53,7 @@ For a focused local rerun, repeat `--game-test` after `game-tests`:
 
 ```powershell
 python tools/runtime_test_harness.py game-tests `
+  --game-test witchery:custom_brew_environmental_actions `
   --game-test witchery:otherwhere_hearth_round_trip `
   --game-test witchery:torment_multiplayer_boss_reconnect
 ```

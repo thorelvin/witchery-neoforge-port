@@ -169,8 +169,8 @@
           "text": "[#](53341a)**Bramble** - Repell Attacker (level 2, 250 power).[#]()"
         },
         {
-          "item": "minecraft:iron_ore",
-          "text": "[#](53341a)**Iron Ore** - Gas Mask (level 2, 100 power).[#]()"
+          "item": "minecraft:gravel",
+          "text": "[#](53341a)**Gravel** - Gas Mask (level 2, 100 power).[#]()"
         }
       ],
       "text": "",
@@ -194,6 +194,173 @@
         {
           "item": "witchery:foul_fume",
           "text": "[#](53341a)**Foul Fume** - Stout Belly (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:poppy",
+          "text": "[#](53341a)**Poppy** - Love (level 4, 500 power).[#]()"
+        },
+        {
+          "item": "witchery:drop_of_luck",
+          "text": "[#](53341a)**Drop of Luck** - Brewing Expertise / inverted: Insanity (level 4, 5000 power).[#]()"
+        },
+        {
+          "item": "witchery:disturbed_cotton",
+          "text": "[#](53341a)**Disturbed Cotton** - Sinking (level 4, 3000 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:ember_moss",
+          "text": "[#](53341a)**Ember Moss** - Overheating (level 4, 3000 power).[#]()"
+        },
+        {
+          "item": "witchery:mellifluous_hunger",
+          "text": "[#](53341a)**Mellifluous Hunger** - Waking Nightmare (level 4, 10000 power).[#]()"
+        },
+        {
+          "item": "witchery:toe_of_frog",
+          "text": "[#](53341a)**Toe of Frog** - Double Jump (level 4, 500 power).[#]()"
+        },
+        {
+          "item": "minecraft:short_grass",
+          "text": "[#](53341a)**Short Grass** - Volatility (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:dead_bush",
+          "text": "[#](53341a)**Dead Bush** - Volatility (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:soul_sand",
+          "text": "[#](53341a)**Soul Sand** - Darkness Allergy (level 4, 4000 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:whiff_of_magic",
+          "text": "[#](53341a)**Whiff of Magic** - Absorb Magic (level 4, 2000 power).[#]()"
+        },
+        {
+          "item": "witchery:spectral_dust",
+          "text": "[#](53341a)**Spectral Dust** - Reflect Damage (level 5, 2000 power).[#]()"
+        },
+        {
+          "item": "witchery:void_bramble",
+          "text": "[#](53341a)**Void Bramble** - Ill Fitting (level 6, 8000 power).[#]()"
+        },
+        {
+          "item": "witchery:hint_of_rebirth",
+          "text": "[#](53341a)**Hint of Rebirth** - Reincarnate (level 6, 2500 power).[#]()"
+        },
+        {
+          "item": "minecraft:emerald",
+          "text": "[#](53341a)**Emerald** - Resizing (level 6, 2500 power).[#]()"
+        },
+        {
+          "item": "witchery:focused_will",
+          "text": "[#](53341a)**Focused Will** - Keep Inventory (level 8, 10000 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:redstone_soup",
+          "text": "[#](53341a)**Redstone Soup** - Keep Effects (level 8, 10000 power).[#]()"
+        },
+        {
+          "item": "minecraft:red_dye",
+          "text": "[#](53341a)**Red Dye** - Colorful (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:green_dye",
+          "text": "[#](53341a)**Green Dye** - Colorful (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:purple_dye",
+          "text": "[#](53341a)**Purple Dye** - Colorful (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:cyan_dye",
+          "text": "[#](53341a)**Cyan Dye** - Colorful (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:light_gray_dye",
+          "text": "[#](53341a)**Light Gray Dye** - Colorful (level 1).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:gray_dye",
+          "text": "[#](53341a)**Gray Dye** - Colorful (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:pink_dye",
+          "text": "[#](53341a)**Pink Dye** - Colorful (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:lime_dye",
+          "text": "[#](53341a)**Lime Dye** - Colorful (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:yellow_dye",
+          "text": "[#](53341a)**Yellow Dye** - Colorful (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:light_blue_dye",
+          "text": "[#](53341a)**Light Blue Dye** - Colorful (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:magenta_dye",
+          "text": "[#](53341a)**Magenta Dye** - Colorful (level 1).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:orange_dye",
+          "text": "[#](53341a)**Orange Dye** - Colorful (level 1).[#]()"
         }
       ],
       "text": "",

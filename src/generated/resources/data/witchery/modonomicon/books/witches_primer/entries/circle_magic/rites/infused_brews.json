@@ -1,0 +1,150 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:infused_brew_base"
+  },
+  "name": "Infused Brews",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)This family contains **2 distinct workings**. Each one has its own exact offerings, circles, power, and conditions; use the card belonging to the result you intend.[#]()",
+      "title": "Infused Brews",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Infuse the Brew of Soaring.[#]() [#](53341a)**Required offerings:** **Infused Brew Base**, **Broom**, **Feather**, **Arthana**.[#]()",
+      "title": "Brew of Soaring",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        },
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:infused_brew_base",
+          "x": 23,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:broom",
+          "x": 41,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:feather",
+          "x": 59,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:arthana",
+          "x": 77,
+          "y": 76
+        }
+      ],
+      "source_id": 80,
+      "text": "[#](53341a)**7x7 + 11x11** - **Ritual** chalk - **3000** altar power[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Infuse the Brew of the Grave.[#]() [#](53341a)**Required offerings:** **Infused Brew Base**, **Bone**, **Dense Web**, **Necromantic Stone**.[#]()",
+      "title": "Brew of the Grave",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        },
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:infused_brew_base",
+          "x": 23,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:bone",
+          "x": 41,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:dense_web",
+          "x": 59,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:necro_stone",
+          "x": 77,
+          "y": 76
+        }
+      ],
+      "source_id": 81,
+      "text": "[#](53341a)**7x7 + 11x11** - **Ritual** chalk - **3000** altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 52,
+  "x": 0,
+  "y": 0
+}

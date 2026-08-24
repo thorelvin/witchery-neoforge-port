@@ -1,0 +1,87 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:bound_taglock_kit"
+  },
+  "name": "Rite of Remove Vampirism",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Cleanse the taglocked being of vampirism.[#]() [#](53341a)**Required offerings:** **Bound Taglock Kit**, **Breath of the Goddess**, **Silver Sword**, **Garlic**, **Diamond**, **Brew of Love**.[#]() [#](53341a)**Conditions:** Active cat familiar.[#]() [#](53341a)**Coven required:** 6.[#]()",
+      "title": "Rite of Remove Vampirism",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "coven_faces": 6,
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:bound_taglock_kit",
+          "x": 32,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:breath_of_goddess",
+          "x": 50,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:silver_sword",
+          "x": 68,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:garlic",
+          "x": 32,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:diamond",
+          "x": 50,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_love",
+          "x": 68,
+          "y": 87
+        }
+      ],
+      "source_id": 94,
+      "text": "[#](53341a)**7x7** - **Ritual** chalk - **10000** altar power - **Coven: 6**[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 59,
+  "x": 0,
+  "y": 0
+}

@@ -1,0 +1,136 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "minecraft:blaze_rod"
+  },
+  "name": "Rite of Broiling",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)This family contains **2 distinct workings**. Each one has its own exact offerings, circles, power, and conditions; use the card belonging to the result you intend.[#]()",
+      "title": "Rite of Broiling",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Cooks any food placed in the circle. May overcook food.[#]() [#](53341a)**Required offerings:** **Blaze Rod**, **Wood Ash**, **Coal**.[#]()",
+      "title": "Altar-powered broiling",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "red",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:blaze_rod",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:coal",
+          "x": 68,
+          "y": 76
+        }
+      ],
+      "source_id": 51,
+      "text": "[#](53341a)**7x7** - **Infernal** chalk - **1000** altar power[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Cooks any food placed in the circle. May overcook food.[#]() [#](53341a)**Required offerings:** **Attuned Stone (Charged)**, **Blaze Rod**, **Wood Ash**, **Blaze Powder**.[#]()",
+      "title": "Portable broiling",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "red",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone_charged",
+          "x": 23,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:blaze_rod",
+          "x": 41,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 59,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:blaze_powder",
+          "x": 77,
+          "y": 76
+        }
+      ],
+      "source_id": 58,
+      "text": "[#](53341a)**7x7** - **Infernal** chalk - no initial altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 35,
+  "x": 0,
+  "y": 0
+}

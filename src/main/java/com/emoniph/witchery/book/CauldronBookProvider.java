@@ -147,11 +147,19 @@ public class CauldronBookProvider implements BookSubProvider {
 
     private static List<BookPageModel<?>> bottlingPages() {
         List<BookPageModel<?>> pages = new ArrayList<>(WitcheryBooks.prose("Bottling",
-                "Use a **Glass Bottle** on a heated composed brew. Each bottle takes one of the cauldron's three "
-                        + "water levels, so a brim-full batch yields three bottles. The ingredient chain remains "
-                        + "seasoned in the vessel until the last water level is drawn."
+                "Use a **Glass Bottle** on a heated composed brew. A brim-full cauldron holds 3,000 measures. "
+                        + "A novice draws all 3,000 into one bottle; practiced bottlers draw progressively smaller "
+                        + "measures, yielding 1, 2, 3, 4, 5, 6, 8, 10, 15, or at most 30 bottles. The ingredient "
+                        + "chain remains seasoned until too little brew remains for the next bottle."
                         + "\n\nUse an empty **Bucket** instead to take the whole batch as one moving Brew Bucket. "
                         + "That empties and clears the cauldron immediately."));
+        pages.addAll(WitcheryBooks.prose("Bottling Mastery",
+                "Bottling a brew complex enough for your present skill trains mastery from 0 to 100. New yield "
+                        + "tiers open at skill 30 and 60; demanding capacity-eight brews carry mastery from 90 to "
+                        + "100. The cauldron announces the 30, 60, and 90 milestones."
+                        + "\n\nA Witch's Hat, Baba Yaga's Hat, Witches' Robes, Necromancer Robes, **Brewing "
+                        + "Expertise**, and an active Owl familiar improve skilled yield in the exact old tiers. "
+                        + "A Diamond opens capacity eight but imposes the source two-tier yield penalty."));
         pages.addAll(WitcheryBooks.prose("Altar Power",
                 "Every ingredient may add a power cost. Bottling charges that cost **for each bottle**; taking a "
                         + "Brew Bucket charges it once for the whole batch. A valid altar within eight blocks must "
@@ -184,13 +192,13 @@ public class CauldronBookProvider implements BookSubProvider {
 
     private static List<BookPageModel<?>> cauldronCraftingPages() {
         List<BookPageModel<?>> pages = new ArrayList<>(WitcheryBooks.prose("Old Craftings",
-                "For these workings, drop the loose offerings into a heated cauldron with water, then use the final "
+                "For these workings, use the loose offerings on a heated cauldron with water, then use the final "
                         + "trigger item on the vessel. The result rises from the bowl. Powered recipes require a "
                         + "valid altar within eight blocks and consume one water level."));
-        pages.add(BrewReferencePages.vesselRecipe("Mutandis", "Use Exhale of the Horned One last.",
+        pages.add(BrewReferencePages.vesselRecipe("Mutandis", "Use the Egg last.",
                 WitcheryItems.MUTANDIS.get(), 6,
-                List.of(WitcheryItems.MANDRAKE_ROOT.get(), Items.EGG,
-                        WitcheryItems.EXHALE_OF_HORNED_ONE.get())));
+                List.of(WitcheryItems.MANDRAKE_ROOT.get(), WitcheryItems.EXHALE_OF_HORNED_ONE.get(),
+                        Items.EGG)));
         pages.add(BrewReferencePages.vesselRecipe("Mutandis Extremis", "Use Mutandis last.",
                 WitcheryItems.MUTANDIS_EXTREMIS.get(), 1,
                 List.of(Items.NETHER_WART, WitcheryItems.MUTANDIS.get())));
@@ -228,15 +236,42 @@ public class CauldronBookProvider implements BookSubProvider {
     private static List<BookPageModel<?>> sourceCraftingPages() {
         List<BookPageModel<?>> pages = new ArrayList<>(WitcheryBooks.prose("The Older Index",
                 "The old book also indexed cauldron cooking, Nether Wart, End Stone, Rotten Flesh, and a Player "
-                        + "Compass. Those old transmutations are **not accepted by the present cauldron**. They "
-                        + "remain part of the source record, but this guide will not pretend an unavailable "
-                        + "working can be performed."
-                        + "\n\nThe Player Compass has a modern crafting recipe and can also be bound with a filled "
-                        + "player Taglock Kit. Chalk, Mutandis, Mutandis Extremis, Drop of Luck, and the Mutating "
-                        + "Sprig also keep ordinary recipe bridges for accessibility."));
+                        + "Compass. These transmutations are live again. **Use** each loose support item on the hot "
+                        + "cauldron to offer it safely; sneak-use remains the gesture for stirring a dual-purpose "
+                        + "custom-brew ingredient. Use the named trigger last."
+                        + "\n\nRaw Porkchop, Chicken, Beef, Mutton, and Raw Odd Pork cook directly when used as the "
+                        + "trigger. A Witch Hand yields six Rotten Flesh. Every success consumes one water level."));
+        pages.add(BrewReferencePages.vesselRecipe("Nether Wart", "Use Mutandis last.", Items.NETHER_WART, 1,
+                List.of(WitcheryItems.MANDRAKE_ROOT.get(), WitcheryItems.TEAR_OF_GODDESS.get(),
+                        WitcheryItems.DIAMOND_VAPOUR.get(), Items.ENDER_PEARL, Items.WHEAT,
+                        WitcheryItems.MUTANDIS.get())));
+        pages.add(BrewReferencePages.vesselRecipe("End Stone", "Use Mutandis Extremis last; costs 1,800 power.",
+                Items.END_STONE, 2,
+                List.of(WitcheryItems.MANDRAKE_ROOT.get(), Items.STONE, Items.END_STONE,
+                        WitcheryItems.MUTANDIS_EXTREMIS.get())));
+        pages.add(BrewReferencePages.vesselRecipe("Endless Water", "Use a Snow Block last; costs 3,000 power.",
+                WitcheryItems.BREW_OF_ENDLESS_WATER.get(), 1,
+                List.of(Items.NETHER_WART, Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
+                        WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.SNOW_BLOCK)));
+        pages.add(spotlight(WitcheryItems.BREW_OF_ENDLESS_WATER.get(), "Endless Water Grades",
+                "Nether Wart alone gives 5 uses. Add Glowstone Dust for 20, then a Blaze Rod for 50, then a "
+                        + "Charged Attuned Stone for the full 100 uses. The Snow Block is always the final trigger."));
+        pages.add(BrewReferencePages.vesselRecipe("Combustion Brew", "Use Charcoal last.",
+                WitcheryItems.COMBUSTION_BREW.get(), 1,
+                List.of(WitcheryItems.MANDRAKE_ROOT.get(), Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
+                        WitcheryItems.ATTUNED_STONE_CHARGED.get(), Items.CHARCOAL)));
+        pages.add(spotlight(WitcheryItems.COMBUSTION_BREW.get(), "Combustion Grades",
+                "Mandrake Root alone yields 2,400 burn ticks. Glowstone Dust raises this to 5,000, a Blaze Rod "
+                        + "to 10,000, and a Charged Attuned Stone to 50,000. Charcoal is always the final trigger."));
+        pages.add(BrewReferencePages.vesselRecipe("Rotten Flesh", "Use a Witch Hand last; yields six.",
+                Items.ROTTEN_FLESH, 6, List.of(WitcheryItems.WITCH_HAND.get())));
+        pages.add(BrewReferencePages.vesselRecipe("Player Compass", "Use the vanilla Compass last.",
+                WitcheryItems.PLAYER_COMPASS.get(), 1,
+                List.of(Items.NETHER_WART, WitcheryItems.TEAR_OF_GODDESS.get(), Items.VINE,
+                        Items.RED_MUSHROOM, Items.COMPASS)));
         pages.add(spotlight(WitcheryItems.PLAYER_COMPASS.get(), "Player Compass",
-                "Craft the blank compass, then bind it directly to a player or combine it with that player's "
-                        + "filled Taglock Kit."));
+                "The cauldron yields a blank Player Compass. Bind it directly to a player or combine it with "
+                        + "that player's filled Taglock Kit. The modern crafting bridge remains available."));
         return pages;
     }
 
@@ -247,7 +282,8 @@ public class CauldronBookProvider implements BookSubProvider {
                         + "within eight blocks must pay the full ritual power cost."
                         + "\n\nDelivery is checked before power is spent. A ritual that lacks a valid target, "
                         + "cannot place its gas or liquid, or conflicts with its dispersal remains in the bowl so "
-                        + "you can correct the working."));
+                        + "you can correct the working. Chalk-circle rites are catalogued separately in the "
+                        + "Witches' Primer under **Circle Magic & Rites**, with every exact offering and ring."));
         pages.addAll(WitcheryBooks.prose("Risk",
                 "Misfortune is tested only after a powered ritual succeeds. Casting without a complete small or "
                         + "medium ritual circle adds risk; Infernal circles and the Shade of Leonard add further "

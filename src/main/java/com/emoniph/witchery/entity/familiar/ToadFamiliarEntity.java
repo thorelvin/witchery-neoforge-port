@@ -28,6 +28,7 @@ public class ToadFamiliarEntity extends FamiliarEntity {
 
     private static final int COLLECT_INTERVAL = 200;
     private static final double COLLECT_RANGE  = 6.0;
+    private int poisonousLifetime;
 
     public ToadFamiliarEntity(EntityType<? extends ToadFamiliarEntity> type, Level level) {
         super(type, level);
@@ -72,11 +73,19 @@ public class ToadFamiliarEntity extends FamiliarEntity {
     @Override
     public void tick() {
         super.tick();
+        if (!level().isClientSide() && poisonousLifetime > 0 && --poisonousLifetime <= 0) {
+            discard();
+            return;
+        }
         if (!level().isClientSide() && tickCount % COLLECT_INTERVAL == 0 && isTame()) {
             if (getOwner() instanceof ServerPlayer owner) {
                 collectNearbyItems(owner);
             }
         }
+    }
+
+    public void setPoisonousLifetime(int ticks) {
+        poisonousLifetime = Math.max(0, ticks);
     }
 
     @Override
@@ -121,11 +130,13 @@ public class ToadFamiliarEntity extends FamiliarEntity {
     public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("SkinColor", getSkinColor());
+        tag.putInt("PoisonousLifetime", poisonousLifetime);
     }
 
     @Override
     public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
         super.readAdditionalSaveData(tag);
         setSkinColor(tag.getIntOr("SkinColor", 0));
+        poisonousLifetime = tag.getIntOr("PoisonousLifetime", 0);
     }
 }

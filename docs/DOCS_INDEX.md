@@ -44,8 +44,13 @@ write new notes.
 
 - [../README.md](../README.md) - setup, build, high-level state, and navigation.
 - [../Book_of_Shadows.html](../Book_of_Shadows.html) - broad player-facing guide.
-- In-game Modonomicon/Primer data under `src/main/resources/data/witchery`
-  remains the concrete in-game book source.
+- In-game Modonomicon data is generated under
+  `src/generated/resources/data/witchery/modonomicon/books`; its providers live
+  under `src/main/java/com/emoniph/witchery/book`. The Primer and standalone
+  Witches' Brews book are the concrete in-game guide sources. Circle Magic's
+  canonical catalog is `src/main/resources/data/witchery/ritual/ritual_compendium.json`;
+  regenerate it with `tools/build_ritual_compendium.py` and keep
+  `RitualCompendiumParityTest` green against the extracted source fixture.
 
 Update player-facing docs only when behavior, recipes, commands, or discovery
 for players changed. Do not copy every dev-note into them.
@@ -66,6 +71,9 @@ for players changed. Do not copy every dev-note into them.
   implementation notes.
 - [reference/LEGACY_MODEL_COORDINATES.md](reference/LEGACY_MODEL_COORDINATES.md)
   - exact 1.7.10-to-modern model transform contract and parity audit method.
+- [reference/CUSTOM_BREW_SOURCE_PARITY.md](reference/CUSTOM_BREW_SOURCE_PARITY.md)
+  - authoritative 158-registration custom-brew ledger, bottling contract,
+  station recipes, modern ownership, and verification map.
 - [reference/OBSCURE_MECHANICS.md](reference/OBSCURE_MECHANICS.md) - source
   mechanics worth preserving.
 - [reference/SPIRIT_WORLD_ATMOSPHERE.md](reference/SPIRIT_WORLD_ATMOSPHERE.md)

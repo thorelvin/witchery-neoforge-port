@@ -1,0 +1,98 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:attuned_stone_charged"
+  },
+  "name": "Curse of Blindness",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Makes nearby creatures blind.[#]() [#](53341a)**Required offerings:** **Attuned Stone (Charged)**, **Redstone Soup**, **Reek of Misfortune**, **Exhale of the Horned One**, **Brew of Ink**, **Poisonous Potato**, **Spider Eye**, **Diamond**.[#]()",
+      "title": "Curse of Blindness",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "red",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone_charged",
+          "x": 23,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:redstone_soup",
+          "x": 41,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:reek_of_misfortune",
+          "x": 59,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:exhale_of_horned_one",
+          "x": 77,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_ink",
+          "x": 23,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:poisonous_potato",
+          "x": 41,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:spider_eye",
+          "x": 59,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:diamond",
+          "x": 77,
+          "y": 87
+        }
+      ],
+      "source_id": 38,
+      "text": "[#](53341a)**7x7** - **Infernal** chalk - no initial altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 28,
+  "x": 0,
+  "y": 0
+}

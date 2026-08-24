@@ -1,0 +1,69 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "minecraft:diamond_sword"
+  },
+  "name": "Rite of Icy Expansion",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Create an icy sphere. Coven of 2 or more.[#]() [#](53341a)**Required offerings:** **Diamond Sword**, **Frozen Heart**, **Attuned Stone (Charged)**.[#]() [#](53341a)**Coven required:** 2.[#]()",
+      "title": "Rite of Icy Expansion",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "coven_faces": 2,
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:diamond_sword",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:frozen_heart",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone_charged",
+          "x": 68,
+          "y": 76
+        }
+      ],
+      "source_id": 65,
+      "text": "[#](53341a)**7x7** - **Ritual** chalk - no initial altar power - **Coven: 2**[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 45,
+  "x": 0,
+  "y": 0
+}

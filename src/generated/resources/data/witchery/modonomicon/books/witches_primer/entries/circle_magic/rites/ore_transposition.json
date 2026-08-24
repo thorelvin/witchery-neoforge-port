@@ -1,0 +1,80 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "minecraft:ender_pearl"
+  },
+  "name": "Ore Transposition",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Transpose iron from the ore below.[#]() [#](53341a)**Required offerings:** **Ender Pearl**, **Iron Ingot**, **Blaze Powder**, **Diamond Vapor**, **Attuned Stone (Charged)**.[#]()",
+      "title": "Ore Transposition",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "purple",
+          "size": "large"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:ender_pearl",
+          "x": 14,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:iron_ingot",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:blaze_powder",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:diamond_vapour",
+          "x": 68,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone_charged",
+          "x": 86,
+          "y": 76
+        }
+      ],
+      "source_id": 7,
+      "text": "[#](53341a)**15x15** - **Otherwhere** chalk - no initial altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 9,
+  "x": 0,
+  "y": 0
+}

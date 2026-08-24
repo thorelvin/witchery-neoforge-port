@@ -2,135 +2,72 @@ package com.emoniph.witchery.ritual;
 
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.init.WitcheryItems;
-import com.emoniph.witchery.item.WaystoneItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Locks the data-driven small-ring {@link RitualDefinition} dispatch table: each migrated trigger
- * item (on the right circle variant) resolves to its rite, and the circle-variant gates are enforced.
- * Runs headlessly via ModDevGradle {@code unitTest} (game registries bootstrapped, no client/server).
- */
+/** Locks the representative-trigger table that remains for intentional post-1.7.10 rites. */
 class RitualDefinitionTest {
 
-    // Mirror of RitualExecutor's private VARIANT_* constants.
     private static final int RITUAL = 1;
     private static final int OTHERWHERE = 2;
     private static final int INFERNAL = 3;
-
-    private static final RitualCircleDetector.CircleSize SMALL = RitualCircleDetector.CircleSize.SMALL;
-    private static final RitualCircleDetector.CircleSize MEDIUM = RitualCircleDetector.CircleSize.MEDIUM;
-    private static final RitualCircleDetector.CircleSize LARGE = RitualCircleDetector.CircleSize.LARGE;
-
-    private static String match(ItemStack item, int variant) {
-        return RitualExecutor.matchingRitualDefinitionName(SMALL, item, variant);
-    }
 
     private static String match(RitualCircleDetector.CircleSize size, ItemStack item, int variant) {
         return RitualExecutor.matchingRitualDefinitionName(size, item, variant);
     }
 
-    private static List<String> rings(RitualCircleDetector.CircleSize size, ItemStack item, int variant) {
-        return RitualExecutor.matchingRitualDefinitionCompanionRings(size, item, variant);
+    @Test
+    void modernOnlyRepresentativeRoutesRemainAvailable() {
+        assertEquals("whiff_of_magic_familiar", match(RitualCircleDetector.CircleSize.MEDIUM,
+                new ItemStack(WitcheryItems.WHIFF_OF_MAGIC.get()), RITUAL));
+        assertEquals("bind_creaking_familiar", match(RitualCircleDetector.CircleSize.MEDIUM,
+                new ItemStack(Blocks.CREAKING_HEART.asItem()), RITUAL));
+        assertEquals("gathered_lives", match(RitualCircleDetector.CircleSize.MEDIUM,
+                new ItemStack(WitcheryItems.MELLIFLUOUS_HUNGER.get()), OTHERWHERE));
+        assertEquals("moving_earth", match(RitualCircleDetector.CircleSize.LARGE,
+                new ItemStack(Items.DIRT), RITUAL));
+        assertEquals("volcano", match(RitualCircleDetector.CircleSize.LARGE,
+                new ItemStack(Items.LAVA_BUCKET), INFERNAL));
     }
 
     @Test
-    void migratedTriggersResolveToTheirRite() {
-        assertEquals("summon_witch", match(new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()), INFERNAL));
-        assertEquals("summon_familiar", match(new ItemStack(WitcheryItems.DROP_OF_LUCK.get()), RITUAL));
-        assertEquals("prior_incarnation", match(new ItemStack(Items.ROTTEN_FLESH), INFERNAL));
-        assertEquals("ice_shell", match(new ItemStack(WitcheryItems.FROZEN_HEART.get()), RITUAL));
-        assertEquals("storm_base", match(new ItemStack(Items.WOODEN_SWORD), RITUAL));
-        assertEquals("storm_large", match(new ItemStack(Items.STONE_SWORD), RITUAL));
-        assertEquals("storm_portable", match(new ItemStack(Items.IRON_SWORD), RITUAL));
-        assertEquals("sanctity", match(new ItemStack(Items.FEATHER), RITUAL));
-        assertEquals("imprisonment", match(new ItemStack(Items.SLIME_BALL), RITUAL));
-        assertEquals("cook_item", match(new ItemStack(Items.SUGAR), INFERNAL));
-        assertEquals("infuse_seer_stone", match(new ItemStack(WitcheryItems.QUARTZ_SPHERE.get()), RITUAL));
+    void sourceRecipeNamesCannotFallBackToRepresentativeTriggers() {
+        assertNull(match(RitualCircleDetector.CircleSize.SMALL,
+                new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()), INFERNAL));
+        assertNull(match(RitualCircleDetector.CircleSize.SMALL,
+                new ItemStack(Items.FEATHER), RITUAL));
+        assertNull(match(RitualCircleDetector.CircleSize.MEDIUM,
+                new ItemStack(WitcheryItems.TEAR_OF_GODDESS.get()), RITUAL));
+        assertNull(match(RitualCircleDetector.CircleSize.LARGE,
+                new ItemStack(WitcheryItems.TORMENTED_TWINE.get()), INFERNAL));
     }
 
     @Test
-    void iceShellIgnoresCircleVariant() {
-        // Frozen Heart -> Ice Shell has no variant gate (ANY_VARIANT).
-        assertEquals("ice_shell", match(new ItemStack(WitcheryItems.FROZEN_HEART.get()), INFERNAL));
-        assertEquals("ice_shell", match(new ItemStack(WitcheryItems.FROZEN_HEART.get()), OTHERWHERE));
-    }
-
-    @Test
-    void variantGatesAreEnforced() {
-        // Storm rites need a Ritual ring; cook needs Infernal.
-        assertNull(match(new ItemStack(Items.WOODEN_SWORD), INFERNAL));
-        assertNull(match(new ItemStack(Items.FEATHER), INFERNAL));
-        assertNull(match(new ItemStack(Items.SUGAR), RITUAL));
-        assertNull(match(new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()), RITUAL));
-    }
-
-    @Test
-    void unrelatedTriggersDoNotMatch() {
-        assertNull(match(new ItemStack(Items.DIRT), RITUAL));
-        assertNull(match(ItemStack.EMPTY, RITUAL));
-    }
-
-    @Test
-    void mediumTriggersResolveToTheirRite() {
-        assertEquals("whiff_of_magic_familiar", match(MEDIUM, new ItemStack(WitcheryItems.WHIFF_OF_MAGIC.get()), RITUAL));
-        assertEquals("bind_familiar", match(MEDIUM, new ItemStack(WitcheryItems.TEAR_OF_GODDESS.get()), RITUAL));
-        assertEquals("bind_familiar", match(MEDIUM, new ItemStack(WitcheryItems.ODOUR_OF_PURITY.get()), RITUAL));
-        assertEquals("bind_creaking_familiar", match(MEDIUM, new ItemStack(Blocks.CREAKING_HEART.asItem()), RITUAL));
-        assertEquals("call_familiar", match(MEDIUM, new ItemStack(WitcheryItems.BREATH_OF_GODDESS.get()), RITUAL));
-        assertEquals("call_familiar", match(MEDIUM, new ItemStack(WitcheryItems.HINT_OF_REBIRTH.get()), RITUAL));
-        assertEquals("infusion_recharge", match(MEDIUM, PotionContents.createItemStack(Items.POTION, Potions.REGENERATION), RITUAL));
-        assertEquals("rain_of_toads", match(MEDIUM, new ItemStack(Items.LILY_PAD), INFERNAL));
-        assertEquals("rain_of_toads", match(MEDIUM, new ItemStack(Items.FROGSPAWN), INFERNAL));
-        assertEquals("blight", match(MEDIUM, new ItemStack(Items.WITHER_ROSE), INFERNAL));
-        assertEquals("corrupt_poppet", match(MEDIUM, new ItemStack(WitcheryItems.VOODOO_PROTECTION_POPPET.get()), INFERNAL));
-        assertEquals("bind_fetish", match(MEDIUM, new ItemStack(WitcheryItems.FETISH_SCARECROW.get()), RITUAL));
-        assertEquals("gathered_lives", match(MEDIUM, new ItemStack(WitcheryItems.MELLIFLUOUS_HUNGER.get()), OTHERWHERE));
-    }
-
-    @Test
-    void largeTriggersResolveToTheirRite() {
-        assertEquals("transpose_ores", match(LARGE, new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()), OTHERWHERE));
-        assertEquals("moving_earth", match(LARGE, new ItemStack(Items.DIRT), RITUAL));
-        assertEquals("moving_earth", match(LARGE, new ItemStack(Items.SAND), RITUAL));
-        assertEquals("volcano", match(LARGE, new ItemStack(Items.LAVA_BUCKET), INFERNAL));
-        assertEquals("broken_earth", match(LARGE, new ItemStack(Items.FLINT), RITUAL));
-        assertEquals("summon_imp", match(LARGE, new ItemStack(WitcheryItems.REFINED_EVIL.get()), INFERNAL));
-        assertEquals("summon_demon", match(LARGE, new ItemStack(WitcheryItems.TORMENTED_TWINE.get()), INFERNAL));
-    }
-
-    @Test
-    void companionGatedRitesAreInTheTableWithTheirRings() {
-        // Small infusion bases require a Medium companion ring in the matching chalk family.
-        assertEquals("infuse_light", match(SMALL, new ItemStack(WitcheryItems.GHOST_OF_THE_LIGHT.get()), RITUAL));
-        assertEquals(List.of("MEDIUM:" + RITUAL), rings(SMALL, new ItemStack(WitcheryItems.GHOST_OF_THE_LIGHT.get()), RITUAL));
-        assertEquals("infuse_overworld", match(SMALL, new ItemStack(WitcheryItems.SOUL_OF_THE_WORLD.get()), RITUAL));
-        assertEquals("infuse_otherwhere", match(SMALL, new ItemStack(WitcheryItems.SPIRIT_OF_OTHERWHERE.get()), OTHERWHERE));
-        assertEquals(List.of("MEDIUM:" + OTHERWHERE), rings(SMALL, new ItemStack(WitcheryItems.SPIRIT_OF_OTHERWHERE.get()), OTHERWHERE));
-        assertEquals("infuse_infernal", match(SMALL, new ItemStack(WitcheryItems.INFERNAL_ANIMUS.get()), INFERNAL));
-
-        // Medium rites gated on a companion Small ring.
-        assertEquals("enchant_broom", match(MEDIUM, new ItemStack(WitcheryItems.FLYING_OINTMENT.get()), RITUAL));
-        assertEquals(List.of("SMALL:" + RITUAL), rings(MEDIUM, new ItemStack(WitcheryItems.FLYING_OINTMENT.get()), RITUAL));
-        assertEquals("mystic_branch", match(MEDIUM, new ItemStack(WitcheryItems.ENT_TWIG.get()), RITUAL));
-        assertEquals("infuse_brew", match(MEDIUM, new ItemStack(WitcheryItems.INFUSED_BREW_BASE.get()), RITUAL));
-
-        // A rite with no companion requirement reports none.
-        assertEquals(List.of(), rings(SMALL, new ItemStack(Items.FEATHER), RITUAL));
+    void modernOnlyRosterIsLockedAndDisjointFromSourceRecipes() {
+        List<String> names = RitualExecutor.allRitualDefinitionNames();
+        assertEquals(Set.of(
+                "breath_of_goddess_cure",
+                "protection_barrier_charged",
+                "whiff_of_magic_familiar",
+                "bind_creaking_familiar",
+                "the_forest",
+                "gathered_lives",
+                "moving_earth",
+                "volcano",
+                "summoning_lord_of_torment"), Set.copyOf(names));
+        assertEquals(names.size(), Set.copyOf(names).size(), "definition names must be unique");
     }
 
     @Test
@@ -149,92 +86,5 @@ class RitualDefinitionTest {
         assertTrue(RitualExecutor.shouldGrantInfusionAfterOrdeal(true, 0.2F));
         assertFalse(RitualExecutor.shouldGrantInfusionAfterOrdeal(true, 0.1F));
         assertFalse(RitualExecutor.shouldGrantInfusionAfterOrdeal(false, 20.0F));
-    }
-
-    @Test
-    void ringSizeAndVariantDisambiguateSharedItems() {
-        // Diamond Vapour: small+infernal -> summon_witch, large+otherwhere -> transpose_ores; nothing else.
-        assertEquals("summon_witch", match(SMALL, new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()), INFERNAL));
-        assertEquals("transpose_ores", match(LARGE, new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()), OTHERWHERE));
-        assertNull(match(LARGE, new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()), INFERNAL));
-        assertNull(match(SMALL, new ItemStack(WitcheryItems.DIAMOND_VAPOUR.get()), OTHERWHERE));
-        // Raise Column is data-driven for all three rings.
-        assertEquals("raise_column_small", match(SMALL, new ItemStack(Items.COBBLESTONE), RITUAL));
-        assertEquals("raise_column_medium", match(MEDIUM, new ItemStack(Items.COBBLESTONE), RITUAL));
-        assertEquals("raise_column_large", match(LARGE, new ItemStack(Items.STONE), RITUAL));
-    }
-
-    @Test
-    void offeringGatedAndRemainingSmallRitesAreInTheTable() {
-        // Small stragglers (no offering) now data-driven.
-        assertEquals("total_eclipse", match(SMALL, new ItemStack(Items.IRON_AXE), RITUAL));
-        assertEquals("total_eclipse", match(SMALL, new ItemStack(Items.STONE_AXE), RITUAL));
-        assertEquals("spectral_stone", match(SMALL, new ItemStack(WitcheryItems.SPECTRAL_DUST.get()), RITUAL));
-        assertEquals("manifestation_dream", match(SMALL, new ItemStack(WitcheryItems.SPECTRAL_DUST.get()), OTHERWHERE));
-        // Blaze Powder disambiguates by ring variant.
-        assertEquals("blindness", match(SMALL, new ItemStack(Items.BLAZE_POWDER), INFERNAL));
-        assertEquals("banish_demon", match(SMALL, new ItemStack(Items.BLAZE_POWDER), RITUAL));
-
-        // Medium offering-gated rites (trigger mapping; the offering/companion are checked at runtime).
-        assertEquals("protection", match(MEDIUM, new ItemStack(Items.OBSIDIAN), RITUAL));
-        assertEquals("protection", match(MEDIUM, new ItemStack(Items.CRYING_OBSIDIAN), RITUAL));
-        assertEquals("charge_stone_medium", match(MEDIUM, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
-        // charge_stone_medium carries both a companion ring and an offering requirement.
-        assertEquals(List.of("SMALL:" + RITUAL), rings(MEDIUM, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
-    }
-
-    @Test
-    void disambiguationOrderingListsTheOfferingGatedRiteFirst() {
-        // For a shared trigger, the offering-gated definition is listed before its fallback, so it
-        // wins when its offering is present (the trigger-match hook returns that first entry).
-        assertEquals("portable_fertility", match(SMALL, new ItemStack(Items.BONE_MEAL), RITUAL));
-        assertEquals("charge_stone_small", match(SMALL, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
-        assertEquals("protection_barrier_charged", match(SMALL, new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()), RITUAL));
-        assertEquals("obsidian_barrier_portable", match(SMALL, new ItemStack(Items.OBSIDIAN), RITUAL));
-        ItemStack bound = new ItemStack(WitcheryItems.WAYSTONE.get());
-        WaystoneItem.bindTo(bound, BlockPos.ZERO, Level.OVERWORLD);
-        assertEquals("bind_waystone_copy_portable", match(SMALL, bound, RITUAL));
-        // The small Charge Stone rite still requires its Medium companion ring.
-        assertEquals(List.of("MEDIUM:" + RITUAL), rings(SMALL, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
-    }
-
-    @Test
-    void waystoneRitesResolveByBindingStateAndVariant() {
-        ItemStack bound = new ItemStack(WitcheryItems.WAYSTONE.get());
-        WaystoneItem.bindTo(bound, BlockPos.ZERO, Level.OVERWORLD);
-        assertEquals("bind_waystone_copy_portable", match(SMALL, bound, RITUAL));
-        assertEquals("transposition_to_waystone", match(SMALL, bound, OTHERWHERE));
-
-        ItemStack blank = new ItemStack(WitcheryItems.WAYSTONE.get());
-        // Blank waystone on a Ritual ring: the offering-gated Blooded rite is listed before plain bind.
-        assertEquals("bind_blooded_waystone", match(SMALL, blank, RITUAL));
-        // Blank is not any-bound, so an Otherwhere ring transposes nothing.
-        assertNull(match(SMALL, blank, OTHERWHERE));
-    }
-
-    @Test
-    void vetoedRitesAreInTheTable() {
-        // Both carry a veto (checked at runtime); the trigger mapping still resolves to them.
-        assertEquals("crystal_ball", match(MEDIUM, new ItemStack(WitcheryItems.QUARTZ_SPHERE.get()), RITUAL));
-        assertEquals("climate_change", match(LARGE, new ItemStack(WitcheryItems.ATTUNED_STONE.get()), RITUAL));
-    }
-
-    @Test
-    void largeCompanionGatedRitesAreInTheTable() {
-        assertEquals("hell_on_earth", match(LARGE, new ItemStack(Items.NETHER_STAR), INFERNAL));
-        assertEquals(List.of("MEDIUM:" + OTHERWHERE, "SMALL:" + INFERNAL),
-                rings(LARGE, new ItemStack(Items.NETHER_STAR), INFERNAL));
-        assertEquals("summon_wither", match(LARGE, new ItemStack(Items.WITHER_SKELETON_SKULL), INFERNAL));
-        assertEquals(List.of("MEDIUM:" + INFERNAL), rings(LARGE, new ItemStack(Items.WITHER_SKELETON_SKULL), INFERNAL));
-    }
-
-    @Test
-    void definitionNamesAreUniqueAndRosterIsLocked() {
-        List<String> names = RitualExecutor.allRitualDefinitionNames();
-        assertEquals(75, names.size(), "ritual definition roster size");
-        assertTrue(names.contains("bind_waystone_portable"));
-        assertTrue(names.contains("bind_waystone_copy_portable"));
-        assertTrue(names.contains("remove_vampirism"));
-        assertEquals(names.size(), new java.util.HashSet<>(names).size(), "definition names must be unique");
     }
 }

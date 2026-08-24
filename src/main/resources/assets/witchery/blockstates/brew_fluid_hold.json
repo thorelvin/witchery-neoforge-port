@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "fluid=water,source=false": { "model": "minecraft:block/air" },
+    "fluid=water,source=true": { "model": "minecraft:block/air" },
+    "fluid=lava,source=false": { "model": "minecraft:block/air" },
+    "fluid=lava,source=true": { "model": "minecraft:block/air" }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "minecraft:milk_bucket"
+  },
+  "name": "Rite of Beastial Call",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Call animals. Coven of 3 or more.[#]() [#](53341a)**Required offerings:** **Milk Bucket**, **Hay Block**, **Apple**, **Beef**, **Cod**, **Red Mushroom**, **Carrot**, **Wheat Seeds**.[#]() [#](53341a)**Coven required:** 3.[#]()",
+      "title": "Rite of Beastial Call",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "coven_faces": 3,
+      "rings": [
+        {
+          "color": "purple",
+          "size": "large"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:milk_bucket",
+          "x": 23,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "minecraft:hay_block",
+          "x": 41,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "minecraft:apple",
+          "x": 59,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "minecraft:beef",
+          "x": 77,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "minecraft:cod",
+          "x": 23,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:red_mushroom",
+          "x": 41,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:carrot",
+          "x": 59,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:wheat_seeds",
+          "x": 77,
+          "y": 87
+        }
+      ],
+      "source_id": 68,
+      "text": "[#](53341a)**15x15** - **Otherwhere** chalk - **6000** altar power - **Coven: 3**[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 48,
+  "x": 0,
+  "y": 0
+}

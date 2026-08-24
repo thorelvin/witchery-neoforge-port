@@ -1,0 +1,2144 @@
+{
+  "source": "WitcheryRecipes.java",
+  "sourceSha256": "2e25c794439becf119691af254e3bb5cc666a42961e27767800668a706a82ca0",
+  "registrationCount": 96,
+  "registrations": [
+    {
+      "sourceId": 1,
+      "bookIndex": 0,
+      "translationKey": "witchery.rite.bindcircle",
+      "sourceLine": 2945,
+      "effect": "new RiteBindCircleToTalisman()",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem(new ItemStack(Witchery.Items.CIRCLE_TALISMAN), new ItemStack(Items.field_151137_ax)), new SacrificePower(1000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.CIRCLE_TALISMAN)",
+        "new ItemStack(Items.field_151137_ax)"
+      ],
+      "optionalItems": [],
+      "power": 1000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [],
+      "modernHome": "bind_circle_talisman",
+      "mode": "direct"
+    },
+    {
+      "sourceId": 2,
+      "bookIndex": 1,
+      "translationKey": "witchery.rite.bindwaystone",
+      "sourceLine": 2955,
+      "effect": "new RiteSummonItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack(), RiteSummonItem.Binding.LOCATION)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemWaystone.createStack(), Witchery.Items.GENERIC.itemEnderDew.createStack(), new ItemStack(Items.field_151114_aO) ), new SacrificePower(500.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemWaystone.createStack()",
+        "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+        "new ItemStack(Items.field_151114_aO)"
+      ],
+      "optionalItems": [],
+      "power": 500.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "bind_waystone",
+      "mode": "full"
+    },
+    {
+      "sourceId": 3,
+      "bookIndex": 3,
+      "translationKey": "witchery.rite.chargestone",
+      "sourceLine": 2969,
+      "effect": "new RiteSummonItem(Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack(), RiteSummonItem.Binding.NONE)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemAttunedStone.createStack(), new ItemStack(Items.field_151114_aO), new ItemStack(Items.field_151137_ax), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemQuicklime.createStack() ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+        "new ItemStack(Items.field_151114_aO)",
+        "new ItemStack(Items.field_151137_ax)",
+        "Witchery.Items.GENERIC.itemAshWood.createStack()",
+        "Witchery.Items.GENERIC.itemQuicklime.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)",
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "charge_stone_small",
+      "mode": "full"
+    },
+    {
+      "sourceId": 4,
+      "bookIndex": 4,
+      "translationKey": "witchery.rite.infusionrecharge",
+      "sourceLine": 2988,
+      "effect": "new RiteInfusionRecharge(10, 4, 40.0F, 0)",
+      "sacrifice": "new SacrificeMultiple(new SacrificeItem(new ItemStack(Items.field_151068_bn, 1, 8193)), new SacrificePower(4000.0F, 20))",
+      "requiredItems": [
+        "new ItemStack(Items.field_151068_bn, 1, 8193)"
+      ],
+      "optionalItems": [],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)",
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "infusion_recharge",
+      "mode": "full"
+    },
+    {
+      "sourceId": 5,
+      "bookIndex": 5,
+      "translationKey": "witchery.rite.teleporttowaystone",
+      "sourceLine": 2998,
+      "effect": "new RiteTeleportToWaystone(3)",
+      "sacrifice": "new SacrificeItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack())",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 16, 0)"
+      ],
+      "modernHome": "transposition_to_waystone",
+      "mode": "full"
+    },
+    {
+      "sourceId": 6,
+      "bookIndex": 6,
+      "translationKey": "witchery.rite.teleportentity",
+      "sourceLine": 3007,
+      "effect": "new RiteTeleportEntity(3)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemWaystone.createStack(), new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemEnderDew.createStack(), new ItemStack(Items.field_151036_c) ), new SacrificePower(3000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemWaystone.createStack()",
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+        "new ItemStack(Items.field_151036_c)"
+      ],
+      "optionalItems": [],
+      "power": 3000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 28, 0)"
+      ],
+      "modernHome": "transposition_entity",
+      "mode": "full"
+    },
+    {
+      "sourceId": 7,
+      "bookIndex": 7,
+      "translationKey": "witchery.rite.teleportironore",
+      "sourceLine": 3024,
+      "effect": "new RiteTransposeOres(8, 30, new Block[]{Blocks.field_150366_p, Blocks.field_150352_o})",
+      "sacrifice": "new SacrificeItem( new ItemStack(Items.field_151079_bi), new ItemStack(Items.field_151042_j), new ItemStack(Items.field_151065_br), Witchery.Items.GENERIC.itemDiamondVapour.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151079_bi)",
+        "new ItemStack(Items.field_151042_j)",
+        "new ItemStack(Items.field_151065_br)",
+        "Witchery.Items.GENERIC.itemDiamondVapour.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 40, 0)"
+      ],
+      "modernHome": "transpose_ores",
+      "mode": "full"
+    },
+    {
+      "sourceId": 8,
+      "bookIndex": 8,
+      "translationKey": "witchery.rite.protection",
+      "sourceLine": 3039,
+      "effect": "new RiteProtectionCircleRepulsive(4, 0.8F, 0)",
+      "sacrifice": "new SacrificeMultiple(new SacrificeItem(new ItemStack(Items.field_151008_G), new ItemStack(Items.field_151137_ax)), new SacrificePower(500.0F, 20))",
+      "requiredItems": [
+        "new ItemStack(Items.field_151008_G)",
+        "new ItemStack(Items.field_151137_ax)"
+      ],
+      "optionalItems": [],
+      "power": 500.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "sanctity",
+      "mode": "full"
+    },
+    {
+      "sourceId": 9,
+      "bookIndex": 9,
+      "translationKey": "witchery.rite.imprisonment",
+      "sourceLine": 3048,
+      "effect": "new RiteProtectionCircleAttractive(4, 0.8F, 0)",
+      "sacrifice": "new SacrificeMultiple(new SacrificeItem(new ItemStack(Items.field_151123_aH), new ItemStack(Items.field_151137_ax)), new SacrificePower(500.0F, 20))",
+      "requiredItems": [
+        "new ItemStack(Items.field_151123_aH)",
+        "new ItemStack(Items.field_151137_ax)"
+      ],
+      "optionalItems": [],
+      "power": 500.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "imprisonment",
+      "mode": "full"
+    },
+    {
+      "sourceId": 10,
+      "bookIndex": 10,
+      "translationKey": "witchery.rite.barrier",
+      "sourceLine": 3057,
+      "effect": "new RiteProtectionCircleBarrier(4, 5, 1.2F, false, 0)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem(new ItemStack(Blocks.field_150343_Z), new ItemStack(Items.field_151137_ax)), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(500.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Blocks.field_150343_Z)",
+        "new ItemStack(Items.field_151137_ax)"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 500.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "obsidian_barrier_monsters",
+      "mode": "full"
+    },
+    {
+      "sourceId": 11,
+      "bookIndex": 11,
+      "translationKey": "witchery.rite.barrierlarge",
+      "sourceLine": 3070,
+      "effect": "new RiteProtectionCircleBarrier(6, 6, 1.4F, true, 0)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem(new ItemStack(Blocks.field_150343_Z), new ItemStack(Items.field_151114_aO)), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(1000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Blocks.field_150343_Z)",
+        "new ItemStack(Items.field_151114_aO)"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 1000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "protection",
+      "mode": "full"
+    },
+    {
+      "sourceId": 12,
+      "bookIndex": 12,
+      "translationKey": "witchery.rite.barrierportable",
+      "sourceLine": 3083,
+      "effect": "new RiteProtectionCircleBarrier(6, 4, 0.0F, true, 60)",
+      "sacrifice": "new SacrificeItem(new ItemStack(Blocks.field_150343_Z), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack())",
+      "requiredItems": [
+        "new ItemStack(Blocks.field_150343_Z)",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "obsidian_barrier_portable",
+      "mode": "full"
+    },
+    {
+      "sourceId": 13,
+      "bookIndex": 13,
+      "translationKey": "witchery.rite.volcano",
+      "sourceLine": 3092,
+      "effect": "new RiteRaiseVolcano(8, 8)",
+      "sacrifice": "new SacrificeItem( new ItemStack(Blocks.field_150348_b), new ItemStack(Items.field_151064_bs), new ItemStack(Items.field_151010_B), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "new ItemStack(Blocks.field_150348_b)",
+        "new ItemStack(Items.field_151064_bs)",
+        "new ItemStack(Items.field_151010_B)",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 16)"
+      ],
+      "modernHome": "volcano_charged",
+      "mode": "full"
+    },
+    {
+      "sourceId": 14,
+      "bookIndex": 14,
+      "translationKey": "witchery.rite.storm",
+      "sourceLine": 3106,
+      "effect": "new RiteWeatherCallStorm(0, 3, 8)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem(new ItemStack(Items.field_151041_m), Witchery.Items.GENERIC.itemAshWood.createStack()), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(1000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151041_m)",
+        "Witchery.Items.GENERIC.itemAshWood.createStack()"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 1000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "storm_base",
+      "mode": "full"
+    },
+    {
+      "sourceId": 15,
+      "bookIndex": 15,
+      "translationKey": "witchery.rite.stormlarge",
+      "sourceLine": 3119,
+      "effect": "new RiteWeatherCallStorm(3, 7, 18)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem(new ItemStack(Items.field_151052_q), Witchery.Items.GENERIC.itemAshWood.createStack()), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151052_q)",
+        "Witchery.Items.GENERIC.itemAshWood.createStack()"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "storm_large",
+      "mode": "full"
+    },
+    {
+      "sourceId": 16,
+      "bookIndex": 16,
+      "translationKey": "witchery.rite.stormportable",
+      "sourceLine": 3132,
+      "effect": "new RiteWeatherCallStorm(3, 7, 18)",
+      "sacrifice": "new SacrificeItem( new ItemStack(Items.field_151040_l), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151040_l)",
+        "Witchery.Items.GENERIC.itemAshWood.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "storm_portable",
+      "mode": "full"
+    },
+    {
+      "sourceId": 17,
+      "bookIndex": 17,
+      "translationKey": "witchery.rite.eclipse",
+      "sourceLine": 3145,
+      "effect": "new RiteEclipse()",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem(new ItemStack(Items.field_151049_t), Witchery.Items.GENERIC.itemQuicklime.createStack()), new SacrificePower(3000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151049_t)",
+        "Witchery.Items.GENERIC.itemQuicklime.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 3000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_AT_DAY)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "total_eclipse",
+      "mode": "full"
+    },
+    {
+      "sourceId": 18,
+      "bookIndex": 18,
+      "translationKey": "witchery.rite.eclipseportable",
+      "sourceLine": 3156,
+      "effect": "new RiteEclipse()",
+      "sacrifice": "new SacrificeItem( new ItemStack(Items.field_151036_c), Witchery.Items.GENERIC.itemQuicklime.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151036_c)",
+        "Witchery.Items.GENERIC.itemQuicklime.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_AT_DAY)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "total_eclipse_portable",
+      "mode": "full"
+    },
+    {
+      "sourceId": 19,
+      "bookIndex": 19,
+      "translationKey": "witchery.rite.partearth",
+      "sourceLine": 3169,
+      "effect": "new RitePartEarth(60, 1, 10)",
+      "sacrifice": "new SacrificeItem(Witchery.Items.GENERIC.itemBrewOfErosion.createStack())",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemBrewOfErosion.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "broken_earth",
+      "mode": "full"
+    },
+    {
+      "sourceId": 20,
+      "bookIndex": 20,
+      "translationKey": "witchery.rite.raiseearth",
+      "sourceLine": 3178,
+      "effect": "new RiteRaiseColumn(4, 8)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemBrewOfSprouting.createStack(), new ItemStack(Blocks.field_150434_aF), new ItemStack(Items.field_151016_H) ), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+        "new ItemStack(Blocks.field_150434_aF)",
+        "new ItemStack(Items.field_151016_H)"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "raise_column_small",
+      "mode": "full"
+    },
+    {
+      "sourceId": 21,
+      "bookIndex": 23,
+      "translationKey": "witchery.rite.banishdemonportable",
+      "sourceLine": 3192,
+      "effect": "new RiteBanishDemon(9)",
+      "sacrifice": "new SacrificeItem( new ItemStack(Items.field_151065_br), Witchery.Items.GENERIC.itemWaystone.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151065_br)",
+        "Witchery.Items.GENERIC.itemWaystone.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "banish_demon_charged",
+      "mode": "full"
+    },
+    {
+      "sourceId": 22,
+      "bookIndex": 24,
+      "translationKey": "witchery.rite.banishdemon",
+      "sourceLine": 3205,
+      "effect": "new RiteBanishDemon(9)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem(new ItemStack(Items.field_151065_br), Witchery.Items.GENERIC.itemWaystone.createStack()), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151065_br)",
+        "Witchery.Items.GENERIC.itemWaystone.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "banish_demon",
+      "mode": "full"
+    },
+    {
+      "sourceId": 23,
+      "bookIndex": 25,
+      "translationKey": "witchery.rite.summondemon",
+      "sourceLine": 3216,
+      "effect": "new RiteSummonCreature(EntityDemon.class, false)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemRefinedEvil.createStack(), new ItemStack(Items.field_151065_br), new ItemStack(Items.field_151079_bi) ), new SacrificeLiving(EntityVillager.class), new SacrificePower(3000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemRefinedEvil.createStack()",
+        "new ItemStack(Items.field_151065_br)",
+        "new ItemStack(Items.field_151079_bi)"
+      ],
+      "optionalItems": [],
+      "power": 3000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 40)"
+      ],
+      "modernHome": "summon_demon",
+      "mode": "full"
+    },
+    {
+      "sourceId": 24,
+      "bookIndex": 26,
+      "translationKey": "witchery.rite.summondemonexpensive",
+      "sourceLine": 3231,
+      "effect": "new RiteSummonCreature(EntityDemon.class, false)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemRefinedEvil.createStack(), new ItemStack(Items.field_151072_bj), new ItemStack(Items.field_151079_bi), Witchery.Items.GENERIC.itemAttunedStone.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() ), new SacrificePower(3000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemRefinedEvil.createStack()",
+        "new ItemStack(Items.field_151072_bj)",
+        "new ItemStack(Items.field_151079_bi)",
+        "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 3000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 40)"
+      ],
+      "modernHome": "summon_demon_expensive",
+      "mode": "full"
+    },
+    {
+      "sourceId": 25,
+      "bookIndex": 27,
+      "translationKey": "witchery.rite.summonwither",
+      "sourceLine": 3249,
+      "effect": "new RiteSummonCreature(EntityWither.class, false)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Items.field_151144_bL, 1, 1), Witchery.Items.GENERIC.itemDiamondVapour.createStack(), new ItemStack(Items.field_151079_bi) ), new SacrificeLiving(EntityVillager.class), new SacrificePower(4000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151144_bL, 1, 1)",
+        "Witchery.Items.GENERIC.itemDiamondVapour.createStack()",
+        "new ItemStack(Items.field_151079_bi)"
+      ],
+      "optionalItems": [],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 28)",
+        "new Circle(0, 0, 40)"
+      ],
+      "modernHome": "summon_wither",
+      "mode": "full"
+    },
+    {
+      "sourceId": 26,
+      "bookIndex": 28,
+      "translationKey": "witchery.rite.summonwitherexpensive",
+      "sourceLine": 3265,
+      "effect": "new RiteSummonCreature(EntityWither.class, false)",
+      "sacrifice": "new SacrificeItem( new ItemStack(Items.field_151144_bL, 1, 1), new ItemStack(Items.field_151045_i), new ItemStack(Items.field_151079_bi), Witchery.Items.GENERIC.itemAttunedStone.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151144_bL, 1, 1)",
+        "new ItemStack(Items.field_151045_i)",
+        "new ItemStack(Items.field_151079_bi)",
+        "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 28)",
+        "new Circle(0, 0, 40)"
+      ],
+      "modernHome": "summon_wither_expensive",
+      "mode": "full"
+    },
+    {
+      "sourceId": 27,
+      "bookIndex": 31,
+      "translationKey": "witchery.rite.infusionlight",
+      "sourceLine": 3283,
+      "effect": "new RiteInfusePlayers(this.infusionLight, 200, 4)",
+      "sacrifice": "new SacrificeMultiple(new SacrificeItem(Witchery.Items.GENERIC.itemGhostOfTheLight.createStack()), new SacrificePower(2000.0F, 20))",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemGhostOfTheLight.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)",
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "infuse_light",
+      "mode": "full"
+    },
+    {
+      "sourceId": 28,
+      "bookIndex": 32,
+      "translationKey": "witchery.rite.infusionearth",
+      "sourceLine": 3295,
+      "effect": "new RiteInfusePlayers(this.infusionWorld, 200, 4)",
+      "sacrifice": "new SacrificeMultiple(new SacrificeItem(Witchery.Items.GENERIC.itemSoulOfTheWorld.createStack()), new SacrificePower(4000.0F, 20))",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemSoulOfTheWorld.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)",
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "infuse_overworld",
+      "mode": "full"
+    },
+    {
+      "sourceId": 29,
+      "bookIndex": 33,
+      "translationKey": "witchery.rite.infusionender",
+      "sourceLine": 3307,
+      "effect": "new RiteInfusePlayers(this.infusionEnder, 200, 4)",
+      "sacrifice": "new SacrificeMultiple(new SacrificeItem(Witchery.Items.GENERIC.itemSpiritOfOtherwhere.createStack()), new SacrificePower(4000.0F, 20))",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemSpiritOfOtherwhere.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 16, 0)",
+        "new Circle(0, 28, 0)"
+      ],
+      "modernHome": "infuse_otherwhere",
+      "mode": "full"
+    },
+    {
+      "sourceId": 30,
+      "bookIndex": 34,
+      "translationKey": "witchery.rite.infusionhell",
+      "sourceLine": 3319,
+      "effect": "new RiteInfusePlayers(this.infusionBeast, 200, 4)",
+      "sacrifice": "new SacrificeMultiple(new SacrificeItem(Witchery.Items.GENERIC.itemInfernalAnimus.createStack()), new SacrificePower(4000.0F, 20))",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemInfernalAnimus.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 16)",
+        "new Circle(0, 0, 28)"
+      ],
+      "modernHome": "infuse_infernal",
+      "mode": "full"
+    },
+    {
+      "sourceId": 31,
+      "bookIndex": 35,
+      "translationKey": "witchery.rite.infusionsky",
+      "sourceLine": 3329,
+      "effect": "new RiteSummonItem(Witchery.Items.GENERIC.itemBroomEnchanted.createStack(), RiteSummonItem.Binding.NONE)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem(Witchery.Items.GENERIC.itemBroom.createStack(), Witchery.Items.GENERIC.itemFlyingOintment.createStack()), new SacrificePower(3000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemBroom.createStack()",
+        "Witchery.Items.GENERIC.itemFlyingOintment.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 3000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+      "circles": [
+        "new Circle(16, 0, 0)",
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "enchant_broom",
+      "mode": "full"
+    },
+    {
+      "sourceId": 32,
+      "bookIndex": 36,
+      "translationKey": "witchery.rite.necrostone",
+      "sourceLine": 3342,
+      "effect": "new RiteSummonItem(Witchery.Items.GENERIC.itemNecroStone.createStack(), RiteSummonItem.Binding.NONE)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemAttunedStone.createStack(), new ItemStack(Items.field_151103_aS), new ItemStack(Items.field_151078_bh), Witchery.Items.GENERIC.itemAshWood.createStack(), new ItemStack(Items.field_151040_l), Witchery.Items.GENERIC.itemSpectralDust.createStack() ), new SacrificePower(1000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+        "new ItemStack(Items.field_151103_aS)",
+        "new ItemStack(Items.field_151078_bh)",
+        "Witchery.Items.GENERIC.itemAshWood.createStack()",
+        "new ItemStack(Items.field_151040_l)",
+        "Witchery.Items.GENERIC.itemSpectralDust.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 1000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "necromantic_stone",
+      "mode": "full"
+    },
+    {
+      "sourceId": 33,
+      "bookIndex": 30,
+      "translationKey": "witchery.rite.summonfamiliar",
+      "sourceLine": 3361,
+      "effect": "new RiteSummonCreature(EntityFamiliar.class, true)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemDropOfLuck.createStack(), new ItemStack(Items.field_151147_al), new ItemStack(Items.field_151043_k), new ItemStack(Witchery.Items.ARTHANA) ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemDropOfLuck.createStack()",
+        "new ItemStack(Items.field_151147_al)",
+        "new ItemStack(Items.field_151043_k)",
+        "new ItemStack(Witchery.Items.ARTHANA)"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "summon_familiar",
+      "mode": "full"
+    },
+    {
+      "sourceId": 34,
+      "bookIndex": 2,
+      "translationKey": "witchery.rite.bindwaystonecopy",
+      "sourceLine": 3378,
+      "effect": "new RiteSummonItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack(2), RiteSummonItem.Binding.COPY_LOCATION)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemWaystoneBound.createStack(), Witchery.Items.GENERIC.itemWaystone.createStack(), Witchery.Items.GENERIC.itemEnderDew.createStack(), new ItemStack(Items.field_151137_ax) ), new SacrificePower(500.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+        "Witchery.Items.GENERIC.itemWaystone.createStack()",
+        "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+        "new ItemStack(Items.field_151137_ax)"
+      ],
+      "optionalItems": [],
+      "power": 500.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "bind_waystone_copy",
+      "mode": "full"
+    },
+    {
+      "sourceId": 35,
+      "bookIndex": 21,
+      "translationKey": "witchery.rite.fertility",
+      "sourceLine": 3395,
+      "effect": "new RiteFertility(50, 15)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Dye.BONE_MEAL.createStack(), Witchery.Items.GENERIC.itemHintOfRebirth.createStack(), Witchery.Items.GENERIC.itemDiamondVapour.createStack(), Witchery.Items.GENERIC.itemQuicklime.createStack(), Witchery.Items.GENERIC.itemGypsum.createStack(), Witchery.Items.GENERIC.itemMutandis.createStack() ), new SacrificePower(3000.0F, 20) )",
+      "requiredItems": [
+        "Dye.BONE_MEAL.createStack()",
+        "Witchery.Items.GENERIC.itemHintOfRebirth.createStack()",
+        "Witchery.Items.GENERIC.itemDiamondVapour.createStack()",
+        "Witchery.Items.GENERIC.itemQuicklime.createStack()",
+        "Witchery.Items.GENERIC.itemGypsum.createStack()",
+        "Witchery.Items.GENERIC.itemMutandis.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 3000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "fertility",
+      "mode": "full"
+    },
+    {
+      "sourceId": 36,
+      "bookIndex": 22,
+      "translationKey": "witchery.rite.fertilityportable",
+      "sourceLine": 3414,
+      "effect": "new RiteFertility(50, 15)",
+      "sacrifice": "new SacrificeItem( Dye.BONE_MEAL.createStack(), Witchery.Items.GENERIC.itemHintOfRebirth.createStack(), Witchery.Items.GENERIC.itemDiamondVapour.createStack(), Witchery.Items.GENERIC.itemQuicklime.createStack(), Witchery.Items.GENERIC.itemGypsum.createStack(), Witchery.Items.GENERIC.itemMutandisExtremis.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "Dye.BONE_MEAL.createStack()",
+        "Witchery.Items.GENERIC.itemHintOfRebirth.createStack()",
+        "Witchery.Items.GENERIC.itemDiamondVapour.createStack()",
+        "Witchery.Items.GENERIC.itemQuicklime.createStack()",
+        "Witchery.Items.GENERIC.itemGypsum.createStack()",
+        "Witchery.Items.GENERIC.itemMutandisExtremis.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "portable_fertility",
+      "mode": "full"
+    },
+    {
+      "sourceId": 37,
+      "bookIndex": 37,
+      "translationKey": "witchery.rite.curseblight",
+      "sourceLine": 3431,
+      "effect": "new RiteBlight(80, 15)",
+      "sacrifice": "new SacrificeItem( Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack(), Witchery.Items.GENERIC.itemRedstoneSoup.createStack(), Witchery.Items.GENERIC.itemReekOfMisfortune.createStack(), new ItemStack(Items.field_151071_bq), new ItemStack(Items.field_151060_bw), new ItemStack(Items.field_151078_bh), new ItemStack(Items.field_151045_i) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+        "Witchery.Items.GENERIC.itemRedstoneSoup.createStack()",
+        "Witchery.Items.GENERIC.itemReekOfMisfortune.createStack()",
+        "new ItemStack(Items.field_151071_bq)",
+        "new ItemStack(Items.field_151060_bw)",
+        "new ItemStack(Items.field_151078_bh)",
+        "new ItemStack(Items.field_151045_i)"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 28)"
+      ],
+      "modernHome": "blight",
+      "mode": "full"
+    },
+    {
+      "sourceId": 38,
+      "bookIndex": 38,
+      "translationKey": "witchery.rite.curseblindness",
+      "sourceLine": 3448,
+      "effect": "new RiteBlindness(80, 15)",
+      "sacrifice": "new SacrificeItem( Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack(), Witchery.Items.GENERIC.itemRedstoneSoup.createStack(), Witchery.Items.GENERIC.itemReekOfMisfortune.createStack(), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(), Witchery.Items.GENERIC.itemBrewOfInk.createStack(), new ItemStack(Items.field_151170_bI), new ItemStack(Items.field_151070_bp), new ItemStack(Items.field_151045_i) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+        "Witchery.Items.GENERIC.itemRedstoneSoup.createStack()",
+        "Witchery.Items.GENERIC.itemReekOfMisfortune.createStack()",
+        "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+        "Witchery.Items.GENERIC.itemBrewOfInk.createStack()",
+        "new ItemStack(Items.field_151170_bI)",
+        "new ItemStack(Items.field_151070_bp)",
+        "new ItemStack(Items.field_151045_i)"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 16)"
+      ],
+      "modernHome": "blindness",
+      "mode": "full"
+    },
+    {
+      "sourceId": 39,
+      "bookIndex": 39,
+      "translationKey": "witchery.rite.hellonearth",
+      "sourceLine": 3466,
+      "effect": "new RiteHellOnEarth(20, 15, 200.0F)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemRedstoneSoup.createStack(), Witchery.Items.GENERIC.itemDemonHeart.createStack(), Witchery.Items.GENERIC.itemWaystone.createStack(), new ItemStack(Items.field_151156_bN) ), new SacrificeLiving(EntityVillager.class), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(5000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemRedstoneSoup.createStack()",
+        "Witchery.Items.GENERIC.itemDemonHeart.createStack()",
+        "Witchery.Items.GENERIC.itemWaystone.createStack()",
+        "new ItemStack(Items.field_151156_bN)"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 5000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_OVERWORLD, RitualTraits.ONLY_AT_NIGHT)",
+      "circles": [
+        "new Circle(0, 0, 16)",
+        "new Circle(0, 28, 0)",
+        "new Circle(0, 0, 40)"
+      ],
+      "modernHome": "hell_on_earth",
+      "mode": "full"
+    },
+    {
+      "sourceId": 40,
+      "bookIndex": 29,
+      "translationKey": "witchery.rite.summonwitch",
+      "sourceLine": 3487,
+      "effect": "new RiteSummonCreature(EntityWitch.class, false)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemDiamondVapour.createStack(), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(), new ItemStack(Items.field_151064_bs), new ItemStack(Witchery.Items.ARTHANA), new ItemStack(Items.field_151071_bq) ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemDiamondVapour.createStack()",
+        "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+        "new ItemStack(Items.field_151064_bs)",
+        "new ItemStack(Witchery.Items.ARTHANA)",
+        "new ItemStack(Items.field_151071_bq)"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 16)"
+      ],
+      "modernHome": "summon_witch",
+      "mode": "full"
+    },
+    {
+      "sourceId": 41,
+      "bookIndex": 1,
+      "translationKey": "witchery.rite.bindwaystoneportable",
+      "sourceLine": 3505,
+      "effect": "new RiteSummonItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack(), RiteSummonItem.Binding.LOCATION)",
+      "sacrifice": "new SacrificeItem( Witchery.Items.GENERIC.itemWaystone.createStack(), Witchery.Items.GENERIC.itemEnderDew.createStack(), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemWaystone.createStack()",
+        "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+        "Witchery.Items.GENERIC.itemAshWood.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "bind_waystone_portable",
+      "mode": "full"
+    },
+    {
+      "sourceId": 42,
+      "bookIndex": 2,
+      "translationKey": "witchery.rite.bindwaystonecopyportable",
+      "sourceLine": 3519,
+      "effect": "new RiteSummonItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack(2), RiteSummonItem.Binding.COPY_LOCATION)",
+      "sacrifice": "new SacrificeItem( Witchery.Items.GENERIC.itemWaystoneBound.createStack(), Witchery.Items.GENERIC.itemWaystone.createStack(), Witchery.Items.GENERIC.itemEnderDew.createStack(), Witchery.Items.GENERIC.itemQuicklime.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()",
+        "Witchery.Items.GENERIC.itemWaystone.createStack()",
+        "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+        "Witchery.Items.GENERIC.itemQuicklime.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "bind_waystone_copy_portable",
+      "mode": "full"
+    },
+    {
+      "sourceId": 43,
+      "bookIndex": 22,
+      "translationKey": "witchery.rite.naturespower",
+      "sourceLine": 3534,
+      "effect": "new RiteNaturesPower(14, 8, 150, 2)",
+      "sacrifice": "new SacrificeItem( Witchery.Items.GENERIC.itemBrewOfSprouting.createStack(), new ItemStack(Witchery.Blocks.SAPLING, 1, 0), new ItemStack(Witchery.Blocks.SAPLING, 1, 1), new ItemStack(Witchery.Blocks.SAPLING, 1, 2), new ItemStack(Blocks.field_150345_g, 1, 0), new ItemStack(Blocks.field_150345_g, 1, 1), new ItemStack(Blocks.field_150345_g, 1, 2), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+        "new ItemStack(Witchery.Blocks.SAPLING, 1, 0)",
+        "new ItemStack(Witchery.Blocks.SAPLING, 1, 1)",
+        "new ItemStack(Witchery.Blocks.SAPLING, 1, 2)",
+        "new ItemStack(Blocks.field_150345_g, 1, 0)",
+        "new ItemStack(Blocks.field_150345_g, 1, 1)",
+        "new ItemStack(Blocks.field_150345_g, 1, 2)",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "natures_power",
+      "mode": "full"
+    },
+    {
+      "sourceId": 44,
+      "bookIndex": 36,
+      "translationKey": "witchery.rite.priorincarnation",
+      "sourceLine": 3552,
+      "effect": "new RitePriorIncarnation(5, 16)",
+      "sacrifice": "new SacrificeItem( Witchery.Items.GENERIC.itemNecroStone.createStack(), Witchery.Items.GENERIC.itemDogTongue.createStack(), new ItemStack(Items.field_151103_aS), Witchery.Items.GENERIC.itemSpectralDust.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+        "Witchery.Items.GENERIC.itemDogTongue.createStack()",
+        "new ItemStack(Items.field_151103_aS)",
+        "Witchery.Items.GENERIC.itemSpectralDust.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 16)"
+      ],
+      "modernHome": "prior_incarnation",
+      "mode": "full"
+    },
+    {
+      "sourceId": 45,
+      "bookIndex": 0,
+      "translationKey": "witchery.rite.bindcircleportable",
+      "sourceLine": 3567,
+      "effect": "new RiteBindCircleToTalisman()",
+      "sacrifice": "new SacrificeItem( new ItemStack(Witchery.Items.CIRCLE_TALISMAN), new ItemStack(Items.field_151114_aO), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.CIRCLE_TALISMAN)",
+        "new ItemStack(Items.field_151114_aO)",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [],
+      "modernHome": "bind_circle_talisman",
+      "mode": "direct"
+    },
+    {
+      "sourceId": 46,
+      "bookIndex": 20,
+      "translationKey": "witchery.rite.raiseearth",
+      "sourceLine": 3579,
+      "effect": "new RiteRaiseColumn(6, 8)",
+      "sacrifice": "new SacrificeItem( Witchery.Items.GENERIC.itemBrewOfSprouting.createStack(), new ItemStack(Blocks.field_150434_aF), new ItemStack(Items.field_151137_ax) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+        "new ItemStack(Blocks.field_150434_aF)",
+        "new ItemStack(Items.field_151137_ax)"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "raise_column_medium",
+      "mode": "full"
+    },
+    {
+      "sourceId": 47,
+      "bookIndex": 20,
+      "translationKey": "witchery.rite.raiseearth",
+      "sourceLine": 3590,
+      "effect": "new RiteRaiseColumn(9, 8)",
+      "sacrifice": "new SacrificeItem( Witchery.Items.GENERIC.itemBrewOfSprouting.createStack(), new ItemStack(Blocks.field_150434_aF), new ItemStack(Items.field_151114_aO) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+        "new ItemStack(Blocks.field_150434_aF)",
+        "new ItemStack(Items.field_151114_aO)"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(40, 0, 0)"
+      ],
+      "modernHome": "raise_column_large",
+      "mode": "full"
+    },
+    {
+      "sourceId": 48,
+      "bookIndex": 48,
+      "translationKey": "witchery.rite.cursecreature1",
+      "sourceLine": 3601,
+      "effect": "new RiteCurseCreature(true, \"witcheryCursed\", 1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(), new ItemStack(Items.field_151071_bq), new ItemStack(Items.field_151016_H), Witchery.Items.GENERIC.itemBrewGrotesque.createStack() ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+        "new ItemStack(Items.field_151071_bq)",
+        "new ItemStack(Items.field_151016_H)",
+        "Witchery.Items.GENERIC.itemBrewGrotesque.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_IN_STROM)",
+      "circles": [
+        "new Circle(0, 0, 28)"
+      ],
+      "modernHome": "curse_creature",
+      "mode": "full"
+    },
+    {
+      "sourceId": 49,
+      "bookIndex": 49,
+      "translationKey": "witchery.rite.removecurse1",
+      "sourceLine": 3619,
+      "effect": "new RiteCurseCreature(false, \"witcheryCursed\", 1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(), new ItemStack(Items.field_151070_bp), new ItemStack(Items.field_151016_H), Witchery.Items.GENERIC.itemBrewOfLove.createStack() ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+        "new ItemStack(Items.field_151070_bp)",
+        "new ItemStack(Items.field_151016_H)",
+        "Witchery.Items.GENERIC.itemBrewOfLove.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "cure_creature",
+      "mode": "full"
+    },
+    {
+      "sourceId": 50,
+      "bookIndex": 35,
+      "translationKey": "witchery.rite.infusiontree",
+      "sourceLine": 3637,
+      "effect": "new RiteSummonItem(new ItemStack(Witchery.Items.MYSTIC_BRANCH), RiteSummonItem.Binding.NONE)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem(Witchery.Items.GENERIC.itemBranchEnt.createStack(), Witchery.Items.GENERIC.itemMysticUnguent.createStack()), new SacrificePower(3000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemBranchEnt.createStack()",
+        "Witchery.Items.GENERIC.itemMysticUnguent.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 3000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+      "circles": [
+        "new Circle(16, 0, 0)",
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "mystic_branch",
+      "mode": "full"
+    },
+    {
+      "sourceId": 51,
+      "bookIndex": 20,
+      "translationKey": "witchery.rite.cookfood",
+      "sourceLine": 3650,
+      "effect": "new RiteCookItem(5.0F, 0.08)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem(new ItemStack(Items.field_151072_bj), Witchery.Items.GENERIC.itemAshWood.createStack(), new ItemStack(Items.field_151044_h)), new SacrificePower(1000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151072_bj)",
+        "Witchery.Items.GENERIC.itemAshWood.createStack()",
+        "new ItemStack(Items.field_151044_h)"
+      ],
+      "optionalItems": [],
+      "power": 1000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 16)"
+      ],
+      "modernHome": "cook_item",
+      "mode": "full"
+    },
+    {
+      "sourceId": 52,
+      "bookIndex": 48,
+      "translationKey": "witchery.rite.curseinsanity1",
+      "sourceLine": 3662,
+      "effect": "new RiteCurseCreature(true, \"witcheryInsanity\", 1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(), new ItemStack(Items.field_151170_bI), new ItemStack(Items.field_151102_aT), Witchery.Items.GENERIC.itemBrewGrotesque.createStack() ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+        "new ItemStack(Items.field_151170_bI)",
+        "new ItemStack(Items.field_151102_aT)",
+        "Witchery.Items.GENERIC.itemBrewGrotesque.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_IN_STROM)",
+      "circles": [
+        "new Circle(0, 0, 28)"
+      ],
+      "modernHome": "curse_insanity",
+      "mode": "full"
+    },
+    {
+      "sourceId": 53,
+      "bookIndex": 49,
+      "translationKey": "witchery.rite.removeinsanity1",
+      "sourceLine": 3680,
+      "effect": "new RiteCurseCreature(false, \"witcheryInsanity\", 1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(), new ItemStack(Items.field_151174_bG), new ItemStack(Items.field_151102_aT), Witchery.Items.GENERIC.itemBrewOfLove.createStack() ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+        "new ItemStack(Items.field_151174_bG)",
+        "new ItemStack(Items.field_151102_aT)",
+        "Witchery.Items.GENERIC.itemBrewOfLove.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "cure_insanity",
+      "mode": "full"
+    },
+    {
+      "sourceId": 54,
+      "bookIndex": 1,
+      "translationKey": "witchery.rite.bindfamiliar",
+      "sourceLine": 3698,
+      "effect": "new RiteBindFamiliar(7)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemTearOfTheGoddess.createStack(), Witchery.Items.GENERIC.itemOdourOfPurity.createStack(), Witchery.Items.GENERIC.itemWhiffOfMagic.createStack(), new ItemStack(Items.field_151045_i), Witchery.Items.GENERIC.itemInfernalBlood.createStack() ), new SacrificePower(8000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemTearOfTheGoddess.createStack()",
+        "Witchery.Items.GENERIC.itemOdourOfPurity.createStack()",
+        "Witchery.Items.GENERIC.itemWhiffOfMagic.createStack()",
+        "new ItemStack(Items.field_151045_i)",
+        "Witchery.Items.GENERIC.itemInfernalBlood.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 8000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "bind_familiar",
+      "mode": "full"
+    },
+    {
+      "sourceId": 55,
+      "bookIndex": 30,
+      "translationKey": "witchery.rite.callfamiliar",
+      "sourceLine": 3716,
+      "effect": "new RiteCallFamiliar(7)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(), Witchery.Items.GENERIC.itemHintOfRebirth.createStack(), Witchery.Items.GENERIC.itemWhiffOfMagic.createStack() ), new SacrificePower(1000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+        "Witchery.Items.GENERIC.itemHintOfRebirth.createStack()",
+        "Witchery.Items.GENERIC.itemWhiffOfMagic.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 1000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "call_familiar",
+      "mode": "full"
+    },
+    {
+      "sourceId": 56,
+      "bookIndex": 50,
+      "translationKey": "witchery.rite.corruptvoodooprotection",
+      "sourceLine": 3732,
+      "effect": "new RiteCursePoppets(1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(), Witchery.Items.POPPET.antiVoodooPoppet.createStack(), new ItemStack(Items.field_151065_br), Witchery.Items.GENERIC.itemSpectralDust.createStack() ), new SacrificePower(7000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+        "Witchery.Items.POPPET.antiVoodooPoppet.createStack()",
+        "new ItemStack(Items.field_151065_br)",
+        "Witchery.Items.GENERIC.itemSpectralDust.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 7000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 28)"
+      ],
+      "modernHome": "corrupt_poppet",
+      "mode": "full"
+    },
+    {
+      "sourceId": 57,
+      "bookIndex": 35,
+      "translationKey": "witchery.rite.infusionfuture",
+      "sourceLine": 3750,
+      "effect": "new RiteSummonItem(new ItemStack(Witchery.Blocks.CRYSTAL_BALL), RiteSummonItem.Binding.NONE)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemQuartzSphere.createStack(), new ItemStack(Items.field_151043_k), Witchery.Items.GENERIC.itemHappenstanceOil.createStack() ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemQuartzSphere.createStack()",
+        "new ItemStack(Items.field_151043_k)",
+        "Witchery.Items.GENERIC.itemHappenstanceOil.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "crystal_ball",
+      "mode": "full"
+    },
+    {
+      "sourceId": 58,
+      "bookIndex": 20,
+      "translationKey": "witchery.rite.cookfood",
+      "sourceLine": 3766,
+      "effect": "new RiteCookItem(5.0F, 0.16)",
+      "sacrifice": "new SacrificeItem( Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack(), new ItemStack(Items.field_151072_bj), Witchery.Items.GENERIC.itemAshWood.createStack(), new ItemStack(Items.field_151065_br) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+        "new ItemStack(Items.field_151072_bj)",
+        "Witchery.Items.GENERIC.itemAshWood.createStack()",
+        "new ItemStack(Items.field_151065_br)"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 16)"
+      ],
+      "modernHome": "cook_item",
+      "mode": "full"
+    },
+    {
+      "sourceId": 59,
+      "bookIndex": 48,
+      "translationKey": "witchery.rite.cursesinking1",
+      "sourceLine": 3780,
+      "effect": "new RiteCurseCreature(true, \"witcherySinking\", 1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(), Dye.INK_SAC.createStack(), new ItemStack(Items.field_151075_bm), Witchery.Items.GENERIC.itemBrewGrotesque.createStack() ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+        "Dye.INK_SAC.createStack()",
+        "new ItemStack(Items.field_151075_bm)",
+        "Witchery.Items.GENERIC.itemBrewGrotesque.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_IN_STROM)",
+      "circles": [
+        "new Circle(0, 0, 28)"
+      ],
+      "modernHome": "curse_sinking",
+      "mode": "full"
+    },
+    {
+      "sourceId": 60,
+      "bookIndex": 49,
+      "translationKey": "witchery.rite.removesinking1",
+      "sourceLine": 3798,
+      "effect": "new RiteCurseCreature(false, \"witcherySinking\", 1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(), Dye.BONE_MEAL.createStack(), new ItemStack(Items.field_151075_bm), Witchery.Items.GENERIC.itemBrewOfTheDepths.createStack() ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+        "Dye.BONE_MEAL.createStack()",
+        "new ItemStack(Items.field_151075_bm)",
+        "Witchery.Items.GENERIC.itemBrewOfTheDepths.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "cure_sinking",
+      "mode": "full"
+    },
+    {
+      "sourceId": 61,
+      "bookIndex": 35,
+      "translationKey": "witchery.rite.infusionseerstone",
+      "sourceLine": 3816,
+      "effect": "new RiteSummonItem(Witchery.Items.GENERIC.itemSeerStone.createStack(), RiteSummonItem.Binding.NONE)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemQuartzSphere.createStack(), new ItemStack(Blocks.field_150343_Z), Witchery.Items.GENERIC.itemHappenstanceOil.createStack() ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemQuartzSphere.createStack()",
+        "new ItemStack(Blocks.field_150343_Z)",
+        "Witchery.Items.GENERIC.itemHappenstanceOil.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "infuse_seer_stone",
+      "mode": "full"
+    },
+    {
+      "sourceId": 62,
+      "bookIndex": 48,
+      "translationKey": "witchery.rite.curseoverheating",
+      "sourceLine": 3832,
+      "effect": "new RiteCurseCreature(true, \"witcheryOverheating\", 1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(), Witchery.Items.GENERIC.itemInfernalBlood.createStack(), new ItemStack(Items.field_151072_bj), Witchery.Items.GENERIC.itemBrewGrotesque.createStack() ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+        "Witchery.Items.GENERIC.itemInfernalBlood.createStack()",
+        "new ItemStack(Items.field_151072_bj)",
+        "Witchery.Items.GENERIC.itemBrewGrotesque.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_IN_STROM)",
+      "circles": [
+        "new Circle(0, 0, 28)"
+      ],
+      "modernHome": "curse_overheating",
+      "mode": "full"
+    },
+    {
+      "sourceId": 63,
+      "bookIndex": 49,
+      "translationKey": "witchery.rite.cureoverheating",
+      "sourceLine": 3850,
+      "effect": "new RiteCurseCreature(false, \"witcheryOverheating\", 1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(), Witchery.Items.GENERIC.itemIcyNeedle.createStack(), new ItemStack(Items.field_151072_bj), Witchery.Items.GENERIC.itemBrewOfTheDepths.createStack() ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+        "Witchery.Items.GENERIC.itemIcyNeedle.createStack()",
+        "new ItemStack(Items.field_151072_bj)",
+        "Witchery.Items.GENERIC.itemBrewOfTheDepths.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "cure_overheating",
+      "mode": "full"
+    },
+    {
+      "sourceId": 64,
+      "bookIndex": 22,
+      "translationKey": "witchery.rite.climatechange",
+      "sourceLine": 3868,
+      "effect": "new RiteClimateChange(16)",
+      "sacrifice": "new SacrificeItem( new ItemStack(Items.field_151070_bp), Witchery.Items.GENERIC.itemToeOfFrog.createStack(), Witchery.Items.GENERIC.itemBatWool.createStack(), Witchery.Items.GENERIC.itemDogTongue.createStack(), Witchery.Items.GENERIC.itemOwletsWing.createStack(), Witchery.Items.GENERIC.itemAttunedStone.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151070_bp)",
+        "Witchery.Items.GENERIC.itemToeOfFrog.createStack()",
+        "Witchery.Items.GENERIC.itemBatWool.createStack()",
+        "Witchery.Items.GENERIC.itemDogTongue.createStack()",
+        "Witchery.Items.GENERIC.itemOwletsWing.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(40, 0, 0)"
+      ],
+      "modernHome": "climate_change",
+      "mode": "full"
+    },
+    {
+      "sourceId": 65,
+      "bookIndex": 12,
+      "translationKey": "witchery.rite.iceshell",
+      "sourceLine": 3885,
+      "effect": "new RiteSphereEffect(8, Witchery.Blocks.PERPETUAL_ICE)",
+      "sacrifice": "new SacrificeItem( new ItemStack(Items.field_151048_u), Witchery.Items.GENERIC.itemFrozenHeart.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151048_u)",
+        "Witchery.Items.GENERIC.itemFrozenHeart.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "ice_shell",
+      "mode": "full"
+    },
+    {
+      "sourceId": 66,
+      "bookIndex": 38,
+      "translationKey": "witchery.rite.rainoffrogs",
+      "sourceLine": 3898,
+      "effect": "new RiteRainOfToads(5, 16, 10)",
+      "sacrifice": "new SacrificeItem( Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack(), Witchery.Items.GENERIC.itemRedstoneSoup.createStack(), Witchery.Items.GENERIC.itemReekOfMisfortune.createStack(), Witchery.Items.GENERIC.itemToeOfFrog.createStack(), new ItemStack(Items.field_151131_as), Witchery.Items.GENERIC.itemBelladonnaFlower.createStack() )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()",
+        "Witchery.Items.GENERIC.itemRedstoneSoup.createStack()",
+        "Witchery.Items.GENERIC.itemReekOfMisfortune.createStack()",
+        "Witchery.Items.GENERIC.itemToeOfFrog.createStack()",
+        "new ItemStack(Items.field_151131_as)",
+        "Witchery.Items.GENERIC.itemBelladonnaFlower.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 28)"
+      ],
+      "modernHome": "rain_of_toads",
+      "mode": "full"
+    },
+    {
+      "sourceId": 67,
+      "bookIndex": 4,
+      "translationKey": "witchery.rite.glyphictransform",
+      "sourceLine": 3914,
+      "effect": "new RiteGlyphicTransformation()",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem(Witchery.Items.GENERIC.itemGypsum.createStack(), new ItemStack(Witchery.Items.ARTHANA)), new SacrificePower(1000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemGypsum.createStack()",
+        "new ItemStack(Witchery.Items.ARTHANA)"
+      ],
+      "optionalItems": [],
+      "power": 1000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [],
+      "modernHome": "glyphic_transformation",
+      "mode": "direct"
+    },
+    {
+      "sourceId": 68,
+      "bookIndex": 7,
+      "translationKey": "witchery.rite.callbeasts",
+      "sourceLine": 3924,
+      "effect": "new RiteCallCreatures( 64.0F, new Class[]{ EntityPig.class, EntityChicken.class, EntityCow.class, EntitySheep.class, EntityMooshroom.class, EntityWolf.class, EntityOcelot.class } )",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Items.field_151117_aB), new ItemStack(Blocks.field_150407_cf), new ItemStack(Items.field_151034_e), new ItemStack(Items.field_151082_bd), new ItemStack(Items.field_151115_aP), new ItemStack(Blocks.field_150337_Q), new ItemStack(Items.field_151172_bF), new ItemStack(Items.field_151014_N) ), new SacrificePower(6000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Items.field_151117_aB)",
+        "new ItemStack(Blocks.field_150407_cf)",
+        "new ItemStack(Items.field_151034_e)",
+        "new ItemStack(Items.field_151082_bd)",
+        "new ItemStack(Items.field_151115_aP)",
+        "new ItemStack(Blocks.field_150337_Q)",
+        "new ItemStack(Items.field_151172_bF)",
+        "new ItemStack(Items.field_151014_N)"
+      ],
+      "optionalItems": [],
+      "power": 6000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 40, 0)"
+      ],
+      "modernHome": "beastial_call",
+      "mode": "full"
+    },
+    {
+      "sourceId": 69,
+      "bookIndex": 7,
+      "translationKey": "witchery.rite.manifest",
+      "sourceLine": 3950,
+      "effect": "new RiteSetNBT(5, \"WITCManifestDuration\", 150, 25)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemSpectralDust.createStack(), Witchery.Items.GENERIC.itemMellifluousHunger.createStack(), Witchery.Items.GENERIC.itemNecroStone.createStack(), new ItemStack(Items.field_151005_D), new ItemStack(Witchery.Items.ARTHANA), new ItemStack(Items.field_151016_H) ), new SacrificePower(5000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemSpectralDust.createStack()",
+        "Witchery.Items.GENERIC.itemMellifluousHunger.createStack()",
+        "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+        "new ItemStack(Items.field_151005_D)",
+        "new ItemStack(Witchery.Items.ARTHANA)",
+        "new ItemStack(Items.field_151016_H)"
+      ],
+      "optionalItems": [],
+      "power": 5000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 16, 0)"
+      ],
+      "modernHome": "manifestation_dream",
+      "mode": "full"
+    },
+    {
+      "sourceId": 70,
+      "bookIndex": 22,
+      "translationKey": "witchery.rite.forestation",
+      "sourceLine": 3969,
+      "effect": "new RiteForestation(20, 8, 60, Blocks.field_150345_g, 0)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Blocks.field_150345_g, 1, 0), new ItemStack(Witchery.Blocks.WICKER_BUNDLE), Witchery.Items.GENERIC.itemBrewOfSprouting.createStack(), Witchery.Items.GENERIC.itemBranchEnt.createStack() ), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(4000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Blocks.field_150345_g, 1, 0)",
+        "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+        "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+        "Witchery.Items.GENERIC.itemBranchEnt.createStack()"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "forestation_oak",
+      "mode": "full"
+    },
+    {
+      "sourceId": 71,
+      "bookIndex": 22,
+      "translationKey": "witchery.rite.forestation",
+      "sourceLine": 3987,
+      "effect": "new RiteForestation(20, 8, 60, Blocks.field_150345_g, 1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Blocks.field_150345_g, 1, 1), new ItemStack(Witchery.Blocks.WICKER_BUNDLE), Witchery.Items.GENERIC.itemBrewOfSprouting.createStack(), Witchery.Items.GENERIC.itemBranchEnt.createStack() ), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(4000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Blocks.field_150345_g, 1, 1)",
+        "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+        "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+        "Witchery.Items.GENERIC.itemBranchEnt.createStack()"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "forestation_spruce",
+      "mode": "full"
+    },
+    {
+      "sourceId": 72,
+      "bookIndex": 22,
+      "translationKey": "witchery.rite.forestation",
+      "sourceLine": 4006,
+      "effect": "new RiteForestation(20, 8, 60, Blocks.field_150345_g, 2)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Blocks.field_150345_g, 1, 2), new ItemStack(Witchery.Blocks.WICKER_BUNDLE), Witchery.Items.GENERIC.itemBrewOfSprouting.createStack(), Witchery.Items.GENERIC.itemBranchEnt.createStack() ), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(4000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Blocks.field_150345_g, 1, 2)",
+        "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+        "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+        "Witchery.Items.GENERIC.itemBranchEnt.createStack()"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "forestation_birch",
+      "mode": "full"
+    },
+    {
+      "sourceId": 73,
+      "bookIndex": 22,
+      "translationKey": "witchery.rite.forestation",
+      "sourceLine": 4025,
+      "effect": "new RiteForestation(20, 8, 60, Blocks.field_150345_g, 3)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Blocks.field_150345_g, 1, 3), new ItemStack(Witchery.Blocks.WICKER_BUNDLE), Witchery.Items.GENERIC.itemBrewOfSprouting.createStack(), Witchery.Items.GENERIC.itemBranchEnt.createStack() ), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(4000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Blocks.field_150345_g, 1, 3)",
+        "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+        "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+        "Witchery.Items.GENERIC.itemBranchEnt.createStack()"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "forestation_jungle",
+      "mode": "full"
+    },
+    {
+      "sourceId": 74,
+      "bookIndex": 22,
+      "translationKey": "witchery.rite.forestation",
+      "sourceLine": 4044,
+      "effect": "new RiteForestation(20, 8, 60, Witchery.Blocks.SAPLING, 0)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Blocks.SAPLING, 1, 0), new ItemStack(Witchery.Blocks.WICKER_BUNDLE), Witchery.Items.GENERIC.itemBrewOfSprouting.createStack(), Witchery.Items.GENERIC.itemBranchEnt.createStack() ), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(4000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Blocks.SAPLING, 1, 0)",
+        "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+        "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+        "Witchery.Items.GENERIC.itemBranchEnt.createStack()"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "forestation_rowan",
+      "mode": "full"
+    },
+    {
+      "sourceId": 75,
+      "bookIndex": 22,
+      "translationKey": "witchery.rite.forestation",
+      "sourceLine": 4063,
+      "effect": "new RiteForestation(20, 8, 60, Witchery.Blocks.SAPLING, 1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Blocks.SAPLING, 1, 1), new ItemStack(Witchery.Blocks.WICKER_BUNDLE), Witchery.Items.GENERIC.itemBrewOfSprouting.createStack(), Witchery.Items.GENERIC.itemBranchEnt.createStack() ), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(4000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Blocks.SAPLING, 1, 1)",
+        "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+        "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+        "Witchery.Items.GENERIC.itemBranchEnt.createStack()"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "forestation_alder",
+      "mode": "full"
+    },
+    {
+      "sourceId": 76,
+      "bookIndex": 22,
+      "translationKey": "witchery.rite.forestation",
+      "sourceLine": 4082,
+      "effect": "new RiteForestation(20, 8, 60, Witchery.Blocks.SAPLING, 2)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Blocks.SAPLING, 1, 2), new ItemStack(Witchery.Blocks.WICKER_BUNDLE), Witchery.Items.GENERIC.itemBrewOfSprouting.createStack(), Witchery.Items.GENERIC.itemBranchEnt.createStack() ), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(4000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Blocks.SAPLING, 1, 2)",
+        "new ItemStack(Witchery.Blocks.WICKER_BUNDLE)",
+        "Witchery.Items.GENERIC.itemBrewOfSprouting.createStack()",
+        "Witchery.Items.GENERIC.itemBranchEnt.createStack()"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "forestation_hawthorn",
+      "mode": "full"
+    },
+    {
+      "sourceId": 77,
+      "bookIndex": 13,
+      "translationKey": "witchery.rite.volcano",
+      "sourceLine": 4101,
+      "effect": "new RiteRaiseVolcano(8, 8)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem(new ItemStack(Blocks.field_150347_e), new ItemStack(Items.field_151064_bs), new ItemStack(Items.field_151010_B)), new SacrificeOptionalItem(Witchery.Items.GENERIC.itemWaystoneBound.createStack()), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Blocks.field_150347_e)",
+        "new ItemStack(Items.field_151064_bs)",
+        "new ItemStack(Items.field_151010_B)"
+      ],
+      "optionalItems": [
+        "Witchery.Items.GENERIC.itemWaystoneBound.createStack()"
+      ],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 16)"
+      ],
+      "modernHome": "volcano_powered",
+      "mode": "full"
+    },
+    {
+      "sourceId": 78,
+      "bookIndex": 48,
+      "translationKey": "witchery.rite.cursenightmare",
+      "sourceLine": 4114,
+      "effect": "new RiteCurseCreature(true, \"witcheryWakingNightmare\", 1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(), Witchery.Items.GENERIC.itemMellifluousHunger.createStack(), Witchery.Items.GENERIC.itemTormentedTwine.createStack(), new ItemStack(Items.field_151045_i), Witchery.Items.GENERIC.itemBrewGrotesque.createStack() ), new SacrificePower(10000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+        "Witchery.Items.GENERIC.itemMellifluousHunger.createStack()",
+        "Witchery.Items.GENERIC.itemTormentedTwine.createStack()",
+        "new ItemStack(Items.field_151045_i)",
+        "Witchery.Items.GENERIC.itemBrewGrotesque.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 10000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_IN_STROM)",
+      "circles": [
+        "new Circle(0, 0, 28)"
+      ],
+      "modernHome": "curse_waking_nightmare",
+      "mode": "full"
+    },
+    {
+      "sourceId": 79,
+      "bookIndex": 49,
+      "translationKey": "witchery.rite.curenightmare",
+      "sourceLine": 4133,
+      "effect": "new RiteCurseCreature(false, \"witcheryWakingNightmare\", 1)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(), new ItemStack(Items.field_151150_bK), Witchery.Items.GENERIC.itemTormentedTwine.createStack(), Witchery.Items.GENERIC.itemBrewOfLove.createStack() ), new SacrificePower(2000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+        "new ItemStack(Items.field_151150_bK)",
+        "Witchery.Items.GENERIC.itemTormentedTwine.createStack()",
+        "Witchery.Items.GENERIC.itemBrewOfLove.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "cure_waking_nightmare",
+      "mode": "full"
+    },
+    {
+      "sourceId": 80,
+      "bookIndex": 35,
+      "translationKey": "witchery.rite.infusebrewsoaring",
+      "sourceLine": 4151,
+      "effect": "new RiteSummonItem(Witchery.Items.GENERIC.itemBrewOfSoaring.createStack(), RiteSummonItem.Binding.NONE)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemInfusionBase.createStack(), Witchery.Items.GENERIC.itemBroom.createStack(), new ItemStack(Items.field_151008_G), new ItemStack(Witchery.Items.ARTHANA) ), new SacrificeLiving(EntityOwl.class), new SacrificePower(3000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemInfusionBase.createStack()",
+        "Witchery.Items.GENERIC.itemBroom.createStack()",
+        "new ItemStack(Items.field_151008_G)",
+        "new ItemStack(Witchery.Items.ARTHANA)"
+      ],
+      "optionalItems": [],
+      "power": 3000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)",
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "infuse_brew",
+      "mode": "full"
+    },
+    {
+      "sourceId": 81,
+      "bookIndex": 35,
+      "translationKey": "witchery.rite.infusebrewgrave",
+      "sourceLine": 4170,
+      "effect": "new RiteSummonItem(Witchery.Items.GENERIC.itemBrewGrave.createStack(), RiteSummonItem.Binding.NONE)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemInfusionBase.createStack(), new ItemStack(Items.field_151103_aS), Witchery.Items.GENERIC.itemWeb.createStack(), Witchery.Items.GENERIC.itemNecroStone.createStack() ), new SacrificeLiving(EntityZombie.class), new SacrificePower(3000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemInfusionBase.createStack()",
+        "new ItemStack(Items.field_151103_aS)",
+        "Witchery.Items.GENERIC.itemWeb.createStack()",
+        "Witchery.Items.GENERIC.itemNecroStone.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 3000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)",
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "infuse_brew",
+      "mode": "full"
+    },
+    {
+      "sourceId": 82,
+      "bookIndex": 36,
+      "translationKey": "witchery.rite.spectralstone",
+      "sourceLine": 4189,
+      "effect": "new RiteSummonItem(new ItemStack(Witchery.Items.SPECTRAL_STONE), RiteSummonItem.Binding.NONE)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemNecroStone.createStack(), Witchery.Items.GENERIC.itemCongealedSpirit.createStack(), Witchery.Items.GENERIC.itemCondensedFear.createStack(), Witchery.Items.GENERIC.itemSpectralDust.createStack(), new ItemStack(Witchery.Items.BOLINE) ), new SacrificePower(6000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+        "Witchery.Items.GENERIC.itemCongealedSpirit.createStack()",
+        "Witchery.Items.GENERIC.itemCondensedFear.createStack()",
+        "Witchery.Items.GENERIC.itemSpectralDust.createStack()",
+        "new ItemStack(Witchery.Items.BOLINE)"
+      ],
+      "optionalItems": [],
+      "power": 6000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "spectral_stone",
+      "mode": "full"
+    },
+    {
+      "sourceId": 83,
+      "bookIndex": 1,
+      "translationKey": "witchery.rite.bindspectral",
+      "sourceLine": 4208,
+      "effect": "new RiteSummonSpectralStone(5)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.SPECTRAL_STONE), Witchery.Items.GENERIC.itemSpectralDust.createStack(), new ItemStack(Witchery.Items.BOLINE) ), new SacrificePower(5000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.SPECTRAL_STONE)",
+        "Witchery.Items.GENERIC.itemSpectralDust.createStack()",
+        "new ItemStack(Witchery.Items.BOLINE)"
+      ],
+      "optionalItems": [],
+      "power": 5000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "bind_spectral_stone",
+      "mode": "full"
+    },
+    {
+      "sourceId": 84,
+      "bookIndex": 1,
+      "translationKey": "witchery.rite.bindfetish",
+      "sourceLine": 4222,
+      "effect": "new RiteBindSpiritsToFetish(5)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Blocks.FETISH_SCARECROW), Witchery.Items.GENERIC.itemAttunedStone.createStack(), Witchery.Items.GENERIC.itemNecroStone.createStack(), new ItemStack(Witchery.Items.BOLINE) ), new SacrificePower(6000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Blocks.FETISH_SCARECROW)",
+        "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+        "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+        "new ItemStack(Witchery.Items.BOLINE)"
+      ],
+      "optionalItems": [],
+      "power": 6000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "bind_fetish",
+      "mode": "full"
+    },
+    {
+      "sourceId": 85,
+      "bookIndex": 1,
+      "translationKey": "witchery.rite.bindfetish",
+      "sourceLine": 4239,
+      "effect": "new RiteBindSpiritsToFetish(5)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Blocks.FETISH_TREANT_IDOL), Witchery.Items.GENERIC.itemAttunedStone.createStack(), Witchery.Items.GENERIC.itemNecroStone.createStack(), new ItemStack(Witchery.Items.BOLINE) ), new SacrificePower(6000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Blocks.FETISH_TREANT_IDOL)",
+        "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+        "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+        "new ItemStack(Witchery.Items.BOLINE)"
+      ],
+      "optionalItems": [],
+      "power": 6000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "bind_fetish",
+      "mode": "full"
+    },
+    {
+      "sourceId": 86,
+      "bookIndex": 1,
+      "translationKey": "witchery.rite.bindfetish",
+      "sourceLine": 4257,
+      "effect": "new RiteBindSpiritsToFetish(5)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Blocks.FETISH_WITCHS_LADDER), Witchery.Items.GENERIC.itemAttunedStone.createStack(), Witchery.Items.GENERIC.itemNecroStone.createStack(), new ItemStack(Witchery.Items.BOLINE) ), new SacrificePower(6000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Blocks.FETISH_WITCHS_LADDER)",
+        "Witchery.Items.GENERIC.itemAttunedStone.createStack()",
+        "Witchery.Items.GENERIC.itemNecroStone.createStack()",
+        "new ItemStack(Witchery.Items.BOLINE)"
+      ],
+      "optionalItems": [],
+      "power": 6000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "bind_fetish",
+      "mode": "full"
+    },
+    {
+      "sourceId": 87,
+      "bookIndex": 26,
+      "translationKey": "witchery.rite.summonimp",
+      "sourceLine": 4275,
+      "effect": "new RiteSummonCreature(EntityImp.class, false)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemRefinedEvil.createStack(), Witchery.Items.GENERIC.itemInfernalBlood.createStack(), new ItemStack(Items.field_151079_bi), Witchery.Items.GENERIC.itemAttunedStone.createStack() ), new SacrificePower(5000.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemRefinedEvil.createStack()",
+        "Witchery.Items.GENERIC.itemInfernalBlood.createStack()",
+        "new ItemStack(Items.field_151079_bi)",
+        "Witchery.Items.GENERIC.itemAttunedStone.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 5000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 28)"
+      ],
+      "modernHome": "summon_imp",
+      "mode": "full"
+    },
+    {
+      "sourceId": 88,
+      "bookIndex": 1,
+      "translationKey": "witchery.rite.bindwaystonetoplayer",
+      "sourceLine": 4292,
+      "effect": "new RiteSummonItem(Witchery.Items.GENERIC.itemWaystonePlayerBound.createStack(), RiteSummonItem.Binding.ENTITY)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemWaystone.createStack(), Witchery.Items.GENERIC.itemEnderDew.createStack(), new ItemStack(Items.field_151123_aH), new ItemStack(Items.field_151126_ay) ), new SacrificePower(500.0F, 20) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemWaystone.createStack()",
+        "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+        "new ItemStack(Items.field_151123_aH)",
+        "new ItemStack(Items.field_151126_ay)"
+      ],
+      "optionalItems": [],
+      "power": 500.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "bind_blooded_waystone",
+      "mode": "full"
+    },
+    {
+      "sourceId": 89,
+      "bookIndex": 1,
+      "translationKey": "witchery.rite.bindwaystonetoplayer",
+      "sourceLine": 4309,
+      "effect": "new RiteSummonItem(Witchery.Items.GENERIC.itemWaystonePlayerBound.createStack(), RiteSummonItem.Binding.ENTITY)",
+      "sacrifice": "new SacrificeItem( Witchery.Items.GENERIC.itemWaystone.createStack(), Witchery.Items.GENERIC.itemEnderDew.createStack(), new ItemStack(Items.field_151123_aH), Witchery.Items.GENERIC.itemIcyNeedle.createStack(), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemWaystone.createStack()",
+        "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+        "new ItemStack(Items.field_151123_aH)",
+        "Witchery.Items.GENERIC.itemIcyNeedle.createStack()",
+        "Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "bind_blooded_waystone_portable",
+      "mode": "full"
+    },
+    {
+      "sourceId": 90,
+      "bookIndex": 1,
+      "translationKey": "witchery.rite.bindstatuetoplayer",
+      "sourceLine": 4324,
+      "effect": "new RiteSummonItem(new ItemStack(Witchery.Blocks.STATUE_OF_WORSHIP), RiteSummonItem.Binding.PLAYER)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Blocks.STATUE_OF_WORSHIP), Witchery.Items.GENERIC.itemBelladonnaFlower.createStack(), new ItemStack(Blocks.field_150328_O), new ItemStack(Blocks.field_150327_N) ), new SacrificePower(4000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Blocks.STATUE_OF_WORSHIP)",
+        "Witchery.Items.GENERIC.itemBelladonnaFlower.createStack()",
+        "new ItemStack(Blocks.field_150328_O)",
+        "new ItemStack(Blocks.field_150327_N)"
+      ],
+      "optionalItems": [],
+      "power": 4000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "bind_statue_to_player",
+      "mode": "full"
+    },
+    {
+      "sourceId": 91,
+      "bookIndex": 5,
+      "translationKey": "witchery.rite.teleporttowaystone",
+      "sourceLine": 4341,
+      "effect": "new RiteTeleportToWaystone(3)",
+      "sacrifice": "new SacrificeItem(Witchery.Items.GENERIC.itemWaystonePlayerBound.createStack())",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemWaystonePlayerBound.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 0.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 16, 0)"
+      ],
+      "modernHome": "transposition_to_waystone",
+      "mode": "full"
+    },
+    {
+      "sourceId": 92,
+      "bookIndex": 48,
+      "translationKey": "witchery.rite.wolfcurse.book",
+      "sourceLine": 4350,
+      "effect": "new RiteCurseOfTheWolf(true)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(), new ItemStack(Witchery.Blocks.WOLFHEAD, 1, 1), Witchery.Items.GENERIC.itemWolfsbane.createStack(), new ItemStack(Items.field_151045_i), Witchery.Items.GENERIC.itemBrewGrotesque.createStack() ), new SacrificePower(10000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()",
+        "new ItemStack(Witchery.Blocks.WOLFHEAD, 1, 1)",
+        "Witchery.Items.GENERIC.itemWolfsbane.createStack()",
+        "new ItemStack(Items.field_151045_i)",
+        "Witchery.Items.GENERIC.itemBrewGrotesque.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 10000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+      "circles": [
+        "new Circle(0, 0, 28)"
+      ],
+      "modernHome": "curse_of_the_wolf",
+      "mode": "full"
+    },
+    {
+      "sourceId": 93,
+      "bookIndex": 49,
+      "translationKey": "witchery.rite.wolfcure.book",
+      "sourceLine": 4369,
+      "effect": "new RiteCurseOfTheWolf(false)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(), new ItemStack(Witchery.Items.SILVER_SWORD), Witchery.Items.GENERIC.itemWolfsbane.createStack(), new ItemStack(Items.field_151045_i), Witchery.Items.GENERIC.itemBrewOfLove.createStack() ), new SacrificePower(10000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+        "new ItemStack(Witchery.Items.SILVER_SWORD)",
+        "Witchery.Items.GENERIC.itemWolfsbane.createStack()",
+        "new ItemStack(Items.field_151045_i)",
+        "Witchery.Items.GENERIC.itemBrewOfLove.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 10000.0,
+      "traits": "EnumSet.of(RitualTraits.ONLY_AT_NIGHT)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "cure_wolf",
+      "mode": "full"
+    },
+    {
+      "sourceId": 94,
+      "bookIndex": 49,
+      "translationKey": "witchery.rite.vampirecure.book",
+      "sourceLine": 4388,
+      "effect": "new RiteRemoveVampirism()",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(), new ItemStack(Witchery.Items.SILVER_SWORD), new ItemStack(Witchery.Items.SEEDS_GARLIC), new ItemStack(Items.field_151045_i), Witchery.Items.GENERIC.itemBrewOfLove.createStack() ), new SacrificePower(10000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.TAGLOCK_KIT, 1, 1)",
+        "Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()",
+        "new ItemStack(Witchery.Items.SILVER_SWORD)",
+        "new ItemStack(Witchery.Items.SEEDS_GARLIC)",
+        "new ItemStack(Items.field_151045_i)",
+        "Witchery.Items.GENERIC.itemBrewOfLove.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 10000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(16, 0, 0)"
+      ],
+      "modernHome": "remove_vampirism",
+      "mode": "full"
+    },
+    {
+      "sourceId": 95,
+      "bookIndex": 35,
+      "translationKey": "witchery.rite.infusionmirror",
+      "sourceLine": 4407,
+      "effect": "new RiteSummonItem(new ItemStack(Witchery.Items.MIRROR), RiteSummonItem.Binding.NONE)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( Witchery.Items.GENERIC.itemBrewOfHollowTears.createStack(), new ItemStack(Items.field_151043_k), new ItemStack(Blocks.field_150410_aZ) ), new SacrificePower(2000.0F, 20), new SacrificeLiving(EntityDemon.class) )",
+      "requiredItems": [
+        "Witchery.Items.GENERIC.itemBrewOfHollowTears.createStack()",
+        "new ItemStack(Items.field_151043_k)",
+        "new ItemStack(Blocks.field_150410_aZ)"
+      ],
+      "optionalItems": [],
+      "power": 2000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(28, 0, 0)"
+      ],
+      "modernHome": "infusion_mirror",
+      "mode": "full"
+    },
+    {
+      "sourceId": 96,
+      "bookIndex": 28,
+      "translationKey": "witchery.rite.summonreflection",
+      "sourceLine": 4422,
+      "effect": "new RiteSummonCreature(EntityReflection.class, false)",
+      "sacrifice": "new SacrificeMultiple( new SacrificeItem( new ItemStack(Witchery.Items.MIRROR), Witchery.Items.GENERIC.itemEnderDew.createStack(), new ItemStack(Items.field_151065_br), Witchery.Items.GENERIC.itemQuartzSphere.createStack() ), new SacrificePower(5000.0F, 20) )",
+      "requiredItems": [
+        "new ItemStack(Witchery.Items.MIRROR)",
+        "Witchery.Items.GENERIC.itemEnderDew.createStack()",
+        "new ItemStack(Items.field_151065_br)",
+        "Witchery.Items.GENERIC.itemQuartzSphere.createStack()"
+      ],
+      "optionalItems": [],
+      "power": 5000.0,
+      "traits": "EnumSet.noneOf(RitualTraits.class)",
+      "circles": [
+        "new Circle(0, 0, 40)"
+      ],
+      "modernHome": "summon_reflection",
+      "mode": "full"
+    }
+  ]
+}

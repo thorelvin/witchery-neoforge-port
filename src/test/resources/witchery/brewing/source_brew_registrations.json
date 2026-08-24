@@ -1,0 +1,2608 @@
+{
+  "source": "WitcheryBrewRegistry.java",
+  "sourceSha256": "17db77abb73bab8b4d3cc5bf827e1d545c5d1a6ba095a79a9229be0891b7abe3",
+  "registrationSiteCount": 158,
+  "registrations": [
+    {
+      "sourceIndex": 1,
+      "sourceLine": 125,
+      "actionClass": "BrewActionDispersal",
+      "ingredientExpression": "Items.field_151016_H",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 6,
+      "sourceExpression": "new BrewActionDispersal(new BrewItemKey(Items.field_151016_H), new AltarPower(0), new DispersalInstant()) .addNullifier(new BrewItemKey(Items.field_151016_H), false) .addNullifier(Witchery.Items.GENERIC.itemBatWool.getBrewItemKey(), false) .addNullifier(Witchery.Items.GENERIC.itemArtichoke.getBrewItemKey(), false) .addNullifier(Witchery.Items.GENERIC.itemWormwood.getBrewItemKey(), false) .addNullifier(triggeredKey, false) .addNullifier(new BrewItemKey(Items.field_151015_O), false)"
+    },
+    {
+      "sourceIndex": 2,
+      "sourceLine": 134,
+      "actionClass": "BrewActionDispersal",
+      "ingredientExpression": "Items.field_151016_H",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 6,
+      "sourceExpression": "new BrewActionDispersal(Witchery.Items.GENERIC.itemArtichoke.getBrewItemKey(), new AltarPower(0), new DispersalInstant()) .addNullifier(new BrewItemKey(Items.field_151016_H), false) .addNullifier(Witchery.Items.GENERIC.itemBatWool.getBrewItemKey(), false) .addNullifier(Witchery.Items.GENERIC.itemArtichoke.getBrewItemKey(), false) .addNullifier(Witchery.Items.GENERIC.itemWormwood.getBrewItemKey(), false) .addNullifier(triggeredKey, false) .addNullifier(new BrewItemKey(Items.field_151015_O), false)"
+    },
+    {
+      "sourceIndex": 3,
+      "sourceLine": 143,
+      "actionClass": "BrewActionDispersal",
+      "ingredientExpression": "Items.field_151016_H",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 6,
+      "sourceExpression": "new BrewActionDispersal(Witchery.Items.GENERIC.itemBatWool.getBrewItemKey(), new AltarPower(0), new DispersalGas()) .addNullifier(new BrewItemKey(Items.field_151016_H), false) .addNullifier(Witchery.Items.GENERIC.itemArtichoke.getBrewItemKey(), false) .addNullifier(Witchery.Items.GENERIC.itemBatWool.getBrewItemKey(), false) .addNullifier(Witchery.Items.GENERIC.itemWormwood.getBrewItemKey(), false) .addNullifier(triggeredKey, false) .addNullifier(new BrewItemKey(Items.field_151015_O), false)"
+    },
+    {
+      "sourceIndex": 4,
+      "sourceLine": 152,
+      "actionClass": "BrewActionDispersal",
+      "ingredientExpression": "Items.field_151016_H",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 6,
+      "sourceExpression": "new BrewActionDispersal(Witchery.Items.GENERIC.itemWormwood.getBrewItemKey(), new AltarPower(0), new DispersalLiquid()) .addNullifier(new BrewItemKey(Items.field_151016_H), false) .addNullifier(Witchery.Items.GENERIC.itemBatWool.getBrewItemKey(), false) .addNullifier(Witchery.Items.GENERIC.itemArtichoke.getBrewItemKey(), false) .addNullifier(Witchery.Items.GENERIC.itemWormwood.getBrewItemKey(), false) .addNullifier(triggeredKey, false) .addNullifier(new BrewItemKey(Items.field_151015_O), false)"
+    },
+    {
+      "sourceIndex": 5,
+      "sourceLine": 161,
+      "actionClass": "BrewActionDispersal",
+      "ingredientExpression": "Items.field_151016_H",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 6,
+      "sourceExpression": "new BrewActionDispersal(triggeredKey, new AltarPower(0), new DispersalTriggered()) .addNullifier(new BrewItemKey(Items.field_151016_H), false) .addNullifier(Witchery.Items.GENERIC.itemBatWool.getBrewItemKey(), false) .addNullifier(Witchery.Items.GENERIC.itemArtichoke.getBrewItemKey(), false) .addNullifier(Witchery.Items.GENERIC.itemWormwood.getBrewItemKey(), false) .addNullifier(triggeredKey, false) .addNullifier(new BrewItemKey(Items.field_151015_O), false)"
+    },
+    {
+      "sourceIndex": 6,
+      "sourceLine": 170,
+      "actionClass": "BrewActionImpactModifier",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemAshWood.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "50",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionImpactModifier(Witchery.Items.GENERIC.itemAshWood.getBrewItemKey(), new BrewNamePartModifier(0, 0, false, 1, 0), new AltarPower(50)) { @Override protected void onPrepareSplashPotion(World world, ModifiersImpact modifiers) { if (modifiers.extent < 1) { modifiers.extent++; } } }"
+    },
+    {
+      "sourceIndex": 7,
+      "sourceLine": 180,
+      "actionClass": "BrewActionImpactModifier",
+      "ingredientExpression": "Dye.COCOA_BEANS.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionImpactModifier(Dye.COCOA_BEANS.getBrewItemKey(), new BrewNamePartModifier(0, 0, false, 1, 0), new AltarPower(100)) { @Override protected void onPrepareSplashPotion(World world, ModifiersImpact modifiers) { if (modifiers.extent < 2) { modifiers.extent++; } } }"
+    },
+    {
+      "sourceIndex": 8,
+      "sourceLine": 188,
+      "actionClass": "BrewActionImpactModifier",
+      "ingredientExpression": "Witchery.Blocks.WISPY_COTTON",
+      "translationKeys": [],
+      "altarPowerExpression": "150",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionImpactModifier(new BrewItemKey(Witchery.Blocks.WISPY_COTTON), new BrewNamePartModifier(0, 0, false, 1, 0), new AltarPower(150)) { @Override protected void onPrepareSplashPotion(World world, ModifiersImpact modifiers) { if (modifiers.extent < 3) { modifiers.extent++; } } }"
+    },
+    {
+      "sourceIndex": 9,
+      "sourceLine": 198,
+      "actionClass": "BrewActionImpactModifier",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemBelladonnaFlower.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "50",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionImpactModifier( Witchery.Items.GENERIC.itemBelladonnaFlower.getBrewItemKey(), new BrewNamePartModifier(0, 0, false, 0, 1), new AltarPower(50) ) { @Override protected void onPrepareSplashPotion(World world, ModifiersImpact modifiers) { if (modifiers.lifetime < 1) { modifiers.lifetime++; } } }"
+    },
+    {
+      "sourceIndex": 10,
+      "sourceLine": 210,
+      "actionClass": "BrewActionImpactModifier",
+      "ingredientExpression": "Dye.LAPIS_LAZULI.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionImpactModifier(Dye.LAPIS_LAZULI.getBrewItemKey(), new BrewNamePartModifier(0, 0, false, 0, 1), new AltarPower(100)) { @Override protected void onPrepareSplashPotion(World world, ModifiersImpact modifiers) { if (modifiers.lifetime < 2) { modifiers.lifetime++; } } }"
+    },
+    {
+      "sourceIndex": 11,
+      "sourceLine": 218,
+      "actionClass": "BrewActionImpactModifier",
+      "ingredientExpression": "Blocks.field_150377_bs",
+      "translationKeys": [],
+      "altarPowerExpression": "150",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionImpactModifier(new BrewItemKey(Blocks.field_150377_bs), new BrewNamePartModifier(0, 0, false, 0, 1), new AltarPower(150)) { @Override protected void onPrepareSplashPotion(World world, ModifiersImpact modifiers) { if (modifiers.lifetime < 3) { modifiers.lifetime++; } } }"
+    },
+    {
+      "sourceIndex": 12,
+      "sourceLine": 228,
+      "actionClass": "BrewActionSetColor",
+      "ingredientExpression": "Blocks.field_150325_L, 15 - dye.damageValue",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionSetColor(new BrewItemKey(Blocks.field_150325_L, 15 - dye.damageValue), new AltarPower(0), dye.rgb)"
+    },
+    {
+      "sourceIndex": 13,
+      "sourceLine": 231,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Items.field_151074_bl",
+      "translationKeys": [],
+      "altarPowerExpression": "50",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Items.field_151074_bl), null, new AltarPower(50)) { @Override public void augmentEffectModifiers(ModifiersEffect modifiers) { modifiers.noParticles = true; } }"
+    },
+    {
+      "sourceIndex": 14,
+      "sourceLine": 237,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemRowanBerries.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "50",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(Witchery.Items.GENERIC.itemRowanBerries.getBrewItemKey(), null, new AltarPower(50)) { @Override public int getDrinkSpeedModifiers() { return -8; } }"
+    },
+    {
+      "sourceIndex": 15,
+      "sourceLine": 243,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.getBrewItemKey(), null, new AltarPower(0)) { @Override public int getDrinkSpeedModifiers() { return -4; } }"
+    },
+    {
+      "sourceIndex": 16,
+      "sourceLine": 249,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Witchery.Blocks.SPANISH_MOSS",
+      "translationKeys": [],
+      "altarPowerExpression": "50",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Witchery.Blocks.SPANISH_MOSS), null, new AltarPower(50)) { @Override public int getDrinkSpeedModifiers() { return -4; } }"
+    },
+    {
+      "sourceIndex": 17,
+      "sourceLine": 255,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemMandrakeRoot.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(Witchery.Items.GENERIC.itemMandrakeRoot.getBrewItemKey(), null, new AltarPower(0)) { @Override public boolean augmentEffectLevels(EffectLevelCounter totalEffects) { totalEffects.increaseAvailableLevelIf(new EffectLevel(1), new EffectLevel(1)); return true; } }"
+    },
+    {
+      "sourceIndex": 18,
+      "sourceLine": 262,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Items.field_151075_bm",
+      "translationKeys": [],
+      "altarPowerExpression": "50",
+      "effectLevelExpression": "2",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Items.field_151075_bm), null, new AltarPower(50)) { @Override public boolean augmentEffectLevels(EffectLevelCounter totalEffects) { totalEffects.increaseAvailableLevelIf(new EffectLevel(2), new EffectLevel(2)); return true; } }"
+    },
+    {
+      "sourceIndex": 19,
+      "sourceLine": 269,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemTearOfTheGoddess.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": "2",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(Witchery.Items.GENERIC.itemTearOfTheGoddess.getBrewItemKey(), null, new AltarPower(100)) { @Override public boolean augmentEffectLevels(EffectLevelCounter totalEffects) { totalEffects.increaseAvailableLevelIf(new EffectLevel(2), new EffectLevel(4)); return true; } }"
+    },
+    {
+      "sourceIndex": 20,
+      "sourceLine": 276,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemDiamondVapour.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "150",
+      "effectLevelExpression": "2",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(Witchery.Items.GENERIC.itemDiamondVapour.getBrewItemKey(), null, new AltarPower(150)) { @Override public boolean augmentEffectLevels(EffectLevelCounter totalEffects) { totalEffects.increaseAvailableLevelIf(new EffectLevel(2), new EffectLevel(6)); return true; } }"
+    },
+    {
+      "sourceIndex": 21,
+      "sourceLine": 283,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Items.field_151045_i",
+      "translationKeys": [],
+      "altarPowerExpression": "150",
+      "effectLevelExpression": "2",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Items.field_151045_i), null, new AltarPower(150)) { @Override public boolean augmentEffectLevels(EffectLevelCounter totalEffects) { totalEffects.increaseAvailableLevelIf(new EffectLevel(2), new EffectLevel(8)); return true; } }"
+    },
+    {
+      "sourceIndex": 22,
+      "sourceLine": 290,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Items.field_151156_bN",
+      "translationKeys": [],
+      "altarPowerExpression": "150",
+      "effectLevelExpression": "4",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Items.field_151156_bN), new BrewNamePartModifier(0, 0, false, 0, 0, true), new AltarPower(150)) { @Override public boolean augmentEffectLevels(EffectLevelCounter totalEffects) { totalEffects.increaseAvailableLevelIf(new EffectLevel(4), new EffectLevel(10)); return true; } @Override public void augmentEffectModifiers(ModifiersEffect modifiers) { modifiers.powerhCeilingDisabled = true; } }"
+    },
+    {
+      "sourceIndex": 23,
+      "sourceLine": 302,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemKobolditePentacle.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "6",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(Witchery.Items.GENERIC.itemKobolditePentacle.getBrewItemKey(), null, new AltarPower(1000)) { @Override public boolean augmentEffectLevels(EffectLevelCounter totalEffects) { totalEffects.increaseAvailableLevelIf(new EffectLevel(6), new EffectLevel(16)); return true; } }"
+    },
+    {
+      "sourceIndex": 24,
+      "sourceLine": 309,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Items.field_151114_aO",
+      "translationKeys": [],
+      "altarPowerExpression": "50",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Items.field_151114_aO), new BrewNamePartModifier(1, 0, false, 0, 0), new AltarPower(50)) { @Override public void augmentEffectModifiers(ModifiersEffect modifiers) { if (modifiers.strength < 1) { modifiers.increaseStrength(1); } } }"
+    },
+    {
+      "sourceIndex": 25,
+      "sourceLine": 317,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Items.field_151072_bj",
+      "translationKeys": [],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Items.field_151072_bj), new BrewNamePartModifier(1, 0, false, 0, 0), new AltarPower(100)) { @Override public void augmentEffectModifiers(ModifiersEffect modifiers) { if (modifiers.strength < 2) { modifiers.increaseStrength(1); } } }"
+    },
+    {
+      "sourceIndex": 26,
+      "sourceLine": 325,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemAttunedStoneCharged.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "150",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier( Witchery.Items.GENERIC.itemAttunedStoneCharged.getBrewItemKey(), new BrewNamePartModifier(1, 0, false, 0, 0), new AltarPower(150) ) { @Override public void augmentEffectModifiers(ModifiersEffect modifiers) { if (modifiers.strength < 3) { modifiers.increaseStrength(1); } } }"
+    },
+    {
+      "sourceIndex": 27,
+      "sourceLine": 337,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Items.field_151137_ax",
+      "translationKeys": [],
+      "altarPowerExpression": "50",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Items.field_151137_ax), new BrewNamePartModifier(0, 1, false, 0, 0), new AltarPower(50)) { @Override public void augmentEffectModifiers(ModifiersEffect modifiers) { if (modifiers.duration < 1) { modifiers.increaseDuration(1); } } }"
+    },
+    {
+      "sourceIndex": 28,
+      "sourceLine": 345,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Blocks.field_150343_Z",
+      "translationKeys": [],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Blocks.field_150343_Z), new BrewNamePartModifier(0, 1, false, 0, 0), new AltarPower(100)) { @Override public void augmentEffectModifiers(ModifiersEffect modifiers) { if (modifiers.duration < 2) { modifiers.increaseDuration(1); } } }"
+    },
+    {
+      "sourceIndex": 29,
+      "sourceLine": 353,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Witchery.Items.SEEDS_MINDRAKE",
+      "translationKeys": [],
+      "altarPowerExpression": "150",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Witchery.Items.SEEDS_MINDRAKE), new BrewNamePartModifier(0, 1, false, 0, 0), new AltarPower(150)) { @Override public void augmentEffectModifiers(ModifiersEffect modifiers) { if (modifiers.duration < 3) { modifiers.increaseDuration(1); } } }"
+    },
+    {
+      "sourceIndex": 30,
+      "sourceLine": 361,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Items.field_151071_bq",
+      "translationKeys": [],
+      "altarPowerExpression": "25",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Items.field_151071_bq), new BrewNamePartModifier(0, 0, true, 0, 0), new AltarPower(25)) { @Override public void augmentEffectModifiers(ModifiersEffect modifiers) { modifiers.inverted = true; } }"
+    },
+    {
+      "sourceIndex": 31,
+      "sourceLine": 367,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Items.field_151130_bT",
+      "translationKeys": [],
+      "altarPowerExpression": "50",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Items.field_151130_bT), null, new AltarPower(50)) { @Override public void augmentEffectModifiers(ModifiersEffect modifiers) { modifiers.disableBlockTarget = true; } }"
+    },
+    {
+      "sourceIndex": 32,
+      "sourceLine": 373,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Items.field_151118_aC",
+      "translationKeys": [],
+      "altarPowerExpression": "50",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Items.field_151118_aC), null, new AltarPower(50)) { @Override public void augmentEffectModifiers(ModifiersEffect modifiers) { modifiers.disableEntityTarget = true; } }"
+    },
+    {
+      "sourceIndex": 33,
+      "sourceLine": 379,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Items.field_151115_aP, 2",
+      "translationKeys": [],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(new BrewItemKey(Items.field_151115_aP, 2), null, new AltarPower(200)) { @Override public void augmentEffectModifiers(ModifiersEffect modifiers) { modifiers.strengthCeilingDisabled = true; } }"
+    },
+    {
+      "sourceIndex": 34,
+      "sourceLine": 385,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Items.field_151126_ay",
+      "translationKeys": [
+        "witchery:brew.snow"
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [
+        "TimeUtil.minsToTicks(3"
+      ],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Items.field_151126_ay), new BrewNamePart(\"witchery:brew.snow\").setBaseDuration(TimeUtil.minsToTicks(3)), new AltarPower(0), new Probability(1.0), new EffectLevel(1) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { PotionSnowTrail.createSnowCovering(world, x, y, z, 2 + 2 * modifiers.getStrength(), modifiers.caster); } @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { BrewPotionEffect.applyPotionEffect( targetEntity, modifiers, Witchery.Potions.SNOW_TRAIL, TimeUtil.minsToTicks(3), modifiers.noParticles, modifiers.caster ); } }"
+    },
+    {
+      "sourceIndex": 35,
+      "sourceLine": 406,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151115_aP, 0",
+      "translationKeys": [
+        "witchery:brew.swimming"
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151115_aP, 0), new BrewNamePart(\"witchery:brew.swimming\"), new AltarPower(0), new Probability(1.0), Witchery.Potions.SWIMMING, (long)TimeUtil.minsToTicks(3), new EffectLevel(1) )"
+    },
+    {
+      "sourceIndex": 36,
+      "sourceLine": 432,
+      "actionClass": "BrewCurseEffect",
+      "ingredientExpression": "dye.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:potion.colorful."
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewCurseEffect( dye.getBrewItemKey(), new BrewNamePart(\"witchery:potion.colorful.\" + dye.unlocalizedName), new AltarPower(0), new Probability(1.0), Witchery.Potions.COLORFUL, (long)TimeUtil.secsToTicks(90), new EffectLevel(1), false ) { @Override public void applyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack stack) { if (!modifiers.disableEntityTarget) { if (!modifiers.protectedFromNegativePotions) { targetEntity.func_70690_d(new PotionEffect(this.potion.field_76415_H, this.baseDuration, dye.ordinal(), true)); } modifiers.reset(); } } }"
+    },
+    {
+      "sourceIndex": 37,
+      "sourceLine": 457,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemEnderDew.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:potion.enderinhibition"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "1",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( Witchery.Items.GENERIC.itemEnderDew.getBrewItemKey(), new BrewNamePart(\"witchery:potion.enderinhibition\"), new AltarPower(200), new Probability(1.0), Witchery.Potions.ENDER_INHIBITION, (long)TimeUtil.secsToTicks(90), new EffectLevel(1) )"
+    },
+    {
+      "sourceIndex": 38,
+      "sourceLine": 468,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151015_O",
+      "translationKeys": [
+        "witchery:brew.moonshine"
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151015_O), new BrewNamePart(\"witchery:brew.moonshine\"), new AltarPower(0), new Probability(1.0), Witchery.Potions.FEEL_NO_PAIN, (long)TimeUtil.secsToTicks(90), new EffectLevel(1) )"
+    },
+    {
+      "sourceIndex": 39,
+      "sourceLine": 479,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Items.field_151044_h",
+      "translationKeys": [
+        "witchery:brew.extinguish"
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Items.field_151044_h), new BrewNamePart(\"witchery:brew.extinguish\"), new AltarPower(0), new Probability(1.0), new EffectLevel(1) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack stack) { if (modifiers.getStrength() > 1 || !world.field_73011_w.field_76575_d) { if (modifiers.getStrength() > 0 && targetEntity instanceof EntityBlaze) { targetEntity.func_70097_a(DamageSource.func_76354_b(modifiers.caster, modifiers.caster), (float)(modifiers.getStrength() + 1) * 4.0F); } if (targetEntity.func_70027_ad()) { targetEntity.func_70066_B(); } } } @Override protected void doApplyToBlock( World world, int x, int y, int z, ForgeDirection side, final int radius, final ModifiersEffect modifiers, ItemStack stack ) { if (modifiers.getStrength() > 1 || !world.field_73011_w.field_76575_d) { (new BlockActionCircle() { @Override public void onBlock(World world, int x, int y, int z) { for (int dy = y - radius; dy <= y + radius; dy++) { Block block = world.func_147439_a(x, dy, z); if (block == Blocks.field_150480_ab && BlockProtect.checkModsForBreakOK(world, x, dy, z, block, world.func_72805_g(x, dy, z), modifiers.caster) && BlockProtect.canBreak(block, world)) { world.func_147468_f(x, dy, z); SoundEffect.RANDOM_FIZZ.playAt(world, (double)x, (double)dy, (double)z, 1.0F, 2.0F); } } } }) .processFilledCircle(world, x, y, z, radius + (modifiers.ritualised ? 5 : 0)); } } }"
+    },
+    {
+      "sourceIndex": 40,
+      "sourceLine": 520,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150348_b",
+      "translationKeys": [
+        "witchery:brew.dissipate"
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150348_b), new BrewNamePart(\"witchery:brew.dissipate\"), new AltarPower(0), new Probability(1.0), new EffectLevel(1) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack stack) { if (targetEntity instanceof EntitySummonedUndead) { targetEntity.func_70097_a(DamageSource.func_76354_b(modifiers.caster, modifiers.caster), (float)(modifiers.getStrength() + 1) * 5.0F); } } @Override protected void doApplyToBlock( World world, int x, int y, int z, ForgeDirection side, final int radius, final ModifiersEffect modifiers, ItemStack stack ) { (new BlockActionCircle() { @Override public void onBlock(World world, int x, int y, int z) { for (int dy = y - radius; dy <= y + radius; dy++) { Block block = world.func_147439_a(x, dy, z); if (block == Witchery.Blocks.BREW_GAS) { if (BlockProtect.checkModsForBreakOK(world, x, dy, z, block, world.func_72805_g(x, dy, z), modifiers.caster) && BlockProtect.canBreak(block, world)) { world.func_147468_f(x, dy, z); SoundEffect.RANDOM_FIZZ.playAt(world, (double)x, (double)dy, (double)z, 1.0F, 2.0F); } } else if (block instanceof IFluidBlock && modifiers.getStrength() >= 1) { IFluidBlock fluidBlock = (IFluidBlock)block; if (fluidBlock.getFluid() != null && fluidBlock.getFluid().isGaseous() && BlockProtect.checkModsForBreakOK(world, x, dy, z, block, world.func_72805_g(x, dy, z), modifiers.caster) && BlockProtect.canBreak(block, world)) { world.func_147468_f(x, dy, z); SoundEffect.RANDOM_FIZZ.playAt(world, (double)x, (double)dy, (double)z, 1.0F, 2.0F); } } } } }) .processFilledCircle(world, x, y, z, radius); } }"
+    },
+    {
+      "sourceIndex": 41,
+      "sourceLine": 563,
+      "actionClass": "BrewActionBlockCircle",
+      "ingredientExpression": "Blocks.field_150327_N",
+      "translationKeys": [
+        "witchery:brew.flowers"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "1",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionBlockCircle(new BrewItemKey(Blocks.field_150327_N), new BrewNamePart(\"witchery:brew.flowers\"), new AltarPower(200), new EffectLevel(1)) { private final Block[] BLOCKS = new Block[]{ Blocks.field_150327_N, Blocks.field_150328_O, Blocks.field_150328_O, Blocks.field_150328_O, Blocks.field_150328_O, Blocks.field_150328_O, Blocks.field_150328_O, Blocks.field_150328_O, Blocks.field_150328_O, Blocks.field_150328_O }; @Override protected void onCircleBlock(World world, int x, int y, int z, ModifiersEffect modifiers, Count counter) { for (int dy = y - 1; dy <= y + 1; dy++) { if (BlockUtil.isReplaceableBlock(world, x, dy, z, modifiers.caster) && !world.func_147439_a(x, dy, z).func_149688_o().func_76224_d() && Blocks.field_150327_N.func_149742_c(world, x, dy, z) && world.field_73012_v.nextInt(8 - modifiers.getStrength()) == 0) { int flowerIndex = world.field_73012_v.nextInt(this.BLOCKS.length); int flowerMeta = Math.max(flowerIndex - 1, 0); world.func_147465_d(x, dy, z, this.BLOCKS[flowerIndex], flowerMeta, 3); } } } }"
+    },
+    {
+      "sourceIndex": 42,
+      "sourceLine": 593,
+      "actionClass": "BrewActionBlockCircle",
+      "ingredientExpression": "Dye.BONE_MEAL.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.fertilization"
+      ],
+      "altarPowerExpression": "250",
+      "effectLevelExpression": "1",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionBlockCircle(Dye.BONE_MEAL.getBrewItemKey(), new BrewNamePart(\"witchery:brew.fertilization\"), new AltarPower(250), new EffectLevel(1)) { private final ItemStack BONEMEAL = Dye.BONE_MEAL.createStack(); @Override protected void onCircleBlock(World world, int x, int y, int z, ModifiersEffect modifiers, Count counter) { for (int dy = y + 1; dy >= y - 1; dy--) { Block block = world.func_147439_a(x, dy, z); if (block instanceof IGrowable || block instanceof IPlantable || block instanceof BlockWitchCrop) { for (int i = 0; i <= modifiers.getStrength(); i++) { ItemDye.func_150919_a(this.BONEMEAL, world, x, dy, z); } break; } } } }"
+    },
+    {
+      "sourceIndex": 43,
+      "sourceLine": 611,
+      "actionClass": "BrewActionBlockCircle",
+      "ingredientExpression": "Items.field_151034_e",
+      "translationKeys": [
+        "witchery:brew.harvesting"
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionBlockCircle(new BrewItemKey(Items.field_151034_e), new BrewNamePart(\"witchery:brew.harvesting\"), new AltarPower(0), new EffectLevel(1)) { @Override protected void onCircleBlock(World world, int x, int y, int z, ModifiersEffect modifiers, Count counter) { for (int dy = y - 1; dy <= y + 1; dy++) { Block block = world.func_147439_a(x, dy, z); if (block instanceof BlockBush) { int meta = world.func_72805_g(x, dy, z); List<ItemStack> drops = new ArrayList<>(); drops.addAll(block.getDrops(world, x, dy, z, meta, Math.max(modifiers.getStrength() - 1, 0))); world.func_147468_f(x, dy, z); counter.increment(); if (world.field_73012_v.nextInt(counter.get()) == 0) { world.func_72926_e(2001, x, dy, z, Block.func_149682_b(block) + (meta << 12)); } for (ItemStack drop : drops) { world.func_72838_d(new EntityItem(world, 0.5 + (double)x, 0.5 + (double)dy, 0.5 + (double)z, drop.func_77946_l())); } } } } }"
+    },
+    {
+      "sourceIndex": 44,
+      "sourceLine": 635,
+      "actionClass": "BrewActionBlockCircle",
+      "ingredientExpression": "Blocks.field_150346_d",
+      "translationKeys": [
+        "witchery:brew.tilling"
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionBlockCircle(new BrewItemKey(Blocks.field_150346_d), new BrewNamePart(\"witchery:brew.tilling\"), new AltarPower(0), new EffectLevel(1)) { @Override protected void onCircleBlock(World world, int x, int y, int z, ModifiersEffect modifiers, Count counter) { for (int dy = y - 1; dy <= y + 1; dy++) { Block block = world.func_147439_a(x, dy, z); if (( block == Blocks.field_150349_c || block == Blocks.field_150346_d || block == Blocks.field_150354_m && modifiers.getStrength() > 0 || block == Blocks.field_150424_aL && modifiers.getStrength() > 1 || block == Blocks.field_150425_aM && modifiers.getStrength() > 2 ) && world.func_147437_c(x, dy + 1, z)) { world.func_147449_b(x, dy, z, Blocks.field_150458_ak); counter.increment(); if (world.field_73012_v.nextInt(counter.get()) == 0) { world.func_72908_a( (double)((float)x + 0.5F), (double)((float)dy + 0.5F), (double)((float)z + 0.5F), block.field_149762_H.func_150498_e(), (block.field_149762_H.func_150497_c() + 1.0F) / 2.0F, block.field_149762_H.func_150494_d() * 0.8F ); } } } } }"
+    },
+    {
+      "sourceIndex": 45,
+      "sourceLine": 666,
+      "actionClass": "BrewActionPlanting",
+      "ingredientExpression": "Items.field_151014_N",
+      "translationKeys": [
+        "witchery:brew.planting"
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionPlanting(new BrewItemKey(Items.field_151014_N), new BrewNamePart(\"witchery:brew.planting\"), new AltarPower(0), new EffectLevel(1))"
+    },
+    {
+      "sourceIndex": 46,
+      "sourceLine": 669,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150338_P",
+      "translationKeys": [
+        "witchery:brew.pruning"
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150338_P), new BrewNamePart(\"witchery:brew.pruning\"), new AltarPower(0), new Probability(1.0), new EffectLevel(1) ) { @Override protected void doApplyToBlock( World world, int posX, int posY, int posZ, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack stack ) { int BLOCK_RADIUS = radius - 1; int BLOCK_RADIUS_SQ = BLOCK_RADIUS * BLOCK_RADIUS; int blockX = MathHelper.func_76128_c((double)posX); int blockY = MathHelper.func_76128_c((double)posY); int blockZ = MathHelper.func_76128_c((double)posZ); for (int y = blockY - BLOCK_RADIUS; y <= blockY + BLOCK_RADIUS; y++) { for (int x = blockX - BLOCK_RADIUS; x <= blockX + BLOCK_RADIUS; x++) { for (int z = blockZ - BLOCK_RADIUS; z <= blockZ + BLOCK_RADIUS; z++) { if (Coord.distanceSq((double)x, (double)y, (double)z, (double)blockX, (double)blockY, (double)blockZ) <= (double)BLOCK_RADIUS_SQ && BlockProtect.checkModsForBreakOK(world, x, y, z, modifiers.caster)) { Material material = world.func_147439_a(x, y, z).func_149688_o(); if (material != null && ( material == Material.field_151584_j || (material == Material.field_151585_k || material == Material.field_151582_l) && material.func_76222_j() )) { Block blockID = world.func_147439_a(x, y, z); if (!(blockID instanceof BlockCircle) && !(blockID instanceof BlockCircleGlyph)) { blockID.func_149697_b(world, x, y, z, world.func_72805_g(x, y, z), modifiers.getStrength()); world.func_147468_f(x, y, z); } } } } } } } }"
+    },
+    {
+      "sourceIndex": 47,
+      "sourceLine": 707,
+      "actionClass": "BrewActionFelling",
+      "ingredientExpression": "dynamic",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionFelling(Items.field_151007_F, 0, new AltarPower(0), new EffectLevel(1))"
+    },
+    {
+      "sourceIndex": 48,
+      "sourceLine": 708,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Items.field_151145_ak",
+      "translationKeys": [
+        "witchery:brew.pulverisation"
+      ],
+      "altarPowerExpression": "250",
+      "effectLevelExpression": "1",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Items.field_151145_ak), new BrewNamePart(\"witchery:brew.pulverisation\"), new AltarPower(250), new Probability(1.0), new EffectLevel(1) ) { @Override protected void doApplyToBlock( World world, int x, int y, int z, ForgeDirection side, int radius, final ModifiersEffect modifiers, ItemStack actionStack ) { if (!world.field_72995_K) { (new BlockActionSphere() { @Override public void onBlock(World world, int x, int y, int z) { Block block = world.func_147439_a(x, y, z); if (BlockProtect.checkModsForBreakOK(world, x, y, z, block, world.func_72805_g(x, y, z), modifiers.caster) && BlockProtect.canBreak(block, world)) { if (block == Blocks.field_150348_b) { world.func_147449_b(x, y, z, Blocks.field_150347_e); } else if (block == Blocks.field_150347_e) { world.func_147449_b(x, y, z, Blocks.field_150351_n); } else if (block != Blocks.field_150351_n && block != Blocks.field_150322_A) { if (block != Blocks.field_150354_m) { return; } world.func_147468_f(x, y, z); EntityUtil.spawnEntityInWorld( world, new EntityItem(world, (double)x, (double)y, (double)z, new ItemStack(Blocks.field_150354_m)) ); } else { world.func_147449_b(x, y, z, Blocks.field_150354_m); } ParticleEffect.SMOKE.send(SoundEffect.NONE, world, (double)x, (double)(y + 1), (double)z, 0.25, 0.25, 16); } } }) .drawFilledSphere(world, x, y, z, Math.max(radius - 1, 1)); SoundEffect.MOB_GHAST_FIREBALL.playAt(world, (double)x, (double)y, (double)z, 0.5F, 2.0F); } } }"
+    },
+    {
+      "sourceIndex": 49,
+      "sourceLine": 754,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150354_m",
+      "translationKeys": [
+        "witchery:brew.tidehold"
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150354_m), new BrewNamePart(\"witchery:brew.tidehold\"), new AltarPower(0), new Probability(1.0), new EffectLevel(1) ) { @Override protected void doApplyToBlock( World world, int x, int y, int z, ForgeDirection side, int radius, final ModifiersEffect modifiers, ItemStack actionStack ) { if (!world.field_72995_K) { (new BlockActionSphere() { @Override public void onBlock(World world, int x, int y, int z) { Block block = world.func_147439_a(x, y, z); if (block == Blocks.field_150355_j || block == Blocks.field_150358_i) { Witchery.Blocks.SLURP.replaceBlockAt(world, x, y, z, modifiers.getModifiedDuration(TimeUtil.secsToTicks(10))); } } }).drawFilledSphere(world, x, y, z, Math.max(radius + 2, 1)); } } }"
+    },
+    {
+      "sourceIndex": 50,
+      "sourceLine": 776,
+      "actionClass": "BrewActionLilify",
+      "ingredientExpression": "Blocks.field_150392_bi",
+      "translationKeys": [
+        "witchery:brew.lilify"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "1",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionLilify(new BrewItemKey(Blocks.field_150392_bi), new BrewNamePart(\"witchery:brew.lilify\"), new AltarPower(200), new EffectLevel(1))"
+    },
+    {
+      "sourceIndex": 51,
+      "sourceLine": 779,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemWolfsbane.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:potion.wolfsbane"
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "1",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( Witchery.Items.GENERIC.itemWolfsbane.getBrewItemKey(), new BrewNamePart(\"witchery:potion.wolfsbane\"), new AltarPower(0), new Probability(1.0), Witchery.Potions.WOLFSBANE, (long)TimeUtil.secsToTicks(60), new EffectLevel(1) )"
+    },
+    {
+      "sourceIndex": 52,
+      "sourceLine": 790,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemPurifiedMilk.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.removedebuffs"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemPurifiedMilk.getBrewItemKey(), new BrewNamePart(\"witchery:brew.removedebuffs\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack stack) { List<Potion> effectsToRemove = new ArrayList<>(); for (PotionEffect effect : targetEntity.func_70651_bq()) { Potion potion = Potion.field_76425_a[effect.func_76456_a()]; if (PotionBase.isDebuff(potion)) { if (PotionBase.isCurable(potion) && effect.func_76458_c() <= modifiers.getStrength()) { effectsToRemove.add(potion); } if (potion == Witchery.Potions.DISEASED && modifiers.getStrength() >= 2) { effectsToRemove.add(potion); if (targetEntity instanceof EntityPlayer) { EntityPlayer player = (EntityPlayer)targetEntity; ExtendedPlayer playerEx = ExtendedPlayer.get(player); if (playerEx != null) { playerEx.clearCachedIncurablePotionEffect(potion); } } if (modifiers.getStrength() >= 3) { int R = 9; Coord coord = new Coord(targetEntity); for (int x = -9; x <= 9; x++) { for (int z = -9; z <= 9; z++) { for (int y = -9; y <= 9; y++) { Block block = world.func_147439_a(coord.x + x, coord.y + y, coord.z + z); if (block == Witchery.Blocks.DISEASE) { world.func_147468_f(coord.x + x, coord.y + y, coord.z + z); } } } } } } } } for (Potion potion : effectsToRemove) { targetEntity.func_82170_o(potion.field_76415_H); } } @Override protected void doApplyRitualToEntity( World world, EntityLivingBase targetEntity, ModifiersRitual ritualModifiers, ModifiersEffect modifiers, ItemStack stack ) { List<Potion> effectsToRemove = new ArrayList<>(); List<PotionEffect> effectsToAdd = new ArrayList<>(); Collection<PotionEffect> effects = targetEntity.func_70651_bq(); int modifiedStrength = modifiers.getStrength(); for (PotionEffect effect : effects) { Potion potion = Potion.field_76425_a[effect.func_76456_a()]; if (PotionBase.isDebuff(potion)) { if (effect.func_76458_c() < modifiedStrength) { effectsToRemove.add(potion); if (world.field_73012_v.nextDouble() < 0.01) { effectsToAdd.add(new PotionEffect(effect.func_76456_a(), effect.func_76459_b(), effect.func_76458_c() + 1)); } } else if (effect.func_76458_c() == modifiedStrength) { effectsToRemove.add(potion); if (world.field_73012_v.nextDouble() < 0.25) { effectsToAdd.add(new PotionEffect(effect.func_76456_a(), effect.func_76459_b(), effect.func_76458_c() + 1)); } } else { effectsToRemove.add(potion); if (world.field_73012_v.nextDouble() < 0.75) { effectsToAdd.add(new PotionEffect(effect.func_76456_a(), effect.func_76459_b(), effect.func_76458_c() + 1)); } } } } for (Potion potion : effectsToRemove) { targetEntity.func_82170_o(potion.field_76415_H); if (!PotionBase.isCurable(potion) && targetEntity instanceof EntityPlayer) { EntityPlayer player = (EntityPlayer)targetEntity; ExtendedPlayer playerEx = ExtendedPlayer.get(player); if (playerEx != null) { playerEx.clearCachedIncurablePotionEffect(potion); } } } for (PotionEffect potionEffect : effectsToAdd) { targetEntity.func_70690_d(potionEffect); } if (effectsToAdd.isEmpty()) { ParticleEffect.SPELL.send(SoundEffect.RANDOM_LEVELUP, targetEntity, 0.5, 2.0, 16); } else { ParticleEffect.MOB_SPELL.send(SoundEffect.MOB_ENDERDRAGON_GROWL, targetEntity, 0.5, 2.0, 16); } } }"
+    },
+    {
+      "sourceIndex": 53,
+      "sourceLine": 897,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemReekOfMisfortune.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.removebuffs"
+      ],
+      "altarPowerExpression": "250",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemReekOfMisfortune.getBrewItemKey(), new BrewNamePart(\"witchery:brew.removebuffs\"), new AltarPower(250), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack stack) { List<Potion> effectsToRemove = new ArrayList<>(); for (PotionEffect effect : targetEntity.func_70651_bq()) { Potion potion = Potion.field_76425_a[effect.func_76456_a()]; if (!PotionBase.isDebuff(potion) && PotionBase.isCurable(potion) && effect.func_76458_c() <= modifiers.getStrength()) { effectsToRemove.add(potion); } } for (Potion potion : effectsToRemove) { targetEntity.func_82170_o(potion.field_76415_H); } } }"
+    },
+    {
+      "sourceIndex": 54,
+      "sourceLine": 922,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150347_e",
+      "translationKeys": [
+        "witchery:brew.lavahold"
+      ],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150347_e), new BrewNamePart(\"witchery:brew.lavahold\"), new AltarPower(100), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock( World world, int x, int y, int z, ForgeDirection side, int radius, final ModifiersEffect modifiers, ItemStack actionStack ) { if (!world.field_72995_K) { (new BlockActionSphere() { @Override public void onBlock(World world, int x, int y, int z) { Block block = world.func_147439_a(x, y, z); if (block == Blocks.field_150353_l || block == Blocks.field_150356_k) { Witchery.Blocks.SLURP.replaceBlockAt(world, x, y, z, modifiers.getModifiedDuration(TimeUtil.secsToTicks(10))); } } }).drawFilledSphere(world, x, y, z, Math.max(radius + 2, 1)); } } }"
+    },
+    {
+      "sourceIndex": 55,
+      "sourceLine": 944,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Blocks.BRAMBLE, 0",
+      "translationKeys": [
+        "witchery:potion.repellattacker"
+      ],
+      "altarPowerExpression": "250",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Witchery.Blocks.BRAMBLE, 0), new BrewNamePart(\"witchery:potion.repellattacker\"), new AltarPower(250), new Probability(1.0), Witchery.Potions.REPELL_ATTACKER, (long)TimeUtil.secsToTicks(90), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 56,
+      "sourceLine": 955,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Blocks.field_150351_n",
+      "translationKeys": [
+        "witchery:potion.gasmask"
+      ],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Blocks.field_150351_n), new BrewNamePart(\"witchery:potion.gasmask\"), new AltarPower(100), new Probability(1.0), Witchery.Potions.GAS_MASK, (long)TimeUtil.secsToTicks(90), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 57,
+      "sourceLine": 966,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151070_bp",
+      "translationKeys": [
+        "witchery:brew.poison"
+      ],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151070_bp), new BrewNamePart(\"witchery:brew.poison\"), new AltarPower(0), new Probability(1.0), Potion.field_76436_u, (long)TimeUtil.secsToTicks(45), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 58,
+      "sourceLine": 977,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151102_aT",
+      "translationKeys": [
+        "witchery:brew.movespeed",
+        "witchery:brew.moveslow"
+      ],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151102_aT), new BrewNamePart(\"witchery:brew.movespeed\", \"witchery:brew.moveslow\"), new AltarPower(100), new Probability(1.0), Potion.field_76424_c, (long)TimeUtil.minsToTicks(3), Potion.field_76421_d, (long)TimeUtil.secsToTicks(90), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 59,
+      "sourceLine": 990,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151115_aP, 3",
+      "translationKeys": [
+        "witchery:brew.waterbreathing"
+      ],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151115_aP, 3), new BrewNamePart(\"witchery:brew.waterbreathing\"), new AltarPower(100), new Probability(1.0), Potion.field_76427_o, (long)TimeUtil.minsToTicks(3), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 60,
+      "sourceLine": 1001,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151064_bs",
+      "translationKeys": [
+        "witchery:brew.resistfire"
+      ],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151064_bs), new BrewNamePart(\"witchery:brew.resistfire\"), new AltarPower(100), new Probability(1.0), Potion.field_76426_n, (long)TimeUtil.minsToTicks(3), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 61,
+      "sourceLine": 1012,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151150_bK",
+      "translationKeys": [
+        "witchery:brew.nightvision",
+        "witchery:brew.invisibility"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151150_bK), new BrewNamePart(\"witchery:brew.nightvision\", \"witchery:brew.invisibility\"), new AltarPower(200), new Probability(1.0), Potion.field_76439_r, (long)TimeUtil.minsToTicks(3), Potion.field_76441_p, (long)TimeUtil.minsToTicks(3), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 62,
+      "sourceLine": 1025,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151073_bk",
+      "translationKeys": [
+        "witchery:brew.regeneration",
+        "witchery:brew.poison"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151073_bk), new BrewNamePart(\"witchery:brew.regeneration\", \"witchery:brew.poison\"), new AltarPower(200), new Probability(1.0), Potion.field_76428_l, (long)TimeUtil.secsToTicks(45), Potion.field_76436_u, (long)TimeUtil.secsToTicks(45), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 63,
+      "sourceLine": 1038,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151065_br",
+      "translationKeys": [
+        "witchery:brew.damageboost",
+        "witchery:brew.weakness"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151065_br), new BrewNamePart(\"witchery:brew.damageboost\", \"witchery:brew.weakness\"), new AltarPower(200), new Probability(1.0), Potion.field_76420_g, (long)TimeUtil.minsToTicks(3), Potion.field_76437_t, (long)TimeUtil.secsToTicks(90), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 64,
+      "sourceLine": 1051,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151060_bw",
+      "translationKeys": [
+        "witchery:brew.healing",
+        "witchery:brew.harming"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151060_bw), new BrewNamePart(\"witchery:brew.healing\", \"witchery:brew.harming\"), new AltarPower(200), new Probability(1.0), Potion.field_76432_h, 0L, Potion.field_76433_i, 0L, new EffectLevel(2) ) .setStrengthCeiling(1)"
+    },
+    {
+      "sourceIndex": 65,
+      "sourceLine": 1065,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151120_aE",
+      "translationKeys": [
+        "witchery:brew.floating"
+      ],
+      "altarPowerExpression": "250",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151120_aE), new BrewNamePart(\"witchery:brew.floating\"), new AltarPower(250), new Probability(1.0), Witchery.Potions.FLOATING, (long)TimeUtil.secsToTicks(90), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 66,
+      "sourceLine": 1076,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151116_aA",
+      "translationKeys": [
+        "witchery:brew.jump"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151116_aA), new BrewNamePart(\"witchery:brew.jump\"), new AltarPower(200), new Probability(1.0), Potion.field_76430_j, (long)TimeUtil.minsToTicks(3), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 67,
+      "sourceLine": 1087,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151008_G",
+      "translationKeys": [
+        "witchery:brew.featherfall"
+      ],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151008_G), new BrewNamePart(\"witchery:brew.featherfall\"), new AltarPower(100), new Probability(1.0), Witchery.Potions.FEATHER_FALL, (long)TimeUtil.minsToTicks(1), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 68,
+      "sourceLine": 1098,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Blocks.field_150337_Q",
+      "translationKeys": [
+        "witchery:potion.poisonweapons"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Blocks.field_150337_Q), new BrewNamePart(\"witchery:potion.poisonweapons\"), new AltarPower(200), new Probability(1.0), Witchery.Potions.POISON_WEAPONS, (long)TimeUtil.secsToTicks(90), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 69,
+      "sourceLine": 1109,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Blocks.field_150321_G",
+      "translationKeys": [
+        "witchery:potion.reflectprojectiles",
+        "witchery:potion.attractprojectiles"
+      ],
+      "altarPowerExpression": "250",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Blocks.field_150321_G), new BrewNamePart(\"witchery:potion.reflectprojectiles\", \"witchery:potion.attractprojectiles\"), new AltarPower(250), new Probability(1.0), Witchery.Potions.REFLECT_PROJECTILES, (long)TimeUtil.secsToTicks(90), Witchery.Potions.ATTRACT_PROJECTILES, (long)TimeUtil.secsToTicks(45), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 70,
+      "sourceLine": 1122,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemBatBall.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.batburst"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemBatBall.getBrewItemKey(), new BrewNamePart(\"witchery:brew.batburst\"), new AltarPower(1000), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { int BAT_COUNT = (modifiers.powerScalingFactor == 1.0 && !modifiers.isGlancing && modifiers.strengthPenalty <= 0 ? 10 : 1) + modifiers.getStrength(); this.explodeBats(world, new Coord(x, y, z), side, BAT_COUNT); } @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { if (!(targetEntity instanceof EntityOwl) && !(targetEntity instanceof EntityBat)) { int BAT_COUNT = (modifiers.powerScalingFactor == 1.0 && !modifiers.isGlancing ? 10 : 1) + modifiers.getStrength(); if (modifiers.powerScalingFactor == 1.0 && !modifiers.isGlancing || world.field_73012_v.nextInt(20) == 0) { this.explodeBats(world, new Coord(targetEntity), ForgeDirection.UP, BAT_COUNT); } } } private void explodeBats(World world, Coord coord, ForgeDirection side, int bats) { int x = coord.x + side.offsetX; int z = coord.z + side.offsetZ; int y = coord.y + side.offsetY; int NUM_BATS = bats; for (int i = 0; i < NUM_BATS; i++) { EntityBat bat = new EntityBat(world); EntityUtil.setNoDrops(bat); bat.func_70012_b((double)x, (double)y, (double)z, 0.0F, 0.0F); world.func_72838_d(bat); } ParticleEffect.EXPLODE.send(SoundEffect.MOB_ENDERMEN_PORTAL, world, 0.5 + (double)x, 0.5 + (double)y, 0.5 + (double)z, 3.0, 3.0, 16); } }"
+    },
+    {
+      "sourceIndex": 71,
+      "sourceLine": 1164,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemOwletsWing.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.bodega"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemOwletsWing.getBrewItemKey(), new BrewNamePart(\"witchery:brew.bodega\"), new AltarPower(1000), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { if (modifiers.caster != null && Familiar.hasActiveBroomMasteryFamiliar(modifiers.caster) && !(targetEntity instanceof EntityOwl) && !(targetEntity instanceof EntityBat)) { int BIRD_COUNT = (modifiers.powerScalingFactor == 1.0 && !modifiers.isGlancing ? 3 + world.field_73012_v.nextInt(2) : 1) + modifiers.getStrength(); if (modifiers.powerScalingFactor == 1.0 && !modifiers.isGlancing || world.field_73012_v.nextInt(20) == 0) { this.explodeBirds(world, targetEntity, BIRD_COUNT); } } } private void explodeBirds(World world, EntityLivingBase victim, int birds) { for (int i = 0; i < birds; i++) { EntityOwl owl = new EntityOwl(world); owl.func_70012_b( victim.field_70165_t - 2.0 + (double)world.field_73012_v.nextInt(5), victim.field_70163_u + (double)victim.field_70131_O + 1.0 + (double)world.field_73012_v.nextInt(2), victim.field_70161_v - 2.0 + (double)world.field_73012_v.nextInt(5), 0.0F, 0.0F ); owl.func_70624_b(victim); owl.setTimeToLive(400); world.func_72838_d(owl); ParticleEffect.PORTAL.send(SoundEffect.MOB_ENDERMEN_PORTAL, owl, 1.0, 1.0, 16); } } }"
+    },
+    {
+      "sourceIndex": 72,
+      "sourceLine": 1204,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemBreathOfTheGoddess.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.airhike"
+      ],
+      "altarPowerExpression": "750",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemBreathOfTheGoddess.getBrewItemKey(), new BrewNamePart(\"witchery:brew.airhike\"), new AltarPower(750), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { double motionY = 0.6 + 0.2 * (double)modifiers.getStrength(); targetEntity.field_70143_R = 0.0F; if (targetEntity instanceof EntityPlayer) { Witchery.packetPipeline.sendTo(new PacketPushTarget(0.0, motionY, 0.0), (EntityPlayer)targetEntity); } else { targetEntity.field_70181_x = motionY; } } }"
+    },
+    {
+      "sourceIndex": 73,
+      "sourceLine": 1224,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Items.field_151123_aH",
+      "translationKeys": [
+        "witchery:brew.frogtongue"
+      ],
+      "altarPowerExpression": "150",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Items.field_151123_aH), new BrewNamePart(\"witchery:brew.frogtongue\"), new AltarPower(150), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { if (modifiers.getStrength() > 0 && !(modifiers.caster instanceof FakePlayer)) { EntityUtil.pullTowards(world, targetEntity, new EntityPosition(modifiers.caster), 0.05, 0.0); } else { EntityUtil.pullTowards(world, targetEntity, modifiers.impactLocation, 0.05, 0.0); } } @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack stack) { double R = (double)radius; double R_SQ = R * R; EntityPosition position = modifiers.impactLocation; AxisAlignedBB bb = AxisAlignedBB.func_72330_a(position.x - R, position.y - R, position.z - R, position.x + R, position.y + R, position.z + R); for (Entity targetEntity : world.func_72872_a(Entity.class, bb)) { if (!(targetEntity instanceof EntityLivingBase)) { double distanceSq = position.getDistanceSqToEntity(targetEntity); if (distanceSq <= R_SQ) { if (modifiers.getStrength() > 0 && !(modifiers.caster instanceof FakePlayer)) { EntityUtil.pullTowards(world, targetEntity, new EntityPosition(modifiers.caster), 0.05, 0.0); } else { EntityUtil.pullTowards(world, targetEntity, modifiers.impactLocation, 0.05, 0.0); } } } } } }"
+    },
+    {
+      "sourceIndex": 74,
+      "sourceLine": 1259,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150423_aK",
+      "translationKeys": [
+        "witchery:brew.harmundead"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150423_aK), new BrewNamePart(\"witchery:brew.harmundead\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { int strength = Math.min(modifiers.getStrength(), modifiers.strengthCeilingDisabled ? 3 : 1); if (CreatureUtil.isUndead(targetEntity)) { targetEntity.func_70097_a( DamageSource.func_76354_b(modifiers.caster, modifiers.caster), (float)MathHelper.func_76143_f((double)(10 << strength) * modifiers.powerScalingFactor) ); } else { targetEntity.func_70097_a( DamageSource.func_76354_b(modifiers.caster, modifiers.caster), (float)MathHelper.func_76143_f((double)(3 << strength) * modifiers.powerScalingFactor) ); } } }"
+    },
+    {
+      "sourceIndex": 75,
+      "sourceLine": 1284,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150328_O, 1",
+      "translationKeys": [
+        "witchery:brew.harminsects"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150328_O, 1), new BrewNamePart(\"witchery:brew.harminsects\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { int strength = Math.min(modifiers.getStrength(), modifiers.strengthCeilingDisabled ? 3 : 1); if (CreatureUtil.isInsect(targetEntity)) { targetEntity.func_70097_a( DamageSource.func_76354_b(modifiers.caster, modifiers.caster), (float)MathHelper.func_76143_f((double)(10 << strength) * modifiers.powerScalingFactor) ); } else { targetEntity.func_70097_a( DamageSource.func_76354_b(modifiers.caster, modifiers.caster), (float)MathHelper.func_76143_f((double)(3 << strength) * modifiers.powerScalingFactor) ); } } }"
+    },
+    {
+      "sourceIndex": 76,
+      "sourceLine": 1309,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemOilOfVitriol.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.erosion"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemOilOfVitriol.getBrewItemKey(), new BrewNamePart(\"witchery:brew.erosion\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock( World world, int x, int y, int z, ForgeDirection side, int radius, final ModifiersEffect modifiers, ItemStack actionStack ) { final Count obsidianCount = new Count(); for (int r = radius; r > 0; r--) { int depth = radius - r; (new BlockActionCircle() { @Override public void onBlock(World world, int x, int y, int z) { Block block = world.func_147439_a(x, y, z); if (BlockProtect.checkModsForBreakOK(world, x, y, z, block, world.func_72805_g(x, y, z), modifiers.caster) && BlockProtect.canBreak(block, world)) { world.func_147468_f(x, y, z); ParticleEffect.SPLASH.send(SoundEffect.NONE, world, (double)x, (double)y, (double)z, 0.5, 0.5, 16); obsidianCount.incrementBy(block == Blocks.field_150343_Z ? 1 : 0); } } }) .processFilledCircle(world, x, y, z, r); } SoundEffect.RANDOM_FIZZ.playAt(world, (double)x, (double)y, (double)z, 1.0F, 2.0F); SpawnUtil.spawnEntityItem(world, (double)x, (double)y, (double)z, Blocks.field_150343_Z, obsidianCount.get()); } @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { if (world.field_73012_v.nextInt(MathHelper.func_76143_f(5.0 / modifiers.powerScalingFactor)) == 0) { targetEntity.func_70097_a( DamageSource.func_76356_a(targetEntity, modifiers.caster), (float)MathHelper.func_76143_f(8.0 * modifiers.powerScalingFactor) ); } for (int slot = 0; slot < 5; slot++) { ItemStack stack = targetEntity.func_71124_b(slot); if (stack != null && stack.func_77984_f()) { stack.func_77972_a( MathHelper.func_76143_f((50.0 + (double)world.field_73012_v.nextInt(25)) * modifiers.powerScalingFactor), modifiers.caster ); if (stack.func_77960_j() >= stack.func_77958_k() || stack.field_77994_a <= 0) { targetEntity.func_70062_b(slot, null); } } } } }"
+    },
+    {
+      "sourceIndex": 77,
+      "sourceLine": 1366,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150424_aL",
+      "translationKeys": [
+        "witchery:brew.levelling"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150424_aL), new BrewNamePart(\"witchery:brew.levelling\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int r, final ModifiersEffect modifiers, ItemStack actionStack) { final int y0 = modifiers.ritualised ? y - 1 : y; int radius = modifiers.ritualised ? r + (modifiers.getStrength() + 1) * 3 : r; final Count dirt = new Count(); final Count stone = new Count(); final Count sand = new Count(); final Count sandstone = new Count(); final Count netherrack = new Count(); final Count endstone = new Count(); final int s = modifiers.getStrength(); int defaultAmount = modifiers.ritualised ? 64 + 32 * modifiers.getStrength() : 16; Block hitBlock = world.func_147439_a(x, y0, z); if (hitBlock == Blocks.field_150346_d) { dirt.incrementBy(defaultAmount); } else if (hitBlock == Blocks.field_150348_b) { stone.incrementBy(defaultAmount); } else if (hitBlock == Blocks.field_150354_m) { sand.incrementBy(defaultAmount); } else if (hitBlock == Blocks.field_150322_A) { sandstone.incrementBy(defaultAmount); } else if (hitBlock == Blocks.field_150424_aL) { netherrack.incrementBy(defaultAmount); } else if (hitBlock == Blocks.field_150377_bs) { endstone.incrementBy(defaultAmount); } (new BlockActionCircle() { @Override public void onBlock(World world, int x, int y, int z) { for (int dy = y0 + 1; dy < y0 + 4 + s; dy++) { Block block = world.func_147439_a(x, dy, z); if (block != Blocks.field_150350_a && BlockProtect.checkModsForBreakOK(world, x, dy, z, block, world.func_72805_g(x, dy, z), modifiers.caster) && BlockProtect.canBreak(block, world)) { if (block == Blocks.field_150348_b) { stone.increment(); } else if (block == Blocks.field_150354_m) { sand.increment(); } else if (block == Blocks.field_150322_A) { sandstone.increment(); } else if (block == Blocks.field_150424_aL) { netherrack.increment(); } else if (block == Blocks.field_150377_bs) { endstone.increment(); } else { dirt.increment(); } world.func_147468_f(x, dy, z); ParticleEffect.SMOKE.send(SoundEffect.NONE, world, (double)x, (double)dy, (double)z, 0.5, 0.5, 16); } } } }) .processFilledCircle(world, x, y0, z, radius); for (int newy = y0; newy >= y0 - (4 + s); newy--) { final int dy = newy; (new BlockActionCircle() { @Override public void onBlock(World world, int x, int y, int z) { Block block = world.func_147439_a(x, dy, z); if (BlockUtil.isReplaceableBlock(world, x, dy, z, modifiers.caster)) { if (endstone.get() > 0) { endstone.decrement(); world.func_147449_b(x, dy, z, Blocks.field_150377_bs); } else if (netherrack.get() > 0) { netherrack.decrement(); world.func_147449_b(x, dy, z, Blocks.field_150424_aL); } else if (sandstone.get() > 0) { sandstone.decrement(); world.func_147449_b(x, dy, z, Blocks.field_150322_A); } else if (sand.get() > 0) { sand.decrement(); world.func_147449_b(x, dy, z, Blocks.field_150354_m); } else if (stone.get() > 0) { stone.decrement(); world.func_147449_b(x, dy, z, Blocks.field_150348_b); } else { if (dirt.get() <= 0) { return; } dirt.decrement(); world.func_147449_b(x, dy, z, Blocks.field_150346_d); } ParticleEffect.SMOKE.send(SoundEffect.NONE, world, (double)x, (double)dy, (double)z, 0.5, 0.5, 16); } } }).processFilledCircle(world, x, y0, z, radius); } SoundEffect.RANDOM_FIZZ.playAt(world, (double)x, (double)y0, (double)z, 1.0F, 2.0F); } }"
+    },
+    {
+      "sourceIndex": 78,
+      "sourceLine": 1468,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemWeb.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.webs"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemWeb.getBrewItemKey(), new BrewNamePart(\"witchery:brew.webs\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { this.placeWeb(world, new Coord(x, y, z), modifiers, side, modifiers.caster); } @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { this.placeWeb(world, new Coord(targetEntity), modifiers, ForgeDirection.UNKNOWN, modifiers.caster); } private void placeWeb(World world, Coord coord, ModifiersEffect modifiers, ForgeDirection side, EntityPlayer source) { Coord location = BlockUtil.getClosestPlantableBlock(world, coord.x, coord.y, coord.z, side, source, true); if (location != null) { Block web = Witchery.Blocks.WEB; BlockUtil.setBlockIfReplaceable(world, location.x, location.y, location.z, web); if (modifiers.getStrength() > 0) { BlockUtil.setBlockIfReplaceable(world, location.x + 1, location.y, location.z, web); BlockUtil.setBlockIfReplaceable(world, location.x - 1, location.y, location.z, web); BlockUtil.setBlockIfReplaceable(world, location.x, location.y, location.z + 1, web); BlockUtil.setBlockIfReplaceable(world, location.x, location.y, location.z - 1, web); BlockUtil.setBlockIfReplaceable(world, location.x, location.y + 1, location.z, web); BlockUtil.setBlockIfReplaceable(world, location.x, location.y - 1, location.z, web); } if (modifiers.getStrength() > 1) { BlockUtil.setBlockIfReplaceable(world, location.x + 1, location.y, location.z + 1, web); BlockUtil.setBlockIfReplaceable(world, location.x - 1, location.y, location.z + 1, web); BlockUtil.setBlockIfReplaceable(world, location.x + 1, location.y, location.z - 1, web); BlockUtil.setBlockIfReplaceable(world, location.x - 1, location.y, location.z - 1, web); BlockUtil.setBlockIfReplaceable(world, location.x + 1, location.y + 1, location.z, web); BlockUtil.setBlockIfReplaceable(world, location.x - 1, location.y + 1, location.z, web); BlockUtil.setBlockIfReplaceable(world, location.x, location.y + 1, location.z + 1, web); BlockUtil.setBlockIfReplaceable(world, location.x, location.y + 1, location.z - 1, web); BlockUtil.setBlockIfReplaceable(world, location.x, location.y - 1, location.z + 1, web); BlockUtil.setBlockIfReplaceable(world, location.x, location.y - 1, location.z - 1, web); BlockUtil.setBlockIfReplaceable(world, location.x + 1, location.y - 1, location.z, web); BlockUtil.setBlockIfReplaceable(world, location.x - 1, location.y - 1, location.z, web); } } } }"
+    },
+    {
+      "sourceIndex": 79,
+      "sourceLine": 1518,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150395_bd",
+      "translationKeys": [
+        "witchery:brew.vines"
+      ],
+      "altarPowerExpression": "150",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [
+        "TimeUtil.secsToTicks(90"
+      ],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150395_bd), new BrewNamePart(\"witchery:brew.vines\").setBaseDuration(TimeUtil.secsToTicks(90)), new AltarPower(150), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { int meta = 0; byte var14; switch (side) { case NORTH: var14 = 2; break; case SOUTH: var14 = 3; break; case WEST: var14 = 4; break; case EAST: var14 = 5; break; default: return; } Block vine = Witchery.Blocks.VINE; int newX = x + side.offsetX; int newZ = z + side.offsetZ; for (int offsetY = 0; BlockUtil.isReplaceableBlock(world, newX, y + offsetY, newZ) && y + offsetY > 0 && (modifiers.getStrength() > 0 || world.func_147439_a(x, y + offsetY, z).func_149688_o().func_76220_a()); offsetY-- ) { world.func_147465_d(newX, y + offsetY, newZ, vine, var14, 3); } for (int var15 = 1; ( BlockUtil.isReplaceableBlock(world, newX, y + var15, newZ) || world.func_147439_a(newX, y + var15, newZ).func_149688_o() == Material.field_151584_j ) && world.func_147439_a(x, y + var15, z).func_149688_o().func_76220_a() && y + var15 < 255; var15++ ) { world.func_147465_d(newX, y + var15, newZ, vine, var14, 3); } } @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { BrewPotionEffect.applyPotionEffect( targetEntity, modifiers, Witchery.Potions.WRAPPED_IN_VINE, TimeUtil.secsToTicks(90), modifiers.noParticles, modifiers.caster ); } }"
+    },
+    {
+      "sourceIndex": 80,
+      "sourceLine": 1581,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150434_aF",
+      "translationKeys": [
+        "witchery:brew.thorns"
+      ],
+      "altarPowerExpression": "150",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [
+        "TimeUtil.secsToTicks(90"
+      ],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150434_aF), new BrewNamePart(\"witchery:brew.thorns\").setBaseDuration(TimeUtil.secsToTicks(90)), new AltarPower(150), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { Coord coord = null; if (world.func_147439_a(x, y, z) == Witchery.Blocks.CACTUS) { y++; while (world.func_147439_a(x, y, z) == Witchery.Blocks.CACTUS) { y++; } if (BlockUtil.isReplaceableBlock(world, x, y, z)) { coord = new Coord(x, y, z); } } else { coord = BlockUtil.getClosestPlantableBlock(world, x, y, z, side, modifiers.caster); } if (coord != null) { int i = 0; for (int height = 3 + modifiers.getStrength(); i < height && BlockUtil.isReplaceableBlock(world, coord.x, coord.y + i, coord.z) && coord.y + i < 255; i++ ) { world.func_147449_b(coord.x, coord.y + i, coord.z, Witchery.Blocks.CACTUS); } } } @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { BrewPotionEffect.applyPotionEffect( targetEntity, modifiers, Witchery.Potions.SPIKED, TimeUtil.secsToTicks(90), modifiers.noParticles, modifiers.caster ); } }"
+    },
+    {
+      "sourceIndex": 81,
+      "sourceLine": 1626,
+      "actionClass": "BrewActionSprouting",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemBranchEnt.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.sprouting"
+      ],
+      "altarPowerExpression": "350",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [
+        "TimeUtil.secsToTicks(15"
+      ],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionSprouting( Witchery.Items.GENERIC.itemBranchEnt.getBrewItemKey(), new BrewNamePart(\"witchery:brew.sprouting\").setBaseDuration(TimeUtil.secsToTicks(15)), new AltarPower(350), new Probability(1.0), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 82,
+      "sourceLine": 1635,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemIcyNeedle.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.cold"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [
+        "TimeUtil.minsToTicks(3"
+      ],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemIcyNeedle.getBrewItemKey(), new BrewNamePart(\"witchery:brew.cold\").setBaseDuration(TimeUtil.minsToTicks(3)), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { if (BlockProtect.checkModsForBreakOK(world, x, y, z, modifiers.caster)) { (new BlockActionReplaceSphere() { @Override protected boolean onShouldReplace(World world, int x, int y, int z, Block block) { return block.func_149688_o() == Material.field_151586_h; } @Override protected void onReplaceBlock(World world, int x, int y, int z, Block block) { world.func_147449_b(x, y, z, Blocks.field_150432_aD); } }).replaceBlocks(world, x, y, z, 2 + 2 * modifiers.getStrength()); } } @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { BrewPotionEffect.applyPotionEffect( targetEntity, modifiers, Witchery.Potions.CHILLED, TimeUtil.minsToTicks(3), modifiers.noParticles, modifiers.caster ); } }"
+    },
+    {
+      "sourceIndex": 83,
+      "sourceLine": 1668,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Items.field_151055_y",
+      "translationKeys": [
+        "witchery:brew.knockback"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Items.field_151055_y), new BrewNamePart(\"witchery:brew.knockback\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { if (modifiers.impactLocation != null) { EntityUtil.pushback( world, targetEntity, modifiers.impactLocation, 1.0 + (double)modifiers.getStrength() * modifiers.powerScalingFactor, 0.5 + (double)modifiers.getStrength() * 0.2 ); } else { double radius = (double)(3 + modifiers.getStrength()); double radiusSq = radius * radius; EntityPosition position = new EntityPosition(targetEntity); for (Entity entity : world.func_72839_b(targetEntity, position.getBounds(radius))) { if ((entity instanceof EntityLivingBase || entity instanceof EntityItem) && targetEntity.func_70068_e(entity) <= radiusSq) { EntityUtil.pushback( world, entity, position, 1.0 + (double)modifiers.getStrength() * modifiers.powerScalingFactor, 0.5 + (double)modifiers.getStrength() * 0.2 ); } } } } }"
+    },
+    {
+      "sourceIndex": 84,
+      "sourceLine": 1702,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150345_g, 0",
+      "translationKeys": [
+        "witchery:brew.treeoak"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150345_g, 0), new BrewNamePart(\"witchery:brew.treeoak\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { Coord location = BlockUtil.getClosestPlantableBlock(world, x, y, z, side, modifiers.caster); if (location != null) { (modifiers.getStrength() > 1 ? new WorldGenBigTree(true) : new WorldGenTrees(true)) .func_76484_a(world, world.field_73012_v, location.x, location.y, location.z); } } }"
+    },
+    {
+      "sourceIndex": 85,
+      "sourceLine": 1716,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150345_g, 1",
+      "translationKeys": [
+        "witchery:brew.treespruce"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150345_g, 1), new BrewNamePart(\"witchery:brew.treespruce\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { Coord location = BlockUtil.getClosestPlantableBlock(world, x, y, z, side, modifiers.caster); if (location != null) { (modifiers.getStrength() > 1 ? new WorldGenMegaPineTree(false, world.field_73012_v.nextBoolean()) : new WorldGenTaiga2(true)) .func_76484_a(world, world.field_73012_v, location.x, location.y, location.z); } } }"
+    },
+    {
+      "sourceIndex": 86,
+      "sourceLine": 1734,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150345_g, 2",
+      "translationKeys": [
+        "witchery:brew.treebirch"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150345_g, 2), new BrewNamePart(\"witchery:brew.treebirch\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { Coord location = BlockUtil.getClosestPlantableBlock(world, x, y, z, side, modifiers.caster); if (location != null) { new WorldGenForest(true, false).func_76484_a(world, world.field_73012_v, location.x, location.y, location.z); } } }"
+    },
+    {
+      "sourceIndex": 87,
+      "sourceLine": 1751,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150345_g, 3",
+      "translationKeys": [
+        "witchery:brew.treejungle"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150345_g, 3), new BrewNamePart(\"witchery:brew.treejungle\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { Coord location = BlockUtil.getClosestPlantableBlock(world, x, y, z, side, modifiers.caster); if (location != null) { (modifiers.strength > 2 ? new WorldGenMegaJungle(true, 10, 20, 3, 3) : new WorldGenTrees(true, 4 + world.field_73012_v.nextInt(7), 3, 3, false)) .func_76484_a(world, world.field_73012_v, location.x, location.y, location.z); } } }"
+    },
+    {
+      "sourceIndex": 88,
+      "sourceLine": 1771,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150345_g, 4",
+      "translationKeys": [
+        "witchery:brew.treeacacia"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150345_g, 4), new BrewNamePart(\"witchery:brew.treeacacia\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { Coord location = BlockUtil.getClosestPlantableBlock(world, x, y, z, side, modifiers.caster); if (location != null) { new WorldGenSavannaTree(true).func_76484_a(world, world.field_73012_v, location.x, location.y, location.z); } } }"
+    },
+    {
+      "sourceIndex": 89,
+      "sourceLine": 1788,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150345_g, 5",
+      "translationKeys": [
+        "witchery:brew.treedarkoak"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150345_g, 5), new BrewNamePart(\"witchery:brew.treedarkoak\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { Coord location = BlockUtil.getClosestPlantableBlock(world, x, y, z, side, modifiers.caster); if (location != null) { new WorldGenCanopyTree(true).func_76484_a(world, world.field_73012_v, location.x, location.y, location.z); } } }"
+    },
+    {
+      "sourceIndex": 90,
+      "sourceLine": 1805,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Blocks.SAPLING, 0",
+      "translationKeys": [
+        "witchery:brew.treerowan"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Witchery.Blocks.SAPLING, 0), new BrewNamePart(\"witchery:brew.treerowan\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { Coord location = BlockUtil.getClosestPlantableBlock(world, x, y, z, side, modifiers.caster); if (location != null) { new WorldGenWitchTree(true, 5, 0, 0, 1, false).func_76484_a(world, world.field_73012_v, location.x, location.y, location.z); } } }"
+    },
+    {
+      "sourceIndex": 91,
+      "sourceLine": 1822,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Blocks.SAPLING, 1",
+      "translationKeys": [
+        "witchery:brew.treealder"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Witchery.Blocks.SAPLING, 1), new BrewNamePart(\"witchery:brew.treealder\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { Coord location = BlockUtil.getClosestPlantableBlock(world, x, y, z, side, modifiers.caster); if (location != null) { WorldGenLargeWitchTree tree = new WorldGenLargeWitchTree(true, 1, 1, 0.5); tree.func_76487_a(0.6, 0.5, 0.5); tree.func_76484_a(world, world.field_73012_v, location.x, location.y, location.z); } } }"
+    },
+    {
+      "sourceIndex": 92,
+      "sourceLine": 1841,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Blocks.SAPLING, 2",
+      "translationKeys": [
+        "witchery:brew.treehawthorn"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Witchery.Blocks.SAPLING, 2), new BrewNamePart(\"witchery:brew.treehawthorn\"), new AltarPower(200), new Probability(1.0), new EffectLevel(2) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { Coord location = BlockUtil.getClosestPlantableBlock(world, x, y, z, side, modifiers.caster); if (location != null) { WorldGenLargeWitchTree tree = new WorldGenLargeWitchTree(true, 2, 2); tree.func_76487_a(0.8, 1.2, 1.0); tree.func_76484_a(world, world.field_73012_v, location.x, location.y, location.z); } } }"
+    },
+    {
+      "sourceIndex": 93,
+      "sourceLine": 1860,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemHeartOfGold.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.animalattraction",
+        "witchery:brew.animalrepulsion"
+      ],
+      "altarPowerExpression": "500",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemHeartOfGold.getBrewItemKey(), new BrewNamePart(\"witchery:brew.animalattraction\", \"witchery:brew.animalrepulsion\"), new AltarPower(500), new Probability(1.0), new EffectLevel(4) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { double radius = (double)((modifiers.getStrength() + 1) * 16); double radiusSq = radius * radius; AxisAlignedBB bounds = targetEntity.field_70121_D.func_72314_b(radius, radius, radius); int maxCreatures = (int)Math.ceil(((double)modifiers.getStrength() + 1.0) * 2.0 * modifiers.powerScalingFactor); List<EntityLivingBase> entities = world.func_72872_a(EntityLivingBase.class, bounds); Iterator i$ = entities.iterator(); while (true) { EntityLivingBase otherEntity; while (true) { if (!i$.hasNext()) { return; } otherEntity = (EntityLivingBase)i$.next(); if (otherEntity != targetEntity && otherEntity.func_70068_e(targetEntity) < radiusSq) { if (!(otherEntity instanceof EntityTameable)) { break; } EntityTameable tameable = (EntityTameable)otherEntity; if (!Familiar.couldBeFamiliar(tameable)) { if (!modifiers.inverted) { if (!tameable.func_70909_n()) { tameable.func_70903_f(true); tameable.func_70778_a((PathEntity)null); tameable.func_70624_b((EntityLivingBase)null); tameable.func_70606_j(20.0F); tameable.func_152115_b(targetEntity.func_110124_au().toString()); world.func_72960_a(tameable, (byte)7); if (tameable instanceof EntityOcelot) { ((EntityOcelot)tameable).func_70912_b(1 + world.field_73012_v.nextInt(3)); } } } else if (tameable.func_70909_n() && !tameable.func_152114_e(targetEntity)) { tameable.func_70903_f(false); tameable.func_70778_a((PathEntity)null); tameable.func_70624_b((EntityLivingBase)null); tameable.func_152115_b(\"\"); world.func_72960_a(tameable, (byte)6); if (tameable instanceof EntityOcelot) { ((EntityOcelot)tameable).func_70912_b(0); } } break; } } } if (otherEntity instanceof EntityAnimal) { EntityAnimal animal = (EntityAnimal)otherEntity; if (modifiers.inverted) { int RANGE = 6; int newX = MathHelper.func_76128_c(targetEntity.field_70165_t) + (world.field_73012_v.nextBoolean() ? 1 : -1) * (RANGE + world.field_73012_v.nextInt(RANGE)); int newZ = MathHelper.func_76128_c(targetEntity.field_70161_v) + (world.field_73012_v.nextBoolean() ? 1 : -1) * (RANGE + world.field_73012_v.nextInt(RANGE)); int newY = 62; while (!world.func_147437_c(newX, newY + 1, newZ)) { newY++; } if (!animal.func_70661_as().func_75492_a((double)newX, (double)newY, (double)newZ, 1.0)) { animal.func_70634_a(0.5 + (double)newX, (double)newY, 0.5 + (double)newZ); } } else if (!animal.func_70661_as().func_75492_a(targetEntity.field_70165_t, targetEntity.field_70163_u, targetEntity.field_70161_v, 1.0)) { animal.func_70778_a( world.func_72844_a( animal, MathHelper.func_76128_c(targetEntity.field_70165_t), MathHelper.func_76128_c(targetEntity.field_70163_u), MathHelper.func_76128_c(targetEntity.field_70161_v), 10.0F, true, false, false, true ) ); } } } } }"
+    },
+    {
+      "sourceIndex": 94,
+      "sourceLine": 1956,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemSilverDust.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.harmwerewolves"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemSilverDust.getBrewItemKey(), new BrewNamePart(\"witchery:brew.harmwerewolves\"), new AltarPower(1000), new Probability(1.0), new EffectLevel(4) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { int strength = Math.min(modifiers.getStrength(), modifiers.strengthCeilingDisabled ? 3 : 1); if (CreatureUtil.isWerewolf(targetEntity)) { targetEntity.func_70097_a( new EntityDamageSourceIndirectSilver(modifiers.caster, modifiers.caster), (float)MathHelper.func_76143_f((double)(3 << strength) * modifiers.powerScalingFactor) ); } else { targetEntity.func_70097_a( DamageSource.func_76354_b(modifiers.caster, modifiers.caster), (float)MathHelper.func_76143_f((double)(1 << strength) * modifiers.powerScalingFactor) ); } } @Override protected void doApplyRitualToBlock( World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersRitual ritualModifiers, ModifiersEffect modifiers, ItemStack stack ) { if (!world.field_72995_K) { WorldInfo worldinfo = ((WorldServer)world).func_72912_H(); int i = (300 + world.field_73012_v.nextInt(600)) * 20; if (!worldinfo.func_76059_o()) { worldinfo.func_76080_g(i); worldinfo.func_76084_b(true); } if (modifiers.getStrength() >= 1 && !worldinfo.func_76061_m()) { worldinfo.func_76090_f(i); worldinfo.func_76069_a(true); } } } }"
+    },
+    {
+      "sourceIndex": 95,
+      "sourceLine": 2000,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.SEEDS_GARLIC",
+      "translationKeys": [
+        "witchery:brew.weakenvampires"
+      ],
+      "altarPowerExpression": "500",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Witchery.Items.SEEDS_GARLIC), new BrewNamePart(\"witchery:brew.weakenvampires\"), new AltarPower(500), new Probability(1.0), new EffectLevel(4) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { if (CreatureUtil.isVampire(targetEntity)) { if (targetEntity instanceof EntityPlayer) { ExtendedPlayer playerEx = ExtendedPlayer.get((EntityPlayer)targetEntity); playerEx.decreaseBloodPower(50 + 20 * modifiers.getStrength(), false); } BrewPotionEffect.applyPotionEffect(targetEntity, modifiers, Potion.field_76437_t, TimeUtil.secsToTicks(90), false, modifiers.caster); } } }"
+    },
+    {
+      "sourceIndex": 96,
+      "sourceLine": 2021,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151144_bL, 1",
+      "translationKeys": [
+        "witchery:brew.wither"
+      ],
+      "altarPowerExpression": "200",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151144_bL, 1), new BrewNamePart(\"witchery:brew.wither\"), new AltarPower(200), new Probability(1.0), Potion.field_82731_v, (long)TimeUtil.secsToTicks(15), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 97,
+      "sourceLine": 2032,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Blocks.GLINT_WEED",
+      "translationKeys": [
+        "witchery:brew.inferno"
+      ],
+      "altarPowerExpression": "750",
+      "effectLevelExpression": "3",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Witchery.Blocks.GLINT_WEED), new BrewNamePart(\"witchery:brew.inferno\"), new AltarPower(750), new Probability(1.0), new EffectLevel(3) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack stack) { if (!world.field_72995_K && !modifiers.isGlancing) { EntitySplatter.splatter(world, new Coord(x, y, z, side), modifiers.getStrength()); } } @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack stack) { if (!world.field_72995_K && !modifiers.isGlancing && targetEntity instanceof EntityLivingBase) { new Coord(targetEntity); targetEntity.func_70015_d(2 + 2 * modifiers.getStrength()); if (modifiers.powerScalingFactor == 1.0) { EntitySplatter.splatter(world, new Coord(targetEntity), modifiers.powerScalingFactor == 1.0 ? modifiers.getStrength() : 0); } } } }"
+    },
+    {
+      "sourceIndex": 98,
+      "sourceLine": 2059,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemInfernalBlood.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.fear"
+      ],
+      "altarPowerExpression": "500",
+      "effectLevelExpression": "2",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( Witchery.Items.GENERIC.itemInfernalBlood.getBrewItemKey(), new BrewNamePart(\"witchery:brew.fear\"), new AltarPower(500), new Probability(1.0), Witchery.Potions.GROTESQUE, (long)TimeUtil.minsToTicks(3), new EffectLevel(2) )"
+    },
+    {
+      "sourceIndex": 99,
+      "sourceLine": 2070,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Dye.INK_SAC.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.blindness"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( Dye.INK_SAC.getBrewItemKey(), new BrewNamePart(\"witchery:brew.blindness\"), new AltarPower(1000), new Probability(1.0), Potion.field_76440_q, (long)TimeUtil.secsToTicks(15), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 100,
+      "sourceLine": 2081,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Blocks.field_150328_O",
+      "translationKeys": [
+        "witchery:brew.love"
+      ],
+      "altarPowerExpression": "500",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Blocks.field_150328_O), new BrewNamePart(\"witchery:brew.love\"), new AltarPower(500), new Probability(1.0), Witchery.Potions.LOVE, (long)TimeUtil.secsToTicks(10), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 101,
+      "sourceLine": 2092,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemDemonHeart.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.paralysis"
+      ],
+      "altarPowerExpression": "750",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( Witchery.Items.GENERIC.itemDemonHeart.getBrewItemKey(), new BrewNamePart(\"witchery:brew.paralysis\"), new AltarPower(750), new Probability(1.0), Witchery.Potions.PARALYSED, (long)TimeUtil.secsToTicks(10), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 102,
+      "sourceLine": 2103,
+      "actionClass": "BrewCurseEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemDropOfLuck.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.potionmaster",
+        "witchery:brew.insanity"
+      ],
+      "altarPowerExpression": "5000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewCurseEffect( Witchery.Items.GENERIC.itemDropOfLuck.getBrewItemKey(), new BrewNamePart(\"witchery:brew.potionmaster\", \"witchery:brew.insanity\"), new AltarPower(5000), new Probability(1.0), Witchery.Potions.BREWING_EXPERT, (long)TimeUtil.minsToTicks(6), Witchery.Potions.INSANITY, (long)TimeUtil.minsToTicks(3), new EffectLevel(4), true )"
+    },
+    {
+      "sourceIndex": 103,
+      "sourceLine": 2117,
+      "actionClass": "BrewCurseEffect",
+      "ingredientExpression": "Items.field_151078_bh",
+      "translationKeys": [
+        "witchery:potion.diseased"
+      ],
+      "altarPowerExpression": "2000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewCurseEffect( new BrewItemKey(Items.field_151078_bh), new BrewNamePart(\"witchery:potion.diseased\"), new AltarPower(2000), new Probability(1.0), Witchery.Potions.DISEASED, (long)TimeUtil.minsToTicks(3), new EffectLevel(4), false )"
+    },
+    {
+      "sourceIndex": 104,
+      "sourceLine": 2129,
+      "actionClass": "BrewCurseEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemDisturbedCotton.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.sinking"
+      ],
+      "altarPowerExpression": "3000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewCurseEffect( Witchery.Items.GENERIC.itemDisturbedCotton.getBrewItemKey(), new BrewNamePart(\"witchery:brew.sinking\"), new AltarPower(3000), new Probability(1.0), Witchery.Potions.SINKING, (long)TimeUtil.minsToTicks(3), new EffectLevel(4), false )"
+    },
+    {
+      "sourceIndex": 105,
+      "sourceLine": 2141,
+      "actionClass": "BrewCurseEffect",
+      "ingredientExpression": "Witchery.Blocks.EMBER_MOSS",
+      "translationKeys": [
+        "witchery:brew.overheating"
+      ],
+      "altarPowerExpression": "3000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewCurseEffect( new BrewItemKey(Witchery.Blocks.EMBER_MOSS), new BrewNamePart(\"witchery:brew.overheating\"), new AltarPower(3000), new Probability(1.0), Witchery.Potions.OVERHEATING, (long)TimeUtil.minsToTicks(3), new EffectLevel(4), false )"
+    },
+    {
+      "sourceIndex": 106,
+      "sourceLine": 2153,
+      "actionClass": "BrewCurseEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemMellifluousHunger.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.wakingnightmare"
+      ],
+      "altarPowerExpression": "10000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewCurseEffect( Witchery.Items.GENERIC.itemMellifluousHunger.getBrewItemKey(), new BrewNamePart(\"witchery:brew.wakingnightmare\"), new AltarPower(10000), new Probability(1.0), Witchery.Potions.WAKING_NIGHTMARE, (long)TimeUtil.minsToTicks(3), new EffectLevel(4), false )"
+    },
+    {
+      "sourceIndex": 107,
+      "sourceLine": 2165,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemToeOfFrog.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.frogsleg"
+      ],
+      "altarPowerExpression": "500",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( Witchery.Items.GENERIC.itemToeOfFrog.getBrewItemKey(), new BrewNamePart(\"witchery:brew.frogsleg\"), new AltarPower(500), new Probability(1.0), Witchery.Potions.DOUBLE_JUMP, (long)TimeUtil.minsToTicks(6), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 108,
+      "sourceLine": 2176,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151153_ao",
+      "translationKeys": [
+        "witchery:brew.absorbsion"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151153_ao), new BrewNamePart(\"witchery:brew.absorbsion\"), new AltarPower(1000), new Probability(1.0), Potion.field_76444_x, (long)TimeUtil.secsToTicks(30), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 109,
+      "sourceLine": 2187,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151153_ao, 1",
+      "translationKeys": [
+        "witchery:brew.healthboost"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151153_ao, 1), new BrewNamePart(\"witchery:brew.healthboost\"), new AltarPower(1000), new Probability(1.0), Potion.field_76434_w, (long)TimeUtil.minsToTicks(2), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 110,
+      "sourceLine": 2198,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemSubduedSpirit.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.wasting",
+        "witchery:brew.fullness"
+      ],
+      "altarPowerExpression": "500",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemSubduedSpirit.getBrewItemKey(), new BrewNamePart(\"witchery:brew.wasting\", \"witchery:brew.fullness\"), new AltarPower(500), new Probability(1.0), new EffectLevel(4) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack stack) { int hungerTicks = modifiers.getModifiedDuration(TimeUtil.secsToTicks(20)); int poisonTicks = Math.max(modifiers.getModifiedDuration(TimeUtil.secsToTicks(3)), 40); int strength = 1 + modifiers.getStrength() / 2; if (targetEntity instanceof EntityPlayer) { EntityPlayer victim = (EntityPlayer)targetEntity; if (modifiers.inverted) { int minLevel = 6 + 2 * modifiers.getStrength(); victim.func_71024_bL().func_75122_a(minLevel, (float)minLevel); } else { int minLevel = 10 - modifiers.getStrength(); if (victim.func_71024_bL().func_75116_a() > minLevel) { victim.func_71024_bL().func_75122_a(-minLevel, 2.0F); } victim.func_70690_d(new PotionEffect(Potion.field_76438_s.field_76415_H, hungerTicks, strength)); victim.func_70690_d(new PotionEffect(Potion.field_76436_u.field_76415_H, poisonTicks, 0)); } } else if (modifiers.inverted) { targetEntity.func_70690_d(new PotionEffect(Potion.field_76428_l.field_76415_H, TimeUtil.secsToTicks(30), modifiers.getStrength())); } else { targetEntity.func_70690_d(new PotionEffect(Potion.field_82731_v.field_76415_H, hungerTicks, strength)); targetEntity.func_70690_d(new PotionEffect(Potion.field_76436_u.field_76415_H, poisonTicks)); } } }"
+    },
+    {
+      "sourceIndex": 111,
+      "sourceLine": 2234,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemOdourOfPurity.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.revealing"
+      ],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemOdourOfPurity.getBrewItemKey(), new BrewNamePart(\"witchery:brew.revealing\"), new AltarPower(100), new Probability(1.0), new EffectLevel(4) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack stack) { boolean doDamage = false; if (targetEntity.func_70644_a(Potion.field_76441_p)) { targetEntity.func_82170_o(Potion.field_76441_p.field_76415_H); } if (targetEntity instanceof EntityPlayer && targetEntity.func_82150_aj()) { targetEntity.func_82142_c(false); } if (targetEntity instanceof EntityPlayer) { EntityPlayer player = (EntityPlayer)targetEntity; ExtendedPlayer playerEx = ExtendedPlayer.get(player); if (playerEx != null && playerEx.getCreatureType() == TransformCreature.PLAYER) { ParticleEffect.SMOKE.send(SoundEffect.WITCHERY_RANDOM_POOF, player, 0.5, 2.0, 16); Shapeshift.INSTANCE.shiftTo(player, TransformCreature.NONE); } } if (targetEntity instanceof EntitySummonedUndead && ((EntitySummonedUndead)targetEntity).isObscured()) { ((EntitySummonedUndead)targetEntity).setObscured(false); } int strength = modifiers.getStrength(); if (doDamage && strength > 0) { targetEntity.func_70097_a(DamageSource.func_76354_b(modifiers.caster, modifiers.caster), (float)strength); } } }"
+    },
+    {
+      "sourceIndex": 112,
+      "sourceLine": 2273,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemFoulFume.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:potion.stoutbelly"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( Witchery.Items.GENERIC.itemFoulFume.getBrewItemKey(), new BrewNamePart(\"witchery:potion.stoutbelly\"), new AltarPower(1000), new Probability(1.0), Witchery.Potions.STOUT_BELLY, (long)TimeUtil.secsToTicks(90), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 113,
+      "sourceLine": 2284,
+      "actionClass": "BrewActionBlight",
+      "ingredientExpression": "Items.field_151170_bI",
+      "translationKeys": [
+        "witchery:brew.blight"
+      ],
+      "altarPowerExpression": "2000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionBlight( new BrewItemKey(Items.field_151170_bI), new BrewNamePart(\"witchery:brew.blight\"), new AltarPower(2000), new Probability(1.0), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 114,
+      "sourceLine": 2289,
+      "actionClass": "BrewActionTranspose",
+      "ingredientExpression": "Items.field_151079_bi",
+      "translationKeys": [
+        "witchery:brew.transpose"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionTranspose( new BrewItemKey(Items.field_151079_bi), new BrewNamePart(\"witchery:brew.transpose\"), new AltarPower(1000), new Probability(1.0), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 115,
+      "sourceLine": 2294,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Items.field_151042_j",
+      "translationKeys": [
+        "witchery:brew.transposeore"
+      ],
+      "altarPowerExpression": "2000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Items.field_151042_j), new BrewNamePart(\"witchery:brew.transposeore\"), new AltarPower(2000), new Probability(1.0), new EffectLevel(4) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack stack) { int depth = radius + modifiers.strength; Block[] blockTypes = new Block[]{Blocks.field_150366_p, Blocks.field_150352_o, Blocks.field_150369_x, Blocks.field_150412_bA}; this.slurpOres(world, x, y, z, radius, depth, blockTypes, modifiers, y + 2); } @Override protected void doApplyRitualToBlock( World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersRitual ritualModifiers, ModifiersEffect modifiers, ItemStack stack ) { int r = ritualModifiers.covenSize + radius; int maxDepth = 4 * ritualModifiers.covenSize * (1 + modifiers.getStrength()); int steps = 4; Block[] blockTypes = new Block[]{Blocks.field_150366_p, Blocks.field_150352_o, Blocks.field_150369_x, Blocks.field_150412_bA}; this.slurpOres(world, x, y - (ritualModifiers.pulses - 1) * 4, z, r, 4, blockTypes, modifiers, y + 2); ParticleEffect.FLAME.send(SoundEffect.FIREWORKS_BLAST1, world, (double)x, (double)y, (double)z, 1.0, 1.0, 16); ritualModifiers.setRitualStatus(ritualModifiers.pulses * 4 < maxDepth ? RitualStatus.ONGOING : RitualStatus.COMPLETE); } private void slurpOres(World world, int posX, int posY, int posZ, int radius, int depth, Block[] blockTypes, ModifiersEffect modifiers, int returnY) { int r = radius; int maxType = modifiers.getStrength(); for (int x = posX - radius; x <= posX + r; x++) { for (int z = posZ - r; z <= posZ + r; z++) { for (int y = posY - depth; y <= posY + r; y++) { Block blockID = world.func_147439_a(x, y, z); for (int t = 0; t < blockTypes.length && t < maxType; t++) { if (blockID == blockTypes[t]) { ItemStack newStack = new ItemStack(blockID); EntityItem entity = new EntityItem(world, (double)posX + 0.5, (double)posY + 0.5, (double)posZ + 0.5, newStack); if (!world.field_72995_K) { world.func_147468_f(x, y, z); world.func_72838_d(entity); } } } } } } } }"
+    },
+    {
+      "sourceIndex": 116,
+      "sourceLine": 2347,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Blocks.field_150329_H, 0",
+      "translationKeys": [
+        "witchery:potion.volatility"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Blocks.field_150329_H, 0), new BrewNamePart(\"witchery:potion.volatility\"), new AltarPower(1000), new Probability(1.0), Witchery.Potions.VOLATILITY, (long)TimeUtil.secsToTicks(180), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 117,
+      "sourceLine": 2358,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Blocks.field_150330_I",
+      "translationKeys": [
+        "witchery:potion.volatility"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Blocks.field_150330_I), new BrewNamePart(\"witchery:potion.volatility\"), new AltarPower(1000), new Probability(1.0), Witchery.Potions.VOLATILITY, (long)TimeUtil.secsToTicks(180), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 118,
+      "sourceLine": 2369,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Blocks.field_150425_aM",
+      "translationKeys": [
+        "witchery:brew.allergydark"
+      ],
+      "altarPowerExpression": "4000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Blocks.field_150425_aM), new BrewNamePart(\"witchery:brew.allergydark\"), new AltarPower(4000), new Probability(1.0), Witchery.Potions.DARKNESS_ALLERGY, (long)TimeUtil.minsToTicks(2), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 119,
+      "sourceLine": 2380,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemWhiffOfMagic.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:potion.absorbmagic"
+      ],
+      "altarPowerExpression": "2000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( Witchery.Items.GENERIC.itemWhiffOfMagic.getBrewItemKey(), new BrewNamePart(\"witchery:potion.absorbmagic\"), new AltarPower(2000), new Probability(1.0), Witchery.Potions.ABSORB_MAGIC, (long)TimeUtil.secsToTicks(60), new EffectLevel(4) )"
+    },
+    {
+      "sourceIndex": 120,
+      "sourceLine": 2391,
+      "actionClass": "BrewActionRaising",
+      "ingredientExpression": "dynamic",
+      "translationKeys": [],
+      "altarPowerExpression": "2000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRaising(Items.field_151103_aS, new AltarPower(2000), new EffectLevel(4))"
+    },
+    {
+      "sourceIndex": 121,
+      "sourceLine": 2392,
+      "actionClass": "BrewActionRaiseLand",
+      "ingredientExpression": "Items.field_151128_bU",
+      "translationKeys": [
+        "witchery:brew.raiseland"
+      ],
+      "altarPowerExpression": "2000",
+      "effectLevelExpression": "4",
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRaiseLand(new BrewItemKey(Items.field_151128_bU), new BrewNamePart(\"witchery:brew.raiseland\"), new AltarPower(2000), new EffectLevel(4))"
+    },
+    {
+      "sourceIndex": 122,
+      "sourceLine": 2395,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150432_aD",
+      "translationKeys": [
+        "witchery:brew.harmdemons"
+      ],
+      "altarPowerExpression": "500",
+      "effectLevelExpression": "5",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150432_aD), new BrewNamePart(\"witchery:brew.harmdemons\"), new AltarPower(500), new Probability(1.0), new EffectLevel(5) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { int strength = Math.min(modifiers.getStrength(), modifiers.strengthCeilingDisabled ? 3 : 1); if (targetEntity instanceof EntityLeonard) { ((EntityLeonard)targetEntity).attackEntityFromWeakness(MathHelper.func_76143_f((double)(10 << strength) * modifiers.powerScalingFactor)); } else if (CreatureUtil.isDemonic(targetEntity)) { targetEntity.func_70097_a( DamageSource.func_76354_b(modifiers.caster, modifiers.caster), (float)MathHelper.func_76143_f((double)(10 << strength) * modifiers.powerScalingFactor) ); } else { targetEntity.func_70097_a( DamageSource.func_76354_b(modifiers.caster, modifiers.caster), (float)MathHelper.func_76143_f((double)(3 << strength) * modifiers.powerScalingFactor) ); } } }"
+    },
+    {
+      "sourceIndex": 123,
+      "sourceLine": 2422,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemFrozenHeart.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.iceshell"
+      ],
+      "altarPowerExpression": "500",
+      "effectLevelExpression": "5",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemFrozenHeart.getBrewItemKey(), new BrewNamePart(\"witchery:brew.iceshell\"), new AltarPower(500), new Probability(1.0), new EffectLevel(5) ) { @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { this.createSphere(world, modifiers, BlockUtil.getClosestPlantableBlock(world, x, y, z, side, modifiers.caster)); } @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { boolean resistent = targetEntity instanceof EntityDemon || targetEntity instanceof EntityBlaze || targetEntity instanceof IBossDisplayData || targetEntity instanceof EntityEnt || targetEntity instanceof EntityIronGolem; if (!resistent) { BrewPotionEffect.applyPotionEffect( targetEntity, modifiers, Witchery.Potions.CHILLED, TimeUtil.secsToTicks(10), modifiers.noParticles, modifiers.caster ); if (!modifiers.isGlancing) { this.createSphere(world, modifiers, new Coord(targetEntity)); } } else if (targetEntity.field_71093_bK != -1) { Coord coord = new Coord(targetEntity); BlockUtil.setBlockIfReplaceable(world, coord.x, coord.y, coord.z, Blocks.field_150358_i); } } public void createSphere(final World world, ModifiersEffect modifiers, final Coord coord) { if (coord != null) { final int iceRadius = modifiers.getStrength() + (modifiers.getStrength() > 3 ? 2 : 1); (new BlockActionSphere() { @Override protected void onBlock(World worldx, int x, int y, int z) { BlockUtil.setBlockIfReplaceable(world, x, y, z, Witchery.Blocks.PERPETUAL_ICE); } @Override protected void onComplete() { this.fillWith(world, coord.x, coord.y, coord.z, iceRadius, Blocks.field_150350_a, Witchery.Blocks.PERPETUAL_ICE); } }).drawHollowSphere(world, coord.x, coord.y, coord.z, iceRadius); } } }"
+    },
+    {
+      "sourceIndex": 124,
+      "sourceLine": 2473,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemSpectralDust.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:potion.reflectdamage"
+      ],
+      "altarPowerExpression": "2000",
+      "effectLevelExpression": "5",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( Witchery.Items.GENERIC.itemSpectralDust.getBrewItemKey(), new BrewNamePart(\"witchery:potion.reflectdamage\"), new AltarPower(2000), new Probability(1.0), Witchery.Potions.REFLECT_DAMAGE, (long)TimeUtil.secsToTicks(90), new EffectLevel(5) )"
+    },
+    {
+      "sourceIndex": 125,
+      "sourceLine": 2484,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemRefinedEvil.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.hellgate"
+      ],
+      "altarPowerExpression": "3000",
+      "effectLevelExpression": "5",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemRefinedEvil.getBrewItemKey(), new BrewNamePart(\"witchery:brew.hellgate\"), new AltarPower(3000), new Probability(1.0), new EffectLevel(5) ) { @Override public boolean isRitualTargetLocationValid( MinecraftServer server, World world, int x, int y, int z, BlockPosition target, ModifiersRitual modifiers ) { return CircleUtil.isMediumCircle(target.getWorld(server), target.x, target.y, target.z, Witchery.Blocks.GLYPH_INFERNAL); } @Override protected void doApplyRitualToBlock( World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersRitual ritualModifiers, ModifiersEffect modifiers, ItemStack stack ) { InfusionInfernal.spawnCreature(world, EntityDemon.class, x, y, z, null, 0, 2, ParticleEffect.FLAME, SoundEffect.MOB_ENDERDRAGON_GROWL); } @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack actionStack) { } @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { BrewPotionEffect.applyPotionEffect( targetEntity, modifiers, Witchery.Potions.NETHER_BOUND, TimeUtil.minsToTicks(3), modifiers.noParticles, modifiers.caster ); } }"
+    },
+    {
+      "sourceIndex": 126,
+      "sourceLine": 2518,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Items.field_151043_k",
+      "translationKeys": [
+        "witchery:brew.blast"
+      ],
+      "altarPowerExpression": "500",
+      "effectLevelExpression": "5",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Items.field_151043_k), new BrewNamePart(\"witchery:brew.blast\"), new AltarPower(500), new Probability(1.0), new EffectLevel(5) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack stack) { if (modifiers.powerScalingFactor == 1.0 || world.field_73012_v.nextDouble() < modifiers.powerScalingFactor * 0.2) { world.func_72876_a( modifiers.caster, targetEntity.field_70165_t, targetEntity.field_70163_u, targetEntity.field_70161_v, (float)modifiers.getStrength(), true ); } } @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack stack) { world.func_72876_a( modifiers.caster, (double)(x + side.offsetX) + 0.5, (double)(y + side.offsetY) + 0.5, (double)(z + side.offsetZ) + 0.5, (float)modifiers.getStrength(), true ); } }"
+    },
+    {
+      "sourceIndex": 127,
+      "sourceLine": 2544,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Blocks.field_150398_cm",
+      "translationKeys": [
+        "witchery:brew.poisontoad"
+      ],
+      "altarPowerExpression": "500",
+      "effectLevelExpression": "5",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Blocks.field_150398_cm), new BrewNamePart(\"witchery:brew.poisontoad\"), new AltarPower(500), new Probability(1.0), new EffectLevel(5) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack stack) { if (!(targetEntity instanceof EntityToad) && modifiers.powerScalingFactor == 1.0 || world.field_73012_v.nextDouble() < modifiers.powerScalingFactor * 0.2) { EntityToad toad = new EntityToad(world); toad.func_70012_b( targetEntity.field_70165_t, targetEntity.field_70163_u + (double)targetEntity.field_70131_O + 1.0, targetEntity.field_70161_v, 0.0F, 0.0F ); toad.setTimeToLive(60 + modifiers.getStrength() * 40, true); world.func_72838_d(toad); } } @Override protected void doApplyToBlock(World world, int x, int y, int z, ForgeDirection side, int radius, ModifiersEffect modifiers, ItemStack stack) { EntityToad toad = new EntityToad(world); toad.func_70012_b(0.5 + (double)x, 2.5 + (double)y, 0.5 + (double)z, 0.0F, 0.0F); toad.setTimeToLive(60 + modifiers.getStrength() * 40, true); world.func_72838_d(toad); } }"
+    },
+    {
+      "sourceIndex": 128,
+      "sourceLine": 2574,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Items.field_151061_bv",
+      "translationKeys": [
+        "witchery:brew.iceworld"
+      ],
+      "altarPowerExpression": "2000",
+      "effectLevelExpression": "5",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Items.field_151061_bv), new BrewNamePart(\"witchery:brew.iceworld\"), new AltarPower(2000), new Probability(1.0), new EffectLevel(5) ) { @Override protected void doApplyToBlock( World world, int x, int y0, int z, ForgeDirection side, int radius, final ModifiersEffect modifiers, ItemStack actionStack ) { if (!world.field_72995_K) { (new BlockActionSphere() { @Override public void onBlock(World world, int x, int y, int z) { Block block = world.func_147439_a(x, y, z); if (BlockProtect.checkModsForBreakOK(world, x, y, z, block, world.func_72805_g(x, y, z), modifiers.caster) && BlockProtect.canBreak(block, world)) { int meta = world.func_72805_g(x, y, z); if (block != Blocks.field_150466_ao) { return; } int i1 = ((BlockDoor)block).func_150012_g(world, x, y, z); if ((i1 & 8) != 0) { y--; } world.func_147468_f(x, y, z); world.func_147468_f(x, y + 1, z); ItemDoor.func_150924_a(world, x, y, z, i1 & 3, Witchery.Blocks.PERPETUAL_ICE_DOOR); ParticleEffect.SMOKE.send(SoundEffect.NONE, world, (double)x, (double)(y + 1), (double)z, 0.25, 0.25, 16); } } }) .drawFilledSphere(world, x, y0, z, (int)Math.ceil(Math.max((double)radius * 1.5, 1.0))); (new BlockActionSphere() { @Override public void onBlock(World world, int x, int y, int z) { Block block = world.func_147439_a(x, y, z); if (BlockProtect.checkModsForBreakOK(world, x, y, z, block, world.func_72805_g(x, y, z), modifiers.caster) && BlockProtect.canBreak(block, world)) { int meta = world.func_72805_g(x, y, z); if (block == Blocks.field_150346_d || block == Blocks.field_150349_c || block == Blocks.field_150391_bh || block == Blocks.field_150354_m) { world.func_147449_b(x, y, z, Blocks.field_150433_aE); } else if (block == Blocks.field_150347_e || block == Blocks.field_150341_Y || block == Blocks.field_150364_r || block == Blocks.field_150363_s || block == Witchery.Blocks.LOG) { world.func_147449_b(x, y, z, Blocks.field_150403_cj); } else if (block == Blocks.field_150348_b || block == Blocks.field_150417_aV || block == Blocks.field_150336_V || block == Blocks.field_150344_f || block == Blocks.field_150362_t || block == Blocks.field_150361_u || block == Witchery.Blocks.LEAVES || block == Witchery.Blocks.PLANKS || block == Blocks.field_150322_A) { world.func_147449_b(x, y, z, Witchery.Blocks.PERPETUAL_ICE); } else if (block == Blocks.field_150456_au || block == Blocks.field_150452_aw) { world.func_147449_b(x, y, z, Witchery.Blocks.PERPETUAL_ICE_PRESSURE_PLATE); } else if (block == Blocks.field_150446_ar || block == Blocks.field_150389_bf || block == Blocks.field_150390_bg || block == Blocks.field_150476_ad || block == Blocks.field_150485_bF || block == Blocks.field_150372_bz || block == Blocks.field_150487_bG || block == Blocks.field_150481_bH || block == Blocks.field_150401_cl || block == Blocks.field_150400_ck || block == Witchery.Blocks.STAIRS_ALDER || block == Witchery.Blocks.STAIRS_HAWTHORN || block == Witchery.Blocks.STAIRS_ROWAN) { world.func_147465_d(x, y, z, Witchery.Blocks.PERPETUAL_ICE_STAIRS, meta, 3); } else if (block == Blocks.field_150333_U || block == Blocks.field_150376_bx || block == Witchery.Blocks.WOOD_SLAB_SINGLE) { world.func_147449_b(x, y, z, Witchery.Blocks.PERPETUAL_ICE_SLAB_SINGLE); } else if (block == Blocks.field_150334_T || block == Blocks.field_150373_bw || block == Witchery.Blocks.WOOD_SLAB_DOUBLE) { world.func_147449_b(x, y, z, Witchery.Blocks.PERPETUAL_ICE_SLAB_DOUBLE); } else if (block == Blocks.field_150422_aJ || block == Blocks.field_150463_bK) { world.func_147449_b(x, y, z, Witchery.Blocks.PERPETUAL_ICE_FENCE); } else if (block == Blocks.field_150396_be) { world.func_147449_b(x, y, z, Witchery.Blocks.PERPETUAL_ICE_FENCE_GATE); } else { if (block != Witchery.Blocks.STOCKADE) { return; } world.func_147449_b(x, y, z, Witchery.Blocks.STOCKADE_ICE); } ParticleEffect.SMOKE.send(SoundEffect.NONE, world, (double)x, (double)(y + 1), (double)z, 0.25, 0.25, 16); } } }) .drawFilledSphere(world, x, y0, z, (int)Math.ceil(Math.max((double)radius * 1.5, 1.0))); SoundEffect.RANDOM_ORB.playAt(world, (double)x, (double)y0, (double)z, 0.5F, 2.0F); } } }"
+    },
+    {
+      "sourceIndex": 129,
+      "sourceLine": 2677,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemCondensedFear.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.drainmagic"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "6",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemCondensedFear.getBrewItemKey(), new BrewNamePart(\"witchery:brew.drainmagic\"), new AltarPower(1000), new Probability(1.0), new EffectLevel(6) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack actionStack) { Witchery.modHooks.reducePowerLevels(targetEntity, 0.25F * (1.0F + (float)modifiers.getStrength()) * (float)modifiers.powerScalingFactor); } }"
+    },
+    {
+      "sourceIndex": 130,
+      "sourceLine": 2691,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151119_aD",
+      "translationKeys": [
+        "witchery:potion.fortune"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "6",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151119_aD), new BrewNamePart(\"witchery:potion.fortune\"), new AltarPower(1000), new Probability(1.0), Witchery.Potions.FORTUNE, (long)TimeUtil.minsToTicks(3), new EffectLevel(6) )"
+    },
+    {
+      "sourceIndex": 131,
+      "sourceLine": 2702,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151115_aP, 1",
+      "translationKeys": [
+        "witchery:brew.allergysun"
+      ],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": "6",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151115_aP, 1), new BrewNamePart(\"witchery:brew.allergysun\"), new AltarPower(1000), new Probability(1.0), Witchery.Potions.SUN_ALLERGY, (long)TimeUtil.secsToTicks(60), new EffectLevel(6) )"
+    },
+    {
+      "sourceIndex": 132,
+      "sourceLine": 2713,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Blocks.BRAMBLE, 1",
+      "translationKeys": [
+        "witchery:potion.illfitting"
+      ],
+      "altarPowerExpression": "8000",
+      "effectLevelExpression": "6",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [
+        "TimeUtil.secsToTicks(6"
+      ],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Witchery.Blocks.BRAMBLE, 1), new BrewNamePart(\"witchery:potion.illfitting\").setBaseDuration(TimeUtil.secsToTicks(6)), new AltarPower(8000), new Probability(1.0), Witchery.Potions.ILL_FITTING, (long)TimeUtil.secsToTicks(6), new EffectLevel(6) )"
+    },
+    {
+      "sourceIndex": 133,
+      "sourceLine": 2724,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemHintOfRebirth.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.reincarnate"
+      ],
+      "altarPowerExpression": "2500",
+      "effectLevelExpression": "6",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( Witchery.Items.GENERIC.itemHintOfRebirth.getBrewItemKey(), new BrewNamePart(\"witchery:brew.reincarnate\"), new AltarPower(2500), new Probability(1.0), Witchery.Potions.REINCARNATE, (long)TimeUtil.minsToTicks(3), new EffectLevel(6) )"
+    },
+    {
+      "sourceIndex": 134,
+      "sourceLine": 2735,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemCreeperHeart.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.durationboost"
+      ],
+      "altarPowerExpression": "5000",
+      "effectLevelExpression": "6",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( Witchery.Items.GENERIC.itemCreeperHeart.getBrewItemKey(), new BrewNamePart(\"witchery:brew.durationboost\"), new AltarPower(5000), new Probability(1.0), new EffectLevel(6) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase target, ModifiersEffect modifiers, ItemStack actionStack) { if (target.func_70644_a(Witchery.Potions.QUEASY)) { if (target.field_70170_p.field_73012_v.nextInt(3) == 0) { target.func_70690_d(new PotionEffect(Potion.field_76440_q.field_76415_H, TimeUtil.minsToTicks(2), 0, true)); } else { target.func_70690_d(new PotionEffect(Potion.field_76431_k.field_76415_H, TimeUtil.minsToTicks(5), 0, true)); } } else { Collection<PotionEffect> potionEffects = target.func_70651_bq(); if (!potionEffects.isEmpty()) { List<PotionEffect> newEffects = new ArrayList<>(); int durationBoost = MathHelper.func_76143_f(modifiers.powerScalingFactor * (double)TimeUtil.minsToTicks(3)); for (PotionEffect potionEffect : potionEffects) { if (!Potion.field_76425_a[potionEffect.func_76456_a()].func_76403_b()) { int remainingTicks = potionEffect.func_76459_b(); int newDuration = remainingTicks + Math.min(remainingTicks, durationBoost); newEffects.add(new PotionEffect(potionEffect.func_76456_a(), newDuration, potionEffect.func_76458_c(), potionEffect.func_82720_e())); } } target.func_70674_bp(); for (PotionEffect potionEffectx : newEffects) { target.func_70690_d(potionEffectx); } int mins = 3 * Math.max(1, 4 - modifiers.getStrength()); target.func_70690_d(new PotionEffect(Witchery.Potions.QUEASY.field_76415_H, TimeUtil.minsToTicks(mins), 0, true)); } } } }"
+    },
+    {
+      "sourceIndex": 135,
+      "sourceLine": 2778,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Items.field_151166_bC",
+      "translationKeys": [
+        "witchery:brew.resizing"
+      ],
+      "altarPowerExpression": "2500",
+      "effectLevelExpression": "6",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( new BrewItemKey(Items.field_151166_bC), new BrewNamePart(\"witchery:brew.resizing\"), new AltarPower(2500), new Probability(1.0), Witchery.Potions.RESIZING, (long)TimeUtil.secsToTicks(20), new EffectLevel(6) )"
+    },
+    {
+      "sourceIndex": 136,
+      "sourceLine": 2789,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Items.field_151144_bL, 0",
+      "translationKeys": [
+        "witchery:brew.stealbuffs"
+      ],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": "6",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Items.field_151144_bL, 0), new BrewNamePart(\"witchery:brew.stealbuffs\"), new AltarPower(100), new Probability(1.0), new EffectLevel(6) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack stack) { double radius = (double)((modifiers.getStrength() + 1) * 8); double radiusSq = radius * radius; AxisAlignedBB bounds = targetEntity.field_70121_D.func_72314_b(radius, radius, radius); int maxBuffs = (int)Math.ceil(((double)modifiers.getStrength() + 1.0) * 2.0 * modifiers.powerScalingFactor); for (EntityLivingBase otherEntity : world.func_72872_a(EntityLivingBase.class, bounds)) { if (otherEntity != targetEntity && otherEntity.func_70068_e(targetEntity) < radiusSq) { Collection<PotionEffect> potionEffects = otherEntity.func_70651_bq(); List<Integer> effectsToRemove = new ArrayList<>(); for (PotionEffect effect : potionEffects) { Potion potion = Potion.field_76425_a[effect.func_76456_a()]; if (!PotionBase.isDebuff(potion) && PotionBase.isCurable(potion) && effect.func_76458_c() <= modifiers.getStrength()) { PotionEffect myEffect = targetEntity.func_70660_b(potion); if (myEffect != null) { if (myEffect.func_76459_b() <= effect.func_76459_b() && myEffect.func_76458_c() <= effect.func_76458_c()) { targetEntity.func_70690_d(new PotionEffect(effect)); effectsToRemove.add(effect.func_76456_a()); maxBuffs--; } } else { targetEntity.func_70690_d(new PotionEffect(effect)); effectsToRemove.add(effect.func_76456_a()); maxBuffs--; } if (maxBuffs <= 0) { break; } } } for (int id : effectsToRemove) { otherEntity.func_82170_o(id); } if (maxBuffs <= 0) { break; } } } } }"
+    },
+    {
+      "sourceIndex": 137,
+      "sourceLine": 2843,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemFocusedWill.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:brew.keepinventory"
+      ],
+      "altarPowerExpression": "10000",
+      "effectLevelExpression": "8",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( Witchery.Items.GENERIC.itemFocusedWill.getBrewItemKey(), new BrewNamePart(\"witchery:brew.keepinventory\"), new AltarPower(10000), new Probability(1.0), Witchery.Potions.KEEP_INVENTORY, (long)TimeUtil.minsToTicks(6), new EffectLevel(8) )"
+    },
+    {
+      "sourceIndex": 138,
+      "sourceLine": 2854,
+      "actionClass": "BrewPotionEffect",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemRedstoneSoup.getBrewItemKey()",
+      "translationKeys": [
+        "witchery:potion.keepeffects"
+      ],
+      "altarPowerExpression": "10000",
+      "effectLevelExpression": "8",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewPotionEffect( Witchery.Items.GENERIC.itemRedstoneSoup.getBrewItemKey(), new BrewNamePart(\"witchery:potion.keepeffects\"), new AltarPower(10000), new Probability(1.0), Witchery.Potions.KEEP_EFFECTS, (long)TimeUtil.minsToTicks(6), new EffectLevel(8) )"
+    },
+    {
+      "sourceIndex": 139,
+      "sourceLine": 2865,
+      "actionClass": "BrewActionBiomeChange",
+      "ingredientExpression": "Witchery.Items.BIOME_NOTE, 32767",
+      "translationKeys": [
+        "witchery:brew.seasons"
+      ],
+      "altarPowerExpression": "5000",
+      "effectLevelExpression": "8",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionBiomeChange( new BrewItemKey(Witchery.Items.BIOME_NOTE, 32767), new BrewNamePart(\"witchery:brew.seasons\"), new AltarPower(5000), new Probability(1.0), new EffectLevel(8) )"
+    },
+    {
+      "sourceIndex": 140,
+      "sourceLine": 2874,
+      "actionClass": "BrewActionEffect",
+      "ingredientExpression": "Items.field_151144_bL, 4",
+      "translationKeys": [
+        "witchery:brew.spreaddebuffs"
+      ],
+      "altarPowerExpression": "2000",
+      "effectLevelExpression": "8",
+      "probabilityExpression": "1.0",
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionEffect( new BrewItemKey(Items.field_151144_bL, 4), new BrewNamePart(\"witchery:brew.spreaddebuffs\"), new AltarPower(2000), new Probability(1.0), new EffectLevel(8) ) { @Override protected void doApplyToEntity(World world, EntityLivingBase targetEntity, ModifiersEffect modifiers, ItemStack stack) { int strength = modifiers.getStrength(); double radius = (double)((strength + 1) * 4); double radiusSq = radius * radius; AxisAlignedBB bounds = targetEntity.field_70121_D.func_72314_b(radius, radius, radius); int maxBuffs = (int)Math.ceil(((double)strength + 1.0) * modifiers.powerScalingFactor); List<EntityLivingBase> entities = world.func_72872_a(EntityLivingBase.class, bounds); List<EntityLivingBase> others = new ArrayList<>(); for (EntityLivingBase otherEntity : entities) { if (otherEntity != targetEntity && otherEntity.func_70068_e(targetEntity) < radiusSq) { others.add(otherEntity); } } Collection<PotionEffect> effects = targetEntity.func_70651_bq(); List<Integer> effectsToRemove = new ArrayList<>(); for (PotionEffect effect : effects) { Potion potion = Potion.field_76425_a[effect.func_76456_a()]; if (PotionBase.isDebuff(potion) && PotionBase.isCurable(potion) && effect.func_76458_c() <= Math.max(strength - 1, 1)) { effectsToRemove.add(potion.field_76415_H); for (EntityLivingBase other : others) { other.func_70690_d(new PotionEffect(effect)); } if (--maxBuffs <= 0) { break; } } } for (int id : effectsToRemove) { targetEntity.func_82170_o(id); } } }"
+    },
+    {
+      "sourceIndex": 141,
+      "sourceLine": 2922,
+      "actionClass": "BrewActionRitualSummonMob",
+      "ingredientExpression": "Witchery.Items.WITCH_HAT",
+      "translationKeys": [],
+      "altarPowerExpression": "10000",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualSummonMob( new BrewItemKey(Witchery.Items.WITCH_HAT), new AltarPower(10000), new BrewActionRitualSummonMob.Recipe( EntityLeonard.class, new ItemStack(Items.field_151075_bm), Witchery.Items.GENERIC.itemTearOfTheGoddess.createStack(), Witchery.Items.GENERIC.itemDiamondVapour.createStack(), new ItemStack(Items.field_151045_i), new ItemStack(Items.field_151156_bN) ) )"
+    },
+    {
+      "sourceIndex": 142,
+      "sourceLine": 2936,
+      "actionClass": "BrewActionModifier",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemWaystoneBound.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "100",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionModifier(Witchery.Items.GENERIC.itemWaystoneBound.getBrewItemKey(), null, new AltarPower(100)) { @Override public void prepareRitual(World world, int x, int y, int z, ModifiersRitual modifiers, ItemStack stack) { modifiers.setTarget(stack); } }"
+    },
+    {
+      "sourceIndex": 143,
+      "sourceLine": 2942,
+      "actionClass": "BrewActionRitual",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemDogTongue.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "250",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitual(Witchery.Items.GENERIC.itemDogTongue.getBrewItemKey(), new AltarPower(250), true)"
+    },
+    {
+      "sourceIndex": 144,
+      "sourceLine": 2943,
+      "actionClass": "BrewActionRitualEntityTarget",
+      "ingredientExpression": "Witchery.Items.TAGLOCK_KIT, 32767",
+      "translationKeys": [],
+      "altarPowerExpression": "1000",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualEntityTarget(new BrewItemKey(Witchery.Items.TAGLOCK_KIT, 32767), new AltarPower(1000))"
+    },
+    {
+      "sourceIndex": 145,
+      "sourceLine": 2944,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Witchery.Items.CHALK_RITUAL",
+      "translationKeys": [],
+      "altarPowerExpression": "2000",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( new BrewItemKey(Witchery.Items.CHALK_RITUAL), new AltarPower(2000), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Items.CHALK_OTHERWHERE), new ItemStack(Items.field_151075_bm), Witchery.Items.GENERIC.itemTearOfTheGoddess.createStack(), new ItemStack(Items.field_151079_bi) ), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Items.CHALK_GOLDEN), Witchery.Items.GENERIC.itemMandrakeRoot.createStack(), new ItemStack(Items.field_151074_bl) ), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Items.CHALK_INFERNAL), new ItemStack(Items.field_151075_bm), new ItemStack(Items.field_151065_br) ) )"
+    },
+    {
+      "sourceIndex": 146,
+      "sourceLine": 2962,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Items.field_151110_aK",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( new BrewItemKey(Items.field_151110_aK), new AltarPower(0), new BrewActionRitualRecipe.Recipe( Witchery.Items.GENERIC.itemMutandis.createStack(6), Witchery.Items.GENERIC.itemMandrakeRoot.createStack(), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack() ) )"
+    },
+    {
+      "sourceIndex": 147,
+      "sourceLine": 2973,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemMutandis.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( Witchery.Items.GENERIC.itemMutandis.getBrewItemKey(), new AltarPower(0), new BrewActionRitualRecipe.Recipe( new ItemStack(Items.field_151075_bm), Witchery.Items.GENERIC.itemMandrakeRoot.createStack(), Witchery.Items.GENERIC.itemTearOfTheGoddess.createStack(), Witchery.Items.GENERIC.itemDiamondVapour.createStack(), new ItemStack(Items.field_151079_bi), new ItemStack(Items.field_151015_O) ), new BrewActionRitualRecipe.Recipe(Witchery.Items.GENERIC.itemMutandisExtremis.createStack(), new ItemStack(Items.field_151075_bm)) )"
+    },
+    {
+      "sourceIndex": 148,
+      "sourceLine": 2988,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemMutandisExtremis.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "1800",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( Witchery.Items.GENERIC.itemMutandisExtremis.getBrewItemKey(), new AltarPower(1800), new BrewActionRitualRecipe.Recipe( new ItemStack(Blocks.field_150377_bs, 2), Witchery.Items.GENERIC.itemMandrakeRoot.createStack(), new ItemStack(Blocks.field_150348_b), new ItemStack(Blocks.field_150377_bs) ), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Items.MUTATING_SPRIG), new ItemStack(Items.field_151075_bm), Witchery.Items.GENERIC.itemBranchEnt.createStack() ), new BrewActionRitualRecipe.Recipe( Witchery.Items.GENERIC.itemDropOfLuck.createStack(), Witchery.Items.GENERIC.itemMandrakeRoot.createStack(), new ItemStack(Items.field_151075_bm), Witchery.Items.GENERIC.itemTearOfTheGoddess.createStack(), Witchery.Items.GENERIC.itemRefinedEvil.createStack() ) )"
+    },
+    {
+      "sourceIndex": 149,
+      "sourceLine": 3010,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Blocks.field_150433_aE",
+      "translationKeys": [],
+      "altarPowerExpression": "3000",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( new BrewItemKey(Blocks.field_150433_aE), new AltarPower(3000), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Items.BREW_ENDLESS_WATER, 1, 0), new ItemStack(Items.field_151075_bm), new ItemStack(Items.field_151114_aO), new ItemStack(Items.field_151072_bj), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() ), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Items.BREW_ENDLESS_WATER, 1, 50), new ItemStack(Items.field_151075_bm), new ItemStack(Items.field_151114_aO), new ItemStack(Items.field_151072_bj) ), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Items.BREW_ENDLESS_WATER, 1, 80), new ItemStack(Items.field_151075_bm), new ItemStack(Items.field_151114_aO) ), new BrewActionRitualRecipe.Recipe(new ItemStack(Witchery.Items.BREW_ENDLESS_WATER, 1, 95), new ItemStack(Items.field_151075_bm)) )"
+    },
+    {
+      "sourceIndex": 150,
+      "sourceLine": 3033,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Items.field_151044_h, 1",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( new BrewItemKey(Items.field_151044_h, 1), new AltarPower(0), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Items.BREW_FUEL, 1, 3), Witchery.Items.GENERIC.itemMandrakeRoot.createStack(), new ItemStack(Items.field_151114_aO), new ItemStack(Items.field_151072_bj), Witchery.Items.GENERIC.itemAttunedStoneCharged.createStack() ), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Items.BREW_FUEL, 1, 2), Witchery.Items.GENERIC.itemMandrakeRoot.createStack(), new ItemStack(Items.field_151114_aO), new ItemStack(Items.field_151072_bj) ), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Items.BREW_FUEL, 1, 1), Witchery.Items.GENERIC.itemMandrakeRoot.createStack(), new ItemStack(Items.field_151114_aO) ), new BrewActionRitualRecipe.Recipe(new ItemStack(Witchery.Items.BREW_FUEL, 1, 0), Witchery.Items.GENERIC.itemMandrakeRoot.createStack()) )"
+    },
+    {
+      "sourceIndex": 151,
+      "sourceLine": 3056,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Items.field_151147_al",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( new BrewItemKey(Items.field_151147_al), new AltarPower(0), new BrewActionRitualRecipe.Recipe(new ItemStack(Items.field_151157_am)) )"
+    },
+    {
+      "sourceIndex": 152,
+      "sourceLine": 3061,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Items.field_151076_bf",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( new BrewItemKey(Items.field_151076_bf), new AltarPower(0), new BrewActionRitualRecipe.Recipe(new ItemStack(Items.field_151077_bg)) )"
+    },
+    {
+      "sourceIndex": 153,
+      "sourceLine": 3066,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Items.field_151082_bd",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( new BrewItemKey(Items.field_151082_bd), new AltarPower(0), new BrewActionRitualRecipe.Recipe(new ItemStack(Items.field_151083_be)) )"
+    },
+    {
+      "sourceIndex": 154,
+      "sourceLine": 3071,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemOddPorkRaw.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( Witchery.Items.GENERIC.itemOddPorkRaw.getBrewItemKey(), new AltarPower(0), new BrewActionRitualRecipe.Recipe(Witchery.Items.GENERIC.itemOddPorkCooked.createStack()) )"
+    },
+    {
+      "sourceIndex": 155,
+      "sourceLine": 3078,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemMuttonRaw.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( Witchery.Items.GENERIC.itemMuttonRaw.getBrewItemKey(), new AltarPower(0), new BrewActionRitualRecipe.Recipe(Witchery.Items.GENERIC.itemMuttonCooked.createStack()) )"
+    },
+    {
+      "sourceIndex": 156,
+      "sourceLine": 3085,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Witchery.Items.WITCH_HAND",
+      "translationKeys": [],
+      "altarPowerExpression": "0",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( new BrewItemKey(Witchery.Items.WITCH_HAND), new AltarPower(0), new BrewActionRitualRecipe.Recipe(new ItemStack(Items.field_151078_bh, 6)) )"
+    },
+    {
+      "sourceIndex": 157,
+      "sourceLine": 3090,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Witchery.Items.GENERIC.itemTormentedTwine.getBrewItemKey()",
+      "translationKeys": [],
+      "altarPowerExpression": "4000",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( Witchery.Items.GENERIC.itemTormentedTwine.getBrewItemKey(), new AltarPower(4000), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Blocks.PIT_GRASS, 4), new ItemStack(Items.field_151075_bm), new ItemStack(Blocks.field_150346_d), new ItemStack(Blocks.field_150327_N) ), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Blocks.PIT_DIRT, 4), Witchery.Items.GENERIC.itemMandrakeRoot.createStack(), new ItemStack(Blocks.field_150346_d) ) )"
+    },
+    {
+      "sourceIndex": 158,
+      "sourceLine": 3105,
+      "actionClass": "BrewActionRitualRecipe",
+      "ingredientExpression": "Items.field_151111_aL",
+      "translationKeys": [],
+      "altarPowerExpression": "5000",
+      "effectLevelExpression": null,
+      "probabilityExpression": null,
+      "baseDurationExpressions": [],
+      "incurable": false,
+      "good": false,
+      "nullifierCount": 0,
+      "sourceExpression": "new BrewActionRitualRecipe( new BrewItemKey(Items.field_151111_aL), new AltarPower(5000), new BrewActionRitualRecipe.Recipe( new ItemStack(Witchery.Items.PLAYER_COMPASS), new ItemStack(Items.field_151075_bm), Witchery.Items.GENERIC.itemTearOfTheGoddess.createStack(), new ItemStack(Blocks.field_150395_bd), new ItemStack(Items.field_151070_bp) ) )"
+    }
+  ]
+}

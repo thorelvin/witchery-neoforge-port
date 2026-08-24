@@ -1,6 +1,7 @@
 package com.emoniph.witchery.blocks;
 
 import com.emoniph.witchery.brewing.Brews;
+import com.emoniph.witchery.brewing.BrewingYield;
 import com.emoniph.witchery.brewing.BrewWarningMessages;
 import com.emoniph.witchery.brewing.BrewWarningText;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
@@ -9,6 +10,7 @@ import com.emoniph.witchery.entity.LeonardEntity;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryDataComponents;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.CombustionBrewItem;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -60,7 +62,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 public class WitchCauldronBlock extends BaseEntityBlock {
 
@@ -164,7 +169,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
                 player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
                 player.awardStat(Stats.FILL_CAULDRON);
                 player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
-                setFillLevel(state, level, pos, MAX_FILL_LEVEL);
+                setAbsoluteFillLevel(state, level, pos, MAX_FILL_LEVEL);
                 level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                 level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
@@ -245,6 +250,11 @@ public class WitchCauldronBlock extends BaseEntityBlock {
             return explicitBrewResult;
         }
 
+        InteractionResult sourceRecipeResult = tryRemainingSourceStationRecipes(stack, state, level, pos, player);
+        if (sourceRecipeResult.consumesAction()) {
+            return sourceRecipeResult;
+        }
+
         InteractionResult chalkResult = tryUpgradeChalk(stack, state, level, pos, player);
         if (chalkResult.consumesAction()) {
             return chalkResult;
@@ -260,11 +270,6 @@ public class WitchCauldronBlock extends BaseEntityBlock {
             return pitTrapResult;
         }
 
-        InteractionResult mutandisOfferingResult = tryOfferMutandisIngredient(stack, state, level, pos, player);
-        if (mutandisOfferingResult.consumesAction()) {
-            return mutandisOfferingResult;
-        }
-
         InteractionResult mutandisResult = tryBrewMutandis(stack, state, level, pos, player);
         if (mutandisResult.consumesAction()) {
             return mutandisResult;
@@ -273,6 +278,11 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         InteractionResult mutandisExtremisResult = tryBrewMutandisExtremis(stack, state, level, pos, player);
         if (mutandisExtremisResult.consumesAction()) {
             return mutandisExtremisResult;
+        }
+
+        InteractionResult stationOfferingResult = tryOfferStationIngredient(stack, state, level, pos, player);
+        if (stationOfferingResult.consumesAction()) {
+            return stationOfferingResult;
         }
 
         InteractionResult leonardResult = trySummonLeonard(stack, state, level, pos, player);
@@ -463,6 +473,25 @@ public class WitchCauldronBlock extends BaseEntityBlock {
     }
 
     private static void setFillLevel(BlockState state, Level level, BlockPos pos, int amount) {
+        int clampedAmount = Math.clamp(amount, 0, MAX_FILL_LEVEL);
+        if (level.getBlockEntity(pos) instanceof WitchCauldronBlockEntity brewBe) {
+            int levelDelta = clampedAmount - state.getValue(LEVEL);
+            brewBe.adjustFluidUnits(levelDelta * 1000, state.getValue(LEVEL));
+        }
+        setVisibleFillLevel(state, level, pos, clampedAmount);
+    }
+
+    private static void setAbsoluteFillLevel(BlockState state, Level level, BlockPos pos, int amount) {
+        int clampedAmount = Math.clamp(amount, 0, MAX_FILL_LEVEL);
+        BlockState nextState = state.setValue(LEVEL, clampedAmount);
+        level.setBlockAndUpdate(pos, nextState);
+        if (level.getBlockEntity(pos) instanceof WitchCauldronBlockEntity brewBe) {
+            brewBe.setFluidUnits(clampedAmount * 1000);
+        }
+        level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(nextState));
+    }
+
+    private static void setVisibleFillLevel(BlockState state, Level level, BlockPos pos, int amount) {
         BlockState nextState = state.setValue(LEVEL, amount);
         level.setBlockAndUpdate(pos, nextState);
         level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(nextState));
@@ -476,6 +505,12 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         }
         com.emoniph.witchery.brewing.BrewContents contents =
                 new com.emoniph.witchery.brewing.BrewContents(List.copyOf(be.getIngredients()));
+        int drainAmount = BrewingYield.drainAmount(player, contents.items());
+        int fluidUnits = be.getFluidUnits(state.getValue(LEVEL));
+        if (fluidUnits < drainAmount) {
+            player.displayClientMessage(Component.translatable("witchery.cauldron.brew.not_enough"), false);
+            return;
+        }
         int powerCost = contents.powerCost();
         if (powerCost > 0) {
             AltarBlockEntity altar = findNearbyAltar(level, pos, CHALK_ALTAR_RADIUS);
@@ -493,12 +528,11 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, result));
         player.awardStat(Stats.USE_CAULDRON);
 
-        // Each bottle drains one water level. When the last of the water is bottled the cauldron resets:
-        // the composed brew is cleared so the next water fill starts a fresh brew (and new ingredients can
-        // be stirred in). A Bucket scoop resets it early.
-        int newLevel = Math.max(0, state.getValue(LEVEL) - 1);
-        lowerFillLevel(state, level, pos);
-        if (newLevel <= 0) {
+        int remainingUnits = be.drainFluidUnits(drainAmount, state.getValue(LEVEL));
+        int newLevel = (remainingUnits + 999) / 1000;
+        setVisibleFillLevel(state, level, pos, newLevel);
+        BrewingYield.awardBottlingSkill(player, contents.items());
+        if (remainingUnits <= 0) {
             be.clear();
         }
 
@@ -645,6 +679,13 @@ public class WitchCauldronBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
 
+        Optional<List<ItemEntity>> endStoneRecipe = findCauldronOfferings(level, pos,
+                List.of(WitcheryItems.MANDRAKE_ROOT.get(), Items.STONE, Items.END_STONE));
+        if (endStoneRecipe.isPresent()) {
+            return completeStationRecipe(stack, state, level, pos, player, endStoneRecipe.get(),
+                    new ItemStack(Items.END_STONE, 2), 1800);
+        }
+
         Optional<ItemEntity> mandrake = findCauldronOffering(level, pos, WitcheryItems.MANDRAKE_ROOT.get());
         Optional<ItemEntity> wart = findCauldronOffering(level, pos, Items.NETHER_WART);
         Optional<ItemEntity> tear = findCauldronOffering(level, pos, WitcheryItems.TEAR_OF_GODDESS.get());
@@ -781,6 +822,186 @@ public class WitchCauldronBlock extends BaseEntityBlock {
                 .findFirst();
     }
 
+    private static Optional<List<ItemEntity>> findCauldronOfferings(Level level, BlockPos pos, List<Item> required) {
+        AABB bowl = new AABB(
+                pos.getX() + 0.125, pos.getY() + 0.2, pos.getZ() + 0.125,
+                pos.getX() + 0.875, pos.getY() + 1.0, pos.getZ() + 0.875);
+        List<ItemEntity> available = level.getEntitiesOfClass(ItemEntity.class, bowl).stream()
+                .filter(Entity::isAlive)
+                .toList();
+        List<ItemEntity> matched = new ArrayList<>();
+        for (Item item : required) {
+            ItemEntity entity = available.stream()
+                    .filter(candidate -> !matched.contains(candidate) && candidate.getItem().is(item))
+                    .findFirst()
+                    .orElse(null);
+            if (entity == null) {
+                return Optional.empty();
+            }
+            matched.add(entity);
+        }
+        return Optional.of(matched);
+    }
+
+    private InteractionResult tryRemainingSourceStationRecipes(ItemStack stack, BlockState state, Level level,
+                                                                BlockPos pos, Player player) {
+        if (state.getValue(LEVEL) <= 0 || !isHeated(level.getBlockState(pos.below()))) {
+            return InteractionResult.PASS;
+        }
+        boolean trigger = stack.is(Items.SNOW_BLOCK) || stack.is(Items.CHARCOAL)
+                || stack.is(Items.PORKCHOP) || stack.is(Items.CHICKEN) || stack.is(Items.BEEF)
+                || stack.is(WitcheryItems.ODD_PORKCHOP_RAW.get()) || stack.is(Items.MUTTON)
+                || stack.is(WitcheryItems.WITCH_HAND.get()) || stack.is(Items.COMPASS);
+        if (!trigger) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        if (stack.is(Items.SNOW_BLOCK)) {
+            List<List<Item>> tiers = endlessWaterOfferings();
+            int[] damage = {0, 50, 80, 95};
+            int tier = sourceEndlessWaterTier(cauldronOfferingItems(level, pos));
+            if (tier >= 0) {
+                List<ItemEntity> offerings = findCauldronOfferings(level, pos, tiers.get(tier)).orElseThrow();
+                ItemStack result = new ItemStack(WitcheryItems.BREW_OF_ENDLESS_WATER.get());
+                result.setDamageValue(damage[tier]);
+                return completeStationRecipe(stack, state, level, pos, player, offerings, result, 3000);
+            }
+            player.displayClientMessage(Component.translatable("witchery.cauldron.endless_water.support"), false);
+            return InteractionResult.CONSUME;
+        }
+
+        if (stack.is(Items.CHARCOAL)) {
+            List<List<Item>> tiers = combustionOfferings();
+            int brewLevel = sourceCombustionLevel(cauldronOfferingItems(level, pos));
+            if (brewLevel >= 0) {
+                int tier = 3 - brewLevel;
+                List<ItemEntity> offerings = findCauldronOfferings(level, pos, tiers.get(tier)).orElseThrow();
+                return completeStationRecipe(stack, state, level, pos, player, offerings,
+                        CombustionBrewItem.create(brewLevel), 0);
+            }
+            player.displayClientMessage(Component.translatable("witchery.cauldron.combustion.support"), false);
+            return InteractionResult.CONSUME;
+        }
+
+        ItemStack cooked = sourceCookedResult(stack);
+        if (!cooked.isEmpty()) {
+            return completeStationRecipe(stack, state, level, pos, player, List.of(), cooked, 0);
+        }
+        if (stack.is(WitcheryItems.WITCH_HAND.get())) {
+            return completeStationRecipe(stack, state, level, pos, player, List.of(),
+                    new ItemStack(Items.ROTTEN_FLESH, 6), 0);
+        }
+        if (stack.is(Items.COMPASS)) {
+            List<Item> required = List.of(
+                    Items.NETHER_WART, WitcheryItems.TEAR_OF_GODDESS.get(), Items.VINE, Items.RED_MUSHROOM);
+            if (hasSourcePlayerCompassOfferings(cauldronOfferingItems(level, pos))) {
+                return completeStationRecipe(stack, state, level, pos, player,
+                        findCauldronOfferings(level, pos, required).orElseThrow(),
+                        new ItemStack(WitcheryItems.PLAYER_COMPASS.get()), 0);
+            }
+            player.displayClientMessage(Component.translatable("witchery.cauldron.player_compass.support"), false);
+            return InteractionResult.CONSUME;
+        }
+        return InteractionResult.PASS;
+    }
+
+    static int sourceEndlessWaterTier(Collection<Item> offerings) {
+        return sourceStationTier(offerings, endlessWaterOfferings());
+    }
+
+    static int sourceCombustionLevel(Collection<Item> offerings) {
+        int tier = sourceStationTier(offerings, combustionOfferings());
+        return tier < 0 ? -1 : 3 - tier;
+    }
+
+    static boolean hasSourcePlayerCompassOfferings(Collection<Item> offerings) {
+        return offerings.containsAll(List.of(
+                Items.NETHER_WART, WitcheryItems.TEAR_OF_GODDESS.get(), Items.VINE, Items.RED_MUSHROOM));
+    }
+
+    private static int sourceStationTier(Collection<Item> offerings, List<List<Item>> tiers) {
+        for (int tier = 0; tier < tiers.size(); tier++) {
+            if (offerings.containsAll(tiers.get(tier))) {
+                return tier;
+            }
+        }
+        return -1;
+    }
+
+    private static List<List<Item>> endlessWaterOfferings() {
+        return List.of(
+                List.of(Items.NETHER_WART, Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
+                        WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                List.of(Items.NETHER_WART, Items.GLOWSTONE_DUST, Items.BLAZE_ROD),
+                List.of(Items.NETHER_WART, Items.GLOWSTONE_DUST),
+                List.of(Items.NETHER_WART));
+    }
+
+    private static List<List<Item>> combustionOfferings() {
+        return List.of(
+                List.of(WitcheryItems.MANDRAKE_ROOT.get(), Items.GLOWSTONE_DUST, Items.BLAZE_ROD,
+                        WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                List.of(WitcheryItems.MANDRAKE_ROOT.get(), Items.GLOWSTONE_DUST, Items.BLAZE_ROD),
+                List.of(WitcheryItems.MANDRAKE_ROOT.get(), Items.GLOWSTONE_DUST),
+                List.of(WitcheryItems.MANDRAKE_ROOT.get()));
+    }
+
+    private static Set<Item> cauldronOfferingItems(Level level, BlockPos pos) {
+        AABB bowl = new AABB(
+                pos.getX() + 0.125, pos.getY() + 0.2, pos.getZ() + 0.125,
+                pos.getX() + 0.875, pos.getY() + 1.0, pos.getZ() + 0.875);
+        return level.getEntitiesOfClass(ItemEntity.class, bowl).stream()
+                .filter(Entity::isAlive)
+                .map(entity -> entity.getItem().getItem())
+                .collect(java.util.stream.Collectors.toSet());
+    }
+
+    static ItemStack sourceCookedResult(ItemStack trigger) {
+        if (trigger.is(Items.PORKCHOP)) return new ItemStack(Items.COOKED_PORKCHOP);
+        if (trigger.is(Items.CHICKEN)) return new ItemStack(Items.COOKED_CHICKEN);
+        if (trigger.is(Items.BEEF)) return new ItemStack(Items.COOKED_BEEF);
+        if (trigger.is(WitcheryItems.ODD_PORKCHOP_RAW.get())) return new ItemStack(WitcheryItems.ODD_PORKCHOP_COOKED.get());
+        if (trigger.is(Items.MUTTON)) return new ItemStack(Items.COOKED_MUTTON);
+        return ItemStack.EMPTY;
+    }
+
+    private InteractionResult completeStationRecipe(ItemStack trigger, BlockState state, Level level, BlockPos pos,
+                                                    Player player, List<ItemEntity> offerings,
+                                                    ItemStack result, int powerCost) {
+        if (powerCost > 0) {
+            AltarBlockEntity altar = findNearbyAltar(level, pos, CHALK_ALTAR_RADIUS);
+            if (altar == null || !altar.hasValidStructure() || altar.getPower() < powerCost
+                    || !altar.consumePower(powerCost)) {
+                player.displayClientMessage(Component.translatable("witchery.cauldron.station.no_power", powerCost), false);
+                return InteractionResult.CONSUME;
+            }
+        }
+        if (!player.getAbilities().instabuild) {
+            trigger.shrink(1);
+        }
+        for (ItemEntity offering : offerings) {
+            ItemStack offeringStack = offering.getItem();
+            offeringStack.shrink(1);
+            if (offeringStack.isEmpty()) {
+                offering.discard();
+            } else {
+                offering.setItem(offeringStack);
+            }
+        }
+        lowerFillLevel(state, level, pos);
+        ItemEntity resultEntity = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5, result);
+        resultEntity.setDefaultPickUpDelay();
+        level.addFreshEntity(resultEntity);
+        level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 0.5F, 1.05F);
+        level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+        player.displayClientMessage(Component.translatable("witchery.cauldron.station.success", result.getHoverName()), false);
+        return InteractionResult.CONSUME;
+    }
+
     private InteractionResult tryBrewPitTrap(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
         if (!stack.is(WitcheryItems.TORMENTED_TWINE.get()) || state.getValue(LEVEL) <= 0 || !isHeated(level.getBlockState(pos.below()))) {
             return InteractionResult.PASS;
@@ -844,8 +1065,8 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         return InteractionResult.CONSUME;
     }
 
-    private InteractionResult tryOfferMutandisIngredient(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
-        if ((!stack.is(WitcheryItems.MANDRAKE_ROOT.get()) && !stack.is(Items.EGG))
+    private InteractionResult tryOfferStationIngredient(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
+        if (!isStationOffering(stack)
                 || state.getValue(LEVEL) <= 0
                 || !isHeated(level.getBlockState(pos.below()))) {
             return InteractionResult.PASS;
@@ -860,12 +1081,27 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         }
 
         ItemEntity offeringEntity = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5, offering);
+        offeringEntity.getPersistentData().putBoolean(WitchCauldronBlockEntity.STATION_OFFERING_TAG, true);
         offeringEntity.setPickUpDelay(40);
         offeringEntity.setDeltaMovement(0.0, 0.0, 0.0);
         level.addFreshEntity(offeringEntity);
         level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.35F, 1.4F);
         level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
         return InteractionResult.CONSUME;
+    }
+
+    private static boolean isStationOffering(ItemStack stack) {
+        return stack.is(WitcheryItems.MANDRAKE_ROOT.get())
+                || stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get())
+                || stack.is(WitcheryItems.TEAR_OF_GODDESS.get())
+                || stack.is(WitcheryItems.DIAMOND_VAPOUR.get())
+                || stack.is(WitcheryItems.REFINED_EVIL.get())
+                || stack.is(WitcheryItems.ENT_TWIG.get())
+                || stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())
+                || stack.is(Items.NETHER_WART) || stack.is(Items.ENDER_PEARL)
+                || stack.is(Items.WHEAT) || stack.is(Items.STONE) || stack.is(Items.END_STONE)
+                || stack.is(Items.GLOWSTONE_DUST) || stack.is(Items.BLAZE_ROD)
+                || stack.is(Items.VINE) || stack.is(Items.RED_MUSHROOM);
     }
 
     @Nullable
@@ -949,9 +1185,9 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         return InteractionResult.CONSUME;
     }
 
-    // Mandrake Root + Exhale of the Horned One (trigger) + Egg -> 6x Mutandis
+    // Mandrake Root + Exhale of the Horned One + Egg (trigger) -> 6x Mutandis
     private InteractionResult tryBrewMutandis(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
-        if (!stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()) || state.getValue(LEVEL) <= 0 || !isHeated(level.getBlockState(pos.below()))) {
+        if (!stack.is(Items.EGG) || state.getValue(LEVEL) <= 0 || !isHeated(level.getBlockState(pos.below()))) {
             return InteractionResult.PASS;
         }
         if (level.isClientSide()) {
@@ -959,8 +1195,8 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         }
 
         Optional<ItemEntity> mandrake = findCauldronOffering(level, pos, WitcheryItems.MANDRAKE_ROOT.get());
-        Optional<ItemEntity> egg = findCauldronOffering(level, pos, Items.EGG);
-        if (mandrake.isEmpty() || egg.isEmpty()) {
+        Optional<ItemEntity> exhale = findCauldronOffering(level, pos, WitcheryItems.EXHALE_OF_HORNED_ONE.get());
+        if (mandrake.isEmpty() || exhale.isEmpty()) {
             player.displayClientMessage(Component.translatable("witchery.cauldron.mutandis.support"), false);
             return InteractionResult.CONSUME;
         }
@@ -968,7 +1204,7 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        for (ItemEntity offering : List.of(mandrake.get(), egg.get())) {
+        for (ItemEntity offering : List.of(mandrake.get(), exhale.get())) {
             ItemStack offeringStack = offering.getItem();
             offeringStack.shrink(1);
             if (offeringStack.isEmpty()) {
@@ -996,6 +1232,14 @@ public class WitchCauldronBlock extends BaseEntityBlock {
         }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
+        }
+
+        Optional<List<ItemEntity>> netherWartRecipe = findCauldronOfferings(level, pos, List.of(
+                WitcheryItems.MANDRAKE_ROOT.get(), WitcheryItems.TEAR_OF_GODDESS.get(),
+                WitcheryItems.DIAMOND_VAPOUR.get(), Items.ENDER_PEARL, Items.WHEAT));
+        if (netherWartRecipe.isPresent()) {
+            return completeStationRecipe(stack, state, level, pos, player, netherWartRecipe.get(),
+                    new ItemStack(Items.NETHER_WART), 0);
         }
 
         Optional<ItemEntity> wart = findCauldronOffering(level, pos, Items.NETHER_WART);

@@ -93,6 +93,7 @@ public final class PlacedModonomiconPages {
     private static final int PAGE_INK_SOFT = 0xCC53341A;
     private static final int BUBBLE = 0xCC6F5438;
     private static final int BUBBLE_LIGHT = 0xAAA9875A;
+    private static final int OPTIONAL_FRAME = 0xFFC6922E;
     private static final int PAGE_TEXT_MARGIN_X = 8;
     private static final int PAGE_LIGHT = LightTexture.FULL_BRIGHT;
     private static final int PAGE_FRAME_ORDER = 1;
@@ -590,6 +591,9 @@ public final class PlacedModonomiconPages {
         for (StationRecipePage.Slot slot : page.getSlots()) {
             int itemX = bgX + Math.round(slot.x() * scale);
             int itemY = panelTop + Math.round(slot.y() * scale);
+            if (slot.optional()) {
+                submitOptionalFrame(ps, collector, lightCoords, itemX, itemY);
+            }
             submitItem(slot.stack(), itemX, itemY, seed++, ps, collector, lightCoords);
         }
 
@@ -622,6 +626,14 @@ public final class PlacedModonomiconPages {
             bottom = Math.max(bottom, Math.round((27 + 6) * scale));
         }
         return bottom == 0 ? drawnH : bottom;
+    }
+
+    private static void submitOptionalFrame(PoseStack ps, SubmitNodeCollector collector, int lightCoords,
+                                            int x, int y) {
+        submitRect(ps, collector, lightCoords, x - 1, y - 1, x + 17, y, OPTIONAL_FRAME);
+        submitRect(ps, collector, lightCoords, x - 1, y + 16, x + 17, y + 17, OPTIONAL_FRAME);
+        submitRect(ps, collector, lightCoords, x - 1, y, x, y + 16, OPTIONAL_FRAME);
+        submitRect(ps, collector, lightCoords, x + 16, y, x + 17, y + 16, OPTIONAL_FRAME);
     }
 
     private static void submitRitualRings(StationRecipePage page, PoseStack ps,

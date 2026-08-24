@@ -72,6 +72,14 @@ public class OwlFamiliarEntity extends FamiliarEntity {
     @Override
     public void tick() {
         super.tick();
+        if (!level().isClientSide() && getPersistentData().contains("WitcheryBodegaTicks")) {
+            int remaining = getPersistentData().getIntOr("WitcheryBodegaTicks", 0) - 1;
+            if (remaining <= 0) {
+                discard();
+                return;
+            }
+            getPersistentData().putInt("WitcheryBodegaTicks", remaining);
+        }
         if (!level().isClientSide() && tickCount % ALERT_INTERVAL == 0 && isTame()) {
             if (getOwner() instanceof ServerPlayer owner) {
                 AABB area = getBoundingBox().inflate(ALERT_RANGE);

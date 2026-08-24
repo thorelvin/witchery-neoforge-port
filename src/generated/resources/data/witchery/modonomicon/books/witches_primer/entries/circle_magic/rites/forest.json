@@ -1,0 +1,487 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "minecraft:oak_sapling"
+  },
+  "name": "Rite of the Forest",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)This family contains **7 distinct workings**. Each one has its own exact offerings, circles, power, and conditions; use the card belonging to the result you intend.[#]()",
+      "title": "Rite of the Forest",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Grow a forest, replace the sapling for the desired type.[#]() [#](53341a)**Required offerings:** **Oak Sapling**, **Wicker Bundle**, **Brew of Sprouting**, **Ent Twig**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
+      "title": "Oak forest",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:oak_sapling",
+          "x": 14,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:wicker_bundle",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_sprouting",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:ent_twig",
+          "x": 68,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:bound_waystone",
+          "optional": true,
+          "x": 86,
+          "y": 76
+        }
+      ],
+      "source_id": 70,
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - **4000** altar power - gold frame: optional[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Grow a forest, replace the sapling for the desired type.[#]() [#](53341a)**Required offerings:** **Spruce Sapling**, **Wicker Bundle**, **Brew of Sprouting**, **Ent Twig**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
+      "title": "Spruce forest",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:spruce_sapling",
+          "x": 14,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:wicker_bundle",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_sprouting",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:ent_twig",
+          "x": 68,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:bound_waystone",
+          "optional": true,
+          "x": 86,
+          "y": 76
+        }
+      ],
+      "source_id": 71,
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - **4000** altar power - gold frame: optional[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Grow a forest, replace the sapling for the desired type.[#]() [#](53341a)**Required offerings:** **Birch Sapling**, **Wicker Bundle**, **Brew of Sprouting**, **Ent Twig**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
+      "title": "Birch forest",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:birch_sapling",
+          "x": 14,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:wicker_bundle",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_sprouting",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:ent_twig",
+          "x": 68,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:bound_waystone",
+          "optional": true,
+          "x": 86,
+          "y": 76
+        }
+      ],
+      "source_id": 72,
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - **4000** altar power - gold frame: optional[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Grow a forest, replace the sapling for the desired type.[#]() [#](53341a)**Required offerings:** **Jungle Sapling**, **Wicker Bundle**, **Brew of Sprouting**, **Ent Twig**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
+      "title": "Jungle forest",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:jungle_sapling",
+          "x": 14,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:wicker_bundle",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_sprouting",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:ent_twig",
+          "x": 68,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:bound_waystone",
+          "optional": true,
+          "x": 86,
+          "y": 76
+        }
+      ],
+      "source_id": 73,
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - **4000** altar power - gold frame: optional[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Grow a forest, replace the sapling for the desired type.[#]() [#](53341a)**Required offerings:** **Rowan Sapling**, **Wicker Bundle**, **Brew of Sprouting**, **Ent Twig**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
+      "title": "Rowan forest",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:rowan_sapling",
+          "x": 14,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:wicker_bundle",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_sprouting",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:ent_twig",
+          "x": 68,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:bound_waystone",
+          "optional": true,
+          "x": 86,
+          "y": 76
+        }
+      ],
+      "source_id": 74,
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - **4000** altar power - gold frame: optional[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Grow a forest, replace the sapling for the desired type.[#]() [#](53341a)**Required offerings:** **Alder Sapling**, **Wicker Bundle**, **Brew of Sprouting**, **Ent Twig**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
+      "title": "Alder forest",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:alder_sapling",
+          "x": 14,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:wicker_bundle",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_sprouting",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:ent_twig",
+          "x": 68,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:bound_waystone",
+          "optional": true,
+          "x": 86,
+          "y": 76
+        }
+      ],
+      "source_id": 75,
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - **4000** altar power - gold frame: optional[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Grow a forest, replace the sapling for the desired type.[#]() [#](53341a)**Required offerings:** **Hawthorn Sapling**, **Wicker Bundle**, **Brew of Sprouting**, **Ent Twig**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**.[#]()",
+      "title": "Hawthorn forest",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Optional items have a gold frame on the rite card.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:hawthorn_sapling",
+          "x": 14,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:wicker_bundle",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_of_sprouting",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:ent_twig",
+          "x": 68,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:bound_waystone",
+          "optional": true,
+          "x": 86,
+          "y": 76
+        }
+      ],
+      "source_id": 76,
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - **4000** altar power - gold frame: optional[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 50,
+  "x": 0,
+  "y": 0
+}

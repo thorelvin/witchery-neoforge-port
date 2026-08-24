@@ -1,0 +1,177 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "minecraft:obsidian"
+  },
+  "name": "Rites of Protection",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)This family contains **3 distinct workings**. Each one has its own exact offerings, circles, power, and conditions; use the card belonging to the result you intend.[#]()",
+      "title": "Rites of Protection",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Conjure a dome, impenetrable to monsters. Lasts indefinitely, but requires 24 power/s.[#]() [#](53341a)**Required offerings:** **Obsidian**, **Redstone**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
+      "title": "Monster ward",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:obsidian",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:redstone",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:bound_waystone",
+          "optional": true,
+          "x": 68,
+          "y": 76
+        }
+      ],
+      "source_id": 10,
+      "text": "[#](53341a)**7x7** - **Ritual** chalk - **500** altar power - gold frame: optional[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Conjure a dome, impenetrable to all. Lasts indefinitely, but requires 28 power/s.[#]() [#](53341a)**Required offerings:** **Obsidian**, **Glowstone Dust**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
+      "title": "Universal ward",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:obsidian",
+          "x": 32,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:glowstone_dust",
+          "x": 50,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:bound_waystone",
+          "optional": true,
+          "x": 68,
+          "y": 76
+        }
+      ],
+      "source_id": 11,
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - **1000** altar power - gold frame: optional[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Conjure an impenetrable dome for 60 seconds.[#]() [#](53341a)**Required offerings:** **Obsidian**, **Attuned Stone (Charged)**.[#]()",
+      "title": "Portable ward",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:obsidian",
+          "x": 41,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone_charged",
+          "x": 59,
+          "y": 76
+        }
+      ],
+      "source_id": 12,
+      "text": "[#](53341a)**7x7** - **Ritual** chalk - no initial altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 12,
+  "x": 0,
+  "y": 0
+}

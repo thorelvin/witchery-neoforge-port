@@ -48,6 +48,41 @@
           "text": "[#](53341a)**Bone Meal** - Fertilization (level 1, 250 power, sneak-stir).[#]()"
         },
         {
+          "item": "minecraft:apple",
+          "text": "[#](53341a)**Apple** - Harvesting (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:dirt",
+          "text": "[#](53341a)**Dirt** - Tilling (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:brown_mushroom",
+          "text": "[#](53341a)**Brown Mushroom** - Pruning (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:flint",
+          "text": "[#](53341a)**Flint** - Pulverisation (level 1, 250 power).[#]()"
+        },
+        {
+          "item": "minecraft:sand",
+          "text": "[#](53341a)**Sand** - Tidehold (level 1).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Craft Actions (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:cobblestone",
+          "text": "[#](53341a)**Cobblestone** - Lavahold (level 2, 100 power).[#]()"
+        },
+        {
           "item": "minecraft:string",
           "text": "[#](53341a)**String** - Felling (level 1).[#]()"
         },
@@ -56,8 +91,8 @@
           "text": "[#](53341a)**Lily Pad** - Lilify (level 1, 200 power).[#]()"
         },
         {
-          "item": "minecraft:dead_bush",
-          "text": "[#](53341a)**Dead Bush** - Blight (level 4, 2000 power).[#]()"
+          "item": "minecraft:poisonous_potato",
+          "text": "[#](53341a)**Poisonous Potato** - Blight (level 4, 2000 power).[#]()"
         },
         {
           "item": "minecraft:quartz",
@@ -167,6 +202,165 @@
         {
           "item": "minecraft:slime_ball",
           "text": "[#](53341a)**Slime Ball** - Frog's Tongue (level 2, 150 power).[#]()"
+        },
+        {
+          "item": "witchery:concentrated_bat_ball",
+          "text": "[#](53341a)**Concentrated Bat Ball** - Batburst (level 2, 1000 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Craft Actions (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:owlets_wing",
+          "text": "[#](53341a)**Owlets Wing** - Bodega (level 2, 1000 power).[#]()"
+        },
+        {
+          "item": "witchery:oil_of_vitriol",
+          "text": "[#](53341a)**Oil of Vitriol** - Erosion (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:netherrack",
+          "text": "[#](53341a)**Netherrack** - Levelling (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "witchery:dense_web",
+          "text": "[#](53341a)**Dense Web** - Webs (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:vine",
+          "text": "[#](53341a)**Vine** - Vines (level 2, 150 power).[#]()"
+        },
+        {
+          "item": "minecraft:cactus",
+          "text": "[#](53341a)**Cactus** - Thorns (level 2, 150 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Craft Actions (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:stick",
+          "text": "[#](53341a)**Stick** - Knockback (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:oak_sapling",
+          "text": "[#](53341a)**Oak Sapling** - Treeoak (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:spruce_sapling",
+          "text": "[#](53341a)**Spruce Sapling** - Treespruce (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:birch_sapling",
+          "text": "[#](53341a)**Birch Sapling** - Treebirch (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:jungle_sapling",
+          "text": "[#](53341a)**Jungle Sapling** - Treejungle (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:acacia_sapling",
+          "text": "[#](53341a)**Acacia Sapling** - Treeacacia (level 2, 200 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Craft Actions (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:dark_oak_sapling",
+          "text": "[#](53341a)**Dark Oak Sapling** - Treedarkoak (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "witchery:rowan_sapling",
+          "text": "[#](53341a)**Rowan Sapling** - Treerowan (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "witchery:alder_sapling",
+          "text": "[#](53341a)**Alder Sapling** - Treealder (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "witchery:hawthorn_sapling",
+          "text": "[#](53341a)**Hawthorn Sapling** - Treehawthorn (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "witchery:glint_weed",
+          "text": "[#](53341a)**Glint Weed** - Inferno (level 3, 750 power).[#]()"
+        },
+        {
+          "item": "witchery:subdued_spirit",
+          "text": "[#](53341a)**Subdued Spirit** - Wasting / inverted: Fullness (level 4, 500 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Craft Actions (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:odour_of_purity",
+          "text": "[#](53341a)**Odour of Purity** - Revealing (level 4, 100 power).[#]()"
+        },
+        {
+          "item": "minecraft:iron_ingot",
+          "text": "[#](53341a)**Iron Ingot** - Transposeore (level 4, 2000 power).[#]()"
+        },
+        {
+          "item": "witchery:frozen_heart",
+          "text": "[#](53341a)**Frozen Heart** - Iceshell (level 5, 500 power).[#]()"
+        },
+        {
+          "item": "witchery:refined_evil",
+          "text": "[#](53341a)**Refined Evil** - Hellgate (level 5, 3000 power).[#]()"
+        },
+        {
+          "item": "minecraft:gold_ingot",
+          "text": "[#](53341a)**Gold Ingot** - Blast (level 5, 500 power).[#]()"
+        },
+        {
+          "item": "minecraft:sunflower",
+          "text": "[#](53341a)**Sunflower** - Poisontoad (level 5, 500 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Craft Actions (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:condensed_fear",
+          "text": "[#](53341a)**Condensed Fear** - Drainmagic (level 6, 1000 power).[#]()"
         }
       ],
       "text": "",

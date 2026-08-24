@@ -98,6 +98,7 @@ import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -184,9 +185,29 @@ public class WitcheryPlayerEvents {
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
+        if (event.isWasDeath()) {
+            Player originalPlayer = event.getOriginal();
+            Player freshPlayer = event.getEntity();
+            if (originalPlayer.hasEffect(com.emoniph.witchery.init.WitcheryMobEffects.KEEP_INVENTORY)) {
+                freshPlayer.getInventory().replaceWith(originalPlayer.getInventory());
+            }
+            if (originalPlayer.hasEffect(com.emoniph.witchery.init.WitcheryMobEffects.KEEP_EFFECTS)) {
+                for (MobEffectInstance effect : originalPlayer.getActiveEffects()) {
+                    freshPlayer.addEffect(new MobEffectInstance(effect));
+                }
+            }
+        }
         WitcheryPlayerData original = WitcheryAttachments.get(event.getOriginal());
         WitcheryPlayerData fresh = WitcheryAttachments.get(event.getEntity());
         fresh.copyFrom(original, !event.isWasDeath());
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onKeepInventoryDrops(LivingDropsEvent event) {
+        if (event.getEntity() instanceof Player player
+                && player.hasEffect(com.emoniph.witchery.init.WitcheryMobEffects.KEEP_INVENTORY)) {
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent
@@ -203,6 +224,14 @@ public class WitcheryPlayerEvents {
                 TormentHelper.abandonSession(player);
             }
             syncToClient(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void resetDoubleJumpOnGround(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
+        if (!player.level().isClientSide() && player.onGround()) {
+            player.getPersistentData().remove(com.emoniph.witchery.network.DoubleJumpPayload.USED_JUMPS_TAG);
         }
     }
 

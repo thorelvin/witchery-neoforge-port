@@ -48,4 +48,11 @@ public class CombustionBrewItem extends Item implements IItemExtension {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         return Math.max(0, Math.min(BURN_TIMES.length - 1, tag.getIntOr(TAG_LEVEL, 0)));
     }
+
+    public static ItemStack create(int level) {
+        ItemStack stack = new ItemStack(com.emoniph.witchery.init.WitcheryItems.COMBUSTION_BREW.get());
+        CustomData.update(DataComponents.CUSTOM_DATA, stack,
+                tag -> tag.putInt(TAG_LEVEL, Math.clamp(level, 0, BURN_TIMES.length - 1)));
+        return stack;
+    }
 }

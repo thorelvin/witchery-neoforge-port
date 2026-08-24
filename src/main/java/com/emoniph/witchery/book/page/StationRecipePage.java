@@ -37,7 +37,7 @@ public class StationRecipePage extends BookPage {
     public static final Identifier TYPE = Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "station_recipe");
 
     /** One item placed at (x,y) pixels relative to the background's top-left. */
-    public record Slot(ItemStack stack, int x, int y) {}
+    public record Slot(ItemStack stack, int x, int y, boolean optional) {}
 
     /**
      * One chalk circle of a ritual's ring setup: {@code color} is the chalk family
@@ -158,7 +158,8 @@ public class StationRecipePage extends BookPage {
             Item item = BuiltInRegistries.ITEM.getOptional(
                     Identifier.parse(GsonHelper.getAsString(s, "item"))).orElse(Items.AIR);
             int count = GsonHelper.getAsInt(s, "count", 1);
-            slots.add(new Slot(new ItemStack(item, count), GsonHelper.getAsInt(s, "x"), GsonHelper.getAsInt(s, "y")));
+            slots.add(new Slot(new ItemStack(item, count), GsonHelper.getAsInt(s, "x"),
+                    GsonHelper.getAsInt(s, "y"), GsonHelper.getAsBoolean(s, "optional", false)));
         }
         List<Ring> rings = new ArrayList<>();
         if (json.has("rings")) {
@@ -189,7 +190,7 @@ public class StationRecipePage extends BookPage {
         List<Slot> slots = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
-            slots.add(new Slot(stack, buffer.readVarInt(), buffer.readVarInt()));
+            slots.add(new Slot(stack, buffer.readVarInt(), buffer.readVarInt(), buffer.readBoolean()));
         }
         int ringCount = buffer.readVarInt();
         List<Ring> rings = new ArrayList<>();
@@ -225,6 +226,7 @@ public class StationRecipePage extends BookPage {
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, slot.stack());
             buffer.writeVarInt(slot.x());
             buffer.writeVarInt(slot.y());
+            buffer.writeBoolean(slot.optional());
         }
         buffer.writeVarInt(this.rings.size());
         for (Ring ring : this.rings) {

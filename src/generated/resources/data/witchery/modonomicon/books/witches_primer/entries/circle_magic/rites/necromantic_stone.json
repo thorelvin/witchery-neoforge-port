@@ -1,0 +1,86 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:attuned_stone"
+  },
+  "name": "Necromantic Stone",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Creates a Necromantic Stone. Perform at night.[#]() [#](53341a)**Required offerings:** **Attuned Stone**, **Bone**, **Rotten Flesh**, **Wood Ash**, **Iron Sword**, **Spectral Dust**.[#]() [#](53341a)**Conditions:** Night.[#]()",
+      "title": "Necromantic Stone",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "small"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone",
+          "x": 32,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "minecraft:bone",
+          "x": 50,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "minecraft:rotten_flesh",
+          "x": 68,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:wood_ash",
+          "x": 32,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:iron_sword",
+          "x": 50,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "witchery:spectral_dust",
+          "x": 68,
+          "y": 87
+        }
+      ],
+      "source_id": 32,
+      "text": "[#](53341a)**7x7** - **Ritual** chalk - **1000** altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 23,
+  "x": 0,
+  "y": 0
+}

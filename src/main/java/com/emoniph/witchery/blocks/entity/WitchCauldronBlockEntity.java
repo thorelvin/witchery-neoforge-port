@@ -38,15 +38,19 @@ import java.util.List;
  */
 public class WitchCauldronBlockEntity extends BlockEntity {
 
+    public static final String STATION_OFFERING_TAG = "WitcheryCauldronStationOffering";
+
     private static final String KEY_BREW = "Brew";
     private static final String KEY_COLOR = "Color";
     private static final String KEY_WARNING = "Warning";
     private static final String KEY_RITUAL_TARGET = "RitualTarget";
+    private static final String KEY_FLUID_UNITS = "FluidUnits";
     private static final int STIR_INTERVAL = 6;
 
     private final List<Item> ingredients = new ArrayList<>();
     private int color;
     private ItemStack ritualTarget = ItemStack.EMPTY;
+    private int fluidUnits = -1;
     @Nullable
     private BrewWarningText warningText;
 
@@ -137,6 +141,28 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         return color;
     }
 
+    public int getFluidUnits(int visibleFillLevel) {
+        return fluidUnits >= 0 ? fluidUnits : Math.clamp(visibleFillLevel, 0, WitchCauldronBlock.MAX_FILL_LEVEL) * 1000;
+    }
+
+    public void setFluidUnits(int amount) {
+        fluidUnits = Math.clamp(amount, 0, com.emoniph.witchery.brewing.BrewingYield.FULL_CAULDRON_UNITS);
+        sync();
+    }
+
+    public int drainFluidUnits(int amount, int visibleFillLevel) {
+        fluidUnits = Math.max(0, getFluidUnits(visibleFillLevel) - Math.max(0, amount));
+        sync();
+        return fluidUnits;
+    }
+
+    public int adjustFluidUnits(int change, int visibleFillLevel) {
+        fluidUnits = Math.clamp(getFluidUnits(visibleFillLevel) + change, 0,
+                com.emoniph.witchery.brewing.BrewingYield.FULL_CAULDRON_UNITS);
+        sync();
+        return fluidUnits;
+    }
+
     @Override
     protected void saveAdditional(ValueOutput tag) {
         super.saveAdditional(tag);
@@ -150,6 +176,9 @@ public class WitchCauldronBlockEntity extends BlockEntity {
             tag.store(KEY_RITUAL_TARGET, ItemStack.CODEC, ritualTarget);
         }
         tag.putInt(KEY_COLOR, color);
+        if (fluidUnits >= 0) {
+            tag.putInt(KEY_FLUID_UNITS, fluidUnits);
+        }
     }
 
     @Override
@@ -160,6 +189,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         warningText = tag.read(KEY_WARNING, BrewWarningText.CODEC).orElse(null);
         ritualTarget = tag.read(KEY_RITUAL_TARGET, ItemStack.CODEC).orElse(ItemStack.EMPTY);
         color = tag.getIntOr(KEY_COLOR, ingredients.isEmpty() ? 0 : Brews.color(ingredients));
+        fluidUnits = tag.getIntOr(KEY_FLUID_UNITS, -1);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, WitchCauldronBlockEntity be) {
@@ -178,6 +208,9 @@ public class WitchCauldronBlockEntity extends BlockEntity {
                 pos.getX() + 0.875, pos.getY() + 1.0, pos.getZ() + 0.875);
         for (ItemEntity entity : serverLevel.getEntitiesOfClass(ItemEntity.class, bowl)) {
             if (!entity.isAlive()) {
+                continue;
+            }
+            if (entity.getPersistentData().getBooleanOr(STATION_OFFERING_TAG, false)) {
                 continue;
             }
             ItemStack itemStack = entity.getItem();

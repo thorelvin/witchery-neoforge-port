@@ -330,6 +330,21 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 ### Custom Brews And Rituals
 
+- On a fresh player, bottle one full composed-brew cauldron and confirm one
+  bottle drains all 3,000 units. Train with qualifying capacity 2/4/6/8 brews,
+  then combine skill with Witch's Hat/Baba Yaga's Hat, Witches'/Necromancer
+  Robes, Brewing Expertise, and an active Owl. Confirm deterministic full-pot
+  yields can reach 1/2/3/4/5/6/8/10/15/30 and Diamond capacity lowers the result
+  by two tiers. Partial bottle drains must survive save/reload.
+- Retest the source station routes with ordinary right-click staging and the
+  final trigger last: Egg-last Mutandis, Mutandis/Extremis transformations,
+  four Endless Water grades, four Combustion grades, all five raw-meat cooking
+  paths, Witch's Hand recycling, and the blank Player Compass recipe. Sneak-use
+  the overlapping ingredients and confirm they enter a composed brew instead.
+- The automated `witchery:custom_brew_environmental_actions` dedicated-server
+  fixture covers timed water/lava restoration, web placement, and poisonous
+  toad expiry. Keep live QA focused on visuals, sound, unusual combinations,
+  multiplayer, and controls rather than re-proving those structural contracts.
 - Throw a non-empty brew directly from Leonard's Urn and confirm the ordinary
   arcing trajectory remains. Fire that same Urn slot through a Mystic Branch
   focus glyph and confirm a fast, straight, zero-drop flight that expires after
@@ -649,10 +664,11 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 - Confirm the Primer's chapter unlock path still teaches stations in a workable
   order.
-- Open Circle Magic rite recipe cards in the held Primer and placed Primer.
-  Confirm ring diagrams, two-row offering layouts, coven faces, and captions fit
-  for Beastial Call, Manifestation, Nature's Power, and a small two-item rite
-  such as Sanctity.
+- Held Primer: the generated Rites of Protection family and its optional Bound
+  Waystone card passed live-client fit/render QA on 2026-08-24, including the
+  gold optional frame. Still open the same cards in a placed Primer and sample
+  Beastial Call, Manifestation, Nature's Power, and Sanctity for dense-layout
+  and coven-face coverage.
 - Draw a few ritual/otherwhere/infernal chalk marks and reroll one existing
   same-family mark; each successful draw should use the old chalk-scratch sound
   rather than a sand placement cue.

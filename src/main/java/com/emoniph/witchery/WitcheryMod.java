@@ -76,7 +76,9 @@ public class WitcheryMod {
         com.emoniph.witchery.entity.GoblinBossGameTests.register(modEventBus);
         com.emoniph.witchery.entity.HobgoblinEcologyGameTests.register(modEventBus);
         com.emoniph.witchery.brewing.IceWorldGameTests.register(modEventBus);
+        com.emoniph.witchery.brewing.CustomBrewGameTests.register(modEventBus);
         com.emoniph.witchery.item.InfernalOwnershipGameTests.register(modEventBus);
+        com.emoniph.witchery.ritual.RitualOfferingGameTests.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, WitcheryConfig.SPEC);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerPayloads);
@@ -170,6 +172,10 @@ public class WitcheryMod {
                         BroomControlPayload.TYPE,
                         BroomControlPayload.STREAM_CODEC,
                         BroomControlPayload::handleOnServer)
+                .playToServer(
+                        com.emoniph.witchery.network.DoubleJumpPayload.TYPE,
+                        com.emoniph.witchery.network.DoubleJumpPayload.STREAM_CODEC,
+                        com.emoniph.witchery.network.DoubleJumpPayload::handleOnServer)
                 .playToServer(
                         PlacedModonomiconPageTurnPayload.TYPE,
                         PlacedModonomiconPageTurnPayload.STREAM_CODEC,

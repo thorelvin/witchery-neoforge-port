@@ -37,6 +37,17 @@
       "condition": {
         "type": "modonomicon:none"
       },
+      "show_title_separator": false,
+      "text": "[#](53341a)Chalk-circle rites are catalogued separately in the Witches' Primer under **Circle Magic & Rites**, with every exact offering and ring.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
       "show_title_separator": true,
       "text": "[#](53341a)Misfortune is tested only after a powered ritual succeeds. Casting without a complete small or medium ritual circle adds risk; Infernal circles and the Shade of Leonard add further risk. Backfire may bring Slowness, Paralysis, Insanity, or lightning.[#]()",
       "title": "Risk",

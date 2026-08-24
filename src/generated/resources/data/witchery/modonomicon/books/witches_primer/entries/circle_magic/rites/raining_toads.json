@@ -1,0 +1,87 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:attuned_stone_charged"
+  },
+  "name": "Curse of Raining Toads",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Rain poisonous toads. Coven of 1 or more.[#]() [#](53341a)**Required offerings:** **Attuned Stone (Charged)**, **Redstone Soup**, **Reek of Misfortune**, **Toe of Frog**, **Water Bucket**, **Belladonna Flower**.[#]() [#](53341a)**Coven required:** 1.[#]()",
+      "title": "Curse of Raining Toads",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "coven_faces": 1,
+      "rings": [
+        {
+          "color": "red",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone_charged",
+          "x": 32,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:redstone_soup",
+          "x": 50,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:reek_of_misfortune",
+          "x": 68,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:toe_of_frog",
+          "x": 32,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:water_bucket",
+          "x": 50,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "witchery:belladonna",
+          "x": 68,
+          "y": 87
+        }
+      ],
+      "source_id": 66,
+      "text": "[#](53341a)**11x11** - **Infernal** chalk - no initial altar power - **Coven: 1**[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 46,
+  "x": 0,
+  "y": 0
+}

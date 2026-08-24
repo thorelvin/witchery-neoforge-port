@@ -1,0 +1,98 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:brew_of_sprouting"
+  },
+  "name": "Rite of Nature's Power",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Release nature on a barren area.[#]() [#](53341a)**Required offerings:** **Brew of Sprouting**, **Rowan Sapling**, **Alder Sapling**, **Hawthorn Sapling**, **Oak Sapling**, **Spruce Sapling**, **Birch Sapling**, **Attuned Stone (Charged)**.[#]()",
+      "title": "Rite of Nature's Power",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "white",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:brew_of_sprouting",
+          "x": 23,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:rowan_sapling",
+          "x": 41,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:alder_sapling",
+          "x": 59,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:hawthorn_sapling",
+          "x": 77,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "minecraft:oak_sapling",
+          "x": 23,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:spruce_sapling",
+          "x": 41,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:birch_sapling",
+          "x": 59,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone_charged",
+          "x": 77,
+          "y": 87
+        }
+      ],
+      "source_id": 43,
+      "text": "[#](53341a)**11x11** - **Ritual** chalk - no initial altar power[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 31,
+  "x": 0,
+  "y": 0
+}

@@ -1,0 +1,93 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "minecraft:spider_eye"
+  },
+  "name": "Rite of Shifting Seasons",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Pick Biome with biome foci and glowstone. Coven of 4 or more.[#]() [#](53341a)**Required offerings:** **Spider Eye**, **Toe of Frog**, **Wool of Bat**, **Tongue of Dog**, **Owlet's Wing**, **Attuned Stone**, **Attuned Stone (Charged)**.[#]() [#](53341a)**Coven required:** 4.[#]()",
+      "title": "Rite of Shifting Seasons",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "coven_faces": 4,
+      "rings": [
+        {
+          "color": "white",
+          "size": "large"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:spider_eye",
+          "x": 23,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:toe_of_frog",
+          "x": 41,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:bat_wool",
+          "x": 59,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:tongue_of_dog",
+          "x": 77,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:owlets_wing",
+          "x": 32,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone",
+          "x": 50,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone_charged",
+          "x": 68,
+          "y": 87
+        }
+      ],
+      "source_id": 64,
+      "text": "[#](53341a)**15x15** - **Ritual** chalk - no initial altar power - **Coven: 4**[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 44,
+  "x": 0,
+  "y": 0
+}

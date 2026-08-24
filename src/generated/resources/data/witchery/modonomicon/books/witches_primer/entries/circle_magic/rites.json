@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Some rites also need creatures present — part of the mechanism, not ceremony.[#]() [#](53341a)Experimentation is encouraged. The craft does not document all of its own workings.[#]()",
+      "text": "[#](53341a)Some rites also need creatures present — part of the mechanism, not ceremony.[#]() [#](53341a)The complete compendium follows. Search it by a rite, result, condition, or offering; every working is recorded with its exact circles and costs.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -38,19 +38,8 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)**Infusion** (small) grants a lasting magical nature. **Charging** (small+medium, Attuned Stone) uses glowstone, redstone, wood ash, and quicklime. **Familiar Binding** (small) binds a tamed animal. **Forest** (large, any sapling) grows a grove.[#]()",
-      "title": "A Selection",
-      "use_markdown_in_title": false
-    },
-    {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)**Waystone Binding** and **Transposition** anchor and move you.[#]()",
-      "title": " ",
+      "text": "[#](53341a)Each family groups workings that share a purpose. Every variant still has its own card: circle layers show chalk and size, witch faces show the minimum coven, and live items show the offerings. A **gold frame** marks an optional focus.[#]()",
+      "title": "Reading the Cards",
       "use_markdown_in_title": false
     }
   ],

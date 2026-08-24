@@ -3,15 +3,19 @@ package com.emoniph.witchery.ritual;
 import com.emoniph.witchery.blocks.entity.GrassperBlockEntity;
 import com.emoniph.witchery.entity.familiar.OwlFamiliarEntity;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.item.SpectralStoneItem;
 import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.LivingEntity;
@@ -64,10 +68,12 @@ final class RitualOfferings {
     static final RitualRecipe PROTECTION_BARRIER_MONSTERS_RECIPE = RitualRecipe.named("obsidian_barrier_monsters")
             .require("Obsidian", RitualOfferings::isObsidianStack)
             .require("Redstone", stack -> stack.is(Items.REDSTONE))
+            .optional("Bound Waystone", WaystoneItem::isAnyBoundWaystone)
             .build();
     static final RitualRecipe PROTECTION_BARRIER_LARGE_RECIPE = RitualRecipe.named("protection")
             .require("Obsidian", RitualOfferings::isObsidianStack)
             .require("Glowstone Dust", stack -> stack.is(Items.GLOWSTONE_DUST))
+            .optional("Bound Waystone", WaystoneItem::isAnyBoundWaystone)
             .build();
     static final RitualRecipe PROTECTION_BARRIER_PORTABLE_RECIPE = RitualRecipe.named("obsidian_barrier_portable")
             .require("Obsidian", RitualOfferings::isObsidianStack)
@@ -82,10 +88,12 @@ final class RitualOfferings {
     static final RitualRecipe STORM_BASE_RECIPE = RitualRecipe.named("storm_base")
             .require("Wooden Sword", stack -> stack.is(Items.WOODEN_SWORD))
             .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
+            .optional("Bound Waystone", WaystoneItem::isAnyBoundWaystone)
             .build();
     static final RitualRecipe STORM_LARGE_RECIPE = RitualRecipe.named("storm_large")
             .require("Stone Sword", stack -> stack.is(Items.STONE_SWORD))
             .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
+            .optional("Bound Waystone", WaystoneItem::isAnyBoundWaystone)
             .build();
     static final RitualRecipe STORM_PORTABLE_RECIPE = RitualRecipe.named("storm_portable")
             .require("Iron Sword", stack -> stack.is(Items.IRON_SWORD))
@@ -340,6 +348,7 @@ final class RitualOfferings {
             .require("Cobblestone", stack -> stack.is(Blocks.COBBLESTONE.asItem()))
             .require("Magma Cream", stack -> stack.is(Items.MAGMA_CREAM))
             .require("Golden Sword", stack -> stack.is(Items.GOLDEN_SWORD))
+            .optional("Bound Waystone", WaystoneItem::isAnyBoundWaystone)
             .build();
     static final RitualRecipe CURE_WAKING_NIGHTMARE_RECIPE = RitualRecipe.named("cure_waking_nightmare")
             .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
@@ -362,15 +371,231 @@ final class RitualOfferings {
                     .require("Icy Needle", stack -> stack.is(WitcheryItems.ICY_NEEDLE.get()))
                     .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
                     .build();
+    static final RitualRecipe BIND_STATUE_TO_PLAYER_RECIPE = RitualRecipe.named("bind_statue_to_player")
+            .require("Statue of Hobgoblin Patron", stack -> stack.is(WitcheryItems.STATUE_HOBGOBLIN_PATRON.get()))
+            .require("Belladonna", stack -> stack.is(WitcheryItems.BELLADONNA.get()))
+            .require("Poppy", stack -> stack.is(Items.POPPY))
+            .require("Dandelion", stack -> stack.is(Items.DANDELION))
+            .build();
+    static final RitualRecipe CURSE_OF_THE_WOLF_RECIPE = RitualRecipe.named("curse_of_the_wolf")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Exhale of the Horned One", stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()))
+            .require("Hellhound Head", stack -> stack.is(WitcheryItems.HELLHOUND_HEAD.get()))
+            .require("Wolfsbane", stack -> stack.is(WitcheryItems.WOLFSBANE_FLOWER.get()))
+            .require("Diamond", stack -> stack.is(Items.DIAMOND))
+            .require("Brew of the Grotesque", WitcheryItems::isBrewOfTheGrotesque)
+            .build();
+    static final RitualRecipe CURE_WOLF_RECIPE = RitualRecipe.named("cure_wolf")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Breath of the Goddess", stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()))
+            .require("Silver Sword", stack -> stack.is(WitcheryItems.SILVER_SWORD.get()))
+            .require("Wolfsbane", stack -> stack.is(WitcheryItems.WOLFSBANE_FLOWER.get()))
+            .require("Diamond", stack -> stack.is(Items.DIAMOND))
+            .require("Brew of Love", WitcheryItems::isBrewOfLove)
+            .build();
+    static final RitualRecipe INFUSION_MIRROR_RECIPE = RitualRecipe.named("infusion_mirror")
+            .require("Brew of Hollow Tears", stack -> stack.is(WitcheryItems.BREW_OF_HOLLOW_TEARS.get()))
+            .require("Gold Ingot", stack -> stack.is(Items.GOLD_INGOT))
+            .require("Glass Pane", stack -> stack.is(Items.GLASS_PANE))
+            .build();
+    static final RitualRecipe SUMMON_REFLECTION_RECIPE = RitualRecipe.named("summon_reflection")
+            .require("Mirror", stack -> stack.is(WitcheryItems.MIRROR.get()))
+            .require("Ender Dew", stack -> stack.is(WitcheryItems.ENDER_DEW.get()))
+            .require("Blaze Powder", stack -> stack.is(Items.BLAZE_POWDER))
+            .require("Quartz Sphere", stack -> stack.is(WitcheryItems.QUARTZ_SPHERE.get()))
+            .build();
+    static final RitualRecipe INFUSION_RECHARGE_RECIPE = RitualRecipe.named("infusion_recharge")
+            .require("Potion of Regeneration", RitualOfferings::isRegenerationPotion)
+            .build();
+    static final RitualRecipe TRANSPOSITION_ENTITY_RECIPE = RitualRecipe.named("transposition_entity")
+            .require("Blank Waystone", WaystoneItem::isBlankWaystone)
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Ender Dew", stack -> stack.is(WitcheryItems.ENDER_DEW.get()))
+            .require("Iron Axe", stack -> stack.is(Items.IRON_AXE))
+            .build();
+    static final RitualRecipe TRANSPOSE_ORES_RECIPE = RitualRecipe.named("transpose_ores")
+            .require("Ender Pearl", stack -> stack.is(Items.ENDER_PEARL))
+            .require("Iron Ingot", stack -> stack.is(Items.IRON_INGOT))
+            .require("Blaze Powder", stack -> stack.is(Items.BLAZE_POWDER))
+            .require("Diamond Vapour", stack -> stack.is(WitcheryItems.DIAMOND_VAPOUR.get()))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
+    static final RitualRecipe BROKEN_EARTH_RECIPE = RitualRecipe.named("broken_earth")
+            .require("Brew of Erosion", stack -> stack.is(WitcheryItems.BREW_OF_EROSION.get()))
+            .build();
+    static final RitualRecipe RAISE_COLUMN_SMALL_RECIPE = raiseColumnRecipe(
+            "raise_column_small", "Gunpowder", stack -> stack.is(Items.GUNPOWDER), true);
+    static final RitualRecipe RAISE_COLUMN_MEDIUM_RECIPE = raiseColumnRecipe(
+            "raise_column_medium", "Redstone", stack -> stack.is(Items.REDSTONE), false);
+    static final RitualRecipe RAISE_COLUMN_LARGE_RECIPE = raiseColumnRecipe(
+            "raise_column_large", "Glowstone Dust", stack -> stack.is(Items.GLOWSTONE_DUST), false);
+    static final RitualRecipe INFUSE_LIGHT_RECIPE = RitualRecipe.named("infuse_light")
+            .require("Ghost of the Light", stack -> stack.is(WitcheryItems.GHOST_OF_THE_LIGHT.get()))
+            .build();
+    static final RitualRecipe INFUSE_OVERWORLD_RECIPE = RitualRecipe.named("infuse_overworld")
+            .require("Soul of the World", stack -> stack.is(WitcheryItems.SOUL_OF_THE_WORLD.get()))
+            .build();
+    static final RitualRecipe INFUSE_OTHERWHERE_RECIPE = RitualRecipe.named("infuse_otherwhere")
+            .require("Spirit of Otherwhere", stack -> stack.is(WitcheryItems.SPIRIT_OF_OTHERWHERE.get()))
+            .build();
+    static final RitualRecipe INFUSE_INFERNAL_RECIPE = RitualRecipe.named("infuse_infernal")
+            .require("Infernal Animus", stack -> stack.is(WitcheryItems.INFERNAL_ANIMUS.get()))
+            .build();
+    static final RitualRecipe ENCHANT_BROOM_RECIPE = RitualRecipe.named("enchant_broom")
+            .require("Broom", stack -> stack.is(WitcheryItems.BROOM.get()))
+            .require("Flying Ointment", stack -> stack.is(WitcheryItems.FLYING_OINTMENT.get()))
+            .build();
+    static final RitualRecipe HELL_ON_EARTH_RECIPE = RitualRecipe.named("hell_on_earth")
+            .require("Redstone Soup", stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()))
+            .require("Demon Heart", stack -> stack.is(WitcheryItems.DEMON_HEART.get()))
+            .require("Blank Waystone", WaystoneItem::isBlankWaystone)
+            .require("Nether Star", stack -> stack.is(Items.NETHER_STAR))
+            .optional("Bound Waystone", WaystoneItem::isAnyBoundWaystone)
+            .build();
+    static final RitualRecipe PRIOR_INCARNATION_RECIPE = RitualRecipe.named("prior_incarnation")
+            .require("Necromantic Stone", stack -> stack.is(WitcheryItems.NECRO_STONE.get()))
+            .require("Tongue of Dog", stack -> stack.is(WitcheryItems.TONGUE_OF_DOG.get()))
+            .require("Bone", stack -> stack.is(Items.BONE))
+            .require("Spectral Dust", stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
+    static final RitualRecipe MYSTIC_BRANCH_RECIPE = RitualRecipe.named("mystic_branch")
+            .require("Ent Twig", stack -> stack.is(WitcheryItems.ENT_TWIG.get()))
+            .require("Mystic Unguent", stack -> stack.is(WitcheryItems.MYSTIC_UNGUENT.get()))
+            .build();
+    static final RitualRecipe COOK_ITEM_RECIPE = RitualRecipe.named("cook_item")
+            .require("Sugar", stack -> stack.is(Items.SUGAR))
+            .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
+            .require("Coal", stack -> stack.is(Items.COAL))
+            .build();
+    static final RitualRecipe COOK_ITEM_CHARGED_RECIPE = RitualRecipe.named("cook_item_charged")
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .require("Sugar", stack -> stack.is(Items.SUGAR))
+            .require("Wood Ash", stack -> stack.is(WitcheryItems.WOOD_ASH.get()))
+            .require("Blaze Powder", stack -> stack.is(Items.BLAZE_POWDER))
+            .build();
+    static final RitualRecipe BIND_FAMILIAR_RECIPE = RitualRecipe.named("bind_familiar")
+            .require("Tear of the Goddess", stack -> stack.is(WitcheryItems.TEAR_OF_GODDESS.get()))
+            .require("Odour of Purity", stack -> stack.is(WitcheryItems.ODOUR_OF_PURITY.get()))
+            .require("Whiff of Magic", stack -> stack.is(WitcheryItems.WHIFF_OF_MAGIC.get()))
+            .require("Diamond", stack -> stack.is(Items.DIAMOND))
+            .require("Infernal Blood", RitualOfferings::isInfernalBloodStack)
+            .build();
+    static final RitualRecipe CALL_FAMILIAR_RECIPE = RitualRecipe.named("call_familiar")
+            .require("Breath of the Goddess", stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()))
+            .require("Hint of Rebirth", stack -> stack.is(WitcheryItems.HINT_OF_REBIRTH.get()))
+            .require("Whiff of Magic", stack -> stack.is(WitcheryItems.WHIFF_OF_MAGIC.get()))
+            .build();
+    static final RitualRecipe CORRUPT_POPPET_RECIPE = RitualRecipe.named("corrupt_poppet")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Exhale of the Horned One", stack -> stack.is(WitcheryItems.EXHALE_OF_HORNED_ONE.get()))
+            .require("Voodoo Protection Poppet", stack -> stack.is(WitcheryItems.VOODOO_PROTECTION_POPPET.get()))
+            .require("Blaze Powder", stack -> stack.is(Items.BLAZE_POWDER))
+            .require("Spectral Dust", stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()))
+            .build();
+    static final RitualRecipe CLIMATE_CHANGE_RECIPE = RitualRecipe.named("climate_change")
+            .require("Spider Eye", stack -> stack.is(Items.SPIDER_EYE))
+            .require("Toe of Frog", stack -> stack.is(WitcheryItems.TOE_OF_FROG.get()))
+            .require("Bat Wool", stack -> stack.is(WitcheryItems.BAT_WOOL.get()))
+            .require("Tongue of Dog", stack -> stack.is(WitcheryItems.TONGUE_OF_DOG.get()))
+            .require("Owlet's Wing", stack -> stack.is(WitcheryItems.OWLETS_WING.get()))
+            .require("Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
+    static final RitualRecipe ICE_SHELL_RECIPE = RitualRecipe.named("ice_shell")
+            .require("Diamond Sword", stack -> stack.is(Items.DIAMOND_SWORD))
+            .require("Frozen Heart", stack -> stack.is(WitcheryItems.FROZEN_HEART.get()))
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .build();
+    static final RitualRecipe BEASTIAL_CALL_RECIPE = RitualRecipe.named("beastial_call")
+            .require("Milk Bucket", stack -> stack.is(Items.MILK_BUCKET))
+            .require("Hay Bale", stack -> stack.is(Blocks.HAY_BLOCK.asItem()))
+            .require("Apple", stack -> stack.is(Items.APPLE))
+            .require("Raw Beef", stack -> stack.is(Items.BEEF))
+            .require("Raw Cod", stack -> stack.is(Items.COD))
+            .require("Red Mushroom", stack -> stack.is(Blocks.RED_MUSHROOM.asItem()))
+            .require("Carrot", stack -> stack.is(Items.CARROT))
+            .require("Wheat Seeds", stack -> stack.is(Items.WHEAT_SEEDS))
+            .build();
+    static final RitualRecipe MANIFESTATION_DREAM_RECIPE = RitualRecipe.named("manifestation_dream")
+            .require("Spectral Dust", stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()))
+            .require("Mellifluous Hunger", stack -> stack.is(WitcheryItems.MELLIFLUOUS_HUNGER.get()))
+            .require("Necromantic Stone", stack -> stack.is(WitcheryItems.NECRO_STONE.get()))
+            .require("Golden Pickaxe", stack -> stack.is(Items.GOLDEN_PICKAXE))
+            .require("Arthana", stack -> stack.is(WitcheryItems.ARTHANA.get()))
+            .require("Gunpowder", stack -> stack.is(Items.GUNPOWDER))
+            .build();
+    static final RitualRecipe INFUSE_BREW_SOARING_RECIPE = RitualRecipe.named("infuse_brew_soaring")
+            .require("Infused Brew Base", stack -> stack.is(WitcheryItems.INFUSED_BREW_BASE.get()))
+            .require("Broom", stack -> stack.is(WitcheryItems.BROOM.get()))
+            .require("Feather", stack -> stack.is(Items.FEATHER))
+            .require("Arthana", stack -> stack.is(WitcheryItems.ARTHANA.get()))
+            .build();
+    static final RitualRecipe INFUSE_BREW_GRAVE_RECIPE = RitualRecipe.named("infuse_brew_grave")
+            .require("Infused Brew Base", stack -> stack.is(WitcheryItems.INFUSED_BREW_BASE.get()))
+            .require("Bone", stack -> stack.is(Items.BONE))
+            .require("Dense Web", stack -> stack.is(WitcheryItems.DENSE_WEB.get()))
+            .require("Necromantic Stone", stack -> stack.is(WitcheryItems.NECRO_STONE.get()))
+            .build();
+    static final RitualRecipe BIND_SPECTRAL_STONE_RECIPE = RitualRecipe.named("bind_spectral_stone")
+            .require("Unbound Spectral Stone", stack -> stack.is(WitcheryItems.SPECTRAL_STONE.get())
+                    && !SpectralStoneItem.isBound(stack))
+            .require("Spectral Dust", stack -> stack.is(WitcheryItems.SPECTRAL_DUST.get()))
+            .require("Boline", stack -> stack.is(WitcheryItems.BOLINE.get()))
+            .build();
+    static final RitualRecipe BIND_SCARECROW_RECIPE = bindFetishRecipe(
+            "bind_scarecrow", stack -> stack.is(WitcheryItems.FETISH_SCARECROW.get()));
+    static final RitualRecipe BIND_TRENT_EFFIGY_RECIPE = bindFetishRecipe(
+            "bind_trent_effigy", stack -> stack.is(WitcheryItems.FETISH_TRENT_EFFIGY.get()));
+    static final RitualRecipe BIND_WITCHS_LADDER_RECIPE = bindFetishRecipe(
+            "bind_witchs_ladder", stack -> stack.is(WitcheryItems.FETISH_WITCHS_LADDER.get()));
+    static final RitualRecipe REMOVE_VAMPIRISM_RECIPE = RitualRecipe.named("remove_vampirism")
+            .require("Filled Taglock Kit", RitualOfferings::isFilledTaglockStack)
+            .require("Breath of the Goddess", stack -> stack.is(WitcheryItems.BREATH_OF_GODDESS.get()))
+            .require("Silver Sword", stack -> stack.is(WitcheryItems.SILVER_SWORD.get()))
+            .require("Garlic", stack -> stack.is(WitcheryItems.GARLIC.get()))
+            .require("Diamond", stack -> stack.is(Items.DIAMOND))
+            .require("Brew of Love", WitcheryItems::isBrewOfLove)
+            .build();
 
     private static RitualRecipe forestationRecipe(String name, String saplingName,
-                                                  Predicate<ItemStack> saplingMatcher) {
+                                                   Predicate<ItemStack> saplingMatcher) {
         return RitualRecipe.named(name)
                 .require(saplingName, saplingMatcher)
                 .require("Wicker Bundle", stack -> stack.is(WitcheryItems.WICKER_BUNDLE.get()))
                 .require("Brew of Sprouting", WitcheryItems::isBrewOfSprouting)
                 .require("Ent Twig", stack -> stack.is(WitcheryItems.ENT_TWIG.get()))
+                .optional("Bound Waystone", WaystoneItem::isAnyBoundWaystone)
                 .build();
+    }
+
+    private static RitualRecipe raiseColumnRecipe(String name, String focusName,
+                                                  Predicate<ItemStack> focusMatcher, boolean portable) {
+        RitualRecipe.Builder builder = RitualRecipe.named(name)
+                .require("Brew of Sprouting", WitcheryItems::isBrewOfSprouting)
+                .require("Cactus", stack -> stack.is(Blocks.CACTUS.asItem()))
+                .require(focusName, focusMatcher);
+        if (portable) {
+            builder.optional("Bound Waystone", WaystoneItem::isAnyBoundWaystone);
+        }
+        return builder.build();
+    }
+
+    private static RitualRecipe bindFetishRecipe(String name, Predicate<ItemStack> fetishMatcher) {
+        return RitualRecipe.named(name)
+                .require("Fetish", fetishMatcher)
+                .require("Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE.get()))
+                .require("Necromantic Stone", stack -> stack.is(WitcheryItems.NECRO_STONE.get()))
+                .require("Boline", stack -> stack.is(WitcheryItems.BOLINE.get()))
+                .build();
+    }
+
+    private static boolean isRegenerationPotion(ItemStack stack) {
+        if (!stack.is(Items.POTION)) {
+            return false;
+        }
+        PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
+        return contents != null && contents.is(Potions.REGENERATION);
     }
 
     static Optional<ItemEntity> findNearbyOffering(Level level, BlockPos center, Predicate<ItemStack> matcher) {
@@ -395,11 +620,11 @@ final class RitualOfferings {
         return Optional.ofNullable(closest);
     }
 
-    static Optional<List<ItemEntity>> matchDroppedOfferings(Level level, BlockPos center, RitualRecipe recipe) {
+    static Optional<List<RitualOffering>> matchOfferings(Level level, BlockPos center, RitualRecipe recipe) {
         Vec3 centerPoint = Vec3.atCenterOf(center);
         double radiusSq = DEFAULT_DROPPED_OFFERING_RADIUS * DEFAULT_DROPPED_OFFERING_RADIUS;
         AABB bounds = new AABB(centerPoint, centerPoint).inflate(DEFAULT_DROPPED_OFFERING_RADIUS);
-        List<ItemEntity> candidates = new ArrayList<>();
+        List<RitualOffering> candidates = new ArrayList<>();
         for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, bounds)) {
             ItemStack stack = itemEntity.getItem();
             if (stack.isEmpty() || RitualExecutor.isPendingSacrifice(level, itemEntity)) {
@@ -409,18 +634,40 @@ final class RitualOfferings {
             if (distance >= radiusSq) {
                 continue;
             }
-            candidates.add(itemEntity);
+            candidates.add(RitualOffering.dropped(itemEntity));
         }
         candidates.sort(Comparator
-                .comparingDouble((ItemEntity item) -> item.position().distanceToSqr(centerPoint))
-                .thenComparingInt(ItemEntity::getId));
-        int[] assignment = recipe.assign(candidates.stream().map(ItemEntity::getItem).toList());
+                .comparingDouble((RitualOffering offering) -> offering.position().distanceToSqr(centerPoint))
+                .thenComparingInt(offering -> offering.itemEntity().getId()));
+
+        BlockPos grassperLevel = center.above();
+        List<RitualOffering> grassperCandidates = new ArrayList<>();
+        for (int dx = -GRASSPER_OFFERING_RADIUS; dx <= GRASSPER_OFFERING_RADIUS; dx++) {
+            for (int dz = -GRASSPER_OFFERING_RADIUS; dz <= GRASSPER_OFFERING_RADIUS; dz++) {
+                BlockPos pos = grassperLevel.offset(dx, 0, dz);
+                if (!(level.getBlockEntity(pos) instanceof GrassperBlockEntity grassper)
+                        || grassper.getItem().isEmpty()
+                        || SacrificeConsumer.isPending(level, pos)) {
+                    continue;
+                }
+                grassperCandidates.add(RitualOffering.grassper(grassper));
+            }
+        }
+        grassperCandidates.sort(Comparator
+                .comparingDouble((RitualOffering offering) -> offering.position().distanceToSqr(centerPoint))
+                .thenComparingInt(offering -> offering.blockPosition().getX())
+                .thenComparingInt(offering -> offering.blockPosition().getZ()));
+        candidates.addAll(grassperCandidates);
+
+        int[] assignment = recipe.assign(candidates.stream().map(RitualOffering::stack).toList());
         if (assignment == null) {
             return Optional.empty();
         }
-        List<ItemEntity> matched = new ArrayList<>(assignment.length);
+        List<RitualOffering> matched = new ArrayList<>(assignment.length);
         for (int candidateIndex : assignment) {
-            matched.add(candidates.get(candidateIndex));
+            if (candidateIndex >= 0) {
+                matched.add(candidates.get(candidateIndex));
+            }
         }
         return Optional.of(List.copyOf(matched));
     }
@@ -469,7 +716,7 @@ final class RitualOfferings {
                     continue;
                 }
                 ItemStack stack = grassper.getItem();
-                if (stack.isEmpty() || !matcher.test(stack)) {
+                if (stack.isEmpty() || !matcher.test(stack) || SacrificeConsumer.isPending(level, pos)) {
                     continue;
                 }
                 double distance = Vec3.atCenterOf(pos).distanceToSqr(centerPoint);
@@ -1401,7 +1648,28 @@ final class RitualOfferings {
 
         int maxDistance = 50 + 50 * covenSize;
         boolean tooFar = boundPos.get().distSqr(center) > (double) (maxDistance * maxDistance);
-        return new OptionalWaystoneRelocation(tooFar ? null : boundWaystone.get(), boundPos.get(), tooFar);
+        return new OptionalWaystoneRelocation(tooFar ? null : RitualOffering.dropped(boundWaystone.get()),
+                boundPos.get(), tooFar);
+    }
+
+    static OptionalWaystoneRelocation matchedOptionalWaystoneRelocation(Level level, BlockPos center,
+                                                                        int covenSize,
+                                                                        List<RitualOffering> offerings) {
+        for (RitualOffering offering : offerings) {
+            ItemStack stack = offering.stack();
+            if (!WaystoneItem.isAnyBoundWaystone(stack)) {
+                continue;
+            }
+            Optional<ResourceKey<Level>> boundDim = WaystoneItem.getBoundDim(stack);
+            Optional<BlockPos> boundPos = WaystoneItem.getBoundPos(stack);
+            if (boundDim.isEmpty() || boundPos.isEmpty() || !boundDim.get().equals(level.dimension())) {
+                return new OptionalWaystoneRelocation(null, center, false);
+            }
+            int maxDistance = 50 + 50 * covenSize;
+            boolean tooFar = boundPos.get().distSqr(center) > (double) maxDistance * maxDistance;
+            return new OptionalWaystoneRelocation(tooFar ? null : offering, boundPos.get(), tooFar);
+        }
+        return new OptionalWaystoneRelocation(null, center, false);
     }
 
     static Optional<StormOfferings> findStormOfferings(Level level, BlockPos center, StormRiteVariant variant, int covenSize) {

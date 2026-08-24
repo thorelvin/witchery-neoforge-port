@@ -3,6 +3,7 @@
   "resource_contract_tests": [
     "com.emoniph.witchery.book.CauldronBookParityTest",
     "com.emoniph.witchery.book.PlacedModonomiconGeneratedBookTest",
+    "com.emoniph.witchery.book.RitualCompendiumParityTest",
     "com.emoniph.witchery.resources.LegacyHeldItemResourceTest",
     "com.emoniph.witchery.resources.ObservationsBookParityTest",
     "com.emoniph.witchery.resources.WitchCauldronModelTest",
@@ -60,6 +61,16 @@
     },
     {
       "id": "witchery:ice_world_area_conversion",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:custom_brew_environmental_actions",
+      "lane": "ci",
+      "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:ritual_offering_sources",
       "lane": "ci",
       "timeout_seconds": 120
     },

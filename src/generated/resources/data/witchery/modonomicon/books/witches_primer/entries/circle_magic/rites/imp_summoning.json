@@ -1,0 +1,75 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:refined_evil"
+  },
+  "name": "Imp Summoning",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Call forth an Imp. The inner area must be clear 7x7x4 blocks![#]() [#](53341a)**Required offerings:** **Refined Evil**, **Demonic Blood**, **Ender Pearl**, **Attuned Stone**.[#]() [#](53341a)**Coven required:** 1.[#]()",
+      "title": "Imp Summoning",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "coven_faces": 1,
+      "rings": [
+        {
+          "color": "red",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:refined_evil",
+          "x": 23,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:infernal_blood",
+          "x": 41,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "minecraft:ender_pearl",
+          "x": 59,
+          "y": 76
+        },
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone",
+          "x": 77,
+          "y": 76
+        }
+      ],
+      "source_id": 87,
+      "text": "[#](53341a)**11x11** - **Infernal** chalk - **5000** altar power - **Coven: 1**[#]()",
+      "title": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 55,
+  "x": 0,
+  "y": 0
+}

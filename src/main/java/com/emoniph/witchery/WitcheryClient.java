@@ -27,6 +27,7 @@ import com.emoniph.witchery.client.renderer.LilithRenderer;
 import com.emoniph.witchery.client.renderer.NightmareRenderer;
 import com.emoniph.witchery.client.renderer.SpiritRenderer;
 import com.emoniph.witchery.client.color.BrewBagTint;
+import com.emoniph.witchery.effect.ColorfulMobEffect;
 import com.emoniph.witchery.client.screen.DistilleryScreen;
 import com.emoniph.witchery.client.screen.ObservationsScreen;
 import com.emoniph.witchery.client.screen.SpinningWheelScreen;
@@ -442,6 +443,9 @@ public class WitcheryClient {
                                     effectActive, fixedAuraActive)
                                     ? new GrotesqueLayer.OverlayStatus(effectActive, fixedAuraActive)
                                     : null);
+                    var colorful = entity.getEffect(WitcheryMobEffects.COLORFUL);
+                    state.setRenderData(ColorfulLayer.TINT,
+                            colorful == null ? null : ColorfulMobEffect.sourceTint(colorful.getAmplifier()));
                 });
     }
 
@@ -457,12 +461,26 @@ public class WitcheryClient {
                 ar.addLayer(new VampireArmorChainLayer(ar, event.getContext()));
                 addBarkBeltLayer(ar, event.getContext());
                 addGrotesqueLayer(ar, event.getContext());
+                addColorfulLayer(ar);
             }
         }
         for (net.minecraft.world.entity.EntityType<?> entityType : event.getEntityTypes()) {
             addBarkBeltLayer(event.getRenderer(entityType), event.getContext());
             addGrotesqueLayer(event.getRenderer(entityType), event.getContext());
+            addColorfulLayer(event.getRenderer(entityType));
         }
+    }
+
+    private static void addColorfulLayer(net.minecraft.client.renderer.entity.EntityRenderer<?, ?> renderer) {
+        if (renderer instanceof net.minecraft.client.renderer.entity.LivingEntityRenderer<?, ?, ?> livingRenderer) {
+            addColorfulLayerUnchecked(livingRenderer);
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void addColorfulLayerUnchecked(
+            net.minecraft.client.renderer.entity.LivingEntityRenderer renderer) {
+        renderer.addLayer(new ColorfulLayer(renderer));
     }
 
     private static void addBarkBeltLayer(

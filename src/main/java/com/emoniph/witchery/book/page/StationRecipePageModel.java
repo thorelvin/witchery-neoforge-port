@@ -16,7 +16,7 @@ import java.util.List;
 /** Datagen model that emits a {@link StationRecipePage} ({@code witchery:station_recipe}) JSON. */
 public class StationRecipePageModel extends BookPageModel<StationRecipePageModel> {
 
-    private record SlotModel(Identifier item, int count, int x, int y) {}
+    private record SlotModel(Identifier item, int count, int x, int y, boolean optional) {}
     private record RingModel(String color, String size) {}
 
     private BookTextHolderModel title = new BookTextHolderModel("");
@@ -30,6 +30,7 @@ public class StationRecipePageModel extends BookPageModel<StationRecipePageModel
     private final List<SlotModel> slots = new ArrayList<>();
     private final List<RingModel> rings = new ArrayList<>();
     private int covenFaces = 0;
+    private int sourceId = 0;
 
     protected StationRecipePageModel() {
         super(StationRecipePage.TYPE);
@@ -72,7 +73,16 @@ public class StationRecipePageModel extends BookPageModel<StationRecipePageModel
     }
 
     public StationRecipePageModel withSlot(ItemLike item, int count, int x, int y) {
-        this.slots.add(new SlotModel(BuiltInRegistries.ITEM.getKey(item.asItem()), count, x, y));
+        return this.withSlot(item, count, x, y, false);
+    }
+
+    /** Adds an offering whose gold frame marks it as optional in ritual cards. */
+    public StationRecipePageModel withOptionalSlot(ItemLike item, int count, int x, int y) {
+        return this.withSlot(item, count, x, y, true);
+    }
+
+    private StationRecipePageModel withSlot(ItemLike item, int count, int x, int y, boolean optional) {
+        this.slots.add(new SlotModel(BuiltInRegistries.ITEM.getKey(item.asItem()), count, x, y, optional));
         return this;
     }
 
@@ -85,6 +95,12 @@ public class StationRecipePageModel extends BookPageModel<StationRecipePageModel
     /** Number of coven witches the rite requires; rendered as that many witch faces (0 = none). */
     public StationRecipePageModel withCovenFaces(int count) {
         this.covenFaces = count;
+        return this;
+    }
+
+    /** Original Witchery registration ID, retained in generated JSON for parity auditing. */
+    public StationRecipePageModel withSourceId(int sourceId) {
+        this.sourceId = sourceId;
         return this;
     }
 
@@ -112,6 +128,9 @@ public class StationRecipePageModel extends BookPageModel<StationRecipePageModel
             s.addProperty("count", slot.count());
             s.addProperty("x", slot.x());
             s.addProperty("y", slot.y());
+            if (slot.optional()) {
+                s.addProperty("optional", true);
+            }
             slotArray.add(s);
         }
         json.add("slots", slotArray);
@@ -127,6 +146,9 @@ public class StationRecipePageModel extends BookPageModel<StationRecipePageModel
         }
         if (this.covenFaces > 0) {
             json.addProperty("coven_faces", this.covenFaces);
+        }
+        if (this.sourceId > 0) {
+            json.addProperty("source_id", this.sourceId);
         }
         return json;
     }

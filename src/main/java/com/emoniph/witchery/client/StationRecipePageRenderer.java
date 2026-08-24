@@ -35,6 +35,7 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
     private static final int INK_SOFT = 0x9953341A;
     private static final int BUBBLE = 0xCC6F5438;
     private static final int BUBBLE_LIGHT = 0xAAA9875A;
+    private static final int OPTIONAL_FRAME = 0xFFC6922E;
     private static final Identifier FURNACE_FLAME = Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "book/furnace_flame");
 
     // Ritual ring diagram: centered old glyph art, baked from the same footprints used by RitualCircleDetector.
@@ -98,6 +99,9 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
             int itemX = bgX + Math.round(slot.x() * scale);
             int itemY = panelTop + Math.round(slot.y() * scale);
             this.parentScreen.renderItemStack(graphics, itemX, itemY, mouseX, mouseY, slot.stack());
+            if (slot.optional()) {
+                renderOptionalFrame(graphics, itemX, itemY);
+            }
         }
 
         // Auto-fit the caption into the space left below the visible panel content: the height-bounded overload shrinks
@@ -123,6 +127,13 @@ public class StationRecipePageRenderer extends BookPageRenderer<StationRecipePag
             bottom = Math.max(bottom, Math.round((FACE_ROW_Y + FACE_SIZE) * scale));
         }
         return bottom == 0 ? drawnH : bottom;
+    }
+
+    private static void renderOptionalFrame(GuiGraphics graphics, int x, int y) {
+        graphics.fill(x - 1, y - 1, x + 17, y, OPTIONAL_FRAME);
+        graphics.fill(x - 1, y + 16, x + 17, y + 17, OPTIONAL_FRAME);
+        graphics.fill(x - 1, y, x, y + 16, OPTIONAL_FRAME);
+        graphics.fill(x + 16, y, x + 17, y + 16, OPTIONAL_FRAME);
     }
 
     /**

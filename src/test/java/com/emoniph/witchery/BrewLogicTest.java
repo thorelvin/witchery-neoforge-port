@@ -1775,10 +1775,10 @@ class BrewLogicTest {
                         Items.SPIDER_EYE)),
                 "Lapis Lazuli opens source lifetime tier 2");
         assertEquals(3, Brews.impactLifetime(level2(WitcheryItems.BELLADONNA.get(), Items.LAPIS_LAZULI,
-                        Items.HAY_BLOCK, Items.SPIDER_EYE)),
-                "Hay Block opens source lifetime tier 3");
+                        Items.END_STONE, Items.SPIDER_EYE)),
+                "End Stone opens source lifetime tier 3");
         assertEquals(400, Brews.powerCost(List.of(WitcheryItems.BELLADONNA.get(), Items.LAPIS_LAZULI,
-                        Items.HAY_BLOCK, Items.SUGAR)),
+                        Items.END_STONE, Items.SUGAR)),
                 "lifetime tiers count source altar costs alongside the potion effect");
     }
 
@@ -1812,22 +1812,22 @@ class BrewLogicTest {
                         Items.LAPIS_LAZULI, Items.SUGAR)),
                 "Lapis Lazuli scales legacy cloud duration by the source tier-2 decay ratio");
         assertEquals(6000, Brews.gasCloudDurationTicks(level2(WitcheryItems.BELLADONNA.get(),
-                        Items.LAPIS_LAZULI, Items.HAY_BLOCK, Items.SUGAR)),
-                "Hay Block scales legacy cloud duration by the source tier-3 decay ratio");
+                        Items.LAPIS_LAZULI, Items.END_STONE, Items.SUGAR)),
+                "End Stone scales legacy cloud duration by the source tier-3 decay ratio");
         assertEquals(-0.001F, Brews.gasCloudRadiusPerTick(3000), 0.000001F,
                 "longer fallback clouds shrink over their full configured lifetime");
     }
 
     @Test
-    void ironOreRestoresSourceGasMaskEffect() {
+    void gravelRestoresSourceGasMaskEffect() {
         Brews.bootstrap();
-        List<Item> brew = level2(Items.IRON_ORE);
+        List<Item> brew = level2(Items.GRAVEL);
 
         List<MobEffectInstance> fx = Brews.buildEffects(brew);
         assertEquals(1, fx.size());
         assertSame(WitcheryMobEffects.GAS_MASK.value(), fx.get(0).getEffect().value());
         assertEquals(1800, fx.get(0).getDuration(), "source Gas Mask lasts 90 seconds");
-        assertEquals(150, Brews.powerCost(brew), "Nether Wart capacity plus Iron Ore's source cost");
+        assertEquals(150, Brews.powerCost(brew), "Nether Wart capacity plus Gravel's source cost");
     }
 
     @Test
