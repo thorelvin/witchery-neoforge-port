@@ -1,0 +1,206 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "brewing",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "minecraft:glowstone_dust"
+  },
+  "name": "Modifiers",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Modifiers are read from left to right through the ingredient chain. Strength and duration climb only to the ceiling shown beside their reagent.[#]()",
+      "title": "Modifiers",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Inversion changes the next compatible effect or action; colour and drinking speed shape the finished vessel.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:white_wool",
+          "text": "[#](53341a)**White Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:orange_wool",
+          "text": "[#](53341a)**Orange Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:magenta_wool",
+          "text": "[#](53341a)**Magenta Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:light_blue_wool",
+          "text": "[#](53341a)**Light Blue Wool** - sets bottle colour.[#]()"
+        }
+      ],
+      "text": "[#](53341a)These shape the next effect or action, then reset after that working is recorded.[#]()",
+      "title": "Power & Duration"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:yellow_wool",
+          "text": "[#](53341a)**Yellow Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:lime_wool",
+          "text": "[#](53341a)**Lime Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:pink_wool",
+          "text": "[#](53341a)**Pink Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:gray_wool",
+          "text": "[#](53341a)**Gray Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:light_gray_wool",
+          "text": "[#](53341a)**Light Gray Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:cyan_wool",
+          "text": "[#](53341a)**Cyan Wool** - sets bottle colour.[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Power & Duration (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:purple_wool",
+          "text": "[#](53341a)**Purple Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:blue_wool",
+          "text": "[#](53341a)**Blue Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:brown_wool",
+          "text": "[#](53341a)**Brown Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:green_wool",
+          "text": "[#](53341a)**Green Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:red_wool",
+          "text": "[#](53341a)**Red Wool** - sets bottle colour.[#]()"
+        },
+        {
+          "item": "minecraft:black_wool",
+          "text": "[#](53341a)**Black Wool** - sets bottle colour.[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Power & Duration (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:glowstone_dust",
+          "text": "[#](53341a)**Glowstone Dust** - strength tier 1 (50 power).[#]()"
+        },
+        {
+          "item": "minecraft:blaze_rod",
+          "text": "[#](53341a)**Blaze Rod** - strength tier 2 (100 power).[#]()"
+        },
+        {
+          "item": "witchery:attuned_stone_charged",
+          "text": "[#](53341a)**Charged Attuned Stone** - strength tier 3 (150 power).[#]()"
+        },
+        {
+          "item": "minecraft:redstone",
+          "text": "[#](53341a)**Redstone** - duration tier 1 (50 power).[#]()"
+        },
+        {
+          "item": "minecraft:obsidian",
+          "text": "[#](53341a)**Obsidian** - duration tier 2 (100 power).[#]()"
+        },
+        {
+          "item": "witchery:mindrakebulb",
+          "text": "[#](53341a)**Minedrake Bulb** - duration tier 3 (150 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Power & Duration (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:fermented_spider_eye",
+          "text": "[#](53341a)**Fermented Spider Eye** - inverts the next effect or action (25 power).[#]()"
+        },
+        {
+          "item": "witchery:rowan_berries",
+          "text": "[#](53341a)**Rowan Berries** - faster drinking (50 power).[#]()"
+        },
+        {
+          "item": "witchery:exhale_of_horned_one",
+          "text": "[#](53341a)**Exhale of the Horned One** - faster drinking (sneak-stir).[#]()"
+        },
+        {
+          "item": "witchery:spanish_moss",
+          "text": "[#](53341a)**Spanish Moss** - faster drinking (50 power).[#]()"
+        },
+        {
+          "item": "minecraft:gold_nugget",
+          "text": "[#](53341a)**Gold Nugget** - hides potion particles (50 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:tropical_fish",
+          "text": "[#](53341a)**Tropical Fish** - removes the strength ceiling (200 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Power & Duration (cont.)"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 4,
+  "x": 0,
+  "y": 4
+}

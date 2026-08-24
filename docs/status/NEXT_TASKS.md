@@ -91,7 +91,7 @@ Six implementation lanes - work one bounded slice at a time per lane:
 
 6. **AI NPCs / multiplayer safety** - keep the local persona layer grounded in server facts, add more high-value cards where fallbacks still carry too much weight, test ordinary play conversations, and verify protection/claim adapters in actual server packs before treating the feature as release-ready.
 
-7. **Runtime test maintenance / release gates** - complete as of 2026-08-24. CI validates the exact manifest, runs 14 named resource contracts, executes 23 exact GameTests on a clean dedicated server with custom dimensions, and proves all six automation-certified machine inventories plus command storage survive save/reload. Keep new registered tests synchronized with `tools/runtime_test_manifest.json`; preserve forced Hearth crash/recovery, real-client presentation, and claim-adapter checks in the documented manual lane.
+7. **Runtime test maintenance / release gates** - complete as of 2026-08-24. CI validates the exact manifest, runs 15 named resource contracts, executes 23 exact GameTests on a clean dedicated server with custom dimensions, and proves all six automation-certified machine inventories plus command storage survive save/reload. Keep new registered tests synchronized with `tools/runtime_test_manifest.json`; preserve forced Hearth crash/recovery, real-client presentation, and claim-adapter checks in the documented manual lane.
 
 Small machine/storage QA fixes run in parallel when clearly bounded. Pull from the QA queue below before broader backlog work unless a new blocker appears.
 

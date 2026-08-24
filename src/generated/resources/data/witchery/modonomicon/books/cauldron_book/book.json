@@ -37,7 +37,7 @@
     "texture_width": 256
   },
   "model": "modonomicon:modonomicon_purple",
-  "name": "Cauldron Book",
+  "name": "Witches' Brews",
   "page_display_mode": "double_page",
   "read_all_button_y_offset": 0,
   "right_frame_overlay": {

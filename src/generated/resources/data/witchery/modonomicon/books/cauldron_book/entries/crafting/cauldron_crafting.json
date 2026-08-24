@@ -1,0 +1,388 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "crafting",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:mutandis"
+  },
+  "name": "Cauldron Crafting",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)For these workings, drop the loose offerings into a heated cauldron with water, then use the final trigger item on the vessel. The result rises from the bowl. Powered recipes require a valid altar within eight blocks and consume one water level.[#]()",
+      "title": "Old Craftings",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:egg",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:exhale_of_horned_one",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 6,
+          "item": "witchery:mutandis",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use Exhale of the Horned One last.[#]()",
+      "title": "Mutandis"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 35,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:mutandis",
+          "x": 51,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:mutandis_extremis",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use Mutandis last.[#]()",
+      "title": "Mutandis Extremis"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:refined_evil",
+          "x": 35,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:mutandis_extremis",
+          "x": 51,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:drop_of_luck",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use Mutandis Extremis last; costs 6,930 power.[#]()",
+      "title": "Drop of Luck"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:ent_twig",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:mutandis_extremis",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:mutator",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use Mutandis Extremis last; costs 3,080 power.[#]()",
+      "title": "Mutating Sprig"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:ender_pearl",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:chalk",
+          "x": 43,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:chalk_otherwhere",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use white Chalk last; costs 4,410 power.[#]()",
+      "title": "Otherwhere Chalk"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:blaze_powder",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:chalk",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:chalk_infernal",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use white Chalk last; costs 3,150 power.[#]()",
+      "title": "Infernal Chalk"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:gold_nugget",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:chalk",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:chalk_golden",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use white Chalk last; costs 2,870 power.[#]()",
+      "title": "Golden Chalk"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:dirt",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tormented_twine",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 4,
+          "item": "witchery:pit_dirt",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use Tormented Twine last; costs 4,000 power and yields four traps.[#]()",
+      "title": "Dirt Pit Trap"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:dirt",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:wheat_seeds",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:dandelion",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tormented_twine",
+          "x": 43,
+          "y": 18
+        },
+        {
+          "count": 4,
+          "item": "witchery:pit_grass",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Use Tormented Twine last; costs 4,000 power and yields four traps.[#]()",
+      "title": "Grass Pit Trap"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

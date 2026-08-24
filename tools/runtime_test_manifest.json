@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "resource_contract_tests": [
+    "com.emoniph.witchery.book.CauldronBookParityTest",
     "com.emoniph.witchery.book.PlacedModonomiconGeneratedBookTest",
     "com.emoniph.witchery.resources.LegacyHeldItemResourceTest",
     "com.emoniph.witchery.resources.ObservationsBookParityTest",

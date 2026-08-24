@@ -1,0 +1,39 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "effects",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:cauldron_book"
+  },
+  "name": "Reading the Old Index",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)The source book grouped effects under capacity levels I, II, IV, V, VI, VIII, and XII. The modern edition separates **Potion Reagents** from **World Actions** and prints each accepted ingredient directly from the live brew registry.[#]()",
+      "title": "Reading the Old Index",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)A row's **level** is the capacity it consumes; **power** is charged by the altar. Inverted names show what Fermented Spider Eye can turn that reagent into. If an old effect has no live row, it is not an accepted recipe in this build.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

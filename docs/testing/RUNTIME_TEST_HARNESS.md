@@ -37,9 +37,9 @@ python tools/runtime_test_harness.py all
 
 - `validate` checks manifest schema, duplicate entries, resource-test source
   classes, and exact equality between registered GameTest IDs and the manifest.
-- `resource-contracts` runs the 13 explicitly listed structural/resource JVM
+- `resource-contracts` runs the 15 explicitly listed structural/resource JVM
   tests. A broad Gradle summary cannot silently substitute another test set.
-- `game-tests` starts one clean normal-difficulty dedicated world and runs all 22
+- `game-tests` starts one clean normal-difficulty dedicated world and runs all 23
   CI-lane GameTests sequentially by exact ID. Each command must report exactly
   one completion and the required-tests-passed marker.
 - `save-reload` starts a clean server, places and mutates a Kettle, Witches'

@@ -1,0 +1,207 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "effects",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "minecraft:spider_eye"
+  },
+  "name": "Potion Reagents",
+  "pages": [
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:spider_eye",
+          "text": "[#](53341a)**Spider Eye** - Poison (level 2).[#]()"
+        },
+        {
+          "item": "minecraft:magma_cream",
+          "text": "[#](53341a)**Magma Cream** - Fire Resistance (level 2, 100 power).[#]()"
+        },
+        {
+          "item": "minecraft:sugar",
+          "text": "[#](53341a)**Sugar** - Speed / inverted: Slowness (level 2, 100 power).[#]()"
+        },
+        {
+          "item": "minecraft:ghast_tear",
+          "text": "[#](53341a)**Ghast Tear** - Regeneration / inverted: Poison (level 2, 200 power).[#]()"
+        }
+      ],
+      "text": "[#](53341a)These ingredients become the brew's potion effect when enough capacity is available.[#]()",
+      "title": "Potion Reagents"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:leather",
+          "text": "[#](53341a)**Leather** - Jump Boost (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:sugar_cane",
+          "text": "[#](53341a)**Sugar Cane** - Floating (level 2, 250 power).[#]()"
+        },
+        {
+          "item": "minecraft:pufferfish",
+          "text": "[#](53341a)**Pufferfish** - Water Breathing (level 2, 100 power).[#]()"
+        },
+        {
+          "item": "minecraft:golden_carrot",
+          "text": "[#](53341a)**Golden Carrot** - Night Vision / inverted: Invisibility (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:glistering_melon_slice",
+          "text": "[#](53341a)**Glistering Melon Slice** - Instant Health / inverted: Instant Damage (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:wither_skeleton_skull",
+          "text": "[#](53341a)**Wither Skeleton Skull** - Wither (level 4, 200 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:golden_apple",
+          "text": "[#](53341a)**Golden Apple** - Absorption (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:enchanted_golden_apple",
+          "text": "[#](53341a)**Enchanted Golden Apple** - Health Boost (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:ink_sac",
+          "text": "[#](53341a)**Ink Sac** - Blindness (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "witchery:infernal_blood",
+          "text": "[#](53341a)**Infernal Blood** - Grotesque (level 2, 500 power).[#]()"
+        },
+        {
+          "item": "witchery:ender_dew",
+          "text": "[#](53341a)**Ender Dew** - Ender Inhibition (level 1, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:wheat",
+          "text": "[#](53341a)**Wheat** - Moonshine (level 1).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:wolfsbane_flower",
+          "text": "[#](53341a)**Wolfsbane Flower** - Wolfsbane (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:snowball",
+          "text": "[#](53341a)**Snowball** - Snow Trail (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:cod",
+          "text": "[#](53341a)**Cod** - Swimming (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:clay_ball",
+          "text": "[#](53341a)**Clay Ball** - Fortune (level 6, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:salmon",
+          "text": "[#](53341a)**Salmon** - Sun Allergy (level 6, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:rotten_flesh",
+          "text": "[#](53341a)**Rotten Flesh** - Diseased (level 4, 2000 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:demon_heart",
+          "text": "[#](53341a)**Demon Heart** - Paralysed (level 4, 750 power).[#]()"
+        },
+        {
+          "item": "witchery:icy_needle",
+          "text": "[#](53341a)**Icy Needle** - Chilled (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:blaze_powder",
+          "text": "[#](53341a)**Blaze Powder** - Strength / inverted: Weakness (level 2, 200 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:feather",
+          "text": "[#](53341a)**Feather** - Feather Fall (level 2, 100 power).[#]()"
+        },
+        {
+          "item": "witchery:bramble",
+          "text": "[#](53341a)**Bramble** - Repell Attacker (level 2, 250 power).[#]()"
+        },
+        {
+          "item": "minecraft:iron_ore",
+          "text": "[#](53341a)**Iron Ore** - Gas Mask (level 2, 100 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:red_mushroom",
+          "text": "[#](53341a)**Red Mushroom** - Poison Weapons (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:cobweb",
+          "text": "[#](53341a)**Cobweb** - Reflect Projectiles / inverted: Attract Projectiles (level 2, 250 power).[#]()"
+        },
+        {
+          "item": "witchery:foul_fume",
+          "text": "[#](53341a)**Foul Fume** - Stout Belly (level 4, 1000 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Potion Reagents (cont.)"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 1
+}

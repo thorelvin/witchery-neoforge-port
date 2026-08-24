@@ -57,7 +57,7 @@ enough to read before starting work. Long historical deltas belong in
 ## Recent High-Signal Changes
 
 - The deterministic runtime harness and CI gates are complete. An explicit
-  manifest locks 14 resource-contract classes, 23 exact CI GameTests, and one
+  manifest locks 15 resource-contract classes, 23 exact CI GameTests, and one
   manual forced-restart fixture. Clean normal-difficulty dedicated servers now
   run every named test with all Witchery dimensions loaded, require unambiguous
   per-test success, preserve logs/JSON summaries, and verify Kettle, Witches'

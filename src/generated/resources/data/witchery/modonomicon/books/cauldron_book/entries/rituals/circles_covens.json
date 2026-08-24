@@ -1,0 +1,50 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "rituals",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:chalk"
+  },
+  "name": "Circles & Covens",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A complete small or medium ritual circle removes the risk carried by casting with no circle. Infernal circles are more dangerous. Keep the altar structure valid before release; a failed delivery validation leaves the brew in the cauldron.[#]()",
+      "title": "Circles & Covens",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Nearby coven witches raise the ritual's permitted strength and extend target reach.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The source examples of raised land and extended blindness are now compositions: choose the world action or effect reagent, open its capacity, then add ritual delivery and release it from the cauldron.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 2,
+  "x": 0,
+  "y": 2
+}

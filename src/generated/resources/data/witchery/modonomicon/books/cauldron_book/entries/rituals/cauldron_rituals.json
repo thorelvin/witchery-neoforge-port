@@ -1,0 +1,61 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "rituals",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:tongue_of_dog"
+  },
+  "name": "Casting from the Cauldron",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Begin with a **brim-full**, heated cauldron and a finished effect or world action. Sneak-use **Tongue of Dog** on the vessel to release the brew without bottling it. A valid altar within eight blocks must pay the full ritual power cost.[#]()",
+      "title": "Casting from the Cauldron",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Delivery is checked before power is spent. A ritual that lacks a valid target, cannot place its gas or liquid, or conflicts with its dispersal remains in the bowl so you can correct the working.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Misfortune is tested only after a powered ritual succeeds. Casting without a complete small or medium ritual circle adds risk; Infernal circles and the Shade of Leonard add further risk. Backfire may bring Slowness, Paralysis, Insanity, or lightning.[#]()",
+      "title": "Risk",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)A successful release empties the cauldron. Protective Hunter clothing, Area Markers, and Voodoo Protection Poppets may still intercept hostile target workings.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

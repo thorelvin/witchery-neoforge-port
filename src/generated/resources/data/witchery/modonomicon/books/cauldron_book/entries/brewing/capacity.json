@@ -1,0 +1,67 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "brewing",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "minecraft:nether_wart"
+  },
+  "name": "Capacity",
+  "pages": [
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:mandrake_root",
+          "text": "[#](53341a)**Mandrake Root** - capacity +1 up to 1 (sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:nether_wart",
+          "text": "[#](53341a)**Nether Wart** - capacity +2 up to 2 (50 power, drop or sneak-stir).[#]()"
+        },
+        {
+          "item": "witchery:tear_of_goddess",
+          "text": "[#](53341a)**Tear of the Goddess** - capacity +2 up to 4 (100 power, drop or sneak-stir).[#]()"
+        },
+        {
+          "item": "witchery:diamond_vapour",
+          "text": "[#](53341a)**Diamond Vapour** - capacity +2 up to 6 (150 power).[#]()"
+        }
+      ],
+      "text": "[#](53341a)Capacity ingredients widen the brew before an effect or action can fit. The cauldron also holds no more than eight physical ingredients in one batch.[#]()",
+      "title": "Capacity"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:diamond",
+          "text": "[#](53341a)**Diamond** - capacity +2 up to 8 (150 power).[#]()"
+        },
+        {
+          "item": "minecraft:nether_star",
+          "text": "[#](53341a)**Nether Star** - capacity +4 up to 10 (150 power).[#]()"
+        },
+        {
+          "item": "witchery:pentacle",
+          "text": "[#](53341a)**Pentacle** - capacity +6 up to 16 (1000 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Capacity (cont.)"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 3,
+  "x": 0,
+  "y": 3
+}

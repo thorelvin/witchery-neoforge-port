@@ -1,0 +1,180 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "effects",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:witches_salt"
+  },
+  "name": "World Actions",
+  "pages": [
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:coal",
+          "text": "[#](53341a)**Coal** - Extinguish (level 1, sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:stone",
+          "text": "[#](53341a)**Stone** - Dissipate (level 1, sneak-stir).[#]()"
+        },
+        {
+          "item": "witchery:witches_salt",
+          "text": "[#](53341a)**Witches' Salt** - Drought (level 4, 500 power).[#]()"
+        },
+        {
+          "item": "minecraft:dandelion",
+          "text": "[#](53341a)**Dandelion** - Grow Flowers (level 1, 200 power, sneak-stir).[#]()"
+        }
+      ],
+      "text": "[#](53341a)These ingredients perform an old craft action instead of applying a normal potion effect.[#]()",
+      "title": "Craft Actions"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:bone_meal",
+          "text": "[#](53341a)**Bone Meal** - Fertilization (level 1, 250 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:string",
+          "text": "[#](53341a)**String** - Felling (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:lily_pad",
+          "text": "[#](53341a)**Lily Pad** - Lilify (level 1, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:dead_bush",
+          "text": "[#](53341a)**Dead Bush** - Blight (level 4, 2000 power).[#]()"
+        },
+        {
+          "item": "minecraft:quartz",
+          "text": "[#](53341a)**Quartz** - Raise Land (level 4, 2000 power).[#]()"
+        },
+        {
+          "item": "witchery:ent_twig",
+          "text": "[#](53341a)**Ent Twig** - Sprouting (level 2, 350 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Craft Actions (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "minecraft:wheat_seeds",
+          "text": "[#](53341a)**Wheat Seeds** - Planting (level 1).[#]()"
+        },
+        {
+          "item": "minecraft:ender_pearl",
+          "text": "[#](53341a)**Ender Pearl** - Transposition (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:bone",
+          "text": "[#](53341a)**Bone** - Raising (level 4, 2000 power).[#]()"
+        },
+        {
+          "item": "minecraft:creeper_head",
+          "text": "[#](53341a)**Creeper Head** - Spread Affliction (level 8, 2000 power).[#]()"
+        },
+        {
+          "item": "minecraft:ender_eye",
+          "text": "[#](53341a)**Ender Eye** - Iceworld (level 5, 2000 power).[#]()"
+        },
+        {
+          "item": "witchery:golden_heart",
+          "text": "[#](53341a)**Golden Heart** - Animal Attraction / inverted: Animal Repulsion (level 4, 500 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Craft Actions (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:reek_of_misfortune",
+          "text": "[#](53341a)**Reek of Misfortune** - Cure Buffs (level 2, 250 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "witchery:purified_milk",
+          "text": "[#](53341a)**Purified Milk** - Cure Debuffs (level 2, 200 power, sneak-stir).[#]()"
+        },
+        {
+          "item": "minecraft:pumpkin",
+          "text": "[#](53341a)**Pumpkin** - Undeadbane (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "minecraft:blue_orchid",
+          "text": "[#](53341a)**Blue Orchid** - Insectbane (level 2, 200 power).[#]()"
+        },
+        {
+          "item": "witchery:garlic",
+          "text": "[#](53341a)**Garlic** - Weaken Vampires (level 4, 500 power).[#]()"
+        },
+        {
+          "item": "minecraft:ice",
+          "text": "[#](53341a)**Ice** - Demonbane (level 5, 500 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Craft Actions (cont.)"
+    },
+    {
+      "type": "witchery:item_reference",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rows": [
+        {
+          "item": "witchery:silver_deposits",
+          "text": "[#](53341a)**Silver Deposits** - Harm Werewolves (level 4, 1000 power).[#]()"
+        },
+        {
+          "item": "minecraft:skeleton_skull",
+          "text": "[#](53341a)**Skeleton Skull** - Steal Buffs (level 6, 100 power).[#]()"
+        },
+        {
+          "item": "witchery:creeper_heart",
+          "text": "[#](53341a)**Creeper Heart** - Potion Longevity (level 6, 5000 power).[#]()"
+        },
+        {
+          "item": "witchery:breath_of_goddess",
+          "text": "[#](53341a)**Breath of the Goddess** - Air Hike (level 2, 750 power).[#]()"
+        },
+        {
+          "item": "minecraft:slime_ball",
+          "text": "[#](53341a)**Slime Ball** - Frog's Tongue (level 2, 150 power).[#]()"
+        }
+      ],
+      "text": "",
+      "title": "Craft Actions (cont.)"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 2,
+  "x": 0,
+  "y": 2
+}

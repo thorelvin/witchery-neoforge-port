@@ -1,0 +1,217 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "brewing",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:brew_bottle"
+  },
+  "name": "Making a Brew",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A brew is an ordered chain of no more than **eight physical ingredients**. Drop ordinary reagents into the hot bowl one at a time. Each accepted item is consumed and the water takes its colour.[#]()",
+      "title": "Making a Brew",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Some dual-purpose ingredients must be **sneak-stirred** by using them directly on the cauldron. This keeps them from being swallowed while the cauldron is waiting for an old crafting recipe. The reference pages mark every such ingredient.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Capacity must be opened before an effect or world action can fit. Strength, duration, inversion, particle, and target modifiers shape the **next** accepted effect or action, then their temporary state resets.[#]() [#](53341a)A rejected ingredient remains yours.[#]()",
+      "title": "Order Matters",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)If the bowl refuses an effect, add enough capacity first; if it refuses everything, the eight-item batch is already full or a final ritual target has closed the recipe.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:witches_salt",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:gunpowder",
+          "x": 35,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:glass_bottle",
+          "x": 51,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:splash_brew_bottle",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Stir Nether Wart, Tear of the Goddess, Witches' Salt, then Gunpowder. Bottle it to dry water source blocks near impact.[#]()",
+      "title": "Brew: Drought Splash"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:witches_salt",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:wormwood",
+          "x": 35,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:bucket",
+          "x": 51,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:brew_bucket",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Swap Gunpowder for Wormwood, then scoop with a bucket. The moving brew eats water source blocks it touches.[#]()",
+      "title": "Brew: Drought Bucket"
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/bg_cauldron.png",
+      "bg_height": 60,
+      "bg_width": 112,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:mandrake_root",
+          "x": 27,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:nether_wart",
+          "x": 43,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "witchery:tear_of_goddess",
+          "x": 59,
+          "y": 2
+        },
+        {
+          "count": 1,
+          "item": "minecraft:ender_eye",
+          "x": 27,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:gunpowder",
+          "x": 43,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "minecraft:glass_bottle",
+          "x": 59,
+          "y": 18
+        },
+        {
+          "count": 1,
+          "item": "witchery:splash_brew_bottle",
+          "x": 89,
+          "y": 33
+        }
+      ],
+      "text": "[#](53341a)Open level-five capacity, stir an Ender Eye, then add Gunpowder. The impact remakes nearby terrain as snow and ice; Extent ingredients widen the frozen sphere.[#]()",
+      "title": "Brew: Ice World Splash"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 1
+}

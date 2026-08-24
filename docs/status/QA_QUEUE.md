@@ -15,6 +15,13 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 ## Active Focus
 
+### Witches' Brews Modonomicon
+
+- Open `witchery:cauldron_book` and confirm it opens the dedicated **Witches' Brews** Modonomicon book at **Brewing > The Witch's Cauldron**, not the Primer.
+- Browse all four category indexes at GUI scale 2 and 3. Confirm entry names/icons fit, every station recipe grid remains inside the page, item-reference rows show tooltips, and back/search/page-turn controls remain usable.
+- Check representative long entries: **Cauldron Crafting**, **Modifiers**, **Dispersal**, **Potion Reagents**, and **World Actions**. No text or icon row should cross the page edge, and continuation pages should keep their headings.
+- Brew one listed Drought Splash and one listed cauldron crafting recipe directly from the pages; the displayed order, result count, altar cost, and required sneak-stir/final-use gesture should match the live cauldron.
+
 ### AI NPC Runtime
 
 - Set an invalid local LLM provider or endpoint, talk to a nearby AI NPC, then

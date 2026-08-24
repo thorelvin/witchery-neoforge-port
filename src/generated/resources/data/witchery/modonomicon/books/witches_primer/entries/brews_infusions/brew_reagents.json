@@ -206,7 +206,7 @@
           "y": 33
         }
       ],
-      "text": "[#](53341a)Open level-five capacity, stir an Ender Eye, then add Gunpowder. The impact remakes nearby terrain and wooden fixtures as Snow, Packed Ice, and the Perpetual Ice family; Extent ingredients widen the frozen sphere.[#]()",
+      "text": "[#](53341a)Open level-five capacity, stir an Ender Eye, then add Gunpowder. The impact remakes nearby terrain as snow and ice; Extent ingredients widen the frozen sphere.[#]()",
       "title": "Brew: Ice World Splash"
     },
     {
@@ -277,7 +277,7 @@
           "text": "[#](53341a)**Diamond Vapour** - capacity +2 up to 6 (150 power).[#]()"
         }
       ],
-      "text": "[#](53341a)Capacity ingredients widen the brew before an effect or action can fit.[#]()",
+      "text": "[#](53341a)Capacity ingredients widen the brew before an effect or action can fit. The cauldron also holds no more than eight physical ingredients in one batch.[#]()",
       "title": "Capacity"
     },
     {
@@ -444,7 +444,7 @@
       "rows": [
         {
           "item": "minecraft:fermented_spider_eye",
-          "text": "[#](53341a)**Fermented Spider Eye** - inverts the next effect (25 power).[#]()"
+          "text": "[#](53341a)**Fermented Spider Eye** - inverts the next effect or action (25 power).[#]()"
         },
         {
           "item": "witchery:rowan_berries",
@@ -491,10 +491,10 @@
         },
         {
           "item": "witchery:belladonna",
-          "text": "[#](53341a)**Belladonna** - gas/liquid lifetime tier 1 (50 power).[#]()"
+          "text": "[#](53341a)**Belladonna** - gas or liquid lifetime tier 1 (50 power).[#]()"
         }
       ],
-      "text": "[#](53341a)These alter where the brew may act, how wide it reaches, or how long moving gas/liquid persists.[#]()",
+      "text": "[#](53341a)These alter where the brew may act, how wide it reaches, or how long moving gas and liquid persist.[#]()",
       "title": "Reach & Targets"
     },
     {
@@ -506,11 +506,11 @@
       "rows": [
         {
           "item": "minecraft:lapis_lazuli",
-          "text": "[#](53341a)**Lapis Lazuli** - gas/liquid lifetime tier 2 (100 power).[#]()"
+          "text": "[#](53341a)**Lapis Lazuli** - gas or liquid lifetime tier 2 (100 power).[#]()"
         },
         {
           "item": "minecraft:hay_block",
-          "text": "[#](53341a)**Hay Block** - gas/liquid lifetime tier 3 (150 power).[#]()"
+          "text": "[#](53341a)**Hay Block** - gas or liquid lifetime tier 3 (150 power).[#]()"
         },
         {
           "item": "minecraft:nether_brick",
@@ -537,7 +537,7 @@
         },
         {
           "item": "witchery:artichoke",
-          "text": "[#](53341a)**Artichoke** - source instant/splash dispersal.[#]()"
+          "text": "[#](53341a)**Artichoke** - source instant or splash dispersal.[#]()"
         },
         {
           "item": "witchery:bat_wool",
@@ -548,7 +548,7 @@
           "text": "[#](53341a)**Dragon's Breath** - moving gas dispersal.[#]()"
         }
       ],
-      "text": "[#](53341a)Dispersal ingredients choose how the finished brew leaves its bottle or cauldron.[#]()",
+      "text": "[#](53341a)Dispersal ingredients choose how the finished brew leaves its bottle or cauldron. A triggered curse overrides splash, gas, and liquid delivery.[#]()",
       "title": "Dispersal"
     },
     {
@@ -797,7 +797,7 @@
         }
       ],
       "text": "[#](53341a)These ingredients perform an old craft action instead of applying a normal potion effect.[#]()",
-      "title": "Action Reagents"
+      "title": "Craft Actions"
     },
     {
       "type": "witchery:item_reference",
@@ -832,7 +832,7 @@
         }
       ],
       "text": "",
-      "title": "Action Reagents (cont.)"
+      "title": "Craft Actions (cont.)"
     },
     {
       "type": "witchery:item_reference",
@@ -867,7 +867,7 @@
         }
       ],
       "text": "",
-      "title": "Action Reagents (cont.)"
+      "title": "Craft Actions (cont.)"
     },
     {
       "type": "witchery:item_reference",
@@ -902,7 +902,7 @@
         }
       ],
       "text": "",
-      "title": "Action Reagents (cont.)"
+      "title": "Craft Actions (cont.)"
     },
     {
       "type": "witchery:item_reference",
@@ -933,7 +933,7 @@
         }
       ],
       "text": "",
-      "title": "Action Reagents (cont.)"
+      "title": "Craft Actions (cont.)"
     }
   ],
   "show_when_any_parent_unlocked": false,

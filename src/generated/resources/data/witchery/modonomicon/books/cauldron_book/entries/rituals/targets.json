@@ -1,0 +1,83 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "rituals",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:waystone"
+  },
+  "name": "Waystones & Taglocks",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A brim-full heated cauldron may release a finished brew when you sneak-use **Tongue of Dog**. For a living target, add that player or creature's **filled Taglock Kit last**.[#]()",
+      "title": "Ritual Targets",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The Taglock adds 1,000 altar power, works without a splash ingredient, and prevents bottling or further stirring. Tongue of Dog then serves only as the release gesture.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Distance grows with a nearby coven; six coven witches remove the same-world limit, while cross-dimensional targeting also requires the Shade of Leonard.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Full Hunter clothes, a protecting Area Marker, or a bound Voodoo Protection Poppet may absorb the working after its power is spent.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A **filled Taglock Kit** placed last names a living target and closes the ingredient chain. Location workings use the appropriate bound Waystone offering near the cauldron. Keep target items out of the recipe until the brew itself is finished.[#]()",
+      "title": "Places and People",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Coven reach is finite at first. A full six-witch coven removes the same-world distance limit; crossing dimensions additionally requires the Shade of Leonard.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 1
+}

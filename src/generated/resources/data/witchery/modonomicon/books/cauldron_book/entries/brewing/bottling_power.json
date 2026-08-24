@@ -1,0 +1,61 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "brewing",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "minecraft:glass_bottle"
+  },
+  "name": "Bottling & Power",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Use a **Glass Bottle** on a heated composed brew. Each bottle takes one of the cauldron's three water levels, so a brim-full batch yields three bottles. The ingredient chain remains seasoned in the vessel until the last water level is drawn.[#]()",
+      "title": "Bottling",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Use an empty **Bucket** instead to take the whole batch as one moving Brew Bucket. That empties and clears the cauldron immediately.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Every ingredient may add a power cost. Bottling charges that cost **for each bottle**; taking a Brew Bucket charges it once for the whole batch. A valid altar within eight blocks must hold enough power before either vessel can be filled.[#]()",
+      "title": "Altar Power",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)A brew finished with a ritual release ingredient or a living Taglock target cannot be bottled. Complete that working with Tongue of Dog instead.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 2,
+  "x": 0,
+  "y": 2
+}

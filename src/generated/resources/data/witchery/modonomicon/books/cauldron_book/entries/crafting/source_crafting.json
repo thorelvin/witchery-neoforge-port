@@ -1,0 +1,63 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "crafting",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:player_compass"
+  },
+  "name": "The Older Index",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)The old book also indexed cauldron cooking, Nether Wart, End Stone, Rotten Flesh, and a Player Compass. Those old transmutations are **not accepted by the present cauldron**.[#]()",
+      "title": "The Older Index",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)They remain part of the source record, but this guide will not pretend an unavailable working can be performed.[#]() [#](53341a)The Player Compass has a modern crafting recipe and can also be bound with a filled player Taglock Kit.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Chalk, Mutandis, Mutandis Extremis, Drop of Luck, and the Mutating Sprig also keep ordinary recipe bridges for accessibility.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:player_compass"
+      },
+      "text": "[#](53341a)Craft the blank compass, then bind it directly to a player or combine it with that player's filled Taglock Kit.[#]()",
+      "title": "Player Compass"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 1
+}
