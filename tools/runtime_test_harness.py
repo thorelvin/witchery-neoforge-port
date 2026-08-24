@@ -26,6 +26,8 @@ RUNTIME_ROOT = (ROOT / "build" / "runtime-test").resolve()
 GAME_TEST_SOURCE_ROOT = ROOT / "src" / "main" / "java"
 TEST_SOURCE_ROOT = ROOT / "src" / "test" / "java"
 GAME_TEST_REGISTRATION = re.compile(r'TEST_FUNCTIONS\.register\(\s*"([^"]+)"', re.MULTILINE)
+RCON_PROBE_TIMEOUT_SECONDS = 10.0
+RCON_COMMAND_TIMEOUT_SECONDS = 60.0
 STARTUP_FAILURES = (
     "Failed to start the minecraft server",
     "Exception in server tick loop",
@@ -369,7 +371,7 @@ class ServerProcess:
         last_error: Exception | None = None
         while time.monotonic() < deadline:
             try:
-                response = self.command("list")
+                response = self.command("list", RCON_PROBE_TIMEOUT_SECONDS)
                 if "player" in response.lower():
                     return
             except (OSError, HarnessError) as exc:
@@ -377,8 +379,8 @@ class ServerProcess:
             time.sleep(0.5)
         raise HarnessError(f"RCON did not become ready: {last_error}")
 
-    def command(self, command: str) -> str:
-        return rcon_command(self.rcon_port, self.password, command)
+    def command(self, command: str, timeout: float = RCON_COMMAND_TIMEOUT_SECONDS) -> str:
+        return rcon_command(self.rcon_port, self.password, command, timeout)
 
     def line_count(self) -> int:
         with self.condition:
