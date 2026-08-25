@@ -1,0 +1,86 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "creatures",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:flying_monkey_spawn_egg"
+  },
+  "name": "Flying Monkeys",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A wild Flying Monkey is made by the living mutation described under the Mutating Sprig: a Wolf and Owl beneath the cocoa-ringed web and its prepared Grasspers.[#]()",
+      "title": "Flying Monkeys",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Tempt it with Raw Beef or Raw Porkchop until it accepts you; either meat also heals a hurt companion, and dyes colour its feathers.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:entity",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "default_rotation": 180.0,
+      "entity_id": "witchery:flying_monkey",
+      "name": "The Flying Monkey",
+      "offset": -0.2,
+      "rotate": false,
+      "scale": 0.8,
+      "text": "[#](53341a)A fierce little flyer that follows its owner, fights in their defence, breeds when fed, and settles on the ground or in the trees between journeys.[#]()"
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Use a filled **Taglock Kit** on your tamed Flying Monkey. The kit is consumed; the monkey flies to that exact living creature or player, carries them beneath it, and returns to the place where you gave the order. A traveller may sneak to drop free.[#]()",
+      "title": "Courier Orders",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Use a **Bound Waystone** or **Blooded Waystone** instead to travel yourself. The waystone is reusable. Same-world journeys are flown; a trail that crosses worlds uses the stone's magic after a safe landing is found.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Sneak-use the monkey with an empty hand to cancel an active order.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 5,
+  "x": 0,
+  "y": 0
+}

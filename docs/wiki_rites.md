@@ -271,10 +271,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Requires a sizable pool of lava underground. No specific timing or power cost mentioned. Does not have restrictions for vampires or werewolves.
 
 ## Rite of Fertility
-- **Circle:** Large
-- **Ingredients:** None specified
-- **Effect:** Bonemeals the area and cures Zombie Villagers, players with Blindness, Nausea, or Poison. Witches with a cat familiar can also apply Regeneration and Saturation buffs.
-- **Notes:** No specific timing or power cost mentioned. Does not have restrictions for vampires or werewolves.
+- **Circle:** Small ritual
+- **Ingredients:** Bone Meal, Hint of Rebirth, Diamond Vapor, Quicklime, Gypsum, and either Mutandis plus 3000 Altar Power, or Mutandis Extremis plus an Attuned Stone (Charged) for the portable form.
+- **Effect:** Expands from radius 4 to 50, plus 2 blocks per nearby Coven witch, one ring every 5 ticks. It bonemeals exposed land, restores Zombie Villagers, and clears Blindness, Nausea, and Poison. An active cat familiar also grants Regeneration II and Health Boost.
+- **Notes:** Persists through restart, pauses while its caster or required chunks are unavailable, and refunds consumed offerings if the sustaining circle breaks.
 
 ## Rite of Glyphic Transformation
 - **Circle:** Any
@@ -374,9 +374,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Rite of the Forest
 - **Circle:** Medium
-- **Ingredients:** None specified
-- **Effect:** Creates a forest of a specific type of Vanilla or Witchery tree.
-- **Notes:** Cast on the area outside the chalk circle unless a Bound Waystone is used. Requires 4000 Altar Power.
+- **Ingredients:** One supported sapling, Wicker Bundle, Brew of Sprouting, Ent Twig, and 4000 Altar Power. A Bound Waystone is optional.
+- **Effect:** Attempts one tree of the offered species each second for 59 base pulses within 20 blocks. Each nearby Coven witch adds 2 blocks of radius and 5 attempts.
+- **Notes:** A Bound Waystone relocates the whole working. The rite persists through restart, pauses while its caster or either end's chunks are unavailable, and refunds consumed offerings if the sustaining circle breaks.
 
 ## Rite of Total Eclipse
 - **Circle:** Small

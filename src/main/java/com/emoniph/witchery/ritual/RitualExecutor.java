@@ -118,6 +118,14 @@ public class RitualExecutor {
     private static final int VARIANT_INFERNAL = 3;
 
     private static final int RITUAL_PULSE_INTERVAL = 30;
+    static final int FERTILITY_BASE_RADIUS = 50;
+    static final int FERTILITY_HEIGHT = 15;
+    static final int FERTILITY_PULSE_INTERVAL = 5;
+    static final int FORESTATION_BASE_RADIUS = 20;
+    static final int FORESTATION_HEIGHT = 8;
+    static final int FORESTATION_BASE_DURATION = 60;
+    static final int FORESTATION_PULSE_INTERVAL = 20;
+    static final int FORESTATION_BONEMEAL_ATTEMPTS = 11;
     private static final int VOID_BRAMBLE_NULL_RANGE = 32;
     private static final int VOID_BRAMBLE_NULL_RANGE_SQ = VOID_BRAMBLE_NULL_RANGE * VOID_BRAMBLE_NULL_RANGE;
     private static final int BLIGHT_HEART_RANDOM_RADIUS = 150;
@@ -171,13 +179,65 @@ public class RitualExecutor {
 
     private record ClimateChangeScan(ClimateChangePlan plan, List<ItemEntity> itemsToConsume) {}
 
-    /** Test hook: a sample SavedData with one staged ritual (for codec round-trip verification). */
+    /** Test hook: representative expanding rites for codec round-trip verification. */
     static RitualSavedData buildTestSavedData() {
         RitualSavedData data = new RitualSavedData();
-        data.activeRituals.add(new ActiveRitual(ActiveRitualType.SANCTITY_CIRCLE, BlockPos.ZERO,
-                RitualCircleDetector.CircleSize.SMALL, BlockPos.ZERO, 1, 0, 4, 0, 20, 2, 0.8f, false, 0,
-                100L, new ItemStack(Items.DIAMOND), List.of(new ItemStack(Items.REDSTONE, 3)), "Tester"));
+        ActiveRitual fertility = new ActiveRitual(ActiveRitualType.FERTILITY, BlockPos.ZERO,
+                RitualCircleDetector.CircleSize.SMALL, BlockPos.ZERO, VARIANT_RITUAL,
+                4, fertilityMaxRadius(2), fertilityMaxRadius(2) - 3, FERTILITY_PULSE_INTERVAL,
+                2, 0.0F, true, 0, 100L, ItemStack.EMPTY,
+                List.of(new ItemStack(Items.BONE_MEAL), new ItemStack(Items.DIAMOND)), "Tester",
+                ItemStack.EMPTY);
+        fertility.stage = 11;
+        data.activeRituals.add(fertility);
+
+        ActiveRitual forestation = new ActiveRitual(ActiveRitualType.FORESTATION, new BlockPos(8, 0, 8),
+                RitualCircleDetector.CircleSize.MEDIUM, new BlockPos(32, 70, -12), VARIANT_RITUAL,
+                forestationRadius(3), FORESTATION_HEIGHT, forestationDuration(3), FORESTATION_PULSE_INTERVAL,
+                3, 0.0F, false, 0, 240L, ItemStack.EMPTY,
+                List.of(new ItemStack(Items.OAK_SAPLING), new ItemStack(Items.REDSTONE)), "Tester",
+                new ItemStack(Items.OAK_SAPLING));
+        forestation.stage = 7;
+        data.activeRituals.add(forestation);
         return data;
+    }
+
+    /** Runtime-harness fixture for proving SavedData across a real dedicated-server restart. */
+    public static boolean setupPersistenceProbe(ServerLevel level, BlockPos center) {
+        for (BlockPos mark : RitualCircleDetector.ringPositions(center, RitualCircleDetector.CircleSize.MEDIUM)) {
+            level.setBlock(mark.below(), Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(mark, WitcheryBlocks.CIRCLE_GLYPH.get().defaultBlockState(), Block.UPDATE_ALL);
+        }
+
+        RitualSavedData data = RitualSavedData.get(level);
+        data.activeRituals.removeIf(ritual -> ritual.center.equals(center));
+        ActiveRitual probe = new ActiveRitual(ActiveRitualType.FORESTATION, center,
+                RitualCircleDetector.CircleSize.MEDIUM, center.east(4), VARIANT_RITUAL,
+                FORESTATION_BASE_RADIUS, FORESTATION_HEIGHT, FORESTATION_BASE_DURATION,
+                FORESTATION_PULSE_INTERVAL, 0, 0.0F, false, 0,
+                level.getGameTime() + 1_000_000L, ItemStack.EMPTY,
+                List.of(new ItemStack(Items.OAK_SAPLING), new ItemStack(Items.DIAMOND)), "",
+                new ItemStack(Items.OAK_SAPLING));
+        probe.stage = 7;
+        data.activeRituals.add(probe);
+        data.setDirty();
+        return verifyPersistenceProbe(level, center);
+    }
+
+    public static boolean verifyPersistenceProbe(ServerLevel level, BlockPos center) {
+        for (ActiveRitual ritual : RitualSavedData.get(level).activeRituals) {
+            if (!ritual.center.equals(center) || ritual.type != ActiveRitualType.FORESTATION) {
+                continue;
+            }
+            return ritual.stage == 7
+                    && ritual.effectCenter.equals(center.east(4))
+                    && ritual.focus.is(Items.OAK_SAPLING)
+                    && ritual.supplementalSacrifices.size() == 2
+                    && ritual.supplementalSacrifices.get(0).is(Items.OAK_SAPLING)
+                    && ritual.supplementalSacrifices.get(1).is(Items.DIAMOND)
+                    && RitualCircleDetector.hasRing(level, center, RitualCircleDetector.CircleSize.MEDIUM);
+        }
+        return false;
     }
 
     private static List<ActiveRitual> activeRituals(ServerLevel level) {
@@ -2384,7 +2444,7 @@ public class RitualExecutor {
     // MEDIUM rites
     // ══════════════════════════════════════════════════════════════════════════
 
-    /** Rite of Fertility — bone-meals all crops in 10-block radius; cures zombie villagers. */
+    /** Rite of Fertility — expands outward while growing land and curing players and villagers. */
     private static boolean riteOfFertility(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<FertilityOfferings> offerings = findFertilityOfferings(level, center);
@@ -2424,59 +2484,37 @@ public class RitualExecutor {
     private static boolean startFertilityFromRecipe(Player player, Level level, BlockPos center,
                                                     List<RitualOffering> matchedItems) {
         if (!(level instanceof ServerLevel sl)) return false;
-        return startFertility(player, level, sl, center, 3000, "Rite of Fertility",
-                matchedItems);
+        return startFertility(player, level, sl, center, 3000, "Rite of Fertility", matchedItems);
     }
 
     private static boolean startPortableFertilityFromRecipe(Player player, Level level, BlockPos center,
                                                             List<RitualOffering> matchedItems) {
         if (!(level instanceof ServerLevel sl)) return false;
-        return startFertility(player, level, sl, center, 0, "Portable Rite of Fertility",
-                matchedItems);
+        return startFertility(player, level, sl, center, 0, "Portable Rite of Fertility", matchedItems);
     }
 
     private static boolean startFertility(Player player, Level level, ServerLevel sl, BlockPos center,
                                           int altarPower, String logPrefix,
                                           List<RitualOffering> offerings) {
+        if (!ensureActiveRitualCenterAvailable(player, sl, center)) {
+            return false;
+        }
+        int covenSize = countNearbyCovenWitches(level, center);
+        int maxRadius = fertilityMaxRadius(covenSize);
+        List<ItemStack> refunds = activeRitualRefunds(offerings);
         RitualTransaction transaction = new RitualTransaction(sl, center, 16, altarPower,
                 "witchery.ritual.fertility.no_power");
         offerAll(transaction, offerings);
-        if (!transaction.commitDeferred(player, () ->
-                applyFertilityEffects(player, level, sl, center, logPrefix))) {
+        if (!transaction.commit(player, () -> queuePersistentEffectRitual(sl, ActiveRitualType.FERTILITY,
+                RitualCircleDetector.CircleSize.SMALL, center, center, 4, maxRadius,
+                maxRadius - 3, FERTILITY_PULSE_INTERVAL, covenSize, false,
+                ItemStack.EMPTY, refunds, ritualOwnerName(player), nextPulseBoundary(sl.getGameTime(), 20)))) {
             return false;
         }
+        player.displayClientMessage(Component.translatable("witchery.ritual.fertility.started"), false);
+        WitcheryMod.LOGGER.info("{} started at {} with radius {} for {}", logPrefix, center, maxRadius,
+                player.getName().getString());
         return true;
-    }
-
-    private static void applyFertilityEffects(Player player, Level level, ServerLevel sl,
-                                             BlockPos center, String logPrefix) {
-        int grown = 0;
-        for (BlockPos bp : BlockPos.betweenClosed(
-                center.offset(-10, -3, -10), center.offset(10, 3, 10))) {
-            BlockState s = sl.getBlockState(bp);
-            if (s.getBlock() instanceof BonemealableBlock bm
-                    && bm.isValidBonemealTarget(sl, bp, s)) {
-                if (bm.isBonemealSuccess(sl, sl.random, bp, s)) {
-                    bm.performBonemeal(sl, sl.random, bp, s);
-                    grown++;
-                }
-            }
-        }
-
-        int cured = 0;
-        for (ZombieVillager zv : sl.getEntitiesOfClass(ZombieVillager.class,
-                new AABB(center).inflate(15))) {
-            zv.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 3600, 0));
-            ItemEntity apple = new ItemEntity(sl,
-                    zv.getX(), zv.getY() + 0.5, zv.getZ(),
-                    new ItemStack(Items.GOLDEN_APPLE));
-            sl.addFreshEntity(apple);
-            cured++;
-        }
-
-        player.displayClientMessage(Component.translatable("witchery.ritual.fertility.success", grown, cured), false);
-        success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 2, 48);
-        WitcheryMod.LOGGER.info("{}: grew {}, cured {} zombie villagers", logPrefix, grown, cured);
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -2512,11 +2550,10 @@ public class RitualExecutor {
                                             ItemStack saplingStack, List<RitualOffering> offerings,
                                             boolean exactRecipeOfferings) {
         if (!(saplingStack.getItem() instanceof BlockItem blockItem)
-                || !(blockItem.getBlock() instanceof SaplingBlock saplingBlock)) {
+                || !(blockItem.getBlock() instanceof SaplingBlock)) {
             return false;
         }
 
-        BlockState saplingState = saplingBlock.defaultBlockState();
         int covenSize = countNearbyCovenWitches(level, center);
         OptionalWaystoneRelocation relocation = exactRecipeOfferings
                 ? matchedOptionalWaystoneRelocation(level, center, covenSize, offerings)
@@ -2530,28 +2567,23 @@ public class RitualExecutor {
         RitualTransaction transaction = offerAll(
                 new RitualTransaction(sl, center, 16, 4000, "witchery.ritual.forest.no_power"),
                 offerings);
-        if (!exactRecipeOfferings) transaction.offer(relocation.boundWaystone());
-        if (!transaction.commitDeferred(player, () -> {
-            int radius = 20 + covenSize * 2;
-            int attempts = 60 + covenSize * 5;
-            int grown = 0;
-            for (int i = 0; i < attempts; i++) {
-                BlockPos ground = findForestationAnchor(sl, effectCenter, radius, 8);
-                if (ground == null) {
-                    continue;
-                }
-                if (seedForestationTree(sl, ground.above(), saplingState)) {
-                    grown++;
-                }
-            }
-
-            player.displayClientMessage(Component.translatable("witchery.ritual.forest.success", grown), false);
-            success(player, level, center, null, SoundEvents.GRASS_PLACE, 1f, 3, 72);
-            WitcheryMod.LOGGER.info("Rite of the Forest seeded {} {} grove attempts at {} for {}",
-                    grown, saplingStack.getHoverName().getString(), effectCenter, player.getName().getString());
-        })) {
+        List<RitualOffering> refundableOfferings = new ArrayList<>(offerings);
+        if (!exactRecipeOfferings && relocation.boundWaystone() != null) {
+            transaction.offer(relocation.boundWaystone());
+            refundableOfferings.add(relocation.boundWaystone());
+        }
+        List<ItemStack> refunds = activeRitualRefunds(refundableOfferings);
+        int radius = forestationRadius(covenSize);
+        int duration = forestationDuration(covenSize);
+        if (!transaction.commit(player, () -> queuePersistentEffectRitual(sl, ActiveRitualType.FORESTATION,
+                RitualCircleDetector.CircleSize.MEDIUM, center, effectCenter, radius, FORESTATION_HEIGHT,
+                duration, FORESTATION_PULSE_INTERVAL, covenSize, false, saplingStack.copyWithCount(1), refunds,
+                ritualOwnerName(player), nextPulseBoundary(sl.getGameTime(), 20)))) {
             return false;
         }
+        player.displayClientMessage(Component.translatable("witchery.ritual.forest.started"), false);
+        WitcheryMod.LOGGER.info("Rite of the Forest started a {} grove at {} for {}",
+                saplingStack.getHoverName().getString(), effectCenter, player.getName().getString());
         return true;
     }
 
@@ -3197,6 +3229,22 @@ public class RitualExecutor {
         return List.copyOf(copies);
     }
 
+    private static List<ItemStack> activeRitualRefunds(List<RitualOffering> offerings) {
+        List<ItemStack> refunds = new ArrayList<>(offerings.size() + 1);
+        for (RitualOffering offering : offerings) {
+            if (offering == null || offering.stack().isEmpty()) {
+                continue;
+            }
+            refunds.add(offering.stack().copyWithCount(1));
+        }
+        ItemStack trigger = PENDING_RITUAL_INGREDIENT.get();
+        if (!trigger.isEmpty() && refunds.stream().noneMatch(stack ->
+                ItemStack.isSameItemSameComponents(stack, trigger))) {
+            refunds.add(trigger.copyWithCount(1));
+        }
+        return List.copyOf(refunds);
+    }
+
     private static void consumeClimateChangeItem(ServerLevel level, ItemEntity itemEntity) {
         if (itemEntity == null || !itemEntity.isAlive()) {
             return;
@@ -3561,6 +3609,9 @@ public class RitualExecutor {
 
         for (int i = rituals.size() - 1; i >= 0; i--) {
             ActiveRitual ritual = rituals.get(i);
+            if (!canActiveRitualProgress(level, ritual)) {
+                continue;
+            }
             if (tickActiveRitual(level, ritual)) {
                 spawnActiveCenterParticle(level, ritual.center);
             } else {
@@ -3575,6 +3626,17 @@ public class RitualExecutor {
         }
         // Rituals advanced their stage/timers this pass — persist the change.
         markRitualsDirty(level);
+    }
+
+    private static boolean canActiveRitualProgress(ServerLevel level, ActiveRitual ritual) {
+        if (!level.hasChunkAt(ritual.center) || !level.hasChunkAt(ritual.effectCenter)) {
+            return false;
+        }
+        if (ritual.type != ActiveRitualType.FERTILITY && ritual.type != ActiveRitualType.FORESTATION) {
+            return true;
+        }
+        ServerPlayer owner = ritualOwner(level, ritual);
+        return ritual.ownerName.isBlank() || owner != null && owner.isAlive() && owner.level() == level;
     }
 
     private static void spawnActiveCenterParticle(ServerLevel level, BlockPos center) {
@@ -3596,14 +3658,44 @@ public class RitualExecutor {
         if (gameTime < ritual.nextGameTime) {
             return true;
         }
+        if (!areActiveRitualPulseChunksLoaded(level, ritual)) {
+            ritual.nextGameTime = gameTime + 20;
+            return true;
+        }
 
         ritual.nextGameTime = gameTime + ritual.pulseInterval;
         return tickActiveRitualByType(level, ritual);
     }
 
+    private static boolean areActiveRitualPulseChunksLoaded(ServerLevel level, ActiveRitual ritual) {
+        int radius;
+        if (ritual.type == ActiveRitualType.FERTILITY) {
+            radius = Math.min(ritual.stage + 4, ritual.maxRadius);
+        } else if (ritual.type == ActiveRitualType.FORESTATION) {
+            radius = ritual.minRadius;
+        } else {
+            return true;
+        }
+
+        int minChunkX = (ritual.effectCenter.getX() - radius) >> 4;
+        int maxChunkX = (ritual.effectCenter.getX() + radius) >> 4;
+        int minChunkZ = (ritual.effectCenter.getZ() - radius) >> 4;
+        int maxChunkZ = (ritual.effectCenter.getZ() + radius) >> 4;
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+                if (!level.hasChunk(chunkX, chunkZ)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private static boolean tickActiveRitualByType(ServerLevel level, ActiveRitual ritual) {
         ActiveRitualType type = ritual.type;
         if (type == ActiveRitualType.WEATHER_CALL_STORM) return tickStormRitual(level, ritual);
+        if (type == ActiveRitualType.FERTILITY) return tickFertilityRitual(level, ritual);
+        if (type == ActiveRitualType.FORESTATION) return tickForestationRitual(level, ritual);
         if (type == ActiveRitualType.ICE_SHELL) return tickIceShellRitual(level, ritual);
         if (type == ActiveRitualType.RAIN_OF_TOADS) return tickRainOfToadsRitual(level, ritual);
         if (type == ActiveRitualType.BLINDNESS) return tickBlindnessRitual(level, ritual);
@@ -3622,6 +3714,139 @@ public class RitualExecutor {
         if (type == ActiveRitualType.INFUSION_RECHARGE) return tickInfusionRechargeRitual(level, ritual);
         if (type == ActiveRitualType.SANCTITY_CIRCLE) return tickSanctityCircleRitual(level, ritual);
         return tickImprisonmentCircleRitual(level, ritual);
+    }
+
+    private static boolean tickFertilityRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        int currentRadius = ritual.stage + 3;
+        if (currentRadius > ritual.maxRadius || ritual.stage > 250) {
+            return false;
+        }
+
+        if (ritual.stage == 1) {
+            level.playSound(null, ritual.center, SoundEvents.FIRE_EXTINGUISH,
+                    SoundSource.BLOCKS, 0.7F, 1.35F);
+        }
+        ServerPlayer owner = ritualOwner(level, ritual);
+        applyFertilityEntityRing(level, ritual, currentRadius,
+                owner != null && hasActiveCurseMasteryFamiliar(owner));
+        if (owner != null) {
+            drawFertilityRing(level, ritual, currentRadius, FERTILITY_HEIGHT);
+        }
+        return currentRadius < ritual.maxRadius;
+    }
+
+    private static void applyFertilityEntityRing(ServerLevel level, ActiveRitual ritual, int radius,
+                                                 boolean enhanced) {
+        double radiusSq = (double) radius * radius;
+        double minSq = (double) Math.max(0, (radius - 1) * (radius - 1));
+        double centerX = ritual.effectCenter.getX() + 0.5D;
+        double centerY = ritual.effectCenter.getY() + 0.5D;
+        double centerZ = ritual.effectCenter.getZ() + 0.5D;
+        AABB bounds = new AABB(ritual.effectCenter).inflate(radius);
+
+        for (ServerPlayer victim : level.getEntitiesOfClass(ServerPlayer.class, bounds)) {
+            double distanceSq = victim.distanceToSqr(centerX, centerY, centerZ);
+            if (distanceSq <= minSq || distanceSq > radiusSq) {
+                continue;
+            }
+            victim.removeEffect(MobEffects.NAUSEA);
+            victim.removeEffect(MobEffects.BLINDNESS);
+            victim.removeEffect(MobEffects.POISON);
+            if (enhanced) {
+                victim.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 300, 1));
+                victim.addEffect(new MobEffectInstance(MobEffects.HEALTH_BOOST, 2400, 0));
+            }
+        }
+
+        List<ZombieVillager> zombies = List.copyOf(level.getEntitiesOfClass(ZombieVillager.class, bounds));
+        for (ZombieVillager zombie : zombies) {
+            double distanceSq = zombie.distanceToSqr(centerX, centerY, centerZ);
+            if (!zombie.isAlive() || distanceSq <= minSq || distanceSq > radiusSq) {
+                continue;
+            }
+            Villager converted = zombie.convertTo(EntityType.VILLAGER,
+                    ConversionParams.single(zombie, true, true),
+                    net.minecraft.world.entity.EntitySpawnReason.CONVERSION,
+                    villager -> villager.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 200, 0)));
+            if (converted != null) {
+                level.levelEvent(1017, converted.blockPosition(), 0);
+            }
+        }
+    }
+
+    private static void drawFertilityRing(ServerLevel level, ActiveRitual ritual, int radius, int height) {
+        int x = radius;
+        int z = 0;
+        int radiusError = 1 - radius;
+        while (x >= z) {
+            fertilityPixel(level, ritual, x, z, height);
+            fertilityPixel(level, ritual, z, x, height);
+            fertilityPixel(level, ritual, -x, z, height);
+            fertilityPixel(level, ritual, -z, x, height);
+            fertilityPixel(level, ritual, -x, -z, height);
+            fertilityPixel(level, ritual, -z, -x, height);
+            fertilityPixel(level, ritual, x, -z, height);
+            fertilityPixel(level, ritual, z, -x, height);
+            z++;
+            if (radiusError < 0) {
+                radiusError += 2 * z + 1;
+            } else {
+                x--;
+                radiusError += 2 * (z - x + 1);
+            }
+        }
+    }
+
+    private static void fertilityPixel(ServerLevel level, ActiveRitual ritual, int dx, int dz, int height) {
+        for (int offset = 0; offset < height; offset++) {
+            BlockPos upper = ritual.effectCenter.offset(dx, offset, dz);
+            if (applyFertilityAtSurface(level, ritual, upper)) {
+                return;
+            }
+            if (offset > 0) {
+                BlockPos lower = ritual.effectCenter.offset(dx, -offset, dz);
+                if (applyFertilityAtSurface(level, ritual, lower)) {
+                    return;
+                }
+            }
+        }
+    }
+
+    private static boolean applyFertilityAtSurface(ServerLevel level, ActiveRitual ritual, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (state.isAir() || !level.getBlockState(pos.above()).isAir()) {
+            return false;
+        }
+        level.levelEvent(2005, pos.above(), 0);
+        if (state.getBlock() instanceof BonemealableBlock bonemealable
+                && bonemealable.isValidBonemealTarget(level, pos, state)
+                && bonemealable.isBonemealSuccess(level, level.random, pos, state)
+                && canRitualModify(ritual, level, pos, WitcheryProtectionAction.BLOCK_TRANSFORM)) {
+            bonemealable.performBonemeal(level, level.random, pos, state);
+        }
+        return true;
+    }
+
+    private static boolean tickForestationRitual(ServerLevel level, ActiveRitual ritual) {
+        ritual.stage++;
+        if (ritual.stage >= ritual.targetStage) {
+            return false;
+        }
+        if (!(ritual.focus.getItem() instanceof BlockItem blockItem)
+                || !(blockItem.getBlock() instanceof SaplingBlock sapling)) {
+            ritual.failedOnStop = true;
+            ritual.refundOnStop = true;
+            return false;
+        }
+
+        level.levelEvent(2005, ritual.effectCenter.above(), 0);
+        BlockPos ground = findForestationAnchor(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius);
+        if (ground != null) {
+            level.levelEvent(2005, ground.above(), 0);
+            seedForestationTree(level, ritual, ground.above(), sapling.defaultBlockState());
+        }
+        return true;
     }
 
     private static boolean tickStormRitual(ServerLevel level, ActiveRitual ritual) {
@@ -4149,6 +4374,45 @@ public class RitualExecutor {
         return queueActiveRitual(level, type, circleSize, center, minRadius, maxRadius, targetStage, RITUAL_PULSE_INTERVAL);
     }
 
+    private static boolean queuePersistentEffectRitual(ServerLevel level, ActiveRitualType type,
+                                                       RitualCircleDetector.CircleSize circleSize,
+                                                       BlockPos center, BlockPos effectCenter,
+                                                       int minRadius, int maxRadius, int targetStage,
+                                                       int pulseInterval, int covenSize, boolean enhanced,
+                                                       ItemStack focus, List<ItemStack> refundableSacrifices,
+                                                       String ownerName, long nextGameTime) {
+        List<ActiveRitual> rituals = activeRituals(level);
+        if (hasActiveRitualAt(level, center)) {
+            return false;
+        }
+        int circleVariant = RitualCircleDetector.detectVariant(level, center, circleSize);
+        List<ItemStack> refunds = refundableSacrifices.stream()
+                .filter(stack -> stack != null && !stack.isEmpty())
+                .map(ItemStack::copy)
+                .toList();
+        rituals.add(new ActiveRitual(type, center, circleSize, effectCenter, circleVariant,
+                minRadius, maxRadius, targetStage, pulseInterval, covenSize, 0.0F, enhanced, 0,
+                nextGameTime, ItemStack.EMPTY, refunds, ownerName, focus));
+        markRitualsDirty(level);
+        return true;
+    }
+
+    private static long nextPulseBoundary(long gameTime, int interval) {
+        return gameTime + (interval - Math.floorMod(gameTime, interval));
+    }
+
+    static int fertilityMaxRadius(int covenSize) {
+        return FERTILITY_BASE_RADIUS + Math.max(0, covenSize) * 2;
+    }
+
+    static int forestationRadius(int covenSize) {
+        return FORESTATION_BASE_RADIUS + Math.max(0, covenSize) * 2;
+    }
+
+    static int forestationDuration(int covenSize) {
+        return FORESTATION_BASE_DURATION + Math.max(0, covenSize) * 5;
+    }
+
     private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
                                              BlockPos center, int minRadius, int maxRadius, int targetStage, int pulseInterval) {
         return queueActiveRitual(level, type, circleSize, center, minRadius, maxRadius, targetStage, pulseInterval, 0, 0.0f, 0);
@@ -4255,6 +4519,8 @@ public class RitualExecutor {
         }
         if (type == ActiveRitualType.INFUSION_RECHARGE) return "Infusion Recharge";
         if (type == ActiveRitualType.WEATHER_CALL_STORM) return "Storm";
+        if (type == ActiveRitualType.FERTILITY) return "Fertility";
+        if (type == ActiveRitualType.FORESTATION) return "Forestation";
         if (type == ActiveRitualType.ICE_SHELL) return "Ice Shell";
         if (type == ActiveRitualType.RAIN_OF_TOADS) return "Rain of Toads";
         if (type == ActiveRitualType.BLINDNESS) return "Blindness";
@@ -6201,11 +6467,11 @@ public class RitualExecutor {
 
     private static BlockPos findForestationAnchor(ServerLevel level, BlockPos center, int radius, int height) {
         int radiusSq = (radius + 1) * (radius + 1);
-        int x = center.getX() - radius + level.random.nextInt(radius * 2 + 1);
-        int z = center.getZ() - radius + level.random.nextInt(radius * 2 + 1);
+        int x = center.getX() - radius + level.random.nextInt(radius * 2);
+        int z = center.getZ() - radius + level.random.nextInt(radius * 2);
         if (Mth.square(x - center.getX()) + Mth.square(z - center.getZ()) > radiusSq) {
-            x = center.getX() - radius + level.random.nextInt(radius * 2 + 1);
-            z = center.getZ() - radius + level.random.nextInt(radius * 2 + 1);
+            x = center.getX() - radius + level.random.nextInt(radius * 2);
+            z = center.getZ() - radius + level.random.nextInt(radius * 2);
             if (Mth.square(x - center.getX()) + Mth.square(z - center.getZ()) > radiusSq) {
                 return null;
             }
@@ -6213,35 +6479,38 @@ public class RitualExecutor {
 
         int baseY = center.getY() - 1;
         BlockPos direct = new BlockPos(x, baseY, z);
-        if (isForestationAnchor(level, direct)) {
+        if (isForestationAnchor(level, direct, true)) {
             return direct;
         }
 
         for (int offset = 1; offset < height; offset++) {
             BlockPos up = new BlockPos(x, baseY + offset, z);
-            if (isForestationAnchor(level, up)) {
+            if (isForestationAnchor(level, up, false)) {
                 return up;
             }
             BlockPos down = new BlockPos(x, baseY - offset, z);
-            if (isForestationAnchor(level, down)) {
+            if (isForestationAnchor(level, down, false)) {
                 return down;
             }
         }
         return null;
     }
 
-    private static boolean isForestationAnchor(ServerLevel level, BlockPos pos) {
+    private static boolean isForestationAnchor(ServerLevel level, BlockPos pos, boolean requireAirAbove) {
         BlockState ground = level.getBlockState(pos);
         if (!ground.blocksMotion()) {
             return false;
         }
-        return level.getBlockState(pos.above()).canBeReplaced();
+        BlockState above = level.getBlockState(pos.above());
+        return requireAirAbove ? above.isAir() : above.canBeReplaced();
     }
 
-    private static boolean seedForestationTree(ServerLevel level, BlockPos plantPos, BlockState saplingState) {
+    private static boolean seedForestationTree(ServerLevel level, ActiveRitual ritual,
+                                               BlockPos plantPos, BlockState saplingState) {
         BlockState state = level.getBlockState(plantPos);
         if (!state.is(saplingState.getBlock())) {
-            if (!state.canBeReplaced() || !saplingState.canSurvive(level, plantPos)) {
+            if (!state.canBeReplaced() || !saplingState.canSurvive(level, plantPos)
+                    || !canRitualModify(ritual, level, plantPos, WitcheryProtectionAction.BLOCK_PLACE)) {
                 return false;
             }
             level.setBlock(plantPos, saplingState, 3);
@@ -6251,10 +6520,14 @@ public class RitualExecutor {
             return true;
         }
 
-        for (int attempt = 0; attempt < 10; attempt++) {
+        // Source applies once, then retries up to ten more times while the sapling remains.
+        for (int attempt = 0; attempt < FORESTATION_BONEMEAL_ATTEMPTS; attempt++) {
             BlockState current = level.getBlockState(plantPos);
             if (!current.is(sapling)) {
                 return true;
+            }
+            if (!canRitualModify(ritual, level, plantPos, WitcheryProtectionAction.BLOCK_TRANSFORM)) {
+                return false;
             }
             if (sapling.isBonemealSuccess(level, level.random, plantPos, current)) {
                 sapling.performBonemeal(level, level.random, plantPos, current);
@@ -8579,21 +8852,10 @@ public class RitualExecutor {
         }
     }
 
-    /**
-     * Called on server stop. Cancels all active rituals for this dimension and
-     * drops their sacrificed ingredients back into the world so they survive
-     * the final world save. Without this, long-running staged rituals would
-     * silently lose consumed resources across server restarts.
-     */
-    public static void cancelAllWithRefund(ServerLevel level) {
-        SacrificeConsumer.flush(level); // consume any still-pending staged sacrifices before shutdown
-        RitualSavedData data = RitualSavedData.get(level);
-        for (ActiveRitual ritual : data.activeRituals) {
-            refundRitualIngredient(level, ritual);
-        }
-        data.activeRituals.clear();
-        data.climatePlans.clear();
-        data.setDirty();
+    /** Flush transient sacrifice callbacks before the final save while preserving active SavedData. */
+    public static void prepareForServerStop(ServerLevel level) {
+        SacrificeConsumer.flush(level);
+        RitualSavedData.get(level).setDirty();
     }
 
     /**

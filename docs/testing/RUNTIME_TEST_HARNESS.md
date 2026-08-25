@@ -37,17 +37,18 @@ python tools/runtime_test_harness.py all
 
 - `validate` checks manifest schema, duplicate entries, resource-test source
   classes, and exact equality between registered GameTest IDs and the manifest.
-- `resource-contracts` runs the 16 explicitly listed structural/resource JVM
+- `resource-contracts` runs the 18 explicitly listed structural/resource JVM
   tests. A broad Gradle summary cannot silently substitute another test set.
-- `game-tests` starts one clean normal-difficulty dedicated world and runs all 25
+- `game-tests` starts one clean normal-difficulty dedicated world and runs all 30
   CI-lane GameTests sequentially by exact ID. Each command must report exactly
   one completion and the required-tests-passed marker. Isolated test servers
   disable empty-server pausing so long scheduled tests keep ticking without a
   connected player.
 - `save-reload` starts a clean server, places and mutates a Kettle, Witches'
-  Oven, Distillery, Spinning Wheel, Brazier, and Silver Vat plus a command-storage
-  marker, flushes and stops, then starts the same world again and checks every
-  block, inventory payload, block-entity value, and marker.
+  Oven, Distillery, Spinning Wheel, Brazier, and Silver Vat, records a command-storage
+  marker, and queues a relocated active ritual. It then flushes and stops, starts
+  the same world again, and checks every block, inventory payload, block-entity
+  value, marker, ritual stage, focus, destination, and refund ledger.
 - `all` runs the four gates above in order. Dedicated-server startup and clean
   all-dimensions shutdown are required by the server-backed stages.
 

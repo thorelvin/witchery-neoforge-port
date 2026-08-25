@@ -2,6 +2,8 @@ package com.emoniph.witchery.init;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.menu.DistilleryMenu;
+import com.emoniph.witchery.menu.BrewBagMenu;
+import com.emoniph.witchery.menu.LeonardsUrnMenu;
 import com.emoniph.witchery.menu.SpinningWheelMenu;
 import com.emoniph.witchery.menu.WitchesOvenMenu;
 import net.minecraft.core.registries.Registries;
@@ -25,5 +27,13 @@ public class WitcheryMenuTypes {
     public static final DeferredHolder<MenuType<?>, MenuType<DistilleryMenu>> DISTILLERY =
             MENU_TYPES.register("distillery", () ->
                     IMenuTypeExtension.create(DistilleryMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<BrewBagMenu>> BREW_BAG =
+            MENU_TYPES.register("brew_bag", () ->
+                    IMenuTypeExtension.create(BrewBagMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<LeonardsUrnMenu>> LEONARDS_URN =
+            MENU_TYPES.register("leonards_urn", () ->
+                    IMenuTypeExtension.create(LeonardsUrnMenu::new));
 
 }

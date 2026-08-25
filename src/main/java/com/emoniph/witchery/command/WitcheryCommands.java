@@ -341,7 +341,12 @@ public class WitcheryCommands {
                                 .executes(ctx -> showBrewDebug(ctx.getSource(), ctx.getSource().getPlayerOrException()))
                                 .then(Commands.argument("target", EntityArgument.player())
                                         .executes(ctx -> showBrewDebug(ctx.getSource(),
-                                                EntityArgument.getPlayer(ctx, "target"))))))
+                                                EntityArgument.getPlayer(ctx, "target")))))
+                        .then(Commands.literal("ritual_persistence")
+                                .then(Commands.literal("setup")
+                                        .executes(ctx -> setupRitualPersistenceProbe(ctx.getSource())))
+                                .then(Commands.literal("verify")
+                                        .executes(ctx -> verifyRitualPersistenceProbe(ctx.getSource())))))
 
                 // Debug: force a specific crystal-ball prophecy to come true immediately.
                 // /witchery crystal <prophecy> [target]   (use "all" to fire every prophecy)
@@ -1247,6 +1252,34 @@ public class WitcheryCommands {
                 + "  charges=" + d.getCreaturePowerCharges() + "/100";
         src.sendSuccess(() -> Component.literal(out), false);
         return 1;
+    }
+
+    private static int setupRitualPersistenceProbe(CommandSourceStack src) {
+        ServerLevel level = src.getServer().overworld();
+        BlockPos center = ritualPersistenceProbeCenter(level);
+        if (!RitualExecutor.setupPersistenceProbe(level, center)) {
+            src.sendFailure(Component.literal("Ritual persistence probe setup failed."));
+            return 0;
+        }
+        src.sendSuccess(() -> Component.literal("Ritual persistence probe staged at "
+                + center.toShortString() + "."), false);
+        return 1;
+    }
+
+    private static int verifyRitualPersistenceProbe(CommandSourceStack src) {
+        ServerLevel level = src.getServer().overworld();
+        BlockPos center = ritualPersistenceProbeCenter(level);
+        if (!RitualExecutor.verifyPersistenceProbe(level, center)) {
+            src.sendFailure(Component.literal("Ritual persistence probe is missing or changed."));
+            return 0;
+        }
+        src.sendSuccess(() -> Component.literal("Ritual persistence probe survived with stage, focus, destination, and refunds intact."),
+                false);
+        return 1;
+    }
+
+    private static BlockPos ritualPersistenceProbeCenter(ServerLevel level) {
+        return new BlockPos(8, Math.clamp(80, level.getMinY() + 10, level.getMaxY() - 10), 8);
     }
 
     /** Formats tick count as "0t" or "Xt (Ys)". */

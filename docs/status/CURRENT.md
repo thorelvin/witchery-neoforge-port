@@ -16,6 +16,8 @@ enough to read before starting work. Long historical deltas belong in
   release hardening.
 - Current estimates from the README: Mechanical remake parity roughly `95-96%`;
   release-ready parity/polish roughly `82-86%`.
+- Deterministic verification manifest: 18 exact JVM resource contracts, 30 CI
+  GameTests, and one manual forced-restart fixture.
 
 ## Current Focus
 
@@ -56,6 +58,21 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Brew Bag and Leonard's Urn interaction parity is restored. Brew Bag sneak-use
+  opens the exact eight-slot source layout; normal held use drives an eight-way,
+  bag-coloured radial selected from server-observed camera movement and consumes
+  one stored brew on release. Leonard's Urn opens the original capacity-sensitive
+  one-to-four-slot diamond layout and leaves casting to its four Mystic Branch
+  glyphs. Both menus preserve complete fixed/composed brew stacks, protect the
+  held container slot, use the original GUI art, and are covered by focused JVM
+  and dedicated-server interaction tests.
+- Flying Monkeys now restore their source mutation, tameable companion, and
+  courier roles. Filled player or creature Taglocks start a persisted fetch and
+  return journey; Bound and Blooded Waystones remain reusable while the monkey
+  carries its owner to fixed or living targets, including safe cross-world
+  arrival. Cancellation, dismount, unavailable targets, persistence, and arrival
+  are covered by focused JVM and dedicated-server tests; live long-distance and
+  multiplayer presentation remain QA.
 - Custom Brew mechanical parity is closed against the original registry. An
   extracted, source-hashed fixture locks all 158 registrations and their source
   order; every action family has a modern owner. The Witch's Cauldron now keeps
@@ -79,6 +96,15 @@ enough to read before starting work. Long historical deltas belong in
   dropped stacks and Grassper-held stacks. Exact JVM contracts and the dedicated
   `witchery:ritual_offering_sources` server GameTest cover rings, source order,
   duplicate/optional requirements, mixed sources, staging, and rollback behavior.
+- Fertility and Forestation now run as source-paced persistent rites. Fertility
+  expands every five ticks from radius 4 to 50 plus Coven scaling, growing the
+  land, restoring Zombie Villagers, clearing the source ailments, and applying
+  the cat-familiar Regeneration II and Health Boost bonuses. Forestation attempts
+  one selected-species tree per second for 59 base pulses, scales radius and
+  attempts with the Coven, and honors a Bound Waystone destination. Both preserve
+  stage, owner, focus, effect center, and exact abort refunds across restart, and
+  pause while their caster or required chunks are unavailable. Focused JVM tests,
+  `witchery:persistent_expanding_rites`, and the real save/reload probe pass.
 - The Primer's Circle Magic chapter is now a complete generated compendium:
   58 searchable rite families contain all 96 source registrations exactly once.
   Each source-tagged card renders its circles, altar power, coven requirement,
@@ -95,7 +121,7 @@ enough to read before starting work. Long historical deltas belong in
   ingredient to appear once in the generated reference. Unsupported old
   transmutations are named honestly instead of being shown as working recipes.
 - The deterministic runtime harness and CI gates are complete. An explicit
-  manifest locks 16 resource-contract classes, 25 exact CI GameTests, and one
+  manifest locks 18 resource-contract classes, 30 exact CI GameTests, and one
   manual forced-restart fixture. Clean normal-difficulty dedicated servers now
   run every named test with all Witchery dimensions loaded, require unambiguous
   per-test success, preserve logs/JSON summaries, and verify Kettle, Witches'
@@ -183,9 +209,9 @@ enough to read before starting work. Long historical deltas belong in
   undead, and Brew of Love converts both owned adult zombie parents to zombie
   villagers while preserving their state and leaving the baby unowned. Three
   dedicated-server GameTests cover the lifecycle, raising, and breeding routes.
-- Custom Brew projectile and ritual-target parity is restored. Direct Leonard's
-  Urn throws retain their ordinary arc, while Mystic Branch focus shots use the
-  source 4.0 velocity, zero gravity, and 200-tick lifetime. A filled Taglock Kit
+- Custom Brew projectile and ritual-target parity is restored. Leonard's Urn
+  focuses cast only through Mystic Branch glyphs, using the source 4.0 velocity,
+  zero gravity, and 200-tick lifetime. A filled Taglock Kit
   can now be the final cauldron ingredient for a direct 1,000-power ritual:
   later ingredients and bottling are locked, Tongue of Dog releases without a
   splash requirement, and player or loaded-mob targets use the existing coven,
@@ -488,7 +514,7 @@ enough to read before starting work. Long historical deltas belong in
   cast/fail feedback, Crystal Ball scry validation before altar-power charge,
   brew bucket gas/liquid tooltip feedback, Dream Weaver placement/wake cues,
   trap state sync, Beartrap/Wolftrap toggles/snaps through the old
-  `random.click` / `random.mantrap` cues, cursed warning cooldowns, Leonard's Urn focus release and
+  `random.click` / `random.mantrap` cues, cursed warning cooldowns, Leonard's Urn focus storage and
   capacity upgrades, Witches Hand Otherwhere cooldown/feedback, Duplication
   Grenade mirror charging, Book of Biomes climate page stats,
   Wolftrap lured-wolf steering/capture feedback plus source Wolfman lure/capture

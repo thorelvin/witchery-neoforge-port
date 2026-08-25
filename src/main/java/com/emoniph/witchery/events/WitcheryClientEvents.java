@@ -318,6 +318,7 @@ public class WitcheryClientEvents {
 
     @SubscribeEvent
     public static void onRenderGui(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event) {
+        com.emoniph.witchery.client.BrewBagRadialHud.render(event.getGuiGraphics());
         com.emoniph.witchery.client.SymbolHud.render(event.getGuiGraphics(),
                 event.getPartialTick().getGameTimeDeltaPartialTick(false));
         com.emoniph.witchery.client.InfusionEnergyHud.render(event.getGuiGraphics());

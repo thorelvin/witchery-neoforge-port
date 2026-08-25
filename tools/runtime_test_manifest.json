@@ -9,6 +9,7 @@
     "com.emoniph.witchery.resources.PatronStatueResourceTest",
     "com.emoniph.witchery.resources.WitchCauldronModelTest",
     "com.emoniph.witchery.resources.WitcheryResourceIntegrityTest",
+    "com.emoniph.witchery.item.BrewStorageInteractionParityTest",
     "com.emoniph.witchery.ritual.OtherwhereHearthResourceTest",
     "com.emoniph.witchery.spiritworld.SpiritWorldResourceParityTest",
     "com.emoniph.witchery.world.MirrorWorldResourceParityTest",
@@ -76,9 +77,19 @@
       "timeout_seconds": 180
     },
     {
+      "id": "witchery:brew_storage_interaction_parity",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
       "id": "witchery:ritual_offering_sources",
       "lane": "ci",
       "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:persistent_expanding_rites",
+      "lane": "ci",
+      "timeout_seconds": 160
     },
     {
       "id": "witchery:vampire_power_activation",
@@ -104,6 +115,16 @@
       "id": "witchery:hobgoblin_village_ecology",
       "lane": "ci",
       "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:flying_monkey_courier_parity",
+      "lane": "ci",
+      "timeout_seconds": 300
+    },
+    {
+      "id": "witchery:flying_monkey_cross_dimension",
+      "lane": "ci",
+      "timeout_seconds": 300
     },
     {
       "id": "witchery:infernal_ownership_lifecycle",
@@ -158,6 +179,12 @@
     }
   ],
   "save_reload": {
+    "pre_save_commands": [
+      "witchery debug ritual_persistence setup"
+    ],
+    "post_reload_commands": [
+      "witchery debug ritual_persistence verify"
+    ],
     "machines": [
       {
         "name": "kettle",

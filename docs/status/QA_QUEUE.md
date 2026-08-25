@@ -345,10 +345,19 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   fixture covers timed water/lava restoration, web placement, and poisonous
   toad expiry. Keep live QA focused on visuals, sound, unusual combinations,
   multiplayer, and controls rather than re-proving those structural contracts.
-- Throw a non-empty brew directly from Leonard's Urn and confirm the ordinary
-  arcing trajectory remains. Fire that same Urn slot through a Mystic Branch
-  focus glyph and confirm a fast, straight, zero-drop flight that expires after
-  200 ticks if it never hits.
+- Fill all eight Brew Bag menu slots with mixed fixed and composed splash, gas,
+  and liquid brews, including a stack larger than one. Verify shift-click,
+  drag/split/merge, held-hotbar-slot protection, dye recolouring, close/reopen,
+  and relog persistence without lost counts or components.
+- Hold normal use on the Brew Bag and move the view through all eight radial
+  directions. Verify the source-coloured radial and names remain legible, empty
+  directions can be abandoned, an occupied choice locks cleanly, and release
+  consumes exactly one brew and returns one Glass Bottle in survival.
+- Open Leonard's Urn at capacities one through four and verify the source diamond
+  slots, inactive-socket art, one-item focus limit, shift-click, held-slot lock,
+  and close/relog persistence. Normal use must only open the menu. Fire each
+  occupied slot through its Mystic Branch urn glyph and confirm a fast, straight,
+  zero-drop flight that expires after 200 ticks without spending the focus.
 - Add a filled Taglock Kit as the final ingredient in a valid cauldron ritual.
   Confirm the empty kit is rejected, the filled target survives save/reload,
   later ingredients and bottle/bucket extraction are refused, and Tongue of Dog

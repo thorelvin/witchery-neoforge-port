@@ -119,9 +119,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 
 ## Brew Bag
 - **Obtain:** Craft with Impregnated Leather around Golden Thread.
-- **Use:** Carries up to eight throwable brews. Use with a throwable brew in the other hand to store one, sneak-use to choose the next slot, and use normally to throw the selected brew.
+- **Use:** Carries eight stacks of fixed or composed splash, gas, and liquid brews. Sneak-use opens the source-sized storage menu. Hold normal use, move the view toward one of the eight radial directions, and release to throw one brew from that slot.
 - **Stats:** None
-- **Notes:** Craft a Brew Bag with any dye to recolor the bag without emptying it.
+- **Notes:** Craft a Brew Bag with any dye to recolor the bag and radial without emptying it. The held hotbar slot is locked while the menu is open, and survival throws return a Glass Bottle.
 
 ## Brew of Flowing Spirit
 - **Obtain:** Brewing recipe in the Spirit World with specific ingredients.
@@ -460,6 +460,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Use:** Stores items and blood samples for Taglock Kits. Prevents witches from removing their own blood sample.
 - **Stats:** Storage: 27 slots
 - **Notes:** None
+
+## Leonard's Urn
+- **Obtain:** Dropped by the Shade of Leonard; craft two together to merge capacity and focuses up to four slots.
+- **Use:** Normal use opens the source diamond inventory. Place one fixed or composed splash, gas, or liquid brew in each focus slot, then cast the matching slot with one of the Mystic Branch's four urn glyphs.
+- **Stats:** Capacity: 1-4 focus slots; stored focuses are not consumed by glyph casts.
+- **Notes:** The urn does not cast directly from the hand. Its held hotbar slot is locked while the menu is open.
 
 ## Mog's Quiver
 - **Obtain:** Drops from Mog

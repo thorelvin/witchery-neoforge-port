@@ -27,6 +27,28 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
+      "text": "[#](53341a)The offered sapling determines the grove. The rite makes one planting attempt each second, with 59 attempts inside a 20-block radius before Coven bonuses. Every nearby Coven witch adds 2 blocks of radius and 5 attempts.[#]()",
+      "title": "How It Unfolds",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)A Bound Waystone moves the whole working to its bound location. The rite pauses while its caster or either end's chunks are unavailable; breaking its sustaining circle aborts it and returns the consumed offerings.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
       "text": "[#](53341a)Grow a forest, replace the sapling for the desired type.[#]() [#](53341a)**Required offerings:** **Oak Sapling**, **Wicker Bundle**, **Brew of Sprouting**, **Ent Twig**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
       "title": "Oak forest",
       "use_markdown_in_title": false

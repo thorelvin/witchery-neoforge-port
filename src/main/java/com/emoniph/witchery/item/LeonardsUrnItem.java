@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.entity.ThrownBrewEntity;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.menu.LeonardsUrnMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -9,11 +10,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +29,6 @@ import java.util.function.Consumer;
 @SuppressWarnings({"deprecation", "removal"})
 public class LeonardsUrnItem extends Item {
     private static final String TAG_CAPACITY = "Capacity";
-    private static final String TAG_SELECTED = "Selected";
     private static final String TAG_INVENTORY = "Inventory";
     private static final String TAG_ITEMS = "Items";
     private static final String TAG_SLOT = "Slot";
@@ -41,32 +43,14 @@ public class LeonardsUrnItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack urn = player.getItemInHand(hand);
-
-        if (player.isShiftKeyDown()) {
-            if (!level.isClientSide()) {
-                cycleSelectedSlot(urn);
-                int selected = selectedSlot(urn);
-                int capacity = getCapacity(urn);
-                player.displayClientMessage(Component.translatable(
-                        "item.witchery.leonards_urn.selected", selected + 1, capacity), true);
-            }
-            player.awardStat(Stats.ITEM_USED.get(this));
-            return InteractionResult.SUCCESS;
-        }
-
-        InteractionHand otherHand = hand == InteractionHand.MAIN_HAND
-                ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
-        ItemStack other = player.getItemInHand(otherHand);
-        if (isStorableBrew(other)) {
-            if (!level.isClientSide()) {
-                storeBrew(urn, other, player);
-            }
-            player.awardStat(Stats.ITEM_USED.get(this));
-            return InteractionResult.SUCCESS;
-        }
-
-        if (!level.isClientSide()) {
-            castStoredBrew(level, player, urn);
+        if (player instanceof ServerPlayer serverPlayer) {
+            int capacity = getCapacity(urn);
+            serverPlayer.openMenu(new SimpleMenuProvider(
+                    (containerId, inventory, menuPlayer) -> new LeonardsUrnMenu(containerId, inventory, hand),
+                    urn.getHoverName()), data -> {
+                        data.writeEnum(hand);
+                        data.writeVarInt(capacity);
+                    });
         }
         player.awardStat(Stats.ITEM_USED.get(this));
         return InteractionResult.SUCCESS;
@@ -85,63 +69,15 @@ public class LeonardsUrnItem extends Item {
         tooltip.accept(Component.translatable("item.witchery.leonards_urn.tip")
                 .withStyle(ChatFormatting.BLUE));
 
-        int selected = selectedSlot(stack);
         int capacity = getCapacity(stack);
-        tooltip.accept(Component.translatable("item.witchery.leonards_urn.tooltip.selected",
-                selected + 1, capacity).withStyle(ChatFormatting.GRAY));
-
         for (int slot = 0; slot < capacity; slot++) {
             ItemStack stored = getStored(stack, slot);
             Component value = stored.isEmpty()
                     ? Component.translatable("item.witchery.leonards_urn.tooltip.empty")
                     : stored.getHoverName();
             tooltip.accept(Component.translatable("item.witchery.leonards_urn.tooltip.slot",
-                    slot + 1, value).withStyle(slot == selected ? ChatFormatting.GOLD : ChatFormatting.DARK_GRAY));
+                    slot + 1, value).withStyle(ChatFormatting.DARK_GRAY));
         }
-    }
-
-    private static void storeBrew(ItemStack urn, ItemStack brew, Player player) {
-        int slot = firstAvailableSlot(urn);
-        if (slot < 0) {
-            player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.full"), true);
-            return;
-        }
-
-        ItemStack stored = brew.copyWithCount(1);
-        setStored(urn, slot, stored);
-        setSelectedSlot(urn, slot);
-        if (!player.getAbilities().instabuild) {
-            brew.shrink(1);
-        }
-        player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.stored",
-                stored.getHoverName()), true);
-        playUrnStoreEffects(player);
-    }
-
-    private static void castStoredBrew(Level level, Player player, ItemStack urn) {
-        int slot = selectedSlot(urn);
-        ItemStack stored = getStored(urn, slot);
-        if (!ThrowableBrewSupport.isThrowableBrew(stored)) {
-            player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.empty"), true);
-            level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5f, 1.0f);
-            playUrnFailEffects(level, player);
-            return;
-        }
-
-        level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.SPLASH_POTION_THROW, SoundSource.PLAYERS,
-                0.5f, 0.4f / (level.getRandom().nextFloat() * 0.4f + 0.8f));
-        ThrownBrewEntity projectile = ThrowableBrewSupport.createProjectile(level, player, stored);
-        if (projectile == null) {
-            player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.empty"), true);
-            return;
-        }
-        projectile.shootFromSourceThrower(player);
-        level.addFreshEntity(projectile);
-        playUrnCastEffects(level, player);
-        player.displayClientMessage(Component.translatable("item.witchery.leonards_urn.cast",
-                stored.getHoverName()), true);
     }
 
     /**
@@ -178,7 +114,7 @@ public class LeonardsUrnItem extends Item {
         return false;
     }
 
-    private static boolean isStorableBrew(ItemStack stack) {
+    public static boolean isStorableBrew(ItemStack stack) {
         return ThrowableBrewSupport.isThrowableBrew(stack);
     }
 
@@ -215,10 +151,6 @@ public class LeonardsUrnItem extends Item {
     }
 
     private static int firstAvailableSlot(ItemStack urn) {
-        int selected = selectedSlot(urn);
-        if (getStored(urn, selected).isEmpty()) {
-            return selected;
-        }
         int capacity = getCapacity(urn);
         for (int slot = 0; slot < capacity; slot++) {
             if (getStored(urn, slot).isEmpty()) {
@@ -229,16 +161,7 @@ public class LeonardsUrnItem extends Item {
     }
 
     private static ItemStack getStored(ItemStack urn, int slot) {
-        CompoundTag root = customData(urn);
-        ListTag items = root.getCompoundOrEmpty(TAG_INVENTORY).getListOrEmpty(TAG_ITEMS);
-        for (int i = 0; i < items.size(); i++) {
-            CompoundTag entry = items.getCompoundOrEmpty(i);
-            int entrySlot = entry.getByteOr(TAG_SLOT, (byte) 0) & 255;
-            if (entrySlot == slot) {
-                return entry.read(TAG_STACK, ItemStack.CODEC).orElse(ItemStack.EMPTY);
-            }
-        }
-        return ItemStack.EMPTY;
+        return slot >= 0 && slot < getCapacity(urn) ? StoredBrewInventory.get(urn, slot) : ItemStack.EMPTY;
     }
 
     public static ItemStack getStoredBrew(ItemStack urn, int slot) {
@@ -266,48 +189,7 @@ public class LeonardsUrnItem extends Item {
     private static void setStored(ItemStack urn, int slot, ItemStack stored) {
         int capacity = getCapacity(urn);
         int clampedSlot = clamp(slot, 0, capacity - 1);
-        CustomData.update(DataComponents.CUSTOM_DATA, urn, root -> {
-            root.putInt(TAG_CAPACITY, capacity);
-            CompoundTag inventory = root.getCompoundOrEmpty(TAG_INVENTORY);
-            ListTag existing = inventory.getListOrEmpty(TAG_ITEMS);
-            ListTag updated = new ListTag();
-
-            for (int i = 0; i < existing.size(); i++) {
-                CompoundTag entry = existing.getCompoundOrEmpty(i);
-                int entrySlot = entry.getByteOr(TAG_SLOT, (byte) 0) & 255;
-                if (entrySlot != clampedSlot) {
-                    updated.add(entry.copy());
-                }
-            }
-
-            if (!stored.isEmpty()) {
-                CompoundTag entry = new CompoundTag();
-                entry.putByte(TAG_SLOT, (byte) clampedSlot);
-                entry.store(TAG_STACK, ItemStack.CODEC, stored.copyWithCount(1));
-                updated.add(entry);
-            }
-
-            inventory.put(TAG_ITEMS, updated);
-            root.put(TAG_INVENTORY, inventory);
-        });
-    }
-
-    private static void cycleSelectedSlot(ItemStack urn) {
-        int capacity = getCapacity(urn);
-        setSelectedSlot(urn, (selectedSlot(urn) + 1) % capacity);
-    }
-
-    private static void setSelectedSlot(ItemStack urn, int slot) {
-        int capacity = getCapacity(urn);
-        CustomData.update(DataComponents.CUSTOM_DATA, urn, root -> {
-            root.putInt(TAG_CAPACITY, capacity);
-            root.putInt(TAG_SELECTED, clamp(slot, 0, capacity - 1));
-        });
-    }
-
-    private static int selectedSlot(ItemStack urn) {
-        CompoundTag tag = customData(urn);
-        return clamp(tag.getIntOr(TAG_SELECTED, 0), 0, getCapacity(urn) - 1);
+        StoredBrewInventory.set(urn, clampedSlot, stored.copyWithCount(1));
     }
 
     public static int getCapacity(ItemStack urn) {
@@ -317,10 +199,7 @@ public class LeonardsUrnItem extends Item {
 
     public static void setCapacity(ItemStack urn, int capacity) {
         int clamped = clamp(capacity, DEFAULT_CAPACITY, MAX_CAPACITY);
-        CustomData.update(DataComponents.CUSTOM_DATA, urn, root -> {
-            root.putInt(TAG_CAPACITY, clamped);
-            root.putInt(TAG_SELECTED, clamp(root.getIntOr(TAG_SELECTED, 0), 0, clamped - 1));
-        });
+        CustomData.update(DataComponents.CUSTOM_DATA, urn, root -> root.putInt(TAG_CAPACITY, clamped));
     }
 
     private static CompoundTag customData(ItemStack stack) {

@@ -14,6 +14,24 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 Detailed session history is archived in `docs/archive/CHANGELOG.md`; keep this file focused on backlog and slice candidates.
 
+- Brew storage interaction parity is implemented: Brew Bag has its exact
+  eight-slot menu and camera-selected, bag-coloured radial casting flow;
+  Leonard's Urn has its source one-to-four-focus diamond menu and casts only
+  through the Mystic Branch's four urn glyphs. Stable item-backed containers,
+  held-slot protection, exact source GUI assets, JVM contracts, and a dedicated
+  interaction GameTest cover the mechanical path. Live radial/menu feel remains
+  in the QA queue.
+- Flying Monkey parity now includes the full source mutation apparatus, tameable
+  companion behavior, Taglock retrieval, reusable Bound/Blooded Waystone owner
+  travel, persistent journeys, cancellation, and safe cross-world arrival.
+  Focused JVM and dedicated-server courier tests pass; live long-distance and
+  multiplayer feel remain QA.
+- Fertility and Forestation now use the persistent active-rite lifecycle instead
+  of resolving instantly. Their source pulse cadence, Coven radius/duration
+  scaling, exact entity effects, offered sapling focus, optional Bound Waystone
+  relocation, restart state, offline/unloaded pause, circle-abort refunds, focused
+  JVM contracts, dedicated-server behavior fixture, and real stop/reload probe are
+  implemented.
 - Machine presentation parity is closed for the current roster: exact source GUI
   atlases/coordinates for Oven, Distillery, and Spinning Wheel; source state
   particles and Kettle ingredient splashes; special item renderer routes; and
@@ -73,7 +91,7 @@ Detailed session history is archived in `docs/archive/CHANGELOG.md`; keep this f
 - 2026-07-01: Local AI NPCs now use a broader persona framework with Coven Witch, Leonard, villager, hobgoblin, Baba Yaga, demon/flame-imp, boss, atmosphere, and reflection card families; the launcher preflights Ollama/EVA, model prewarm is enabled, memory/router/intent checks are LLM-assisted where useful, and game mechanics remain server-authoritative.
 - 2026-07-01: Protection facade landed for NPC command authority and terrain-changing magic, with vanilla checks plus optional reflective Open Parties and Claims, FTB Chunks, and Common Protection API adapters. Needs real modded-server QA.
 - 2026-06-30: Curse of Insanity now spawns source-shaped victim-only fake Creeper/Spider/Zombie illusion mobs instead of the nausea stand-in; high-level private fake sounds remain. Needs in-game frequency/scare QA.
-- 2026-06-23: Custom brew moving-fluid contact, Dog Tongue gas/liquid placement fallback, brazier dousing, Spirit World fog density, Death Hand held-side rendering, trap state sync, cursed warning cooldowns, Leonard's Urn focus release and capacity upgrades, Witches Hand Otherwhere cooldown/feedback, Duplication Grenade mirror charging, Book of Biomes page stats, Wolftrap lure steering, Parasytic Louse payload cues, Sun Collector/Sun Grenade light feedback, and compass scrying cues were tightened.
+- 2026-06-23: Custom brew moving-fluid contact, Dog Tongue gas/liquid placement fallback, brazier dousing, Spirit World fog density, Death Hand held-side rendering, trap state sync, cursed warning cooldowns, Leonard's Urn focus storage and capacity upgrades, Witches Hand Otherwhere cooldown/feedback, Duplication Grenade mirror charging, Book of Biomes page stats, Wolftrap lure steering, Parasytic Louse payload cues, Sun Collector/Sun Grenade light feedback, and compass scrying cues were tightened.
 - 2026-06-21: Visual ritual recipe pages in the Primer gained ring diagrams and coven-face indicators; in-game visual tuning remains.
 - 2026-06-20: Vampire armor visuals, Sun Grenade projectile rendering, Rowan Key use, crop soil rules, Spirit World cotton, Vanishing Hut generation, Witches' Salt, and village wall spawn tuning landed.
 - 2026-06-19 to 2026-06-13: Leonard, NBT structures, custom brew reference/delivery, placed Primer/scrying/apothecary, Disease brew, and Purified Milk polish landed.
@@ -91,13 +109,13 @@ Seven implementation lanes - work one bounded slice at a time per lane:
 
 3. **Village / mobs / bosses / structures** - major recent progress: Village Guard, Wolfman/WereVillager, Vampire, Baba Yaga, Leonard/Lost Souls, Gulg/Mog, village apothecary/bookshop/source-sized witch hut injection, Watch Tower, Keep, first-pass town walls, first-pass Coven Circle/Stone Circle alias, source-shaped Hobgoblin Hut, first-pass Straw Man, source `EntitySummonedUndead` behavior for spectral mobs, source villager-damage protection from Witchery guards/hunters, source `TownZombieAttackReductionMode` villager protection, and source-shaped Insanity illusion mobs are live. Next village slice: fresh-village QA for walls/buildings and keep frequency after the house-pool weight increase. Broader remaining structure/entity parity: Coven Circle/Straw Man fresh-world QA, any optional/non-source Baba Yaga hut decision, and later Witch Forest additive work.
 
-4. **Machines / storage exactness** — sided automation and the current presentation slice are source-audited for Kettle/Oven/Distillery/Spinning Wheel/Brazier/Fume Funnels/Silver Vat. Exact GUI, renderer-route, spout, splash, and state-particle behavior is test-backed and capture-verified. Keep only unrelated recipe/container edge cases and ordinary-play feel checks open.
+4. **Machines / storage exactness** — sided automation and the current presentation slice are source-audited for Kettle/Oven/Distillery/Spinning Wheel/Brazier/Fume Funnels/Silver Vat. Brew Bag and Leonard's Urn now also restore their exact storage layouts and source interaction split. Exact GUI, renderer-route, spout, splash, state-particle, item-container, and radial contracts are test-backed. Keep only unrelated recipe/container edge cases and ordinary-play feel checks open.
 
 5. **Dimensions / world feel** — Spirit World fresh-chunk QA, Mirror World client visual/audio QA, Torment client feel, exact dimension fog-distance if a concrete source hook surfaces.
 
 6. **AI NPCs / multiplayer safety** - keep the local persona layer grounded in server facts, add more high-value cards where fallbacks still carry too much weight, test ordinary play conversations, and verify protection/claim adapters in actual server packs before treating the feature as release-ready.
 
-7. **Runtime test maintenance / release gates** - complete as of 2026-08-25. CI validates the exact manifest, runs 17 named resource contracts, executes 26 exact GameTests on a clean dedicated server with custom dimensions, and proves all six automation-certified machine inventories plus command storage survive save/reload. Runtime worlds disable the vanilla empty-server pause so long tests continue without a connected player. Keep new registered tests synchronized with `tools/runtime_test_manifest.json`; preserve forced Hearth crash/recovery, real-client presentation, and claim-adapter checks in the documented manual lane.
+7. **Runtime test maintenance / release gates** - complete as of 2026-08-25. CI validates the exact manifest, runs 18 named resource contracts, executes 30 exact GameTests on a clean dedicated server with custom dimensions, and proves all six automation-certified machine inventories, command storage, and an active relocated ritual survive save/reload. Runtime worlds disable the vanilla empty-server pause so long tests continue without a connected player. Keep new registered tests synchronized with `tools/runtime_test_manifest.json`; preserve forced Hearth crash/recovery, real-client presentation, and claim-adapter checks in the documented manual lane.
 
 Small machine/storage QA fixes run in parallel when clearly bounded. Pull from the QA queue below before broader backlog work unless a new blocker appears.
 
@@ -412,7 +430,7 @@ The static source-model coordinate pass is closed: exact part graphs, pivots, pa
 - **Mandrake model/harvest** - `/witchery spawn mandrake_mob` and verify the exact source-sized body, whole-body walking wobble, mirror UVs, zero-depth leaf crown, `0.5` shadow, and Ghast-family voice. Harvest mature plants by day/night to verify the 90%/10% awakening split and 20-particle root burst
 - **Ent presentation** - `/witchery spawn ent`, provoke it, and verify the root-leg walk, attack arm lift, knock-up contact, and audio feel in motion. Numeric tests and controlled captures already close the foundational mapping/holes report.
 
-- **Flying Monkey presentation** - `/witchery spawn flying_monkey` and verify landed/flying transitions, wing and tail animation, carried interaction, and feather tint in motion. Numeric tests and controlled captures already close the foundational model/texture-holes report.
+- **Flying Monkey presentation and courier feel** - `/witchery spawn flying_monkey`; tame it, issue a filled creature/player Taglock Kit order, and verify the target hangs beneath it and returns to the command origin. Then use location-bound and Blooded Waystones and verify they remain in hand, same-world travel is flown, cross-world travel lands safely, and sneaking dismount/cancel behaves cleanly. Also verify landed/flying transitions, wing and tail animation, carried interaction, and feather tint in motion. Dedicated-server courier, persistence, reusable-waystone, and arrival coverage plus numeric/controlled model captures are complete.
 - **Flame Imp parity** - `/witchery spawn flame_imp`, provoke it, and verify the source right-arm punch/body twist during melee. Bind and power one, then verify it becomes wider but not taller, emits flame particles, uses the lower powered voice, heals rapidly, deals 8 damage, and never takes more than 5 damage from one hit.
 - **Parasytic Louse potion bite/hotbar defense** - craft `parasytic_louse` with a non-water vanilla potion, place it, let it bite a target, and verify the carried potion effects apply once and then clear; verify pickup preserves unused potion payloads. Then keep a potion-fed louse in the hotbar and verify hostile effects bite the attacker while beneficial effects bite the player, clear the louse payload, and cost 1 magic damage
 - **Biting Belt potion defense** - craft `biting_belt`, load it with up to two non-water vanilla potions, wear it in the legs slot, take entity damage with no usable hotbar louse, and verify it consumes one stored effect, routes harmful effects to a living attacker or beneficial effects to the player, leaves harmful bites stored on source-less hits, skips already-active/instant-heal effects, and costs 1 magic damage

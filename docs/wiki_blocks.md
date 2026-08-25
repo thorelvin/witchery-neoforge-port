@@ -91,9 +91,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 | Gunpowder | Gunpowder | No | Short Strength II and Speed II burst for nearby players. |
 
 ## Brew Bag
-- **Obtain:** Crafting recipe required.
-- **Function:** Holds ingredients for brewing potions.
-- **Notes:** Can be filled with various items to create different potion effects.
+- **Obtain:** Craft from Impregnated Leather around Golden Thread.
+- **Function:** Stores eight stacks of throwable fixed or composed brews in an item inventory.
+- **Notes:** Sneak-use opens storage; hold normal use and aim through the eight-direction radial to cast. See `docs/wiki_items.md` for full controls.
 
 ## Broom (Witchery)
 - **Obtain:** Crafting recipe required.
@@ -271,9 +271,9 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Not specified in the provided text.
 
 ## Leonard's Urn
-- **Obtain:** Not specified in the provided text.
-- **Function:** Not specified in the provided text.
-- **Notes:** Not specified in the provided text.
+- **Obtain:** Dropped by the Shade of Leonard; combine two urns to merge capacity up to four slots.
+- **Function:** Opens a capacity-sensitive diamond inventory holding one unspent brew focus per slot.
+- **Notes:** The urn does not cast directly. The Mystic Branch's four urn glyphs cast the corresponding stored focus with Leonard's fast, straight projectile route.
 
 ## Mirror
 - **Obtain:** Not specified in the provided text.

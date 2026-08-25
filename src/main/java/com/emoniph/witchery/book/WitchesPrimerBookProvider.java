@@ -444,6 +444,10 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                             + "Each one has its own exact offerings, circles, power, and conditions; use the "
                             + "card belonging to the result you intend."));
         }
+        String unfolding = ritualCompendiumUnfolding(family.id());
+        if (!unfolding.isEmpty()) {
+            pages.addAll(WitcheryBooks.prose("How It Unfolds", unfolding));
+        }
         for (RitualCompendium.Variant variant : family.variants()) {
             String pageTitle = family.variants().size() == 1 ? family.title() : variant.variantLabel();
             pages.addAll(WitcheryBooks.prose(pageTitle, ritualCompendiumWorking(variant)));
@@ -452,6 +456,24 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         Item icon = BuiltInRegistries.ITEM.getOptional(family.icon())
                 .orElseThrow(() -> new IllegalStateException("Unknown compendium icon " + family.icon()));
         return entry(cat, "circle_magic/rites/" + family.id(), family.title(), icon, sort, pages);
+    }
+
+    private static String ritualCompendiumUnfolding(String familyId) {
+        return switch (familyId) {
+            case "fertility" -> "The working begins at radius 4 and advances one block every five ticks, "
+                    + "ending at radius 50 plus 2 blocks per nearby Coven witch. Each passing ring grows "
+                    + "the land, restores Zombie Villagers, and clears Blindness, Nausea, and Poison from "
+                    + "players. An active cat familiar also grants Regeneration II and Health Boost. The "
+                    + "rite pauses while its caster or chunks are unavailable; breaking its sustaining "
+                    + "circle aborts it and returns the consumed offerings.";
+            case "forest" -> "The offered sapling determines the grove. The rite makes one planting attempt "
+                    + "each second, with 59 attempts inside a 20-block radius before Coven bonuses. Every "
+                    + "nearby Coven witch adds 2 blocks of radius and 5 attempts. A Bound Waystone moves the "
+                    + "whole working to its bound location. The rite pauses while its caster or either end's "
+                    + "chunks are unavailable; breaking its sustaining circle aborts it and returns the "
+                    + "consumed offerings.";
+            default -> "";
+        };
     }
 
     private static String ritualCompendiumWorking(RitualCompendium.Variant variant) {
@@ -907,8 +929,8 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "**Golden** centre in the very middle. Drop the activating ingredient nearby and "
                         + "right-click that golden centre. Whatever the ring, the centre is always gold."));
         drawing.addAll(WitcheryBooks.prose("Three Sizes",
-                "**Small** (7x7, 16 glyphs) for infusions, familiar binding, and personal rites. **Medium** "
-                        + "(11x11, 28 glyphs) for summoning, fertility, and most buff rites. **Large** "
+                "**Small** (7x7, 16 glyphs) for infusions, familiar binding, fertility, and personal rites. **Medium** "
+                        + "(11x11, 28 glyphs) for summoning, forestation, and most buff rites. **Large** "
                         + "(15x15, 40 glyphs) for world-altering rites, curses, and dimensional workings."
                         + "\n\nThe Circle Talisman stores a pattern and redeploys it instantly."));
 
@@ -1138,10 +1160,12 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "to a giant, harder still to fell."));
         leonard.addAll(WitcheryBooks.prose("Reward",
                 "A defeated Shade drops **Leonard's Urn**, a vessel of considerable infernal standing. Its "
-                        + "use is concrete enough: store thrown brews from your other hand, sneak-use to "
-                        + "change focus, then release the chosen brew without spending the stored focus. "
+                        + "use is concrete enough: use it to open the source-shaped focus inventory, then "
+                        + "place one splash, gas, or liquid brew in each available slot. The urn does not "
+                        + "cast directly from the hand; the Mystic Branch's four urn glyphs call the matching "
+                        + "stored focus without spending it. "
                         + "Crafting two urns together combines their capacity and stored focuses, up to "
-                        + "four slots. The Mystic Branch's four urn glyphs draw from those same focuses."));
+                        + "four slots."));
 
         cat.withEntries(
                 entry(cat, "conjuration/brazier", "The Brazier", WitcheryItems.BRAZIER.get(), 0, brazier),
@@ -1491,13 +1515,32 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "Wolftrap can lure a Wolfman on the full moon; catching that beast makes it "
                         + "infectious. It drops nothing when broken."));
 
+        List<BookPageModel<?>> monkey = new ArrayList<>(WitcheryBooks.prose("Flying Monkeys",
+                "A wild Flying Monkey is made by the living mutation described under the Mutating Sprig: "
+                        + "a Wolf and Owl beneath the cocoa-ringed web and its prepared Grasspers. Tempt it "
+                        + "with Raw Beef or Raw Porkchop until it accepts you; either meat also heals a hurt "
+                        + "companion, and dyes colour its feathers."));
+        monkey.add(creature("witchery:flying_monkey", "The Flying Monkey",
+                "A fierce little flyer that follows its owner, fights in their defence, breeds when fed, "
+                        + "and settles on the ground or in the trees between journeys.", 0.8F, -0.2F));
+        monkey.addAll(WitcheryBooks.prose("Courier Orders",
+                "Use a filled **Taglock Kit** on your tamed Flying Monkey. The kit is consumed; the monkey "
+                        + "flies to that exact living creature or player, carries them beneath it, and returns "
+                        + "to the place where you gave the order. A traveller may sneak to drop free."
+                        + "\n\nUse a **Bound Waystone** or **Blooded Waystone** instead to travel yourself. "
+                        + "The waystone is reusable. Same-world journeys are flown; a trail that crosses worlds "
+                        + "uses the stone's magic after a safe landing is found. Sneak-use the monkey with an "
+                        + "empty hand to cancel an active order."));
+
         cat.withEntries(
                 entry(cat, "creatures/familiars", "Familiars", WitcheryItems.OWL_SPAWN_EGG.get(), 0, familiars),
                 entry(cat, "creatures/witch_hunter", "Witch Hunters", WitcheryItems.HUNTER_HAT.get(), 1, hunter),
                 entry(cat, "creatures/hobgoblin", "Hobgoblins", WitcheryItems.KOBOLDITE_INGOT.get(), 2, hobgoblin),
                 entry(cat, "creatures/spectral_familiar", "Spectral Familiar", WitcheryItems.DROP_OF_LUCK.get(), 3, spectral),
                 entry(cat, "creatures/creature_traps", "Creature Traps", WitcheryItems.BEARTRAP.get(), 4, traps),
-                whatsNext(cat, "creatures", 5, "book_transformations", "Witchcraft: Transformations", WitcheryItems.BOOK_TRANSFORMATIONS.get(), "Transformations"));
+                entry(cat, "creatures/flying_monkey", "Flying Monkeys",
+                        WitcheryItems.FLYING_MONKEY_SPAWN_EGG.get(), 5, monkey),
+                whatsNext(cat, "creatures", 6, "book_transformations", "Witchcraft: Transformations", WitcheryItems.BOOK_TRANSFORMATIONS.get(), "Transformations"));
         return cat;
     }
 

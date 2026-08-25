@@ -333,7 +333,7 @@ public class RitualEvents {
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
         for (ServerLevel level : event.getServer().getAllLevels()) {
-            RitualExecutor.cancelAllWithRefund(level);
+            RitualExecutor.prepareForServerStop(level);
         }
     }
 }

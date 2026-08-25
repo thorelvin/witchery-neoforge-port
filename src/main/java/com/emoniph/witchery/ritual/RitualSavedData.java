@@ -76,6 +76,8 @@ public final class RitualSavedData extends SavedData {
 
 enum ActiveRitualType {
     WEATHER_CALL_STORM,
+    FERTILITY,
+    FORESTATION,
     ICE_SHELL,
     RAIN_OF_TOADS,
     BLINDNESS,
@@ -109,6 +111,7 @@ final class ActiveRitual {
     final int covenSize;
     final float upkeepCost;
     final boolean enhanced;
+    final ItemStack focus;
     final ItemStack sacrificedIngredient;
     final List<ItemStack> supplementalSacrifices;
     final String ownerName;
@@ -125,6 +128,17 @@ final class ActiveRitual {
                  int minRadius, int maxRadius, int targetStage, int pulseInterval,
                  int covenSize, float upkeepCost, boolean enhanced, int heading, long nextGameTime,
                  ItemStack sacrificedIngredient, List<ItemStack> supplementalSacrifices, String ownerName) {
+        this(type, center, circleSize, effectCenter, circleVariant, minRadius, maxRadius, targetStage,
+                pulseInterval, covenSize, upkeepCost, enhanced, heading, nextGameTime,
+                sacrificedIngredient, supplementalSacrifices, ownerName, ItemStack.EMPTY);
+    }
+
+    ActiveRitual(ActiveRitualType type, BlockPos center, RitualCircleDetector.CircleSize circleSize,
+                 BlockPos effectCenter, int circleVariant,
+                 int minRadius, int maxRadius, int targetStage, int pulseInterval,
+                 int covenSize, float upkeepCost, boolean enhanced, int heading, long nextGameTime,
+                 ItemStack sacrificedIngredient, List<ItemStack> supplementalSacrifices, String ownerName,
+                 ItemStack focus) {
         this.type = type;
         this.center = center.immutable();
         this.effectCenter = effectCenter.immutable();
@@ -137,6 +151,7 @@ final class ActiveRitual {
         this.covenSize = covenSize;
         this.upkeepCost = upkeepCost;
         this.enhanced = enhanced;
+        this.focus = focus == null ? ItemStack.EMPTY : focus.copy();
         this.heading = heading;
         this.nextGameTime = nextGameTime;
         this.sacrificedIngredient = sacrificedIngredient;
@@ -153,6 +168,7 @@ final class ActiveRitual {
                     r.circleVariant, r.minRadius, r.maxRadius, r.targetStage, r.pulseInterval, r.covenSize, r.heading)),
             Codec.FLOAT.fieldOf("upkeep_cost").forGetter(r -> r.upkeepCost),
             Codec.BOOL.fieldOf("enhanced").forGetter(r -> r.enhanced),
+            ItemStack.OPTIONAL_CODEC.optionalFieldOf("focus", ItemStack.EMPTY).forGetter(r -> r.focus),
             Codec.LONG.fieldOf("next_game_time").forGetter(r -> r.nextGameTime),
             ItemStack.OPTIONAL_CODEC.fieldOf("sacrificed").forGetter(r -> r.sacrificedIngredient),
             ItemStack.CODEC.listOf().fieldOf("supplemental").forGetter(r -> r.supplementalSacrifices),
@@ -164,11 +180,12 @@ final class ActiveRitual {
 
     private static ActiveRitual fromCodec(ActiveRitualType type, BlockPos center, BlockPos effectCenter,
             RitualCircleDetector.CircleSize circleSize, RitualGeometry geom, float upkeepCost, boolean enhanced,
-            long nextGameTime, ItemStack sacrificed, List<ItemStack> supplemental, String ownerName,
+            ItemStack focus, long nextGameTime, ItemStack sacrificed, List<ItemStack> supplemental, String ownerName,
             List<BlockPos> path, int stage, float upkeepDebt) {
         ActiveRitual r = new ActiveRitual(type, center, circleSize, effectCenter, geom.circleVariant(),
                 geom.minRadius(), geom.maxRadius(), geom.targetStage(), geom.pulseInterval(), geom.covenSize(),
-                upkeepCost, enhanced, geom.heading(), nextGameTime, sacrificed, List.copyOf(supplemental), ownerName);
+                upkeepCost, enhanced, geom.heading(), nextGameTime, sacrificed, List.copyOf(supplemental), ownerName,
+                focus);
         r.stage = stage;
         r.upkeepDebt = upkeepDebt;
         r.path.addAll(path);

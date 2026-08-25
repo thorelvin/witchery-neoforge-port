@@ -76,12 +76,12 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Spell contracts are signed on a target, or on yourself by using the contract while crouched. A pleased, unpowered Flame Imp can cast Living Flame, Fiery Tolerance, Evaporation, Fiery Touch, and Melting Touch, with a three-minute working/gift cooldown. Demon Heart power lasts 60 minutes, doubles its melee damage from 4 to 8, lowers its incoming-damage cap from 15 to 5, and stops Imp Magic until the time passes or Icy Needles calm it.
 
 ## Flying Monkey
-- **HP:** 5
-- **Damage:** 1
-- **Drops:** Feather
-- **Spawn:** Doesn't spawn naturally; must be mutated from a wolf and an owl
-- **Behaviour:** Neutral, can be tamed with Raw Beef or Raw Porkchop. Tamed Flying Monkeys can be healed and bred. They can carry players to the coordinates of a Bound Waystone.
-- **Notes:** Can be dyed.
+- **HP:** 20
+- **Damage:** 2
+- **Drops:** 0-2 Feathers, plus Looting
+- **Spawn:** Does not spawn naturally. Use a Mutating Sprig on a water-backed Cobweb ringed by four mature Cocoa blocks, with a Wolf and Owl nearby and diagonal Grasspers holding two Mutandis Extremis, one Charged Attuned Stone, and one Poppy.
+- **Behaviour:** Neutral; tame, heal, and breed it with Raw Beef or Raw Porkchop. A filled player or creature Taglock Kit sends a tamed monkey to fetch that exact living target and return it to the command point. A Bound or Blooded Waystone makes it carry its owner to the fixed or living destination, including safe cross-dimension travel.
+- **Notes:** Accepted Taglock orders consume the kit; waystones remain reusable. The owner can sneak-use the monkey with an empty hand to cancel, and a carried player can sneak to drop free. Feather colour can be changed with dyes.
 
 ## Hobgoblin
 - **HP:** 20 (x 10)

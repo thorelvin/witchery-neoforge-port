@@ -1215,14 +1215,14 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <h3>Environmental and Terrain Rites (Ritual Chalk unless noted)</h3>
 <table>
   <tr><th>Rite</th><th>Size</th><th>Power</th><th>Chalk</th><th>Key Ingredients</th><th>Effect</th></tr>
-  <tr><td>Rite of the Forest</td><td>11×11</td><td>4,000</td><td>Ritual</td><td>Wicker Bundle + Brew of Sprouting + Ent Twig + Sapling of target tree species</td><td>Grows a forest of the chosen tree species outside the circle. Use with a Bound Waystone to target a specific location. Works with all vanilla and Witchery saplings — useful for seeding a remote Rowan grove or replenishing felled witch-tree areas.</td></tr>
+  <tr><td>Rite of the Forest</td><td>11×11</td><td>4,000</td><td>Ritual</td><td>Wicker Bundle + Brew of Sprouting + Ent Twig + Sapling of target tree species</td><td>Attempts one chosen-species tree each second for 59 base pulses within 20 blocks. Each nearby Coven witch adds 2 blocks of radius and 5 attempts. A Bound Waystone relocates the whole working. The rite persists through restart, pauses while its caster or required chunks are unavailable, and refunds consumed offerings if its sustaining circle breaks.</td></tr>
   <tr><td>Rite of Nature's Power</td><td>11×11</td><td>0</td><td>Ritual</td><td>Alder + Hawthorn + Rowan + Oak + Birch + Spruce Saplings + Brew of Sprouting + Attuned Stone (Charged)</td><td>Forces growth of pumpkins, melons, ember moss, and Witchery trees inside the circle; turns all ground to grass</td></tr>
   <tr><td>Rite of Broken Earth</td><td>7×7</td><td>0</td><td>Ritual</td><td>Brew of Erosion</td><td>Creates a crevice in the ground outside the circle, toward the gold glyph direction</td></tr>
   <tr><td>Rite of Moving Earth</td><td>7×7–15×15</td><td>0</td><td>Ritual</td><td>Brew of Sprouting + Cactus + Gunpowder/Redstone/Glowstone (size variant)</td><td>Sends blocks 10 layers underground upward. Larger sizes with Redstone/Glowstone dust variants. Optional Bound Waystone to target a location.</td></tr>
   <tr><td>Rite of Icy Expansion</td><td>7×7</td><td>0</td><td>Ritual</td><td>Diamond Sword + Frozen Heart + Attuned Stone (Charged); requires 2 Coven witches minimum</td><td>Slowly pushes back liquids in a spherical zone, creating a breathable enclosure underwater. More witches = larger sphere. Creates Perpetual Ice.</td></tr>
   <tr><td>Rite of Earth's Wrath</td><td>7×7</td><td>0</td><td>Infernal</td><td>Attuned Stone (Charged) + Stone + Magma Cream + Golden Sword</td><td>Calls up lava from underground to form a volcano in the casting circle. Requires a pool of lava underground.</td></tr>
   <tr><td>Rite of Sky's Wrath</td><td>7×7</td><td>1,000–2,000</td><td>Ritual</td><td>Wooden Sword (inside) or Stone Sword (outside) + Wood Ash; Iron Sword + Attuned Stone (Charged) for free variant; optional Bound Waystone to target a location</td><td>Calls down lightning strikes. Inside variant strikes within the circle; outside variant strikes the facing direction or the waystone location.</td></tr>
-  <tr><td>Rite of Fertility</td><td>7×7</td><td>0 or 3,000</td><td>Ritual</td><td>Bone Meal + Hint of Rebirth + Diamond Vapor + Quicklime + Gypsum + Mutandis Extremis (free) or Mutandis (powered)</td><td>Bonemeal spreads across a wide area. Cures Zombie Villagers. Cures Blindness/Nausea/Poison. With Cat Familiar: also gives Regeneration and Saturation to players in range.</td></tr>
+  <tr><td>Rite of Fertility</td><td>7×7</td><td>0 or 3,000</td><td>Ritual</td><td>Bone Meal + Hint of Rebirth + Diamond Vapor + Quicklime + Gypsum + Mutandis Extremis (free) or Mutandis (powered)</td><td>An outward wave advances one block every 5 ticks, from radius 4 to 50 plus 2 blocks per nearby Coven witch. It grows exposed land, restores Zombie Villagers, and clears Blindness, Nausea, and Poison. With an active Cat Familiar it also grants Regeneration II and Health Boost. The rite persists through restart, pauses while its caster or chunks are unavailable, and refunds consumed offerings if its sustaining circle breaks.</td></tr>
   <tr><td>Rite of Broiling</td><td>7×7</td><td>0 or 1,000</td><td>Infernal</td><td>Coal + Blaze Rod + Wood Ash + (Attuned Stone Charged for free variant)</td><td>Cooks large quantities of food. Some food may come out slightly burnt.</td></tr>
 </table>
 
@@ -1652,7 +1652,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><th>Type</th><th>ID</th><th>Holds</th><th>Created By</th><th>Used In</th></tr>
   <tr><td>Unbound Waystone</td><td><code>waystone</code></td><td>Nothing</td><td>Crafted; stacks to 16</td><td>Binding rites</td></tr>
   <tr><td>Bound Waystone</td><td><code>bound_waystone</code></td><td>Specific coordinates</td><td>Rite of Binding / copy</td><td>Location teleportation; <a href="#ruby-slippers">Ruby Slippers</a>; <a href="#ch25">Flying Monkey</a></td></tr>
-  <tr><td>Blooded Waystone</td><td><code>blooded_waystone</code></td><td>A specific player or mob</td><td>Rite of Binding (blooded routes)</td><td>Pulling a bound target via Transposition; Crystal Ball scrying</td></tr>
+  <tr><td>Blooded Waystone</td><td><code>blooded_waystone</code></td><td>A specific player or mob</td><td>Rite of Binding (blooded routes)</td><td>Pulling a bound target via Transposition; Crystal Ball scrying; <a href="#ch25">Flying Monkey</a> travel</td></tr>
 </table>
 <div class="callout callout-tip">Old saved worlds bound the coordinates onto the blank <code>witchery:waystone</code> item itself. Those legacy bound stacks still work everywhere the new <code>bound_waystone</code> does — only fresh bindings produce the distinct ID.</div>
 
@@ -1681,7 +1681,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <p>A <strong>Statue of Occluded Summons</strong>, carved as a small stone mandrake effigy, smothers this pull within about thirty-two blocks of the intended victim, unless that victim has recently killed another player under the marker's eye. Creative players, or the placing owner while sneaking, can break a vertical stack of these markers cleanly.</p>
 <p>A <a href="#blooded-binding">Blooded Waystone</a> offers the same reach without a fresh taglock each time: bound once to a target, it sends the entities in an Otherwhere circle to wherever that target currently is, dimension permitting. It is the patient hunter's tool — bind early, pull whenever.</p>
 
-<div class="callout callout-tip">Give a tamed <a href="#ch25">Flying Monkey</a> a Bound Waystone and it will fly you to the stored coordinates without any rite, circle, or altar. An alternative form of travel that does not require preparation. See <a href="#ch25">Chapter 25</a>.</div>
+<div class="callout callout-tip">Use a Bound Waystone on a tamed <a href="#ch25">Flying Monkey</a> to fly to its stored coordinates, or a Blooded Waystone to follow its living target. The stone remains reusable, and cross-world routes complete only after the monkey finds a safe landing. See <a href="#ch25">Chapter 25</a>.</div>
 
 <div class="callout callout-also">Transposition rites (binding &amp; teleport): <a href="#ch11">Ch 11</a> · Ruby Slippers (no-rite home jump): <a href="#ruby-slippers">Ch 34</a> · Flying Monkey courier: <a href="#ch25">Ch 25</a> · Crystal Ball scrying a waystone: <a href="#ch23">Ch 23</a> · The pull rite as a weapon: <a href="#ch33">Ch 33</a></div>
 
@@ -2005,20 +2005,23 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <div class="lore-pull">There are witches who keep cats. There are witches who keep owls. And then there are witches who keep flying monkeys, and they tend to have a different kind of reputation.</div>
 
 <h3>Creation — and What It Costs</h3>
-<p>To create a Flying Monkey, you need your Owl Familiar, a tamed Wolf, and Mutandis Extremis. Right-click the Wolf with the Mutandis Extremis while the Owl Familiar is within approximately 5 blocks. Both the Wolf and the Owl are consumed. A Flying Monkey appears.</p>
+<p>Place a Cobweb above source water and surround it on the four cardinal sides with mature Cocoa. Place a Grassper on each diagonal and load the four Grasspers with two Mutandis Extremis, one Charged Attuned Stone, and one Poppy. Bring a Wolf and an Owl close, then use the Mutating Sprig on the web. The apparatus and both creatures are consumed, leaving a wild Flying Monkey.</p>
 
-<div class="callout callout-warn">This destroys your Owl Familiar. The Rite of Summoning cannot resummon a familiar that was transformed — only ones that died. You lose all Owl Familiar bonuses immediately and permanently. Do this only if you have decided to trade the owl for the monkey.</div>
+<div class="callout callout-warn">The mutation consumes the Wolf and Owl. The Owl does not need to be your bound familiar, so there is no reason to sacrifice a familiar unless you deliberately choose to.</div>
 
 <h3>Properties</h3>
 <ul>
-  <li>Tameable with Raw Beef or Raw Porkchop (ocelot-style — approach slowly, do not run)</li>
+  <li>20 health, 5 armor, and 2 melee damage</li>
+  <li>Tameable, healable, and breedable with Raw Beef or Raw Porkchop</li>
   <li>Dyeable in any of the 16 Minecraft dye colors</li>
-  <li>Four skin variants; assigned at creation</li>
-  <li>Flies and hovers near its owner when tamed</li>
+  <li>Flies, lands, follows its owner, and defends them when tamed</li>
 </ul>
 
-<h3>Waystone Courier</h3>
-<p>Give a tamed <a href="#ch25">Flying Monkey</a> a Bound Waystone — right-click with the waystone. It will fly toward the stored coordinates, carrying you with it. A form of fast travel that requires no circle, no chalk, no altar power. Simply a well-aimed monkey.</p>
+<h3>Taglock Courier</h3>
+<p>Use a filled player or creature Taglock Kit on your tamed Flying Monkey. An accepted order consumes the kit. The monkey flies to that exact loaded living target, carries it beneath its body, and returns it to the point where you gave the order. Missing, dead, mounted, or cross-world targets are refused or abandoned cleanly. A carried player can sneak to drop free.</p>
+
+<h3>Waystone Travel</h3>
+<p>Use a Bound Waystone to travel to its fixed location, or a Blooded Waystone to follow its living target. The monkey carries its owner beneath it and the waystone remains reusable. Same-world journeys are flown; cross-world journeys complete through the stone's magic only after a safe landing is found. Sneak-use the monkey with an empty hand to cancel an active order.</p>
 
 <!-- CH 26 -->
 <h2 class="chapter" id="ch26">Chapter 26: Rowan Security<span class="stage stage-mid">Mid</span> <a href="#toc" class="ch-top">&uarr; Contents</a></h2>
@@ -2265,7 +2268,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Familiar Cat <code>familiar_cat</code></td><td>50 (as familiar)</td><td>Rite of Binding — tamed ocelot</td><td>Life-linked. Curse enhancement and resistance. 5 armor.</td></tr>
   <tr><td>Owl <code>owl</code></td><td>5 wild; 50 familiar</td><td>Mutation — Wolf + Bats</td><td>Tame with Raw Beef/Porkchop. Dyeable. Will use brews given to it.</td></tr>
   <tr><td>Toad <code>toad</code></td><td>5 wild; 50 familiar</td><td>Mutation — Ocelot + Slimes</td><td>Tame with Rotten Flesh. Dyeable. Rare drop: Toe of Frog.</td></tr>
-  <tr><td>Flying Monkey <code>flying_monkey</code></td><td>Moderate</td><td>Wolf + Owl Familiar + Mutandis Extremis</td><td>Tame with Raw Beef/Porkchop. Dyeable. 4 skin variants. Waystone courier.</td></tr>
+  <tr><td>Flying Monkey <code>flying_monkey</code></td><td>20</td><td>Wolf + Owl in the full Mutating Sprig apparatus</td><td>2 damage, 5 armor. Tame with Raw Beef/Porkchop. Dyeable. Taglock retrieval and reusable Bound/Blooded Waystone travel.</td></tr>
   <tr><td>Spectral Familiar <code>spectral_familiar</code></td><td>50</td><td>Small Summon rite</td><td>An ore-seeking spirit companion — gift it ore and it searches for more of that kind. See <a href="#ch21">Ch 21</a>.</td></tr>
   <tr><td>Raven <code>raven</code></td><td>Low</td><td>Brew of Hitchcock</td><td>Temporary swarm bird summoned by the brew; harries the target before dispersing.</td></tr>
 </table>
@@ -2494,10 +2497,10 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <p>A fight is no place to be rummaging. These two vessels keep your finished throwing-brews to hand so the right bottle is always the one in your fingers.</p>
 
 <h4 id="brew-bag">Brew Bag</h4>
-<p>A stout little bag that swallows up to eight splash, gas, or liquid brews. Sneak-use to thumb through to the one you want; tuck a brew away by using the bag with the bottle in your other hand; or simply use it to hurl the chosen brew (the empty bottle comes back to you in survival, as is only polite). Sew one from Impregnated Leather about a thread of Golden Thread, then dye the leather if you want the bag to remember your colours.</p>
+<p>A stout little bag that swallows up to eight stacks of splash, gas, or liquid brews. Sneak-use it to open the bag, then arrange brews in the eight slots or shift-click them between bag and inventory. To cast, hold normal use and move your gaze toward one of the eight directions shown around the source-coloured radial; release when the desired occupied slot is marked. One brew is spent and the empty bottle comes back to you in survival, as is only polite. Sew one from Impregnated Leather about a thread of Golden Thread, then dye the leather if you want the bag and its radial to remember your colours.</p>
 
 <h4 id="leonards-urn">Leonard's Urn</h4>
-<p>The prize the <a href="#ch30">Shade of Leonard</a> leaves behind, and it rarely leaves anything. An epic vessel that glows from within, holding one to four <em>focus</em> brews. Here is its cunning: where the Brew Bag spends what it throws, the urn does not — release the chosen brew and the focus remains, ready to cast again. Cycle the focus, feed it thrown splash, gas, or liquid brews, and pour out its working as often as you please. A direct hand-cast keeps the familiar bottle arc; when a Mystic Branch glyph calls an urn focus, the brew flies straight and swift without falling, as Leonard's old spell did. Craft two urns together to combine their capacity and stored foci, up to four slots.</p>
+<p>The prize the <a href="#ch30">Shade of Leonard</a> leaves behind, and it rarely leaves anything. Use this glowing epic vessel to open its source-shaped diamond inventory and place one splash, gas, or liquid <em>focus</em> in each of its one to four slots. The urn does not cast from the hand: trace one of the Mystic Branch's four urn glyphs to call the matching focus. The brew flies straight and swift without falling, as Leonard's old spell did, and the stored focus remains ready to cast again. Craft two urns together to combine their capacity and stored foci, up to four slots.</p>
 
 <h3>Construction Tools</h3>
 <h4 id="staff-of-duplication">Staff of Duplication</h4>
@@ -3032,7 +3035,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Poltergeist</td><td>Low</td><td>Item throwing</td><td>Hostile</td><td>—</td></tr>
   <tr><td>Nightmare</td><td>100</td><td>4</td><td>Hostile</td><td>Mellifluous Hunger (Spirit World only)</td></tr>
   <tr><td>Flame Imp</td><td>50</td><td>4 melee; 8 powered</td><td>Hostile until bound</td><td>No death loot; Hunger/Fear/Anguish souls and Torment Scroll are ordered relationship gifts</td></tr>
-  <tr><td>Flying Monkey</td><td>Moderate</td><td>Low</td><td>Neutral (tamed)</td><td>—</td></tr>
+  <tr><td>Flying Monkey</td><td>20</td><td>2</td><td>Neutral; owner-defending when tamed</td><td>0-2 Feathers, plus Looting</td></tr>
   <tr><td>Horned Huntsman</td><td>200 or 400</td><td>Up to 20</td><td>Hostile</td><td>Enchanted Books, Spear of Huntsman, Demonic Blood</td></tr>
   <tr><td>Lord of Torment</td><td>Very High</td><td>Very High</td><td>Hostile</td><td>Endgame materials</td></tr>
   <tr><td>Shade of Leonard</td><td>600</td><td>Casts Mystic Branch spells; lays Mortal Coil (Death Coil); summons Lost Souls below half HP; melee only (projectiles bounce)</td><td>Neutral until attacked</td><td>Enchanted Book, Demon Heart, Leonard's Urn</td></tr>

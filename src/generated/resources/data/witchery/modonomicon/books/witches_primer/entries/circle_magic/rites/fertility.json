@@ -27,6 +27,28 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
+      "text": "[#](53341a)The working begins at radius 4 and advances one block every five ticks, ending at radius 50 plus 2 blocks per nearby Coven witch. Each passing ring grows the land, restores Zombie Villagers, and clears Blindness, Nausea, and Poison from players.[#]()",
+      "title": "How It Unfolds",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)An active cat familiar also grants Regeneration II and Health Boost. The rite pauses while its caster or chunks are unavailable; breaking its sustaining circle aborts it and returns the consumed offerings.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
       "text": "[#](53341a)Makes nearby land fertile. Heals sick villagers.[#]() [#](53341a)**Required offerings:** **Bone Meal**, **Hint of Rebirth**, **Diamond Vapor**, **Quicklime**, **Gypsum**, **Mutandis**.[#]()",
       "title": "Altar-powered fertility",
       "use_markdown_in_title": false

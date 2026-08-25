@@ -27,6 +27,8 @@ import com.emoniph.witchery.client.renderer.LilithRenderer;
 import com.emoniph.witchery.client.renderer.NightmareRenderer;
 import com.emoniph.witchery.client.renderer.SpiritRenderer;
 import com.emoniph.witchery.client.color.BrewBagTint;
+import com.emoniph.witchery.client.screen.BrewBagScreen;
+import com.emoniph.witchery.client.screen.LeonardsUrnScreen;
 import com.emoniph.witchery.effect.ColorfulMobEffect;
 import com.emoniph.witchery.client.screen.DistilleryScreen;
 import com.emoniph.witchery.client.screen.ObservationsScreen;
@@ -195,6 +197,8 @@ public class WitcheryClient {
         event.register(WitcheryMenuTypes.WITCHES_OVEN.get(),    WitchesOvenScreen::new);
         event.register(WitcheryMenuTypes.SPINNING_WHEEL.get(), SpinningWheelScreen::new);
         event.register(WitcheryMenuTypes.DISTILLERY.get(),     DistilleryScreen::new);
+        event.register(WitcheryMenuTypes.BREW_BAG.get(),       BrewBagScreen::new);
+        event.register(WitcheryMenuTypes.LEONARDS_URN.get(),   LeonardsUrnScreen::new);
     }
 
     /**

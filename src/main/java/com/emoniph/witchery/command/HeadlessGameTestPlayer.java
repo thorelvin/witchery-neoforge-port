@@ -19,14 +19,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-final class HeadlessGameTestPlayer {
+public final class HeadlessGameTestPlayer {
     private static final Field PLAYERS = field("players");
     private static final Field PLAYERS_BY_UUID = field("playersByUUID");
 
     private HeadlessGameTestPlayer() {
     }
 
-    static ServerPlayer create(ServerLevel level, UUID id, String name) {
+    public static ServerPlayer create(ServerLevel level, UUID id, String name) {
         GameProfile profile = new GameProfile(id, name);
         ServerPlayer player = new ServerPlayer(
                 level.getServer(), level, profile, ClientInformation.createDefault());
@@ -43,7 +43,7 @@ final class HeadlessGameTestPlayer {
         return player;
     }
 
-    static void remove(ServerPlayer player) {
+    public static void remove(ServerPlayer player) {
         if (player == null) {
             return;
         }

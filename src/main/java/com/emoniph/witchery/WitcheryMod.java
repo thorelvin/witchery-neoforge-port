@@ -76,10 +76,13 @@ public class WitcheryMod {
         com.emoniph.witchery.blocks.PatronStatueGameTests.register(modEventBus);
         com.emoniph.witchery.entity.GoblinBossGameTests.register(modEventBus);
         com.emoniph.witchery.entity.HobgoblinEcologyGameTests.register(modEventBus);
+        com.emoniph.witchery.entity.FlyingMonkeyCourierGameTests.register(modEventBus);
         com.emoniph.witchery.brewing.IceWorldGameTests.register(modEventBus);
         com.emoniph.witchery.brewing.CustomBrewGameTests.register(modEventBus);
         com.emoniph.witchery.item.InfernalOwnershipGameTests.register(modEventBus);
+        com.emoniph.witchery.item.BrewStorageGameTests.register(modEventBus);
         com.emoniph.witchery.ritual.RitualOfferingGameTests.register(modEventBus);
+        com.emoniph.witchery.ritual.PersistentExpandingRiteGameTests.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, WitcheryConfig.SPEC);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerPayloads);

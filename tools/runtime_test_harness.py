@@ -117,6 +117,11 @@ def validate_manifest(manifest: dict) -> None:
     machines = save_reload.get("machines")
     if not isinstance(machines, list) or not machines:
         raise HarnessError("save_reload.machines must be a non-empty array")
+    for command_key in ("pre_save_commands", "post_reload_commands"):
+        commands = save_reload.get(command_key, [])
+        if not isinstance(commands, list) or not all(
+                isinstance(command, str) and command.strip() for command in commands):
+            raise HarnessError(f"save_reload.{command_key} must be a list of non-empty commands")
     names: set[str] = set()
     positions: set[tuple[int, int, int]] = set()
     for machine in machines:
@@ -616,6 +621,8 @@ def run_save_reload(manifest: dict, startup_timeout: int) -> None:
     machines = config["machines"]
     storage = config["storage"]
     marker = config["storage_marker"]
+    pre_save_commands = config.get("pre_save_commands", [])
+    post_reload_commands = config.get("post_reload_commands", [])
     summary: dict = {"status": "failed", "stages": []}
 
     first = ServerProcess(work_dir, "save", rcon_port, password, startup_timeout)
@@ -643,6 +650,8 @@ def run_save_reload(manifest: dict, startup_timeout: int) -> None:
                     f"with {item['item']} {item['count']}",
                 )
         command_must_succeed(first, f"data modify storage {storage} marker set value {marker}")
+        for command in pre_save_commands:
+            command_must_succeed(first, command)
         assert_saved_machine_state(first, machines, storage, marker)
         command_must_succeed(first, "save-all flush", "saved")
         first.graceful_stop()
@@ -676,6 +685,8 @@ def run_save_reload(manifest: dict, startup_timeout: int) -> None:
             x, _, z = machine["position"]
             command_must_succeed(second, f"forceload add {x} {z}")
         assert_saved_machine_state(second, machines, storage, marker)
+        for command in post_reload_commands:
+            command_must_succeed(second, command)
         command_must_succeed(second, "save-all flush", "saved")
         second.graceful_stop()
         second_stopped = True
