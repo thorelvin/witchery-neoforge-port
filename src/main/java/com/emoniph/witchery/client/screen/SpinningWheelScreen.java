@@ -1,6 +1,7 @@
 package com.emoniph.witchery.client.screen;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.menu.MachinePresentationLayout;
 import com.emoniph.witchery.menu.SpinningWheelMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -12,7 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class SpinningWheelScreen extends AbstractContainerScreen<SpinningWheelMenu> {
 
     private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/gui/spinning_wheel.png");
+            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/gui/spinningwheel.png");
 
     public SpinningWheelScreen(SpinningWheelMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
@@ -29,13 +30,22 @@ public class SpinningWheelScreen extends AbstractContainerScreen<SpinningWheelMe
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0.0f, 0.0f, this.imageWidth, this.imageHeight, 256, 256);
 
         if (!menu.hasPower()) {
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 79, y + 27, 176.0f, 0.0f, 24, 16, 256, 256);
-        } else {
-            int arrowWidth = menu.getSpinProgress();
-            if (arrowWidth > 0) {
-                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 79, y + 26, 176.0f, 16.0f, arrowWidth + 1, 16, 256, 256);
-            }
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE,
+                    x + MachinePresentationLayout.SpinningWheel.NO_POWER_X,
+                    y + MachinePresentationLayout.SpinningWheel.NO_POWER_Y,
+                    MachinePresentationLayout.SpinningWheel.NO_POWER_U,
+                    MachinePresentationLayout.SpinningWheel.NO_POWER_V,
+                    MachinePresentationLayout.SpinningWheel.NO_POWER_WIDTH,
+                    MachinePresentationLayout.SpinningWheel.NO_POWER_HEIGHT, 256, 256);
         }
+
+        int arrowWidth = menu.getSpinProgress();
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE,
+                x + MachinePresentationLayout.SpinningWheel.PROGRESS_X,
+                y + MachinePresentationLayout.SpinningWheel.PROGRESS_Y,
+                MachinePresentationLayout.SpinningWheel.PROGRESS_U,
+                MachinePresentationLayout.SpinningWheel.PROGRESS_V,
+                arrowWidth + 1, MachinePresentationLayout.SpinningWheel.PROGRESS_HEIGHT, 256, 256);
     }
 
     @Override

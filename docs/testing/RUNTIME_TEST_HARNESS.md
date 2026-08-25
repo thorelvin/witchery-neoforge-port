@@ -41,7 +41,9 @@ python tools/runtime_test_harness.py all
   tests. A broad Gradle summary cannot silently substitute another test set.
 - `game-tests` starts one clean normal-difficulty dedicated world and runs all 25
   CI-lane GameTests sequentially by exact ID. Each command must report exactly
-  one completion and the required-tests-passed marker.
+  one completion and the required-tests-passed marker. Isolated test servers
+  disable empty-server pausing so long scheduled tests keep ticking without a
+  connected player.
 - `save-reload` starts a clean server, places and mutates a Kettle, Witches'
   Oven, Distillery, Spinning Wheel, Brazier, and Silver Vat plus a command-storage
   marker, flushes and stops, then starts the same world again and checks every

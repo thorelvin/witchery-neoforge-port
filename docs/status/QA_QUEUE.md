@@ -453,7 +453,8 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   no XP, and drop one Mandrake Root plus one seed with a 25% second seed.
 - Place a Silver Vat alone, then put block-entity machines against each side one
   at a time. It should use the exact pale source texture, keep its blue bath,
-  show all four spouts when clear, and hide only the spout touching each machine.
+  show no world spouts while clear, and show only the spout pointing toward each
+  adjacent block-entity machine. Item views should still show all four spouts.
   The adjacent output-growth trigger, one-in-five deposit roll, and hopper
   routes are dedicated-server certified. In a client, feed new Gold Ingots into
   an adjacent sided output and verify the resulting deposits render one source

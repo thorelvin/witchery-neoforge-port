@@ -69,10 +69,18 @@ public class SilverVatRenderer
 
         var level = blockEntity.getLevel();
         var pos = blockEntity.getBlockPos();
-        state.northSpout = level == null || !level.getBlockState(pos.north()).hasBlockEntity();
-        state.southSpout = level == null || !level.getBlockState(pos.south()).hasBlockEntity();
-        state.westSpout = level == null || !level.getBlockState(pos.west()).hasBlockEntity();
-        state.eastSpout = level == null || !level.getBlockState(pos.east()).hasBlockEntity();
+        state.northSpout = rendersSpout(level == null,
+                level != null && level.getBlockState(pos.north()).hasBlockEntity());
+        state.southSpout = rendersSpout(level == null,
+                level != null && level.getBlockState(pos.south()).hasBlockEntity());
+        state.westSpout = rendersSpout(level == null,
+                level != null && level.getBlockState(pos.west()).hasBlockEntity());
+        state.eastSpout = rendersSpout(level == null,
+                level != null && level.getBlockState(pos.east()).hasBlockEntity());
+    }
+
+    static boolean rendersSpout(boolean itemView, boolean neighborHasBlockEntity) {
+        return itemView || neighborHasBlockEntity;
     }
 
     @Override

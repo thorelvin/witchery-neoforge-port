@@ -211,6 +211,7 @@ def write_server_files(work_dir: Path, rcon_port: int, server_port: int, passwor
         "max-tick-time": "-1",
         "motd": "Witchery Runtime Test",
         "online-mode": "false",
+        "pause-when-empty-seconds": "0",
         "prevent-proxy-connections": "false",
         "query.port": str(server_port),
         "rcon.password": password,

@@ -15,10 +15,8 @@ import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -112,9 +110,6 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
 
         ps.popPose();
 
-        if (state.brewing && state.level != null && state.level.isClientSide()) {
-            spawnBubbles(state.level, state.bePos);
-        }
     }
 
     static void applySourcePose(PoseStack ps, float yaw) {
@@ -150,16 +145,6 @@ public class KettleRenderer implements BlockEntityRenderer<KettleBlockEntity, Ke
         float green = ((color >>> 8) & 0xFF) / 256.0F * shade;
         float blue = (color & 0xFF) / 256.0F * shade;
         return ARGB.colorFromFloat(1.0F, red, green, blue);
-    }
-
-    private void spawnBubbles(Level level, BlockPos pos) {
-        RandomSource rand = level.random;
-        if (rand.nextInt(5) != 0) return;
-        double cx = pos.getX() + 0.5, cy = pos.getY() + 0.25, cz = pos.getZ() + 0.5;
-        double ox = (rand.nextDouble() - 0.5) * 0.35, oz = (rand.nextDouble() - 0.5) * 0.35;
-        level.addParticle(ParticleTypes.SMOKE, cx + ox, cy, cz + oz, 0, 0.04, 0);
-        if (rand.nextInt(3) == 0) level.addParticle(ParticleTypes.SPLASH, cx + ox, cy + 0.02, cz + oz, 0, 0.08, 0);
-        if (rand.nextInt(8) == 0) level.addParticle(ParticleTypes.POOF, cx + ox * 0.5, cy, cz + oz * 0.5, 0, 0.02, 0);
     }
 
     @Override

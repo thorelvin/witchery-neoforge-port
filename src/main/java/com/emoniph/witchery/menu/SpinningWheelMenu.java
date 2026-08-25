@@ -29,16 +29,26 @@ public class SpinningWheelMenu extends AbstractContainerMenu {
 
         checkContainerSize(container, SpinningWheelBlockEntity.SLOT_COUNT);
 
-        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_FIBRE, 56, 26));
-        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_MODIFIER_1, 38, 48));
-        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_OUTPUT, 116, 27) {
+        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_FIBRE,
+                MachinePresentationLayout.SpinningWheel.FIBRE_X,
+                MachinePresentationLayout.SpinningWheel.FIBRE_Y));
+        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_MODIFIER_1,
+                MachinePresentationLayout.SpinningWheel.MODIFIER_1_X,
+                MachinePresentationLayout.SpinningWheel.MODIFIER_1_Y));
+        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_OUTPUT,
+                MachinePresentationLayout.SpinningWheel.OUTPUT_X,
+                MachinePresentationLayout.SpinningWheel.OUTPUT_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_MODIFIER_2, 56, 48));
-        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_MODIFIER_3, 74, 48));
+        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_MODIFIER_2,
+                MachinePresentationLayout.SpinningWheel.MODIFIER_2_X,
+                MachinePresentationLayout.SpinningWheel.MODIFIER_2_Y));
+        this.addSlot(new Slot(container, SpinningWheelBlockEntity.SLOT_MODIFIER_3,
+                MachinePresentationLayout.SpinningWheel.MODIFIER_3_X,
+                MachinePresentationLayout.SpinningWheel.MODIFIER_3_Y));
 
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
@@ -55,7 +65,7 @@ public class SpinningWheelMenu extends AbstractContainerMenu {
     public int getSpinProgress() {
         int progress = data.get(0);
         int total = data.get(1);
-        return total > 0 ? progress * 24 / total : 0;
+        return total > 0 ? progress * MachinePresentationLayout.SpinningWheel.PROGRESS_WIDTH / total : 0;
     }
 
     public boolean isSpinning() {

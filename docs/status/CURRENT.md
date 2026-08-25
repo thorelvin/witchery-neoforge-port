@@ -103,7 +103,19 @@ enough to read before starting work. Long historical deltas belong in
   state across a real stop/reload. CI uploads build
   or runtime diagnostics on failure. Building the gate also exposed and fixed
   the Otherwhere Hearth traveller-state race on Spirit entry and the Lord of
-  Torment's failure to collect nearby non-attacking players.
+  Torment's failure to collect nearby non-attacking players. Runtime worlds now
+  explicitly set `pause-when-empty-seconds=0`, preventing long suites from
+  freezing at Minecraft's default one-minute empty-server pause.
+- Machine presentation parity is closed for the current machine roster. Witches'
+  Oven, Distillery, and Spinning Wheel screens use the exact 1.7.10 atlases,
+  slot coordinates, progress lanes, and source-specific one-pixel behavior.
+  Kettle, Oven, Distillery, Brazier, and Fume Funnel ambient effects now follow
+  their source state gates; accepted or overflowing Kettle ingredients use the
+  original splash feedback. Brazier items retain their special renderer, and
+  Silver Vat world spouts appear only toward adjacent block entities while item
+  views show all four. Controlled original/port captures cover four GUIs, eight
+  item forms, Oven facings/states, and the machine blocks; focused JVM tests,
+  the full build, all 25 GameTests, and save/reload are green.
 - Observations of an Immortal now uses its source-shaped standalone reader instead
   of the temporary Modonomicon route: the byte-identical 192 x 192 book sheet is
   exposed through a legal lowercase resource path, all 16 literal source markup

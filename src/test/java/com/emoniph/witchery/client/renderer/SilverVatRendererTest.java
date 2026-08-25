@@ -1,6 +1,8 @@
 package com.emoniph.witchery.client.renderer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.emoniph.witchery.client.model.SilverVatModel;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -38,6 +40,13 @@ class SilverVatRendererTest {
         Vector3f southeast = matrix.transformPosition(new Vector3f(0.5F, 0.0F, 0.5F));
         assertVector(northwest, 0.875F, 0.3F, 0.125F);
         assertVector(southeast, 0.125F, 0.3F, 0.875F);
+    }
+
+    @Test
+    void sourceSpoutsAppearForItemViewsOrAdjacentBlockEntitiesOnly() {
+        assertTrue(SilverVatRenderer.rendersSpout(true, false));
+        assertTrue(SilverVatRenderer.rendersSpout(false, true));
+        assertFalse(SilverVatRenderer.rendersSpout(false, false));
     }
 
     private static void assertVector(Vector3f actual, float x, float y, float z) {

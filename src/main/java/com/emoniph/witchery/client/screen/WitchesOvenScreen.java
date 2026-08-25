@@ -1,6 +1,7 @@
 package com.emoniph.witchery.client.screen;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.menu.MachinePresentationLayout;
 import com.emoniph.witchery.menu.WitchesOvenMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -34,9 +35,12 @@ public class WitchesOvenScreen extends AbstractContainerScreen<WitchesOvenMenu> 
         }
 
         int arrowWidth = menu.getCookProgress();
-        if (arrowWidth > 0) {
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 79, y + 21, 176.0f, 14.0f, arrowWidth + 1, 16, 256, 256);
-        }
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE,
+                x + MachinePresentationLayout.WitchesOven.PROGRESS_X,
+                y + MachinePresentationLayout.WitchesOven.PROGRESS_Y,
+                MachinePresentationLayout.WitchesOven.PROGRESS_U,
+                MachinePresentationLayout.WitchesOven.PROGRESS_V,
+                arrowWidth + 1, MachinePresentationLayout.WitchesOven.PROGRESS_HEIGHT, 256, 256);
     }
 
     @Override

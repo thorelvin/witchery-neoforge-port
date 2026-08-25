@@ -188,6 +188,42 @@ class WitcheryResourceIntegrityTest {
     }
 
     @Test
+    void machineItemsUseTheirSourceModelRenderers() throws IOException {
+        assertSpecialItemRenderer("witches_oven", "witchery:witches_oven");
+        assertSpecialItemRenderer("distillery", "witchery:distillery");
+        assertSpecialItemRenderer("spinning_wheel", "witchery:spinning_wheel");
+        assertSpecialItemRenderer("kettle", "witchery:kettle");
+        assertSpecialItemRenderer("brazier", "witchery:brazier");
+        assertSpecialItemRenderer("silver_vat", "witchery:silver_vat");
+    }
+
+    @Test
+    void machinePresentationUsesExactSourceTextures() throws IOException, NoSuchAlgorithmException {
+        assertTexture("witches_oven.png", 64, 64,
+                "bae80dfa3518cf5f78f830cfa680b625876b3338453f1e971f5a23438ce85042");
+        assertTexture("distillery.png", 64, 64,
+                "1aaf9294f0ca8bc76fd09f5f8855549785266ac931b0e6f8581e014f0a25f855");
+        assertTexture("spinningwheel.png", 64, 64,
+                "8fb8f881b751b3e78ece8aadbe8b422cfdf0d562c5479b1d2ae5ceeb7d0f4c60");
+        assertTexture("fumefunnel.png", 64, 64,
+                "e679529ac60a6cd553fedb11254e8d844752980a2aad7f014279c6bb7874b63d");
+        assertTexture("kettle.png", 64, 64,
+                "bd778127307820b57f7f986c232a049a98e314e3be3d89d6e89c9030fbf222a7");
+        assertTexture("brazier.png", 64, 64,
+                "cce6ee7c582c3b229bee03ac0fa1141b6107005129de589396e3ea762aa5662b");
+        assertTexture("silvervat.png", 64, 32,
+                "4a7f35fcfd7cdda8fd4e731a85f69c4d1881daa04ee09ef509a271b52e374e6b");
+        assertTexture("silvervat_liquid.png", 64, 16,
+                "9d80249fba30d0d7ec065e830b0bd093eba6cc4bbc1795e8589461cb4c3d71e1");
+        assertTexture(Path.of("gui", "witches_oven.png"), 256, 256,
+                "c9b6c84d14d30aed4a71cf17c2fd80df8eee9fc25bacb8ba5c276f2a84911ec3");
+        assertTexture(Path.of("gui", "distiller.png"), 256, 256,
+                "7d5bd273c456ae0f4406d7bfdb4f1ad51887cd9bd82f3181cf62fbe8fa9e2447");
+        assertTexture(Path.of("gui", "spinningwheel.png"), 256, 256,
+                "403456f032a925b7c0f00099462bd3a37f74ad5bb0f37d8291e7ec0d2540d74f");
+    }
+
+    @Test
     void crystalBallUsesSourceTextureAndSpecialItemRenderer() throws IOException, NoSuchAlgorithmException {
         assertSpecialItemRenderer("crystal_ball", "witchery:crystal_ball");
         assertTexture("crystalball.png", 32, 32,

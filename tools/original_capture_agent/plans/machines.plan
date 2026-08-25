@@ -1,0 +1,61 @@
+# Controlled source-reference captures for Witchery 1.7.10 machine presentation.
+OUTPUT C:\claude\witchery\captures\machine-presentation\original
+LOAD WitcheryParityClean|Witchery Parity Clean
+WAIT_WORLD 60000
+NO_PAUSE
+CLEAR_SCREEN
+HIDE_GUI true
+GAMMA 1.0
+FOV 70
+THIRD_PERSON 0
+WAIT 3000
+COMMAND /gamerule doDaylightCycle false
+COMMAND /gamerule doMobSpawning false
+COMMAND /time set 6000
+COMMAND /weather clear
+COMMAND /tp 900.5 4 -8.5
+WAIT 1000
+LOOK 0 -2
+
+COMMAND /setblock 900 5 0 witchery:witchesovenidle 2
+WAIT 1000
+CAPTURE witches-oven-idle.png
+COMMAND /setblock 900 5 0 witchery:witchesovenidle 3
+WAIT 1000
+CAPTURE witches-oven-idle-meta3.png
+COMMAND /setblock 900 5 0 witchery:witchesovenidle 4
+WAIT 1000
+CAPTURE witches-oven-idle-meta4.png
+COMMAND /setblock 900 5 0 witchery:witchesovenidle 5
+WAIT 1000
+CAPTURE witches-oven-idle-meta5.png
+COMMAND /setblock 900 5 0 witchery:witchesovenburning 2
+WAIT 2500
+CAPTURE witches-oven-burning.png
+
+COMMAND /setblock 900 5 0 witchery:distilleryidle 2
+WAIT 1000
+CAPTURE distillery-idle.png
+COMMAND /setblock 900 5 0 witchery:distilleryburning 2
+WAIT 2500
+CAPTURE distillery-burning.png
+
+COMMAND /setblock 900 5 0 witchery:spinningwheel 2
+WAIT 1000
+CAPTURE spinning-wheel.png
+COMMAND /setblock 900 5 0 witchery:fumefunnel 2
+WAIT 1000
+CAPTURE fume-funnel.png
+COMMAND /setblock 900 5 0 witchery:filteredfumefunnel 2
+WAIT 1000
+CAPTURE filtered-fume-funnel.png
+COMMAND /setblock 900 5 0 witchery:kettle 2
+WAIT 1000
+CAPTURE kettle.png
+COMMAND /setblock 900 5 0 witchery:brazier 0
+WAIT 1000
+CAPTURE brazier.png
+COMMAND /setblock 900 5 0 witchery:silvervat 0
+WAIT 1000
+CAPTURE silver-vat.png
+STOP

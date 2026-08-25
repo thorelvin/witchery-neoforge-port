@@ -33,33 +33,44 @@ public class DistilleryMenu extends AbstractContainerMenu {
         this.data = data;
         checkContainerSize(container, DistilleryBlockEntity.SLOT_COUNT);
 
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_INPUT_1, 56, 15));
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_INPUT_2, 56, 33));
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_JARS, 56, 55) {
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_INPUT_1,
+                MachinePresentationLayout.Distillery.INPUT_X, MachinePresentationLayout.Distillery.INPUT_1_Y));
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_INPUT_2,
+                MachinePresentationLayout.Distillery.INPUT_X, MachinePresentationLayout.Distillery.INPUT_2_Y));
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_JARS,
+                MachinePresentationLayout.Distillery.JARS_X, MachinePresentationLayout.Distillery.JARS_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(WitcheryItems.CLAY_JAR.get());
             }
         });
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_1, 112, 26) {
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_1,
+                MachinePresentationLayout.Distillery.OUTPUT_1_X,
+                MachinePresentationLayout.Distillery.OUTPUT_1_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_2, 130, 26) {
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_2,
+                MachinePresentationLayout.Distillery.OUTPUT_2_X,
+                MachinePresentationLayout.Distillery.OUTPUT_1_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_3, 112, 44) {
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_3,
+                MachinePresentationLayout.Distillery.OUTPUT_1_X,
+                MachinePresentationLayout.Distillery.OUTPUT_2_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_4, 130, 44) {
+        this.addSlot(new Slot(container, DistilleryBlockEntity.SLOT_OUTPUT_4,
+                MachinePresentationLayout.Distillery.OUTPUT_2_X,
+                MachinePresentationLayout.Distillery.OUTPUT_2_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
@@ -87,7 +98,7 @@ public class DistilleryMenu extends AbstractContainerMenu {
     public int getCookProgress() {
         int progress = data.get(2);
         int total = data.get(3);
-        return total > 0 ? progress * 28 / total : 0;
+        return total > 0 ? progress * MachinePresentationLayout.Distillery.PROGRESS_WIDTH / total : 0;
     }
 
     public boolean isLit() {

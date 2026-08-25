@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/brazier"
+    "type": "minecraft:special",
+    "base": "witchery:item/brazier",
+    "model": {
+      "type": "witchery:brazier"
+    }
   }
 }

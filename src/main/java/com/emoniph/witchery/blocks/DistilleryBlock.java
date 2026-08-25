@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SpellParticleOption;
 import net.minecraft.util.RandomSource;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
@@ -77,7 +78,11 @@ public class DistilleryBlock extends BaseEntityBlock {
         double x = pos.getX() + 0.4 + random.nextDouble() * 0.2;
         double y = pos.getY() + 1.0 + random.nextDouble() * 0.3;
         double z = pos.getZ() + 0.4 + random.nextDouble() * 0.2;
-        level.addParticle(ParticleTypes.WITCH, x, y, z, 0.0, 0.0, 0.0);
+        level.addParticle(sourceActiveParticle(), x, y, z, 0.0, 0.0, 0.0);
+    }
+
+    static SpellParticleOption sourceActiveParticle() {
+        return SpellParticleOption.create(ParticleTypes.INSTANT_EFFECT, 0xFFFFFF, 1.0F);
     }
 
     @Override

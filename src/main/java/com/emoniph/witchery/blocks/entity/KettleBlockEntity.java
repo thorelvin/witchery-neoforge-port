@@ -155,6 +155,7 @@ public class KettleBlockEntity extends BlockEntity implements WorldlyContainer {
     public boolean isRuined() { return isRuined; }
     public boolean isReady() { return !getItem(RESULT_SLOT).isEmpty() && !isRuined; }
     public boolean isBrewing() { return isFilled() && !isRuined && getItem(RESULT_SLOT).isEmpty() && someFilled(); }
+    public boolean isPowered() { return isPowered; }
 
     public boolean isOtherwhereHearthBound() {
         return otherwhereHearthOwner != null;

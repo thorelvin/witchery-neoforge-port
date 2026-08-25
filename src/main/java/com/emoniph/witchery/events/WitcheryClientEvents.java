@@ -72,6 +72,7 @@ public class WitcheryClientEvents {
         com.emoniph.witchery.client.ScryingCameraState.clientTick();
         com.emoniph.witchery.client.WoodenScannerPoseHarness.clientTick();
         com.emoniph.witchery.client.LegacyModelParityHarness.clientTick();
+        com.emoniph.witchery.client.MachinePresentationHarness.clientTick();
         applySwimmingBoost();
         handleDoubleJumpInput();
         syncBroomControls();
@@ -184,6 +185,7 @@ public class WitcheryClientEvents {
         com.emoniph.witchery.client.ScryingCameraState.afterRenderFrame();
         com.emoniph.witchery.client.WoodenScannerPoseHarness.afterRenderFrame();
         com.emoniph.witchery.client.LegacyModelParityHarness.afterRenderFrame();
+        com.emoniph.witchery.client.MachinePresentationHarness.afterRenderFrame();
     }
 
     @SubscribeEvent

@@ -39,26 +39,32 @@ public class WitchesOvenMenu extends AbstractContainerMenu {
         checkContainerSize(container, WitchesOvenBlockEntity.SLOT_COUNT);
         checkContainerDataCount(data, 4);
 
-        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_INPUT, 56, 17));
-        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_FUEL, 56, 53) {
+        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_INPUT,
+                MachinePresentationLayout.WitchesOven.INPUT_X, MachinePresentationLayout.WitchesOven.INPUT_Y));
+        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_FUEL,
+                MachinePresentationLayout.WitchesOven.FUEL_X, MachinePresentationLayout.WitchesOven.FUEL_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return playerInventory.player.level().fuelValues().isFuel(stack);
             }
         });
-        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_COOKED, 118, 21) {
+        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_COOKED,
+                MachinePresentationLayout.WitchesOven.OUTPUT_X, MachinePresentationLayout.WitchesOven.OUTPUT_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_BYPRODUCT, 118, 53) {
+        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_BYPRODUCT,
+                MachinePresentationLayout.WitchesOven.BYPRODUCT_X,
+                MachinePresentationLayout.WitchesOven.BYPRODUCT_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_JARS, 83, 53) {
+        this.addSlot(new Slot(container, WitchesOvenBlockEntity.SLOT_JARS,
+                MachinePresentationLayout.WitchesOven.JARS_X, MachinePresentationLayout.WitchesOven.JARS_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(WitcheryItems.CLAY_JAR.get());
@@ -87,7 +93,9 @@ public class WitchesOvenMenu extends AbstractContainerMenu {
     public int getCookProgress() {
         int cookTime = data.get(2);
         int cookTimeTotal = data.get(3);
-        return cookTimeTotal > 0 ? cookTime * 24 / cookTimeTotal : 0;
+        return cookTimeTotal > 0
+                ? cookTime * MachinePresentationLayout.WitchesOven.PROGRESS_WIDTH / cookTimeTotal
+                : 0;
     }
 
     public boolean isLit() {

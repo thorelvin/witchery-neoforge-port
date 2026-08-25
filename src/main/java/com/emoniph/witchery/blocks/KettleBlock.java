@@ -6,6 +6,9 @@ import com.emoniph.witchery.ritual.OtherwhereHearthTransposition;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ColorParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SpellParticleOption;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,6 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -112,6 +116,55 @@ public class KettleBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) { return RenderShape.INVISIBLE; }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (!(level.getBlockEntity(pos) instanceof KettleBlockEntity kettle)) {
+            return;
+        }
+
+        double x = pos.getX() + 0.45D;
+        double y = pos.getY() + 0.4D;
+        double z = pos.getZ() + 0.5D;
+        switch (ambientCue(kettle.isRuined(), kettle.isReady(), kettle.isPowered(), kettle.isBrewing())) {
+            case RUINED -> level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, 0.0D, 0.0D, 0.0D);
+            case READY_POWERED -> {
+                level.addParticle(ParticleTypes.ITEM_SLIME, x, y, z, 0.0D, 0.0D, 0.0D);
+                level.addParticle(SpellParticleOption.create(ParticleTypes.EFFECT, -1, 1.0F),
+                        x, y, z, 0.0D, 0.0D, 0.0D);
+            }
+            case READY_UNPOWERED -> {
+                level.addParticle(ParticleTypes.ITEM_SLIME, x, y, z, 0.0D, 0.0D, 0.0D);
+                addUnpoweredSpellParticle(level, x, y, z);
+            }
+            case BREWING -> addUnpoweredSpellParticle(level, x, y, z);
+            case NONE -> {
+            }
+        }
+    }
+
+    static AmbientCue ambientCue(boolean ruined, boolean ready, boolean powered, boolean brewing) {
+        if (ruined) {
+            return AmbientCue.RUINED;
+        }
+        if (ready) {
+            return powered ? AmbientCue.READY_POWERED : AmbientCue.READY_UNPOWERED;
+        }
+        return brewing ? AmbientCue.BREWING : AmbientCue.NONE;
+    }
+
+    private static void addUnpoweredSpellParticle(Level level, double x, double y, double z) {
+        level.addParticle(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, 0xFF000000),
+                x, y, z, 0.0D, 0.0D, 0.0D);
+    }
+
+    enum AmbientCue {
+        NONE,
+        RUINED,
+        READY_POWERED,
+        READY_UNPOWERED,
+        BREWING
+    }
 
     @Override
     protected VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
@@ -361,7 +414,15 @@ public class KettleBlock extends BaseEntityBlock {
         // Other items → ingredient slot (if water present)
         if (kettle.isFilled() && !kettle.isRuined()) {
             boolean added = kettle.addIngredient(stack);
-            if (added) itemEntity.discard();
+            if (added || kettle.isRuined()) {
+                itemEntity.discard();
+                level.playSound(null, pos, SoundEvents.PLAYER_SPLASH, SoundSource.BLOCKS, 1.0F, 1.0F);
+                if (level instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ParticleTypes.SPLASH,
+                            pos.getX() + 0.5D, pos.getY() + 0.2D, pos.getZ() + 0.5D,
+                            5, 0.5D, 0.5D, 0.5D, 0.0D);
+                }
+            }
         }
     }
 

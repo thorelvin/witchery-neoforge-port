@@ -2,6 +2,7 @@ package com.emoniph.witchery.client.screen;
 
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.menu.DistilleryMenu;
+import com.emoniph.witchery.menu.MachinePresentationLayout;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -16,7 +17,7 @@ import java.util.List;
 public class DistilleryScreen extends AbstractContainerScreen<DistilleryMenu> {
 
     private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/gui/distillery.png");
+            Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "textures/gui/distiller.png");
 
     // Altar power gauge (relative to the GUI top-left). Sits just right of the output slots.
     private static final int GAUGE_X = 152;
@@ -48,19 +49,33 @@ public class DistilleryScreen extends AbstractContainerScreen<DistilleryMenu> {
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0.0f, 0.0f, this.imageWidth, this.imageHeight, 256, 256);
 
         if (!menu.hasPower()) {
-            // No power: draw the red "X" only. Its source tile is opaque panel grey, so it
-            // fully hides the arrow art baked into the background. The progress arrow is
-            // intentionally not drawn here so the X and arrow never show at the same time.
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 77, y + 34, 197.0f, 0.0f, 28, 17, 256, 256);
-        } else {
-            int arrowWidth = menu.getCookProgress();
-            if (arrowWidth > 0) {
-                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 77, y + 37, 176.0f, 29.0f, arrowWidth, 9, 256, 256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE,
+                    x + MachinePresentationLayout.Distillery.NO_POWER_X,
+                    y + MachinePresentationLayout.Distillery.NO_POWER_Y,
+                    MachinePresentationLayout.Distillery.NO_POWER_U,
+                    MachinePresentationLayout.Distillery.NO_POWER_V,
+                    MachinePresentationLayout.Distillery.NO_POWER_WIDTH,
+                    MachinePresentationLayout.Distillery.NO_POWER_HEIGHT, 256, 256);
+        }
 
-                int bubbleHeight = menu.getBubbleFrameHeight();
-                if (bubbleHeight > 0) {
-                    graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 40, y + 18 + 29 - bubbleHeight, 185.0f, 29.0f - bubbleHeight, 12, bubbleHeight, 256, 256);
-                }
+        int arrowWidth = menu.getCookProgress();
+        if (arrowWidth > 0) {
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE,
+                    x + MachinePresentationLayout.Distillery.PROGRESS_X,
+                    y + MachinePresentationLayout.Distillery.PROGRESS_Y,
+                    MachinePresentationLayout.Distillery.PROGRESS_U,
+                    MachinePresentationLayout.Distillery.PROGRESS_V,
+                    arrowWidth, MachinePresentationLayout.Distillery.PROGRESS_HEIGHT, 256, 256);
+
+            int bubbleHeight = menu.getBubbleFrameHeight();
+            if (bubbleHeight > 0) {
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE,
+                        x + MachinePresentationLayout.Distillery.BUBBLES_X,
+                        y + MachinePresentationLayout.Distillery.BUBBLES_Y
+                                + MachinePresentationLayout.Distillery.BUBBLES_HEIGHT - bubbleHeight,
+                        MachinePresentationLayout.Distillery.BUBBLES_U,
+                        MachinePresentationLayout.Distillery.BUBBLES_V - bubbleHeight,
+                        MachinePresentationLayout.Distillery.BUBBLES_WIDTH, bubbleHeight, 256, 256);
             }
         }
 
