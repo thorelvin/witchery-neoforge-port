@@ -489,9 +489,9 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   is present should not stack faces; cleared mirrors and mirrors inside Mirror
   World should not show one.
 - Open the Witchery creative tab and confirm internal utility entries stay
-  hidden: Pit Dirt, Pit Grass, duplicate Koboldite Pentacle, Witches' Shoes, and
-  the unfinished Hobgoblin Patron statue should not appear as normal player
-  picks.
+  hidden: Pit Dirt, Pit Grass, duplicate Koboldite Pentacle, and Witches' Shoes.
+  Confirm the finished Statue of Hobgoblin Patron appears beside the Goddess
+  statue as a normal player-facing pick.
 - Spawn a Wolfman with `/witchery spawn wolfman`; confirm idle audio uses the
   old low talk with rare howls, and hurt/death sounds are no longer zombie
   placeholders.
@@ -571,6 +571,24 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   teleport destinations. On repeated kills, verify 1-3 Koboldite Nuggets,
   enchanted chainmail, and roughly 50% signature reward drops; inspect both
   bosses full-bright and their reward armor in live play.
+- Run `/test run witchery:patron_statue_lifecycle` on a dedicated server. In
+  survival, craft the statue from its Stone/Koboldite figure recipe, bind it in
+  a small Ritual circle with Belladonna Flower, Poppy, Dandelion, and 4000 altar
+  power, then break and replace it. Confirm its owner name, UUID, facing, bound
+  player skin, and translucent stone overlay survive a server restart.
+- Gather Hobgoblins within eight blocks of the bound statue and verify its
+  five-second pulses: five worshippers restore 30 infusion energy, ten grant
+  Worship I, and fifteen grant Worship II. Confirm fifteen also permits the
+  config-scaled rare automatic paired encounter.
+- As the owner, offer a Nether Star with five active worshippers. Unsafe ground,
+  an existing nearby Mog or Gulg, too few worshippers, and use by another player
+  must consume neither the star nor worshippers. A valid activation must spawn
+  one persistent Mog/Gulg pair on safe ground and consume exactly the star and
+  five worshippers; a second activation must refuse without further loss.
+- Wear Mog's Quiver and confirm bows consume no arrows, fly faster, triple damage
+  against airborne targets, and inflict Weakness. Wear Gulg's Gurdle and confirm
+  empty-hand hits deal five damage and launch. With separate players wearing the
+  two rewards within eight blocks, confirm both receive Resistance II.
 - Spawn Nightmare, Spectre, Treefyd, Flying Monkey, and Reflection with
   `/witchery spawn nightmare`, `/witchery spawn spectre`,
   `/witchery spawn treefyd`, `/witchery spawn flying_monkey`, and

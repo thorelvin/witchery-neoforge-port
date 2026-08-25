@@ -877,7 +877,7 @@ public final class NpcPromptBuilder {
                 Hobgoblins are neutral to players, hostile to villagers, live around huts, trade scrounged goods, value Koboldite, and fear or worship Mog and Gulg.
                 They may use broken grammar, short words, and blunt gestures, but they should still answer the player's meaning.
                 They do not know expert witchcraft recipes, circle rites, coven secrets, demon contracts, or village politics.
-                They may know that witches trick patron statues to steal prayers, and that this angers Mog and Gulg.
+                They know a bound Patron rewards five, ten, and fifteen worshippers, and that a Nether Star plus five worshippers calls Mog and Gulg together.
 
                 Speech shape:
                 one complete in-world line; two tiny sentences only if needed.
@@ -2125,7 +2125,7 @@ public final class NpcPromptBuilder {
                 example("will you protect me?",
                         "{\"speech\":\"Protection is what frightened prey calls the nearest larger hunger.\",\"intent\":\"none\",\"memory\":\"\"}"),
                 example("how do I fight Mog and Gulg?",
-                        "{\"speech\":\"Patrons answer stolen prayers with fists and arrows. Choose which anger reaches you first.\",\"intent\":\"warn_threat\",\"memory\":\"\"}")
+                        "{\"speech\":\"The Patron calls both gods together. Split them apart, or neither wound will hold.\",\"intent\":\"warn_threat\",\"memory\":\"\"}")
         );
     }
 

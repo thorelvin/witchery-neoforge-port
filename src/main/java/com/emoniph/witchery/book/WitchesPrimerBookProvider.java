@@ -1427,9 +1427,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         List<BookPageModel<?>> hobgoblin = new ArrayList<>(WitcheryBooks.prose("Hobgoblins",
                 "Hobgoblins are small, territorial, and largely reasonable as long as you do not disturb "
                         + "their patron. They live in woodland huts and trade in koboldite, a metal found "
-                        + "only through their commerce."
-                        + "\n\nThe Statue of the Hobgoblin Patron is a fine decoration — but right-clicking "
-                        + "it has consequences. You have been told."));
+                        + "only through their commerce."));
         hobgoblin.add(creature("witchery:hobgoblin", "Hobgoblin",
                 "Five trades, each unlocked by the last. Coal into dust; dust and gold into nuggets; work "
                         + "upward. The koboldite at the end is genuinely useful.", 0.85F, -1.0F));
@@ -1447,6 +1445,27 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "\n\nBabies grow through the ordinary day-and-night passage of time and keep their "
                         + "own profession markings. Leash work, worship, conversation, following, and guard "
                         + "orders take precedence over this village life."));
+        hobgoblin.addAll(WitcheryBooks.prose("The Patron Statue",
+                "Craft the statue as a small figure: Stone-Koboldite-Stone across the top, Stone in the "
+                        + "middle, and two Stone feet. Bind it to yourself in a small Ritual circle with "
+                        + "Belladonna Flower, Poppy, Dandelion, and 4000 altar power. The finished statue "
+                        + "keeps your name and likeness when broken, carried, or placed again."
+                        + "\n\nOnly the bound owner receives its gifts. Hobgoblins within eight blocks are "
+                        + "drawn to worship, and the statue counts them every five seconds."));
+        hobgoblin.addAll(WitcheryBooks.prose("Worship and the Goblin Gods",
+                "Five worshippers restore 30 infusion energy each pulse. Ten grant Worship I for one "
+                        + "minute; fifteen grant Worship II and permit a rare paired visit from Mog and Gulg."
+                        + "\n\nFor a deliberate summons, the owner offers a Nether Star while five Hobgoblins "
+                        + "are actively worshipping. Mog and Gulg arrive together on safe ground, and only "
+                        + "then are the star and five worshippers consumed. Existing gods, too few worshippers, "
+                        + "unsafe ground, or the wrong player leave the offering untouched."));
+        hobgoblin.addAll(WitcheryBooks.prose("Mog and Gulg",
+                "The pair cannot be hurt while standing within three blocks of one another. Separate them "
+                        + "to open their defenses. Gulg throws victims skyward; Mog punishes airborne prey."
+                        + "\n\nMog's Quiver supplies limitless fast arrows, triples damage against airborne "
+                        + "targets, and inflicts Weakness. Gulg's Gurdle makes empty-handed blows deal five "
+                        + "damage and launch. Quiver and Gurdle wearers within eight blocks grant each other "
+                        + "Resistance II."));
 
         List<BookPageModel<?>> spectral = new ArrayList<>(WitcheryBooks.prose("Spectral Familiar",
                 "The old **Rite of Summoning** did not call an owl, toad, or cat that already lived in the "

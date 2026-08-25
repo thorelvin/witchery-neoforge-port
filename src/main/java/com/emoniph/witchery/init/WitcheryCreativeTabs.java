@@ -179,6 +179,7 @@ public class WitcheryCreativeTabs {
                 WitcheryItems.FETISH_TRENT_EFFIGY.get(),
                 WitcheryItems.FETISH_WITCHS_LADDER.get(),
                 WitcheryItems.STATUE_GODDESS.get(),
+                WitcheryItems.STATUE_HOBGOBLIN_PATRON.get(),
                 WitcheryItems.DECURSE_TELEPORT.get(),
                 WitcheryItems.DECURSE_DIRECTED.get(),
                 WitcheryItems.WICKER_BUNDLE.get(),

@@ -212,7 +212,8 @@ public final class MachinePresentationHarness {
                 new ItemStack(WitcheryItems.FUME_FUNNEL.get()),
                 new ItemStack(WitcheryItems.FILTERED_FUME_FUNNEL.get()),
                 new ItemStack(WitcheryItems.SILVER_VAT.get()),
-                new ItemStack(WitcheryItems.BRAZIER.get()));
+                new ItemStack(WitcheryItems.BRAZIER.get()),
+                new ItemStack(WitcheryItems.STATUE_HOBGOBLIN_PATRON.get()));
 
         private MachineItemScreen() {
             super(Component.literal("Machine Items"));
@@ -221,7 +222,7 @@ public final class MachinePresentationHarness {
         @Override
         public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
             graphics.fill(0, 0, width, height, 0xB0101010);
-            int panelWidth = 224;
+            int panelWidth = 16 + ITEMS.size() * 26;
             int panelHeight = 64;
             int left = (width - panelWidth) / 2;
             int top = (height - panelHeight) / 2;

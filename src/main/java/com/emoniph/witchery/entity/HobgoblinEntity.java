@@ -369,6 +369,11 @@ public class HobgoblinEntity extends AbstractVillager {
         return this.entityData.get(WORK_STATE) == 2;
     }
 
+    public boolean isWorshippingAt(BlockPos patron) {
+        BlockPos activeTarget = activeWorshipTarget();
+        return activeTarget != null && activeTarget.equals(patron);
+    }
+
     private boolean canUseVillageEcology() {
         return !isTrading() && !isLeashed() && !isWorking() && !isWorshipping()
                 && !hasActiveMiningOrder()
@@ -511,6 +516,14 @@ public class HobgoblinEntity extends AbstractVillager {
         return findNearestPatron(Math.max(1, radius));
     }
 
+    public void beginPatronWorship(BlockPos patron) {
+        if (!isWorshipping()
+                && level().getBlockEntity(patron) instanceof StatueHobgoblinPatronBlockEntity statue
+                && statue.hasOwner()) {
+            startWorship(patron, WORSHIP_PASSIVE_TICKS + getRandom().nextInt(10), null);
+        }
+    }
+
     public String patronSceneInfo(int radius) {
         Optional<BlockPos> patron = nearestPatronStatue(radius);
         if (patron.isEmpty() || !(level().getBlockEntity(patron.get())
@@ -540,7 +553,8 @@ public class HobgoblinEntity extends AbstractVillager {
             clearWorshipTarget();
             return null;
         }
-        if (!(level().getBlockEntity(worshipTarget) instanceof StatueHobgoblinPatronBlockEntity)) {
+        if (!(level().getBlockEntity(worshipTarget) instanceof StatueHobgoblinPatronBlockEntity statue)
+                || !statue.hasOwner()) {
             clearWorshipTarget();
             return null;
         }
@@ -647,7 +661,8 @@ public class HobgoblinEntity extends AbstractVillager {
         for (BlockPos candidate : BlockPos.betweenClosed(
                 center.offset(-radius, -4, -radius),
                 center.offset(radius, 4, radius))) {
-            if (!(serverLevel.getBlockEntity(candidate) instanceof StatueHobgoblinPatronBlockEntity)) {
+            if (!(serverLevel.getBlockEntity(candidate) instanceof StatueHobgoblinPatronBlockEntity statue)
+                    || !statue.hasOwner()) {
                 continue;
             }
             long dx = candidate.getX() - center.getX();
@@ -682,19 +697,36 @@ public class HobgoblinEntity extends AbstractVillager {
             return;
         }
 
-        offers.add(new MerchantOffer(new ItemCost(Items.COAL, 17), java.util.Optional.empty(),
-                new ItemStack(WitcheryItems.KOBOLDITE_DUST.get(), 1), 12, 0, 0.05f));
-        offers.add(new MerchantOffer(new ItemCost(WitcheryItems.KOBOLDITE_DUST.get(), 9),
-                java.util.Optional.of(new ItemCost(Items.GOLD_NUGGET, 5)),
-                new ItemStack(WitcheryItems.KOBOLDITE_NUGGET.get(), 1), 8, 0, 0.05f));
-        offers.add(new MerchantOffer(new ItemCost(WitcheryItems.KOBOLDITE_DUST.get(), 16),
-                java.util.Optional.of(new ItemCost(Items.GOLD_INGOT, 1)),
-                new ItemStack(WitcheryItems.KOBOLDITE_NUGGET.get(), 2), 8, 0, 0.05f));
-        offers.add(new MerchantOffer(new ItemCost(WitcheryItems.KOBOLDITE_NUGGET.get(), 9),
-                java.util.Optional.of(new ItemCost(Items.EMERALD, 1)),
-                new ItemStack(WitcheryItems.KOBOLDITE_INGOT.get(), 1), 4, 0, 0.05f));
-        offers.add(new MerchantOffer(new ItemCost(Items.GOLD_INGOT, 8), java.util.Optional.empty(),
-                new ItemStack(Items.EMERALD, 1), 16, 0, 0.05f));
+        offers.add(createKobolditeTrade(0));
+    }
+
+    @Override
+    public void notifyTrade(MerchantOffer offer) {
+        var offers = getOffers();
+        boolean unlockNext = offers.size() < 5 && offers.getLast() == offer;
+        super.notifyTrade(offer);
+        if (unlockNext) {
+            offers.add(createKobolditeTrade(offers.size()));
+        }
+    }
+
+    static MerchantOffer createKobolditeTrade(int index) {
+        return switch (index) {
+            case 0 -> new MerchantOffer(new ItemCost(Items.COAL, 17), Optional.empty(),
+                    new ItemStack(WitcheryItems.KOBOLDITE_DUST.get(), 1), 12, 0, 0.05f);
+            case 1 -> new MerchantOffer(new ItemCost(WitcheryItems.KOBOLDITE_DUST.get(), 9),
+                    Optional.of(new ItemCost(Items.GOLD_NUGGET, 5)),
+                    new ItemStack(WitcheryItems.KOBOLDITE_NUGGET.get(), 1), 8, 0, 0.05f);
+            case 2 -> new MerchantOffer(new ItemCost(WitcheryItems.KOBOLDITE_DUST.get(), 16),
+                    Optional.of(new ItemCost(Items.GOLD_INGOT, 1)),
+                    new ItemStack(WitcheryItems.KOBOLDITE_NUGGET.get(), 2), 8, 0, 0.05f);
+            case 3 -> new MerchantOffer(new ItemCost(WitcheryItems.KOBOLDITE_NUGGET.get(), 9),
+                    Optional.of(new ItemCost(Items.EMERALD, 1)),
+                    new ItemStack(WitcheryItems.KOBOLDITE_INGOT.get(), 1), 4, 0, 0.05f);
+            case 4 -> new MerchantOffer(new ItemCost(Items.GOLD_INGOT, 8), Optional.empty(),
+                    new ItemStack(Items.EMERALD, 1), 16, 0, 0.05f);
+            default -> throw new IllegalArgumentException("Unknown Hobgoblin trade index: " + index);
+        };
     }
 
     @Override

@@ -69,7 +69,7 @@ public final class GoblinClothesEvents {
             if (!target.onGround()) {
                 event.setNewDamage(event.getNewDamage() * 3.0F);
             }
-            target.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 200, 0));
+            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 0));
             return;
         }
 

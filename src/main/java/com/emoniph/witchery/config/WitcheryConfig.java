@@ -15,6 +15,7 @@ public class WitcheryConfig {
     public static final ModConfigSpec.BooleanValue DEBUG;
     public static final ModConfigSpec.IntValue TOWN_ZOMBIE_ATTACK_REDUCTION_MODE;
     public static final ModConfigSpec.BooleanValue ALLOW_DEATHS_HOOD_FREEZE;
+    public static final ModConfigSpec.IntValue HOBGOBLIN_GOD_SPAWN_CHANCE_PERCENT;
 
     // ── Vampire ───────────────────────────────────────────────────────────────
     public static final ModConfigSpec.IntValue VAMPIRE_BLOOD_DRAIN_INTERVAL;
@@ -82,6 +83,9 @@ public class WitcheryConfig {
         ALLOW_DEATHS_HOOD_FREEZE = BUILDER
                 .comment("Source AllowDeathsHoodToFreezeVictims: if true, Death's Hood slows creatures the wearer stares at. Default: true")
                 .define("AllowDeathsHoodToFreezeVictims", true);
+        HOBGOBLIN_GOD_SPAWN_CHANCE_PERCENT = BUILDER
+                .comment("Source HobgoblinGodSpawnChance: relative percent used by a 15-worshipper Patron statue every five seconds. Default: 10")
+                .defineInRange("HobgoblinGodSpawnChance", 10, 0, 100);
         BUILDER.pop();
 
         BUILDER.push("vampire");

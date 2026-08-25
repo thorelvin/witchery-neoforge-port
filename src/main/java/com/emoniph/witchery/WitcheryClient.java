@@ -557,6 +557,7 @@ public class WitcheryClient {
         event.registerBlockEntityRenderer(WitcheryBlockEntities.GRASSPER.get(),        GrassperRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.BEARTRAP.get(),        BeartrapRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.STATUE_GODDESS.get(),  StatueGoddessRenderer::new);
+        event.registerBlockEntityRenderer(WitcheryBlockEntities.STATUE_HOBGOBLIN_PATRON.get(), PatronStatueRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.AREA_MARKER.get(),     DecurseStatueRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.SILVER_VAT.get(),      SilverVatRenderer::new);
         event.registerBlockEntityRenderer(WitcheryBlockEntities.WOLF_ALTAR.get(),      com.emoniph.witchery.client.renderer.WolfAltarRenderer::new);

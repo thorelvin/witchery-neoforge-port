@@ -115,7 +115,7 @@ enough to read before starting work. Long historical deltas belong in
   Silver Vat world spouts appear only toward adjacent block entities while item
   views show all four. Controlled original/port captures cover four GUIs, eight
   item forms, Oven facings/states, and the machine blocks; focused JVM tests,
-  the full build, all 25 GameTests, and save/reload are green.
+  the full build, all 26 GameTests, and save/reload are green.
 - Observations of an Immortal now uses its source-shaped standalone reader instead
   of the temporary Modonomicon route: the byte-identical 192 x 192 book sheet is
   exposed through a legal lowercase resource path, all 16 literal source markup
@@ -149,6 +149,16 @@ enough to read before starting work. Long historical deltas belong in
   fire/water/web resilience, full-bright rendering, and guarded atomic combat
   teleports. Focused JVM tests and `witchery:goblin_boss_parity` pass; live combat,
   reward, and presentation feel remain QA.
+- The Hobgoblin Patron closes the boss acquisition path. Its exact Stone and
+  Koboldite figure recipe feeds the existing source-exact 4000-power small-circle
+  binding rite, which now stores owner name and UUID. A bound statue recruits
+  Hobgoblins within eight blocks every five seconds, restores 30 infusion energy
+  at five worshippers, grants Worship I/II at ten/fifteen, and keeps the original
+  config-scaled paired automatic summon. The owner can spend one Nether Star and
+  five active worshippers to summon Mog and Gulg together; duplicate bosses,
+  unsafe ground, low worship, or wrong ownership consume nothing. Owner state,
+  staged trades, source player-skin/stone-overlay renderer, special item route,
+  save/reload, and the `witchery:patron_statue_lifecycle` GameTest pass.
 - The remaining automatic vampire level perks now follow the 1.7.10 contract:
   human-form attack damage rises to ×2/×3/×4 at levels 1/4/7, level-3
   sneaking strikes launch their victim, and level-6 sneaking fist/tool-mismatch
@@ -449,7 +459,8 @@ enough to read before starting work. Long historical deltas belong in
   pickaxes can be ordered by chat to mine, actively path to nearby natural
   stone/earth/ore blocks, break them with feedback, wear their pickaxe, drop
   normal resources, and roll Koboldite Dust into nearby chests or the world.
-  Patron worship state persists and still feeds prayers into the statue.
+  Patron worship state persists and now feeds the source 5/10/15 owner reward
+  thresholds and paired Goblin God lifecycle.
   Follow and guard chat orders now have real movement behavior; guard watches
   for threats attacking the command holder instead of just acknowledging text.
   Failed hobgoblin command attempts no longer claim a new command owner.

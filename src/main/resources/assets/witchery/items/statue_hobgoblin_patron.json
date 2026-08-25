@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "witchery:item/statue_hobgoblin_patron"
+    "type": "minecraft:special",
+    "base": "witchery:item/entity_machine_base",
+    "model": {
+      "type": "witchery:statue_hobgoblin_patron"
+    }
   }
 }

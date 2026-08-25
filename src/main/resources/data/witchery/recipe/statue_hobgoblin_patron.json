@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "SKS",
+    " S ",
+    "S S"
+  ],
+  "key": {
+    "S": "minecraft:stone",
+    "K": "witchery:koboldite_ingot"
+  },
+  "result": {
+    "id": "witchery:statue_hobgoblin_patron",
+    "count": 1
+  }
+}

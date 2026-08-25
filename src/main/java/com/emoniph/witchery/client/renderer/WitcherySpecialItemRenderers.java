@@ -29,6 +29,7 @@ import com.emoniph.witchery.client.model.StatueGoddessModel;
 import com.emoniph.witchery.client.model.WolfAltarModel;
 import com.emoniph.witchery.client.model.WolfStatueModel;
 import com.emoniph.witchery.client.model.WitchesOvenModel;
+import com.emoniph.witchery.blocks.entity.StatueHobgoblinPatronBlockEntity;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.item.HandBowItem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -39,6 +40,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -47,13 +49,17 @@ import net.minecraft.client.renderer.special.NoDataSpecialModelRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+
+import java.util.UUID;
 
 public final class WitcherySpecialItemRenderers {
     private WitcherySpecialItemRenderers() {}
@@ -88,6 +94,7 @@ public final class WitcherySpecialItemRenderers {
         event.register(id("fetish_trent_effigy"), FetishTrentUnbaked.MAP_CODEC);
         event.register(id("fetish_witchs_ladder"), FetishWitchsLadderUnbaked.MAP_CODEC);
         event.register(id("statue_goddess"), StatueGoddessUnbaked.MAP_CODEC);
+        event.register(id("statue_hobgoblin_patron"), PatronStatueUnbaked.MAP_CODEC);
         event.register(id("statue_mandrake"), MandrakeStatueUnbaked.MAP_CODEC);
         event.register(id("statue_wolf"), WolfStatueUnbaked.MAP_CODEC);
         event.register(id("wolf_altar"), WolfAltarUnbaked.MAP_CODEC);
@@ -1314,6 +1321,58 @@ public final class WitcherySpecialItemRenderers {
 
         @Override
         public MapCodec<StatueGoddessUnbaked> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record PatronOwner(String name, UUID uuid) {}
+
+    public record PatronStatueSpecialRenderer(HumanoidModel<net.minecraft.client.renderer.entity.state.HumanoidRenderState> model)
+            implements SpecialModelRenderer<PatronOwner> {
+        @Override
+        public PatronOwner extractArgument(ItemStack stack) {
+            var tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+            String name = tag.getStringOr(StatueHobgoblinPatronBlockEntity.ITEM_OWNER_KEY, "");
+            String uuidText = tag.getStringOr(StatueHobgoblinPatronBlockEntity.ITEM_OWNER_UUID_KEY, "");
+            UUID uuid = null;
+            try {
+                uuid = uuidText.isBlank() ? null : UUID.fromString(uuidText);
+            } catch (IllegalArgumentException ignored) {
+                // Malformed imported item data falls back to the name-based skin lookup.
+            }
+            return new PatronOwner(name, uuid);
+        }
+
+        @Override
+        public void submit(PatronOwner owner, ItemDisplayContext displayContext, PoseStack poseStack,
+                           SubmitNodeCollector collector, int lightCoords, int overlayCoords,
+                           boolean hasFoil, int outlineColor) {
+            poseStack.pushPose();
+            PatronStatueRenderer.applySourceItemPose(poseStack);
+            PatronStatueRenderer.submitSourceModel(model,
+                    PatronStatueRenderer.resolveSkin(owner == null ? null : owner.uuid(),
+                            owner == null ? "" : owner.name()),
+                    poseStack, collector, lightCoords, overlayCoords, hasFoil, outlineColor);
+            poseStack.popPose();
+        }
+
+        @Override
+        public void getExtents(Consumer<Vector3fc> consumer) {
+            unitBlockExtents(consumer);
+        }
+    }
+
+    public record PatronStatueUnbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<PatronStatueUnbaked> MAP_CODEC = MapCodec.unit(new PatronStatueUnbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+            return new PatronStatueSpecialRenderer(new HumanoidModel<>(
+                    context.entityModelSet().bakeLayer(ModelLayers.PLAYER)));
+        }
+
+        @Override
+        public MapCodec<PatronStatueUnbaked> type() {
             return MAP_CODEC;
         }
     }

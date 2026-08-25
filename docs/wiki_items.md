@@ -346,12 +346,6 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Stackable up to 64.
 
 ## Gulg's Gurdle
-- **Obtain:** Not specified in the provided text.
-- **Use:** Not specified in the provided text.
-- **Stats:** N/A
-- **Notes:** Not specified in the provided text.
-
-## Gulg's Gurdle
 - **Obtain:** Drop from Gulg
 - **Use:** Provides leather-level protection with iron-level durability. Grants a special knockback effect that pushes victims upwards by 10 blocks, deals twice as much damage with bare hands, and applies a Resistance buff when near someone using Mog's Quiver.
 - **Stats:** Durability: 76
@@ -466,12 +460,6 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Use:** Stores items and blood samples for Taglock Kits. Prevents witches from removing their own blood sample.
 - **Stats:** Storage: 27 slots
 - **Notes:** None
-
-## Mog's Quiver
-- **Obtain:** Crafting recipe not provided.
-- **Use:** Not specified in the given text.
-- **Stats:** None
-- **Notes:** No known crafting uses.
 
 ## Mog's Quiver
 - **Obtain:** Drops from Mog
@@ -739,10 +727,10 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Notes:** Intended for developers.
 
 ## Statue of Hobgoblin Patron
-- **Obtain:** Recipe TBD.
-- **Use:** Worshiped by Hobgoblins and can be bound to a player to increase the power of their Mystic Branch spells. Angers Mog and Gulg if bound.
-- **Stats:** N/A
-- **Notes:** Can be expanded.
+- **Obtain:** Craft the figure from Stone with a Koboldite Ingot at the top center: `SKS / _S_ / S_S`. Bind it in a small Ritual circle with Belladonna Flower, Poppy, Dandelion, and 4000 altar power.
+- **Use:** Every five seconds, nearby worshippers feed the bound owner: five restore 30 infusion energy, ten grant Worship I, and fifteen grant Worship II plus a rare paired Goblin God arrival. The owner may offer a Nether Star with five active worshippers to summon Mog and Gulg together.
+- **Stats:** Worship radius 8; owner reward range 64; Worship duration 60 seconds.
+- **Notes:** A successful manual summon consumes the Nether Star and five worshippers. Wrong owner, insufficient worship, nearby bosses, or unsafe terrain do not consume them. Owner name and UUID persist when the statue is broken and replaced.
 
 ## Statue of The Goddess
 - **Obtain:** Recipe can be disabled in config file.

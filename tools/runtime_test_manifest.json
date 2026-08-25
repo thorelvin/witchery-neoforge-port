@@ -6,6 +6,7 @@
     "com.emoniph.witchery.book.RitualCompendiumParityTest",
     "com.emoniph.witchery.resources.LegacyHeldItemResourceTest",
     "com.emoniph.witchery.resources.ObservationsBookParityTest",
+    "com.emoniph.witchery.resources.PatronStatueResourceTest",
     "com.emoniph.witchery.resources.WitchCauldronModelTest",
     "com.emoniph.witchery.resources.WitcheryResourceIntegrityTest",
     "com.emoniph.witchery.ritual.OtherwhereHearthResourceTest",
@@ -56,6 +57,11 @@
     },
     {
       "id": "witchery:goblin_boss_parity",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:patron_statue_lifecycle",
       "lane": "ci",
       "timeout_seconds": 120
     },

@@ -1359,7 +1359,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <strong>Mystic Branch (Rite of Infusion, paired 7×7 + 11×11 Ritual rings, 3,000 power):</strong> Ent Twig + Mystic Unguent in the circle. Requires a Player Infusion to already be active before the Branch is usable.
 </div>
 
-<div class="callout callout-tip">Spell power can be boosted by having Hobgoblins worship a Statue of Hobgoblin Patron — their worship feeds the Branch's power pool. The 25% anger chance still applies. Some spells require Demon souls (Soul of Fear, Soul of Anguish, Soul of Torment) obtained from specific Demons.</div>
+<div class="callout callout-tip">A bound Statue of Hobgoblin Patron can refill infusion energy when at least five Hobgoblins worship within eight blocks. Ten worshippers grant Worship I and fifteen grant Worship II. Some spells require Demon souls (Soul of Fear, Soul of Anguish, Soul of Torment) obtained from specific Demons.</div>
 
 <h3 id="branch-gestures">Spell Gestures</h3>
 <p>Each spell is a sequence of directional swishes: Up (U), Down (D), Left (L), Right (R).</p>
@@ -1875,20 +1875,21 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <!-- CH 22 -->
 <h2 class="chapter" id="ch22">Chapter 22: The Hobgoblin Ecosystem<span class="stage stage-mid">Mid</span> <a href="#toc" class="ch-top">&uarr; Contents</a></h2>
 
-<p>Hobgoblins are small, territorial, and largely reasonable as long as you do not disturb their patron. They live in woodland huts, they trade in koboldite — a curious metal found only through their commerce — and they can be led around with appropriate items, which they find irresistible. The Statue of Hobgoblin Patron is a fine decoration, but right-clicking it has consequences. You have been told.</p>
+<p>Hobgoblins are small, territorial, and largely reasonable as long as you do not disturb their patron. They live in woodland huts, trade in koboldite, work when leashed with a pickaxe, and settle around village homes.</p>
 
 <h3>Finding Them</h3>
 <p>Hobgoblin Huts generate in forests and swamps. The raised designer-built hut keeps one resident Hobgoblin and no loot chest; the resident's trades and labor are the route into Koboldite.</p>
 
 <h3>Five Trades, Each Unlocked in Sequence</h3>
 <ol>
-  <li>Coal → Koboldite Dust</li>
-  <li>Koboldite Dust + Gold Nugget → Koboldite Nugget</li>
-  <li>Koboldite Nuggets → Koboldite Ingot</li>
-  <li>Koboldite Ingot → Koboldite Pickaxe</li>
-  <li>Koboldite Ingot → Koboldite Pentacle</li>
+  <li>17 Coal &rarr; 1 Koboldite Dust</li>
+  <li>9 Koboldite Dust + 5 Gold Nuggets &rarr; 1 Koboldite Nugget</li>
+  <li>16 Koboldite Dust + 1 Gold Ingot &rarr; 2 Koboldite Nuggets</li>
+  <li>9 Koboldite Nuggets + 1 Emerald &rarr; 1 Koboldite Ingot</li>
+  <li>8 Gold Ingots &rarr; 1 Emerald</li>
 </ol>
-<p>The Pentacle at trade 5 is the altar's ×2 multiplicative recharge upgrade — the primary reason to work through this chain. Work upward. The koboldite at the end is genuinely useful.</p>
+<p>Only the first offer is visible at first. Completing the current final offer unlocks exactly one more, until all five are known.</p>
+<p>The final Koboldite Ingot completes the material path needed to craft the Patron statue and begin the Goblin God encounter.</p>
 
 <h3>Village Packs and Families</h3>
 <p>Hobgoblins recognize nearby village homes and, once settled, keep to the village instead of vanishing when distant players leave. If one wanders too far, village life is a low-priority pull home; conversation, trade, leash work, worship, following, and guard orders still come first.</p>
@@ -1902,8 +1903,10 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 
 <p>The same command sense can tell a hobgoblin to <strong>worship</strong> or <strong>pray</strong> at a nearby Patron statue, or to stay, stop, follow, come closer, go away, or guard. Owners and trusted players command; strangers mostly get suspicion.</p>
 
-<h3>The Patron Statue — A Final Warning</h3>
-<p>The Statue collects worship from hobgoblins within 16 blocks. Each worship event has a 25% chance of angering nearby hobgoblins named Gulg or Mog into attacking the player. There is no reliable prevention. Build the statue behind barriers, or simply do not build it at all if you would prefer not to fight goblins.</p>
+<h3>The Patron Statue</h3>
+<p>Craft the unbound statue in the old figure shape: Stone, Koboldite Ingot, Stone across the top; one Stone in the middle; and two Stone feet. Bind it to yourself with the <strong>Rite of Binding</strong> in a small Ritual circle, offering the statue, Belladonna Flower, Poppy, Dandelion, and 4000 altar power. The bound owner name and likeness survive breaking, carrying, replacement, and reload.</p>
+<p>Every five seconds, a bound statue recruits and counts Hobgoblins within eight blocks. Five worshippers restore 30 infusion energy to the owner. Ten grant Worship I for sixty seconds, while fifteen grant Worship II and enable the original config-scaled rare automatic arrival of Mog and Gulg. The owner must be online in the same dimension and within sixty-four blocks to receive these pulses.</p>
+<p>For a deliberate encounter, the owner right-clicks the statue with a Nether Star while five Hobgoblins actively worship nearby. Mog and Gulg are summoned together on safe ground; only after both can arrive does the star vanish and the five worshippers become the sacrifice. The wrong player, too few worshippers, either boss already nearby, or blocked terrain refuses activation without consuming anything.</p>
 
 
 <!-- ═══ PART III ═══ -->
@@ -2288,7 +2291,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Treefyd <code>treefyd</code></td><td>50 base; upgradeable</td><td>Hostile to non-whitelist</td><td>Grown from Treefyd Seeds. Creeper Heart → 100 HP / 4 dmg. Demon Heart → 150 HP / 8 dmg. <a href="#boline">Boline</a> adjusts roaming behavior. Drops Roses.</td></tr>
   <tr><td>Ent <code>ent</code></td><td>200</td><td>Hostile (deforestation)</td><td>Summoned by felling too many witch trees. Weak to axes. Drops Ent Twig + saplings.</td></tr>
   <tr><td>Flame Imp <code>flame_imp</code></td><td>50</td><td>Hostile until bound</td><td>Summonable via Infernal rite; bind with a signed <a href="#demonic-contract">Demonic Contract</a> for 25 levels. It then defends its owner, remains near the bargain site, accepts source shinies for ordered secret gifts, and works Imp Magic while unpowered. Ordinary deaths yield nothing.</td></tr>
-  <tr><td>Hobgoblin <code>hobgoblin</code></td><td>20</td><td>Neutral / hostile to villagers</td><td>5-trade sequence. 15% Koboldite Dust drop from mining. Lives in forest huts.</td></tr>
+  <tr><td>Hobgoblin <code>hobgoblin</code></td><td>20</td><td>Neutral / hostile to villagers</td><td>Five staged trades. Mining yields Koboldite Dust at 5%, or 8% with a Koboldite Pickaxe. Lives in forest huts.</td></tr>
   <tr><td>Vampire <code>vampire</code></td><td>40</td><td>Hostile</td><td>Stalks a village by night, draining Villagers rather than striking them normally, healing from blood taken, and returning after its quota. Weak to silver and sunlight. See <a href="#ch16">Ch 16</a>.</td></tr>
   <tr><td>Wolfman <code>wolfman</code></td><td>High</td><td>Hostile</td><td>The bestial werewolf form as a standalone creature. Weak to silver.</td></tr>
   <tr><td>Were Villager <code>were_villager</code></td><td>Moderate</td><td>Hostile at night</td><td>A villager that turns under the moon; renders on the vanilla villager body.</td></tr>
@@ -2477,7 +2480,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   </div>
   <div>
     <h4 id="mogs-quiver">Mog's Quiver</h4>
-    <p>Chest-slot. Grants limitless, fast bow shots and tags your arrows so airborne targets are punished harder. Dropped by Goblin Mog.</p>
+    <p>Chest-slot. Grants limitless fast bow shots; its tagged arrows deal triple damage to airborne targets and inflict Weakness. Dropped by Goblin Mog.</p>
   </div>
 </div>
 

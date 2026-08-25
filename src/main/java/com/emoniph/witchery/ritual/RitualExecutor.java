@@ -667,7 +667,10 @@ public class RitualExecutor {
         }
         ItemStack boundStatue = new ItemStack(WitcheryItems.STATUE_HOBGOBLIN_PATRON.get());
         CustomData.update(DataComponents.CUSTOM_DATA, boundStatue,
-                tag -> tag.putString(StatueHobgoblinPatronBlockEntity.ITEM_OWNER_KEY, sp.getScoreboardName()));
+                tag -> {
+                    tag.putString(StatueHobgoblinPatronBlockEntity.ITEM_OWNER_KEY, sp.getScoreboardName());
+                    tag.putString(StatueHobgoblinPatronBlockEntity.ITEM_OWNER_UUID_KEY, sp.getUUID().toString());
+                });
         RitualTransaction transaction = offerAll(
                 new RitualTransaction(sl, center, 16, 4000, "witchery.ritual.bind_statue.no_power"),
                 offerings);

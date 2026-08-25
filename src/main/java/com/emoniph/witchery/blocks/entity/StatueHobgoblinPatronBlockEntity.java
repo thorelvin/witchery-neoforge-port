@@ -16,14 +16,20 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public class StatueHobgoblinPatronBlockEntity extends BlockEntity {
     public static final String ITEM_OWNER_KEY = "WITCBoundPlayer";
+    public static final String ITEM_OWNER_UUID_KEY = "WITCBoundPlayerUUID";
     private static final String OWNER_KEY = "Owner";
+    private static final String OWNER_UUID_KEY = "OwnerUUID";
     private static final String STORED_PRAYERS_KEY = "StoredPrayers";
     private static final String LIFETIME_PRAYERS_KEY = "LifetimePrayers";
     private static final int MAX_STORED_PRAYERS = 64;
 
     private String owner = "";
+    @Nullable
+    private UUID ownerUuid;
     private int storedPrayers;
     private int lifetimePrayers;
 
@@ -32,8 +38,35 @@ public class StatueHobgoblinPatronBlockEntity extends BlockEntity {
     }
 
     public void setOwner(String owner) {
+        setOwner(owner, null);
+    }
+
+    public void setOwner(String owner, @Nullable UUID ownerUuid) {
         this.owner = owner == null ? "" : owner;
+        this.ownerUuid = ownerUuid;
         setChanged();
+    }
+
+    public String ownerName() {
+        return owner;
+    }
+
+    @Nullable
+    public UUID ownerUuid() {
+        return ownerUuid;
+    }
+
+    public boolean hasOwner() {
+        return !owner.isBlank();
+    }
+
+    public boolean isOwner(net.minecraft.world.entity.player.Player player) {
+        if (player == null || !hasOwner()) {
+            return false;
+        }
+        return ownerUuid != null
+                ? ownerUuid.equals(player.getUUID())
+                : owner.equalsIgnoreCase(player.getScoreboardName());
     }
 
     public int storedPrayers() {
@@ -77,7 +110,12 @@ public class StatueHobgoblinPatronBlockEntity extends BlockEntity {
     public ItemStack createDropStack(Block block) {
         ItemStack stack = new ItemStack(block);
         CustomData.update(DataComponents.CUSTOM_DATA, stack,
-                tag -> tag.putString(ITEM_OWNER_KEY, owner));
+                tag -> {
+                    tag.putString(ITEM_OWNER_KEY, owner);
+                    if (ownerUuid != null) {
+                        tag.putString(ITEM_OWNER_UUID_KEY, ownerUuid.toString());
+                    }
+                });
         return stack;
     }
 
@@ -96,6 +134,9 @@ public class StatueHobgoblinPatronBlockEntity extends BlockEntity {
     protected void saveAdditional(ValueOutput tag) {
         super.saveAdditional(tag);
         tag.putString(OWNER_KEY, owner);
+        if (ownerUuid != null) {
+            tag.putString(OWNER_UUID_KEY, ownerUuid.toString());
+        }
         tag.putInt(STORED_PRAYERS_KEY, storedPrayers);
         tag.putInt(LIFETIME_PRAYERS_KEY, lifetimePrayers);
     }
@@ -104,6 +145,12 @@ public class StatueHobgoblinPatronBlockEntity extends BlockEntity {
     protected void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
         owner = tag.getStringOr(OWNER_KEY, "");
+        String uuid = tag.getStringOr(OWNER_UUID_KEY, "");
+        try {
+            ownerUuid = uuid.isBlank() ? null : UUID.fromString(uuid);
+        } catch (IllegalArgumentException ignored) {
+            ownerUuid = null;
+        }
         storedPrayers = Math.max(0, Math.min(MAX_STORED_PRAYERS, tag.getIntOr(STORED_PRAYERS_KEY, 0)));
         lifetimePrayers = Math.max(0, tag.getIntOr(LIFETIME_PRAYERS_KEY, storedPrayers));
     }

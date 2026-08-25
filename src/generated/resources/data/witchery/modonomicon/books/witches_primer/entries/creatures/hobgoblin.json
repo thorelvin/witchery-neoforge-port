@@ -21,17 +21,6 @@
       "use_markdown_in_title": false
     },
     {
-      "type": "modonomicon:text",
-      "anchor": "",
-      "condition": {
-        "type": "modonomicon:none"
-      },
-      "show_title_separator": false,
-      "text": "[#](53341a)The Statue of the Hobgoblin Patron is a fine decoration — but right-clicking it has consequences. You have been told.[#]()",
-      "title": " ",
-      "use_markdown_in_title": false
-    },
-    {
       "type": "modonomicon:entity",
       "anchor": "",
       "condition": {
@@ -86,6 +75,94 @@
       },
       "show_title_separator": false,
       "text": "[#](53341a)Babies grow through the ordinary day-and-night passage of time and keep their own profession markings. Leash work, worship, conversation, following, and guard orders take precedence over this village life.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Craft the statue as a small figure: Stone-Koboldite-Stone across the top, Stone in the middle, and two Stone feet. Bind it to yourself in a small Ritual circle with Belladonna Flower, Poppy, Dandelion, and 4000 altar power.[#]()",
+      "title": "The Patron Statue",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The finished statue keeps your name and likeness when broken, carried, or placed again.[#]() [#](53341a)Only the bound owner receives its gifts. Hobgoblins within eight blocks are drawn to worship, and the statue counts them every five seconds.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Five worshippers restore 30 infusion energy each pulse. Ten grant Worship I for one minute; fifteen grant Worship II and permit a rare paired visit from Mog and Gulg.[#]()",
+      "title": "Worship and the Goblin Gods",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)For a deliberate summons, the owner offers a Nether Star while five Hobgoblins are actively worshipping. Mog and Gulg arrive together on safe ground, and only then are the star and five worshippers consumed.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Existing gods, too few worshippers, unsafe ground, or the wrong player leave the offering untouched.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)The pair cannot be hurt while standing within three blocks of one another. Separate them to open their defenses. Gulg throws victims skyward; Mog punishes airborne prey.[#]()",
+      "title": "Mog and Gulg",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Mog's Quiver supplies limitless fast arrows, triples damage against airborne targets, and inflicts Weakness. Gulg's Gurdle makes empty-handed blows deal five damage and launch.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Quiver and Gurdle wearers within eight blocks grant each other Resistance II.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }
