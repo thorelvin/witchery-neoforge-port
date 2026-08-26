@@ -115,6 +115,7 @@ public class WitchHutPiece extends StructurePiece {
                 catLady.finalizeSpawn(level,
                         new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
                         EntitySpawnReason.STRUCTURE, null);
+                VillageResidentMarker.mark(catLady, "witch_hut", boundingBox);
                 level.addFreshEntityWithPassengers(catLady);
             }
         } else {
@@ -126,6 +127,7 @@ public class WitchHutPiece extends StructurePiece {
                 witch.finalizeSpawn(level,
                         new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
                         EntitySpawnReason.STRUCTURE, null);
+                VillageResidentMarker.mark(witch, "witch_hut", boundingBox);
                 level.addFreshEntityWithPassengers(witch);
             }
         }

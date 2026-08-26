@@ -4,6 +4,7 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.events.VillageWallEvents;
 import com.emoniph.witchery.init.WitcheryStructures;
+import com.emoniph.witchery.world.WitcheryStructureData;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -175,6 +176,8 @@ public class WitcheryVillageElement extends StructurePoolElement {
         ChunkPos chunkPos = new ChunkPos(new BlockPos(box.minX(), 0, box.minZ()));
         try {
             piece.postProcess(level, structureMgr, generator, random, box, chunkPos, pos);
+            WitcheryStructureData.get(level.getLevel()).record(level.getLevel(),
+                    WitcheryStructureData.VILLAGE_BUILDING, building, offset);
             debugLog("Finished placing {} at {} for generation box {}.", building, offset, box);
         } catch (Throwable e) {
             WitcheryMod.LOGGER.error("[VillageBuildings] Failed to place {} at {} in generation box {}; skipping this slice.",
@@ -196,6 +199,10 @@ public class WitcheryVillageElement extends StructurePoolElement {
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private int[] dims() {
+        return dimensions(building);
+    }
+
+    static int[] dimensions(String building) {
         return switch (building) {
             case "apothecary"           -> new int[]{9, 9, 6};
             case "bookshop"             -> new int[]{10, 8, 9};

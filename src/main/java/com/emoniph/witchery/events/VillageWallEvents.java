@@ -88,6 +88,7 @@ public class VillageWallEvents {
         boolean force;
         final String reason;
         final List<ChunkPos> chunks;
+        final Set<Long> ownedForcedChunks = new HashSet<>();
         final List<PendingTeleport> teleports = new ArrayList<>();
         final long queuedAt;
         boolean ticketChunks;
@@ -185,6 +186,7 @@ public class VillageWallEvents {
     private static final long WALL_JOB_LOG_INTERVAL_TICKS = 40L;
     private static final long WALL_JOB_TIMEOUT_TICKS = 20L * 30L;
     private static final long WALL_JOB_STUCK_CHUNK_SKIP_TICKS = 20L * 10L;
+    private static final long NATURAL_WALL_JOB_UNLOAD_GRACE_TICKS = 40L;
     private static final int FORCE_LOAD_PADDING_BLOCKS = 24;
     private static final int FORCE_LOAD_TICKET_PADDING_BLOCKS = 18;
     private static final int FORCE_LOAD_EDGE_RING_CHUNKS = 1;
@@ -844,7 +846,7 @@ public class VillageWallEvents {
                             start.getBoundingBox(), job.wallAttempts, result.gateCandidates());
                     return finishVillageGotoPrep(level, job, false, null);
                 }
-                data.markProcessed(start.getBoundingBox());
+                data.markProcessed(start.getBoundingBox(), result.gateCandidates(), result.gates());
                 WitcheryMod.LOGGER.info("[VillageWalls] Wall generation complete for {}.",
                         start.getBoundingBox());
                 return finishVillageGotoPrep(level, job, true, start);
@@ -1018,7 +1020,9 @@ public class VillageWallEvents {
                     ChunkPos cp = job.chunks.get(job.ticketCursor);
                     debugLog("Requesting forced wall chunk {}/{} {} for {} (reason={}).",
                             job.ticketCursor + 1, job.chunks.size(), cp, job.start.getBoundingBox(), job.reason);
-                    level.getChunkSource().updateChunkForced(cp, true);
+                    if (level.getChunkSource().updateChunkForced(cp, true)) {
+                        job.ownedForcedChunks.add(cp.toLong());
+                    }
                     job.ticketCursor++;
                     debugLog("Requested forced wall chunk {}/{} {} for {}.",
                             job.ticketCursor, job.chunks.size(), cp, job.start.getBoundingBox());
@@ -1048,6 +1052,13 @@ public class VillageWallEvents {
                 if (ready > job.lastReadyCount) {
                     job.lastReadyCount = ready;
                     job.lastProgressAt = now;
+                }
+                if (!job.ticketChunks
+                        && now - job.lastProgressAt > NATURAL_WALL_JOB_UNLOAD_GRACE_TICKS) {
+                    WitcheryMod.LOGGER.info("[VillageWalls] Released naturally loaded wall job at {} after its footprint unloaded ({}/{} chunks remain); it can be rediscovered later.",
+                            job.start.getBoundingBox(), ready, job.chunks.size());
+                    finishWallJob(level, job, false);
+                    return true;
                 }
                 if (now - job.lastLogAt >= WALL_JOB_LOG_INTERVAL_TICKS) {
                     job.lastLogAt = now;
@@ -1098,7 +1109,7 @@ public class VillageWallEvents {
                 finishWallJob(level, job, false);
                 return true;
             }
-            data.markProcessed(job.start.getBoundingBox());
+            data.markProcessed(job.start.getBoundingBox(), result.gateCandidates(), result.gates());
             WitcheryMod.LOGGER.info("[VillageWalls] Wall generation complete for {}.",
                     job.start.getBoundingBox());
             finishWallJob(level, job, true);
@@ -1132,7 +1143,7 @@ public class VillageWallEvents {
             ChunkPos cp = job.chunks.get(i);
             if (level.getChunkSource().getChunkNow(cp.x, cp.z) != null) continue;
 
-            level.getChunkSource().updateChunkForced(cp, false);
+            releaseOwnedWallChunk(level, job, cp);
             job.chunks.remove(i);
             if (i < job.ticketCursor) job.ticketCursor--;
             job.lastProgressAt = now;
@@ -1182,10 +1193,15 @@ public class VillageWallEvents {
         for (PendingTeleport teleport : job.teleports) {
             completeTeleport(level, teleport, success);
         }
-        int ticketed = Math.min(job.ticketCursor, job.chunks.size());
-        for (int i = 0; i < ticketed; i++) {
-            ChunkPos cp = job.chunks.get(i);
-            level.getChunkSource().updateChunkForced(cp, false);
+        for (long packed : job.ownedForcedChunks) {
+            level.getChunkSource().updateChunkForced(new ChunkPos(packed), false);
+        }
+        job.ownedForcedChunks.clear();
+    }
+
+    private static void releaseOwnedWallChunk(ServerLevel level, WallJob job, ChunkPos chunk) {
+        if (job.ownedForcedChunks.remove(chunk.toLong())) {
+            level.getChunkSource().updateChunkForced(chunk, false);
         }
     }
 
@@ -1260,6 +1276,32 @@ public class VillageWallEvents {
             return nearCenter;
         }
         return findClearSurfaceNear(level, fallback, 18);
+    }
+
+    public static BlockPos certificationLanding(ServerLevel level, StructureStart start) {
+        BoundingBox bb = start.getBoundingBox();
+        BlockPos fallback = new BlockPos((bb.minX() + bb.maxX()) / 2, 64,
+                (bb.minZ() + bb.maxZ()) / 2);
+        BlockPos bestRoad = null;
+        double bestRoadDist = Double.MAX_VALUE;
+        for (int x = bb.minX(); x <= bb.maxX(); x++) {
+            for (int z = bb.minZ(); z <= bb.maxZ(); z++) {
+                if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) continue;
+                int y = safeSurfaceY(level, x, z, fallback.getY());
+                if (!isSafeLandingAt(level, x, y, z)) continue;
+                if (!isVillageRoadSurface(level.getBlockState(new BlockPos(x, y - 1, z)))) continue;
+                double distance = fallback.distSqr(new BlockPos(x, fallback.getY(), z));
+                if (distance < bestRoadDist) {
+                    bestRoadDist = distance;
+                    bestRoad = new BlockPos(x, y, z);
+                }
+            }
+        }
+        return bestRoad != null ? bestRoad : findClearSurfaceNear(level, fallback, 18);
+    }
+
+    public static boolean isSafeLanding(ServerLevel level, BlockPos pos) {
+        return isSafeLandingAt(level, pos.getX(), pos.getY(), pos.getZ());
     }
 
     private static BlockPos villageBuildingAnchor(StructureStart start, String building) {

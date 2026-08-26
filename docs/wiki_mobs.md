@@ -104,7 +104,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Drops:** Friendly reward interactions after defeat: empty Glass Goblet -> Lilith blood, Garlic -> vampirism cure, Poppy -> vampire level 6 to 7, enchantable item/book -> high-level blessing
 - **Spawn:** The chicken-blood skull rite summons persistent Elle; lead Elle to a large source-shaped lava pool and she transforms into Lilith.
 - **Behaviour:** Opens with invulnerability and healing, regenerates while hostile, caps incoming damage, uses fireballs, spell pressure, fire rain, and can be weakened by reflected large fireballs.
-- **Notes:** Best to deflect her fireballs and bring fire protection or Demonbane support. Her Lilith blood reward accepts werewolves only when the server's source-default hybrid setting is enabled.
+- **Notes:** Best to deflect her fireballs and bring fire protection or Demonbane support. Her Lilith blood reward accepts werewolves only when the server enables hybrids; Witchery Rewoven defaults that setting to disabled.
 
 ## Lord of Torment
 - **HP:** 500

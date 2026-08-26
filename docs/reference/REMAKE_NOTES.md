@@ -13,6 +13,30 @@ Current target:
 
 ---
 
+## 2026-08-26 Village ecosystem and certification closeout
+
+- `WitcheryVillageElement` records a canonical building claim only after a
+  successful piece placement. Apothecary, Bookshop, Witch Hut, Watch Tower, and
+  Keep residents carry persistent building/origin provenance, so certification
+  can distinguish intended residents from ordinary village population.
+- `VillageWallData` persists candidate and selected-gate evidence instead of a
+  bare processed set. Wall jobs track the exact force-load tickets they acquire
+  and release only those tickets. Curtain, gatehouse, and graded-path placement
+  relocates blockers to validated dry/collision-free ground; a bounded final
+  collision pass prevents delayed terrain suffocation.
+- `/witchery verify village` emits a parseable audit of claims, palette-family
+  blocks, residents, gates, and safe landing. The runtime harness uses the fixed
+  `witchery-runtime-test` seed across plains, desert, savanna, taiga, and snowy
+  villages, then restarts and certifies the same coordinates. All ten audits
+  pass, and the harness rejects any wall-suffocation death.
+- Were-Villager conversion stores sanitized full Villager NBT through Were
+  Villager, Wolfman save/load, reversion, and cure. Infectious Wolfmen and
+  level-10 transformed players share the near-fatal bite route. Creature
+  Taglocks, Voodoo/Vampiric Poppets, Curse Creature, and Wither/Demon/Hell
+  Villager sacrifice selectors have dedicated-server coverage. Hybrid
+  vampire/werewolf curses default to disabled.
+- Backwards-save migration remains intentionally out of scope.
+
 ## 2026-08-26 Persistent ritual queue closeout
 
 - Source has three independent timing values that cannot be collapsed into one

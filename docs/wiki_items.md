@@ -319,7 +319,7 @@ _Auto-generated from FTW wiki scrape. Verify against decompiled source._
 - **Obtain:** Best Lilith, then right-click friendly Lilith with an empty Glass Goblet to receive a Full Glass Goblet tagged with Lilith's blood. The standalone `liliths_blood` consumable remains exposed as a rare QA/practical item.
 - **Use:** In the current remake, non-vampires drink it to become vampires with practical starting blood, while existing vampires refill to the current 500 cap.
 - **Stats:** Stackable (16), rare.
-- **Notes:** Werewolves are accepted when `AllowVampireWerewolfHybrids` is enabled (the source-default setting) and refused when it is disabled. Friendly Lilith also accepts Garlic to cure vampirism, a Poppy for the level 6->7 mastery boon, or an enchantable item/book for a level-40 blessing.
+- **Notes:** Werewolves are accepted when `AllowVampireWerewolfHybrids` is enabled and refused when it is disabled; Witchery Rewoven defaults the setting to disabled. Friendly Lilith also accepts Garlic to cure vampirism, a Poppy for the level 6->7 mastery boon, or an enchantable item/book for a level-40 blessing.
 
 ## Vampire Feeding
 - **Obtain:** Be a vampire in the current NeoForge remake and empty-hand interact with a living target.

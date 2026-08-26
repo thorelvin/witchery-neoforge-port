@@ -34,11 +34,10 @@ import javax.annotation.Nullable;
  *   - Targets players, villagers, witch hunters
  *   - Silver weapons deal 1.5× damage (max 15); all other damage capped at 1.0
  *   - Every 100 ticks when not full-moon night: reverts to WereVillagerEntity
- *   - Tracks formerProfession and infectious flag from original villager
+ *   - Retains the complete villager snapshot and infectious flag through transformations
  */
 public class WolfmanEntity extends Monster {
 
-    private int formerProfession = -1;   // ≥0 means converted from a villager
     private boolean infectious   = false; // biting spreads lycanthropy
     private int attackTimer      = 0;
 
@@ -80,7 +79,7 @@ public class WolfmanEntity extends Monster {
         super.tick();
         if (attackTimer > 0) attackTimer--;
         if (!level().isClientSide()) {
-            if (tickCount % 100 == 3 && formerProfession >= 0 && !isFullMoonNight()
+            if (tickCount % 100 == 3 && VillagerWerewolfConversion.hasVillagerSnapshot(this) && !isFullMoonNight()
                     && !hasEffect(WitcheryMobEffects.WOLFSBANE)) {
                 convertToWereVillager();
             } else if (tickCount % 40 == 4 && hasEffect(MobEffects.WEAKNESS)) {
@@ -129,23 +128,11 @@ public class WolfmanEntity extends Monster {
 
     private void convertToWereVillager() {
         if (!(level() instanceof ServerLevel sl)) return;
-        WereVillagerEntity were = WitcheryEntities.WERE_VILLAGER.get()
-                .create(sl, EntitySpawnReason.MOB_SUMMONED);
-        if (were == null) { discard(); return; }
-        were.setPos(getX(), getY(), getZ());
-        were.setYRot(getYRot());
-        were.setFormerProfession(formerProfession);
-        if (infectious) were.setInfectious(true);
-        were.setPersistenceRequired();
-        sl.addFreshEntity(were);
-        sl.levelEvent(null, 1017, blockPosition(), 0); // cure particles
-        discard();
+        VillagerWerewolfConversion.restoreWereVillager(sl, this);
     }
 
     // ── Profession / infection tracking ──────────────────────────────────────
 
-    public int getFormerProfession() { return formerProfession; }
-    public void setFormerProfession(int p) { this.formerProfession = p; }
     public boolean isInfectious() { return infectious; }
     public void setInfectious() { this.infectious = true; }
 
@@ -183,14 +170,12 @@ public class WolfmanEntity extends Monster {
     @Override
     public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt("FormerProfession", formerProfession);
         tag.putBoolean("Infectious", infectious);
     }
 
     @Override
     public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        formerProfession = tag.getIntOr("FormerProfession", -1);
         infectious = tag.getBooleanOr("Infectious", false);
     }
 }

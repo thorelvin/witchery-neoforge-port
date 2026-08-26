@@ -16,6 +16,7 @@ import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.FlameImpEntity;
 import com.emoniph.witchery.entity.LordOfTormentEntity;
 import com.emoniph.witchery.entity.ReflectionEntity;
+import com.emoniph.witchery.entity.VillagerWerewolfConversion;
 import com.emoniph.witchery.entity.WereVillagerEntity;
 import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.entity.WitchHunterEntity;
@@ -880,15 +881,7 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.werewolf.infection")
                     .withStyle(ChatFormatting.DARK_PURPLE), false);
         } else if (target instanceof Villager villager) {
-            WereVillagerEntity converted = villager.convertTo(WitcheryEntities.WERE_VILLAGER.get(),
-                    ConversionParams.single(villager, true, true),
-                    net.minecraft.world.entity.EntitySpawnReason.CONVERSION,
-                    were -> {
-                        were.setFormerProfession(0);
-                        were.setInfectious(false);
-                        were.setPersistenceRequired();
-                    });
-            if (converted == null) {
+            if (VillagerWerewolfConversion.convertVillager(level, villager, false) == null) {
                 return false;
             }
         } else {
@@ -921,11 +914,11 @@ public class RitualExecutor {
                 PacketDistributor.sendToPlayer(player, SyncPlayerDataPayload.from(player, data));
             }
         } else if (target instanceof WereVillagerEntity wereVillager) {
-            if (!restoreVillager(wereVillager, level)) {
+            if (VillagerWerewolfConversion.cure(level, wereVillager) == null) {
                 return false;
             }
         } else if (target instanceof WolfmanEntity wolfman) {
-            if (!restoreVillager(wolfman, level)) {
+            if (VillagerWerewolfConversion.cure(level, wolfman) == null) {
                 return false;
             }
         } else {
@@ -938,14 +931,6 @@ public class RitualExecutor {
                 resisted ? SoundEvents.ENDER_DRAGON_GROWL : SoundEvents.PLAYER_LEVELUP,
                 0.8F, 3, 48);
         return true;
-    }
-
-    private static boolean restoreVillager(Mob source, ServerLevel level) {
-        Villager restored = source.convertTo(EntityType.VILLAGER,
-                ConversionParams.single(source, true, true),
-                net.minecraft.world.entity.EntitySpawnReason.CONVERSION,
-                villager -> villager.setPersistenceRequired());
-        return restored != null;
     }
 
     private static boolean startInfusionMirrorFromRecipe(Player player, Level level, BlockPos center,
@@ -7060,15 +7045,11 @@ public class RitualExecutor {
             return false;
         }
         int potencyBonus = cursePotencyBonus(player, level, center);
-        boolean applied = performOfferedCurse(player, level, center,
+        boolean applied = performOfferedCreatureCurse(player, level, center,
                 offerings.get().taglockKit(),
                 2000,
                 "witchery.ritual.curse_creature.no_power",
-                target -> {
-                    target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200 + (potencyBonus * 60), Math.min(2, potencyBonus)));
-                    target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 200 + (potencyBonus * 60), 1 + Math.min(2, potencyBonus)));
-                    target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200 + (potencyBonus * 60), Math.min(2, potencyBonus)));
-                },
+                target -> applyCreatureCurseEffects(target, potencyBonus),
                 "witchery.curse.cursed",
                 "witchery.curse.cursed",
                 true,
@@ -7087,14 +7068,10 @@ public class RitualExecutor {
                                                         List<RitualOffering> matchedItems) {
         if (!requireThunderstorm(player, level, center)) return false;
         int potencyBonus = cursePotencyBonus(player, level, center);
-        return performMatchedCurse(player, level, center, matchedItems,
+        return performMatchedCreatureCurse(player, level, center, matchedItems,
                 2000,
                 "witchery.ritual.curse_creature.no_power",
-                target -> {
-                    target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200 + (potencyBonus * 60), Math.min(2, potencyBonus)));
-                    target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 200 + (potencyBonus * 60), 1 + Math.min(2, potencyBonus)));
-                    target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200 + (potencyBonus * 60), Math.min(2, potencyBonus)));
-                },
+                target -> applyCreatureCurseEffects(target, potencyBonus),
                 "witchery.curse.cursed",
                 "witchery.curse.cursed",
                 true);
@@ -8445,6 +8422,9 @@ public class RitualExecutor {
     @FunctionalInterface
     private interface CurseAction { void apply(ServerPlayer target); }
 
+    @FunctionalInterface
+    private interface CreatureCurseAction { void apply(LivingEntity target); }
+
     private static boolean applyCurse(Player caster, Level level, BlockPos center, ItemEntity offeredTaglock,
                                       CurseAction action, String successKey, String failKey,
                                       boolean checkHunterArmorProtection) {
@@ -8553,6 +8533,106 @@ public class RitualExecutor {
         }
         return performOfferedCurse(caster, level, center, matchedItems.get(0), altarPowerCost, noPowerKey,
                 action, successKey, failKey, checkHunterArmorProtection, matchedItems);
+    }
+
+    private static boolean performOfferedCreatureCurse(Player caster, Level level, BlockPos center,
+                                                       ItemEntity offeredTaglock, int altarPowerCost,
+                                                       String noPowerKey, CreatureCurseAction action,
+                                                       String successKey, String failKey,
+                                                       boolean checkHunterArmorProtection,
+                                                       ItemEntity... offerings) {
+        List<RitualOffering> stagedOfferings = new ArrayList<>(offerings.length + 1);
+        stagedOfferings.add(RitualOffering.dropped(offeredTaglock));
+        for (ItemEntity offering : offerings) {
+            if (offering != null) {
+                stagedOfferings.add(RitualOffering.dropped(offering));
+            }
+        }
+        return performOfferedCreatureCurse(caster, level, center, RitualOffering.dropped(offeredTaglock),
+                altarPowerCost, noPowerKey, action, successKey, failKey,
+                checkHunterArmorProtection, List.copyOf(stagedOfferings));
+    }
+
+    private static boolean performMatchedCreatureCurse(Player caster, Level level, BlockPos center,
+                                                       List<RitualOffering> matchedItems,
+                                                       int altarPowerCost, String noPowerKey,
+                                                       CreatureCurseAction action, String successKey,
+                                                       String failKey, boolean checkHunterArmorProtection) {
+        if (matchedItems.isEmpty()) {
+            return false;
+        }
+        return performOfferedCreatureCurse(caster, level, center, matchedItems.getFirst(),
+                altarPowerCost, noPowerKey, action, successKey, failKey,
+                checkHunterArmorProtection, matchedItems);
+    }
+
+    private static boolean performOfferedCreatureCurse(Player caster, Level level, BlockPos center,
+                                                       RitualOffering offeredTaglock, int altarPowerCost,
+                                                       String noPowerKey, CreatureCurseAction action,
+                                                       String successKey, String failKey,
+                                                       boolean checkHunterArmorProtection,
+                                                       List<RitualOffering> offerings) {
+        if (!(caster instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl)) {
+            return false;
+        }
+        Optional<UUID> taglockUuid = TaglockKitItem.getUUID(offeredTaglock.stack());
+        if (taglockUuid.isEmpty()) {
+            sp.displayClientMessage(Component.translatable(failKey + ".no_taglock"), false);
+            return false;
+        }
+        LivingEntity target = resolveCreatureCurseTarget(sl, offeredTaglock.stack()).orElse(null);
+        if (target == null) {
+            sp.displayClientMessage(Component.translatable(failKey + ".offline"), false);
+            return false;
+        }
+        if (target instanceof ServerPlayer playerTarget) {
+            if (checkHunterArmorProtection && hasCurseProtection(playerTarget)) {
+                sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+                return false;
+            }
+            if (AreaMarkerBlockEntity.isDirectedCurseProtected(playerTarget)) {
+                sp.displayClientMessage(Component.translatable("witchery.rite.blackmagicdampening"), false);
+                return false;
+            }
+            if (triggerVoodooProtection(playerTarget)) {
+                playerTarget.displayClientMessage(Component.translatable("witchery.curse.blocked_by_poppet"), false);
+                sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
+                return false;
+            }
+        }
+
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, altarPowerCost, noPowerKey), offerings);
+        return transaction.commitDeferred(caster, () -> {
+            if (!target.isAlive() || target.level() != sl) {
+                return;
+            }
+            action.apply(target);
+            if (target instanceof ServerPlayer playerTarget) {
+                playerTarget.displayClientMessage(Component.translatable(successKey + ".target"), false);
+            }
+            success(caster, level, center, successKey + ".caster",
+                    SoundEvents.WITCH_CELEBRATE, 1f, 3, 48);
+            WitchHunterEntity.blackMagicPerformed(sp);
+        });
+    }
+
+    static Optional<LivingEntity> resolveCreatureCurseTarget(ServerLevel level, ItemStack taglock) {
+        Optional<UUID> targetId = TaglockKitItem.getUUID(taglock);
+        if (targetId.isEmpty()) {
+            return Optional.empty();
+        }
+        return PoppetItem.findLivingEntity(level.getServer(), targetId.get())
+                .filter(entity -> entity.isAlive() && entity.level() == level);
+    }
+
+    static void applyCreatureCurseEffects(LivingEntity target, int potencyBonus) {
+        target.addEffect(new MobEffectInstance(MobEffects.WITHER,
+                200 + (potencyBonus * 60), Math.min(2, potencyBonus)));
+        target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS,
+                200 + (potencyBonus * 60), 1 + Math.min(2, potencyBonus)));
+        target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
+                200 + (potencyBonus * 60), Math.min(2, potencyBonus)));
     }
 
     @FunctionalInterface

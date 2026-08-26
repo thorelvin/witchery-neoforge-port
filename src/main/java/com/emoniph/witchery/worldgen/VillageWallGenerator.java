@@ -375,6 +375,7 @@ public final class VillageWallGenerator {
 
         // 10. Build gatehouses — independent locked 7×3 models that override the wall.
         for (GateDef g : gates) buildGatehouse(level, g, brickBlock, merlonBlock, pathBlock, desert, spawnGuards);
+        rescueCollidingLivingEntities(level, minX - PADDING, minZ - PADDING, maxX + PADDING, maxZ + PADDING);
 
         WitcheryMod.LOGGER.info("[VillageWalls] Generated walls for village at {},{} ({}x{}), {} gate(s).",
                 cx, cz, w, d, gates.size());
@@ -1042,6 +1043,61 @@ public final class VillageWallGenerator {
         return null;
     }
 
+    private static boolean moveLivingEntitiesOutOfGateColumn(ServerLevel level, int x, int minY, int z, int maxY,
+                                                              String feature) {
+        AABB box = new AABB(x, minY, z, x + 1.0, maxY + 1.0, z + 1.0);
+        List<LivingEntity> blockers = level.getEntitiesOfClass(LivingEntity.class, box, LivingEntity::isAlive);
+        if (blockers.isEmpty()) return true;
+
+        for (LivingEntity blocker : blockers) {
+            BlockPos safe = findNearbyRelocation(level, x, z, blocker);
+            if (safe == null) {
+                WitcheryMod.LOGGER.info("[VillageWalls] Could not safely move {} out of {} column {},{}; skipping column.",
+                        blocker.getType(), feature, x, z);
+                return false;
+            }
+            blocker.teleportTo(safe.getX() + 0.5D, safe.getY(), safe.getZ() + 0.5D);
+            WitcheryMod.LOGGER.info("[VillageWalls] Moved {} from {} column {},{} to {},{},{} before placing blocks.",
+                    blocker.getType(), feature, x, z,
+                    safe.getX(), safe.getY(), safe.getZ());
+        }
+
+        return level.getEntitiesOfClass(LivingEntity.class, box, LivingEntity::isAlive).isEmpty();
+    }
+
+    private static BlockPos findNearbyRelocation(ServerLevel level, int x, int z, LivingEntity entity) {
+        for (int radius = 1; radius <= WALL_ENTITY_RELOCATION_RADIUS; radius++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dz)) != radius) continue;
+                    BlockPos candidate = safeRelocationPos(level, x + dx, z + dz, entity);
+                    if (candidate != null) return candidate;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static void rescueCollidingLivingEntities(ServerLevel level, int minX, int minZ, int maxX, int maxZ) {
+        AABB villageEnvelope = new AABB(minX, MIN_BUILD_Y, minZ, maxX + 1.0, MAX_BUILD_Y + 1.0, maxZ + 1.0);
+        for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, villageEnvelope, LivingEntity::isAlive)) {
+            if (level.noCollision(entity, entity.getBoundingBox())) continue;
+            int x = entity.blockPosition().getX();
+            int y = entity.blockPosition().getY();
+            int z = entity.blockPosition().getZ();
+            BlockPos safe = findNearbyRelocation(level, x, z, entity);
+            if (safe == null) {
+                WitcheryMod.LOGGER.warn("[VillageWalls] Could not rescue colliding {} at {},{},{} after wall generation.",
+                        entity.getType(), entity.getX(), entity.getY(), entity.getZ());
+                continue;
+            }
+            entity.teleportTo(safe.getX() + 0.5D, safe.getY(), safe.getZ() + 0.5D);
+            WitcheryMod.LOGGER.info("[VillageWalls] Rescued colliding {} at {},{},{} to {},{},{} after wall generation.",
+                    entity.getType(), x, y, z,
+                    safe.getX(), safe.getY(), safe.getZ());
+        }
+    }
+
     private static BlockPos safeRelocationPos(ServerLevel level, int x, int z, LivingEntity entity) {
         if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) return null;
         int y = groundHeight(level, x, z);
@@ -1093,6 +1149,8 @@ public final class VillageWallGenerator {
             for (int depth = -1; depth <= 1; depth++) {
                 int dwx = bx + g.inDX() * depth, dwz = bz + g.inDZ() * depth;
                 clearTouchedVegetation(level, dwx, refY - 1, dwz, WALL_HEIGHT + GATEHOUSE_CLEAR_ABOVE_WALL, TREE_CLEAR_WALL_TOUCH_RADIUS);
+                if (!moveLivingEntitiesOutOfGateColumn(level, dwx, refY - 2, dwz,
+                        refY + WALL_HEIGHT + 2, "gatehouse")) continue;
                 if (opening) {
                     for (int dy = 0; dy < 5; dy++) forceSet(level, dwx, refY + dy, dwz, Blocks.AIR.defaultBlockState());
                     for (int dy = 5; dy < WALL_HEIGHT; dy++) forceSet(level, dwx, refY + dy, dwz, brick); // arch
@@ -1265,6 +1323,8 @@ public final class VillageWallGenerator {
             else if (natural < nextFloorY) nextFloorY--;
             if (terrainOnly && !isGatePathTerrainColumn(level, ix, nextFloorY, iz, natural, desert)) break;
             floorY = nextFloorY;
+            if (!moveLivingEntitiesOutOfGateColumn(level, ix, Math.min(floorY, natural), iz,
+                    Math.max(floorY, natural) + 4, "gate path")) break;
             // Cut down any tree in the gate path on both lanes (clears connected logs/leaves only,
             // so houses are never demolished — only regular trees in the way are removed).
             clearTouchedVegetation(level, ix, floorY, iz, TREE_CLEAR_SCAN_Y_ABOVE, TREE_CLEAR_PATH_TOUCH_RADIUS);

@@ -6,6 +6,7 @@ import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.data.WitcheryPlayerData.WolfForm;
 import com.emoniph.witchery.data.WitcheryPlayerData.WolfQuestState;
 import com.emoniph.witchery.entity.HornedHuntsmanEntity;
+import com.emoniph.witchery.entity.VillagerWerewolfConversion;
 import com.emoniph.witchery.entity.WereVillagerEntity;
 import com.emoniph.witchery.entity.WolfmanEntity;
 import com.emoniph.witchery.init.WitcheryAttachments;
@@ -333,7 +334,6 @@ public final class WerewolfEvents {
             if (healthAfter < villager.getMaxHealth() * INFECTION_HEALTH_FRACTION
                     && spawnWereVillager(level, villager)) {
                 event.setNewDamage(0.0F);
-                villager.discard();
             }
         } else if (event.getEntity() instanceof ServerPlayer victim) {
             infectPlayer(victim, WitcheryConfig.ALLOW_VAMPIRE_WOLF_HYBRIDS.get());
@@ -355,13 +355,13 @@ public final class WerewolfEvents {
         if (victim instanceof Villager villager) {
             if (spawnWereVillager(level, villager)) {
                 event.setNewDamage(0.0F);
-                villager.discard();
             }
         } else if (victim instanceof ServerPlayer victimPlayer
                 && WitcheryConfig.ALLOW_PLAYER_TO_PLAYER_WOLF_INFECTION.get()
                 && !SilverEvents.wearsFullSilveredSet(victimPlayer)
-                && (WitcheryConfig.ALLOW_VAMPIRE_WOLF_HYBRIDS.get() || !attackerData.isVampire())) {
-            infectPlayer(victimPlayer, true);
+                && (WitcheryConfig.ALLOW_VAMPIRE_WOLF_HYBRIDS.get()
+                    || !WitcheryAttachments.get(victimPlayer).isVampire())) {
+            infectPlayer(victimPlayer, WitcheryConfig.ALLOW_VAMPIRE_WOLF_HYBRIDS.get());
         }
     }
 
@@ -439,18 +439,7 @@ public final class WerewolfEvents {
     }
 
     private static boolean spawnWereVillager(ServerLevel level, Villager villager) {
-        WereVillagerEntity were = WitcheryEntities.WERE_VILLAGER.get()
-                .create(level, EntitySpawnReason.TRIGGERED);
-        if (were == null) return false;
-        were.snapTo(villager.getX(), villager.getY(), villager.getZ(),
-                villager.getYRot(), villager.getXRot());
-        were.setFormerProfession(0);
-        were.setInfectious(true);
-        were.setPersistenceRequired();
-        if (villager.hasCustomName()) were.setCustomName(villager.getCustomName());
-        level.addFreshEntity(were);
-        level.levelEvent(null, 1017, were.blockPosition(), 0);
-        return true;
+        return VillagerWerewolfConversion.convertVillager(level, villager, true) != null;
     }
 
     public static boolean isWerewolf(Entity entity) {

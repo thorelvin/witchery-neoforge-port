@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 
@@ -20,6 +21,7 @@ import java.util.Optional;
  */
 public class WitcheryStructureData extends SavedData {
     public static final String WITCH_WELL = "witchery:witch_well";
+    public static final String VILLAGE_BUILDING = "witchery:village_building";
 
     public record Entry(String dimension, String structure, String variant, BlockPos pos, long gameTime) {
         static final Codec<Entry> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -108,6 +110,19 @@ public class WitcheryStructureData extends SavedData {
             }
         }
         return Optional.ofNullable(best);
+    }
+
+    public List<Entry> entriesWithin(ServerLevel level, String structure, BoundingBox box, int padding) {
+        String dimension = dimensionId(level);
+        return entries.values().stream()
+                .filter(entry -> dimension.equals(entry.dimension()))
+                .filter(entry -> structure.equals(entry.structure()))
+                .filter(entry -> entry.pos().getX() >= box.minX() - padding
+                        && entry.pos().getX() <= box.maxX() + padding
+                        && entry.pos().getZ() >= box.minZ() - padding
+                        && entry.pos().getZ() <= box.maxZ() + padding)
+                .sorted(java.util.Comparator.comparing(Entry::variant).thenComparing(Entry::gameTime))
+                .toList();
     }
 
     public int size() {

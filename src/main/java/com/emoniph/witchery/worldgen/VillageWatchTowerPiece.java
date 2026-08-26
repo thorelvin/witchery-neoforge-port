@@ -212,6 +212,7 @@ public class VillageWatchTowerPiece extends StructurePiece {
             guard.setPos(wx + 0.5, wy, wz + 0.5);
             guard.finalizeSpawn(level, new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
                     EntitySpawnReason.STRUCTURE, null);
+            VillageResidentMarker.mark(guard, "village_watch_tower", boundingBox);
             level.addFreshEntityWithPassengers(guard);
         }
     }

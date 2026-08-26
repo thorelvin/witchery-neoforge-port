@@ -727,10 +727,18 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   damage players and mobs on contact.
 ### Villages And Walls
 
+- Automated baseline: `python tools/runtime_test_harness.py village-certification`
+  uses seed `witchery-runtime-test` to certify one qualifying plains, desert,
+  savanna, taiga, and snowy village, then restarts the same world and repeats
+  the audit. `/witchery verify village` checks canonical claims, biome-family
+  materials, marked residents, persistent gate evidence, and safe landing; the
+  harness also fails on any `suffocated in a wall` death during generation.
 - Generate multiple villages and confirm walls appear on roughly 40% of villages
   by default.
 - Check square inner/outer wall corners, rampart stair angles, gatehouse access,
-  and entity blocker relocation.
+  entity blocker relocation, and the bounded post-build collision rescue. Walk
+  both gatehouse directions and every Keep/Watch Tower ladder route with guards
+  active; the automated gate proves mechanics, not client movement feel.
 - Confirm unwalled villages remain valid and `/witchery walls` can still force a
   wall build for QA.
 

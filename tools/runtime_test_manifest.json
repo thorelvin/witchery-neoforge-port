@@ -14,11 +14,13 @@
     "com.emoniph.witchery.spiritworld.SpiritWorldResourceParityTest",
     "com.emoniph.witchery.world.MirrorWorldResourceParityTest",
     "com.emoniph.witchery.world.TormentResourceParityTest",
+    "com.emoniph.witchery.world.VillageWallDataTest",
     "com.emoniph.witchery.world.WitcheryStructureDataTest",
     "com.emoniph.witchery.worldgen.ConfiguredFeatureBlockStateValidationTest",
     "com.emoniph.witchery.worldgen.NbtStructureTemplateTest",
     "com.emoniph.witchery.worldgen.StrawManTemplateTest",
-    "com.emoniph.witchery.worldgen.StrawManWorldgenConfigTest"
+    "com.emoniph.witchery.worldgen.StrawManWorldgenConfigTest",
+    "com.emoniph.witchery.worldgen.VillageStructureContractTest"
   ],
   "game_tests": [
     {
@@ -120,6 +122,16 @@
       "id": "witchery:lycanthropy_progression",
       "lane": "ci",
       "timeout_seconds": 180
+    },
+    {
+      "id": "witchery:were_villager_state_cycle",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:villager_magic_and_sacrifices",
+      "lane": "ci",
+      "timeout_seconds": 140
     },
     {
       "id": "witchery:hobgoblin_village_ecology",
@@ -299,5 +311,18 @@
     ],
     "storage": "witchery:runtime_test",
     "storage_marker": 424242
+  },
+  "village_certification": {
+    "force_radius_blocks": 112,
+    "timeout_seconds": 300,
+    "max_candidate_villages": 9,
+    "candidate_probe_spacing_blocks": 4096,
+    "structures": [
+      {"biome": "plains", "structure": "minecraft:village_plains"},
+      {"biome": "desert", "structure": "minecraft:village_desert"},
+      {"biome": "savanna", "structure": "minecraft:village_savanna"},
+      {"biome": "taiga", "structure": "minecraft:village_taiga"},
+      {"biome": "snowy", "structure": "minecraft:village_snowy"}
+    ]
   }
 }

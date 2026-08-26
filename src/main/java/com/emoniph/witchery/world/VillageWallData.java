@@ -8,10 +8,11 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Tracks which villages have already had walls generated so they are not
@@ -20,9 +21,19 @@ import java.util.Set;
  */
 public class VillageWallData extends SavedData {
 
+    public record WallRecord(long key, int gateCandidates, int gates) {
+        static final Codec<WallRecord> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.LONG.fieldOf("key").forGetter(WallRecord::key),
+                Codec.INT.fieldOf("gate_candidates").forGetter(WallRecord::gateCandidates),
+                Codec.INT.fieldOf("gates").forGetter(WallRecord::gates)
+        ).apply(instance, WallRecord::new));
+    }
+
     public static final Codec<VillageWallData> CODEC = RecordCodecBuilder.create(inst ->
             inst.group(
-                    Codec.LONG.listOf().fieldOf("walls").forGetter(d -> new ArrayList<>(d.processed))
+                    WallRecord.CODEC.listOf().fieldOf("walls").forGetter(d -> d.records.values().stream()
+                            .sorted(Comparator.comparingLong(WallRecord::key))
+                            .toList())
             ).apply(inst, VillageWallData::fromCodec));
 
     public static final SavedDataType<VillageWallData> TYPE = new SavedDataType<>(
@@ -31,13 +42,15 @@ public class VillageWallData extends SavedData {
             CODEC,
             DataFixTypes.SAVED_DATA_COMMAND_STORAGE);
 
-    private final Set<Long> processed = new HashSet<>();
+    private final Map<Long, WallRecord> records = new HashMap<>();
 
     public VillageWallData() {}
 
-    private static VillageWallData fromCodec(List<Long> keys) {
+    private static VillageWallData fromCodec(List<WallRecord> records) {
         VillageWallData d = new VillageWallData();
-        d.processed.addAll(keys);
+        for (WallRecord record : records) {
+            d.records.put(record.key(), record);
+        }
         return d;
     }
 
@@ -46,16 +59,20 @@ public class VillageWallData extends SavedData {
     }
 
     public boolean isProcessed(BoundingBox bb) {
-        return processed.contains(key(bb));
+        return records.containsKey(key(bb));
     }
 
-    public void markProcessed(BoundingBox bb) {
-        processed.add(key(bb));
+    public Optional<WallRecord> record(BoundingBox bb) {
+        return Optional.ofNullable(records.get(key(bb)));
+    }
+
+    public void markProcessed(BoundingBox bb, int gateCandidates, int gates) {
+        records.put(key(bb), new WallRecord(key(bb), gateCandidates, gates));
         setDirty();
     }
 
     public void reset() {
-        processed.clear();
+        records.clear();
         setDirty();
     }
 

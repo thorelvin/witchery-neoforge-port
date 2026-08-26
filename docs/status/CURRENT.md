@@ -18,7 +18,7 @@ enough to read before starting work. Long historical deltas belong in
   has unevenly scoped rows, and a `Done` implementation can still require
   live-client, multiplayer, balance, or packaging work; use the matrix and QA
   queue directly instead of treating an editorial percentage as a measurement.
-- Deterministic verification manifest: 18 exact JVM resource contracts, 32 CI
+- Deterministic verification manifest: 20 exact JVM resource contracts, 34 CI
   GameTests, and one manual forced-restart fixture.
 - The standalone Book of Shadows is published at
   `https://thorelvin.github.io/witchery-book-of-shadows/`; this repository's
@@ -56,13 +56,31 @@ enough to read before starting work. Long historical deltas belong in
 - Creative-tab and GUI-item polish for promoted exact IDs: hide utility/internal
   blocks until their player-facing route is useful, keep item renders legible,
   and prefer source-shaped models/textures over improvised geometry.
-- Structure/worldgen tuning for NBT-backed huts, wells, villages, and Nether
-  placements.
+- Fresh-world certification and traversal for NBT-backed huts, Coven Circle,
+  Straw Man, wells, wild Witch Huts, and Nether placements; village mechanics
+  already have their five-biome gate.
 - Spirit World atmosphere and dream/nightmare behavior QA.
 - Public-release hardening: docs clarity, launcher diagnostics, asset/legal
   review, packaging, and multiplayer/server checks.
 
 ## Recent High-Signal Changes
+
+- The village ecosystem and cross-biome certification package is complete.
+  Witchery village pieces now persist one canonical building claim and an
+  origin-marked resident identity; walls persist gate candidates and selected
+  gates, retain only force-load tickets they acquired, relocate living blockers,
+  and perform one bounded collision rescue when construction finishes. The
+  operator-facing `/witchery verify village` command audits building claims,
+  biome-family materials, expected residents, wall/gate evidence, and a safe
+  arrival. The fixed `witchery-runtime-test` world passed plains, desert,
+  savanna, taiga, and snowy audits fresh and after restart; the harness also
+  rejects any wall-suffocation death. Were Villagers now preserve complete
+  sanitized Villager identity through infection, Wolfman form, reversion, and
+  cure, and vampire/werewolf hybrids default to disabled. Creature Taglocks,
+  Voodoo/Vampiric Poppets, Curse Creature, and Villager sacrifice selectors are
+  covered by dedicated-server fixtures. The manifest is now 20 exact resource
+  contracts, 34 CI GameTests, and one manual forced-restart fixture. See
+  [VILLAGE_CERTIFICATION.md](VILLAGE_CERTIFICATION.md).
 
 - Persistent ritual lifecycle parity is closed for the original registry's
   continuing workings. All 33 source registrations map to 21 explicit active
@@ -156,13 +174,14 @@ enough to read before starting work. Long historical deltas belong in
   ingredient to appear once in the generated reference. Unsupported old
   transmutations are named honestly instead of being shown as working recipes.
 - The deterministic runtime harness and CI gates are complete. An explicit
-  manifest locks 18 resource-contract classes, 32 exact CI GameTests, and one
+  manifest locks 20 resource-contract classes, 34 exact CI GameTests, and one
   manual forced-restart fixture. Clean normal-difficulty dedicated servers now
   run every named test with all Witchery dimensions loaded, require unambiguous
   per-test success, preserve logs/JSON summaries, and verify Kettle, Witches'
   Oven, Distillery, Spinning Wheel, Brazier, Silver Vat, and command-storage
   state plus active Forestation, Blight, and Broken Earth workings across a real
-  stop/reload.
+  stop/reload. A separate fresh-structure lane certifies five village biome
+  families and then reuses the same coordinates after restart.
   CI uploads build
   or runtime diagnostics on failure. Building the gate also exposed and fixed
   the Otherwhere Hearth traveller-state race on Spirit entry and the Lord of

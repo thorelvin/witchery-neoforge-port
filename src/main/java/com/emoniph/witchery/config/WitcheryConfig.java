@@ -106,8 +106,8 @@ public class WitcheryConfig {
                 .comment("Source AllowPlayerToPlayerWolfInfection. Default: true")
                 .define("AllowPlayerToPlayerWolfInfection", true);
         ALLOW_VAMPIRE_WOLF_HYBRIDS = BUILDER
-                .comment("Source AllowVampireWerewolfHybrids. Default: true")
-                .define("AllowVampireWerewolfHybrids", true);
+                .comment("Source AllowVampireWerewolfHybrids. Witchery Rewoven policy default: false")
+                .define("AllowVampireWerewolfHybrids", false);
         BUILDER.pop();
 
         BUILDER.push("traps");

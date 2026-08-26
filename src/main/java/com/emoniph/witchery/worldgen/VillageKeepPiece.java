@@ -355,6 +355,7 @@ public class VillageKeepPiece extends StructurePiece {
             guard.setPos(wx + 0.5, wy, wz + 0.5);
             guard.finalizeSpawn(level, new net.minecraft.world.DifficultyInstance(level.getDifficulty(), 0L, 0L, 0.0F),
                     EntitySpawnReason.STRUCTURE, null);
+            VillageResidentMarker.mark(guard, "village_keep", boundingBox);
             level.addFreshEntityWithPassengers(guard);
         }
     }

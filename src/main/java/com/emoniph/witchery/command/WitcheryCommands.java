@@ -42,6 +42,7 @@ import com.emoniph.witchery.ritual.OtherwhereHearthTransposition;
 import com.emoniph.witchery.predictions.Predictions;
 import com.emoniph.witchery.world.WitcheryStructureData;
 import com.emoniph.witchery.worldgen.WitchWellPiece;
+import com.emoniph.witchery.worldgen.VillageCertification;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -334,7 +335,9 @@ public class WitcheryCommands {
                         .then(Commands.literal("otherwhere_hearth")
                                 .executes(ctx -> verifyOtherwhereHearth(ctx.getSource())))
                         .then(Commands.literal("lycanthropy")
-                                .executes(ctx -> verifyLycanthropy(ctx.getSource()))))
+                                .executes(ctx -> verifyLycanthropy(ctx.getSource())))
+                        .then(Commands.literal("village")
+                                .executes(ctx -> verifyVillage(ctx.getSource()))))
 
                 .then(Commands.literal("debug")
                         .then(Commands.literal("brew")
@@ -3298,16 +3301,15 @@ public class WitcheryCommands {
 
     // ── walls command ────────────────────────────────────────────────────────
 
-    private static int buildWalls(CommandSourceStack src)
-            throws com.mojang.brigadier.exceptions.CommandSyntaxException {
-        ServerPlayer player = src.getPlayerOrException();
+    private static int buildWalls(CommandSourceStack src) {
         ServerLevel level = src.getLevel();
+        BlockPos sourcePos = BlockPos.containing(src.getPosition());
 
         // Manual walls should operate on an already generated nearby village.
         // Vanilla locate can trigger the same synchronous scan that made chained
         // village goto commands freeze.
         net.minecraft.world.level.levelgen.structure.StructureStart start =
-                com.emoniph.witchery.events.VillageWallEvents.findVillageStartNear(level, player.blockPosition());
+                com.emoniph.witchery.events.VillageWallEvents.findVillageStartNear(level, sourcePos);
 
         if (start == null || !start.isValid() || start.getPieces().isEmpty()) {
             src.sendFailure(Component.literal(
@@ -3333,6 +3335,18 @@ public class WitcheryCommands {
                 : "[VillageWalls] Wall generation queued for village at " + found.getX() + " ~ " + found.getZ()
                 + " (" + pieces + " pieces). Run /witchery walls reset if you need to re-run."), false);
         return 1;
+    }
+
+    private static int verifyVillage(CommandSourceStack src) {
+        VillageCertification.Report report = VillageCertification.audit(
+                src.getLevel(), BlockPos.containing(src.getPosition()));
+        WitcheryMod.LOGGER.info(report.summary());
+        if (report.passed()) {
+            src.sendSuccess(() -> Component.literal(report.summary()), false);
+            return 1;
+        }
+        src.sendFailure(Component.literal(report.summary()));
+        return 0;
     }
 
     private static int resetWalls(CommandSourceStack src)

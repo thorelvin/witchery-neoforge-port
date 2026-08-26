@@ -1670,7 +1670,9 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "Either shape feeds from living kills at level 4."
                         + "\n\nAt level 7 a wolfman howl paralyses nearby non-werewolves and non-vampires. "
                         + "At level 8 a wolf howl calls a temporary tamed pack. Level 9 wolfman claws rend armor, "
-                        + "and a level-10 bite may spread the curse to a near-death player or villager."));
+                        + "and a level-10 bite may spread the curse to a near-death player or villager. "
+                        + "A Were Villager keeps its profession, trades, name, equipment, and village identity through reversion or cure. "
+                        + "Vampire-werewolf hybrids are disabled by default unless the server enables them."));
 
         cat.withEntries(
                 entry(cat, "transformations/vampirism", "Vampirism", WitcheryItems.BREW_OF_INFECTION.get(), 0, vampirism),

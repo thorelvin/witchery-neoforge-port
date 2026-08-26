@@ -14,6 +14,12 @@ Full feature status: `docs/status/FEATURE_MATRIX.md`
 
 Detailed session history is archived in `docs/archive/CHANGELOG.md`; keep this file focused on backlog and slice candidates.
 
+- Village ecosystem certification is closed: full Villager identity survives
+  Were-Villager/Wolfman/reversion/cure, creature Taglock/Poppet/curse/sacrifice
+  routes have dedicated-server fixtures, and plains/desert/savanna/taiga/snowy
+  villages pass canonical claim, palette, resident, wall/gate, safe-arrival,
+  collision-safety, and restart audits. The next package is the wild-structure
+  roster rather than more village mechanics.
 - Brew storage interaction parity is implemented: Brew Bag has its exact
   eight-slot menu and camera-selected, bag-coloured radial casting flow;
   Leonard's Urn has its source one-to-four-focus diamond menu and casts only
@@ -107,7 +113,7 @@ Seven implementation lanes - work one bounded slice at a time per lane:
 
 2. **Transformation live QA / vampire polish** — the selectable vampire Blood Power ladder, automatic level perks, village/guard consequences, Observations reader, and lycanthropy's full source progression are implemented. Both transformations still need live camera, audio, HUD, feeding-witness, and multiplayer feel QA. Source: `ExtendedPlayer.java`, `Shapeshift.java`, infusion package, `EntityVampire.java`, `EntityWolfman.java`, `EntityVillagerWere.java`.
 
-3. **Village / mobs / bosses / structures** - major recent progress: Village Guard, Wolfman/WereVillager, Vampire, Baba Yaga, Leonard/Lost Souls, Gulg/Mog, village apothecary/bookshop/source-sized witch hut injection, Watch Tower, Keep, first-pass town walls, first-pass Coven Circle/Stone Circle alias, source-shaped Hobgoblin Hut, first-pass Straw Man, source `EntitySummonedUndead` behavior for spectral mobs, source villager-damage protection from Witchery guards/hunters, source `TownZombieAttackReductionMode` villager protection, and source-shaped Insanity illusion mobs are live. Next village slice: fresh-village QA for walls/buildings and keep frequency after the house-pool weight increase. Broader remaining structure/entity parity: Coven Circle/Straw Man fresh-world QA, any optional/non-source Baba Yaga hut decision, and later Witch Forest additive work.
+3. **Village / mobs / bosses / structures** - village mechanics are now certified across plains, desert, savanna, taiga, and snowy fresh worlds plus restart: canonical building claims, shared biome-family materials, marked residents, persistent gates, safe arrivals, force-ticket ownership, and entity collision safety are automated. Were-Villager identity, creature Taglocks/Poppets/curses, and Villager sacrifice routes have dedicated-server coverage. Remaining village work is live visual/traversal/distribution feel. The next structure package is the non-village wild roster: Coven Circle, Straw Man, Warped Coven, Hobgoblin Hut, wild Witch Hut, and Vanishing Hut.
 
 4. **Machines / storage exactness** — sided automation and the current presentation slice are source-audited for Kettle/Oven/Distillery/Spinning Wheel/Brazier/Fume Funnels/Silver Vat. Brew Bag and Leonard's Urn now also restore their exact storage layouts and source interaction split. Exact GUI, renderer-route, spout, splash, state-particle, item-container, and radial contracts are test-backed. Keep only unrelated recipe/container edge cases and ordinary-play feel checks open.
 
@@ -115,28 +121,28 @@ Seven implementation lanes - work one bounded slice at a time per lane:
 
 6. **AI NPCs / multiplayer safety** - keep the local persona layer grounded in server facts, add more high-value cards where fallbacks still carry too much weight, test ordinary play conversations, and verify protection/claim adapters in actual server packs before treating the feature as release-ready.
 
-7. **Runtime test maintenance / release gates** - complete as of 2026-08-26. CI validates the exact manifest, runs 18 named resource contracts, executes 32 exact GameTests on a clean dedicated server with custom dimensions, and proves all six automation-certified machine inventories, command storage, and active Forestation, Blight, and Broken Earth rites survive save/reload. Runtime worlds disable the vanilla empty-server pause so long tests continue without a connected player. Keep new registered tests synchronized with `tools/runtime_test_manifest.json`; preserve forced Hearth crash/recovery, real-client presentation, and claim-adapter checks in the documented manual lane.
+7. **Runtime test maintenance / release gates** - complete as of 2026-08-26. CI validates the exact manifest, runs 20 named resource contracts, executes 34 exact GameTests on a clean dedicated server with custom dimensions, proves all six automation-certified machine inventories, command storage, and active Forestation, Blight, and Broken Earth rites survive save/reload, and certifies five village biome families fresh plus restart. Runtime worlds disable the vanilla empty-server pause so long tests continue without a connected player. Keep new registered tests synchronized with `tools/runtime_test_manifest.json`; preserve forced Hearth crash/recovery, real-client presentation, and claim-adapter checks in the documented manual lane.
 
 Small machine/storage QA fixes run in parallel when clearly bounded. Pull from the QA queue below before broader backlog work unless a new blocker appears.
 
 ## Next recommended work package
 
-**Village ecosystem and cross-biome structure certification.** This is the next large package because
-`Village additions` is the matrix's only remaining row still marked simply `Large`, and the
-cross-cutting villager goal below still contains several `Needs verify` contracts. Keep it bounded to:
+**Wild structure fresh-world certification and traversal.** Village certification is closed. The next
+large package should prove the non-village surface/Nether structure roster under real world generation:
 
-1. Add one dedicated-server villager-interaction fixture for creature Taglocks, Voodoo and Vampiric
-   Poppets, curse targeting, and the Villager sacrifices used by Demon, Wither, and Hell rites.
-2. Restore the exact level-10 transformed-player bite route into Were Villagers, including profession,
-   trade, name, equipment/state transfer where source does so, and lock the current no-hybrid policy.
-3. Certify fresh plains, desert, savanna, taiga, and snowy villages for one-per-type Witchery building
-   claims, shared biome material family, resident placement, walls, gates, and safe arrival. Fix only
-   reproducible parity or generation faults exposed by that matrix.
-4. Add restart coverage for any village-owned state touched by the package, update the Primer/HTML
-   guide only for player-facing changes, and leave backwards-save migration out of scope.
+1. Build an exact registry/placement inventory for Coven Circle/Stone Circle, Straw Man, Warped Coven,
+   Hobgoblin Hut, wild Witch Hut, and Vanishing Hut: biome tags, spacing, terrain adaptation, dry-land
+   and slope predicates, templates/pieces, residents, spawners, and loot.
+2. Add a deterministic fresh-world harness that locates or probes every structure, records parseable
+   block/resident/loot evidence, verifies safe `/witchery goto` landing and basic traversal, then
+   recertifies persisted state after restart where the structure owns state.
+3. Fix only reproducible source/placement faults exposed by that matrix. Keep optional Baba Yaga hut
+   and broader additive Witch Forest architecture out of scope unless source evidence changes the call.
+4. Capture live-client visuals for the highest-risk shapes after the mechanical gate passes: Coven
+   Circle supports/spawners, Straw Man base/spawner, Warped Coven terrain fit, and Vanishing Hut move.
 
-Exit gate: focused JVM tests, the new dedicated-server fixture, five fresh biome captures/audits, the
-full runtime manifest, and a real stop/restart pass are green.
+Exit gate: focused contracts, all six fresh-world audits, applicable restart checks, safe goto/traversal,
+the full runtime manifest, and synchronized status/player docs are green.
 
 ---
 
@@ -295,26 +301,25 @@ This goal is not about one file; it is a cross-cutting vertical slice. Track eac
 
 | Sub-task | Status | Notes |
 |---|---|---|
-| Taglock Kit on villagers | Needs verify | `interactLivingEntity` uses the LivingEntity path for mobs and filled Taglock Kits can now craft-bind those creature signatures onto poppets. Test: right-click villager with empty kit, then craft with a poppet and verify the output shows the villager name. |
-| Voodoo Poppet bound to villager | Needs verify | Voodoo Poppets can now receive mob taglocks through the source-style binding recipe and resolve the bound UUID across loaded server levels. Test: bind poppet to villager, use throw/needle/lava, verify villager takes effect. |
-| VampiricPoppetItem — villager as victim | Needs verify | Two-taglock crafting and direct binding now preserve/resolve living mob victims for redirect. Test: bind source to self, bind victim to villager, take damage, verify villager receives redirect. |
+| Taglock Kit on villagers | Done / dedicated server | `witchery:villager_magic_and_sacrifices` collects a real Villager UUID/type with an empty kit and resolves that creature signature through the shared loaded-entity route. |
+| Voodoo Poppet bound to villager | Done / dedicated server | The same fixture binds a Villager target and proves throw/levitation delivery reaches that exact living entity. |
+| VampiricPoppetItem — villager as victim | Done / dedicated server | The same fixture fires the real damage event and proves redirection reaches the Villager victim. |
 | Vampiric blood feeding from villagers/guards | Done / live QA | Selected Drink drains persisted 500-point stores from Villagers and Village Guards. Awake Villagers yield the old two-thirds amount, sleeping or mesmerised Villagers yield the full bite, sleeping Villagers recover blood and eventually heal, clothing drink boost applies, and low-blood victims take extra harm. Guards use their source two-thirds drain rule, witness feeding while conscious, defend village victims/reputation, and slowly recover health plus blood while idle in a village with no target. Hostile Vampire mobs acquire a village, drain its Villagers without ordinary melee damage, heal only when blood is taken, and return after their source quota. Mesmerise accepts ordinary Villagers, Village Guards, and players while Werevillagers resist it. A vampire-blood Full Glass Goblet used on a paralysed, fully drained Villager or Guard near a Coffin replaces that target with the current Vampire mob, empties the goblet, plays source-style red-dust drink feedback, and can advance a level-9 owner to level 10 when the goblet carries their own blood. Reversible Bell conversion carries current blood both ways. Remaining: live conversion, sleep-recovery, witness, and multiplayer feel QA. |
-| Ritual sacrifice — villager offering | Needs verify | Hell on Earth, Wither summoning, and Demon summoning already specify `VillagerEntity` sacrifice. Test each rite with a caged villager on-site. |
-| Curse rite targeting villager via taglock | Needs verify | `Curse Creature` resolves taglock UUID via `ServerLevel.getEntity`. Test: fill taglock from villager, place it in medium infernal circle, verify villager receives Wither/Slowness/Weakness. |
+| Ritual sacrifice — villager offering | Done / dedicated server | `witchery:villager_magic_and_sacrifices` proves the Wither, Demon, and Hell selectors choose a nearby Villager sacrifice. |
+| Curse rite targeting villager via taglock | Done / dedicated server | Curse Creature now has a dedicated LivingEntity route through `PoppetItem.findLivingEntity`; the fixture proves target resolution and Wither/Slowness/Weakness application. |
 | Blight villager zombification | Automated mechanics / live stochastic QA | The corrected persistent Curse of Blight is covered by JVM source contracts, save/reload, and `witchery:persistent_expanding_curses` for its Nausea II and farmland-to-sand ring. Its exact one-in-ten Villager conversion branch remains best checked in a populated live village because a deterministic GameTest should not falsify the source random roll. |
-| Werewolf infection of villagers | Partial - source Wolfman bite branch restored | Infectious `WolfmanEntity` damage now follows source `Shapeshift.processWolfInfection`: if the bite would leave a Villager below 25% health, the Villager is immediately replaced by the existing `WereVillagerEntity` and the damage is suppressed. The earlier full-moon-night werewolf-player kill shortcut still exists as a first-pass bridge, but exact source parity remains the level-10 transformed player bite branch, old profession/trade transfer, and a deliberate decision on the source `AllowVampireWerewolfHybrids` / current no-hybrid policy. |
+| Werewolf infection of villagers | Done / dedicated server | Infectious Wolfman and exact level-10 transformed-player near-fatal bites share one conversion path. Full sanitized Villager NBT preserves type, profession, level, XP, offers, name, equipment, health, and persistent state through Were Villager, Wolfman save/load, reversion, and cure. The default hybrid policy is disabled. `witchery:were_villager_state_cycle` proves the lifecycle. |
 | Player Compass — scry to named villager | Deferred | Player Compass only binds to players currently. Villager support would need a non-player name resolution path. Defer unless requested. |
 
 #### Why this matters
 
 Vanilla villages are a rich social target that the original Witchery treated as a living ecosystem: vampires fed from villagers, witches cursed them, werewolves infected them, and ritual casters sacrificed them. Making the current remake respect that ecosystem makes the open-world feel of Witchery land properly — players can run a coven near a village and use it both as a resource and a risk.
 
-#### Suggested implementation order
+#### Completion evidence
 
-1. Verify the three "needs verify" rows first (no code, just QA) — they may already work.
-2. Retest vampiric villager feeding now that persisted source-style drain is live.
-3. Retest werewolf villager infection in-game: first use an infectious Wolfman bite to push a Villager below 25% health and confirm immediate Were Villager conversion, then separately retest the existing full-moon werewolf-player kill bridge until the level-10 source player-bite branch is restored.
-4. Were-Villager mob is a separate larger entity task; add it to the entities backlog if requested.
+The cross-cutting mechanical routes are closed by `witchery:villager_magic_and_sacrifices` and
+`witchery:were_villager_state_cycle`. Remaining rows marked live QA concern feel, multiplayer,
+or deliberately stochastic source behavior rather than missing routing.
 
 ---
 

@@ -35,6 +35,8 @@ write new notes.
   parity notes.
 - [status/FEATURE_MATRIX.md](status/FEATURE_MATRIX.md) - compact feature-level
   parity status. Use it for feature state changes, not session journaling.
+- [status/VILLAGE_CERTIFICATION.md](status/VILLAGE_CERTIFICATION.md) - exact
+  five-biome fresh-world/restart village gate and evidence ledger.
 - [status/NEXT_TASKS.md](status/NEXT_TASKS.md) - backlog and slice candidates.
   Keep it focused on future work.
 - [status/COMMIT_AUDIT.md](status/COMMIT_AUDIT.md) - compact recent-commit

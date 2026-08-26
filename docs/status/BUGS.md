@@ -1,6 +1,16 @@
 # Active Bugs
 
-Last reconciled: 2026-06-18. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
+Last reconciled: 2026-08-26. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
+
+**Closed 2026-08-26 (village wall generation could suffocate loaded residents).**
+The deterministic snowy-village audit repeatedly showed an ordinary Villager
+dying in the same tick as wall completion even though building/resident counts
+passed. Gatehouse and graded-path columns now use the same safe relocation
+principle as curtain columns, and one bounded post-build collision scan rescues
+living entities still intersecting generated terrain. If no collision-free dry
+landing on solid ground exists, the affected column is skipped. The runtime
+harness now fails on any `suffocated in a wall` line. Five fresh biome audits
+and all five restart audits pass without such a death.
 
 **In progress — placed-book entity render (mob drawn, faced, lit; final QA).** The placed Modonomicon block renders the live mob in the portrait frame instead of the spawn egg: `PlacedModonomiconPages.submitFramedEntity` drives `EntityRenderer.submit` into the page's `SubmitNodeCollector` (the `CameraRenderState` is threaded from `PlacedModonomiconRenderer`), fit to the frame by bounding box, centred, faced via `ENTITY_FACING_Y_DEGREES` (0), try/catch → spawn-egg fallback. QA confirmed: mob renders, faces the reader after the 180→0 flip. **Lighting fix:** the upright flip now uses a Y-reflecting scale (`scale(sx,-sy,sz)`) instead of `rotateZ(180)`. The page content pose already carries a -Y scale, so a pure-rotation flip left an odd reflection count → inverted normals → the mob rendered lit-from-below with dark faces. The Y-reflection pairs with the page's -Y for an even count, so normals (and winding) are correct. The placed frame centres purely by bounding box and ignores the page `offset` (item-book knob only).
 

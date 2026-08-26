@@ -148,7 +148,7 @@ final class VillageBuildingMaterials {
         return null;
     }
 
-    private static VillageType typeForVillagePath(String path) {
+    static VillageType typeForVillagePath(String path) {
         if (path.contains("village_desert") || path.contains("village/desert/")) return VillageType.DESERT;
         if (path.contains("village_savanna") || path.contains("village/savanna/")) return VillageType.SAVANNA;
         if (path.contains("village_taiga") || path.contains("village/taiga/")) return VillageType.TAIGA;
@@ -186,7 +186,7 @@ final class VillageBuildingMaterials {
         return VillageType.PLAINS;
     }
 
-    private static VillageBuildingMaterials forType(VillageType type) {
+    static VillageBuildingMaterials forType(VillageType type) {
         if (type == VillageType.DESERT) {
             return new VillageBuildingMaterials(
                     type,
@@ -258,6 +258,20 @@ final class VillageBuildingMaterials {
 
     VillageType type() {
         return type;
+    }
+
+    boolean belongsToFamily(BlockState state) {
+        Block block = state.getBlock();
+        return block == foundation.getBlock()
+                || block == floor.getBlock()
+                || block == wall.getBlock()
+                || block == trim.getBlock()
+                || block == roofSolid.getBlock()
+                || block == roofStairs
+                || block == stepStairs
+                || block == roofSlab
+                || block == parapet.getBlock()
+                || block == door;
     }
 
     BlockState foundation() {

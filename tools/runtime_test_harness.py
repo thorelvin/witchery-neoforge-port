@@ -172,6 +172,36 @@ def validate_manifest(manifest: dict) -> None:
                     and all(isinstance(value, int) for value in setup_position)):
                 raise HarnessError(f"Invalid setup block position for save/reload machine {name}")
 
+    village = manifest.get("village_certification")
+    if not isinstance(village, dict):
+        raise HarnessError("village_certification must be an object")
+    structures = village.get("structures")
+    if not isinstance(structures, list) or len(structures) != 5:
+        raise HarnessError("village_certification.structures must contain five entries")
+    biome_names: set[str] = set()
+    structure_ids: set[str] = set()
+    for entry in structures:
+        if not isinstance(entry, dict):
+            raise HarnessError("Each village certification entry must be an object")
+        biome = entry.get("biome")
+        structure = entry.get("structure")
+        if not isinstance(biome, str) or not biome.strip() or biome in biome_names:
+            raise HarnessError(f"Invalid or duplicate village biome: {biome!r}")
+        if not isinstance(structure, str) or ":" not in structure or structure in structure_ids:
+            raise HarnessError(f"Invalid or duplicate village structure: {structure!r}")
+        biome_names.add(biome)
+        structure_ids.add(structure)
+    if not isinstance(village.get("force_radius_blocks"), int) or village["force_radius_blocks"] <= 0:
+        raise HarnessError("village_certification.force_radius_blocks must be positive")
+    if not isinstance(village.get("timeout_seconds"), int) or village["timeout_seconds"] <= 0:
+        raise HarnessError("village_certification.timeout_seconds must be positive")
+    if not isinstance(village.get("max_candidate_villages"), int) \
+            or not 1 <= village["max_candidate_villages"] <= 9:
+        raise HarnessError("village_certification.max_candidate_villages must be between 1 and 9")
+    if not isinstance(village.get("candidate_probe_spacing_blocks"), int) \
+            or village["candidate_probe_spacing_blocks"] <= 0:
+        raise HarnessError("village_certification.candidate_probe_spacing_blocks must be positive")
+
 
 def safe_reset_directory(target: Path) -> None:
     target = target.resolve()
@@ -199,7 +229,8 @@ def find_free_ports(count: int) -> tuple[int, ...]:
             sock.close()
 
 
-def write_server_files(work_dir: Path, rcon_port: int, server_port: int, password: str) -> None:
+def write_server_files(work_dir: Path, rcon_port: int, server_port: int, password: str,
+                       generate_structures: bool = False, spawn_npcs: bool = False) -> None:
     (work_dir / "eula.txt").write_text("eula=true\n", encoding="ascii")
     properties = {
         "allow-flight": "true",
@@ -209,7 +240,7 @@ def write_server_files(work_dir: Path, rcon_port: int, server_port: int, passwor
         "enable-rcon": "true",
         "force-gamemode": "true",
         "gamemode": "creative",
-        "generate-structures": "false",
+        "generate-structures": str(generate_structures).lower(),
         "level-name": "runtime-world",
         "level-seed": "witchery-runtime-test",
         "max-players": "4",
@@ -226,7 +257,7 @@ def write_server_files(work_dir: Path, rcon_port: int, server_port: int, passwor
         "simulation-distance": "4",
         "spawn-animals": "false",
         "spawn-monsters": "true",
-        "spawn-npcs": "false",
+        "spawn-npcs": str(spawn_npcs).lower(),
         "sync-chunk-writes": "true",
         "view-distance": "4",
     }
@@ -471,6 +502,14 @@ def snapshot_minecraft_log(work_dir: Path, label: str) -> None:
         shutil.copy2(latest, work_dir / f"minecraft-{label}.log")
 
 
+def assert_no_wall_suffocation(work_dir: Path, label: str) -> None:
+    log_path = work_dir / f"minecraft-{label}.log"
+    if not log_path.is_file():
+        raise HarnessError(f"Village certification log is missing: {log_path}")
+    if "suffocated in a wall" in log_path.read_text(encoding="utf-8", errors="replace"):
+        raise HarnessError(f"Village wall generation suffocated a living entity: {log_path}")
+
+
 def write_summary(work_dir: Path, summary: dict) -> None:
     (work_dir / "summary.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -524,14 +563,17 @@ def assert_saved_machine_state(server: ServerProcess, machines: list[dict],
             )
 
 
-def prepare_runtime_server(work_dir: Path, reset: bool) -> tuple[int, str]:
+def prepare_runtime_server(work_dir: Path, reset: bool,
+                           generate_structures: bool = False,
+                           spawn_npcs: bool = False) -> tuple[int, str]:
     if reset:
         safe_reset_directory(work_dir)
     else:
         work_dir.mkdir(parents=True, exist_ok=True)
     rcon_port, server_port = find_free_ports(2)
     password = secrets.token_urlsafe(24)
-    write_server_files(work_dir, rcon_port, server_port, password)
+    write_server_files(work_dir, rcon_port, server_port, password,
+                       generate_structures=generate_structures, spawn_npcs=spawn_npcs)
     return rcon_port, password
 
 
@@ -713,11 +755,223 @@ def run_save_reload(manifest: dict, startup_timeout: int) -> None:
         write_summary(work_dir, summary)
 
 
+VILLAGE_LOCATE_PATTERN = re.compile(r"\[\s*(-?\d+)\s*,\s*(?:~|-?\d+)\s*,\s*(-?\d+)\s*\]")
+
+
+def locate_village(server: ServerProcess, structure: str,
+                   origin_x: int = 0, origin_z: int = 0) -> tuple[int, int, str]:
+    response = server.command(
+        f"execute positioned {origin_x} 80 {origin_z} run locate structure {structure}",
+        timeout=180,
+    )
+    match = VILLAGE_LOCATE_PATTERN.search(response)
+    if match is None:
+        raise HarnessError(f"Could not parse village location for {structure}: {response}")
+    return int(match.group(1)), int(match.group(2)), response
+
+
+def load_village_area(server: ServerProcess, x: int, z: int, radius: int) -> None:
+    command_must_succeed(
+        server, f"forceload add {x - radius} {z - radius} {x + radius} {z + radius}")
+
+
+def wait_for_loaded_village_audit(server: ServerProcess, x: int, z: int,
+                                  timeout_seconds: int = 60) -> str:
+    deadline = time.monotonic() + timeout_seconds
+    last_response = ""
+    while time.monotonic() < deadline:
+        last_response = server.command(
+            f"execute positioned {x} 80 {z} run witchery verify village")
+        print(f"[runtime-test] Village preflight at {x}, {z}: {last_response}", flush=True)
+        if "no_loaded_village" not in last_response:
+            return last_response
+        time.sleep(2)
+    raise HarnessError(
+        f"Village failed to load at {x}, {z}; last response: {last_response}")
+
+
+def village_probe_origins(spacing: int, maximum: int) -> list[tuple[int, int]]:
+    directions = (
+        (0, 0), (1, 0), (-1, 0), (0, 1), (0, -1),
+        (1, 1), (-1, 1), (1, -1), (-1, -1),
+    )
+    return [(x * spacing, z * spacing) for x, z in directions[:maximum]]
+
+
+def wait_for_village_certification(server: ServerProcess, x: int, z: int,
+                                   timeout_seconds: int) -> str:
+    deadline = time.monotonic() + timeout_seconds
+    last_response = ""
+    while time.monotonic() < deadline:
+        last_response = server.command(
+            f"execute positioned {x} 80 {z} run witchery verify village")
+        print(f"[runtime-test] Village audit at {x}, {z}: {last_response}", flush=True)
+        if "[VillageCertification] PASS" in last_response:
+            return last_response
+        time.sleep(5)
+    raise HarnessError(
+        f"Village certification timed out at {x}, {z}; last response: {last_response}")
+
+
+def certify_villages(server: ServerProcess, config: dict, queue_walls: bool,
+                     capture_dir: Path, stage: str,
+                     known_locations: list[dict] | None = None) -> list[dict]:
+    reports: list[dict] = []
+    capture_dir.mkdir(parents=True, exist_ok=True)
+    for index, entry in enumerate(config["structures"]):
+        biome = entry["biome"]
+        structure = entry["structure"]
+        rejected_candidates: list[dict] = []
+        if known_locations is None:
+            seen_locations: set[tuple[int, int]] = set()
+            selected = None
+            for origin_x, origin_z in village_probe_origins(
+                    config["candidate_probe_spacing_blocks"],
+                    config["max_candidate_villages"]):
+                candidate_x, candidate_z, candidate_locate = locate_village(
+                    server, structure, origin_x, origin_z)
+                if (candidate_x, candidate_z) in seen_locations:
+                    continue
+                seen_locations.add((candidate_x, candidate_z))
+                load_village_area(
+                    server, candidate_x, candidate_z, config["force_radius_blocks"])
+                preflight = wait_for_loaded_village_audit(server, candidate_x, candidate_z)
+                if "no_witchery_buildings" not in preflight:
+                    selected = (candidate_x, candidate_z, candidate_locate)
+                    break
+                rejected_candidates.append({
+                    "x": candidate_x,
+                    "z": candidate_z,
+                    "probe_origin": [origin_x, origin_z],
+                    "locate": candidate_locate,
+                    "audit": preflight,
+                })
+                print(
+                    f"[runtime-test] Skipping {biome} village at "
+                    f"{candidate_x}, {candidate_z}: no Witchery building was selected",
+                    flush=True,
+                )
+                command_must_succeed(server, "forceload remove all")
+            if selected is None:
+                raise HarnessError(
+                    f"No {biome} village with a Witchery building found after "
+                    f"{len(seen_locations)} unique candidate(s)")
+            x, z, locate_response = selected
+        else:
+            known = known_locations[index]
+            if known["biome"] != biome or known["structure"] != structure:
+                raise HarnessError("Village restart location order drifted")
+            x, z = known["x"], known["z"]
+            locate_response = "reused persisted fresh-world coordinates"
+
+        if known_locations is not None:
+            load_village_area(server, x, z, config["force_radius_blocks"])
+        wall_response = "persisted"
+        if queue_walls:
+            wall_response = command_must_succeed(
+                server, f"execute positioned {x} 80 {z} run witchery walls")
+        audit_response = wait_for_village_certification(
+            server, x, z, config["timeout_seconds"])
+        report = {
+            "biome": biome,
+            "structure": structure,
+            "x": x,
+            "z": z,
+            "locate": locate_response,
+            "walls": wall_response,
+            "audit": audit_response,
+            "rejected_candidates": rejected_candidates,
+        }
+        reports.append(report)
+        (capture_dir / f"{stage}-{biome}.txt").write_text(
+            f"structure={structure}\ncoordinates={x},80,{z}\n"
+            f"locate={locate_response}\nrejected_candidates={rejected_candidates}\n"
+            f"walls={wall_response}\naudit={audit_response}\n",
+            encoding="utf-8",
+        )
+        command_must_succeed(server, "forceload remove all")
+    return reports
+
+
+def run_village_certification(manifest: dict, startup_timeout: int) -> None:
+    work_dir = RUNTIME_ROOT / "village-certification"
+    rcon_port, password = prepare_runtime_server(
+        work_dir, reset=True, generate_structures=True, spawn_npcs=True)
+    config = manifest["village_certification"]
+    captures = work_dir / "captures"
+    summary: dict = {"status": "failed", "stages": []}
+
+    first = ServerProcess(work_dir, "fresh", rcon_port, password, startup_timeout)
+    first_started = False
+    first_stopped = False
+    try:
+        first.start()
+        first_started = True
+        fresh_reports = certify_villages(first, config, True, captures, "fresh")
+        command_must_succeed(first, "save-all flush", "saved")
+        first.graceful_stop()
+        first_stopped = True
+        snapshot_minecraft_log(work_dir, "fresh")
+        assert_no_wall_suffocation(work_dir, "fresh")
+        summary["fresh"] = fresh_reports
+        summary["stages"].append("five_fresh_villages")
+    except Exception as exc:
+        summary["error"] = str(exc)
+        raise
+    finally:
+        if not first_stopped and first.process is not None:
+            if first_started:
+                try:
+                    first.graceful_stop()
+                    snapshot_minecraft_log(work_dir, "fresh")
+                except Exception:
+                    first.force_stop()
+            else:
+                first.force_stop()
+        if "error" in summary:
+            write_summary(work_dir, summary)
+
+    second_port, second_password = prepare_runtime_server(
+        work_dir, reset=False, generate_structures=True, spawn_npcs=True)
+    second = ServerProcess(work_dir, "restart", second_port, second_password, startup_timeout)
+    second_started = False
+    second_stopped = False
+    try:
+        second.start()
+        second_started = True
+        restart_reports = certify_villages(
+            second, config, False, captures, "restart", summary["fresh"])
+        command_must_succeed(second, "save-all flush", "saved")
+        second.graceful_stop()
+        second_stopped = True
+        snapshot_minecraft_log(work_dir, "restart")
+        assert_no_wall_suffocation(work_dir, "restart")
+        summary["restart"] = restart_reports
+        summary["stages"].append("restart_recertified")
+        summary["status"] = "passed"
+    except Exception as exc:
+        summary["error"] = str(exc)
+        raise
+    finally:
+        if not second_stopped and second.process is not None:
+            if second_started:
+                try:
+                    second.graceful_stop()
+                    snapshot_minecraft_log(work_dir, "restart")
+                except Exception as stop_error:
+                    summary["shutdown_error"] = str(stop_error)
+                    second.force_stop()
+            else:
+                second.force_stop()
+        write_summary(work_dir, summary)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "command",
-        choices=("validate", "resource-contracts", "game-tests", "save-reload", "all"),
+        choices=("validate", "resource-contracts", "game-tests", "save-reload",
+                 "village-certification", "all"),
     )
     parser.add_argument("--startup-timeout", type=int, default=600)
     parser.add_argument(
@@ -749,6 +1003,8 @@ def main() -> int:
                            set(args.game_tests) if args.game_tests else None)
         if args.command in {"save-reload", "all"}:
             run_save_reload(manifest, args.startup_timeout)
+        if args.command in {"village-certification", "all"}:
+            run_village_certification(manifest, args.startup_timeout)
         return 0
     except (HarnessError, OSError, subprocess.SubprocessError) as exc:
         print(f"[runtime-test] ERROR: {exc}", file=sys.stderr)
