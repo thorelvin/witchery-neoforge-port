@@ -39,7 +39,7 @@ python tools/runtime_test_harness.py all
   classes, and exact equality between registered GameTest IDs and the manifest.
 - `resource-contracts` runs the 18 explicitly listed structural/resource JVM
   tests. A broad Gradle summary cannot silently substitute another test set.
-- `game-tests` starts one clean normal-difficulty dedicated world and runs all 30
+- `game-tests` starts one clean normal-difficulty dedicated world and runs all 31
   CI-lane GameTests sequentially by exact ID. Each command must report exactly
   one completion and the required-tests-passed marker. Isolated test servers
   disable empty-server pausing so long scheduled tests keep ticking without a

@@ -16,6 +16,39 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
+      "text": "[#](53341a)After its 5000-power opening and Villager sacrifice, the curse expands from radius 4 by one block every five ticks to radius 20 plus 2 blocks per Coven witch.[#]()",
+      "title": "How It Unfolds",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)It replaces source terrain with Netherrack; an active cat familiar can ignite affected plants when server configuration allows.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Once fully expanded it consumes 200 altar power every 40 ticks and calls a weighted Demon, Ghast, Blaze, Magma Cube, or Zombified Piglin at the working's centre. A Bound Waystone moves that centre.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
       "text": "[#](53341a)Only works in the Overworld at night, requires 200 power/s.[#]() [#](53341a)**Required offerings:** **Redstone Soup**, **Demon Heart**, **Waystone**, **Nether Star**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
       "title": "Curse of Hell on Earth",
       "use_markdown_in_title": false

@@ -16,6 +16,28 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
+      "text": "[#](53341a)The curse waits for the next full second, then expands from radius 4 by one block every five ticks to radius 80 plus 2 blocks per nearby Coven witch. Each passing ring blinds creatures for two minutes, or five minutes with an active cat familiar.[#]()",
+      "title": "How It Unfolds",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Six Voodoo Protection activations abort the wave. Unloaded chunks pause it, and a broken circle aborts it and returns every consumed item.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
       "text": "[#](53341a)Makes nearby creatures blind.[#]() [#](53341a)**Required offerings:** **Attuned Stone (Charged)**, **Redstone Soup**, **Reek of Misfortune**, **Exhale of the Horned One**, **Brew of Ink**, **Poisonous Potato**, **Spider Eye**, **Diamond**.[#]()",
       "title": "Curse of Blindness",
       "use_markdown_in_title": false

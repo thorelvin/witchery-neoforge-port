@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-08-25
+Last curated: 2026-08-26
 
 This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -16,7 +16,7 @@ enough to read before starting work. Long historical deltas belong in
   release hardening.
 - Current estimates from the README: Mechanical remake parity roughly `95-96%`;
   release-ready parity/polish roughly `82-86%`.
-- Deterministic verification manifest: 18 exact JVM resource contracts, 30 CI
+- Deterministic verification manifest: 18 exact JVM resource contracts, 31 CI
   GameTests, and one manual forced-restart fixture.
 
 ## Current Focus
@@ -85,9 +85,8 @@ enough to read before starting work. Long historical deltas belong in
   the generated Witches' Brews guide, and
   `witchery:custom_brew_environmental_actions` cover the high-risk behavior;
   [CUSTOM_BREW_SOURCE_PARITY.md](../reference/CUSTOM_BREW_SOURCE_PARITY.md)
-  holds the complete ownership and verification ledger. The 2026-08-25 closeout
-  passed the full build, all 16 resource contracts, all 25 CI GameTests, and the
-  forced dedicated-server save/reload cycle.
+  holds the complete ownership and verification ledger. Its closeout passed the
+  full build and the complete runtime suite available for that slice.
 - Circle Magic recipe and offering parity is closed against the original registry.
   An extracted, source-hashed fixture locks all 96 registrations: 93 use exact
   full-recipe definitions and the remaining three use documented native direct
@@ -105,11 +104,26 @@ enough to read before starting work. Long historical deltas belong in
   stage, owner, focus, effect center, and exact abort refunds across restart, and
   pause while their caster or required chunks are unavailable. Focused JVM tests,
   `witchery:persistent_expanding_rites`, and the real save/reload probe pass.
+- Blindness, Curse of Blight, and Hell on Earth now share that persistent,
+  refund-safe expanding lifecycle. All wait for the next 20-tick boundary, pulse
+  every five ticks, scale by two radius per nearby Coven witch, re-evaluate Cat
+  Familiar mastery on each ring, pause for an offline caster or unloaded ring
+  chunk, and preserve stage/refunds through restart. Blight's original
+  Glistering Melon recipe, Nausea II, villager/cow/animal effects, exact old
+  flower/crop set, and sand/dirt decay are restored. The previous Poisonous
+  Potato + 3000-power heart seeding behavior is retained as the separately named
+  additive **Rite of the Blight Heart**. Hell on Earth restores the source
+  200-power upkeep, exact mob weights and center spawn, and configurable
+  familiar-enhanced plant fires. Focused JVM coverage and
+  `witchery:persistent_expanding_curses` exercise the server behavior; the real
+  save/reload probe now certifies an in-progress Blight wave too.
 - The Primer's Circle Magic chapter is now a complete generated compendium:
   58 searchable rite families contain all 96 source registrations exactly once.
   Each source-tagged card renders its circles, altar power, coven requirement,
   conditions, and ordered offerings from one canonical resource; optional
-  offerings have a gold frame in both held and placed books. A focused parity
+  offerings have a gold frame in both held and placed books. The separately
+  labeled additive Rite of the Blight Heart brings the Primer to 115 generated
+  entries without pretending to be a source registration. A focused parity
   contract locks the generated catalog back to the extracted source fixture.
 - The source-facing `witchery:cauldron_book` now opens a dedicated native
   Modonomicon edition of **Witches' Brews**, separate from the progressive
@@ -121,12 +135,13 @@ enough to read before starting work. Long historical deltas belong in
   ingredient to appear once in the generated reference. Unsupported old
   transmutations are named honestly instead of being shown as working recipes.
 - The deterministic runtime harness and CI gates are complete. An explicit
-  manifest locks 18 resource-contract classes, 30 exact CI GameTests, and one
+  manifest locks 18 resource-contract classes, 31 exact CI GameTests, and one
   manual forced-restart fixture. Clean normal-difficulty dedicated servers now
   run every named test with all Witchery dimensions loaded, require unambiguous
   per-test success, preserve logs/JSON summaries, and verify Kettle, Witches'
   Oven, Distillery, Spinning Wheel, Brazier, Silver Vat, and command-storage
-  state across a real stop/reload. CI uploads build
+  state plus active Forestation and Blight workings across a real stop/reload.
+  CI uploads build
   or runtime diagnostics on failure. Building the gate also exposed and fixed
   the Otherwhere Hearth traveller-state race on Spirit entry and the Lord of
   Torment's failure to collect nearby non-attacking players. Runtime worlds now

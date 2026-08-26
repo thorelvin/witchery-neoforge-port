@@ -383,6 +383,16 @@ public class PoppetEvents {
         return damageBoundPoppet(target, WitcheryItems.VOODOO_PROTECTION_POPPET.get(), VOODOO_PROTECTION_DAMAGE);
     }
 
+    public static boolean triggerRitualVoodooProtection(ServerPlayer target, Player attacker, int strength) {
+        int charges = Math.max(1, strength);
+        for (int charge = 1; charge <= charges; charge++) {
+            if (!triggerVoodooProtection(target, attacker, charge == charges)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static boolean triggerVoodooProtection(ServerPlayer target, Player attacker, ItemStack attackingPoppet) {
         if (!triggerVoodooProtection(target, attacker, true)) {
             return false;

@@ -1,0 +1,102 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "circle_magic",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:blight_heart"
+  },
+  "name": "Rite of the Blight Heart",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)This port-added working is separate from the original **Curse of Blight**. It plants one persistent Blight Heart in suitable buried ground within 150 blocks, beginning the local Blight ecosystem without replacing the source expanding curse.[#]()",
+      "title": "Rite of the Blight Heart",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "witchery:station_recipe",
+      "anchor": "",
+      "background": "witchery:textures/gui/book/ritual_circle_magic.png",
+      "bg_height": 120,
+      "bg_width": 116,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "rings": [
+        {
+          "color": "red",
+          "size": "medium"
+        }
+      ],
+      "show_background": false,
+      "slots": [
+        {
+          "count": 1,
+          "item": "witchery:attuned_stone_charged",
+          "x": 23,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:redstone_soup",
+          "x": 41,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "witchery:reek_of_misfortune",
+          "x": 59,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "minecraft:fermented_spider_eye",
+          "x": 77,
+          "y": 68
+        },
+        {
+          "count": 1,
+          "item": "minecraft:poisonous_potato",
+          "x": 32,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:rotten_flesh",
+          "x": 50,
+          "y": 87
+        },
+        {
+          "count": 1,
+          "item": "minecraft:diamond",
+          "x": 68,
+          "y": 87
+        }
+      ],
+      "text": "[#](53341a)**11x11** - **Infernal** chalk - **3000** altar power[#]()",
+      "title": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Activate the complete medium Infernal circle while all seven offerings are present. The Poisonous Potato distinguishes this rite from the original curse's Glistering Melon Slice. If no safe embedded position can be found, nothing is consumed.[#]()",
+      "title": "The Working",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 61,
+  "x": 0,
+  "y": 0
+}

@@ -310,13 +310,23 @@ class PlacedModonomiconGeneratedBookTest {
                 .filter(path -> path.getFileName().toString().endsWith(".json"))) {
             riteEntries = entries.toList();
         }
-        assertEquals(58, riteEntries.size(), "one generated entry should exist per rite family");
+        assertEquals(59, riteEntries.size(), "58 source families plus one declared additive rite should exist");
 
         Map<Integer, GeneratedRiteCard> cards = new HashMap<>();
         int highestFamilySort = -1;
+        int blightHeartSort = -1;
         for (Path entryPath : riteEntries) {
             JsonObject entry = readJson(entryPath);
             assertEquals("circle_magic", entry.get("category").getAsString());
+            if (entryPath.getFileName().toString().equals("blight_heart.json")) {
+                blightHeartSort = entry.get("sort_number").getAsInt();
+                String text = entry.toString();
+                assertTrue(text.contains("Rite of the Blight Heart"));
+                assertTrue(text.contains("port-added working is separate"));
+                assertTrue(text.contains("minecraft:poisonous_potato"));
+                assertFalse(text.contains("source_id"), "the additive rite must not impersonate a source card");
+                continue;
+            }
             highestFamilySort = Math.max(highestFamilySort, entry.get("sort_number").getAsInt());
             for (var pageElement : entry.getAsJsonArray("pages")) {
                 JsonObject page = pageElement.getAsJsonObject();
@@ -343,7 +353,8 @@ class PlacedModonomiconGeneratedBookTest {
 
         int gatheredSort = readJson(circleRoot.resolve("gathered_lives.json")).get("sort_number").getAsInt();
         int nextSort = readJson(circleRoot.resolve("whats_next.json")).get("sort_number").getAsInt();
-        assertTrue(gatheredSort > highestFamilySort, "hidden Gathered Lives rite should follow the source compendium");
+        assertTrue(blightHeartSort > highestFamilySort, "the additive Blight Heart rite should follow source families");
+        assertTrue(gatheredSort > blightHeartSort, "hidden Gathered Lives rite should follow the additive rite");
         assertTrue(nextSort > gatheredSort, "What Comes Next must remain the final Circle Magic entry");
         String ritesIndex = Files.readString(circleRoot.resolve("rites.json"));
         assertTrue(ritesIndex.contains("complete compendium follows"));

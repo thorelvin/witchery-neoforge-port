@@ -571,6 +571,7 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 
 <h3>The Circle Magic Compendium</h3>
 <p>The Witches' Primer now carries the complete source rite registry: <strong>96 exact workings</strong> grouped into <strong>58 searchable families</strong>. Open <em>Circle Magic &amp; Rites</em> and choose the result you intend. Each live card shows the required circles, altar power, coven size, special conditions, and offerings in their proper order. A gold frame marks an optional offering; leave it out for the ordinary working, or include it when you want that modifier. The same cards render in the held Primer and in a placed Primer.</p>
+<p>The Primer also marks the port-added <strong>Rite of the Blight Heart</strong> separately. It is not the original Curse of Blight: the original uses a Glistering Melon Slice and sends out a persistent expanding wave, while the additive heart rite uses a Poisonous Potato and 3,000 altar power to seed the local Blight ecosystem.</p>
 
 <div id="circle-talisman" class="callout callout-tip">The <a href="#circle-talisman">Circle Talisman</a> stores a drawn circle and redeploys it instantly anywhere. Right-click the center glyph with an empty talisman to store. Right-click any suitable flat surface to redeploy. A genuine convenience when your knees object to drawing the same ring twice. Carry three — one per chalk type, pre-loaded with your most common rites.</div>
 
@@ -1688,12 +1689,12 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
 <!-- CH 19 -->
 <h2 class="chapter" id="ch19">Chapter 19: Curses — The Twelve Afflictions<span class="stage stage-late">Late</span> <a href="#toc" class="ch-top">&uarr; Contents</a></h2>
 
-<p>A curse requires the target's taglock and sufficient altar power. It works at any distance, across the dimension, without warning. A Cat Familiar makes your curses harder to resist and easier for you to remove from others. <a href="#ch14">Voodoo Protection</a> counters the effects; the Rite of Remove Curse removes them.</p>
+<p>Directed curses require the target's taglock and sufficient altar power. Blindness, Blight, and Hell on Earth are instead expanding circle curses: they begin at the working's centre or an optional Bound Waystone destination and pass outward one block every five ticks. A Cat Familiar strengthens their source-specific effects. <a href="#ch14">Voodoo Protection</a> counters the effects; the Rite of Remove Curse removes tracked afflictions.</p>
 
 <table>
   <tr><th>Curse</th><th>Effect</th><th>Notes</th></tr>
-  <tr><td>Blindness</td><td>Persistent Blindness effect</td><td>—</td></tr>
-  <tr><td>Blight</td><td>Area blight centered on the victim: kills nearby flora, converts dirt to sand, zombifies villagers, inflicts Nausea on the target player</td><td>Stacks with other curses</td></tr>
+  <tr><td>Blindness</td><td>An annular wave from radius 4 to 80 plus Coven scaling; each ring blinds creatures for two minutes, or five with an active Cat Familiar</td><td>7&times;7 Infernal circle; six Voodoo Protection activations abort the working</td></tr>
+  <tr><td>Blight</td><td>An annular wave from radius 4 to 80 plus Coven scaling; inflicts Nausea II, may zombify Villagers, turn Cows into Mooshrooms, harm animals, wither old crops and flowers, and scar soil into dirt or sand</td><td>11&times;11 Infernal; Glistering Melon Slice; no altar power</td></tr>
   <tr><td>Misfortune</td><td>Reduced luck; affected drop rates and random outcomes</td><td>90% blocked by full WH armor; requires a storm to cast</td></tr>
   <tr><td>Overheating</td><td>Causes spontaneous combustion when the victim is in a hot biome (desert, nether, etc.); fire resistance does not protect against it</td><td>Requires a storm to cast</td></tr>
   <tr><td>Sinking</td><td>Removes swimming; target sinks and drowns in any water</td><td>Requires a storm to cast</td></tr>
@@ -1701,10 +1702,12 @@ a.ch-top:hover { color: #8a2008; text-decoration: underline; }
   <tr><td>Raining Toads</td><td>Toads fall from the sky around the target periodically; each toad explodes in a poisonous mist on impact</td><td>Arguably the most annoying</td></tr>
   <tr><td>Waking Nightmare</td><td>Persistently calls a victim-bound Nightmare outside the Spirit World. Only one stalks the victim nearby at a time, and its blows are weakened there.</td><td>90% blocked by full WH armor; entering the Spirit World ends it</td></tr>
   <tr><td>Corrupt Poppet</td><td>Destroys up to ten poppets in the target's possession at once</td><td><a href="#ch7">Cat Familiar</a> required to cast this one</td></tr>
-  <tr><td>Hell on Earth</td><td>Converts ground around target into Nether terrain</td><td>—</td></tr>
+  <tr><td>Hell on Earth</td><td>Expands Nether terrain to radius 20 plus Coven scaling, then calls weighted infernal creatures at the working's centre</td><td>15&times;15 Infernal + 11&times;11 Otherwhere + 7&times;7 Infernal; 5,000 opening power, Villager sacrifice, then 200 power every 40 ticks</td></tr>
   <tr><td>Creatures of Night</td><td>Forces vampirism on the victim permanently — they become a vampire and remain one through death</td><td>See <a href="#ch16">Chapter 16</a> for full vampirism progression</td></tr>
   <tr><td>Curse of the Wolf</td><td>Forces permanent lycanthropy on the target — they become a werewolf and remain one through death</td><td>See <a href="#ch17">Chapter 17</a> for full lycanthropy progression</td></tr>
 </table>
+
+<div class="callout callout-also"><strong>Rite of the Blight Heart (additive):</strong> in an 11&times;11 Infernal circle, offer Attuned Stone (Charged), Redstone Soup, Reek of Misfortune, Fermented Spider Eye, <strong>Poisonous Potato</strong>, Rotten Flesh, and Diamond with 3,000 altar power. It plants one buried Blight Heart within 150 blocks. The different melon and the power cost are deliberate: this rite does not replace the original expanding Curse of Blight.</div>
 
 <h3>Countering Curses</h3>
 <ul>

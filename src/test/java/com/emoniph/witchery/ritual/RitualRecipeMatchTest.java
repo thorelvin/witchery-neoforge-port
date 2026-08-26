@@ -553,6 +553,15 @@ class RitualRecipeMatchTest {
                         new ItemStack(WitcheryItems.REDSTONE_SOUP.get()),
                         new ItemStack(Items.FERMENTED_SPIDER_EYE),
                         new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
+                        new ItemStack(Items.GLISTERING_MELON_SLICE)), 3));
+        assertEquals("blight_heart", RitualExecutor.matchingFullRecipeDefinitionName(
+                RitualCircleDetector.CircleSize.MEDIUM,
+                List.of(new ItemStack(Items.ROTTEN_FLESH),
+                        new ItemStack(WitcheryItems.REEK_OF_MISFORTUNE.get()),
+                        new ItemStack(Items.DIAMOND),
+                        new ItemStack(WitcheryItems.REDSTONE_SOUP.get()),
+                        new ItemStack(Items.FERMENTED_SPIDER_EYE),
+                        new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get()),
                         new ItemStack(Items.POISONOUS_POTATO)), 3));
         assertEquals("blindness", RitualExecutor.matchingFullRecipeDefinitionName(
                 RitualCircleDetector.CircleSize.SMALL,
@@ -575,6 +584,24 @@ class RitualRecipeMatchTest {
     }
 
     @Test
+    void blightAndBlightHeartUseDistinctMelonOfferings() {
+        ItemStack charged = new ItemStack(WitcheryItems.ATTUNED_STONE_CHARGED.get());
+        ItemStack soup = new ItemStack(WitcheryItems.REDSTONE_SOUP.get());
+        ItemStack reek = new ItemStack(WitcheryItems.REEK_OF_MISFORTUNE.get());
+        ItemStack eye = new ItemStack(Items.FERMENTED_SPIDER_EYE);
+        ItemStack flesh = new ItemStack(Items.ROTTEN_FLESH);
+        ItemStack diamond = new ItemStack(Items.DIAMOND);
+        assertEveryRequiredOfferingMatters(RitualOfferings.BLIGHT_RECIPE,
+                charged, soup, reek, eye, new ItemStack(Items.GLISTERING_MELON_SLICE), flesh, diamond);
+        assertEveryRequiredOfferingMatters(RitualOfferings.BLIGHT_HEART_RECIPE,
+                charged, soup, reek, eye, new ItemStack(Items.POISONOUS_POTATO), flesh, diamond);
+        assertFalse(RitualOfferings.BLIGHT_RECIPE.matches(List.of(
+                charged, soup, reek, eye, new ItemStack(Items.POISONOUS_POTATO), flesh, diamond)));
+        assertFalse(RitualOfferings.BLIGHT_HEART_RECIPE.matches(List.of(
+                charged, soup, reek, eye, new ItemStack(Items.GLISTERING_MELON_SLICE), flesh, diamond)));
+    }
+
+    @Test
     void fullRecipeDispatchKeepsSourceOrderForOverlappingRedstoneSoupSets() {
         assertEquals("blight", RitualExecutor.matchingFullRecipeDefinitionName(
                 RitualCircleDetector.CircleSize.MEDIUM,
@@ -582,7 +609,7 @@ class RitualRecipeMatchTest {
                         new ItemStack(WitcheryItems.REDSTONE_SOUP.get()),
                         new ItemStack(WitcheryItems.REEK_OF_MISFORTUNE.get()),
                         new ItemStack(Items.FERMENTED_SPIDER_EYE),
-                        new ItemStack(Items.POISONOUS_POTATO),
+                        new ItemStack(Items.GLISTERING_MELON_SLICE),
                         new ItemStack(Items.ROTTEN_FLESH),
                         new ItemStack(Items.DIAMOND),
                         new ItemStack(WitcheryItems.TOE_OF_FROG.get()),
@@ -599,7 +626,7 @@ class RitualRecipeMatchTest {
                         new ItemStack(WitcheryItems.REDSTONE_SOUP.get()),
                         new ItemStack(WitcheryItems.REEK_OF_MISFORTUNE.get()),
                         new ItemStack(Items.FERMENTED_SPIDER_EYE),
-                        new ItemStack(Items.POISONOUS_POTATO),
+                        new ItemStack(Items.GLISTERING_MELON_SLICE),
                         new ItemStack(Items.ROTTEN_FLESH)), 3),
                 "Blight needs the Diamond too");
         assertNull(RitualExecutor.matchingFullRecipeDefinitionName(

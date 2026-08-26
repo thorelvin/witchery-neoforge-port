@@ -16,6 +16,39 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
+      "text": "[#](53341a)The curse waits for the next full second, then expands from radius 4 by one block every five ticks to radius 80 plus 2 blocks per nearby Coven witch.[#]()",
+      "title": "How It Unfolds",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Its passing ring brings Nausea II, may turn Villagers into Zombie Villagers and Cows into Mooshrooms, harms animals, withers the old flower and crop families, and scars grass, dirt, mycelium, and farmland into dirt or sand.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)A cat familiar strengthens the land decay. Six Voodoo Protection activations, a broken circle, or a failed sustaining check abort and refund it.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
       "text": "[#](53341a)Makes nearby land infertile and causes sickness.[#]() [#](53341a)**Required offerings:** **Attuned Stone (Charged)**, **Redstone Soup**, **Reek of Misfortune**, **Fermented Spider Eye**, **Glistering Melon Slice**, **Rotten Flesh**, **Diamond**.[#]()",
       "title": "Curse of Blight",
       "use_markdown_in_title": false

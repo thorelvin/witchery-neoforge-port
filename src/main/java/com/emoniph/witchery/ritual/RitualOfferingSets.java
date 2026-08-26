@@ -134,7 +134,7 @@ record BlindnessOfferings(ItemEntity chargedStone, ItemEntity redstoneSoup, Item
                           ItemEntity spiderEye, ItemEntity diamond) {}
 
 record BlightOfferings(ItemEntity chargedStone, ItemEntity redstoneSoup, ItemEntity reekOfMisfortune,
-                       ItemEntity fermentedSpiderEye, ItemEntity poisonousPotato, ItemEntity rottenFlesh,
+                       ItemEntity fermentedSpiderEye, ItemEntity glisteringMelon, ItemEntity rottenFlesh,
                        ItemEntity diamond) {}
 
 record RainOfToadsOfferings(ItemEntity chargedStone, ItemEntity redstoneSoup, ItemEntity reekOfMisfortune,

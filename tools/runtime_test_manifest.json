@@ -92,6 +92,11 @@
       "timeout_seconds": 160
     },
     {
+      "id": "witchery:persistent_expanding_curses",
+      "lane": "ci",
+      "timeout_seconds": 160
+    },
+    {
       "id": "witchery:vampire_power_activation",
       "lane": "ci",
       "timeout_seconds": 120

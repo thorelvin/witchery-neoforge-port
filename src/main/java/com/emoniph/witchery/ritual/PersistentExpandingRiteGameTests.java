@@ -45,6 +45,9 @@ public final class PersistentExpandingRiteGameTests {
     private static final DeferredHolder<Consumer<GameTestHelper>, Consumer<GameTestHelper>> EXPANDING_RITES =
             TEST_FUNCTIONS.register("persistent_expanding_rites",
                     () -> PersistentExpandingRiteGameTests::expandingRites);
+    private static final DeferredHolder<Consumer<GameTestHelper>, Consumer<GameTestHelper>> EXPANDING_CURSES =
+            TEST_FUNCTIONS.register("persistent_expanding_curses",
+                    () -> PersistentExpandingRiteGameTests::expandingCurses);
 
     private PersistentExpandingRiteGameTests() {
     }
@@ -64,6 +67,9 @@ public final class PersistentExpandingRiteGameTests {
         event.registerTest(
                 Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "persistent_expanding_rites"),
                 new FunctionGameTestInstance(EXPANDING_RITES.getKey(), data));
+        event.registerTest(
+                Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "persistent_expanding_curses"),
+                new FunctionGameTestInstance(EXPANDING_CURSES.getKey(), data));
     }
 
     private static void expandingRites(GameTestHelper helper) {
@@ -177,10 +183,96 @@ public final class PersistentExpandingRiteGameTests {
         });
     }
 
+    private static void expandingCurses(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos fixture = helper.absolutePos(new BlockPos(4, 2, 4));
+        int y = Math.clamp(fixture.getY() + 80, level.getMinY() + 20, level.getMaxY() - 30);
+        BlockPos blindnessCenter = new BlockPos(fixture.getX(), y, fixture.getZ());
+        BlockPos blightCenter = blindnessCenter.east(24);
+        BlockPos hellCenter = blindnessCenter.south(24);
+        ServerPlayer owner = HeadlessGameTestPlayer.create(level,
+                UUID.fromString("34e5179e-ad1a-4f2b-ab76-c895f18a13df"), "ExpandingCurseOwner");
+        owner.snapTo(blindnessCenter.getX() + 0.5D, y, blindnessCenter.getZ() + 8.5D, 0.0F, 0.0F);
+        WitcheryAttachments.get(owner).setFamiliarType("cat");
+        LivingEntity familiar = FamiliarHelper.restoreBoundFamiliar(owner, level,
+                owner.getX(), owner.getY(), owner.getZ() + 1.0D);
+        helper.assertTrue(familiar != null, "The curse fixture must restore an active cat familiar");
+
+        ServerPlayer blightVictim = HeadlessGameTestPlayer.create(level,
+                UUID.fromString("c6713614-47a2-47b8-b3cb-ec39feb0014b"), "BlightWaveVictim");
+        blightVictim.snapTo(blightCenter.getX() + 4.5D, y + 0.5D,
+                blightCenter.getZ() + 0.5D, 0.0F, 0.0F);
+        Villager blindnessVictim = EntityType.VILLAGER.create(level, EntitySpawnReason.TRIGGERED);
+        helper.assertTrue(blindnessVictim != null, "The Blindness fixture must create a Villager");
+        if (blindnessVictim == null) throw new IllegalStateException("Unable to create Blindness victim");
+        blindnessVictim.setNoAi(true);
+        blindnessVictim.snapTo(blindnessCenter.getX() + 4.5D, y + 0.5D,
+                blindnessCenter.getZ() + 0.5D, 0.0F, 0.0F);
+        level.addFreshEntity(blindnessVictim);
+
+        placeRing(level, blindnessCenter, RitualCircleDetector.CircleSize.SMALL,
+                WitcheryBlocks.CIRCLE_INFERNAL.get());
+        placeRing(level, blightCenter, RitualCircleDetector.CircleSize.MEDIUM,
+                WitcheryBlocks.CIRCLE_INFERNAL.get());
+        placeRing(level, hellCenter, RitualCircleDetector.CircleSize.LARGE,
+                WitcheryBlocks.CIRCLE_INFERNAL.get());
+        BlockPos blightFarmland = blightCenter.east(4);
+        level.setBlock(blightFarmland, Blocks.FARMLAND.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(blightFarmland.above(), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        BlockPos hellPlant = hellCenter.east(4);
+        level.setBlock(hellPlant.below(), Blocks.DIRT.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(hellPlant, Blocks.POPPY.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(hellPlant.above(), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+
+        RitualSavedData data = RitualSavedData.get(level);
+        data.activeRituals.add(testCurse(ActiveRitualType.BLINDNESS, blindnessCenter,
+                RitualCircleDetector.CircleSize.SMALL, 4, owner, level));
+        data.activeRituals.add(testCurse(ActiveRitualType.BLIGHT, blightCenter,
+                RitualCircleDetector.CircleSize.MEDIUM, 4, owner, level));
+        data.activeRituals.add(testCurse(ActiveRitualType.HELL_ON_EARTH, hellCenter,
+                RitualCircleDetector.CircleSize.LARGE, 5, owner, level));
+        data.setDirty();
+        RitualExecutor.tickActiveRituals(level);
+
+        helper.assertTrue(blindnessVictim.getEffect(MobEffects.BLINDNESS) != null
+                        && blindnessVictim.getEffect(MobEffects.BLINDNESS).getDuration() == 6000,
+                "A cat-enhanced Blindness ring must apply the source five-minute duration");
+        helper.assertTrue(blightVictim.getEffect(MobEffects.NAUSEA) != null
+                        && blightVictim.getEffect(MobEffects.NAUSEA).getAmplifier() == 1,
+                "Blight must apply source Nausea II rather than Wither");
+        helper.assertTrue(level.getBlockState(blightFarmland).is(Blocks.SAND),
+                "An exposed farmland pixel must become source Sand");
+        helper.assertTrue(level.getBlockState(hellPlant).is(Blocks.FIRE),
+                "A cat-enhanced Hell on Earth ring must ignite a source plant when configured");
+
+        data.activeRituals.removeIf(ritual -> ritual.center.equals(hellCenter));
+        if (familiar != null) familiar.discard();
+        blindnessVictim.discard();
+        HeadlessGameTestPlayer.remove(blightVictim);
+        HeadlessGameTestPlayer.remove(owner);
+        data.setDirty();
+        helper.succeed();
+    }
+
+    private static ActiveRitual testCurse(ActiveRitualType type, BlockPos center,
+                                          RitualCircleDetector.CircleSize size, int maxRadius,
+                                          ServerPlayer owner, ServerLevel level) {
+        return new ActiveRitual(type, center, size, center, 3,
+                4, maxRadius, 250, RitualExecutor.EXPANDING_CURSE_PULSE_INTERVAL,
+                0, type == ActiveRitualType.HELL_ON_EARTH ? RitualExecutor.HELL_ON_EARTH_UPKEEP : 0.0F,
+                true, 0, level.getGameTime(), ItemStack.EMPTY, List.of(),
+                owner.getScoreboardName(), ItemStack.EMPTY);
+    }
+
     private static void placeRing(ServerLevel level, BlockPos center, RitualCircleDetector.CircleSize size) {
+        placeRing(level, center, size, WitcheryBlocks.CIRCLE_GLYPH.get());
+    }
+
+    private static void placeRing(ServerLevel level, BlockPos center, RitualCircleDetector.CircleSize size,
+                                  Block circleBlock) {
         for (BlockPos mark : RitualCircleDetector.ringPositions(center, size)) {
             level.setBlock(mark.below(), Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
-            level.setBlock(mark, WitcheryBlocks.CIRCLE_GLYPH.get().defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(mark, circleBlock.defaultBlockState(), Block.UPDATE_ALL);
         }
     }
 

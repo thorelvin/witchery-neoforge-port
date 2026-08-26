@@ -184,6 +184,15 @@ final class RitualOfferings {
             .require("Redstone Soup", stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()))
             .require("Reek of Misfortune", stack -> stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get()))
             .require("Fermented Spider Eye", stack -> stack.is(Items.FERMENTED_SPIDER_EYE))
+            .require("Glistering Melon Slice", stack -> stack.is(Items.GLISTERING_MELON_SLICE))
+            .require("Rotten Flesh", stack -> stack.is(Items.ROTTEN_FLESH))
+            .require("Diamond", stack -> stack.is(Items.DIAMOND))
+            .build();
+    static final RitualRecipe BLIGHT_HEART_RECIPE = RitualRecipe.named("blight_heart")
+            .require("Charged Attuned Stone", stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
+            .require("Redstone Soup", stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()))
+            .require("Reek of Misfortune", stack -> stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get()))
+            .require("Fermented Spider Eye", stack -> stack.is(Items.FERMENTED_SPIDER_EYE))
             .require("Poisonous Potato", stack -> stack.is(Items.POISONOUS_POTATO))
             .require("Rotten Flesh", stack -> stack.is(Items.ROTTEN_FLESH))
             .require("Diamond", stack -> stack.is(Items.DIAMOND))
@@ -1534,11 +1543,11 @@ final class RitualOfferings {
         Optional<ItemEntity> redstoneSoup = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()));
         Optional<ItemEntity> reekOfMisfortune = findNearbyOffering(level, center, stack -> stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get()));
         Optional<ItemEntity> fermentedSpiderEye = findNearbyOffering(level, center, stack -> stack.is(Items.FERMENTED_SPIDER_EYE));
-        Optional<ItemEntity> poisonousPotato = findNearbyOffering(level, center, stack -> stack.is(Items.POISONOUS_POTATO));
+        Optional<ItemEntity> glisteringMelon = findNearbyOffering(level, center, stack -> stack.is(Items.GLISTERING_MELON_SLICE));
         Optional<ItemEntity> rottenFlesh = findNearbyOffering(level, center, stack -> stack.is(Items.ROTTEN_FLESH));
         Optional<ItemEntity> diamond = findNearbyOffering(level, center, stack -> stack.is(Items.DIAMOND));
         if (chargedStone.isEmpty() || redstoneSoup.isEmpty() || reekOfMisfortune.isEmpty() || fermentedSpiderEye.isEmpty()
-                || poisonousPotato.isEmpty() || rottenFlesh.isEmpty() || diamond.isEmpty()) {
+                || glisteringMelon.isEmpty() || rottenFlesh.isEmpty() || diamond.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new BlightOfferings(
@@ -1546,7 +1555,7 @@ final class RitualOfferings {
                 redstoneSoup.get(),
                 reekOfMisfortune.get(),
                 fermentedSpiderEye.get(),
-                poisonousPotato.get(),
+                glisteringMelon.get(),
                 rottenFlesh.get(),
                 diamond.get()));
     }

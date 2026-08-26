@@ -93,12 +93,6 @@ public class RitualEvents {
                 return;
             }
             level.playSound(null, floorCenter, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            if (isVariantRing(level, floorCenter, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)
-                    && hasBlightSupportOfferings(level, floorCenter)
-                    && !hasBlightTrigger(floorCenter, nearbyItems)) {
-                player.displayClientMessage(Component.translatable("witchery.ritual.blight.trigger"), false);
-                return;
-            }
             player.displayClientMessage(Component.translatable("witchery.rite.unknownritual"), false);
             return;
         }
@@ -161,48 +155,16 @@ public class RitualEvents {
             }
         }
 
-        if (isVariantRing(level, floorCenter, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)) {
-            IngredientSource blightSource = nearestOfferingSource(level, floorCenter, nearbyItems,
-                    stack -> stack.is(Items.WITHER_ROSE));
-            if (blightSource != null) {
-                return blightSource;
-            }
-        }
-
-        // When a Blight circle is armed (medium-infernal ring + its full offering set present) but the
-        // Wither Rose trigger is missing, do NOT let Blight's own offerings be grabbed as the ingredient.
-        // The Charged Attuned Stone in particular is the trigger for Banish Demon (charged) on a small
-        // ritual ring, so a forgotten Wither Rose would otherwise misfire Banish Demon's support message
-        // instead of the "needs a Wither Rose" hint. Excluding the offerings yields no ingredient → the
-        // execute() pass returns NO_MATCH → RitualEvents shows the blight.trigger hint.
-        Predicate<ItemStack> triggerFilter = stack -> true;
-        if (isVariantRing(level, floorCenter, RitualCircleDetector.CircleSize.MEDIUM, VARIANT_INFERNAL)
-                && hasBlightSupportOfferings(level, floorCenter)
-                && !hasBlightTrigger(floorCenter, nearbyItems)) {
-            triggerFilter = stack -> !isBlightOfferingItem(stack);
-        }
-
-        Predicate<ItemStack> filter = triggerFilter;
-        ItemEntity nearest = nearestDroppedItem(floorCenter, nearbyItems, item -> filter.test(item.getItem()));
+        ItemEntity nearest = nearestDroppedItem(floorCenter, nearbyItems, item -> true);
         if (nearest != null) {
             return new IngredientSource(nearest, null);
         }
 
-        GrassperBlockEntity grassper = nearestGrassper(floorCenter, level, triggerFilter);
+        GrassperBlockEntity grassper = nearestGrassper(floorCenter, level, stack -> true);
         return grassper == null ? null : new IngredientSource(null, grassper);
     }
 
     /** The seven items a Blight rite consumes as offerings (not its trigger — that is a Wither Rose). */
-    private static boolean isBlightOfferingItem(ItemStack stack) {
-        return stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get())
-                || stack.is(WitcheryItems.REDSTONE_SOUP.get())
-                || stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get())
-                || stack.is(Items.FERMENTED_SPIDER_EYE)
-                || stack.is(Items.POISONOUS_POTATO)
-                || stack.is(Items.ROTTEN_FLESH)
-                || stack.is(Items.DIAMOND);
-    }
-
     private static IngredientSource nearestOfferingSource(Level level, BlockPos floorCenter, List<ItemEntity> nearbyItems,
                                                           Predicate<ItemStack> matcher) {
         ItemEntity dropped = nearestDroppedItem(floorCenter, nearbyItems, item -> matcher.test(item.getItem()));
@@ -240,32 +202,6 @@ public class RitualEvents {
 
     private static boolean isObsidianStack(ItemStack stack) {
         return stack.is(Items.OBSIDIAN) || stack.is(Items.CRYING_OBSIDIAN);
-    }
-
-    private static boolean hasBlightTrigger(BlockPos floorCenter, List<ItemEntity> nearbyItems) {
-        return nearestDroppedItem(floorCenter, nearbyItems, item -> item.getItem().is(Items.WITHER_ROSE)) != null;
-    }
-
-    private static boolean hasBlightSupportOfferings(Level level, BlockPos floorCenter) {
-        return hasNearbyOffering(level, floorCenter, stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()))
-                && hasNearbyOffering(level, floorCenter, stack -> stack.is(WitcheryItems.REDSTONE_SOUP.get()))
-                && hasNearbyOffering(level, floorCenter, stack -> stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get()))
-                && hasNearbyOffering(level, floorCenter, stack -> stack.is(Items.FERMENTED_SPIDER_EYE))
-                && hasNearbyOffering(level, floorCenter, stack -> stack.is(Items.POISONOUS_POTATO))
-                && hasNearbyOffering(level, floorCenter, stack -> stack.is(Items.ROTTEN_FLESH))
-                && hasNearbyOffering(level, floorCenter, stack -> stack.is(Items.DIAMOND));
-    }
-
-    private static boolean hasNearbyOffering(Level level, BlockPos floorCenter, Predicate<ItemStack> matcher) {
-        Vec3 centerPoint = Vec3.atCenterOf(floorCenter);
-        double radiusSq = 1.5D * 1.5D;
-        AABB bounds = new AABB(centerPoint, centerPoint).inflate(1.5D);
-        for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, bounds)) {
-            if (matcher.test(itemEntity.getItem()) && itemEntity.position().distanceToSqr(centerPoint) < radiusSq) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private static ItemEntity nearestDroppedItem(BlockPos floorCenter, List<ItemEntity> nearbyItems,

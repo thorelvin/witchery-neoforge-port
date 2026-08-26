@@ -35,6 +35,7 @@ public class WitcheryConfig {
     // ── Altar / Rituals ───────────────────────────────────────────────────────
     public static final ModConfigSpec.DoubleValue RITUAL_POWER_MULTIPLIER;
     public static final ModConfigSpec.BooleanValue ALLOW_BIOME_CHANGING;
+    public static final ModConfigSpec.BooleanValue ALLOW_HELL_ON_EARTH_FIRES;
     public static final ModConfigSpec.BooleanValue ALLOW_DECURSE_TELEPORT;
     public static final ModConfigSpec.BooleanValue ALLOW_DECURSE_DIRECTED;
     public static final ModConfigSpec.IntValue DECURSE_TELEPORT_RADIUS;
@@ -131,6 +132,9 @@ public class WitcheryConfig {
         ALLOW_BIOME_CHANGING = BUILDER
                 .comment("Allow the Rite of Shifting Seasons to rewrite biome data. Default: true")
                 .define("allowBiomeChanging", true);
+        ALLOW_HELL_ON_EARTH_FIRES = BUILDER
+                .comment("Source AllowHellOnEarthFires: let a cat-enhanced Hell on Earth ignite affected plants. Default: true")
+                .define("AllowHellOnEarthFires", true);
         ALLOW_DECURSE_TELEPORT = BUILDER
                 .comment("Allow Statues of Occluded Summons to dampen taglock transposition pulls near the target. Source default: true")
                 .define("allowDecurseTeleport", true);

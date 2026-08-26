@@ -472,8 +472,40 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                     + "whole working to its bound location. The rite pauses while its caster or either end's "
                     + "chunks are unavailable; breaking its sustaining circle aborts it and returns the "
                     + "consumed offerings.";
+            case "blindness" -> "The curse waits for the next full second, then expands from radius 4 by one "
+                    + "block every five ticks to radius 80 plus 2 blocks per nearby Coven witch. Each passing "
+                    + "ring blinds creatures for two minutes, or five minutes with an active cat familiar. "
+                    + "Six Voodoo Protection activations abort the wave. Unloaded chunks pause it, and a broken "
+                    + "circle aborts it and returns every consumed item.";
+            case "blight" -> "The curse waits for the next full second, then expands from radius 4 by one block "
+                    + "every five ticks to radius 80 plus 2 blocks per nearby Coven witch. Its passing ring "
+                    + "brings Nausea II, may turn Villagers into Zombie Villagers and Cows into Mooshrooms, "
+                    + "harms animals, withers the old flower and crop families, and scars grass, dirt, mycelium, "
+                    + "and farmland into dirt or sand. A cat familiar strengthens the land decay. Six Voodoo "
+                    + "Protection activations, a broken circle, or a failed sustaining check abort and refund it.";
+            case "hell_on_earth" -> "After its 5000-power opening and Villager sacrifice, the curse expands from "
+                    + "radius 4 by one block every five ticks to radius 20 plus 2 blocks per Coven witch. It "
+                    + "replaces source terrain with Netherrack; an active cat familiar can ignite affected plants "
+                    + "when server configuration allows. Once fully expanded it consumes 200 altar power every "
+                    + "40 ticks and calls a weighted Demon, Ghast, Blaze, Magma Cube, or Zombified Piglin at the "
+                    + "working's centre. A Bound Waystone moves that centre.";
             default -> "";
         };
+    }
+
+    private BookEntryModel blightHeartEntry(BookCategoryModel cat, int sort) {
+        return rite(cat, "circle_magic/rites/blight_heart", "Rite of the Blight Heart",
+                WitcheryItems.BLIGHT_HEART.get(), sort,
+                "This port-added working is separate from the original **Curse of Blight**. It plants one "
+                        + "persistent Blight Heart in suitable buried ground within 150 blocks, beginning the "
+                        + "local Blight ecosystem without replacing the source expanding curse.",
+                ritualCard("3000", 0, List.of(ringInfernal("medium")),
+                        WitcheryItems.ATTUNED_STONE_CHARGED.get(), WitcheryItems.REDSTONE_SOUP.get(),
+                        WitcheryItems.REEK_OF_MISFORTUNE.get(), Items.FERMENTED_SPIDER_EYE,
+                        Items.POISONOUS_POTATO, Items.ROTTEN_FLESH, Items.DIAMOND),
+                "Activate the complete medium Infernal circle while all seven offerings are present. The "
+                        + "Poisonous Potato distinguishes this rite from the original curse's Glistering Melon "
+                        + "Slice. If no safe embedded position can be found, nothing is consumed.");
     }
 
     private static String ritualCompendiumWorking(RitualCompendium.Variant variant) {
@@ -957,6 +989,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         for (RitualCompendium.Family family : RitualCompendium.families()) {
             entries.add(ritualCompendiumEntry(cat, family, sort++));
         }
+        entries.add(blightHeartEntry(cat, sort++));
         entries.add(gatheredLivesEntry(cat, sort++));
         entries.add(gatedByItem("guide/obtained/chalk", whatsNext(cat, "circle_magic", sort,
                 "book_burning", "Witchcraft: Conjuration & Fetishes", WitcheryItems.BOOK_BURNING.get(),

@@ -1,6 +1,6 @@
 # QA Queue
 
-Last curated: 2026-07-30
+Last curated: 2026-08-26
 
 This is the active in-game QA queue. It replaces scattered new QA notes in
 the archived parity/fixes/ritual QA notes under `docs/archive/status/` and small
@@ -14,6 +14,33 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Prefer commands and item IDs where possible.
 
 ## Active Focus
+
+### Persistent Expanding Curses
+
+- Cast Curse of Blindness, Curse of Blight, and Hell on Earth from the exact
+  Witches' Primer recipes. Watch the boundary advance from the centre in smooth
+  five-tick rings without cardinal spokes, skipped strips, or forced chunk-load
+  stalls.
+- Repeat Blindness with and without the caster's Cat Familiar nearby. Confirm
+  affected players receive Blindness for two minutes normally and five minutes
+  with familiar mastery, while each protected target drains six Voodoo Poppet
+  charges before the working aborts and refunds its consumed offerings.
+- Run Blight through a populated farm and animal pen. Confirm Nausea II, exposed
+  crop/flower decay, farmland scarring to sand, occasional Villager-to-Zombie
+  Villager and Cow-to-Mooshroom conversions, and source-random animal damage.
+  The wave must not plant Blight Fibre or a Blight Heart.
+- Cast Hell on Earth at night with the three required Infernal/Otherwhere rings,
+  full coven, Villager sacrifice, and enough altar reserve for its 200-power
+  upkeep every 40 ticks. Confirm terrain bands expand to the effect radius while
+  Demons, Ghasts, Blazes, Magma Cubes, and Zombified Piglins use the rite centre
+  as their spawn point.
+- Repeat Hell on Earth with an optional Bound Waystone and Cat Familiar. Terrain,
+  creature spawns, and familiar-enhanced fires should use the relocated centre;
+  disabling `AllowHellOnEarthFires` must suppress only those fires.
+- During each curse, leave the caster offline or unload the next ring, restart
+  the server, and then return. Progress should pause and resume without duplicate
+  effects. Breaking a sustaining circle or exhausting Hell upkeep should stop
+  the rite and return exactly the refundable offerings.
 
 ### Witches' Brews Modonomicon
 

@@ -48,7 +48,7 @@ import java.util.function.Predicate;
 public class DebugInspectorItem extends Item {
     private static final int VARIANT_RITUAL = 1;
     private static final int VARIANT_INFERNAL = 3;
-    private static final int BLIGHT_RITE_POWER = 3000;
+    private static final int BLIGHT_HEART_RITE_POWER = 3000;
     private static final double INSPECTOR_DROPPED_OFFERING_RADIUS = 4.0D;
     private static final double BIND_SPECTRAL_STONE_RADIUS = 16.0D;
 
@@ -244,8 +244,25 @@ public class DebugInspectorItem extends Item {
             return "";
         }
 
-        List<String> missing = new ArrayList<>();
-        appendMissingOffering(missing, "Wither Rose", level, center, stack -> stack.is(Items.WITHER_ROSE));
+        List<String> curseMissing = new ArrayList<>();
+        appendBlightBaseMissing(curseMissing, level, center);
+        appendMissingOffering(curseMissing, "Glistering Melon Slice", level, center,
+                stack -> stack.is(Items.GLISTERING_MELON_SLICE));
+        List<String> heartMissing = new ArrayList<>();
+        appendBlightBaseMissing(heartMissing, level, center);
+        appendMissingOffering(heartMissing, "Poisonous Potato", level, center,
+                stack -> stack.is(Items.POISONOUS_POTATO));
+        if (!hasBlightHeartAltarPower(level, center)) {
+            heartMissing.add(BLIGHT_HEART_RITE_POWER + " altar power");
+        }
+        String curse = curseMissing.isEmpty() ? "curse_of_blight=ready"
+                : "curse_of_blight missing=" + String.join(", ", curseMissing);
+        String heart = heartMissing.isEmpty() ? "blight_heart=ready"
+                : "blight_heart missing=" + String.join(", ", heartMissing);
+        return curse + "; " + heart;
+    }
+
+    private static void appendBlightBaseMissing(List<String> missing, Level level, BlockPos center) {
         appendMissingOffering(missing, "Charged Attuned Stone", level, center,
                 stack -> stack.is(WitcheryItems.ATTUNED_STONE_CHARGED.get()));
         appendMissingOffering(missing, "Redstone Soup", level, center,
@@ -254,16 +271,10 @@ public class DebugInspectorItem extends Item {
                 stack -> stack.is(WitcheryItems.REEK_OF_MISFORTUNE.get()));
         appendMissingOffering(missing, "Fermented Spider Eye", level, center,
                 stack -> stack.is(Items.FERMENTED_SPIDER_EYE));
-        appendMissingOffering(missing, "Poisonous Potato", level, center,
-                stack -> stack.is(Items.POISONOUS_POTATO));
         appendMissingOffering(missing, "Rotten Flesh", level, center,
                 stack -> stack.is(Items.ROTTEN_FLESH));
         appendMissingOffering(missing, "Diamond", level, center,
                 stack -> stack.is(Items.DIAMOND));
-        if (!hasBlightAltarPower(level, center)) {
-            missing.add(BLIGHT_RITE_POWER + " altar power");
-        }
-        return missing.isEmpty() ? "blight=ready" : "blight missing=" + String.join(", ", missing);
     }
 
     private static String describeDroppedRiteReadiness(Level level, BlockPos center, int[] variants) {
@@ -369,9 +380,9 @@ public class DebugInspectorItem extends Item {
                 : new SpectralBindCandidate(name, Math.min(count, 3), nearestDistanceSqr);
     }
 
-    private static boolean hasBlightAltarPower(Level level, BlockPos center) {
+    private static boolean hasBlightHeartAltarPower(Level level, BlockPos center) {
         AltarBlockEntity altar = AltarPowerSourceLookup.findClosest(level, center);
-        return altar != null && altar.hasValidStructure() && altar.getPower() >= BLIGHT_RITE_POWER;
+        return altar != null && altar.hasValidStructure() && altar.getPower() >= BLIGHT_HEART_RITE_POWER;
     }
 
     private static void appendDetectedRing(List<String> parts, String size, int variant) {
