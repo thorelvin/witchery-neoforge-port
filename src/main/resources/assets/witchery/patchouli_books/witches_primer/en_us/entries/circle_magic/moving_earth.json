@@ -6,17 +6,17 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Moving Earth is not the witch's art of lifting one neat pillar. It is a greater sundering, a broad working that parts the land itself and sends the broken line wandering outward from the circle.$(br2)Where Broken Earth is a sharp trench cut, Moving Earth is a sustained rift."
+      "text": "The Moving Earth family raises a column of existing terrain one layer at a time. Its three source workings use small, medium, or large Ritual circles to choose the footprint; they do not carve the wandering rift worked by Broken Earth."
     },
     {
       "type": "patchouli:spotlight",
-      "item": "minecraft:dirt",
-      "text": "In the live port this rite is worked from a $(bold)large ritual circle$(/) through representative earth offerings: $(item)Dirt$(), $(item)Gravel$(), or $(item)Sand$(). Once accepted, it does not resolve at once. The working becomes a staged rite that walks a tearing path away from the circle over time."
+      "item": "witchery:brew_of_sprouting",
+      "text": "Offer $(item)Brew of Sprouting$() and $(item)Cactus$(). Add $(item)Gunpowder$() on a small circle, $(item)Redstone$() on a medium circle, or $(item)Glowstone Dust$() on a large circle. Each accepted working raises one terrain layer every five ticks."
     },
     {
       "type": "patchouli:text",
-      "title": "A Wider Parting",
-      "text": "Nearby Coven Witches strengthen the cast by widening the broken path. Use it when you mean to divide a field, break pursuit lines, or reshape the ground in a way that feels less like mining and more like commanding the earth to move aside. The port's trigger item is still a simplified stand-in, but the live terrain behavior now follows the old earth-parting spirit much more closely."
+      "title": "Three Scales",
+      "text": "The small working alone accepts an optional Bound Waystone to move its effect. All three preserve the terrain they lift rather than stamping a replacement material into the air. Break or re-click the sustaining circle to stop and refund the consumed offerings."
     }
   ]
 }

@@ -120,6 +120,8 @@ final class ActiveRitual {
     int stage;
     long nextGameTime;
     float upkeepDebt;
+    boolean awaitingSacrifices;
+    BlockPos powerSourcePos;
     boolean failedOnStop;
     boolean refundOnStop;
 
@@ -175,19 +177,21 @@ final class ActiveRitual {
             Codec.STRING.optionalFieldOf("owner", "").forGetter(r -> r.ownerName),
             BlockPos.CODEC.listOf().fieldOf("path").forGetter(r -> r.path),
             Codec.INT.fieldOf("stage").forGetter(r -> r.stage),
-            Codec.FLOAT.fieldOf("upkeep_debt").forGetter(r -> r.upkeepDebt)
+            Codec.FLOAT.fieldOf("upkeep_debt").forGetter(r -> r.upkeepDebt),
+            Codec.BOOL.optionalFieldOf("awaiting_sacrifices", false).forGetter(r -> r.awaitingSacrifices)
     ).apply(i, ActiveRitual::fromCodec));
 
     private static ActiveRitual fromCodec(ActiveRitualType type, BlockPos center, BlockPos effectCenter,
             RitualCircleDetector.CircleSize circleSize, RitualGeometry geom, float upkeepCost, boolean enhanced,
             ItemStack focus, long nextGameTime, ItemStack sacrificed, List<ItemStack> supplemental, String ownerName,
-            List<BlockPos> path, int stage, float upkeepDebt) {
+            List<BlockPos> path, int stage, float upkeepDebt, boolean awaitingSacrifices) {
         ActiveRitual r = new ActiveRitual(type, center, circleSize, effectCenter, geom.circleVariant(),
                 geom.minRadius(), geom.maxRadius(), geom.targetStage(), geom.pulseInterval(), geom.covenSize(),
                 upkeepCost, enhanced, geom.heading(), nextGameTime, sacrificed, List.copyOf(supplemental), ownerName,
                 focus);
         r.stage = stage;
         r.upkeepDebt = upkeepDebt;
+        r.awaitingSacrifices = awaitingSacrifices;
         r.path.addAll(path);
         return r;
     }

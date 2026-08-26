@@ -42,6 +42,25 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   effects. Breaking a sustaining circle or exhausting Hell upkeep should stop
   the rite and return exactly the refundable offerings.
 
+### Persistent Ritual Queue
+
+- Start a long staged rite at one circle while Fertility, Sanctity, or another
+  established rite runs at a second circle in the same dimension. The established
+  working must continue at its own source cadence while the new rite waits for
+  its offerings to pop.
+- Cast Broken Earth from its exact small-circle Brew of Erosion recipe. Place the
+  first matched offering in each of several compass directions and confirm the
+  rift follows that heading, waits for the first 20-tick boundary, begins at the
+  sixth path position, then advances every tick along a wandering 60-position
+  route. A larger nearby Coven should widen, not lengthen, the cut.
+- Compare Sanctity, Imprisonment, and each protection barrier. Push/pull and altar
+  upkeep should run every tick; visible barrier blocks should refresh every 20
+  ticks without flicker or a full-range altar scan hitch.
+- Interrupt Broken Earth, Rain of Toads, Climate Change, ore transposition, and a
+  protection rite by breaking the sustaining circle. Each should stop once,
+  clear auxiliary state, and return exactly the consumed offering ledger. Repeat
+  after a normal server restart and confirm stage/path/heading remain unchanged.
+
 ### Witches' Brews Modonomicon
 
 - Open `witchery:cauldron_book` and confirm it opens the dedicated **Witches' Brews** Modonomicon book at **Brewing > The Witch's Cauldron**, not the Primer.

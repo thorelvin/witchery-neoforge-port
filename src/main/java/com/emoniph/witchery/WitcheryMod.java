@@ -83,6 +83,7 @@ public class WitcheryMod {
         com.emoniph.witchery.item.BrewStorageGameTests.register(modEventBus);
         com.emoniph.witchery.ritual.RitualOfferingGameTests.register(modEventBus);
         com.emoniph.witchery.ritual.PersistentExpandingRiteGameTests.register(modEventBus);
+        com.emoniph.witchery.ritual.PersistentRitualQueueGameTests.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, WitcheryConfig.SPEC);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerPayloads);

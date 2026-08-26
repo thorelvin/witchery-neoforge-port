@@ -47,6 +47,8 @@ class RitualPersistenceTest {
         assertEquals(ActiveRitualType.FERTILITY, fertility.type);
         assertEquals(11, fertility.stage, "fertility resumes from its saved expansion ring");
         assertEquals(2, fertility.supplementalSacrifices.size(), "fertility retains its exact refund ledger");
+        assertTrue(fertility.awaitingSacrifices, "per-rite sacrifice arming survives a save/load");
+        assertEquals(null, fertility.powerSourcePos, "the altar cache is reacquired after restart");
         assertEquals(ActiveRitualType.FORESTATION, forestation.type);
         assertEquals(7, forestation.stage, "forestation resumes from its saved pulse");
         assertTrue(forestation.focus.is(Items.OAK_SAPLING), "the selected sapling survives restart");

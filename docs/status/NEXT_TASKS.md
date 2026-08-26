@@ -115,9 +115,28 @@ Seven implementation lanes - work one bounded slice at a time per lane:
 
 6. **AI NPCs / multiplayer safety** - keep the local persona layer grounded in server facts, add more high-value cards where fallbacks still carry too much weight, test ordinary play conversations, and verify protection/claim adapters in actual server packs before treating the feature as release-ready.
 
-7. **Runtime test maintenance / release gates** - complete as of 2026-08-26. CI validates the exact manifest, runs 18 named resource contracts, executes 31 exact GameTests on a clean dedicated server with custom dimensions, and proves all six automation-certified machine inventories, command storage, and active Forestation and Blight rites survive save/reload. Runtime worlds disable the vanilla empty-server pause so long tests continue without a connected player. Keep new registered tests synchronized with `tools/runtime_test_manifest.json`; preserve forced Hearth crash/recovery, real-client presentation, and claim-adapter checks in the documented manual lane.
+7. **Runtime test maintenance / release gates** - complete as of 2026-08-26. CI validates the exact manifest, runs 18 named resource contracts, executes 32 exact GameTests on a clean dedicated server with custom dimensions, and proves all six automation-certified machine inventories, command storage, and active Forestation, Blight, and Broken Earth rites survive save/reload. Runtime worlds disable the vanilla empty-server pause so long tests continue without a connected player. Keep new registered tests synchronized with `tools/runtime_test_manifest.json`; preserve forced Hearth crash/recovery, real-client presentation, and claim-adapter checks in the documented manual lane.
 
 Small machine/storage QA fixes run in parallel when clearly bounded. Pull from the QA queue below before broader backlog work unless a new blocker appears.
+
+## Next recommended work package
+
+**Village ecosystem and cross-biome structure certification.** This is the next large package because
+`Village additions` is the matrix's only remaining row still marked simply `Large`, and the
+cross-cutting villager goal below still contains several `Needs verify` contracts. Keep it bounded to:
+
+1. Add one dedicated-server villager-interaction fixture for creature Taglocks, Voodoo and Vampiric
+   Poppets, curse targeting, and the Villager sacrifices used by Demon, Wither, and Hell rites.
+2. Restore the exact level-10 transformed-player bite route into Were Villagers, including profession,
+   trade, name, equipment/state transfer where source does so, and lock the current no-hybrid policy.
+3. Certify fresh plains, desert, savanna, taiga, and snowy villages for one-per-type Witchery building
+   claims, shared biome material family, resident placement, walls, gates, and safe arrival. Fix only
+   reproducible parity or generation faults exposed by that matrix.
+4. Add restart coverage for any village-owned state touched by the package, update the Primer/HTML
+   guide only for player-facing changes, and leave backwards-save migration out of scope.
+
+Exit gate: focused JVM tests, the new dedicated-server fixture, five fresh biome captures/audits, the
+full runtime manifest, and a real stop/restart pass are green.
 
 ---
 

@@ -195,6 +195,8 @@ public class RitualExecutor {
                 List.of(new ItemStack(Items.BONE_MEAL), new ItemStack(Items.DIAMOND)), "Tester",
                 ItemStack.EMPTY);
         fertility.stage = 11;
+        fertility.awaitingSacrifices = true;
+        fertility.powerSourcePos = new BlockPos(6, 3, -2);
         data.activeRituals.add(fertility);
 
         ActiveRitual forestation = new ActiveRitual(ActiveRitualType.FORESTATION, new BlockPos(8, 0, 8),
@@ -226,11 +228,18 @@ public class RitualExecutor {
 
         RitualSavedData data = RitualSavedData.get(level);
         BlockPos blightCenter = center.west(24);
+        BlockPos movingEarthCenter = center.east(24);
         for (BlockPos mark : RitualCircleDetector.ringPositions(blightCenter, RitualCircleDetector.CircleSize.MEDIUM)) {
             level.setBlock(mark.below(), Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
             level.setBlock(mark, WitcheryBlocks.CIRCLE_INFERNAL.get().defaultBlockState(), Block.UPDATE_ALL);
         }
-        data.activeRituals.removeIf(ritual -> ritual.center.equals(center) || ritual.center.equals(blightCenter));
+        for (BlockPos mark : RitualCircleDetector.ringPositions(
+                movingEarthCenter, RitualCircleDetector.CircleSize.SMALL)) {
+            level.setBlock(mark.below(), Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(mark, WitcheryBlocks.CIRCLE_GLYPH.get().defaultBlockState(), Block.UPDATE_ALL);
+        }
+        data.activeRituals.removeIf(ritual -> ritual.center.equals(center)
+                || ritual.center.equals(blightCenter) || ritual.center.equals(movingEarthCenter));
         ActiveRitual probe = new ActiveRitual(ActiveRitualType.FORESTATION, center,
                 RitualCircleDetector.CircleSize.MEDIUM, center.east(4), VARIANT_RITUAL,
                 FORESTATION_BASE_RADIUS, FORESTATION_HEIGHT, FORESTATION_BASE_DURATION,
@@ -248,6 +257,15 @@ public class RitualExecutor {
                 "", ItemStack.EMPTY);
         blightProbe.stage = 9;
         data.activeRituals.add(blightProbe);
+        ActiveRitual movingEarthProbe = new ActiveRitual(ActiveRitualType.MOVING_EARTH,
+                movingEarthCenter, RitualCircleDetector.CircleSize.SMALL, movingEarthCenter, VARIANT_RITUAL,
+                1, 10, 60, 1, 3, 0.0F, false, 2,
+                level.getGameTime() + 1_000_000L, ItemStack.EMPTY,
+                List.of(new ItemStack(Items.POTION), new ItemStack(Items.DIAMOND)), "",
+                ItemStack.EMPTY);
+        buildMovingEarthPath(level, movingEarthProbe);
+        movingEarthProbe.stage = 12;
+        data.activeRituals.add(movingEarthProbe);
         data.setDirty();
         return verifyPersistenceProbe(level, center);
     }
@@ -255,6 +273,7 @@ public class RitualExecutor {
     public static boolean verifyPersistenceProbe(ServerLevel level, BlockPos center) {
         boolean forestationFound = false;
         boolean blightFound = false;
+        boolean movingEarthFound = false;
         for (ActiveRitual ritual : RitualSavedData.get(level).activeRituals) {
             if (ritual.center.equals(center) && ritual.type == ActiveRitualType.FORESTATION) {
                 forestationFound = ritual.stage == 7
@@ -274,9 +293,20 @@ public class RitualExecutor {
                         && ritual.supplementalSacrifices.get(1).is(Items.DIAMOND)
                         && RitualCircleDetector.hasRing(level, ritual.center,
                         RitualCircleDetector.CircleSize.MEDIUM);
+            } else if (ritual.center.equals(center.east(24))
+                    && ritual.type == ActiveRitualType.MOVING_EARTH) {
+                movingEarthFound = ritual.stage == 12
+                        && ritual.heading == 2
+                        && ritual.path.size() == 60
+                        && ritual.path.getFirst().equals(ritual.center.below())
+                        && ritual.supplementalSacrifices.size() == 2
+                        && ritual.supplementalSacrifices.getFirst().is(Items.POTION)
+                        && ritual.supplementalSacrifices.get(1).is(Items.DIAMOND)
+                        && RitualCircleDetector.hasRing(level, ritual.center,
+                        RitualCircleDetector.CircleSize.SMALL);
             }
         }
-        return forestationFound && blightFound;
+        return forestationFound && blightFound && movingEarthFound;
     }
 
     private static List<ActiveRitual> activeRituals(ServerLevel level) {
@@ -986,10 +1016,21 @@ public class RitualExecutor {
 
     private static boolean startBrokenEarthFromRecipe(Player player, Level level, BlockPos center,
                                                        List<RitualOffering> offerings) {
-        if (!(level instanceof ServerLevel sl)) return false;
+        if (!(level instanceof ServerLevel sl) || offerings.isEmpty()) return false;
+        int heading = headingFromSacrifice(center, offerings.getFirst().blockPosition());
+        List<ItemStack> refunds = activeRitualRefunds(offerings);
         RitualTransaction transaction = offerAll(new RitualTransaction(sl, center, 16, 0,
                 "witchery.ritual.broken_earth.no_power"), offerings);
-        return transaction.commitDeferred(player, () -> riteOfBrokenEarth(player, level, center));
+        if (!transaction.commit(player, () -> queueActiveRitual(sl, ActiveRitualType.MOVING_EARTH,
+                RitualCircleDetector.CircleSize.SMALL, center, center, 1, 10, 60, 1,
+                countNearbyCovenWitches(level, center), 0.0F, heading, refunds, false,
+                ritualOwnerName(player)))) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
+            return false;
+        }
+        SacrificeConsumer.runWhenDrained(sl, () -> success(player, level, center,
+                "witchery.ritual.broken_earth.success", SoundEvents.ROOTED_DIRT_BREAK, 0.6F, 3, 72));
+        return true;
     }
 
     private static boolean startEnchantBroomFromRecipe(Player player, Level level, BlockPos center,
@@ -1022,10 +1063,13 @@ public class RitualExecutor {
                 || !ensureActiveRitualCenterAvailable(player, sl, center)) {
             return false;
         }
+        int covenSize = countNearbyCovenWitches(level, center);
+        List<ItemStack> refunds = activeRitualRefunds(offerings);
         RitualTransaction transaction = offerAll(new RitualTransaction(sl, center, 16, 6000,
                 "witchery.ritual.beastial_call.no_power"), offerings);
         if (!transaction.commit(player, () -> queueActiveRitual(sl, ActiveRitualType.CALL_CREATURES,
-                RitualCircleDetector.CircleSize.LARGE, center, 0, 0, 250, 60))) {
+                RitualCircleDetector.CircleSize.LARGE, center, center, 0, 0, 250, 60,
+                covenSize, 0.0F, 0, refunds, false, ritualOwnerName(player)))) {
             return false;
         }
         SacrificeConsumer.runWhenDrained(sl, () -> success(player, level, center,
@@ -1037,18 +1081,14 @@ public class RitualExecutor {
                                                     List<RitualOffering> offerings) {
         if (!(level instanceof ServerLevel sl) || !requireCoven(player, level, center, 2)) return false;
         int covenSize = countNearbyCovenWitches(level, center);
+        List<ItemStack> refunds = activeRitualRefunds(offerings);
         RitualTransaction transaction = offerAll(new RitualTransaction(sl, center, 16, 0,
                 "witchery.ritual.ice_shell.no_power"), offerings);
         if (!transaction.commit(player, () -> queueActiveRitual(sl, ActiveRitualType.ICE_SHELL,
-                RitualCircleDetector.CircleSize.SMALL, center, 8, 8, 250, 5, covenSize))) {
+                RitualCircleDetector.CircleSize.SMALL, center, center, 8, 8, 250, 5,
+                covenSize, 0.0F, 0, refunds, false, ritualOwnerName(player)))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
-        }
-        for (ActiveRitual ritual : activeRituals(sl)) {
-            if (ritual.center.equals(center) && ritual.type == ActiveRitualType.ICE_SHELL) {
-                ritual.nextGameTime = sl.getGameTime() + 20L;
-                break;
-            }
         }
         SacrificeConsumer.runWhenDrained(sl, () -> success(player, level, center,
                 "witchery.ritual.ice_shell.success", SoundEvents.GLASS_PLACE, 0.9F, 3, 40));
@@ -1067,13 +1107,12 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
             return false;
         }
-        List<ItemStack> supplemental = relocation.boundWaystone() == null ? List.of()
-                : List.of(relocation.boundWaystone().stack().copyWithCount(1));
+        List<ItemStack> refunds = activeRitualRefunds(offerings);
         RitualTransaction transaction = offerAll(new RitualTransaction(sl, center, 16, 0,
                 "witchery.ritual.raise_column.no_power"), offerings);
         if (!transaction.commit(player, () -> queueActiveRitual(sl, ActiveRitualType.RAISE_COLUMN,
                 circleSize, center, relocation.effectCenter(), raiseColumnBaseRadius(circleSize), 8,
-                7, 5, covenSize, 0.0F, 0, supplemental, false, ritualOwnerName(player)))) {
+                7, 5, covenSize, 0.0F, 0, refunds, false, ritualOwnerName(player)))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -1087,11 +1126,12 @@ public class RitualExecutor {
         if (!(level instanceof ServerLevel sl)) return false;
         int covenSize = countNearbyCovenWitches(level, center);
         int pulses = 30 + covenSize * 5;
+        List<ItemStack> refunds = activeRitualRefunds(offerings);
         RitualTransaction transaction = offerAll(new RitualTransaction(sl, center, 16, 0,
                 "witchery.ritual.transpose_ores.no_power"), offerings);
         if (!transaction.commit(player, () -> queueActiveRitual(sl, ActiveRitualType.TRANSPOSE_ORES,
                 RitualCircleDetector.CircleSize.LARGE, center, center, 8, 0, pulses, 10,
-                covenSize, 0.0F, 0, List.of(), false, ritualOwnerName(player)))) {
+                covenSize, 0.0F, 0, refunds, false, ritualOwnerName(player)))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
@@ -1181,7 +1221,8 @@ public class RitualExecutor {
         }
         int covenSize = countNearbyCovenWitches(level, center);
         int radius = 16 * (covenSize - 3);
-        List<ItemStack> supplemental = copyConsumedItemStacks(scan.itemsToConsume());
+        List<ItemStack> supplemental = new ArrayList<>(activeRitualRefunds(offerings));
+        supplemental.addAll(copyConsumedItemStacks(scan.itemsToConsume()));
         RitualTransaction transaction = offerAll(new RitualTransaction(sl, center, 16, 0,
                 "witchery.ritual.climatechange.no_power"), offerings);
         for (ItemEntity auxiliary : scan.itemsToConsume()) transaction.offer(auxiliary);
@@ -1189,7 +1230,7 @@ public class RitualExecutor {
             storeClimateChangePlan(sl, center, scan.plan());
             boolean queued = queueActiveRitual(sl, ActiveRitualType.CLIMATE_CHANGE,
                     RitualCircleDetector.CircleSize.LARGE, center, radius, 0, 5, 20,
-                    covenSize, 0.0F, 0, supplemental);
+                    covenSize, 0.0F, 0, List.copyOf(supplemental));
             if (!queued) clearClimateChangePlan(sl, center);
             return queued;
         })) {
@@ -1836,9 +1877,6 @@ public class RitualExecutor {
             RitualDefinition.of("volcano", RitualCircleDetector.CircleSize.LARGE,
                     item -> item.is(Items.LAVA_BUCKET), VARIANT_INFERNAL,
                     (player, level, center, trigger) -> riteOfVolcano(player, level, center)),
-            RitualDefinition.of("broken_earth", RitualCircleDetector.CircleSize.LARGE,
-                    item -> item.is(Items.FLINT) || item.is(Items.FLINT_AND_STEEL), VARIANT_RITUAL,
-                    (player, level, center, trigger) -> { riteOfBrokenEarth(player, level, center); return true; }),
             RitualDefinition.of("raise_column_large", RitualCircleDetector.CircleSize.LARGE,
                     item -> item.is(Items.COBBLESTONE) || item.is(Items.STONE), VARIANT_RITUAL,
                     (player, level, center, trigger) -> riteOfRaiseColumn(player, level, center, RitualCircleDetector.CircleSize.LARGE)),
@@ -2447,23 +2485,25 @@ public class RitualExecutor {
     /** Rite of Beastial Call — restores the staged coven-gated creature-allure loop instead of a one-shot teleport. */
     private static boolean riteOfBeastialCall(Player player, Level level, BlockPos center) {
         if (!(level instanceof ServerLevel sl)) return false;
-        // Source RiteCallCreatures gates on a coven of 3. Its per-pulse `if (covenSize < 3)` check reads
-        // a value captured ONCE at cast (BlockCircle:217, persisted to NBT) — not a live re-count — so
-        // this upfront gate is functionally identical; no per-tick re-check is needed for parity.
+        // Source RiteCallCreatures captures the coven size at activation and rechecks that saved value.
         if (!requireCoven(player, level, center, 3)) return false;
         if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 6000)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.beastial_call.no_power"), false);
-            return false;
+        int covenSize = countNearbyCovenWitches(level, center);
+        List<ItemStack> refunds = activeRitualRefunds(List.of());
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 6000,
+                "witchery.ritual.beastial_call.no_power");
+        if (!transaction.hasSufficientPower()) {
+            return transaction.reportNoPower(player);
         }
-        if (!queueActiveRitual(sl, ActiveRitualType.CALL_CREATURES, RitualCircleDetector.CircleSize.LARGE,
-                center, 0, 0, 250, 60)) {
+        if (!transaction.commit(player, () -> queueActiveRitual(sl, ActiveRitualType.CALL_CREATURES,
+                RitualCircleDetector.CircleSize.LARGE, center, center, 0, 0, 250, 60,
+                covenSize, 0.0F, 0, refunds, false, ritualOwnerName(player)))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
-        success(player, level, center, "witchery.ritual.beastial_call.started",
-                SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 3, 72);
+        SacrificeConsumer.runWhenDrained(sl, () -> success(player, level, center,
+                "witchery.ritual.beastial_call.started",
+                SoundEvents.AMETHYST_CLUSTER_PLACE, 1f, 3, 72));
         return true;
     }
 
@@ -2687,16 +2727,19 @@ public class RitualExecutor {
                                                  List<RitualOffering> offerings) {
         if (!(level instanceof ServerLevel sl)) return false;
         if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
+        List<ItemStack> refunds = activeRitualRefunds(offerings);
         RitualTransaction transaction = offerAll(new RitualTransaction(sl, center, 16, 4000,
                 "witchery.ritual.infusion_recharge.no_power"), offerings);
-        if (!transaction.hasSufficientPower()) return transaction.reportNoPower(player);
-        if (!queueActiveRitual(sl, ActiveRitualType.INFUSION_RECHARGE, RitualCircleDetector.CircleSize.MEDIUM,
-                center, 4, 4, 0, 20, 0, 40.0f, 0)) {
+        if (!transaction.hasSufficientPower()) {
+            return transaction.reportNoPower(player);
+        }
+        if (!transaction.commit(player, () -> queueActiveRitual(sl, ActiveRitualType.INFUSION_RECHARGE,
+                RitualCircleDetector.CircleSize.MEDIUM, center, center, 4, 4, 0, 20,
+                0, 40.0f, 0, refunds, false, ritualOwnerName(player)))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
 
-        transaction.consumeAll();
         SacrificeConsumer.runWhenDrained(sl, () -> success(player, level, center,
                 "witchery.ritual.infusion_recharge.success", SoundEvents.BEACON_ACTIVATE, 1f, 2, 40));
         WitcheryMod.LOGGER.info("Infusion recharge rite activated at {} by {}", center, player.getName().getString());
@@ -2765,29 +2808,25 @@ public class RitualExecutor {
         }
         int targetStage = type == ActiveRitualType.PROTECTION_BARRIER_PORTABLE ? 60 : 0;
         if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
-        if (startupPower > 0 && !consumeNearbyRitualAltarPower(sl, center, 16, startupPower)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
-            return false;
+        List<RitualOffering> allOfferings = new ArrayList<>(offeringsToConsume);
+        if (relocation.boundWaystone() != null && !allOfferings.contains(relocation.boundWaystone())) {
+            allOfferings.add(relocation.boundWaystone());
         }
-        List<ItemStack> supplementalSacrifices = relocation.boundWaystone() != null
-                ? List.of(relocation.boundWaystone().stack().copyWithCount(1))
-                : List.of();
-        if (!queueActiveRitual(sl, type, circleSize, center, relocation.effectCenter(),
-                radius, height, targetStage, 20, 0, upkeepCost, 0,
-                supplementalSacrifices, player.getScoreboardName())) {
+        List<ItemStack> refunds = activeRitualRefunds(allOfferings);
+        RitualTransaction transaction = offerAll(new RitualTransaction(sl, center, 16, startupPower,
+                "witchery.ritual.protection.no_power"), allOfferings);
+        if (!transaction.hasSufficientPower()) {
+            return transaction.reportNoPower(player);
+        }
+        if (!transaction.commit(player, () -> queueActiveRitual(sl, type, circleSize,
+                center, relocation.effectCenter(), radius, height, targetStage, 1, 0,
+                upkeepCost, 0, refunds, false, player.getScoreboardName()))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
 
-        for (RitualOffering offering : offeringsToConsume) {
-            offering.consumeOne();
-        }
-        if (relocation.boundWaystone() != null) {
-            relocation.boundWaystone().consumeOne();
-        }
-        success(player, level, center, "witchery.ritual.protection.activated",
-                SoundEvents.BEACON_ACTIVATE, 0.9f, 3, 72);
+        SacrificeConsumer.runWhenDrained(sl, () -> success(player, level, center,
+                "witchery.ritual.protection.activated", SoundEvents.BEACON_ACTIVATE, 0.9f, 3, 72));
         WitcheryMod.LOGGER.info("Rite of Protection variant {} raised at {} by {}", type, center, player.getName().getString());
         return true;
     }
@@ -2998,20 +3037,21 @@ public class RitualExecutor {
                                                  net.minecraft.sounds.SoundEvent successSound, float successPitch,
                                                  List<RitualOffering> offeringsToConsume) {
         if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
-        if (!consumeNearbyRitualAltarPower(sl, center, 16, 500)) {
-            level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
-            player.displayClientMessage(Component.translatable("witchery.ritual.protection.no_power"), false);
-            return false;
+        List<ItemStack> refunds = activeRitualRefunds(offeringsToConsume);
+        RitualTransaction transaction = offerAll(new RitualTransaction(sl, center, 16, 500,
+                "witchery.ritual.protection.no_power"), offeringsToConsume);
+        if (!transaction.hasSufficientPower()) {
+            return transaction.reportNoPower(player);
         }
         // Source protection circles run every tick: outward for Sanctity, inward for Imprisonment.
-        if (!queueActiveRitual(sl, type, RitualCircleDetector.CircleSize.SMALL, center, 4, 0, 0, 1, 0, 0.8f, 0)) {
+        if (!transaction.commit(player, () -> queueActiveRitual(sl, type,
+                RitualCircleDetector.CircleSize.SMALL, center, center, 4, 0, 0, 1,
+                0, 0.8f, 0, refunds, false, ritualOwnerName(player)))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
-        for (RitualOffering offering : offeringsToConsume) {
-            offering.consumeOne();
-        }
-        success(player, level, center, successKey, successSound, successPitch, 2, 48);
+        SacrificeConsumer.runWhenDrained(sl, () ->
+                success(player, level, center, successKey, successSound, successPitch, 2, 48));
         return true;
     }
 
@@ -3031,39 +3071,6 @@ public class RitualExecutor {
         success(player, level, center, "witchery.ritual.moving_earth.success",
                 SoundEvents.ROOTED_DIRT_BREAK, 0.8f, 3, 72);
         return true;
-    }
-
-    /** Rite of Broken Earth — digs a 3-wide trench 20 blocks in the player's facing direction. */
-    private static void riteOfBrokenEarth(Player player, Level level, BlockPos center) {
-        if (!(level instanceof ServerLevel sl)) return;
-        var look = player.getLookAngle();
-        int dx, dz;
-        if (Math.abs(look.x) >= Math.abs(look.z)) {
-            dx = look.x > 0 ? 1 : -1;
-            dz = 0;
-        } else {
-            dx = 0;
-            dz = look.z > 0 ? 1 : -1;
-        }
-        int removed = 0;
-        for (int dist = 0; dist < 20; dist++) {
-            for (int side = -1; side <= 1; side++) {
-                int bx = center.getX() + dx * dist + (dx == 0 ? side : 0);
-                int bz = center.getZ() + dz * dist + (dz == 0 ? side : 0);
-                for (int dy = 0; dy > -5; dy--) {
-                    BlockPos bp = new BlockPos(bx, center.getY() + dy, bz);
-                    BlockState bs = sl.getBlockState(bp);
-                    if (!bs.isAir() && !bs.liquid() && bs.getDestroySpeed(sl, bp) >= 0
-                            && canRitualModify(player, sl, bp, WitcheryProtectionAction.BLOCK_BREAK)) {
-                        sl.setBlock(bp, Blocks.AIR.defaultBlockState(), 3);
-                        removed++;
-                    }
-                }
-            }
-        }
-        success(player, level, center, "witchery.ritual.broken_earth.success",
-                SoundEvents.ROOTED_DIRT_BREAK, 0.6f, 3, 72);
-        WitcheryMod.LOGGER.info("Rite of Broken Earth removed {} blocks", removed);
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -3249,7 +3256,7 @@ public class RitualExecutor {
 
     private static void consumeClimateChangeItems(ServerLevel level, List<ItemEntity> items) {
         for (ItemEntity itemEntity : items) {
-            consumeClimateChangeItem(level, itemEntity);
+            consumeOfferedItem(itemEntity);
         }
     }
 
@@ -3261,7 +3268,7 @@ public class RitualExecutor {
             }
             ItemStack stack = itemEntity.getItem();
             if (!stack.isEmpty()) {
-                copies.add(stack.copy());
+                copies.add(stack.copyWithCount(1));
             }
         }
         return List.copyOf(copies);
@@ -3281,17 +3288,6 @@ public class RitualExecutor {
             refunds.add(trigger.copyWithCount(1));
         }
         return List.copyOf(refunds);
-    }
-
-    private static void consumeClimateChangeItem(ServerLevel level, ItemEntity itemEntity) {
-        if (itemEntity == null || !itemEntity.isAlive()) {
-            return;
-        }
-        level.sendParticles(ParticleTypes.ENCHANT,
-                itemEntity.getX(), itemEntity.getY() + 0.25, itemEntity.getZ(),
-                16, 0.15, 0.25, 0.15, 0.0);
-        level.playSound(null, itemEntity.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 0.25f, 1.6f);
-        itemEntity.discard();
     }
 
     private static ClimateFocus climateFocusFromStack(ItemStack stack) {
@@ -3608,18 +3604,39 @@ public class RitualExecutor {
             return true;
         }
 
+        AltarBlockEntity altar = resolveActiveRitualAltar(level, ritual);
+        if (altar == null) {
+            return false;
+        }
+
         ritual.upkeepDebt += upkeepCost;
         int wholePower = Mth.floor(ritual.upkeepDebt);
         if (wholePower <= 0) {
-            return hasNearbyRitualAltar(level, ritual.center, radius);
+            return true;
         }
 
-        if (!consumeNearbyRawRitualAltarPower(level, ritual.center, radius, wholePower)) {
+        if (!altar.consumePower(wholePower)) {
             return false;
         }
 
         ritual.upkeepDebt -= wholePower;
         return true;
+    }
+
+    private static AltarBlockEntity resolveActiveRitualAltar(ServerLevel level, ActiveRitual ritual) {
+        if (ritual.powerSourcePos != null
+                && level.hasChunkAt(ritual.powerSourcePos)
+                && level.getBlockEntity(ritual.powerSourcePos) instanceof AltarBlockEntity cached
+                && cached.hasValidStructure()
+                && AltarPowerSourceLookup.distanceSqr(ritual.center, cached.getBlockPos())
+                <= (double) cached.getRange() * cached.getRange()) {
+            return cached;
+        }
+
+        AltarBlockEntity altar = findNearbyRitualAltar(level, ritual.center,
+                AltarPowerSourceLookup.MAX_ALTAR_RANGE);
+        ritual.powerSourcePos = altar == null ? null : altar.getBlockPos().immutable();
+        return altar;
     }
 
     static AltarBlockEntity findNearbyRitualAltar(Level level, BlockPos center, int radius) {
@@ -3639,9 +3656,6 @@ public class RitualExecutor {
     public static void tickActiveRituals(ServerLevel level) {
         List<ActiveRitual> rituals = activeRituals(level);
         if (rituals.isEmpty()) {
-            return;
-        }
-        if (SacrificeConsumer.hasPending(level)) {
             return;
         }
 
@@ -3693,6 +3707,13 @@ public class RitualExecutor {
     }
 
     private static boolean tickActiveRitual(ServerLevel level, ActiveRitual ritual) {
+        if (ritual.awaitingSacrifices) {
+            if (!SacrificeConsumer.hasPending(level)) {
+                armActiveRitual(level, ritual);
+            }
+            return true;
+        }
+
         if (!hasSustainingCircle(level, ritual)) {
             clearClimateChangePlan(level, ritual.center);
             ritual.failedOnStop = true;
@@ -3705,7 +3726,7 @@ public class RitualExecutor {
             return true;
         }
         if (!areActiveRitualPulseChunksLoaded(level, ritual)) {
-            ritual.nextGameTime = gameTime + 20;
+            ritual.nextGameTime = nextPulseBoundary(gameTime, 20);
             return true;
         }
 
@@ -3722,14 +3743,35 @@ public class RitualExecutor {
         } else if (isExpandingCurse(ritual.type)) {
             radius = Math.min(ritual.stage + 4, ritual.maxRadius + ritual.covenSize * 2);
             return areRingChunksLoaded(level, ritual.effectCenter, radius);
+        } else if (ritual.type == ActiveRitualType.WEATHER_CALL_STORM
+                || ritual.type == ActiveRitualType.RAIN_OF_TOADS) {
+            radius = ritual.maxRadius;
+        } else if (ritual.type == ActiveRitualType.ICE_SHELL) {
+            radius = ritual.covenSize <= 2
+                    ? ritual.minRadius
+                    : ritual.covenSize <= 5 ? Mth.floor(ritual.minRadius * 1.5F) : ritual.minRadius * 2;
+        } else if (ritual.type == ActiveRitualType.CLIMATE_CHANGE
+                || ritual.type == ActiveRitualType.TRANSPOSE_ORES
+                || ritual.type == ActiveRitualType.PROTECTION_BARRIER
+                || ritual.type == ActiveRitualType.PROTECTION_BARRIER_MONSTERS
+                || ritual.type == ActiveRitualType.PROTECTION_BARRIER_PORTABLE) {
+            radius = ritual.minRadius;
+        } else if (ritual.type == ActiveRitualType.NATURES_POWER
+                || ritual.type == ActiveRitualType.RAISE_COLUMN
+                || ritual.type == ActiveRitualType.VOLCANO) {
+            radius = ritual.minRadius + ritual.covenSize * 2;
         } else {
             return true;
         }
 
-        int minChunkX = (ritual.effectCenter.getX() - radius) >> 4;
-        int maxChunkX = (ritual.effectCenter.getX() + radius) >> 4;
-        int minChunkZ = (ritual.effectCenter.getZ() - radius) >> 4;
-        int maxChunkZ = (ritual.effectCenter.getZ() + radius) >> 4;
+        return areAreaChunksLoaded(level, ritual.effectCenter, radius);
+    }
+
+    private static boolean areAreaChunksLoaded(ServerLevel level, BlockPos center, int radius) {
+        int minChunkX = (center.getX() - radius) >> 4;
+        int maxChunkX = (center.getX() + radius) >> 4;
+        int minChunkZ = (center.getZ() - radius) >> 4;
+        int maxChunkZ = (center.getZ() + radius) >> 4;
         for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
             for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
                 if (!level.hasChunk(chunkX, chunkZ)) {
@@ -4092,6 +4134,11 @@ public class RitualExecutor {
     }
 
     private static boolean tickCallCreaturesRitual(ServerLevel level, ActiveRitual ritual) {
+        if (ritual.covenSize < 3) {
+            ritual.failedOnStop = true;
+            ritual.refundOnStop = true;
+            return false;
+        }
         ritual.stage++;
         allureCreatures(level, ritual.center, ritual.stage % 8);
         return ritual.stage < ritual.targetStage;
@@ -4161,21 +4208,23 @@ public class RitualExecutor {
     }
 
     private static boolean tickMovingEarthRitual(ServerLevel level, ActiveRitual ritual) {
-        ritual.stage++;
-        if (ritual.stage < 20) {
-            return true;
-        }
         if (ritual.path.isEmpty()) {
             buildMovingEarthPath(level, ritual);
         }
 
-        int carveStage = ritual.stage - 19;
+        int carveStage = ritual.stage + 1;
         int pathIndex = carveStage + 4;
         if (pathIndex >= ritual.path.size()) {
             return false;
         }
 
         BlockPos carvePos = ritual.path.get(pathIndex);
+        int maxWidth = ritual.minRadius + (ritual.covenSize > 2 ? 2 : 0) + 1;
+        if (!areAreaChunksLoaded(level, carvePos, maxWidth)) {
+            return true;
+        }
+
+        ritual.stage = carveStage;
         int width = ritual.minRadius + (ritual.covenSize > 2 ? 2 : 0) + (level.random.nextInt(3) == 0 ? 1 : 0);
         int depth = ritual.maxRadius - 2 + level.random.nextInt(5);
         carveMovingEarthCircle(level, ritual, carvePos, width, depth);
@@ -4278,12 +4327,14 @@ public class RitualExecutor {
             return false;
         }
 
-        ritual.stage++;
-        drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius, true, ritual.ownerName);
-        if (ritual.stage == 1 || ritual.stage % 4 == 0) {
+        if (PersistentRitualLifecycle.shouldApplyWorldEffect(ritual.type, level.getGameTime())) {
+            drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius,
+                    true, ritual.ownerName);
+        }
+        if (level.getGameTime() % 80L == 0L) {
             spawnRingParticles(level, ritual.effectCenter, ritual.minRadius, 16);
         }
-        return ritual.targetStage <= 0 || ritual.stage < ritual.targetStage;
+        return true;
     }
 
     private static boolean tickProtectionBarrierMonstersRitual(ServerLevel level, ActiveRitual ritual) {
@@ -4293,21 +4344,29 @@ public class RitualExecutor {
             return false;
         }
 
-        ritual.stage++;
-        drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius, false, ritual.ownerName);
-        if (ritual.stage == 1 || ritual.stage % 4 == 0) {
+        if (PersistentRitualLifecycle.shouldApplyWorldEffect(ritual.type, level.getGameTime())) {
+            drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius,
+                    false, ritual.ownerName);
+        }
+        if (level.getGameTime() % 80L == 0L) {
             spawnRingParticles(level, ritual.effectCenter, ritual.minRadius, 12);
         }
         return true;
     }
 
     private static boolean tickProtectionBarrierPortableRitual(ServerLevel level, ActiveRitual ritual) {
+        if (!PersistentRitualLifecycle.shouldApplyWorldEffect(ritual.type, level.getGameTime())) {
+            return true;
+        }
         ritual.stage++;
+        if (ritual.stage >= ritual.targetStage) {
+            return false;
+        }
         drawProtectionBarrier(level, ritual.effectCenter, ritual.minRadius, ritual.maxRadius, true, ritual.ownerName);
         if (ritual.stage == 1 || ritual.stage % 4 == 0) {
             spawnRingParticles(level, ritual.effectCenter, ritual.minRadius, 12);
         }
-        return ritual.stage < ritual.targetStage;
+        return true;
     }
 
     private static boolean tickInfusionRechargeRitual(ServerLevel level, ActiveRitual ritual) {
@@ -4354,10 +4413,9 @@ public class RitualExecutor {
     }
 
     private static void drawProtectionBarrier(ServerLevel level, BlockPos center, int radius, int height, boolean blocksPlayers, String ownerName) {
-        BlockPos circlePlaneCenter = center.above();
-        drawBarrierFilledCircle(level, circlePlaneCenter.below(), radius, blocksPlayers, ownerName);
-        drawBarrierCircleCylinder(level, circlePlaneCenter, radius, height, blocksPlayers, ownerName);
-        drawBarrierFilledCircle(level, circlePlaneCenter.above(height), radius, blocksPlayers, ownerName);
+        drawBarrierFilledCircle(level, center.below(), radius, blocksPlayers, ownerName);
+        drawBarrierCircleCylinder(level, center, radius, height, blocksPlayers, ownerName);
+        drawBarrierFilledCircle(level, center.above(height), radius, blocksPlayers, ownerName);
     }
 
     private static void drawBarrierCircleCylinder(ServerLevel level, BlockPos center, int radius, int height, boolean blocksPlayers, String ownerName) {
@@ -4497,6 +4555,7 @@ public class RitualExecutor {
                                                        boolean enhanced, ItemStack focus,
                                                        List<ItemStack> refundableSacrifices,
                                                        String ownerName, long nextGameTime) {
+        PersistentRitualLifecycle.requirePulseInterval(type, pulseInterval);
         List<ActiveRitual> rituals = activeRituals(level);
         if (hasActiveRitualAt(level, center)) {
             return false;
@@ -4506,9 +4565,11 @@ public class RitualExecutor {
                 .filter(stack -> stack != null && !stack.isEmpty())
                 .map(ItemStack::copy)
                 .toList();
-        rituals.add(new ActiveRitual(type, center, circleSize, effectCenter, circleVariant,
+        ActiveRitual ritual = new ActiveRitual(type, center, circleSize, effectCenter, circleVariant,
                 minRadius, maxRadius, targetStage, pulseInterval, covenSize, upkeepCost, enhanced, 0,
-                nextGameTime, ItemStack.EMPTY, refunds, ownerName, focus));
+                nextGameTime, ItemStack.EMPTY, refunds, ownerName, focus);
+        rituals.add(ritual);
+        awaitRitualSacrifices(level, ritual);
         markRitualsDirty(level);
         return true;
     }
@@ -4573,6 +4634,7 @@ public class RitualExecutor {
                                              BlockPos center, BlockPos effectCenter, int minRadius, int maxRadius, int targetStage,
                                              int pulseInterval, int covenSize, float upkeepCost, int heading,
                                              List<ItemStack> supplementalSacrifices, boolean enhanced, String ownerName) {
+        PersistentRitualLifecycle.requirePulseInterval(type, pulseInterval);
         List<ActiveRitual> rituals = activeRituals(level);
         if (hasActiveRitualAt(level, center)) {
             return false;
@@ -4580,13 +4642,34 @@ public class RitualExecutor {
 
         int circleVariant = RitualCircleDetector.detectVariant(level, center, circleSize);
         ItemStack sacrificedIngredient = PENDING_RITUAL_INGREDIENT.get();
-        rituals.add(new ActiveRitual(type, center, circleSize, effectCenter, circleVariant, minRadius, maxRadius, targetStage, pulseInterval,
+        boolean triggerInRefundLedger = !sacrificedIngredient.isEmpty()
+                && supplementalSacrifices.stream().anyMatch(stack ->
+                ItemStack.isSameItemSameComponents(stack, sacrificedIngredient));
+        ActiveRitual ritual = new ActiveRitual(type, center, circleSize, effectCenter, circleVariant,
+                minRadius, maxRadius, targetStage, pulseInterval,
                 covenSize, upkeepCost, enhanced, heading,
-                level.getGameTime() + pulseInterval,
-                sacrificedIngredient.isEmpty() ? ItemStack.EMPTY : sacrificedIngredient.copy(),
-                List.copyOf(supplementalSacrifices), ownerName));
+                PersistentRitualLifecycle.nextActivationTime(level.getGameTime(), type),
+                sacrificedIngredient.isEmpty() || triggerInRefundLedger
+                        ? ItemStack.EMPTY : sacrificedIngredient.copy(),
+                List.copyOf(supplementalSacrifices), ownerName);
+        rituals.add(ritual);
+        awaitRitualSacrifices(level, ritual);
         markRitualsDirty(level);
         return true;
+    }
+
+    private static void awaitRitualSacrifices(ServerLevel level, ActiveRitual ritual) {
+        ritual.awaitingSacrifices = true;
+        SacrificeConsumer.runWhenDrained(level, () -> armActiveRitual(level, ritual));
+    }
+
+    private static void armActiveRitual(ServerLevel level, ActiveRitual ritual) {
+        if (!activeRituals(level).contains(ritual)) {
+            return;
+        }
+        ritual.awaitingSacrifices = false;
+        ritual.nextGameTime = PersistentRitualLifecycle.nextActivationTime(level.getGameTime(), ritual.type);
+        markRitualsDirty(level);
     }
 
     private static boolean queueActiveRitual(ServerLevel level, ActiveRitualType type, RitualCircleDetector.CircleSize circleSize,
@@ -5178,6 +5261,7 @@ public class RitualExecutor {
                 continue;
             }
             toad.setPos(surface.getX() + 0.5, surface.getY() + 8 + level.random.nextInt(7), surface.getZ() + 0.5);
+            toad.setPoisonousLifetime(30);
             level.addFreshEntity(toad);
         }
     }
@@ -5205,6 +5289,9 @@ public class RitualExecutor {
         int lured = 0;
         for (Animal animal : level.getEntitiesOfClass(Animal.class, search, RitualExecutor::isSummoningCreature)) {
             if (animal.distanceToSqr(center.getX(), center.getY(), center.getZ()) <= 32.0) {
+                continue;
+            }
+            if (!EnderInhibitionMobEffect.canTeleport(animal, 0)) {
                 continue;
             }
             animal.teleportTo(center.getX() - 2.0 + level.random.nextInt(5),
@@ -5241,7 +5328,7 @@ public class RitualExecutor {
         return new BlockPos(center.getX() - maxRadius + ax, center.getY(), center.getZ() - maxRadius + az);
     }
 
-    private static void buildMovingEarthPath(ServerLevel level, ActiveRitual ritual) {
+    static void buildMovingEarthPath(ServerLevel level, ActiveRitual ritual) {
         ritual.path.clear();
         BlockPos cursor = ritual.center.below();
         ritual.path.add(cursor);
@@ -5344,6 +5431,19 @@ public class RitualExecutor {
             case 6 -> 0;
             default -> 1;
         };
+    }
+
+    static int headingFromSacrifice(BlockPos center, BlockPos sacrifice) {
+        double angle = Math.atan2(center.getZ() - sacrifice.getZ(), center.getX() - sacrifice.getX());
+        double eighthTurn = Math.PI / 8.0D;
+        if (angle > -eighthTurn && angle <= eighthTurn) return 6;
+        if (angle > eighthTurn && angle <= 3.0D * eighthTurn) return 7;
+        if (angle > 3.0D * eighthTurn && angle <= 5.0D * eighthTurn) return 0;
+        if (angle > 5.0D * eighthTurn && angle <= 7.0D * eighthTurn) return 1;
+        if (angle > 7.0D * eighthTurn || angle <= -7.0D * eighthTurn) return 2;
+        if (angle > -7.0D * eighthTurn && angle <= -5.0D * eighthTurn) return 3;
+        if (angle > -5.0D * eighthTurn && angle <= -3.0D * eighthTurn) return 4;
+        return 5;
     }
 
     private record MovingEarthStep(BlockPos pos, int heading) {}
@@ -6179,18 +6279,19 @@ public class RitualExecutor {
     private static boolean startRainOfToads(Player player, Level level, ServerLevel sl, BlockPos center,
                                            List<RitualOffering> offerings) {
         int covenSize = countNearbyCovenWitches(level, center);
-        if (!queueActiveRitual(sl, ActiveRitualType.RAIN_OF_TOADS, RitualCircleDetector.CircleSize.MEDIUM, center, 5, 16, 200, 30, covenSize)) {
-            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
-            return false;
-        }
+        List<ItemStack> refunds = activeRitualRefunds(offerings);
         RitualTransaction transaction = offerAll(
                 new RitualTransaction(sl, center, 16, 0, "witchery.ritual.rain_of_toads.no_power"),
                 offerings);
-        if (!transaction.commitDeferred(player, () ->
-                success(player, level, center, "witchery.ritual.rain_of_toads.success",
-                        SoundEvents.LIGHTNING_BOLT_THUNDER, 0.8f, 4, 40))) {
+        if (!transaction.commit(player, () -> queueActiveRitual(sl, ActiveRitualType.RAIN_OF_TOADS,
+                RitualCircleDetector.CircleSize.MEDIUM, center, center, 5, 16, 200, 30,
+                covenSize, 0.0F, 0, refunds, false, ritualOwnerName(player)))) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
+        SacrificeConsumer.runWhenDrained(sl, () -> success(player, level, center,
+                "witchery.ritual.rain_of_toads.success",
+                SoundEvents.LIGHTNING_BOLT_THUNDER, 0.8f, 4, 40));
         return true;
     }
 
@@ -6275,18 +6376,8 @@ public class RitualExecutor {
             return false;
         }
 
-        List<ActiveRitual> rituals = activeRituals(sl);
-        if (rituals != null) {
-            for (ActiveRitual ritual : rituals) {
-                if (ritual.center.equals(center) && ritual.type == ActiveRitualType.ICE_SHELL) {
-                    ritual.nextGameTime = sl.getGameTime() + 20L;
-                    break;
-                }
-            }
-        }
-
-        success(player, level, center, "witchery.ritual.ice_shell.success",
-                SoundEvents.GLASS_PLACE, 0.9f, 3, 40);
+        SacrificeConsumer.runWhenDrained(sl, () -> success(player, level, center,
+                "witchery.ritual.ice_shell.success", SoundEvents.GLASS_PLACE, 0.9f, 3, 40));
         return true;
     }
 
@@ -6312,25 +6403,23 @@ public class RitualExecutor {
             player.displayClientMessage(Component.translatable("witchery.rite.toofaraway"), false);
             return false;
         }
-        List<ItemStack> supplementalSacrifices = relocation.boundWaystone() != null
-                ? List.of(relocation.boundWaystone().stack().copyWithCount(1))
-                : List.of();
-
-        if (!queueActiveRitual(sl, ActiveRitualType.RAISE_COLUMN, circleSize, center,
-                relocation.effectCenter(), baseRadius, height, height - 1, 5, covenSize, 0.0f, 0,
-                supplementalSacrifices, false, ritualOwnerName(player))) {
+        List<RitualOffering> ritualOfferings = new ArrayList<>(droppedOfferings(
+                offerings.get().brewOfSprouting(), offerings.get().cactus(), offerings.get().focus()));
+        if (relocation.boundWaystone() != null) {
+            ritualOfferings.add(relocation.boundWaystone());
+        }
+        List<ItemStack> refunds = activeRitualRefunds(ritualOfferings);
+        RitualTransaction transaction = offerAll(new RitualTransaction(sl, center, 16, 0,
+                "witchery.ritual.raise_column.no_power"), ritualOfferings);
+        if (!transaction.commit(player, () -> queueActiveRitual(sl, ActiveRitualType.RAISE_COLUMN,
+                circleSize, center, relocation.effectCenter(), baseRadius, height, height - 1, 5,
+                covenSize, 0.0f, 0, refunds, false, ritualOwnerName(player)))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
 
-        consumeOfferedItem(offerings.get().brewOfSprouting());
-        consumeOfferedItem(offerings.get().cactus());
-        consumeOfferedItem(offerings.get().focus());
-        if (relocation.boundWaystone() != null) {
-            relocation.boundWaystone().consumeOne();
-        }
-        success(player, level, center, "witchery.ritual.raise_column.success",
-                SoundEvents.STONE_BREAK, 0.8f, 3, 32);
+        SacrificeConsumer.runWhenDrained(sl, () -> success(player, level, center,
+                "witchery.ritual.raise_column.success", SoundEvents.STONE_BREAK, 0.8f, 3, 32));
         return true;
     }
 
@@ -6390,23 +6479,23 @@ public class RitualExecutor {
             return false;
         }
 
-        List<ItemStack> supplementalSacrifices = relocation.boundWaystone() != null
-                ? List.of(relocation.boundWaystone().stack().copyWithCount(1))
-                : List.of();
+        List<RitualOffering> allOfferings = new ArrayList<>(offerings);
+        if (relocation.boundWaystone() != null && !allOfferings.contains(relocation.boundWaystone())) {
+            allOfferings.add(relocation.boundWaystone());
+        }
+        List<ItemStack> refunds = activeRitualRefunds(allOfferings);
         RitualTransaction transaction = offerAll(
                 new RitualTransaction(sl, center, 16, altarPowerCost, "witchery.ritual.volcano.no_power"),
-                offerings);
-        if (!exactRecipeOfferings) transaction.offer(relocation.boundWaystone());
+                allOfferings);
         if (!transaction.hasSufficientPower()) {
             return transaction.reportNoPower(player);
         }
-        if (!queueActiveRitual(sl, ActiveRitualType.VOLCANO, circleSize, center,
-                effectCenter, 8, 8, 0, 15, covenSize, 0.0f, 0, supplementalSacrifices,
-                false, ritualOwnerName(player))) {
+        if (!transaction.commit(player, () -> queueActiveRitual(sl, ActiveRitualType.VOLCANO,
+                circleSize, center, effectCenter, 8, 8, 0, 15, covenSize, 0.0f, 0,
+                refunds, false, ritualOwnerName(player)))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
-        transaction.consumeAll();
 
         SacrificeConsumer.runWhenDrained(sl, () ->
                 success(player, level, center, "witchery.ritual.volcano.success",
@@ -6425,19 +6514,23 @@ public class RitualExecutor {
         }
         int covenSize = countNearbyCovenWitches(level, center);
         int pulses = 30 + covenSize * 5;
-        if (!queueActiveRitual(sl, ActiveRitualType.TRANSPOSE_ORES, RitualCircleDetector.CircleSize.LARGE,
-                center, center, 8, 0, pulses, 10, covenSize, 0.0f, 0, List.of(),
-                false, ritualOwnerName(player))) {
+        List<RitualOffering> ritualOfferings = droppedOfferings(
+                offerings.get().enderPearl(), offerings.get().ironIngot(),
+                offerings.get().blazePowder(), offerings.get().diamondVapour(),
+                offerings.get().chargedStone());
+        List<ItemStack> refunds = activeRitualRefunds(ritualOfferings);
+        RitualTransaction transaction = offerAll(new RitualTransaction(sl, center, 16, 0,
+                "witchery.ritual.transpose_ores.no_power"), ritualOfferings);
+        if (!transaction.commit(player, () -> queueActiveRitual(sl, ActiveRitualType.TRANSPOSE_ORES,
+                RitualCircleDetector.CircleSize.LARGE, center, center, 8, 0, pulses, 10,
+                covenSize, 0.0f, 0, refunds, false, ritualOwnerName(player)))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
 
-        consumeOfferedItem(offerings.get().enderPearl());
-        consumeOfferedItem(offerings.get().ironIngot());
-        consumeOfferedItem(offerings.get().blazePowder());
-        consumeOfferedItem(offerings.get().chargedStone());
-        success(player, level, center, "witchery.ritual.transpose_ores.success",
-                SoundEvents.END_PORTAL_FRAME_FILL, 0.9f, 4, 40);
+        SacrificeConsumer.runWhenDrained(sl, () -> success(player, level, center,
+                "witchery.ritual.transpose_ores.success",
+                SoundEvents.END_PORTAL_FRAME_FILL, 0.9f, 4, 40));
         return true;
     }
 
@@ -6469,21 +6562,19 @@ public class RitualExecutor {
     private static boolean startNaturesPower(Player player, Level level, ServerLevel sl, BlockPos center,
                                              List<RitualOffering> offerings) {
         int covenSize = countNearbyCovenWitches(level, center);
-        if (!queueActiveRitual(sl, ActiveRitualType.NATURES_POWER, RitualCircleDetector.CircleSize.MEDIUM,
-                center, center, 14, 8, 150, 20, covenSize, 0.0f, 0, List.of(),
-                false, ritualOwnerName(player))) {
+        List<ItemStack> refunds = activeRitualRefunds(offerings);
+        RitualTransaction transaction = offerAll(
+                new RitualTransaction(sl, center, 16, 0, "witchery.ritual.natures_power.no_power"),
+                offerings);
+        if (!transaction.commit(player, () -> queueActiveRitual(sl, ActiveRitualType.NATURES_POWER,
+                RitualCircleDetector.CircleSize.MEDIUM, center, center, 14, 8, 150, 20,
+                covenSize, 0.0f, 0, refunds, false, ritualOwnerName(player)))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
 
-        RitualTransaction transaction = offerAll(
-                new RitualTransaction(sl, center, 16, 0, "witchery.ritual.natures_power.no_power"),
-                offerings);
-        if (!transaction.commitDeferred(player, () ->
-                success(player, level, center, "witchery.ritual.natures_power.success",
-                        SoundEvents.BONE_MEAL_USE, 1.1f, 4, 40))) {
-            return false;
-        }
+        SacrificeConsumer.runWhenDrained(sl, () -> success(player, level, center,
+                "witchery.ritual.natures_power.success", SoundEvents.BONE_MEAL_USE, 1.1f, 4, 40));
         return true;
     }
 
@@ -9050,7 +9141,11 @@ public class RitualExecutor {
             if (!ritual.center.equals(center)) {
                 return false;
             }
-            refundRitualIngredient(level, ritual);
+            if (ritual.awaitingSacrifices && SacrificeConsumer.hasPending(level)) {
+                SacrificeConsumer.runWhenDrained(level, () -> refundRitualIngredient(level, ritual));
+            } else {
+                refundRitualIngredient(level, ritual);
+            }
             clearClimateChangePlan(level, ritual.center);
             cancelled[0] = true;
             return true;

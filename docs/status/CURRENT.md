@@ -14,15 +14,21 @@ enough to read before starting work. Long historical deltas belong in
 - Overall shape: playable active parity remake, with many systems implemented and
   the remaining work concentrated in QA, source-feel polish, edge cases, and
   release hardening.
-- Current estimates from the README: Mechanical remake parity roughly `95-96%`;
-  release-ready parity/polish roughly `82-86%`.
-- Deterministic verification manifest: 18 exact JVM resource contracts, 31 CI
+- README completion percentages were retired on 2026-08-26. The feature matrix
+  has unevenly scoped rows, and a `Done` implementation can still require
+  live-client, multiplayer, balance, or packaging work; use the matrix and QA
+  queue directly instead of treating an editorial percentage as a measurement.
+- Deterministic verification manifest: 18 exact JVM resource contracts, 32 CI
   GameTests, and one manual forced-restart fixture.
+- The standalone Book of Shadows is published at
+  `https://thorelvin.github.io/witchery-book-of-shadows/`; this repository's
+  root `Book_of_Shadows.html` remains canonical.
 
 ## Current Focus
 
 - Keep the in-game Primer, `Book_of_Shadows.html`, and README aligned only for
-  real player-facing behavior changes.
+  real player-facing behavior changes. After changing the canonical HTML, sync
+  the public mirror using `docs/reference/BOOK_OF_SHADOWS_PUBLISHING.md`.
 - Drive test work from [QA_QUEUE.md](QA_QUEUE.md), not scattered one-off notes.
 - Keep [FEATURE_MATRIX.md](FEATURE_MATRIX.md) as feature state, not a rolling
   session log.
@@ -58,6 +64,21 @@ enough to read before starting work. Long historical deltas belong in
 
 ## Recent High-Signal Changes
 
+- Persistent ritual lifecycle parity is closed for the original registry's
+  continuing workings. All 33 source registrations map to 21 explicit active
+  owners with source first-boundary, pulse, and world-effect cadence. Staged
+  offerings gate only their own new rite, so an unrelated offering sequence no
+  longer freezes established workings. Protection upkeep remains every tick
+  while barrier redraw stays on its 20-tick boundary; sustaining altar lookup is
+  cached and revalidated instead of rescanning the full range every tick.
+  Broken Earth now follows `RitePartEarth`: the first offered focus chooses one
+  of eight headings, a 60-position wandering path is built below the circle,
+  the first post-boundary update carves path index 5, and subsequent updates run
+  every tick with source depth and Coven-scaled width. The real stop/restart
+  probe now preserves that path, stage, heading, and exact refund ledger beside
+  Forestation and Blight. Focused JVM tests and
+  `witchery:persistent_ritual_queue` cover the registration/timing contract,
+  per-rite gating, and first carve on a dedicated server.
 - Brew Bag and Leonard's Urn interaction parity is restored. Brew Bag sneak-use
   opens the exact eight-slot source layout; normal held use drives an eight-way,
   bag-coloured radial selected from server-observed camera movement and consumes
@@ -135,12 +156,13 @@ enough to read before starting work. Long historical deltas belong in
   ingredient to appear once in the generated reference. Unsupported old
   transmutations are named honestly instead of being shown as working recipes.
 - The deterministic runtime harness and CI gates are complete. An explicit
-  manifest locks 18 resource-contract classes, 31 exact CI GameTests, and one
+  manifest locks 18 resource-contract classes, 32 exact CI GameTests, and one
   manual forced-restart fixture. Clean normal-difficulty dedicated servers now
   run every named test with all Witchery dimensions loaded, require unambiguous
   per-test success, preserve logs/JSON summaries, and verify Kettle, Witches'
   Oven, Distillery, Spinning Wheel, Brazier, Silver Vat, and command-storage
-  state plus active Forestation and Blight workings across a real stop/reload.
+  state plus active Forestation, Blight, and Broken Earth workings across a real
+  stop/reload.
   CI uploads build
   or runtime diagnostics on failure. Building the gate also exposed and fixed
   the Otherwhere Hearth traveller-state race on Spirit entry and the Lord of

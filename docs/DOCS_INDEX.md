@@ -43,7 +43,12 @@ write new notes.
 ## Player-Facing Docs
 
 - [../README.md](../README.md) - setup, build, high-level state, and navigation.
-- [../Book_of_Shadows.html](../Book_of_Shadows.html) - broad player-facing guide.
+- [Book of Shadows](https://thorelvin.github.io/witchery-book-of-shadows/) -
+  rendered public player guide.
+- [../Book_of_Shadows.html](../Book_of_Shadows.html) - canonical source for the
+  public Book of Shadows mirror.
+- [reference/BOOK_OF_SHADOWS_PUBLISHING.md](reference/BOOK_OF_SHADOWS_PUBLISHING.md) -
+  mirror ownership, synchronization, and publication checks.
 - In-game Modonomicon data is generated under
   `src/generated/resources/data/witchery/modonomicon/books`; its providers live
   under `src/main/java/com/emoniph/witchery/book`. The Primer and standalone
@@ -53,7 +58,8 @@ write new notes.
   `RitualCompendiumParityTest` green against the extracted source fixture.
 
 Update player-facing docs only when behavior, recipes, commands, or discovery
-for players changed. Do not copy every dev-note into them.
+for players changed. Publish canonical Book of Shadows changes through the
+documented mirror process. Do not copy every dev-note into them.
 
 ## Testing Docs
 

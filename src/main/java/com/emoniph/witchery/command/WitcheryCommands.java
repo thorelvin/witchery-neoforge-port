@@ -1273,7 +1273,7 @@ public class WitcheryCommands {
             src.sendFailure(Component.literal("Ritual persistence probe is missing or changed."));
             return 0;
         }
-        src.sendSuccess(() -> Component.literal("Ritual persistence probe survived with stage, focus, destination, and refunds intact."),
+        src.sendSuccess(() -> Component.literal("Ritual persistence probe survived with stages, path, focus, destination, and refunds intact."),
                 false);
         return 1;
     }

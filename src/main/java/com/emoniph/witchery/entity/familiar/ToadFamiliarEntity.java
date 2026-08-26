@@ -1,15 +1,21 @@
 package com.emoniph.witchery.entity.familiar;
 
 import com.emoniph.witchery.init.WitcherySoundEvents;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeItem;
@@ -74,7 +80,7 @@ public class ToadFamiliarEntity extends FamiliarEntity {
     public void tick() {
         super.tick();
         if (!level().isClientSide() && poisonousLifetime > 0 && --poisonousLifetime <= 0) {
-            discard();
+            expirePoisonousToad();
             return;
         }
         if (!level().isClientSide() && tickCount % COLLECT_INTERVAL == 0 && isTame()) {
@@ -86,6 +92,21 @@ public class ToadFamiliarEntity extends FamiliarEntity {
 
     public void setPoisonousLifetime(int ticks) {
         poisonousLifetime = Math.max(0, ticks);
+    }
+
+    private void expirePoisonousToad() {
+        if (level() instanceof ServerLevel serverLevel) {
+            AABB area = getBoundingBox().inflate(3.0D, 2.0D, 3.0D);
+            for (LivingEntity target : serverLevel.getEntitiesOfClass(LivingEntity.class, area,
+                    target -> target != this && target.distanceToSqr(this) < 9.0D)) {
+                target.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0), this);
+            }
+            serverLevel.sendParticles(ParticleTypes.POOF, getX(), getY() + 0.25D, getZ(),
+                    12, 0.35D, 0.2D, 0.35D, 0.02D);
+            serverLevel.playSound(null, blockPosition(), WitcherySoundEvents.MOB_TOAD_HURT.get(),
+                    SoundSource.NEUTRAL, 0.55F, 1.25F);
+        }
+        discard();
     }
 
     @Override

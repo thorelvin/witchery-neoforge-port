@@ -181,10 +181,10 @@ Last reconciled: 2026-06-18. Latest village structure/wall bugs are closed; see 
 
 The 2026-05-31 village fixes now cover thirteen observed stall/false-success paths: ticked safe village locate instead of synchronous vanilla locate, pre-teleport one-chunk-per-tick arrival prep, no forced wall tickets before village goto teleport, walls/gates generated before crossing to unprocessed goto villages, nearest-first one-chunk forced-ticket batches for manual wall jobs, a 144-chunk cap for very large explicit forced footprints, no forced wall tickets for automatic world-entry discovery, loaded-only automatic village reference lookup/refresh, bounded multi-village queue rotation/checking, stuck forced-chunk release/skip after 10 seconds without readiness progress, stale processed-village duplicate skips, the 19:07 one-chunk void arrival freeze, and the 19:38-19:44 `0 gate candidate(s)` false processed state. Retest on fresh plains/savanna/desert/taiga/snowy villages after restarting the client, with special attention to automatic spawn villages logging natural chunk waits instead of forced tickets or hidden start-chunk loads, village gotos logging `Queueing safe village search`, `Safe village locate found`, `Queued village arrival prep`, `Preparing village arrival`, wall generation before teleport for fresh villages, and the teleport chat only after prep completes. Explicit `/witchery walls` jobs should still log one-chunk requested-batch waits instead of a large "requested all" spike; manual `/witchery walls` should fail cleanly when no generated village start is nearby; biome-specific village gotos should fail cleanly if the safe radius has no match; and villages should show no duplicate wall layers, no completed generation after `0 gate candidate(s)`, nonzero gate candidates on ordinary road villages, road/safe-surface goto landings instead of underground arrivals, and inward gate path grading that reaches up to 15 terrain-only blocks but stops before building blocks.
 
-### 2. Ritual queue parity is still partial
+### 2. Persistent ritual queue parity - CLOSED 2026-08-26
 
 **Closed 2026-06-03:**
-- ~~Session-only active state~~ — `ACTIVE_RITUALS` and `CLIMATE_CHANGE_PLANS` static maps replaced by per-level `RitualExecutor.RitualSavedData` (a `SavedData` with a Codec for `ActiveRitual` + climate plans). Staged rites and their consumed sacrifices now survive a server restart/crash. Round-trip verified by `RitualPersistenceTest` (headless unit test).
+- ~~Session-only active state~~ — `ACTIVE_RITUALS` and `CLIMATE_CHANGE_PLANS` static maps replaced by per-level `RitualExecutor.RitualSavedData` (a `SavedData` with a Codec for `ActiveRitual` + climate plans). Active stage, ownership, and refund-ledger state now survive restart. A graceful stop flushes the short cosmetic sacrifice-pop queue; abrupt process death during that animation is intentionally not claimed as durable. Round-trip verified by `RitualPersistenceTest` (headless unit test).
 - ~~`RitualTransaction` lacks a true rollback path~~ — added `commit(player, BooleanSupplier effect)`: validate (peek altar power, never half-consume) → apply effect → consume power + offerings **only on success**. `commit(player)` now also peeks before consuming. Migrated `riteOfBindFamiliar` (which previously spent 8000 power + 5 sacrifices then could return false on a finalize failure) to the rollback-safe form.
 
 **Audited 2026-06-03 (multi-sacrifice matching):** A rite-by-rite audit against the source
@@ -196,19 +196,22 @@ Feather **+ Redstone** + power; Barrier = Obsidian + Redstone; Storm/CookItem/Ra
 SeerStone/SpectralStone all gate on their full offering sets — 369 offering-finder call sites). The
 literal "one representative ingredient" concern does **not** hold; the offerings are matched in full.
 
-Remaining gap (architectural only):
-
-- **No declarative recipe registry.** Dispatch + validation are hand-coded per rite rather than
-  driven by a single data table. First step landed: `RitualRecipe` captures a rite's complete
-  sacrifice set as data with the canonical distinct-stack `matches()` rule, and
-  `RitualRecipeMatchTest` regression-locks a few transcribed recipes (incomplete offerings are
-  rejected; duplicate requirements need distinct stacks). Fully consuming this from dispatch is the
-  larger `RitualExecutor` → `RitualDefinition` decomposition (deferred — see NEXT_TASKS 4d).
+**Closed 2026-08-26:** The later source-registry closeout replaced this old architectural gap. All
+96 registrations are fixture-locked, 93 use full declarative recipe definitions, and the three
+native Circle Talisman/Glyphic Transformation adaptations are explicit. The 33 registrations that
+continue after activation map to 21 lifecycle owners with exact first-boundary, pulse, and
+world-effect timing. Staged offerings no longer globally freeze established rites; startup commits
+are rollback-safe; abort ledgers, stage/path state, and ownership survive restart; effect chunks pause
+without forced loading; and sustaining altar lookup is cached and revalidated. Broken Earth now uses
+the source 60-position `RitePartEarth` path and first-offering heading instead of the old one-shot
+trench. Focused JVM tests, `witchery:persistent_ritual_queue`, and the real stop/restart harness pass.
 
 Files:
 - `src/main/java/com/emoniph/witchery/ritual/RitualExecutor.java`
-- `src/main/java/com/emoniph/witchery/ritual/RitualRecipe.java`
-- `src/test/java/com/emoniph/witchery/ritual/RitualRecipeMatchTest.java`
+- `src/main/java/com/emoniph/witchery/ritual/PersistentRitualLifecycle.java`
+- `src/main/java/com/emoniph/witchery/ritual/RitualSavedData.java`
+- `src/test/java/com/emoniph/witchery/ritual/PersistentRitualLifecycleTest.java`
+- `src/main/java/com/emoniph/witchery/ritual/PersistentRitualQueueGameTests.java`
 - `src/main/java/com/emoniph/witchery/events/RitualEvents.java`
 
 See `docs/archive/status/NEXT_FIXES_PLAN.md` for the archived ordered parity roadmap.

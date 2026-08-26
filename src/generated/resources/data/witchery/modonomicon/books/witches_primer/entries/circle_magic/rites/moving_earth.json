@@ -27,6 +27,28 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
+      "text": "[#](53341a)These are the three source column-raising workings despite the family name. Small, medium, and large Ritual circles choose the footprint and use Gunpowder, Redstone, or Glowstone Dust respectively. One terrain layer rises every five ticks.[#]()",
+      "title": "How It Unfolds",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Only the small working accepts an optional Bound Waystone destination.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
       "text": "[#](53341a)Raise a column of earth.[#]() [#](53341a)**Required offerings:** **Brew of Sprouting**, **Cactus**, **Gunpowder**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
       "title": "Small column",
       "use_markdown_in_title": false

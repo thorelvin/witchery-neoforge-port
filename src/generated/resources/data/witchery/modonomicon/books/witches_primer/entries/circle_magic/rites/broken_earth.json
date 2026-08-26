@@ -16,6 +16,28 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
+      "text": "[#](53341a)The first offered focus fixes one of eight headings. After the next 20-tick boundary, the rite begins at the sixth point of a 60-position wandering path below the circle, then parts one point every tick.[#]()",
+      "title": "How It Unfolds",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)It cuts 8 to 12 blocks deep; more than two nearby Coven witches widen the rift. Breaking the sustaining circle stops the working and returns its consumed offering.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
       "text": "[#](53341a)Part the earth, the position of the foci controls the direction.[#]() [#](53341a)**Required offerings:** **Brew of Erosion**.[#]()",
       "title": "Rite of Broken Earth",
       "use_markdown_in_title": false

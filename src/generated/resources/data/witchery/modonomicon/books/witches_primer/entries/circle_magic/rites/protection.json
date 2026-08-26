@@ -27,6 +27,28 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
+      "text": "[#](53341a)Protection upkeep is continuous: the altar is charged every tick. The barrier itself redraws on the source 20-tick boundary, so its blocks remain renewed without rebuilding the whole wall every tick.[#]()",
+      "title": "How It Unfolds",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Re-click the active circle to end the working and recover its refundable offerings.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
       "text": "[#](53341a)Conjure a dome, impenetrable to monsters. Lasts indefinitely, but requires 24 power/s.[#]() [#](53341a)**Required offerings:** **Obsidian**, **Redstone**.[#]() [#](53341a)**Optional focus:** **Bound Waystone**. Optional items have a gold frame on the rite card.[#]()",
       "title": "Monster ward",
       "use_markdown_in_title": false

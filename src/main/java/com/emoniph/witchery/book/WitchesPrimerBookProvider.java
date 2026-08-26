@@ -472,6 +472,19 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                     + "whole working to its bound location. The rite pauses while its caster or either end's "
                     + "chunks are unavailable; breaking its sustaining circle aborts it and returns the "
                     + "consumed offerings.";
+            case "broken_earth" -> "The first offered focus fixes one of eight headings. After the next "
+                    + "20-tick boundary, the rite begins at the sixth point of a 60-position wandering path "
+                    + "below the circle, then parts one point every tick. It cuts 8 to 12 blocks deep; more "
+                    + "than two nearby Coven witches widen the rift. Breaking the sustaining circle stops the "
+                    + "working and returns its consumed offering.";
+            case "moving_earth" -> "These are the three source column-raising workings despite the family "
+                    + "name. Small, medium, and large Ritual circles choose the footprint and use Gunpowder, "
+                    + "Redstone, or Glowstone Dust respectively. One terrain layer rises every five ticks. "
+                    + "Only the small working accepts an optional Bound Waystone destination.";
+            case "protection" -> "Protection upkeep is continuous: the altar is charged every tick. The "
+                    + "barrier itself redraws on the source 20-tick boundary, so its blocks remain renewed "
+                    + "without rebuilding the whole wall every tick. Re-click the active circle to end the "
+                    + "working and recover its refundable offerings.";
             case "blindness" -> "The curse waits for the next full second, then expands from radius 4 by one "
                     + "block every five ticks to radius 80 plus 2 blocks per nearby Coven witch. Each passing "
                     + "ring blinds creatures for two minutes, or five minutes with an active cat familiar. "

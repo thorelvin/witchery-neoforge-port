@@ -13,6 +13,39 @@ Current target:
 
 ---
 
+## 2026-08-26 Persistent ritual queue closeout
+
+- Source has three independent timing values that cannot be collapsed into one
+  `pulseInterval`: the first activation boundary, the active-step cadence, and
+  the cadence at which a step mutates the world. Protection barriers are the
+  sharp example: first update at the next global 20-tick boundary, upkeep every
+  tick, world redraw every 20 ticks. `PersistentRitualLifecycle` locks all three
+  values for the 21 active owners covering 33 source registrations.
+- Never stop `tickActiveRituals` merely because `SacrificeConsumer` has work.
+  The staged-pop queue is dimension-scoped, while source active/upkeep queues are
+  owned by individual circle tiles. Gate only a newly queued rite with
+  `awaitingSacrifices`; established rites must keep advancing.
+- Queue the durable `ActiveRitual` before staging consumption, but arm it only
+  after the delayed offerings drain. A normal server stop calls
+  `SacrificeConsumer.flush` before the final save so the transient cosmetic queue
+  cannot leave an awaiting rite stranded across a graceful restart. Persist the
+  awaiting bit as a recovery guard, but keep the validated altar block position
+  transient and reacquire it after load.
+- `RitePartEarth` is the source owner behind the Broken Earth registration. Its
+  stage 0 waits for the global 20-tick boundary; the first active update carves
+  path index 5 and advances stage immediately. Build 60 wandering positions from
+  the block below the circle, derive one of eight headings from the first
+  sacrifice position, use depth 8-12, and let Coven size widen the cut. The old
+  immediate three-wide trench and look-vector heading were not source parity.
+- Full abort ledgers must include matched required offerings, optional matched
+  Bound Waystones, and auxiliary Climate Change foci exactly once. When the full
+  recipe already contains the trigger, do not also persist the event thread's
+  trigger copy or cancellation duplicates it.
+- Dedicated verification now combines a source-registration/timing JVM contract,
+  `witchery:persistent_ritual_queue` for independent progression and Broken
+  Earth's first carve, and the real stop/restart probe for stage, path, heading,
+  owner, and refund-ledger persistence.
+
 ## 2026-08-25 Custom Brew source-registry closeout
 
 - Do not infer completeness from `Brews` alone. The original registry mixes
