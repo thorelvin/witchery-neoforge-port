@@ -95,6 +95,11 @@ public final class CovenWitchPersona implements NpcPersona<CovenWitchEntity> {
     @Override
     public Optional<String> fallback(ServerLevel level, CovenWitchEntity entity, ServerPlayer player,
                                      String playerMessage, String memoryContext) {
+        String normalized = playerMessage == null ? "" : playerMessage.toLowerCase(java.util.Locale.ROOT);
+        if (normalized.contains("specialty") || normalized.contains("speciality")
+                || normalized.contains("what kind of witch") || normalized.contains("your craft")) {
+            return Optional.of(entity.getSpecialty().spokenDescription().getString());
+        }
         return NpcDialogueFallback.covenChat(playerMessage, displayName(entity), player.getName().getString(),
                 NpcPromptBuilder.biomeName(level, entity.blockPosition()),
                 NpcPromptBuilder.timeName(level.getDayTime()),

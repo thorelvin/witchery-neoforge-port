@@ -16,8 +16,19 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)This port-added working is separate from the original **Curse of Blight**. It plants one persistent Blight Heart in suitable buried ground within 150 blocks, beginning the local Blight ecosystem without replacing the source expanding curse.[#]()",
+      "text": "[#](53341a)Some covens whisper of a buried heart distinct from the true **Curse of Blight**. The older curse travels outward through flesh and field; this forbidden working would root one persistent Heart in nearby soil.[#]()",
       "title": "Rite of the Blight Heart",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)By default the buried heart lies sealed and takes neither offering nor altar power. Where unsealed, each witch may sustain only one Heart, and two Hearts cannot root close together.[#]()",
+      "title": " ",
       "use_markdown_in_title": false
     },
     {
@@ -90,8 +101,30 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Activate the complete medium Infernal circle while all seven offerings are present. The Poisonous Potato distinguishes this rite from the original curse's Glistering Melon Slice. If no safe embedded position can be found, nothing is consumed.[#]()",
+      "text": "[#](53341a)Where the seal has been lifted, activate the complete medium Infernal circle while all seven offerings are present. The Poisonous Potato distinguishes this rite from the original curse's Glistering Melon Slice.[#]()",
       "title": "The Working",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)If no permitted root can be found, or another Heart already answers to the witch, nothing is consumed. The Heart spreads only while its witch is present in that world and remembers every changed block.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Use a Seer Stone on the stain to feel the root's direction. Break or cleanse the Heart and loaded land returns to the blocks it held before the corruption.[#]()",
+      "title": " ",
       "use_markdown_in_title": false
     }
   ],

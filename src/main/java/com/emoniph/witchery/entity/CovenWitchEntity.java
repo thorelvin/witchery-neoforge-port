@@ -60,6 +60,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     /** Source {@code WITCCoven}: a player's coven holds at most 6 recruited witches. */
     public static final int MAX_COVEN = com.emoniph.witchery.world.CovenData.MAX_COVEN;
     private static final String TAG_COVEN_OWNER = "WITCCovenOwner";
+    private static final String TAG_SPECIALTY = "WITCCovenSpecialty";
     private static final String TAG_QUEST_FOR = "WITCQuestFor";
     private static final String TAG_QUEST_ITEM = "WITCQuestItem";
     private static final String TAG_QUEST_LEFT = "WITCQuestLeft";
@@ -71,6 +72,8 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     private static final long ATTENTION_BRIEF_TICKS = 60L * 20L;
     private static final double ATTENTION_MAX_DISTANCE_SQR = 24.0 * 24.0;
     private static final EntityDataAccessor<Integer> SKIN =
+            SynchedEntityData.defineId(CovenWitchEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> SPECIALTY =
             SynchedEntityData.defineId(CovenWitchEntity.class, EntityDataSerializers.INT);
 
     /** Source {@code Quest} subtypes: fetch an item, or slay a conjured pet and return its tagged remains. */
@@ -130,12 +133,25 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     }
 
     public boolean isRecruitedBy(Player player) {
-        return covenOwner != null && covenOwner.equals(player.getUUID());
+        return isRecruitedBy(player.getUUID());
+    }
+
+    public boolean isRecruitedBy(java.util.UUID owner) {
+        return covenOwner != null && covenOwner.equals(owner);
     }
 
     public void setCovenOwner(@Nullable java.util.UUID owner) {
         this.covenOwner = owner;
         setPersistenceRequired(); // a recruited (or once-recruited) witch never despawns
+    }
+
+    public CovenSpecialty getSpecialty() {
+        int ordinal = entityData.get(SPECIALTY);
+        return ordinal >= 0 ? CovenSpecialty.fromOrdinal(ordinal) : CovenSpecialty.forIdentity(getUUID());
+    }
+
+    public void setSpecialty(CovenSpecialty specialty) {
+        entityData.set(SPECIALTY, specialty.ordinal());
     }
 
     /** Mark this witch as a Vanishing Witch Hut resident; null clears the marker. */
@@ -144,6 +160,11 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         if (pos != null) {
             setPersistenceRequired();
         }
+    }
+
+    @Nullable
+    public net.minecraft.core.BlockPos getHutHome() {
+        return hutHome;
     }
 
     /** Size of {@code owner}'s persisted coven roster (the cap basis — source counted the player {@code WITCCoven} list). */
@@ -182,6 +203,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(SKIN, 0);
+        builder.define(SPECIALTY, -1);
     }
 
     public int getSkin() {
@@ -345,10 +367,21 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
         if (hand != InteractionHand.MAIN_HAND) {
             return InteractionResult.PASS;
         }
-        if (level().dimension().equals(com.emoniph.witchery.init.WitcheryDimensions.SPIRIT_WORLD)) {
+        if (!isAlive() || isTrading()) {
             return level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
         }
-        if (!isAlive() || isTrading()) {
+        if (hutHome != null && player.isSecondaryUseActive()) {
+            if (level().isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
+            beginPlayerConversation(player);
+            InteractionResult result = com.emoniph.witchery.worldgen.VanishingHutBargains.interact(this, player);
+            if (result != InteractionResult.PASS) {
+                return result;
+            }
+        }
+        if (hutHome == null
+                && level().dimension().equals(com.emoniph.witchery.init.WitcheryDimensions.SPIRIT_WORLD)) {
             return level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
         }
         if (player.isSecondaryUseActive()) {
@@ -802,6 +835,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt(TAG_SKIN, getSkin());
+        tag.putString(TAG_SPECIALTY, getSpecialty().id());
         if (covenOwner != null) {
             tag.putString(TAG_COVEN_OWNER, covenOwner.toString());
         }
@@ -821,6 +855,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
     public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
         super.readAdditionalSaveData(tag);
         setSkin(tag.getIntOr(TAG_SKIN, 0));
+        setSpecialty(CovenSpecialty.fromId(tag.getStringOr(TAG_SPECIALTY, ""), getUUID()));
         String owner = tag.getStringOr(TAG_COVEN_OWNER, "");
         if (!owner.isEmpty()) {
             try {
@@ -885,6 +920,7 @@ public class CovenWitchEntity extends AbstractVillager implements CovenMember, R
                                         net.minecraft.world.entity.EntitySpawnReason spawnType,
                                         @Nullable SpawnGroupData spawnGroupData) {
         setSkin(this.random.nextInt(5));
+        setSpecialty(CovenSpecialty.forIdentity(getUUID()));
         if (!hasCustomName()) {
             setCustomName(Component.literal(generateWitchName()));
         }

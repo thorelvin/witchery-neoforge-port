@@ -18,7 +18,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * client (it tracks the local look deltas); this stores the prepared spell server-side so it can
  * be cast when the branch is released.
  */
-public record SpellPreparedPayload(int effectId, int level) implements CustomPacketPayload {
+public record SpellPreparedPayload(int effectId, int level, long channelNonce) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SpellPreparedPayload> TYPE =
             new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "spell_prepared"));
@@ -27,6 +27,7 @@ public record SpellPreparedPayload(int effectId, int level) implements CustomPac
             StreamCodec.composite(
                     ByteBufCodecs.VAR_INT, SpellPreparedPayload::effectId,
                     ByteBufCodecs.VAR_INT, SpellPreparedPayload::level,
+                    ByteBufCodecs.VAR_LONG, SpellPreparedPayload::channelNonce,
                     SpellPreparedPayload::new);
 
     @Override
@@ -44,6 +45,20 @@ public record SpellPreparedPayload(int effectId, int level) implements CustomPac
             return;
         }
         WitcheryPlayerData data = WitcheryAttachments.get(player);
-        data.setPreparedSpell(payload.effectId(), Math.max(1, payload.level()));
+        long now = player.level().getGameTime();
+        if (data.validateMysticBranchPreparation(payload.channelNonce(), now)
+                != WitcheryPlayerData.MysticBranchPreparationResult.ACCEPT) {
+            return;
+        }
+        var registry = com.emoniph.witchery.symbol.EffectRegistry.instance();
+        if (!registry.isCastableLevel(payload.effectId(), payload.level())) {
+            return;
+        }
+        var effect = registry.getById(payload.effectId());
+        if (!com.emoniph.witchery.item.MysticBranchItem.canPrepareSpell(player, effect, payload.level())) {
+            return;
+        }
+        data.setPreparedSpell(payload.effectId(), payload.level());
+        data.acceptMysticBranchPreparation();
     }
 }

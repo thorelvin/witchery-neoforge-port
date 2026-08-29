@@ -36,6 +36,7 @@ public class WitcheryConfig {
     public static final ModConfigSpec.DoubleValue RITUAL_POWER_MULTIPLIER;
     public static final ModConfigSpec.BooleanValue ALLOW_BIOME_CHANGING;
     public static final ModConfigSpec.BooleanValue ALLOW_HELL_ON_EARTH_FIRES;
+    public static final ModConfigSpec.BooleanValue ENABLE_BLIGHT_HEART;
     public static final ModConfigSpec.BooleanValue ALLOW_DECURSE_TELEPORT;
     public static final ModConfigSpec.BooleanValue ALLOW_DECURSE_DIRECTED;
     public static final ModConfigSpec.IntValue DECURSE_TELEPORT_RADIUS;
@@ -63,14 +64,19 @@ public class WitcheryConfig {
     public static final ModConfigSpec.IntValue LLM_PREWARM_TIMEOUT_MILLIS;
     public static final ModConfigSpec.IntValue LLM_MAX_CONCURRENT_REQUESTS;
     public static final ModConfigSpec.IntValue LLM_MAX_TOKENS;
+    public static final ModConfigSpec.IntValue LLM_MAX_RESPONSE_BYTES;
     public static final ModConfigSpec.IntValue LLM_KEEP_ALIVE_MINUTES;
     public static final ModConfigSpec.IntValue LLM_CHAT_COOLDOWN_TICKS;
     public static final ModConfigSpec.IntValue LLM_COOLDOWN_TICKS;
     public static final ModConfigSpec.BooleanValue LLM_CANCEL_HANDLED_NPC_CHAT;
+    public static final ModConfigSpec.ConfigValue<String> LLM_ENDPOINT_POLICY;
     public static final ModConfigSpec.BooleanValue LLM_ALLOW_LAN_ENDPOINT;
     public static final ModConfigSpec.ConfigValue<String> LLM_API_KEY_ENV;
     public static final ModConfigSpec.ConfigValue<String> LLM_EXTRA_HEADERS;
     public static final ModConfigSpec.ConfigValue<String> LLM_RESPONSE_FORMAT;
+    public static final ModConfigSpec.IntValue LLM_MEMORY_MAX_ENTRIES;
+    public static final ModConfigSpec.IntValue LLM_MEMORY_MAX_CHARACTERS;
+    public static final ModConfigSpec.IntValue LLM_MEMORY_MAX_AGE_TICKS;
 
     static {
         DEBUG = BUILDER
@@ -135,6 +141,9 @@ public class WitcheryConfig {
         ALLOW_HELL_ON_EARTH_FIRES = BUILDER
                 .comment("Source AllowHellOnEarthFires: let a cat-enhanced Hell on Earth ignite affected plants. Default: true")
                 .define("AllowHellOnEarthFires", true);
+        ENABLE_BLIGHT_HEART = BUILDER
+                .comment("Enable the additive Blight Heart rite, Brew of Blight seeding, and autonomous Heart spread. Existing Blight blocks remain loadable and decay without spreading while disabled. Default: false")
+                .define("enableBlightHeart", false);
         ALLOW_DECURSE_TELEPORT = BUILDER
                 .comment("Allow Statues of Occluded Summons to dampen taglock transposition pulls near the target. Source default: true")
                 .define("allowDecurseTeleport", true);
@@ -207,6 +216,9 @@ public class WitcheryConfig {
         LLM_MAX_TOKENS = BUILDER
                 .comment("Maximum generated tokens for one NPC line. Default: 80")
                 .defineInRange("maxTokens", 80, 16, 256);
+        LLM_MAX_RESPONSE_BYTES = BUILDER
+                .comment("Maximum accepted LLM HTTP response body in bytes. Default: 131072")
+                .defineInRange("maxResponseBytes", 131072, 16384, 1048576);
         LLM_KEEP_ALIVE_MINUTES = BUILDER
                 .comment("Ollama keep_alive duration after NPC requests, in minutes. Keeps prewarmed models resident. 0 uses provider default. Default: 30")
                 .defineInRange("keepAliveMinutes", 30, 0, 240);
@@ -219,8 +231,13 @@ public class WitcheryConfig {
         LLM_CANCEL_HANDLED_NPC_CHAT = BUILDER
                 .comment("Cancel normal player chat broadcast after an explicit/private nearby NPC chat or NPC command is accepted. Look-at ambient routing still broadcasts. Default: true")
                 .define("cancelHandledNpcChat", true);
+        LLM_ENDPOINT_POLICY = BUILDER
+                .comment("LLM endpoint locality: local_only, private_lan, or remote_allowed. remote_allowed may send NPC prompts and player conversation data off this machine. Default: local_only")
+                .define("endpointPolicy", "local_only", value -> value instanceof String policy
+                        && (policy.equals("local_only") || policy.equals("private_lan")
+                        || policy.equals("remote_allowed")));
         LLM_ALLOW_LAN_ENDPOINT = BUILDER
-                .comment("Allow non-loopback LLM endpoints for a LAN sidecar machine. Default: false")
+                .comment("Legacy migration toggle. When endpointPolicy is local_only, true upgrades it to private_lan. It never permits public endpoints. Default: false")
                 .define("allowLanEndpoint", false);
         LLM_API_KEY_ENV = BUILDER
                 .comment("Environment variable containing a bearer API key for openai_compatible endpoints. Blank disables auth header. Default: blank")
@@ -231,6 +248,15 @@ public class WitcheryConfig {
         LLM_RESPONSE_FORMAT = BUILDER
                 .comment("openai_compatible response format: json_schema, json_object, or none. json_schema uses strict NPC JSON schema when the endpoint supports it. Set json_object or none for looser local servers. Default: json_schema")
                 .define("responseFormat", "json_schema");
+        LLM_MEMORY_MAX_ENTRIES = BUILDER
+                .comment("Maximum persisted NPC/player memory pairs. Oldest entries are evicted first. Default: 4096")
+                .defineInRange("memoryMaxEntries", 4096, 128, 65536);
+        LLM_MEMORY_MAX_CHARACTERS = BUILDER
+                .comment("Approximate maximum characters retained across NPC memories. Default: 1048576")
+                .defineInRange("memoryMaxCharacters", 1048576, 65536, 16777216);
+        LLM_MEMORY_MAX_AGE_TICKS = BUILDER
+                .comment("Expire NPC memory pairs after this many world ticks without an update. 0 disables age expiry. Default: 720000")
+                .defineInRange("memoryMaxAgeTicks", 720000, 0, 12096000);
         BUILDER.pop();
 
         SPEC = BUILDER.build();

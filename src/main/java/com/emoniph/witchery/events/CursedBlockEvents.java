@@ -58,6 +58,12 @@ public final class CursedBlockEvents {
     /** Transient per-level warning cooldowns, keyed by warned position and player. */
     private static final Map<ResourceKey<Level>, Map<BlockPos, Map<UUID, Long>>> WARNING_COOLDOWNS = new HashMap<>();
 
+    static void clearSession() {
+        POWERED_PLATES.clear();
+        LADDER_CONTACTS.clear();
+        WARNING_COOLDOWNS.clear();
+    }
+
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (event.getHand() != InteractionHand.MAIN_HAND) {

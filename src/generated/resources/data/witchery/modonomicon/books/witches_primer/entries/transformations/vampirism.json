@@ -71,7 +71,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)The source blood-drop display beneath the crosshair shows what remains in a Villager, Village Guard, or mortal player whenever a vampire holds them in view.[#]() [#](53341a)The curse also works without spending Blood Power.[#]()",
+      "text": "[#](53341a)The blood-drop display beneath the crosshair shows what remains in a Villager, Village Guard, or mortal player whenever a vampire holds them in view.[#]() [#](53341a)The curse also works without spending Blood Power.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

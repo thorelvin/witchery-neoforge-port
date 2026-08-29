@@ -26,7 +26,33 @@ import org.junit.jupiter.api.Test;
 class PlacedModonomiconGeneratedBookTest {
     private static final Path BOOKS_RELATIVE_PATH = Path.of(
             "src", "generated", "resources", "data", "witchery", "modonomicon", "books");
+    private static final Path LANG_RELATIVE_PATH = Path.of(
+            "src", "main", "resources", "assets", "witchery", "lang", "en_us.json");
     private static final List<String> PLACEABLE_BOOKS = List.of("witches_primer", "cauldron_book");
+    private static final List<String> PLAYER_FACING_DEVELOPMENT_LABELS = List.of(
+            "additive endgame working",
+            "compatibility mode",
+            "current port",
+            "currently unavailable",
+            "deeper pass",
+            "in-game pose",
+            "in rewoven today",
+            "in this remake",
+            "live matcher",
+            "not implemented",
+            "port-added",
+            "remaining gaps",
+            "rewoven now follows",
+            "source 20-tick",
+            "source-backed route",
+            "source blood-drop",
+            "source book grouped",
+            "source examples",
+            "source instant or splash",
+            "source two-tier",
+            "source-shaped",
+            "still being rewoven",
+            "this build");
     private static final int PLACED_PAGE_WIDTH = 124;
     private static final int PLACED_PAGE_HEIGHT = 155;
     private static final int STATION_PANEL_TOP = 24;
@@ -302,6 +328,20 @@ class PlacedModonomiconGeneratedBookTest {
     }
 
     @Test
+    void playerFacingGuideTextDoesNotExposeDevelopmentLabels() throws IOException {
+        for (String book : PLACEABLE_BOOKS) {
+            try (Stream<Path> entries = entryFiles(book)) {
+                for (Path entry : entries.toList()) {
+                    assertNoDevelopmentLabels(Files.readString(entry, StandardCharsets.UTF_8), entry.toString());
+                }
+            }
+        }
+
+        Path languageFile = projectPath(LANG_RELATIVE_PATH);
+        assertNoDevelopmentLabels(Files.readString(languageFile, StandardCharsets.UTF_8), languageFile.toString());
+    }
+
+    @Test
     void generatedCircleMagicCompendiumCoversEveryAuditedSourceRegistration() throws IOException {
         Path circleRoot = primerRoot().resolve("entries").resolve("circle_magic");
         Path riteRoot = circleRoot.resolve("rites");
@@ -322,7 +362,8 @@ class PlacedModonomiconGeneratedBookTest {
                 blightHeartSort = entry.get("sort_number").getAsInt();
                 String text = entry.toString();
                 assertTrue(text.contains("Rite of the Blight Heart"));
-                assertTrue(text.contains("port-added working is separate"));
+                assertTrue(text.contains("buried heart lies sealed"));
+                assertFalse(text.contains("port-added"));
                 assertTrue(text.contains("minecraft:poisonous_potato"));
                 assertFalse(text.contains("source_id"), "the additive rite must not impersonate a source card");
                 continue;
@@ -443,6 +484,18 @@ class PlacedModonomiconGeneratedBookTest {
             current = current.getParent();
         }
         return BOOKS_RELATIVE_PATH.resolve(book);
+    }
+
+    private static Path projectPath(Path relativePath) {
+        Path current = Path.of("").toAbsolutePath();
+        while (current != null) {
+            Path candidate = current.resolve(relativePath);
+            if (Files.exists(candidate)) {
+                return candidate;
+            }
+            current = current.getParent();
+        }
+        return relativePath;
     }
 
     private static JsonObject readJson(Path path) throws IOException {
@@ -650,6 +703,13 @@ class PlacedModonomiconGeneratedBookTest {
             index += needle.length();
         }
         return count;
+    }
+
+    private static void assertNoDevelopmentLabels(String text, String location) {
+        String normalized = text.toLowerCase(java.util.Locale.ROOT);
+        for (String label : PLAYER_FACING_DEVELOPMENT_LABELS) {
+            assertFalse(normalized.contains(label), () -> location + " exposes development label: " + label);
+        }
     }
 
     private record GuideTarget(String book, String category, String entry) {}

@@ -202,6 +202,60 @@ def validate_manifest(manifest: dict) -> None:
             or village["candidate_probe_spacing_blocks"] <= 0:
         raise HarnessError("village_certification.candidate_probe_spacing_blocks must be positive")
 
+    wild = manifest.get("wild_structure_certification")
+    if not isinstance(wild, dict):
+        raise HarnessError("wild_structure_certification must be an object")
+    wild_structures = wild.get("structures")
+    if not isinstance(wild_structures, list) or len(wild_structures) != 6:
+        raise HarnessError("wild_structure_certification.structures must contain six entries")
+    expected_wild = {
+        "witchery:coven_circle", "witchery:straw_man", "witchery:hobgoblin_hut",
+        "witchery:witch_hut", "witchery:warped_coven", "witchery:vanishing_hut",
+    }
+    actual_wild: set[str] = set()
+    wild_names: set[str] = set()
+    for entry in wild_structures:
+        if not isinstance(entry, dict):
+            raise HarnessError("Each wild structure certification entry must be an object")
+        name = entry.get("name")
+        structure = entry.get("structure")
+        dimension = entry.get("dimension")
+        if not isinstance(name, str) or not name.strip() or name in wild_names:
+            raise HarnessError(f"Invalid or duplicate wild structure name: {name!r}")
+        if not isinstance(structure, str) or structure not in expected_wild or structure in actual_wild:
+            raise HarnessError(f"Invalid or duplicate wild structure id: {structure!r}")
+        if dimension not in {"minecraft:overworld", "minecraft:the_nether"}:
+            raise HarnessError(f"Invalid wild structure dimension for {name}: {dimension!r}")
+        if structure == "witchery:warped_coven" and dimension != "minecraft:the_nether":
+            raise HarnessError("warped_coven certification must run in the Nether")
+        if structure != "witchery:warped_coven" and dimension != "minecraft:overworld":
+            raise HarnessError(f"{structure} certification must run in the Overworld")
+        wild_names.add(name)
+        actual_wild.add(structure)
+    if actual_wild != expected_wild:
+        raise HarnessError("wild structure certification roster drifted")
+    for field in ("force_radius_blocks", "timeout_seconds", "relocation_timeout_seconds"):
+        if not isinstance(wild.get(field), int) or wild[field] <= 0:
+            raise HarnessError(f"wild_structure_certification.{field} must be positive")
+
+    wells = manifest.get("witch_well_certification")
+    if not isinstance(wells, dict):
+        raise HarnessError("witch_well_certification must be an object")
+    if wells.get("variants") != ["regular", "small", "cave"]:
+        raise HarnessError("witch_well_certification.variants must be regular, small, cave")
+    for field in ("force_radius_blocks", "timeout_seconds", "max_candidate_wells",
+                  "spacing", "separation", "salt"):
+        if not isinstance(wells.get(field), int) or wells[field] <= 0:
+            raise HarnessError(f"witch_well_certification.{field} must be positive")
+    if wells.get("level_seed") != -119995921:
+        raise HarnessError("witch_well_certification.level_seed must match witchery-runtime-test")
+    if wells["spacing"] != 40 or wells["separation"] != 12 or wells["salt"] != 912347651:
+        raise HarnessError("witch_well_certification random-spread contract drifted")
+    if wells["separation"] >= wells["spacing"]:
+        raise HarnessError("witch_well_certification separation must be below spacing")
+    if wells["max_candidate_wells"] > 64:
+        raise HarnessError("witch_well_certification.max_candidate_wells must not exceed 64")
+
 
 def safe_reset_directory(target: Path) -> None:
     target = target.resolve()
@@ -516,8 +570,9 @@ def write_summary(work_dir: Path, summary: dict) -> None:
 
 
 def command_must_succeed(server: ServerProcess, command: str,
-                         expected: str | None = None) -> str:
-    response = server.command(command)
+                         expected: str | None = None,
+                         timeout: float = RCON_COMMAND_TIMEOUT_SECONDS) -> str:
+    response = server.command(command, timeout)
     lowered = response.lower()
     failures = (
         "unknown command",
@@ -595,7 +650,12 @@ def run_game_tests(manifest: dict, startup_timeout: int,
     work_dir = RUNTIME_ROOT / "game-tests"
     rcon_port, password = prepare_runtime_server(work_dir, reset=True)
     server = ServerProcess(work_dir, "game-tests", rcon_port, password, startup_timeout)
-    summary: dict = {"status": "failed", "tests": []}
+    summary: dict = {
+        "status": "failed",
+        "tests": [],
+        "fresh_world": True,
+        "level_seed": "witchery-runtime-test",
+    }
     started = False
     stopped = False
     try:
@@ -656,6 +716,89 @@ def run_game_tests(manifest: dict, startup_timeout: int,
         write_summary(work_dir, summary)
 
 
+def run_blight_heart_restart(manifest: dict, startup_timeout: int) -> None:
+    test_id = "witchery:blight_heart_restart_resume"
+    entry = next((item for item in manifest["game_tests"] if item["id"] == test_id), None)
+    if entry is None or entry["lane"] != "manual_restart":
+        raise HarnessError(f"Missing manual restart GameTest manifest entry: {test_id}")
+
+    work_dir = RUNTIME_ROOT / "blight-heart-restart"
+    summary: dict = {"status": "failed", "test": test_id, "stages": []}
+
+    def run_phase(server: ServerProcess, phase: str) -> None:
+        command_must_succeed(server, "forceload add -16 -16 96 96")
+        command_must_succeed(server, "setblock 0 200 0 minecraft:stone destroy")
+        start_index = server.line_count()
+        response = command_must_succeed(
+            server, f"execute positioned 0 200 0 run test run {test_id}")
+        if response:
+            print(f"[runtime-test] RCON: {response}", flush=True)
+        completion_index, _ = server.wait_for_line(
+            lambda line: "Game Test complete! 1 test(s) were run" in line,
+            entry["timeout_seconds"], start_index, GAME_TEST_FAILURES)
+        server.wait_for_line(
+            lambda line: "All required tests passed :)" in line,
+            15, completion_index, GAME_TEST_FAILURES)
+        command_must_succeed(server, "execute positioned 0 200 0 run test clearall")
+        command_must_succeed(server, "save-all flush", "saved")
+        summary["stages"].append(phase)
+
+    first_port, first_password = prepare_runtime_server(work_dir, reset=True)
+    first = ServerProcess(work_dir, "stage-one", first_port, first_password, startup_timeout)
+    first_started = False
+    first_stopped = False
+    try:
+        first.start()
+        first_started = True
+        run_phase(first, "partial_ledger_saved")
+        first.graceful_stop()
+        first_stopped = True
+        snapshot_minecraft_log(work_dir, "stage-one")
+    except Exception as exc:
+        summary["error"] = str(exc)
+        raise
+    finally:
+        if not first_stopped and first.process is not None:
+            if first_started:
+                try:
+                    first.graceful_stop()
+                    snapshot_minecraft_log(work_dir, "stage-one")
+                except Exception:
+                    first.force_stop()
+            else:
+                first.force_stop()
+        if "error" in summary:
+            write_summary(work_dir, summary)
+
+    second_port, second_password = prepare_runtime_server(work_dir, reset=False)
+    second = ServerProcess(work_dir, "stage-two", second_port, second_password, startup_timeout)
+    second_started = False
+    second_stopped = False
+    try:
+        second.start()
+        second_started = True
+        run_phase(second, "restart_resumed_and_cleansed")
+        second.graceful_stop()
+        second_stopped = True
+        snapshot_minecraft_log(work_dir, "stage-two")
+        summary["status"] = "passed"
+    except Exception as exc:
+        summary["error"] = str(exc)
+        raise
+    finally:
+        if not second_stopped and second.process is not None:
+            if second_started:
+                try:
+                    second.graceful_stop()
+                    snapshot_minecraft_log(work_dir, "stage-two")
+                except Exception as stop_error:
+                    summary["shutdown_error"] = str(stop_error)
+                    second.force_stop()
+            else:
+                second.force_stop()
+        write_summary(work_dir, summary)
+
+
 def run_save_reload(manifest: dict, startup_timeout: int) -> None:
     work_dir = RUNTIME_ROOT / "save-reload"
     rcon_port, password = prepare_runtime_server(work_dir, reset=True)
@@ -696,10 +839,10 @@ def run_save_reload(manifest: dict, startup_timeout: int) -> None:
             command_must_succeed(first, command)
         assert_saved_machine_state(first, machines, storage, marker)
         command_must_succeed(first, "save-all flush", "saved")
-        first.graceful_stop()
+        first.force_stop()
         first_stopped = True
         snapshot_minecraft_log(work_dir, "save")
-        summary["stages"].append("saved")
+        summary["stages"].append("saved_then_process_killed")
     except Exception as exc:
         summary["error"] = str(exc)
         raise
@@ -756,6 +899,8 @@ def run_save_reload(manifest: dict, startup_timeout: int) -> None:
 
 
 VILLAGE_LOCATE_PATTERN = re.compile(r"\[\s*(-?\d+)\s*,\s*(?:~|-?\d+)\s*,\s*(-?\d+)\s*\]")
+WILD_ANCHOR_PATTERN = re.compile(r"anchor=(-?\d+),(-?\d+),(-?\d+)")
+WELL_VARIANT_PATTERN = re.compile(r"variant=(regular|small|cave)")
 
 
 def locate_village(server: ServerProcess, structure: str,
@@ -966,12 +1111,532 @@ def run_village_certification(manifest: dict, startup_timeout: int) -> None:
         write_summary(work_dir, summary)
 
 
+def locate_wild_structure(server: ServerProcess, structure: str, dimension: str,
+                          origin_x: int = 0, origin_z: int = 0) -> tuple[int, int, str]:
+    response = server.command(
+        f"execute in {dimension} positioned {origin_x} 80 {origin_z} "
+        f"run locate structure {structure}",
+        timeout=240,
+    )
+    match = VILLAGE_LOCATE_PATTERN.search(response)
+    if match is None:
+        raise HarnessError(f"Could not parse wild structure location for {structure}: {response}")
+    return int(match.group(1)), int(match.group(2)), response
+
+
+def load_wild_structure_area(server: ServerProcess, dimension: str,
+                             x: int, z: int, radius: int,
+                             timeout_seconds: int) -> None:
+    command_must_succeed(
+        server,
+        f"execute in {dimension} run forceload add "
+        f"{x - radius} {z - radius} {x + radius} {z + radius}",
+        timeout=timeout_seconds,
+    )
+
+
+def remove_dimension_forceloads(server: ServerProcess, dimension: str) -> None:
+    command_must_succeed(server, f"execute in {dimension} run forceload remove all")
+
+
+def wait_for_wild_structure_certification(server: ServerProcess, structure: str,
+                                           dimension: str, x: int, z: int,
+                                           timeout_seconds: int) -> str:
+    deadline = time.monotonic() + timeout_seconds
+    last_response = ""
+    while time.monotonic() < deadline:
+        last_response = server.command(
+            f"execute in {dimension} positioned {x} 80 {z} "
+            f"run witchery verify wild_structure {structure}")
+        print(
+            f"[runtime-test] Wild structure audit for {structure} at {x}, {z}: "
+            f"{last_response}",
+            flush=True,
+        )
+        if "[WildStructureCertification] PASS" in last_response:
+            return last_response
+        time.sleep(3)
+    raise HarnessError(
+        f"Wild structure certification timed out for {structure} at {x}, {z}; "
+        f"last response: {last_response}")
+
+
+def parse_wild_anchor(response: str, structure: str) -> tuple[int, int, int]:
+    match = WILD_ANCHOR_PATTERN.search(response)
+    if match is None:
+        raise HarnessError(f"Could not parse certified anchor for {structure}: {response}")
+    return int(match.group(1)), int(match.group(2)), int(match.group(3))
+
+
+def relocate_vanishing_hut(server: ServerProcess, config: dict, x: int, z: int) -> tuple[int, int, int, str]:
+    structure = "witchery:vanishing_hut"
+    dimension = "minecraft:overworld"
+    response = command_must_succeed(
+        server,
+        f"execute in {dimension} positioned {x} 80 {z} "
+        "run witchery debug wild_structure relocate_vanishing_hut",
+        "queued same-dimension",
+    )
+    print(f"[runtime-test] Vanishing Hut relocation: {response}", flush=True)
+    deadline = time.monotonic() + config["relocation_timeout_seconds"]
+    last_audit = ""
+    while time.monotonic() < deadline:
+        last_audit = server.command(
+            f"execute in {dimension} positioned {x} 80 {z} "
+            f"run witchery verify wild_structure {structure}")
+        if "[WildStructureCertification] PASS" in last_audit:
+            anchor_x, anchor_y, anchor_z = parse_wild_anchor(last_audit, structure)
+            if (anchor_x, anchor_z) != (x, z):
+                return anchor_x, anchor_y, anchor_z, last_audit
+        time.sleep(2)
+    raise HarnessError(
+        f"Vanishing Hut did not complete a certified relocation from {x}, {z}; "
+        f"last audit: {last_audit}")
+
+
+def assert_no_wild_structure_errors(work_dir: Path, label: str) -> None:
+    log_path = work_dir / f"minecraft-{label}.log"
+    if not log_path.is_file():
+        raise HarnessError(f"Wild structure certification log is missing: {log_path}")
+    text = log_path.read_text(encoding="utf-8", errors="replace")
+    failures = (
+        "Could not place template witchery:",
+        "Unknown template marker",
+        "suffocated in a wall",
+    )
+    found = [failure for failure in failures if failure in text]
+    if found:
+        raise HarnessError(f"Wild structure log contains generation errors {found}: {log_path}")
+
+
+def certify_wild_structures(server: ServerProcess, config: dict, capture_dir: Path,
+                            stage: str, known: list[dict] | None = None) -> list[dict]:
+    reports: list[dict] = []
+    capture_dir.mkdir(parents=True, exist_ok=True)
+    for index, entry in enumerate(config["structures"]):
+        name = entry["name"]
+        structure = entry["structure"]
+        dimension = entry["dimension"]
+        if known is None:
+            x, z, locate_response = locate_wild_structure(server, structure, dimension)
+        else:
+            prior = known[index]
+            if prior["name"] != name or prior["structure"] != structure \
+                    or prior["dimension"] != dimension:
+                raise HarnessError("Wild structure restart order drifted")
+            x = prior["restart_x"]
+            z = prior["restart_z"]
+            locate_response = "reused certified fresh-world coordinates"
+
+        load_wild_structure_area(
+            server, dimension, x, z, config["force_radius_blocks"],
+            config["timeout_seconds"])
+        audit = wait_for_wild_structure_certification(
+            server, structure, dimension, x, z, config["timeout_seconds"])
+        anchor_x, anchor_y, anchor_z = parse_wild_anchor(audit, structure)
+        report = {
+            "name": name,
+            "structure": structure,
+            "dimension": dimension,
+            "x": x,
+            "z": z,
+            "anchor": [anchor_x, anchor_y, anchor_z],
+            "locate": locate_response,
+            "audit": audit,
+            "restart_x": anchor_x,
+            "restart_z": anchor_z,
+        }
+
+        if known is None and structure == "witchery:vanishing_hut":
+            moved_x, moved_y, moved_z, moved_audit = relocate_vanishing_hut(
+                server, config, anchor_x, anchor_z)
+            report["relocated_from"] = [anchor_x, anchor_y, anchor_z]
+            report["relocated_to"] = [moved_x, moved_y, moved_z]
+            report["relocated_audit"] = moved_audit
+            report["restart_x"] = moved_x
+            report["restart_z"] = moved_z
+
+        reports.append(report)
+        (capture_dir / f"{stage}-{name}.txt").write_text(
+            f"structure={structure}\ndimension={dimension}\ncoordinates={x},80,{z}\n"
+            f"locate={locate_response}\naudit={audit}\n"
+            f"relocated_from={report.get('relocated_from')}\n"
+            f"relocated_to={report.get('relocated_to')}\n"
+            f"relocated_audit={report.get('relocated_audit')}\n",
+            encoding="utf-8",
+        )
+        remove_dimension_forceloads(server, dimension)
+    return reports
+
+
+def run_wild_structure_certification(manifest: dict, startup_timeout: int) -> None:
+    work_dir = RUNTIME_ROOT / "wild-structure-certification"
+    rcon_port, password = prepare_runtime_server(
+        work_dir, reset=True, generate_structures=True, spawn_npcs=True)
+    config = manifest["wild_structure_certification"]
+    captures = work_dir / "captures"
+    summary: dict = {"status": "failed", "stages": []}
+
+    first = ServerProcess(work_dir, "fresh", rcon_port, password, startup_timeout)
+    first_started = False
+    first_stopped = False
+    try:
+        first.start()
+        first_started = True
+        fresh_reports = certify_wild_structures(first, config, captures, "fresh")
+        command_must_succeed(first, "save-all flush", "saved")
+        first.graceful_stop()
+        first_stopped = True
+        snapshot_minecraft_log(work_dir, "fresh")
+        assert_no_wild_structure_errors(work_dir, "fresh")
+        summary["fresh"] = fresh_reports
+        summary["stages"].extend(["six_fresh_structures", "vanishing_hut_relocated"])
+    except Exception as exc:
+        summary["error"] = str(exc)
+        raise
+    finally:
+        if not first_stopped and first.process is not None:
+            if first_started:
+                try:
+                    first.graceful_stop()
+                    snapshot_minecraft_log(work_dir, "fresh")
+                except Exception:
+                    first.force_stop()
+            else:
+                first.force_stop()
+        if "error" in summary:
+            write_summary(work_dir, summary)
+
+    second_port, second_password = prepare_runtime_server(
+        work_dir, reset=False, generate_structures=True, spawn_npcs=True)
+    second = ServerProcess(work_dir, "restart", second_port, second_password, startup_timeout)
+    second_started = False
+    second_stopped = False
+    try:
+        second.start()
+        second_started = True
+        restart_reports = certify_wild_structures(
+            second, config, captures, "restart", summary["fresh"])
+        command_must_succeed(second, "save-all flush", "saved")
+        second.graceful_stop()
+        second_stopped = True
+        snapshot_minecraft_log(work_dir, "restart")
+        assert_no_wild_structure_errors(work_dir, "restart")
+        summary["restart"] = restart_reports
+        summary["stages"].append("restart_recertified")
+        summary["status"] = "passed"
+    except Exception as exc:
+        summary["error"] = str(exc)
+        raise
+    finally:
+        if not second_stopped and second.process is not None:
+            if second_started:
+                try:
+                    second.graceful_stop()
+                    snapshot_minecraft_log(work_dir, "restart")
+                except Exception as stop_error:
+                    summary["shutdown_error"] = str(stop_error)
+                    second.force_stop()
+            else:
+                second.force_stop()
+        write_summary(work_dir, summary)
+
+
+def wait_for_witch_well_certification(server: ServerProcess, variant: str,
+                                       x: int, z: int, timeout_seconds: int) -> str:
+    deadline = time.monotonic() + timeout_seconds
+    last_response = ""
+    while time.monotonic() < deadline:
+        last_response = server.command(
+            f"execute in minecraft:overworld positioned {x} 80 {z} "
+            f"run witchery verify well {variant}")
+        print(
+            f"[runtime-test] Witch Well audit for {variant} at {x}, {z}: {last_response}",
+            flush=True,
+        )
+        if "[WitchWellCertification] PASS" in last_response:
+            return last_response
+        time.sleep(3)
+    raise HarnessError(
+        f"Witch Well certification timed out for {variant} at {x}, {z}; "
+        f"last response: {last_response}")
+
+
+def parse_well_variant(response: str) -> str:
+    match = WELL_VARIANT_PATTERN.search(response)
+    if match is None:
+        raise HarnessError(f"Could not parse Witch Well variant: {response}")
+    return match.group(1)
+
+
+class JavaRandom:
+    MASK = (1 << 48) - 1
+    MULTIPLIER = 0x5DEECE66D
+    ADDEND = 0xB
+
+    def __init__(self, seed: int):
+        self.set_seed(seed)
+
+    def set_seed(self, seed: int) -> None:
+        self.seed = (seed ^ self.MULTIPLIER) & self.MASK
+
+    def next_bits(self, bits: int) -> int:
+        self.seed = (self.seed * self.MULTIPLIER + self.ADDEND) & self.MASK
+        return self.seed >> (48 - bits)
+
+    def next_int(self, bound: int) -> int:
+        if bound <= 0:
+            raise ValueError("bound must be positive")
+        if bound & (bound - 1) == 0:
+            return (bound * self.next_bits(31)) >> 31
+        while True:
+            bits = self.next_bits(31)
+            value = bits % bound
+            if bits - value + bound - 1 < (1 << 31):
+                return value
+
+    def next_long(self) -> int:
+        high = self.next_bits(32)
+        low = self.next_bits(32)
+        if high >= 1 << 31:
+            high -= 1 << 32
+        if low >= 1 << 31:
+            low -= 1 << 32
+        return (high << 32) + low
+
+
+def witch_well_candidate(config: dict, region_x: int, region_z: int) -> tuple[int, int, int]:
+    spread = config["spacing"] - config["separation"]
+    placement_seed = (region_x * 341873128712 + region_z * 132897987541
+                      + config["level_seed"] + config["salt"])
+    placement_random = JavaRandom(placement_seed)
+    chunk_x = region_x * config["spacing"] + placement_random.next_int(spread)
+    chunk_z = region_z * config["spacing"] + placement_random.next_int(spread)
+
+    feature_random = JavaRandom(config["level_seed"])
+    x_multiplier = feature_random.next_long()
+    z_multiplier = feature_random.next_long()
+    feature_random.set_seed(chunk_x * x_multiplier ^ chunk_z * z_multiplier
+                            ^ config["level_seed"])
+    return chunk_x, chunk_z, feature_random.next_int(10)
+
+
+def spiral_regions(max_ring: int = 512) -> Iterable[tuple[int, int]]:
+    yield 0, 0
+    for ring in range(1, max_ring + 1):
+        for x in range(-ring, ring + 1):
+            yield x, -ring
+            yield x, ring
+        for z in range(-ring + 1, ring):
+            yield -ring, z
+            yield ring, z
+
+
+def candidate_matches_variant(roll: int, variant: str) -> bool:
+    return roll == 0 if variant == "cave" else 1 <= roll <= 5 if variant == "small" else roll >= 6
+
+
+def probe_witch_well_candidate(server: ServerProcess, x: int, z: int) -> str | None:
+    last_response = ""
+    for _ in range(2):
+        last_response = server.command(
+            f"execute in minecraft:overworld positioned {x} 80 {z} "
+            "run witchery verify well any")
+        if WELL_VARIANT_PATTERN.search(last_response) is not None:
+            return last_response
+        if "failures=no_loaded_start" not in last_response:
+            raise HarnessError(
+                f"Natural Witch Well candidate at {x}, {z} failed certification: {last_response}")
+        time.sleep(0.5)
+    return None
+
+
+def certify_fresh_witch_wells(server: ServerProcess, config: dict,
+                              capture_dir: Path) -> tuple[list[dict], list[dict]]:
+    found: dict[str, dict] = {}
+    probes: list[dict] = []
+    variants = config["variants"]
+    capture_dir.mkdir(parents=True, exist_ok=True)
+
+    index = 0
+    for wanted in ("cave", "regular", "small"):
+        variant_probes = 0
+        for region_x, region_z in spiral_regions():
+            if wanted in found:
+                break
+            chunk_x, chunk_z, roll = witch_well_candidate(config, region_x, region_z)
+            if not candidate_matches_variant(roll, wanted):
+                continue
+            if variant_probes >= config["max_candidate_wells"]:
+                break
+            variant_probes += 1
+            index += 1
+            x = chunk_x * 16 + 8
+            z = chunk_z * 16 + 8
+            load_wild_structure_area(
+                server, "minecraft:overworld", x, z, 0, config["timeout_seconds"])
+            try:
+                initial_audit = probe_witch_well_candidate(server, x, z)
+                probe = {"index": index - 1, "region": [region_x, region_z],
+                         "chunk": [chunk_x, chunk_z], "roll": roll,
+                         "location": [x, z], "generated": initial_audit is not None}
+                probes.append(probe)
+                if initial_audit is None:
+                    continue
+                variant = parse_well_variant(initial_audit)
+                load_wild_structure_area(
+                    server, "minecraft:overworld", x, z, config["force_radius_blocks"],
+                    config["timeout_seconds"])
+                audit = wait_for_witch_well_certification(
+                    server, variant, x, z, config["timeout_seconds"])
+                anchor = parse_wild_anchor(audit, f"witch_well/{variant}")
+                probe.update({"variant": variant, "anchor": list(anchor), "audit": audit})
+                if variant not in found:
+                    found[variant] = probe
+                    (capture_dir / f"fresh-{variant}.txt").write_text(
+                        f"variant={variant}\nregion={region_x},{region_z}\n"
+                        f"chunk={chunk_x},{chunk_z}\nroll={roll}\nanchor={anchor}\n"
+                        f"audit={audit}\n",
+                        encoding="utf-8",
+                    )
+            finally:
+                remove_dimension_forceloads(server, "minecraft:overworld")
+        if wanted not in found:
+            raise HarnessError(
+                f"Fixed-seed Witch Well search did not naturally generate variant {wanted} "
+                f"after {variant_probes} deterministic probes")
+
+    missing = [variant for variant in variants if variant not in found]
+    if missing:
+        raise HarnessError(
+            f"Fixed-seed Witch Well search did not naturally generate variants {missing} "
+            f"after up to {config['max_candidate_wells']} probes per variant")
+    return [found[variant] for variant in variants], probes
+
+
+def recertify_witch_wells(server: ServerProcess, config: dict,
+                          capture_dir: Path, known: list[dict]) -> list[dict]:
+    reports: list[dict] = []
+    for prior in known:
+        variant = prior["variant"]
+        anchor_x, anchor_y, anchor_z = prior["anchor"]
+        load_wild_structure_area(
+            server, "minecraft:overworld", anchor_x, anchor_z,
+            config["force_radius_blocks"], config["timeout_seconds"])
+        try:
+            audit = wait_for_witch_well_certification(
+                server, variant, anchor_x, anchor_z, config["timeout_seconds"])
+            anchor = parse_wild_anchor(audit, f"witch_well/{variant}")
+            if anchor != (anchor_x, anchor_y, anchor_z):
+                raise HarnessError(
+                    f"Witch Well {variant} anchor drifted across restart: "
+                    f"{(anchor_x, anchor_y, anchor_z)} -> {anchor}")
+            report = {"variant": variant, "anchor": list(anchor), "audit": audit}
+            reports.append(report)
+            (capture_dir / f"restart-{variant}.txt").write_text(
+                f"variant={variant}\nanchor={anchor}\naudit={audit}\n",
+                encoding="utf-8",
+            )
+        finally:
+            remove_dimension_forceloads(server, "minecraft:overworld")
+    return reports
+
+
+def assert_no_witch_well_errors(work_dir: Path, label: str) -> None:
+    log_path = work_dir / f"minecraft-{label}.log"
+    if not log_path.is_file():
+        raise HarnessError(f"Witch Well certification log is missing: {log_path}")
+    text = log_path.read_text(encoding="utf-8", errors="replace")
+    failures = (
+        "Could not place template witchery:witch_well",
+        "Unknown template marker",
+        "suffocated in a wall",
+    )
+    found = [failure for failure in failures if failure in text]
+    if found:
+        raise HarnessError(f"Witch Well log contains generation errors {found}: {log_path}")
+
+
+def run_witch_well_certification(manifest: dict, startup_timeout: int) -> None:
+    work_dir = RUNTIME_ROOT / "witch-well-certification"
+    rcon_port, password = prepare_runtime_server(
+        work_dir, reset=True, generate_structures=True, spawn_npcs=True)
+    config = manifest["witch_well_certification"]
+    captures = work_dir / "captures"
+    summary: dict = {"status": "failed", "seed": "witchery-runtime-test", "stages": []}
+
+    first = ServerProcess(work_dir, "fresh", rcon_port, password, startup_timeout)
+    first_started = False
+    first_stopped = False
+    try:
+        first.start()
+        first_started = True
+        fresh, probes = certify_fresh_witch_wells(first, config, captures)
+        command_must_succeed(first, "save-all flush", "saved")
+        first.graceful_stop()
+        first_stopped = True
+        snapshot_minecraft_log(work_dir, "fresh")
+        assert_no_witch_well_errors(work_dir, "fresh")
+        summary["fresh"] = fresh
+        summary["probes"] = probes
+        summary["stages"].append("three_natural_variants")
+    except Exception as exc:
+        summary["error"] = str(exc)
+        raise
+    finally:
+        if not first_stopped and first.process is not None:
+            if first_started:
+                try:
+                    first.graceful_stop()
+                    snapshot_minecraft_log(work_dir, "fresh")
+                except Exception:
+                    first.force_stop()
+            else:
+                first.force_stop()
+        if "error" in summary:
+            write_summary(work_dir, summary)
+
+    second_port, second_password = prepare_runtime_server(
+        work_dir, reset=False, generate_structures=True, spawn_npcs=True)
+    second = ServerProcess(work_dir, "restart", second_port, second_password, startup_timeout)
+    second_started = False
+    second_stopped = False
+    try:
+        second.start()
+        second_started = True
+        restart = recertify_witch_wells(second, config, captures, summary["fresh"])
+        command_must_succeed(second, "save-all flush", "saved")
+        second.graceful_stop()
+        second_stopped = True
+        snapshot_minecraft_log(work_dir, "restart")
+        assert_no_witch_well_errors(work_dir, "restart")
+        summary["restart"] = restart
+        summary["stages"].append("restart_recertified")
+        summary["status"] = "passed"
+    except Exception as exc:
+        summary["error"] = str(exc)
+        raise
+    finally:
+        if not second_stopped and second.process is not None:
+            if second_started:
+                try:
+                    second.graceful_stop()
+                    snapshot_minecraft_log(work_dir, "restart")
+                except Exception as stop_error:
+                    summary["shutdown_error"] = str(stop_error)
+                    second.force_stop()
+            else:
+                second.force_stop()
+        write_summary(work_dir, summary)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "command",
         choices=("validate", "resource-contracts", "game-tests", "save-reload",
-                 "village-certification", "all"),
+                 "blight-heart-restart", "village-certification",
+                 "wild-structure-certification", "witch-well-certification", "all"),
     )
     parser.add_argument("--startup-timeout", type=int, default=600)
     parser.add_argument(
@@ -989,9 +1654,10 @@ def main() -> int:
             raise HarnessError("--game-test is only valid with the game-tests command")
         ci_count = sum(1 for entry in manifest["game_tests"] if entry["lane"] == "ci")
         manual_count = sum(1 for entry in manifest["game_tests"] if entry["lane"] != "ci")
+        manual_label = "GameTest" if manual_count == 1 else "GameTests"
         print(
             f"[runtime-test] Manifest valid: {len(manifest['resource_contract_tests'])} resource tests, "
-            f"{ci_count} CI GameTests, {manual_count} manual restart GameTest",
+            f"{ci_count} CI GameTests, {manual_count} manual restart {manual_label}",
             flush=True,
         )
         if args.command == "validate":
@@ -1003,8 +1669,14 @@ def main() -> int:
                            set(args.game_tests) if args.game_tests else None)
         if args.command in {"save-reload", "all"}:
             run_save_reload(manifest, args.startup_timeout)
+        if args.command == "blight-heart-restart":
+            run_blight_heart_restart(manifest, args.startup_timeout)
         if args.command in {"village-certification", "all"}:
             run_village_certification(manifest, args.startup_timeout)
+        if args.command in {"wild-structure-certification", "all"}:
+            run_wild_structure_certification(manifest, args.startup_timeout)
+        if args.command in {"witch-well-certification", "all"}:
+            run_witch_well_certification(manifest, args.startup_timeout)
         return 0
     except (HarnessError, OSError, subprocess.SubprocessError) as exc:
         print(f"[runtime-test] ERROR: {exc}", file=sys.stderr)

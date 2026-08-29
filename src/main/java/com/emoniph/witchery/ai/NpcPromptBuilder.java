@@ -110,6 +110,7 @@ public final class NpcPromptBuilder {
                 witchName,
                 playerName,
                 recruited,
+                witch.getSpecialty().id(),
                 level.dimension().identifier().toString(),
                 biome,
                 time,
@@ -137,6 +138,7 @@ public final class NpcPromptBuilder {
                 "Lilith Poe",
                 "Dev",
                 recruited,
+                "hedge_witch",
                 "minecraft:overworld",
                 biome,
                 time,
@@ -166,6 +168,7 @@ public final class NpcPromptBuilder {
                 "Lilith Poe",
                 "Dev",
                 recruited,
+                "hedge_witch",
                 "minecraft:overworld",
                 biome,
                 time,
@@ -1841,6 +1844,7 @@ public final class NpcPromptBuilder {
     }
 
     private static NpcBrainPrompt covenWitchPrompt(String witchName, String playerName, boolean recruited,
+                                                  String specialty,
                                                   String dimension, String biome, String time, String clock,
                                                   long day, String weather, String threat, String knowledge,
                                                   String memory, String playerMessage, String situation,
@@ -1889,6 +1893,7 @@ public final class NpcPromptBuilder {
                 This entity is a Coven Witch: a named Witchery practitioner, occult merchant, and potion-throwing ally when sworn.
                 Ordinary witches in rumor, hostile wild witches, and village fears are not the same thing as this named Coven Witch.
                 Relationship: %s.
+                Craft specialty: %s. This is one modest craft identity, not a rank or class.
 
                 # Scene
                 dimension %s; biome %s; time of day %s; clock %s; day %d; weather %s; nearby threat %s.
@@ -1921,6 +1926,7 @@ public final class NpcPromptBuilder {
                 React to the player, the time, weather, biome, memory, and trade goods when they matter.
                 If asked about good or bad witches, answer from deeds, bargains, and village fear; avoid cartoon morality.
                 If asked about witches versus Coven Witches, distinguish rumor or hostile witchcraft from named Coven Witches who trade, test, and may swear into a coven.
+                If asked about this witch's specialty or craft, answer from Craft specialty exactly; do not invent levels, skills, or a second specialty.
                 If Relationship says sworn, answer with warmer covenmate language: recognize shared trust, protectiveness, familiar teasing, or fighting beside the player. Do not sound like a stranger merchant.
                 If Relationship says not recruited, do not call the player coven-kin, sister, brother, master, or friend; keep the tone wary and transactional unless memory justifies warmth.
                 If asked about weather or harvest, connect it to the current scene, rites, herbs, bread, omens, or practical caution without promising a spell was cast.
@@ -1946,6 +1952,7 @@ public final class NpcPromptBuilder {
                 witchName,
                 playerName,
                 recruited ? "this witch is sworn to the player" : "not recruited by this player",
+                specialty,
                 dimension,
                 biome,
                 time,

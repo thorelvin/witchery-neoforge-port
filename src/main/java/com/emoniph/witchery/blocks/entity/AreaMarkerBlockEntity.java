@@ -84,6 +84,10 @@ public class AreaMarkerBlockEntity extends BlockEntity {
         }
     }
 
+    public static void clearServer(net.minecraft.server.MinecraftServer server) {
+        ACTIVE_MARKERS.removeIf(marker -> marker.level == null || marker.level.getServer() == server);
+    }
+
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {

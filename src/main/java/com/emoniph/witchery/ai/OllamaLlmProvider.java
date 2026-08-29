@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -76,11 +77,12 @@ public final class OllamaLlmProvider implements LlmProvider {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(body.toString()))
                 .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+        String responseBody = LlmHttpBodies.readBounded(response.body(), config.maxResponseBytes());
         if (response.statusCode() < 200 || response.statusCode() >= 300) {
             throw new IOException("Ollama returned HTTP " + response.statusCode());
         }
-        return parseResponse(response.body());
+        return parseResponse(responseBody);
     }
 
     private static JsonObject message(String role, String content) {

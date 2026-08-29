@@ -56,6 +56,28 @@
       },
       "text": "[#](53341a)The rite returns a Crystal Ball attuned for fortune work. Use it near a powered altar, or focus it with waystones and taglocks. Bad foci are refused before the altar is charged; a true focus wakes the ball with violet motes.[#]()",
       "title": "Crystal Ball"
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A filled Taglock taken from the resident of a Vanishing Hut catches a different vision. Even when witch and house are beyond waking sight, the glass may show the realm, the sort of country, and the temper of the sky around them.[#]()",
+      "title": "A House Through Glass",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)It gives no road, bearing, distance, or coordinates. The house keeps some secrets even from glass.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
     }
   ],
   "show_when_any_parent_unlocked": false,

@@ -1,0 +1,85 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "poppets",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:red_thread"
+  },
+  "name": "Red Thread",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Red Thread gives a Curse of Sinking a place to cling after its natural span. At a Spinning Wheel, work four String with Red Dye and Reek of Misfortune. After fifteen seconds the wheel yields four lengths of Red Thread.[#]()",
+      "title": "Red Thread",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Bind a plain Poppet to the intended victim and leave that one suitable Poppet on a breakable Poppet Shelf. Use Red Thread on the shelf to prepare the knot.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "witchery:red_thread"
+      },
+      "text": "[#](53341a)Perform the ordinary Curse of Sinking with the victim's Taglock, full offerings, infernal circle, thunder, and altar power. If exactly one of your prepared knots answers, the curse settles into it. Without a prepared knot, the rite remains an ordinary finite Curse of Sinking.[#]()",
+      "title": "The Anchored Curse"
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)The victim first feels the curse tighten again, then senses something distant holding it, and finally recognizes a Poppet Shelf at the far end.[#]()",
+      "title": "Finding and Breaking the Knot",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)A Seer Stone can name the binding; a Crystal Ball used with the victim's Taglock can reveal its realm; once the trail matures, a Poppet Shelf Compass points to the anchor.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Break the shelf, remove the threaded Poppet, or perform the Breath of the Goddess cure for Sinking to sever the curse. A broken knot briefly wards that caster and victim against another Red Thread binding.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 3,
+  "x": 0,
+  "y": 0
+}

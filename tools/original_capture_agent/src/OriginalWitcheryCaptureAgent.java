@@ -2,19 +2,27 @@ import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class OriginalWitcheryCaptureAgent {
     private static final long ACTION_TIMEOUT_MILLIS = 120_000L;
+    private static final ConcurrentLinkedQueue<FutureTask<Void>> SERVER_ACTIONS =
+            new ConcurrentLinkedQueue<>();
+    private static Path runLog;
+    private static boolean serverBridgeInstalled;
 
     private OriginalWitcheryCaptureAgent() {
     }
@@ -28,6 +36,12 @@ public final class OriginalWitcheryCaptureAgent {
     }
 
     private static void start(String planPath, Instrumentation instrumentation) {
+        runLog = Paths.get(planPath + ".run.log");
+        try {
+            Files.deleteIfExists(runLog);
+        } catch (Exception exception) {
+            System.err.println("[Witchery original capture] Could not reset run log " + runLog);
+        }
         Thread worker = new Thread(() -> runPlan(Paths.get(planPath), instrumentation),
                 "witchery-original-capture-agent");
         worker.setDaemon(true);
@@ -126,6 +140,35 @@ public final class OriginalWitcheryCaptureAgent {
                         invokeOnClient(schedule, minecraft,
                                 () -> sendCommand(minecraftClass, minecraft, argument));
                         break;
+                    case "WAIT_DIMENSION":
+                        waitForDimension(minecraftClass, minecraft, Integer.parseInt(argument));
+                        break;
+                    case "SPIRIT_ENTER":
+                        invokeOnServer(minecraftClass, minecraft,
+                                () -> enterSpiritWorld(minecraftClass, minecraft, gameLoader, argument));
+                        break;
+                    case "SPIRIT_STATE":
+                        invokeOnServer(minecraftClass, minecraft,
+                                () -> setSpiritState(minecraftClass, minecraft, gameLoader, argument));
+                        break;
+                    case "SPIRIT_STUDIO":
+                        invokeOnServer(minecraftClass, minecraft,
+                                () -> buildSpiritStudio(minecraftClass, minecraft, gameLoader, argument));
+                        break;
+                    case "SPIRIT_PRESENTATION":
+                        invokeOnServer(minecraftClass, minecraft,
+                                () -> setupSpiritPresentation(minecraftClass, minecraft, gameLoader, argument));
+                        invokeOnClient(schedule, minecraft,
+                                () -> setupSpiritPresentationClient(minecraftClass, minecraft, gameLoader, argument));
+                        break;
+                    case "SPIRIT_WAKE":
+                        invokeOnServer(minecraftClass, minecraft,
+                                () -> wakeFromSpiritWorld(minecraftClass, minecraft, gameLoader));
+                        break;
+                    case "REPORT_SPIRIT":
+                        invokeOnClient(schedule, minecraft,
+                                () -> reportSpiritState(minecraftClass, minecraft));
+                        break;
                     case "POSE_ENTITY":
                         invokeOnClient(schedule, minecraft,
                                 () -> poseEntity(minecraftClass, minecraft, argument));
@@ -198,6 +241,10 @@ public final class OriginalWitcheryCaptureAgent {
         } catch (Throwable throwable) {
             System.err.println("[Witchery original capture] Plan failed");
             throwable.printStackTrace(System.err);
+            log("Plan failed: " + throwable);
+            for (StackTraceElement frame : throwable.getStackTrace()) {
+                log("  at " + frame);
+            }
         }
     }
 
@@ -372,6 +419,392 @@ public final class OriginalWitcheryCaptureAgent {
         } catch (ReflectiveOperationException exception) {
             throw new IllegalStateException("Could not send original command " + command, exception);
         }
+    }
+
+    private static void waitForDimension(Class<?> minecraftClass, Object minecraft, int dimension)
+            throws Exception {
+        long deadline = System.currentTimeMillis() + ACTION_TIMEOUT_MILLIS;
+        while (System.currentTimeMillis() < deadline) {
+            Object player = field(minecraftClass, "field_71439_g", "h").get(minecraft);
+            if (player != null
+                    && field(player.getClass(), "field_71093_bK", "ap").getInt(player) == dimension) {
+                log("Player reached dimension " + dimension);
+                return;
+            }
+            Thread.sleep(100L);
+        }
+        throw new IllegalStateException("Player did not reach dimension " + dimension);
+    }
+
+    private static void enterSpiritWorld(Class<?> minecraftClass, Object minecraft,
+                                         ClassLoader loader, String mode) {
+        try {
+            Object serverPlayer = serverPlayer(minecraftClass, minecraft);
+            Class<?> provider = loadClass(loader,
+                    "com.emoniph.witchery.dimension.WorldProviderDreamWorld");
+            Method enter = methodByNameAndCount(provider, "sendPlayerToSpiritWorld", 2);
+            boolean nightmare = !"dream".equalsIgnoreCase(mode);
+            enter.invoke(null, serverPlayer, nightmare ? 1.0D : 0.0D);
+            if ("demonic".equalsIgnoreCase(mode)) {
+                setSpiritState(minecraftClass, minecraft, loader, "demonic");
+            }
+            log("Requested original Spirit World entry: " + mode);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Could not enter the original Spirit World", exception);
+        }
+    }
+
+    private static void setSpiritState(Class<?> minecraftClass, Object minecraft,
+                                       ClassLoader loader, String mode) {
+        try {
+            int level = "demonic".equalsIgnoreCase(mode) ? 2
+                    : "nightmare".equalsIgnoreCase(mode) ? 1 : 0;
+            boolean nightmare = level > 0;
+            boolean demonic = level > 1;
+            Class<?> provider = loadClass(loader,
+                    "com.emoniph.witchery.dimension.WorldProviderDreamWorld");
+            Object serverPlayer = serverPlayer(minecraftClass, minecraft);
+            Method setter = methodByNameAndFirstArgument(provider,
+                    "setPlayerHasNightmare", 3, serverPlayer);
+            setter.invoke(null, serverPlayer, nightmare, demonic);
+            setProviderNightmare(serverPlayer, level);
+
+            Object clientPlayer = field(minecraftClass, "field_71439_g", "h").get(minecraft);
+            if (clientPlayer != null) {
+                setter.invoke(null, clientPlayer, nightmare, demonic);
+                setProviderNightmare(clientPlayer, level);
+            }
+            log("Original Spirit World state set to " + mode + " (" + level + ")");
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Could not set the original Spirit World state", exception);
+        }
+    }
+
+    private static void wakeFromSpiritWorld(Class<?> minecraftClass, Object minecraft,
+                                            ClassLoader loader) {
+        try {
+            Object serverPlayer = serverPlayer(minecraftClass, minecraft);
+            Class<?> provider = loadClass(loader,
+                    "com.emoniph.witchery.dimension.WorldProviderDreamWorld");
+            methodByNameAndCount(provider, "returnPlayerToOverworld", 1)
+                    .invoke(null, serverPlayer);
+            log("Requested original Spirit World wake-up");
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Could not wake from the original Spirit World", exception);
+        }
+    }
+
+    private static void buildSpiritStudio(Class<?> minecraftClass, Object minecraft,
+                                          ClassLoader loader, String argument) {
+        String[] values = argument.split("\\s+");
+        if (values.length != 3) {
+            throw new IllegalArgumentException("SPIRIT_STUDIO requires center-x floor-y center-z");
+        }
+        int centerX = Integer.parseInt(values[0]);
+        int floorY = Integer.parseInt(values[1]);
+        int centerZ = Integer.parseInt(values[2]);
+        try {
+            Object serverPlayer = serverPlayer(minecraftClass, minecraft);
+            Object world = field(serverPlayer.getClass(), "field_70170_p", "o").get(serverPlayer);
+            Class<?> blockClass = loadClass(loader, "net.minecraft.block.Block", "aji");
+            Class<?> blocksClass = loadClass(loader, "net.minecraft.init.Blocks", "ajn");
+            Object grass = field(blocksClass, "field_150349_c", "c").get(null);
+            Object stone = field(blocksClass, "field_150348_b", "b").get(null);
+            Object water = field(blocksClass, "field_150355_j", "j").get(null);
+            Method setBlock = findMethod(world.getClass(),
+                    new Class<?>[]{int.class, int.class, int.class, blockClass, int.class, int.class},
+                    "func_147465_d", "d");
+
+            for (int x = centerX - 32; x <= centerX + 32; x++) {
+                for (int z = centerZ - 32; z <= centerZ + 32; z++) {
+                    setBlock.invoke(world, x, floorY, z, grass, 0, 2);
+                }
+            }
+            for (int x = centerX - 5; x <= centerX + 5; x++) {
+                for (int z = centerZ + 8; z <= centerZ + 14; z++) {
+                    setBlock.invoke(world, x, floorY, z, water, 0, 2);
+                }
+            }
+            for (int y = floorY + 1; y <= floorY + 8; y++) {
+                setBlock.invoke(world, centerX - 8, y, centerZ + 16, stone, 0, 2);
+                if (y <= floorY + 4) {
+                    setBlock.invoke(world, centerX + 8, y, centerZ + 16, stone, 0, 2);
+                }
+            }
+            log("Built original Spirit World comparison studio at "
+                    + centerX + " " + floorY + " " + centerZ);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Could not build the original Spirit World studio", exception);
+        }
+    }
+
+    private static void setupSpiritPresentation(Class<?> minecraftClass, Object minecraft,
+                                                ClassLoader loader, String captureCase) {
+        final int centerX = 4096;
+        final int floorY = 120;
+        final int centerZ = 4096;
+        try {
+            Object player = serverPlayer(minecraftClass, minecraft);
+            Object world = field(player.getClass(), "field_70170_p", "o").get(player);
+            clearPresentationEntities(world);
+            buildPresentationFloor(world, loader, centerX, floorY, centerZ);
+            setOriginalGhost(loader, player, false);
+            clearAndEquipPresentationInventory(loader, player, false);
+
+            double playerX = centerX + 0.5D;
+            double playerY = floorY + 2.0D;
+            double playerZ = centerZ - 5.5D;
+            if ("body".equalsIgnoreCase(captureCase)) {
+                playerZ = centerZ - 2.5D;
+                spawnPresentationEntity(loader, world, "com.emoniph.witchery.entity.EntityCorpse",
+                        centerX + 0.5D, floorY + 1.0D, centerZ + 3.0D, player);
+            } else if ("manifestation".equalsIgnoreCase(captureCase)) {
+                playerY = floorY + 1.0D;
+                playerZ = centerZ + 1.0D;
+                setOriginalGhost(loader, player, true);
+                clearAndEquipPresentationInventory(loader, player, true);
+            } else if ("spirit".equalsIgnoreCase(captureCase)) {
+                playerZ = centerZ + 0.5D;
+            } else if ("nightmare".equalsIgnoreCase(captureCase)
+                    || "demonic-nightmare".equalsIgnoreCase(captureCase)) {
+                playerZ = centerZ - 3.5D;
+            } else if ("portal".equalsIgnoreCase(captureCase)) {
+                buildPresentationPortal(world, loader, centerX, floorY, centerZ + 3);
+            } else {
+                throw new IllegalArgumentException("Unknown Spirit presentation case " + captureCase);
+            }
+
+            Method place = findMethod(player.getClass(),
+                    new Class<?>[]{double.class, double.class, double.class, float.class, float.class},
+                    "func_70012_b", "b");
+            place.invoke(player, playerX, playerY, playerZ, 0.0F,
+                    "body".equalsIgnoreCase(captureCase) ? 13.0F
+                            : "nightmare".equalsIgnoreCase(captureCase)
+                            || "demonic-nightmare".equalsIgnoreCase(captureCase) ? 5.0F : 0.0F);
+            log("Prepared original Spirit presentation case " + captureCase);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Could not prepare original Spirit presentation " + captureCase,
+                    exception);
+        }
+    }
+
+    private static void setupSpiritPresentationClient(Class<?> minecraftClass, Object minecraft,
+                                                      ClassLoader loader, String captureCase) {
+        try {
+            Object player = field(minecraftClass, "field_71439_g", "h").get(minecraft);
+            if (player != null) {
+                boolean manifestation = "manifestation".equalsIgnoreCase(captureCase);
+                setOriginalGhost(loader, player, manifestation);
+                clearAndEquipPresentationInventory(loader, player, manifestation);
+            }
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Could not sync original Spirit presentation " + captureCase,
+                    exception);
+        }
+    }
+
+    private static void clearPresentationEntities(Object world) throws ReflectiveOperationException {
+        Object loaded = field(world.getClass(), "field_72996_f", "e").get(world);
+        if (!(loaded instanceof Iterable<?>)) {
+            return;
+        }
+        List<Object> removals = new ArrayList<>();
+        for (Object entity : (Iterable<?>) loaded) {
+            String name = entity.getClass().getName();
+            if (name.equals("com.emoniph.witchery.entity.EntityCorpse")
+                    || name.equals("com.emoniph.witchery.entity.EntitySpirit")
+                    || name.equals("com.emoniph.witchery.entity.EntityNightmare")
+                    || name.equals("net.minecraft.entity.item.EntityItem")) {
+                removals.add(entity);
+            }
+        }
+        for (Object entity : removals) {
+            findMethod(entity.getClass(), new Class<?>[0], "func_70106_y", "B").invoke(entity);
+        }
+    }
+
+    private static void buildPresentationFloor(Object world, ClassLoader loader,
+                                               int centerX, int floorY, int centerZ)
+            throws ReflectiveOperationException {
+        Class<?> blockClass = loadClass(loader, "net.minecraft.block.Block", "aji");
+        Class<?> blocksClass = loadClass(loader, "net.minecraft.init.Blocks", "ajn");
+        Object grass = field(blocksClass, "field_150349_c", "c").get(null);
+        Object air = field(blocksClass, "field_150350_a", "a").get(null);
+        Method setBlock = findMethod(world.getClass(),
+                new Class<?>[]{int.class, int.class, int.class, blockClass, int.class, int.class},
+                "func_147465_d", "d");
+        for (int x = centerX - 12; x <= centerX + 12; x++) {
+            for (int z = centerZ - 12; z <= centerZ + 12; z++) {
+                setBlock.invoke(world, x, floorY, z, grass, 0, 2);
+                for (int y = floorY + 1; y <= floorY + 8; y++) {
+                    setBlock.invoke(world, x, y, z, air, 0, 2);
+                }
+            }
+        }
+    }
+
+    private static void buildPresentationPortal(Object world, ClassLoader loader,
+                                                int centerX, int floorY, int portalZ)
+            throws ReflectiveOperationException {
+        Class<?> blockClass = loadClass(loader, "net.minecraft.block.Block", "aji");
+        Class<?> blocksClass = loadClass(loader, "net.minecraft.init.Blocks", "ajn");
+        Object snow = field(blocksClass, "field_150433_aE", "aE").get(null);
+        Class<?> witcheryClass = loadClass(loader, "com.emoniph.witchery.Witchery");
+        Object witcheryBlocks = field(witcheryClass, "Blocks").get(null);
+        Object portal = field(witcheryBlocks.getClass(), "SPIRIT_PORTAL").get(witcheryBlocks);
+        Method setBlock = findMethod(world.getClass(),
+                new Class<?>[]{int.class, int.class, int.class, blockClass, int.class, int.class},
+                "func_147465_d", "d");
+        for (int width = -1; width <= 2; width++) {
+            for (int height = -1; height <= 2; height++) {
+                boolean corner = (width == -1 || width == 2) && (height == -1 || height == 2);
+                boolean frame = width == -1 || width == 2 || height == -1 || height == 2;
+                if (frame && !corner) {
+                    setBlock.invoke(world, centerX + width, floorY + 1 + height, portalZ, snow, 0, 2);
+                }
+            }
+        }
+        for (int width = 0; width < 2; width++) {
+            for (int height = 0; height < 2; height++) {
+                setBlock.invoke(world, centerX + width, floorY + 1 + height, portalZ, portal, 0, 2);
+            }
+        }
+    }
+
+    private static void spawnPresentationEntity(ClassLoader loader, Object world, String className,
+                                                double x, double y, double z, Object player)
+            throws ReflectiveOperationException {
+        Class<?> entityClass = loader.loadClass(className);
+        Object entity = null;
+        for (java.lang.reflect.Constructor<?> constructor : entityClass.getConstructors()) {
+            Class<?>[] parameters = constructor.getParameterTypes();
+            if (parameters.length == 1 && parameters[0].isInstance(world)) {
+                entity = constructor.newInstance(world);
+                break;
+            }
+        }
+        if (entity == null) {
+            throw new IllegalStateException("No world constructor for " + className);
+        }
+        if (className.endsWith("EntityCorpse")) {
+            String name = (String) findMethod(player.getClass(), new Class<?>[0],
+                    "func_70005_c_", "b_").invoke(player);
+            findMethod(entityClass, new Class<?>[]{String.class}, "setOwner").invoke(entity, name);
+            findMethod(entityClass, new Class<?>[]{String.class}, "func_94058_c", "b").invoke(entity, name);
+        }
+        findMethod(entityClass,
+                new Class<?>[]{double.class, double.class, double.class, float.class, float.class},
+                "func_70012_b", "b").invoke(entity, x, y, z, 180.0F, 0.0F);
+        Class<?> baseEntity = loadClass(loader, "net.minecraft.entity.Entity", "sa");
+        Method spawn = findMethod(world.getClass(), new Class<?>[]{baseEntity}, "func_72838_d", "d");
+        spawn.invoke(world, entity);
+    }
+
+    private static void setOriginalGhost(ClassLoader loader, Object player, boolean ghost)
+            throws ReflectiveOperationException {
+        Class<?> infusion = loader.loadClass("com.emoniph.witchery.infusion.Infusion");
+        Object nbt = methodByNameAndFirstArgument(infusion, "getNBT", 1, player).invoke(null, player);
+        Class<?> provider = loader.loadClass("com.emoniph.witchery.dimension.WorldProviderDreamWorld");
+        Method setter = methodByNameAndFirstArgument(provider, "setPlayerIsGhost", 2, nbt);
+        setter.invoke(null, nbt, ghost);
+    }
+
+    private static void clearAndEquipPresentationInventory(ClassLoader loader, Object player, boolean equip)
+            throws ReflectiveOperationException {
+        Object inventory = field(player.getClass(), "field_71071_by", "bm").get(player);
+        Object[] main = (Object[]) field(inventory.getClass(), "field_70462_a", "a").get(inventory);
+        Object[] armor = (Object[]) field(inventory.getClass(), "field_70460_b", "b").get(inventory);
+        java.util.Arrays.fill(main, null);
+        java.util.Arrays.fill(armor, null);
+        if (!equip) {
+            return;
+        }
+        Class<?> registry = loader.loadClass("cpw.mods.fml.common.registry.GameRegistry");
+        Method findItem = registry.getMethod("findItem", String.class, String.class);
+        Class<?> itemClass = loadClass(loader, "net.minecraft.item.Item", "adb");
+        Class<?> stackClass = loadClass(loader, "net.minecraft.item.ItemStack", "add");
+        java.lang.reflect.Constructor<?> stack = stackClass.getConstructor(itemClass);
+        main[0] = stack.newInstance(findItem.invoke(null, "minecraft", "diamond_sword"));
+        armor[0] = stack.newInstance(findItem.invoke(null, "minecraft", "diamond_boots"));
+        armor[1] = stack.newInstance(findItem.invoke(null, "minecraft", "diamond_leggings"));
+        armor[2] = stack.newInstance(findItem.invoke(null, "minecraft", "diamond_chestplate"));
+        armor[3] = stack.newInstance(findItem.invoke(null, "minecraft", "diamond_helmet"));
+        field(inventory.getClass(), "field_70461_c", "c").setInt(inventory, 0);
+    }
+
+    private static void reportSpiritState(Class<?> minecraftClass, Object minecraft) {
+        try {
+            Object player = field(minecraftClass, "field_71439_g", "h").get(minecraft);
+            Object world = field(minecraftClass, "field_71441_e", "f").get(minecraft);
+            Object provider = field(world.getClass(), "field_73011_w", "t").get(world);
+            int dimension = field(player.getClass(), "field_71093_bK", "ap").getInt(player);
+            int nightmare = field(provider.getClass(), "nightmare").getInt(provider);
+            long worldTime = ((Number) findMethod(world.getClass(), new Class<?>[0],
+                    "func_72820_D", "J").invoke(world)).longValue();
+            log("Spirit report dimension=" + dimension + " nightmare=" + nightmare
+                    + " worldTime=" + worldTime + " provider=" + provider.getClass().getName());
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Could not report original Spirit World state", exception);
+        }
+    }
+
+    private static Object serverPlayer(Class<?> minecraftClass, Object minecraft)
+            throws ReflectiveOperationException {
+        Object clientPlayer = field(minecraftClass, "field_71439_g", "h").get(minecraft);
+        if (clientPlayer == null) {
+            throw new IllegalStateException("Cannot locate the server player without a client player");
+        }
+        String name = (String) findMethod(clientPlayer.getClass(), new Class<?>[0],
+                "func_70005_c_", "b_").invoke(clientPlayer);
+        Object server = field(minecraftClass, "field_71437_Z", "X").get(minecraft);
+        if (server == null) {
+            throw new IllegalStateException("The original client is not running an integrated server");
+        }
+        Object playerList = findMethod(server.getClass(), new Class<?>[0],
+                "func_71203_ab", "ah").invoke(server);
+        Object player = findMethod(playerList.getClass(), new Class<?>[]{String.class},
+                "func_152612_a", "a").invoke(playerList, name);
+        if (player == null) {
+            throw new IllegalStateException("Integrated-server player not found: " + name);
+        }
+        return player;
+    }
+
+    private static void setProviderNightmare(Object player, int level)
+            throws ReflectiveOperationException {
+        Object world = field(player.getClass(), "field_70170_p", "o").get(player);
+        Object provider = field(world.getClass(), "field_73011_w", "t").get(world);
+        try {
+            field(provider.getClass(), "nightmare").setInt(provider, level);
+        } catch (NoSuchFieldException ignored) {
+            // Entry/exit can briefly expose another dimension's provider.
+        }
+    }
+
+    private static Method methodByNameAndCount(Class<?> type, String name, int parameterCount)
+            throws NoSuchMethodException {
+        for (Method method : type.getMethods()) {
+            if (name.equals(method.getName()) && method.getParameterCount() == parameterCount) {
+                method.setAccessible(true);
+                return method;
+            }
+        }
+        throw new NoSuchMethodException(type.getName() + "." + name + "/" + parameterCount);
+    }
+
+    private static Method methodByNameAndFirstArgument(Class<?> type, String name,
+                                                        int parameterCount, Object argument)
+            throws NoSuchMethodException {
+        for (Method method : type.getMethods()) {
+            Class<?>[] parameters = method.getParameterTypes();
+            if (name.equals(method.getName()) && parameters.length == parameterCount
+                    && parameters[0].isInstance(argument)) {
+                method.setAccessible(true);
+                return method;
+            }
+        }
+        throw new NoSuchMethodException(type.getName() + "." + name
+                + "/" + parameterCount + " for " + argument.getClass().getName());
     }
 
     private static void poseEntity(Class<?> minecraftClass, Object minecraft, String argument) {
@@ -600,6 +1033,58 @@ public final class OriginalWitcheryCaptureAgent {
         ((Future<?>) result).get(ACTION_TIMEOUT_MILLIS, java.util.concurrent.TimeUnit.MILLISECONDS);
     }
 
+    private static void invokeOnServer(Class<?> minecraftClass, Object minecraft, Runnable action)
+            throws Exception {
+        Object server = field(minecraftClass, "field_71437_Z", "X").get(minecraft);
+        if (server == null) {
+            throw new IllegalStateException("The original client is not running an integrated server");
+        }
+        installServerTickBridge(server);
+        FutureTask<Void> task = new FutureTask<>(() -> {
+            action.run();
+            return null;
+        });
+        SERVER_ACTIONS.add(task);
+        task.get(ACTION_TIMEOUT_MILLIS, java.util.concurrent.TimeUnit.MILLISECONDS);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static synchronized void installServerTickBridge(Object server) throws Exception {
+        if (serverBridgeInstalled) {
+            return;
+        }
+        ClassLoader loader = server.getClass().getClassLoader();
+        Class<?> tickable = loadClass(loader,
+                "net.minecraft.server.gui.IUpdatePlayerListBox", "lr");
+        Object bridge = Proxy.newProxyInstance(loader, new Class<?>[]{tickable},
+                (proxy, method, arguments) -> {
+                    if (method.getParameterCount() == 0 && method.getReturnType() == Void.TYPE) {
+                        FutureTask<Void> task;
+                        while ((task = SERVER_ACTIONS.poll()) != null) {
+                            task.run();
+                        }
+                        return null;
+                    }
+                    if ("toString".equals(method.getName())) {
+                        return "WitcheryOriginalCaptureServerBridge";
+                    }
+                    if ("hashCode".equals(method.getName())) {
+                        return System.identityHashCode(proxy);
+                    }
+                    if ("equals".equals(method.getName())) {
+                        return arguments != null && arguments.length == 1 && proxy == arguments[0];
+                    }
+                    return null;
+                });
+        Object tickables = field(server.getClass(), "field_71322_p", "n").get(server);
+        if (!(tickables instanceof List<?>)) {
+            throw new IllegalStateException("Minecraft server tickable registry is not a List");
+        }
+        ((List<Object>) tickables).add(bridge);
+        serverBridgeInstalled = true;
+        log("Installed integrated-server tick bridge");
+    }
+
     private static Field field(Class<?> type, String... names) throws NoSuchFieldException {
         for (String name : names) {
             Class<?> current = type;
@@ -644,7 +1129,18 @@ public final class OriginalWitcheryCaptureAgent {
         throw new ClassNotFoundException(String.join(", ", names));
     }
 
-    private static void log(String message) {
+    private static synchronized void log(String message) {
         System.out.println("[Witchery original capture] " + message);
+        if (runLog == null) {
+            return;
+        }
+        try {
+            Files.write(runLog,
+                    ("[Witchery original capture] " + message + System.lineSeparator())
+                            .getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (Exception exception) {
+            System.err.println("[Witchery original capture] Could not write run log: " + exception);
+        }
     }
 }

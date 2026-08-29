@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -82,11 +83,12 @@ public final class OpenAiCompatibleLlmProvider implements LlmProvider {
                 .POST(HttpRequest.BodyPublishers.ofString(body.toString()));
         addConfiguredHeaders(requestBuilder);
         HttpRequest request = requestBuilder.build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+        String responseBody = LlmHttpBodies.readBounded(response.body(), config.maxResponseBytes());
         if (response.statusCode() < 200 || response.statusCode() >= 300) {
             throw new IOException("OpenAI-compatible endpoint returned HTTP " + response.statusCode());
         }
-        return parseResponse(response.body(), isStrictResponseFormat());
+        return parseResponse(responseBody, isStrictResponseFormat());
     }
 
     JsonObject responseFormat() {

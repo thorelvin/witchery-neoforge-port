@@ -37,6 +37,7 @@ public final class SymbolDrawState {
     private static int lastSentId = -1;
     private static int lastSentLevel = -1;
     private static String preparedNameKey;
+    private static long channelNonce;
 
     private SymbolDrawState() {
     }
@@ -108,7 +109,7 @@ public final class SymbolDrawState {
             if (effect.getEffectId() != lastSentId || level != lastSentLevel) {
                 lastSentId = effect.getEffectId();
                 lastSentLevel = level;
-                ClientPacketDistributor.sendToServer(new SpellPreparedPayload(effect.getEffectId(), level));
+                sendPrepared(effect.getEffectId(), level);
                 player.playSound(SoundEvents.AMETHYST_BLOCK_CHIME, 0.5F, 1.5F);
             }
         } else {
@@ -138,6 +139,17 @@ public final class SymbolDrawState {
         return preparedNameKey;
     }
 
+    public static void beginServerSession(long nonce) {
+        channelNonce = nonce;
+        if (active && lastSentId >= 0) {
+            sendPrepared(lastSentId, lastSentLevel);
+        }
+    }
+
+    private static void sendPrepared(int effectId, int level) {
+        ClientPacketDistributor.sendToServer(new SpellPreparedPayload(effectId, level, channelNonce));
+    }
+
     private static void begin(LocalPlayer player) {
         active = true;
         strokes = new byte[0];
@@ -154,5 +166,6 @@ public final class SymbolDrawState {
         lastSentId = -1;
         lastSentLevel = -1;
         preparedNameKey = null;
+        channelNonce = 0L;
     }
 }

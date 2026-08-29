@@ -24,7 +24,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
@@ -73,8 +75,10 @@ public final class CustomBrewGameTests {
         ServerPlayer player = createTestPlayer(level, center.offset(0, 1, -3));
         ToadFamiliarEntity toad = null;
         try {
-            level.setBlock(water, Blocks.WATER.defaultBlockState(), Block.UPDATE_ALL);
-            level.setBlock(lava, Blocks.LAVA.defaultBlockState(), Block.UPDATE_ALL);
+            BlockState originalWater = Blocks.WATER.defaultBlockState().setValue(LiquidBlock.LEVEL, 4);
+            BlockState originalLava = Blocks.LAVA.defaultBlockState().setValue(LiquidBlock.LEVEL, 10);
+            level.setBlock(water, originalWater, Block.UPDATE_CLIENTS);
+            level.setBlock(lava, originalLava, Block.UPDATE_CLIENTS);
             level.setBlock(webSupport, Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
 
             splashBlock(level, water, List.of(WitcheryItems.MANDRAKE_ROOT.get(), Items.SAND), player);
@@ -100,12 +104,12 @@ public final class CustomBrewGameTests {
             level.addFreshEntity(toad);
             ToadFamiliarEntity spawnedToad = toad;
 
-            helper.runAfterDelay(205, () -> {
+            helper.runAfterDelay(201, () -> {
                 try {
-                    helper.assertTrue(level.getBlockState(water).is(Blocks.WATER),
-                            "Tide Hold must restore the original water source after 200 ticks");
-                    helper.assertTrue(level.getBlockState(lava).is(Blocks.LAVA),
-                            "Lava Hold must restore the original lava source after 200 ticks");
+                    helper.assertTrue(level.getBlockState(water).equals(originalWater),
+                            "Tide Hold must restore the exact flowing-water level after 200 ticks");
+                    helper.assertTrue(level.getBlockState(lava).equals(originalLava),
+                            "Lava Hold must restore the exact falling-lava level after 200 ticks");
                     helper.assertTrue(spawnedToad.isRemoved(),
                             "a poisonous summoned toad must discard itself when its source lifetime expires");
                     helper.succeed();

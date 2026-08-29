@@ -2,8 +2,12 @@
   "background_u_index": 0,
   "background_v_index": 0,
   "category": "spirit_world",
+  "condition": {
+    "type": "modonomicon:advancement",
+    "advancement_id": "witchery:guide/obtained/soul_of_torment"
+  },
   "description": "",
-  "hide_while_locked": false,
+  "hide_while_locked": true,
   "icon": {
     "item": "witchery:otherwhere_hearth_brew"
   },
@@ -16,7 +20,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)This additive endgame working carries a settled home bodily between the waking world and the Spirit World. Brew and bottle an Otherwhere Hearth, then use it on an empty, dry Kettle. The Kettle binds permanently to the witch who named it.[#]()",
+      "text": "[#](53341a)A hearth may be taught to cross the veil with every wall and soul held inside it. Brew and bottle an Otherwhere Hearth, then use it on an empty, dry Kettle. The Kettle binds permanently to the witch who named it.[#]()",
       "title": "The Otherwhere Hearth",
       "use_markdown_in_title": false
     },
@@ -38,7 +42,18 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)Gather six coven witches and a complete altar inside the hearth, fill that altar with at least 10,000 power, then crouch and touch the bound Kettle with an empty hand.[#]()",
+      "text": "[#](53341a)Gather six living witches sworn to the hearth's owner and a complete altar inside the hearth, fill that altar with at least 10,000 power, then crouch and touch the bound Kettle with an empty hand.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Remembered dead may lend their voices to lesser rites, but they cannot carry a home bodily across the veil.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },
@@ -174,6 +189,28 @@
       },
       "show_title_separator": false,
       "text": "[#](53341a)Witches carried bodily into the Spirit World keep their inventory and face ordinary death there; this is not dream walking.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Touch the bound Kettle with a **Seer Stone** to trace the moving hearth in violet motes. The Stone names faults in the near hearth without taking offerings or altar power. Only the witch bound to the Kettle may read it.[#]()",
+      "title": "Reading the Hearth",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The far hearth remains veiled unless its ground is already awake. A quiet Stone is a preparation, not a promise: the crossing itself judges both worlds before anything is spent.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     }

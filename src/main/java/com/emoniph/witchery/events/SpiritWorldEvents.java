@@ -6,7 +6,6 @@ import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryItems;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -17,44 +16,20 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public final class SpiritWorldEvents {
-    static final long DREAM_TIME = 6_000L;
-    static final long NIGHTMARE_TIME = 18_000L;
-
     private SpiritWorldEvents() {
-    }
-
-    @SubscribeEvent
-    public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel level)
-                || !level.dimension().equals(WitcheryDimensions.SPIRIT_WORLD)
-                || level.getGameTime() % 20L != 0L) {
-            return;
-        }
-
-        boolean nightmare = hasNightmareAtmosphere(level);
-        long target = Math.floorDiv(level.getDayTime(), 24_000L) * 24_000L
-                + targetTimeOfDay(nightmare);
-        if (level.getDayTime() != target) {
-            level.setDayTime(target);
-        }
     }
 
     static boolean contributesNightmareAtmosphere(WitcheryPlayerData data) {
         return data.isInSpiritWorld() && !data.isSpiritWorldDream();
     }
 
-    public static boolean hasNightmareAtmosphere(ServerLevel level) {
+    public static boolean hasNightmareAtmosphere(net.minecraft.server.level.ServerLevel level) {
         return level.players().stream()
                 .map(WitcheryAttachments::get)
                 .anyMatch(SpiritWorldEvents::contributesNightmareAtmosphere);
-    }
-
-    static long targetTimeOfDay(boolean nightmare) {
-        return nightmare ? NIGHTMARE_TIME : DREAM_TIME;
     }
 
     @SubscribeEvent

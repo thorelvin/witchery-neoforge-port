@@ -142,12 +142,20 @@ public class WitcheryPlayerEvents {
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            WitcheryAttachments.get(player).clearMysticBranchChannel();
             if (!event.getTo().equals(WitcheryDimensions.MIRROR_WORLD)
                     && WitcheryAttachments.get(player).getMirrorRouteDepth() > 0) {
                 WitcheryAttachments.get(player).clearMirrorRoutes();
             }
             player.level().getServer().execute(() -> reconcileSpiritLifecycle(player));
             syncToClient(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            WitcheryAttachments.get(player).clearMysticBranchChannel();
         }
     }
 
@@ -253,6 +261,7 @@ public class WitcheryPlayerEvents {
     public static void onLivingDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         WitcheryPlayerData data = WitcheryAttachments.get(player);
+        data.clearMysticBranchChannel();
         if (data.isManifestedGhost()) {
             event.setCanceled(true);
             player.setHealth(1.0f);
@@ -395,6 +404,12 @@ public class WitcheryPlayerEvents {
         }
 
         WitcheryPlayerData dataEveryTick = WitcheryAttachments.get(player);
+        if (dataEveryTick.hasActiveMysticBranchChannel()
+                && (dataEveryTick.isMysticBranchChannelExpired(player.level().getGameTime())
+                || !player.isUsingItem()
+                || !(player.getUseItem().getItem() instanceof com.emoniph.witchery.item.MysticBranchItem))) {
+            dataEveryTick.clearMysticBranchChannel();
+        }
         if (dataEveryTick.hasSoaringBuff()) dataEveryTick.tickSoaring();
         if (dataEveryTick.hasGraveBrew()) dataEveryTick.tickGrave();
         dataEveryTick.tickTormentPortal();

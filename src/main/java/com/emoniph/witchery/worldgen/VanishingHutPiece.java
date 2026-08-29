@@ -53,12 +53,13 @@ public class VanishingHutPiece extends StructurePiece {
 
         ServerLevel serverLevel = level.getLevel();
         UUID hutId = UUID.randomUUID();
-        VanishingHut.build(level, anchor, hutId);
+        VanishingHut.buildForWorldgen(level, anchor, hutId);
         CovenWitchEntity witch = VanishingHut.spawnResident(level, anchor);
-        if (serverLevel.getBlockEntity(anchor) instanceof VanishingHutAnchorBlockEntity be) {
+        if (level.getBlockEntity(anchor) instanceof VanishingHutAnchorBlockEntity be) {
             be.setResident(witch == null ? null : witch.getUUID());
         }
-        VanishingHutData.get(serverLevel).upsert(hutId, serverLevel, anchor);
+        VanishingHutData.get(serverLevel).upsert(
+                hutId, serverLevel, anchor, witch == null ? null : witch.getUUID());
     }
 
     /** Clear plants/leaves/loose logs from the hut volume so trees don't poke through the walls. */

@@ -7,6 +7,27 @@
 **Target:** Minecraft 1.21.11 / NeoForge 21.11
 **Purpose:** This file is the clean implementation handoff. Read this first, then use the supporting roadmap files in the order and scope described below.
 
+**2026-08-27 integration review:** verified correction and expansion priorities
+now live in [FEATURE_INTEGRATION_REVIEW_ACTIONS.md](FEATURE_INTEGRATION_REVIEW_ACTIONS.md).
+The first two corrections, living owner-sworn coven semantics for the Otherwhere
+Hearth and source-default infusion behavior without recurring identity buffs,
+  landed on 2026-08-27. Default-off Blight Heart containment and the separate
+  owned, indexed, bounded, reversible Heart redesign also closed that day. The
+  restrained two-mode Creaking familiar specialization is closed as well. The
+  Hearth's owner-safe Seer Stone preparation view, Soul of Torment discovery
+  gate, and the wider player-facing language sweep closed on 2026-08-28. The
+  deliberately narrow Red Thread intermediary and one anchored Curse of Sinking,
+  restrained living-coven specialties, Coven Concord, Vanishing Hut bargains, and
+  restraint consequences all closed on 2026-08-28. Spirit World atmosphere and
+  lifecycle certification closed the same day with matched original/port captures,
+  fixed-seed fresh chunks, two-player GameTests, and a two-process Icy Needle wake.
+  The additive regular, small, and cursed Witch Well family is now certified
+  against the supplied designer NBT with fixed-seed natural generation, exact
+  authored-block/fluid/loot/trigger audits, safe traversal, restart persistence,
+  and controlled captures. Original Witchery contains no equivalent well system.
+  The next recommended package is Spirit Portal, Body/Manifestation, and
+  dream-entity presentation certification against controlled source runs.
+
 **2026-06-20 additive snapshot:** `vanishing_witch_hut` (§3.3 / §6) slice 1 is implemented — a block hut that relocates when unobserved (inside→exit→unwatched trigger), usually within the Overworld and ~25% crossing to the Spirit World at mirror coords, leaving ash/debris. It is a block structure (remove + rebuild), not a walking creature, per the structure doc. Built block-by-block around a hidden anchor BlockEntity; the resident reuses `CovenWitchEntity` (tethered to the hut, and carried to the new site on each move so it stays the same witch). The **salt-line counterplay is implemented**: a line of Witches' Salt (`SaltLineBlock`, item `witchery:witches_salt` — reuses the redstone-wire connection rendering, tinted white; smelt kelp in the Witches' Oven or buy from a Coven Witch) across the doorway holds the hut. Natural forest/swamp worldgen is in (`VanishingHutStructure` + `has_vanishing_hut` biome tag, random_spread). Remaining: the other "hold it" routes (red thread / iron nail / offering) plus an anger-on-restraint chance. QA: `/witchery setup|goto vanishing_hut`, `/witchery hut move|watch`.
 
 **2026-06-14 remaking snapshot:** today's landed scope is still faithful-remake work, not additive expansion: placed Modonomicon live pages/navigation, Waystone/Blooded Waystone/Taglock Crystal Ball scrying, dropped bound/Blooded Waystone transposition, Player Compass needle/model parity, Apothecary cauldron-jobsite trade repair, triggered cursed-block brew dispersal, vanilla-shaped custom brew liquid polish, Gas Mask/lifetime gas parity, Disease brew/block spread parity, Purified Milk disease cleanup, and Dog Tongue ritualized custom-brew cauldron release. Next faithful-remake follow-ups from this cluster are the wider dynamic brew action roster, exact ritual pulse/backfire/target-modifier parity, old spell-projectile routes, and final scrying/apothecary reload QA.
@@ -223,14 +244,14 @@ Use this as the unified order for current work:
 2. **Blood and binding foundation**
    - Blood Vial as advanced taglock
    - Witch Needle
-   - Red Thread support
+   - Red Thread support - first narrow Spinning/Poppet slice closed 2026-08-28
 
 3. **Mosquito in a Bottle**
    - Mobile blood collection feeding existing taglock/poppet/curse systems
 
 4. **Anchored curse foundation**
-   - Optional anchor data layer on top of existing curse logic
-   - Start with a small, safe curse set
+   - First persisted anchor is live on top of the existing Curse of Sinking
+   - Keep any wider curse set behind a separate explicit scope decision
 
 5. **Witch Forest atmosphere**
    - biome

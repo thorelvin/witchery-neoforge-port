@@ -6,6 +6,8 @@ import net.minecraft.util.Mth;
 public final class SpiritWorldAtmosphere {
     private static final float DREAM_ANGLE = 1.0F;
     private static final float NIGHTMARE_ANGLE = 0.5F;
+    private static final long DREAM_TIME = 6_000L;
+    private static final long NIGHTMARE_TIME = 18_000L;
 
     private SpiritWorldAtmosphere() {
     }
@@ -36,10 +38,11 @@ public final class SpiritWorldAtmosphere {
                 red * (factor * 0.94F + 0.06F),
                 green * (factor * 0.94F + 0.06F),
                 blue * (factor * 0.91F + 0.09F));
-        return new Atmosphere(color, celestialAngle * Mth.TWO_PI);
+        return new Atmosphere(color, celestialAngle * Mth.TWO_PI,
+                nightmareLike ? NIGHTMARE_TIME : DREAM_TIME);
     }
 
-    public record Atmosphere(Color color, float sunAngleRadians) {
+    public record Atmosphere(Color color, float sunAngleRadians, long clientDayTime) {
     }
 
     public record Color(float red, float green, float blue) {

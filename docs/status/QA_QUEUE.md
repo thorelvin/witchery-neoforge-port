@@ -1,6 +1,6 @@
 # QA Queue
 
-Last curated: 2026-08-26
+Last curated: 2026-08-28
 
 This is the active in-game QA queue. It replaces scattered new QA notes in
 the archived parity/fixes/ritual QA notes under `docs/archive/status/` and small
@@ -14,6 +14,148 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Prefer commands and item IDs where possible.
 
 ## Active Focus
+
+### Creaking Familiar Roles
+
+- Automated baseline: `/test run witchery:creaking_familiar_modes` must pass. It
+  covers follow/root exclusivity, persisted anchor and cadence state, bounded
+  alert throttling, one-clump resin accumulation, NBT reload, and return to follow.
+- Bind a wild Creaking with the Rite of the Creakening. With an empty hand, use it
+  once to root it and again to release it; sneak-use only while rooted to dismiss.
+  Confirm its message, sway sound, active/inactive pose, and feet stay visually
+  stable at the chosen block through both transitions.
+- In follow mode, have a non-owner watch it, then look away while a hostile attacks
+  the owner. It should freeze under the stranger's gaze, recover over long distance,
+  and defend only against the owner's attacker. It must not alert, repel an area,
+  or shed resin.
+- In rooted mode, approach with a non-allied second player and several hostiles.
+  The owner should receive a restrained warning rather than repeated action-bar
+  spam; only a bounded handful of monsters should retreat on each slow pulse.
+  Leave one Resin Clump at its feet and verify no pile accumulates. The Rite of
+  Calling must refuse before consuming offerings or altar power.
+- Restart with the guard rooted, then revisit its loaded chunk. Its name,
+  visibility, mode, exact anchor, alert restraint, and resin wait should remain;
+  the guard must never load its own chunk merely because the owner is elsewhere.
+
+### Blight Heart Containment And Lifecycle
+
+- Automated baseline: `/test run witchery:blight_heart_containment` must pass
+  with `rituals.enableBlightHeart=false`. A fully powered, fully offered rite
+  and Brew of Blight must refuse without consuming; loaded Hearts must not
+  spread; existing taint may only clean its own block on a random tick.
+- In a disposable world, place existing Blight Heart, Fibre, Soil, Stone, and
+  Log blocks while the gate is closed, restart, and confirm every ID still
+  loads. Watch long enough to confirm no new taint appears and orphan terrain
+  recedes gradually rather than disappearing in a synchronous area sweep.
+- Only in a disposable protection-adapter test world, set
+  `rituals.enableBlightHeart=true`. Confirm the rite and Brew refuse protected
+  root positions without consuming and still work on land the caster may alter.
+- Automated lifecycle baseline: `/test run witchery:blight_heart_lifecycle` must
+  pass. It covers one Heart per owner, 32-block inter-owner separation, tagged
+  barrier skip, owner-offline spread pause, Seer Stone tracing, authorized
+  non-owner cleansing, and exact Grass Block/Cobblestone/Spruce Log restoration.
+- Run `python tools/runtime_test_harness.py blight-heart-restart`. Stage one must
+  save a partially progressed Heart journal; stage two must restart the same
+  world, recover its owner/state/budget/cadence/ledger, cleanse it, and report
+  `restart_resumed_and_cleansed` in the summary.
+- With Open Parties and Claims, FTB Chunks, and Common Protection API installed
+  one at a time, try enabled rite placement, Brew placement, autonomous spread,
+  Seer tracing, anchor breaking, and Brew of Cleansing as owner and non-owner.
+  Protected creation must consume nothing; protected spread/restoration must
+  skip rather than bypass the adapter; no action may force-load a remote chunk.
+- In survival with two players, let the owner leave the dimension and verify the
+  stain stops advancing. Have the other permitted player use a Seer Stone on a
+  stained block, follow its direction/distance reading, and break or cleanse the
+  Heart. Loaded terrain should return gradually to exact block families, with a
+  final relief effect; unloaded corruption should wait until its chunk loads.
+
+### Infusion Source Parity
+
+- Automated baseline: `/test run witchery:infusion_passive_parity` must pass.
+  Remaining infused for an ambient tick must not grant Night Vision,
+  Regeneration, Slow Falling, or Fire Resistance, and must not spend energy.
+- Apply each infusion in survival and confirm its one-time grant feedback and
+  ambient aura remain visible. Exercise representative Witch's Hand powers,
+  the Overworld hard-landing cushion, and Infernal fire/drowning/lightning/fall
+  creature reactions; those source-backed mechanics must remain functional.
+
+### Coven Specialties And Concord
+
+- Automated baseline: `/test run witchery:coven_specialty_contributions` must
+  pass. It proves specialty/owner save-load, living owner-sworn participation,
+  sixteen-block range, duplicate collapse, the five narrow contributions, dead
+  exclusion, and the six-witch Concord achievement.
+- Use a Seer Stone on several free and recruited Coven Witches. Each should keep
+  one Hedge, Grave, Pale, Storm, or Hearth identity across restart, and direct
+  questions about her craft should agree with the Stone. No level, skill point,
+  reroll, or second specialty should appear.
+- Bring one suitable sworn witch within sixteen blocks of Fertility/Forestation,
+  Necromantic/Spectral Stone, Manifestation, weather, and protection workings.
+  Confirm the matching witch produces her coloured motes and contribution line;
+  an unsworn, other-owned, dead, distant, or duplicate-specialty witch must add
+  nothing. Judge whether each bonus is noticeable but smaller than ordinary Coven
+  scaling.
+- Gather all six living sworn witches and activate a supported working. Confirm
+  each participant receives craft-coloured motes, the chime and Concord line read
+  clearly without obscuring rite feedback, and the scene remains social rather
+  than a large power spike.
+
+### Vanishing Hut Bargains And Salt
+
+- Automated baseline: `/test run witchery:vanishing_hut_bargain_cycle` must pass.
+  It covers exact payment/reward, one completion per relocation cycle, relocation
+  reset, salt refusal without consumption, persisted resident lookup, unloaded-
+  resident Taglock scrying, and coordinate-free output.
+- Find a naturally generated or setup Vanishing Hut and crouch-use its resident.
+  She should name one exact difficult-reagent exchange; plain use must still open
+  ordinary trades. Return crouched with the complete stack in the main hand,
+  confirm exact payment/reward, then repeat: no second reward should be possible
+  until the same hut relocates.
+- Leave after completing the exchange and look away. The hut should remain still
+  while occupied or watched but become willing to move after roughly five seconds.
+  Rediscover it and confirm a fresh single offer. Restart before and after payment;
+  neither action may reroll or duplicate the current cycle.
+- On a fresh cycle, draw three Witches' Salt marks across the visible threshold.
+  The resident must refuse the rare bargain without taking its reagent. After
+  thirty seconds, confirm the warning, angry motes, sound, and threshold smoke.
+  After two continuous minutes, leave and look away: the hut may tear free while
+  leaving the salt line behind. Removing salt earlier stops the escape clock but
+  does not restore that settlement's forfeited offer.
+- Take a filled Taglock from the resident and use it at a powered Crystal Ball
+  before and after the hut moves across dimensions. The reading may name broad
+  realm, biome, weather, or time atmosphere, but must never reveal coordinates,
+  direction, distance, a waypoint, particles at the remote hut, or force-load its
+  chunk.
+
+### Red Thread And Anchored Sinking
+
+- Automated baseline: `/test run witchery:red_thread_anchored_sinking` must pass.
+  It exercises the real Spinning/Poppet assets, shelf preparation, full Infernal
+  Sinking rite, one active anchor, effect renewal, shelf-break cleanup, exact
+  prior-effect restoration, and short same-caster ward.
+- At a powered Spinning Wheel, place four String in the fibre slot with Red Dye
+  and Reek of Misfortune as modifiers. After fifteen seconds it should yield four
+  Red Thread with the crimson curled-thread icon and ordinary machine feedback.
+- Bind a plain Poppet to a second player, place it alone among otherwise
+  ineligible shelf contents, and use Red Thread on the shelf. Confirm one thread
+  is consumed, the intended Poppet gains its prepared tooltip, and ambiguous
+  shelves, protected shelves, unbreakable shelf positions, creature-bound
+  Poppets, and already-specialized Poppets refuse without consuming.
+- Perform the ordinary full Curse of Sinking during thunder with the victim's
+  Taglock, exact offerings, Medium Infernal ring, and altar power. With one valid
+  prepared shelf the original effects should persist; with none, the unchanged
+  finite curse should still cast. A second prepared shelf or a duplicate caster-
+  target binding must refuse without spending the rite.
+- Let the victim experience every clue stage. A Seer Stone should name the
+  binding, a Crystal Ball used with the victim's Taglock should reveal its realm,
+  and the Poppet Shelf Compass should eventually point toward the loaded anchor.
+  Repeat across dimensions and with the shelf chunk unloaded; divination and
+  sustaining ticks must not force-load the anchor.
+- Remove the threaded Poppet, break the shelf, and use the existing Breath of the
+  Goddess Sinking cure in separate runs. Each route should end the binding once,
+  restore any weaker pre-existing Slowness exactly, remove only anchor-owned
+  Mining Fatigue, and briefly refuse another anchor from the same caster. Restart
+  once with an active anchor and repeat with two players on a protected server.
 
 ### Persistent Expanding Curses
 
@@ -44,6 +186,12 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 
 ### Persistent Ritual Queue
 
+- Automated baseline: `python tools/runtime_test_harness.py save-reload` flushes
+  a world and forcibly kills the first server, then proves PREPARED escrow is
+  discarded, PAID escrow refunds its exact ledger once, ARMED escrow survives,
+  and a held flowing-fluid block restores its complete block state. Keep any
+  live interruption tests focused on world effects with external side effects.
+
 - Start a long staged rite at one circle while Fertility, Sanctity, or another
   established rite runs at a second circle in the same dimension. The established
   working must continue at its own source cadence while the new rite waits for
@@ -69,6 +217,15 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Brew one listed Drought Splash and one listed cauldron crafting recipe directly from the pages; the displayed order, result count, altar cost, and required sneak-stir/final-use gesture should match the live cauldron.
 
 ### AI NPC Runtime
+
+- Exercise each `endpointPolicy`: `local_only` must accept loopback and reject
+  LAN/public/DNS hosts; `private_lan` must accept literal private addresses but
+  reject public addresses and DNS names; `remote_allowed` must work only after
+  the operator explicitly accepts that dialogue may leave the machine.
+- Set a tiny `maxResponseBytes` against a provider that streams an oversized
+  response. The request must stop at the configured bound and fall back without
+  retaining the excess body. Lower each `memoryMax*` setting, generate enough
+  memories to cross it, restart, and confirm oldest/expired entries are pruned.
 
 - Set an invalid local LLM provider or endpoint, talk to a nearby AI NPC, then
   fix the config and retry immediately. The failed provider/config attempt
@@ -96,6 +253,30 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - Trigger a rejected AI reply, such as a prompt-leak answer, player-echo line,
   repeated NPC line, or busy gate, then run `/witchery ai status` and confirm
   `recentRejections` names the rejection reason clearly.
+
+### Mystic Branch And Scrying
+
+- Start drawing a valid unlocked glyph, then replay its preparation packet,
+  alter its nonce/effect/level, exceed the channel rate, swap away from the
+  branch, or disconnect before release. The server must reject each stale or
+  forged preparation without casting or consuming energy; ordinary registered
+  glyphs should still cast once.
+- Begin living-target, self, and location scrying, then release use, unload or
+  remove the eye, change dimension, disconnect, and restart the server. Camera
+  control must always return, and a later session must not resolve an old entity
+  or level reference.
+
+### Flying Monkey And Vampire Flight
+
+- Order same- and cross-dimension Bound/Blooded Waystone travel into an unloaded
+  but existing chunk and a freshly generated chunk. The monkey should remain in
+  `PREPARING_WAYSTONE` while work is budgeted across ticks, time out cleanly when
+  necessary, and release only its own temporary ticket after arrival,
+  cancellation, owner dismount, or server stop.
+- Enter and leave vampire Bat form with no other flight source, with flight
+  granted before transformation, and with a supported third-party provider
+  toggled during transformation. Witchery must restore only the vanilla ability
+  values it owned and must not revoke an independent grant.
 
 ### Hobgoblin Chat Commands
 
@@ -180,37 +361,55 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   is held.
 - Confirm natural generation remains forest/swamp only.
 
-### NBT Structures
+### Wild Structures
 
-- Confirm designer NBT files remain loadable in a vanilla structure block after
-  import and cleanup.
-- Hobgoblin Hut: generate in forest/swamp, reject water/ocean placement, avoid
-  ugly terrain gashes, and spawn one Hobgoblin resident. There should be no
-  chest.
-- Warped Coven: generate in Nether warped forest terrain, choose a stable site,
-  clear stems/leaves/blocks from enclosed spaces, remove the mirror, and spawn a
-  Coven Witch with fitting loot.
-- Coven/Stone Circle: in a fresh Overworld, confirm `/witchery goto
-  coven_circle` and `/witchery goto stone_circle` locate the same registered
-  structure family; verify the ring is flush with terrain, keeps the three
-  source cobweb details, hides the dispenser and two Witch spawners under the
-  altar, spawns the Coven Witch resident most of the time, rejects river/ocean or
-  frozen-water sites, uses sandstone only in desert/badlands, and avoids a raised
-  dirt skirt in non-desert terrain.
-- Straw Man: in a fresh Overworld, confirm `/witchery goto straw_man` lands on a
-  placed 6x8x5 effigy with the hidden Zombie/Zombie/Skeleton spawner set, dry
-  footprint, biome-appropriate plant details, no water/frozen-water intersection,
-  and no broad raised sand/dirt platform.
-- Wells: test regular/small/cursed wells in forest/swamp terrain. Confirm
-  surface adaptation, shaft/room clearance, round grass skirt blending, and no
-  buried center features.
+- Automated and controlled-client certification is closed for Coven Circle,
+  Straw Man, Hobgoblin Hut, wild Witch Hut, Warped Coven, and Vanishing Hut.
+  Exact registry, natural-generation, content, safe-arrival, traversal,
+  relocation, restart, and capture evidence is in
+  [WILD_STRUCTURE_CERTIFICATION.md](WILD_STRUCTURE_CERTIFICATION.md).
+- Keep only ordinary long-session distribution and incidental terrain/foliage
+  feel open for those six structures; report a concrete seed and coordinates if
+  a new placement defect appears.
+- Automated and controlled-client certification is also closed for the separate
+  regular, small, and cursed-cave Witch Well family. Exact designer-NBT blocks,
+  adaptive surfaces, authored fluids, loot, curse triggers, safe arrival,
+  traversal, natural fixed-seed generation, restart identity, and seven views
+  are recorded in
+  [WITCH_WELL_CERTIFICATION.md](WITCH_WELL_CERTIFICATION.md).
+- Keep only ordinary long-session well distribution and incidental biome-edge
+  feel open. Report a concrete seed, coordinates, variant, and screenshot if a
+  surface skirt, center feature, shaft, or lower room is buried or exposed badly.
 
 ### Dream And Spirit World
 
-- Run `/witchery verify spiritworld` before fresh-chunk testing. It must pass the
-  mirrored-biome, Spirit-only cotton, and native-Spirit spawn wiring audit. During each travel mode, run
-  `/witchery verify spirit_lifecycle`; ordinary dream, nightmare, manifested
-  ghost, and physical-Hearth states must each report `CONSISTENT`.
+- **Certified 2026-08-28:** controlled original and port clients captured clear
+  dream, rainy dream, nightmare, and demonic states. The source palettes, fixed
+  celestial presentation, dark terrain response, zero stars, and no-cloud sky
+  match. Rain-particle density differs with the modern renderer and is not an
+  exact-parity claim. Evidence lives under
+  `C:\claude\witchery\captures\spirit-world\` with the analyzer summary in
+  `comparison/atmosphere-comparison.json`.
+- `witchery:spirit_world_fresh_chunks` certifies an actual fixed-seed 9 x 9
+  fresh-chunk region: 5,184 paired biome samples, 1,296 generator-terrain samples,
+  natural Wispy Cotton, ordinary ecology, eligible source floors, and the exact
+  weight-1/group-2-to-5 Spirit spawn entry. `witchery:spirit_world_lifecycle`
+  certifies two simultaneous players across peaceful/nightmare pressure, Body and
+  inventory isolation, reconnect, blocked return, Manifestation, death/Icy Needle
+  wake, and cleanup. The separate two-process client certificate at
+  `build/runtime-test/spirit-world-lifecycle-live/20260828-103710/summary.json`
+  proves exact persisted dream state and a live Icy Needle wake after JVM restart.
+- **Controlled presentation certificate 2026-08-28:** direct 0.24.1 research and
+  original/port captures now cover the Portal, sleeping Body, Manifestation,
+  native Spirit, Nightmare, and demonic Nightmare. Portal plane/tint/light/motes,
+  Body owner skin/name and prone pose, manifested skin/equipment and 0.51 alpha,
+  exact entity models/alphas, Spirit mote cadence, and Nightmare sound mappings
+  are locked. Evidence and caveats are in
+  [SPIRIT_WORLD_ATMOSPHERE.md](../reference/SPIRIT_WORLD_ATMOSPHERE.md).
+- Keep the remaining bullets as ordinary two-client presentation,
+  interaction-feel, and regression checks. `/witchery verify spiritworld` must
+  pass before testing, and `/witchery verify spirit_lifecycle` must report
+  `CONSISTENT` in each travel mode.
 - From the Overworld, record F3 coordinates, run `/witchery dream`, and confirm
   Spirit World X/Z match exactly.
 - Y should stay in the same column and only move enough to find a safe landing.
@@ -242,8 +441,9 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   Native Spirits should appear in groups of 2-5 only above Y 60 on well-lit grass or
   sand and in source-equivalent land biomes, never oceans, rivers, or Mushroom Fields.
   Nightmares must not naturally biome-spawn.
-- Enter a peaceful dream and confirm shared daylight. Switch one true dreamer to a
-  nightmare and confirm shared night, then clear that nightmare and confirm day.
+- Enter a peaceful dream and confirm shared client daylight. Switch one true dreamer to a
+  nightmare and confirm shared client night, then clear that nightmare and confirm day.
+  The server and Overworld clock must remain untouched.
   A player carried bodily by an Otherwhere Hearth must not affect either state.
 - Harvest Wispy Cotton by hand, automation, and explosion during a shared nightmare;
   every route should yield Disturbed Cotton. Confirm Flowing Spirit must be a source
@@ -273,20 +473,37 @@ one-off status files. Keep entries concrete: setup, action, expected result.
 - In a disposable world with both volumes empty of players, run `/witchery setup
   otherwhere_hearth`. Stand beside its Kettle and run `/witchery verify
   otherwhere_hearth`; it must report `READY`. The generated paired 25 x 25 x 25
-  fixture includes contrasting inventories, signs, fluids, redstone, coven,
+  fixture includes contrasting inventories, signs, fluids, redstone, six living
+  coven witches sworn to the owner,
   pets, a vehicle/passenger pair, a loose item, a hostile, and destination-side
   markers. Confirm both volumes and every entity swap at identical coordinates,
   a second crossing restores them exactly, and the altar loses exactly one
   scaled crossing cost each way.
 - On an integrated or dedicated dev server where the custom dimensions are
   loaded, run `/test run witchery:otherwhere_hearth_round_trip`. The registered
-  manual GameTest must pass its bidirectional block-entity, fluid, redstone,
+  GameTest must pass its bidirectional block-entity, fluid, redstone,
   entity, passenger, physical-traveller, journal, and exact altar-charge checks.
-  The headless GameTest server cannot satisfy this gate because it creates only
-  the vanilla dimensions. This dedicated-server test passed on 2026-08-18.
+  The runtime dedicated-server test passed again on 2026-08-27.
 - `/test run witchery:otherwhere_hearth_destination_refusal` passed on a
-  custom-dimension dedicated server on 2026-08-18, proving an occupied target
+  custom-dimension dedicated server again on 2026-08-27, proving an occupied target
   creates no journal, changes no source blocks, and spends no altar power.
+- `/test run witchery:otherwhere_hearth_coven_ownership` passed on the runtime
+  dedicated server on 2026-08-27. It proves the owner's six living sworn witches
+  qualify; unrecruited and other-owned living witches do not; a Spectral Witch
+  cannot replace one of the six; that Spectral Witch still contributes to
+  ordinary source rites; and rejected activation spends no power and creates no
+  journal.
+- `/test run witchery:otherwhere_hearth_seer_preflight` passed on the runtime
+  dedicated server on 2026-08-28. It begins with zero loaded destination chunks
+  and proves owner readiness, non-owner privacy, a still-veiled far hearth, no
+  remote chunk request, no Seer Stone or altar-power spend, the five-second
+  cooldown, and shared broken-circle rejection. In a real client, confirm the
+  violet outline is readable but restrained at all eight vertical offsets and
+  twelve horizontal edges, and that no message overlaps or floods chat.
+- In a fresh progression test, confirm the Otherwhere Hearth Primer entry stays
+  hidden until a Soul of Torment enters the inventory, then opens with the Seer
+  Stone preparation page. Unlocking the surrounding Spirit World chapter alone
+  must not reveal the endgame recipe.
 - Separately confirm the Otherwhere Hearth refuses wrong dimensions, incomplete
   rings/coven/altar, insufficient altar capacity or power, an altar outside the
   volume, a destination player, a dream-walking player, an unteleportable
@@ -371,8 +588,10 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   confirm the text appears in purple actionbar text when triggered.
 - Re-trigger warning doors/buttons/levers and confirm repeated warnings respect
   the cooldown instead of spamming every activation.
-- Cursed well: confirm top ladder warning uses `You feel uneasy.` without poison;
-  lower ladder applies the actual curse once.
+- Cursed-well ladder semantics are automated: the top ladder keeps
+  `You feel uneasy.` on a 100-tick cooldown without poison, while the lower
+  ladder consumes its one real curse charge. Ordinary play need only judge the
+  warning timing, visibility, and descent feel.
 
 ### Custom Brews And Rituals
 
@@ -735,10 +954,14 @@ one-off status files. Keep entries concrete: setup, action, expected result.
   harness also fails on any `suffocated in a wall` death during generation.
 - Generate multiple villages and confirm walls appear on roughly 40% of villages
   by default.
-- Check square inner/outer wall corners, rampart stair angles, gatehouse access,
-  entity blocker relocation, and the bounded post-build collision rescue. Walk
-  both gatehouse directions and every Keep/Watch Tower ladder route with guards
-  active; the automated gate proves mechanics, not client movement feel.
+- Controlled source-shape baseline completed 2026-08-27: overhead and ground
+  captures covered plains, desert, savanna, and taiga palettes, severe terrain,
+  snow, and water-edge runs; the plains integrated arch was walked from the
+  exterior path into the village without collision or a step snag. Exact tests
+  cover both arch rotations and all five palettes.
+- During ordinary play, sample the remaining gates in both directions, walk the
+  patrol crown, and traverse every Keep/Watch Tower ladder route with guards
+  active. This is movement/distribution feel QA, not an open wall-template gap.
 - Confirm unwalled villages remain valid and `/witchery walls` can still force a
   wall build for QA.
 

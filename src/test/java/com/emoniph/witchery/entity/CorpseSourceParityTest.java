@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,8 @@ class CorpseSourceParityTest {
         assertEquals(0.25F, CorpseEntity.SOURCE_RENDER_Y_OFFSET);
         assertEquals(90.0F, CorpseEntity.SOURCE_PRONE_ROTATION_DEGREES);
         assertEquals(1.0D, CorpseEntity.SOURCE_MOVEMENT_SPEED);
+        assertTrue(CorpseEntity.OWNER_NAMEPLATE_VISIBLE,
+                "The port must present the owner custom name assigned by the source entry path");
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryMobEffects;
 import com.emoniph.witchery.network.SyncPlayerDataPayload;
+import com.emoniph.witchery.network.MysticBranchChannelPayload;
 import com.emoniph.witchery.symbol.EffectRegistry;
 import com.emoniph.witchery.symbol.SymbolEffect;
 import com.emoniph.witchery.symbol.SymbolEffectProjectile;
@@ -41,6 +42,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public class MysticBranchItem extends Item {
 
     private static final int USE_DURATION = 36000;
+    private static final int CHANNEL_SESSION_TICKS = 20 * 30;
 
     public MysticBranchItem(Properties props) {
         super(props.stacksTo(1).rarity(Rarity.RARE));
@@ -71,7 +73,13 @@ public class MysticBranchItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide()) {
-            WitcheryAttachments.get(player).clearPreparedSpell();
+            WitcheryPlayerData data = WitcheryAttachments.get(player);
+            long nonce;
+            do {
+                nonce = level.random.nextLong();
+            } while (nonce == 0L);
+            data.beginMysticBranchChannel(nonce, level.getGameTime() + CHANNEL_SESSION_TICKS);
+            PacketDistributor.sendToPlayer((ServerPlayer) player, new MysticBranchChannelPayload(nonce));
         }
         player.startUsingItem(hand);
         return InteractionResult.CONSUME;
@@ -98,11 +106,16 @@ public class MysticBranchItem extends Item {
 
         WitcheryPlayerData data = WitcheryAttachments.get(player);
         int id = data.getPreparedSpellId();
-        int spellLevel = effectiveSpellLevel(serverPlayer, data.getPreparedSpellLevel());
-        data.clearPreparedSpell();
+        int requestedLevel = data.getPreparedSpellLevel();
+        data.clearMysticBranchChannel();
 
         SymbolEffect effect = id < 0 ? null : EffectRegistry.instance().getById(id);
-        if (effect == null) {
+        if (effect == null || !EffectRegistry.instance().isCastableLevel(id, requestedLevel)) {
+            fail(serverLevel, serverPlayer, "witchery.infuse.branch.unknownsymbol");
+            return true;
+        }
+        int spellLevel = effectiveSpellLevel(serverPlayer, requestedLevel);
+        if (spellLevel != requestedLevel || !canPrepareSpell(serverPlayer, effect, requestedLevel)) {
             fail(serverLevel, serverPlayer, "witchery.infuse.branch.unknownsymbol");
             return true;
         }
@@ -165,6 +178,22 @@ public class MysticBranchItem extends Item {
     static int effectiveSpellLevel(ServerPlayer player, int preparedLevel) {
         var worship = player == null ? null : player.getEffect(WitcheryMobEffects.WORSHIP);
         return effectiveSpellLevelForWorshipAmplifier(preparedLevel, worship == null ? -1 : worship.getAmplifier());
+    }
+
+    /** Shared server-side preparation/cast authorization; client recognition is never trusted alone. */
+    public static boolean canPrepareSpell(ServerPlayer player, SymbolEffect effect, int requestedLevel) {
+        if (player == null || effect == null
+                || !EffectRegistry.instance().isCastableLevel(effect.getEffectId(), requestedLevel)
+                || effectiveSpellLevel(player, requestedLevel) != requestedLevel) {
+            return false;
+        }
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        boolean creative = player.getAbilities().instabuild;
+        if (!effect.hasValidInfusion(creative, data.getInfusionType())) {
+            return false;
+        }
+        String knowledge = effect.getKnowledgeKey();
+        return creative || knowledge == null || WitcheryAttachments.learned(player).keys.contains(knowledge);
     }
 
     static int effectiveSpellLevelForWorshipAmplifier(int preparedLevel, int worshipAmplifier) {

@@ -1,6 +1,6 @@
 # Current Status
 
-Last curated: 2026-08-26
+Last curated: 2026-08-28
 
 This is the compact living handoff for the Witchery NeoForge remake. Keep it short
 enough to read before starting work. Long historical deltas belong in
@@ -18,14 +18,22 @@ enough to read before starting work. Long historical deltas belong in
   has unevenly scoped rows, and a `Done` implementation can still require
   live-client, multiplayer, balance, or packaging work; use the matrix and QA
   queue directly instead of treating an editorial percentage as a measurement.
-- Deterministic verification manifest: 20 exact JVM resource contracts, 34 CI
-  GameTests, and one manual forced-restart fixture.
+- Deterministic verification manifest: 22 exact JVM resource contracts, 48 CI
+  GameTests, and two manual restart fixtures for the Hearth and Blight Heart.
+  Blight Heart and the separate Spirit World client lifecycle each have dedicated
+  two-process harnesses and passed both stages on 2026-08-27 and 2026-08-28.
 - The standalone Book of Shadows is published at
   `https://thorelvin.github.io/witchery-book-of-shadows/`; this repository's
   root `Book_of_Shadows.html` remains canonical.
 
 ## Current Focus
 
+- The accepted feature-integration correction and expansion list is closed.
+  Red Thread anchors one existing curse; living Coven Witches carry one of five
+  modest, non-stacking crafts and can form a visible six-witch Concord; and each
+  Vanishing Hut settlement owns one persisted rare bargain plus meaningful salt
+  refusal, warning, and escape consequences. The Hearth's player-safe Seer Stone
+  preparation view remains distinct from activation's authoritative full preflight.
 - Keep the in-game Primer, `Book_of_Shadows.html`, and README aligned only for
   real player-facing behavior changes. After changing the canonical HTML, sync
   the public mirror using `docs/reference/BOOK_OF_SHADOWS_PUBLISHING.md`.
@@ -41,12 +49,12 @@ enough to read before starting work. Long historical deltas belong in
   Witches, Leonard, villagers, village guards, hobgoblins, Baba Yaga, bosses,
   demons/flame imps, and reflections should sound distinct while keeping server
   mechanics authoritative. Runtime cards now cover 98 indexed Markdown files and
-  1,474 targeted facts behind exact/scoped/rumor/no persona access boundaries.
+  1,475 targeted facts behind exact/scoped/rumor/no persona access boundaries.
 - In-server QA for the new protection facade: vanilla spawn/build limits plus
   Open Parties and Claims, FTB Chunks, and Common Protection API when installed.
 - In-game QA for recently restored or polished systems: Flame Imp contracts,
-  Vanishing Witch Hut, NBT structures, the source-corrected Spirit World lifecycle,
-  mirrored terrain/spawns/Manifestation visuals, cursed well warnings, the complete
+  Vanishing Witch Hut, NBT structures, Spirit Portal/entity/audio presentation,
+  cursed well warnings, the complete
   Ice World area conversion, Witchery crop growth/worldgen, the paired Gulg/Mog
   fight, unusual custom-brew effect combinations, and active-rite presentation.
 - State-dependent source-feel QA for exact-ID items and wearables. Foundational
@@ -56,30 +64,142 @@ enough to read before starting work. Long historical deltas belong in
 - Creative-tab and GUI-item polish for promoted exact IDs: hide utility/internal
   blocks until their player-facing route is useful, keep item renders legible,
   and prefer source-shaped models/textures over improvised geometry.
-- Fresh-world certification and traversal for NBT-backed huts, Coven Circle,
-  Straw Man, wells, wild Witch Huts, and Nether placements; village mechanics
-  already have their five-biome gate.
-- Spirit World atmosphere and dream/nightmare behavior QA.
+- The additive Witch Well family is certified from supplied designer NBT: exact
+  regular, small, and cursed-cave authored blocks, adaptive terrain, natural
+  fixed-seed generation, loot and warning/curse semantics, safe traversal,
+  restart identity, and seven controlled client views all pass. Original
+  Witchery 1.7.10 contains no Witch Well implementation, so this is not claimed
+  as original-source parity. See
+  [WITCH_WELL_CERTIFICATION.md](WITCH_WELL_CERTIFICATION.md).
+- The Spirit Portal, Body/Manifestation, and dream-entity presentation package is
+  automated/controlled-client certified. Its source ledger, six-state evidence,
+  focused contracts, and dedicated-server two-player regression pass are closed;
+  one ordinary two-client crossing/audio feel pass remains before full closure.
+  See [SPIRIT_WORLD_ATMOSPHERE.md](../reference/SPIRIT_WORLD_ATMOSPHERE.md).
 - Public-release hardening: docs clarity, launcher diagnostics, asset/legal
   review, packaging, and multiplayer/server checks.
 
 ## Recent High-Signal Changes
+
+- Spirit presentation now has a direct 0.24.1 ledger and matched evidence for the
+  Portal, sleeping Body, Manifestation, native Spirit, Nightmare, and demonic
+  Nightmare. The Portal is again an axis-aware 4/16 animated plane with source
+  `#00ff66` tint, light, and two dripping-water particles; formation no longer
+  tears down cells during the four-block placement. Native Spirit motes now use
+  the source every-client-tick cadence and tight footprint, and Bodies retain a
+  visible owner name after creation/reload. Source-correct existing entity models,
+  Nightmare audio mappings/assets, and Manifestation's 0.51 alpha were retained.
+  Six real port captures and original-client/model evidence live under
+  `C:\claude\witchery\captures\spirit-presentation\`.
+
+- Witch Well certification is closed for the three additive designer-NBT
+  variants. The cleaned contracts pin 138 regular, 42 small, and 496 cave blocks;
+  a fixed seed naturally generated all three at stable anchors and recertified
+  them after restart. The cave passes exact authored-fluid, loot, upper warning,
+  lower curse, ladder, safe-arrival, and segmented 23-block traversal checks.
+  Placement now uses per-variant terrain variance, preserves authored cave
+  fluids and cross-chunk Coffins, and routes through truly non-colliding glyphs.
+  Seven deterministic 1920 x 1080 client captures cover exteriors, centers,
+  shaft, and lower chamber.
+
+- Spirit World atmosphere and lifecycle certification is closed. Matched original
+  and port clients cover clear dream, rainy dream, nightmare, and demonic states;
+  the source fog palettes, fixed celestial presentation, dark terrain response,
+  zero stars, and no-cloud sky match. Modern rain-particle density remains an
+  intentional renderer-generation difference. `witchery:spirit_world_fresh_chunks`
+  proves 81 newly generated paired chunks, 5,184 biome samples, 1,296 raw-terrain
+  samples, natural Wispy Cotton, ordinary ecology, and exact Spirit spawn entries.
+  `witchery:spirit_world_lifecycle` proves simultaneous peaceful/nightmare players,
+  Body and inventory isolation, reconnect, real Icy Needle and lethal-damage wake,
+  blocked-return fallback, Manifestation transfer, nightmare pressure, and cleanup.
+  A separate two-process client certificate preserves exact dream state across a
+  JVM restart and wakes through live item use without changing the Overworld clock.
+- Coven specialties are live as stable Hedge, Grave, Pale, Storm, or Hearth
+  identities visible through the Seer Stone and grounded dialogue. Only nearby,
+  living, caster-sworn participants contribute; duplicates do not stack. Five
+  narrow rite hooks and the coloured six-witch Coven Concord scene are covered
+  by focused tests and `witchery:coven_specialty_contributions`.
+- Each Vanishing Hut settlement now offers one UUID-and-cycle-stable exchange of
+  existing difficult reagents through its resident. Completion shortens the
+  departure delay. Witches' Salt forfeits that cycle's bargain, escalates through
+  warning feedback, and permits an unoccupied unwatched escape after two minutes;
+  it still performs no global scan or chunk load. A resident Taglock gives a
+  Crystal Ball only realm/biome/weather atmosphere, never a route or coordinates.
+  `witchery:vanishing_hut_bargain_cycle` passes on a dedicated server.
+- Red Thread is live as a four-output Spinning Wheel recipe using four String,
+  Red Dye, and Reek of Misfortune. One plain player-bound Poppet on a breakable
+  Poppet Shelf can be prepared as an anchor for the otherwise unchanged full
+  Curse of Sinking rite. The one-per-caster-target binding persists, renews only
+  the original effects while the shelf is loaded, reveals itself gradually
+  through victim clues, Seer Stone, Taglock Crystal Ball, and Poppet Shelf
+  Compass, and ends cleanly on Poppet removal, shelf break, or the existing cure.
+  Codec/resource tests and `witchery:red_thread_anchored_sinking` pass.
+- Blight Heart containment and redesign are closed behind the release-default
+  `rituals.enableBlightHeart=false` gate. Enabled Hearts now have one durable
+  global owner/index/ledger: one root per owner, 32-block anchor separation,
+  512 successful mutations, four attempts per 20-tick cadence, real-owner
+  protection checks, owner-offline pause, a loaded-column-only rite search,
+  unloaded-target rejection before state reads, loaded-chunk-only exact
+  restoration, and Seer Stone tracing. Legacy
+  cleanup also passes a stable server actor through claim adapters; legacy
+  unowned Hearts remain inert. Codec/bound tests,
+  `witchery:blight_heart_containment`, `witchery:blight_heart_lifecycle`, the
+  real clean-stop/restart harness, and the complete runtime harness pass.
+- Infusion passive parity is restored: simply remaining infused no longer
+  refreshes Night Vision, Regeneration, Slow Falling, or Fire Resistance.
+  Source-backed energy, active powers, fall cushioning, creature reactions,
+  grant feedback, and ambient aura remain; the dedicated-server
+  `witchery:infusion_passive_parity` fixture passes.
+- The six-structure Wild certification package is complete. Coven Circle, Straw
+  Man, Hobgoblin Hut, wild Witch Hut, Warped Coven, and Vanishing Hut pass
+  fixed-seed natural generation, piece-bounded content/fluid audits, collision-
+  safe exterior arrival, internal route finding, and restart recertification.
+  Vanishing Hut also relocates with the same expected resident UUID and persists
+  its new anchor. Controlled client captures cover every structure; provenance,
+  registry values, exact coordinates, and evidence are recorded in
+  [WILD_STRUCTURE_CERTIFICATION.md](WILD_STRUCTURE_CERTIFICATION.md).
+
+- The release-hardening review is implemented. Ritual startup offerings now use
+  durable per-batch PREPARED/PAID/ARMED escrow with UUID ownership and exact
+  restart recovery; the save/reload harness flushes and forcibly kills the first
+  server before proving PREPARED discard, one-time PAID refund, ARMED retention,
+  and exact held-fluid restoration. Vampire Bat flight tracks only abilities it
+  owns, server-session queues and transient strong references are cleared at
+  shutdown, scrying stores UUID/dimension identifiers, AI work uses generation-
+  scoped permits, explicit endpoint locality policies, bounded HTTP bodies, and
+  bounded memory, and Mystic Branch preparation validates session, nonce, rate,
+  spell, level, and unlock state server-side. Flying Monkey waystone preparation
+  is tick-budgeted with temporary ticket cleanup. GameTests register only behind
+  `witchery.enableGameTests=true`; CI exposes the named `Build`, `Resource
+  Contracts`, `Hardening Unit Tests`, `Dedicated GameTests`, and `Dedicated Save
+  Reload` checks. Branch protection remains a repository-owner action.
 
 - The village ecosystem and cross-biome certification package is complete.
   Witchery village pieces now persist one canonical building claim and an
   origin-marked resident identity; walls persist gate candidates and selected
   gates, retain only force-load tickets they acquired, relocate living blockers,
   and perform one bounded collision rescue when construction finishes. The
-  operator-facing `/witchery verify village` command audits building claims,
+  visible generator now stamps the original three-block-thick, eight-course
+  curtain, recessed five-wide patrol crown, heavy L corners, and integrated
+  three-wide arch instead of the remake's thin wall and detached gatehouse;
+  biome and terrain adaptation remain intact. Each passage now carries a flat,
+  supported three-wide floor through the wall, then grades inward to the detected
+  village road and outward into the terrain. Exact coordinate tests lock the
+  wall, corners, both gate rotations, clear tunnel, and five material families.
+  The operator-facing `/witchery verify village` command audits building claims,
   biome-family materials, expected residents, wall/gate evidence, and a safe
   arrival. The fixed `witchery-runtime-test` world passed plains, desert,
   savanna, taiga, and snowy audits fresh and after restart; the harness also
-  rejects any wall-suffocation death. Were Villagers now preserve complete
+  rejects any wall-suffocation death. A controlled dev-client pass covered the
+  plains gate from both sides and on foot plus desert, savanna, and taiga
+  overviews; biome palettes, water edges, severe slopes, corners, crowns, and
+  the graded gate passage rendered continuously and the gate was collision-free.
+  Were Villagers now preserve complete
   sanitized Villager identity through infection, Wolfman form, reversion, and
   cure, and vampire/werewolf hybrids default to disabled. Creature Taglocks,
   Voodoo/Vampiric Poppets, Curse Creature, and Villager sacrifice selectors are
-  covered by dedicated-server fixtures. The manifest is now 20 exact resource
-  contracts, 34 CI GameTests, and one manual forced-restart fixture. See
+  covered by dedicated-server fixtures. The manifest now holds 22 exact resource
+  contracts, 48 CI GameTests, and two manual restart fixtures. See
   [VILLAGE_CERTIFICATION.md](VILLAGE_CERTIFICATION.md).
 
 - Persistent ritual lifecycle parity is closed for the original registry's
@@ -150,8 +270,8 @@ enough to read before starting work. Long historical deltas belong in
   chunk, and preserve stage/refunds through restart. Blight's original
   Glistering Melon recipe, Nausea II, villager/cow/animal effects, exact old
   flower/crop set, and sand/dirt decay are restored. The previous Poisonous
-  Potato + 3000-power heart seeding behavior is retained as the separately named
-  additive **Rite of the Blight Heart**. Hell on Earth restores the source
+  Potato + 3000-power heart seeding behavior is retained as the separately named,
+  sealed-by-default **Rite of the Blight Heart**. Hell on Earth restores the source
   200-power upkeep, exact mob weights and center spawn, and configurable
   familiar-enhanced plant fires. Focused JVM coverage and
   `witchery:persistent_expanding_curses` exercise the server behavior; the real
@@ -161,7 +281,7 @@ enough to read before starting work. Long historical deltas belong in
   Each source-tagged card renders its circles, altar power, coven requirement,
   conditions, and ordered offerings from one canonical resource; optional
   offerings have a gold frame in both held and placed books. The separately
-  labeled additive Rite of the Blight Heart brings the Primer to 115 generated
+  recorded Rite of the Blight Heart brings the Primer to 115 generated
   entries without pretending to be a source registration. A focused parity
   contract locks the generated catalog back to the extracted source fixture.
 - The source-facing `witchery:cauldron_book` now opens a dedicated native
@@ -174,14 +294,16 @@ enough to read before starting work. Long historical deltas belong in
   ingredient to appear once in the generated reference. Unsupported old
   transmutations are named honestly instead of being shown as working recipes.
 - The deterministic runtime harness and CI gates are complete. An explicit
-  manifest locks 20 resource-contract classes, 34 exact CI GameTests, and one
-  manual forced-restart fixture. Clean normal-difficulty dedicated servers now
+  manifest locks 22 resource-contract classes, 48 exact CI GameTests, and two
+  manual restart fixtures. Clean normal-difficulty dedicated servers now
   run every named test with all Witchery dimensions loaded, require unambiguous
   per-test success, preserve logs/JSON summaries, and verify Kettle, Witches'
   Oven, Distillery, Spinning Wheel, Brazier, Silver Vat, and command-storage
   state plus active Forestation, Blight, and Broken Earth workings across a real
-  stop/reload. A separate fresh-structure lane certifies five village biome
-  families and then reuses the same coordinates after restart.
+  stop/reload. Fixed-seed lanes now certify 81 paired fresh Spirit chunks, five
+  village biome families, all six Wild structures, and all three Witch Well
+  variants; persisted structures are then recertified at the same coordinates
+  after restart.
   CI uploads build
   or runtime diagnostics on failure. Building the gate also exposed and fixed
   the Otherwhere Hearth traveller-state race on Spirit entry and the Lord of
@@ -365,12 +487,35 @@ enough to read before starting work. Long historical deltas belong in
   dimension and covers the ordinary two-way transfer plus destination refusal;
   deliberate process-kill recovery, real-client multiplayer feel, and
   claim-adapter execution remain manual gates.
-- The additive Otherwhere Hearth endgame working is code-complete, with live
+- The broader Spirit lifecycle is now certified independently of the Hearth.
+  A fixed-seed 9 x 9 chunk comparison proves mirrored biome and raw terrain
+  geography while retaining Spirit-only cotton, ordinary biome ecology, and the
+  source Spirit spawn entry. A two-player GameTest covers concurrent peaceful and
+  nightmare dreamers, victim-bound pressure, separate inventories/vitals, Body
+  persistence, reconnect, Manifestation, Icy Needle/death wake paths, safe blocked
+  return, and cleanup. A property-gated two-process client harness then proves the
+  same persisted Body UUID, return point, escrow, inventory, health, and hunger
+  survive a real JVM restart before a live Icy Needle use wakes the player. Matched
+  original/port captures cover dream, rainy dream, nightmare, and demonic palettes;
+  time pinning is client-local in Spirit and leaves the server/Overworld clock alone.
+- The owner may now touch the bound Kettle with a Seer Stone for a no-cost
+  preparation reading. A five-second server cooldown bounds the request; the
+  exact moving volume appears as 80 deduplicated edge particles, local blockers
+  are ordered and capped in chat, and a destination is inspected only when its
+  complete footprint is already loaded. Otherwise the far hearth remains
+  veiled. Non-owners receive no owner, blocker, or destination detail. The
+  dedicated `witchery:otherwhere_hearth_seer_preflight` test passed on
+  2026-08-28 with zero remote chunks loaded before and after, no item or altar
+  spend, and the same broken-circle rejection as activation. The Primer entry is
+  now hidden until a Soul of Torment enters the player's inventory.
+- The Otherwhere Hearth endgame working is code-complete, with live
   dedicated round-trip, restart-recovery, offline-owner, and destination-refusal
-  GameTests passing; real-client multiplayer and claim QA remain open. A
+  GameTests passing; the dedicated ownership fixture also proves spectral,
+  unrecruited, and other-owned witches cannot substitute for the owner's living
+  coven without spending power or opening a journal. Real-client multiplayer and claim QA remain open. A
   10,000-power six-ingredient Kettle batch permanently binds
   one empty Kettle to its owner. A large Otherwhere ring, medium Ritual ring,
-  six coven members, and an in-volume altar with a base 10,000 available power
+  six living Coven Witches sworn to that owner, and an in-volume altar with a base 10,000 available power
   then swap the complete same-coordinate 25 x 25 x 25 Overworld/Spirit World
   volumes, including block entities and every movable entity on either side.
   Activation refuses occupied destinations, dream travellers, unmovable
@@ -379,7 +524,8 @@ enough to read before starting work. Long historical deltas belong in
   manifest, and complete non-player entity snapshots, allowing interrupted
   crossings, missing-entity recovery, and offline-player transfers to resume
   safely.
-- Corpse 1.7.10 parity is code-complete pending live QA. Spirit World entry now
+- Corpse 1.7.10 parity is mechanically certified; owner-skin presentation remains
+  ordinary live QA. Spirit World entry now
   leaves the source `1.2 x 0.5` persistent Body at the centre of the entry block,
   carrying the owner's name, UUID, health, and skin. It cannot fall, drift, or
   be pushed; accepts the source no-op interaction; uses the old `Owner` save key
@@ -387,7 +533,8 @@ enough to read before starting work. Long historical deltas belong in
   prone player with the source `0.9 / 0.25` offset, rotations, and zero shadow.
   Destroying it while the owner is online still forces that dreamer awake, and
   normal return removes the Body.
-- Nightmare 1.7.10 parity is code-complete pending live QA. The entity now uses
+- Nightmare 1.7.10 parity is mechanically certified; combat animation/audio feel
+  remains ordinary live QA. The entity now uses
   the source 0.6 x 1.8 fireproof body, 25 XP, full door/target/village movement
   stack, 16-block victim expiry burst, persistent source victim-name key,
   screaming and defended sync, fall/web immunity, 15-damage cap, source defense

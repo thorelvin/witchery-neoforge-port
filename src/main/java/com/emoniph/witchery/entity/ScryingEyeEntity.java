@@ -1,6 +1,7 @@
 package com.emoniph.witchery.entity;
 
 import com.emoniph.witchery.init.WitcheryEntities;
+import com.emoniph.witchery.scrying.ScryingSessions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -86,6 +87,14 @@ public class ScryingEyeEntity extends Mob {
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         return false;
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        super.remove(reason);
+        if (!level().isClientSide()) {
+            ScryingSessions.eyeRemoved(getUUID());
+        }
     }
 
     @Override

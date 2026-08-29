@@ -2,10 +2,21 @@
 
 Last reconciled: 2026-08-26. Latest village structure/wall bugs are closed; see `docs/archive/BUGS_CLOSED.md` for the older history.
 
+**Closed 2026-08-26 (adaptive village walls did not resemble the original wall or gate).**
+The prior curtain was thin and its detached 7x3 tower gatehouse came from the
+remake rather than Witchery's source. `VillageWallGenerator` now stamps the
+original eight-course, three-block-thick curtain, recessed five-wide patrol
+crown, two-course L corners, and integrated three-wide layered arch while
+retaining the modern adaptive contour, biome palettes, terrain/water support,
+tree cleanup, road detection, path grading, guards, and persisted generation.
+Exact straight/corner/gate coordinate tests cover both rotations and all five
+palette families. The post-build rescue also excludes the wall and its floor
+and refuses distant rooftop candidates.
+
 **Closed 2026-08-26 (village wall generation could suffocate loaded residents).**
 The deterministic snowy-village audit repeatedly showed an ordinary Villager
 dying in the same tick as wall completion even though building/resident counts
-passed. Gatehouse and graded-path columns now use the same safe relocation
+passed. Integrated-gate and graded-path columns now use the same safe relocation
 principle as curtain columns, and one bounded post-build collision scan rescues
 living entities still intersecting generated terrain. If no collision-free dry
 landing on solid ground exists, the affected column is skipped. The runtime
@@ -87,7 +98,7 @@ and all five restart audits pass without such a death.
 - ~~Rite of Imprisonment activates ("The circle begins to hold creatures fast") but mobs slowly inch out and escape~~ — Imprisonment is the inward-pull rite (source `RiteProtectionCircleAttractive(4, 0.8F, 0)` → `witchery.rite.imprisonment`; the Barrier-cylinder rite is the *separate* `witchery.rite.barrier`). The remake's `pullProtectionMob` (boundary-gated 0.22 pull toward centre) was already faithful; the bug was **cadence** — the rite was queued at `pulseInterval=20`, so the pull fired once a second while mob AI moved them freely the other 19 ticks. Source's `RiteProtectionCircle` upkeep step runs `update()` **every tick**, so the pull is continuous. Fixed: `pulseInterval=1` (radius 4, upkeep 0.8 to match source); dropped the non-source Slowness the approximation had added. (A first attempt mis-remade this as the barrier cylinder; reverted after re-reading the source `addRecipe`/`setUnlocalizedName` chaining.) **Sanctity** (source `RiteProtectionCircleRepulsive(4, 0.8F, 0)` → `witchery.rite.protection`, the every-tick outward push) had the identical `pulseInterval=20` bug and was fixed the same way (→ 1); its `pushProtectionMob` already matches source `repulse()` (pushes all creatures within radius outward, ±0.22). Build + 134 tests green; manual-QA the in-world containment for both.
 
 **Closed 2026-06-10 (Blight rite QA):**
-- ~~A Blight circle could fall through to Banish Demon when its former custom trigger was absent.~~ This workaround was superseded by the 2026-08-26 expanding-curse parity pass. **Curse of Blight** now uses the source-faithful medium Infernal full recipe with Glistering Melon Slice, no trigger item, and no initial altar-power charge. The old one-shot embedded-heart mechanic remains available separately as the port-added **Rite of the Blight Heart**, using Poisonous Potato and 3000 altar power.
+- ~~A Blight circle could fall through to Banish Demon when its former custom trigger was absent.~~ This workaround was superseded by the 2026-08-26 expanding-curse parity pass. **Curse of Blight** now uses the source-faithful medium Infernal full recipe with Glistering Melon Slice, no trigger item, and no initial altar-power charge. The old one-shot embedded-heart mechanic remains separately registered as the sealed-by-default **Rite of the Blight Heart**, using Poisonous Potato and 3000 altar power.
 
 **Closed 2026-06-10 (Creaking familiar rite QA):**
 - ~~The new `bind_creaking_familiar` rite (Rite of the Creakening) would not activate in-game~~ — the rite is triggered by a Creaking Heart dropped at the circle centre, but `RitualEvents.selectIngredientSource` picks the *nearest dropped item of any type* as the rite ingredient for a MEDIUM ritual ring, and the Creaking Heart is **not** one of the rite's own offerings (unlike `bind_familiar`, whose Tear/Odour triggers double as offerings). So whenever an offering landed nearer the centre, the wrong item was selected as the trigger, `matches()` failed, and the rite fell through silently to "unknown ritual". Fixed: `selectIngredientSource` now prefers a dropped Creaking Heart in the MEDIUM ritual-ring branch (like the obsidian protection branch), guaranteeing it is chosen as the trigger when present. Build + 134 unit tests green; the dispatch mapping (Creaking Heart → `bind_creaking_familiar`) is regression-locked in `RitualDefinitionTest`. The selection logic itself is world-dependent and remains manual-QA. See REMAKE_NOTES 2026-06-10 for the reusable rule.
@@ -187,6 +198,23 @@ and all five restart audits pass without such a death.
 
 ## Open
 
+### Release-hardening residual checks
+
+- Vampire Bat flight preserves a pre-existing vanilla flight grant and restores
+  only fields it changed. A second provider granting the same vanilla
+  `mayfly=true` bit while Bat form already owns it cannot be distinguished from
+  the existing grant; test the intended third-party flight mods live.
+- Mystic Branch packets now require a live channel session, nonce, rate limit,
+  registered effect, sufficient branch level, and a server-known unlock. A
+  modified client can still choose among spells that are already valid and
+  unlocked for that session because stroke recognition remains client-side.
+- Durable ritual escrow closes save/reload duplication for persisted PREPARED,
+  PAID, and ARMED stages. Generic effect callbacks still have an instruction-
+  level abrupt-crash boundary between arbitrary world mutation and the final
+  ARMED journal write; do not advertise CPU-instruction atomicity.
+- GitHub Actions exposes five stable release checks, but repository branch
+  protection must be enabled by the repository owner and is not asserted here.
+
 ### 1. Village goto pre-teleport prep needs follow-up retest
 
 The 2026-05-31 village fixes now cover thirteen observed stall/false-success paths: ticked safe village locate instead of synchronous vanilla locate, pre-teleport one-chunk-per-tick arrival prep, no forced wall tickets before village goto teleport, walls/gates generated before crossing to unprocessed goto villages, nearest-first one-chunk forced-ticket batches for manual wall jobs, a 144-chunk cap for very large explicit forced footprints, no forced wall tickets for automatic world-entry discovery, loaded-only automatic village reference lookup/refresh, bounded multi-village queue rotation/checking, stuck forced-chunk release/skip after 10 seconds without readiness progress, stale processed-village duplicate skips, the 19:07 one-chunk void arrival freeze, and the 19:38-19:44 `0 gate candidate(s)` false processed state. Retest on fresh plains/savanna/desert/taiga/snowy villages after restarting the client, with special attention to automatic spawn villages logging natural chunk waits instead of forced tickets or hidden start-chunk loads, village gotos logging `Queueing safe village search`, `Safe village locate found`, `Queued village arrival prep`, `Preparing village arrival`, wall generation before teleport for fresh villages, and the teleport chat only after prep completes. Explicit `/witchery walls` jobs should still log one-chunk requested-batch waits instead of a large "requested all" spike; manual `/witchery walls` should fail cleanly when no generated village start is nearby; biome-specific village gotos should fail cleanly if the safe radius has no match; and villages should show no duplicate wall layers, no completed generation after `0 gate candidate(s)`, nonzero gate candidates on ordinary road villages, road/safe-surface goto landings instead of underground arrivals, and inward gate path grading that reaches up to 15 terrain-only blocks but stops before building blocks.
@@ -275,5 +303,4 @@ wet/witch_visitor/zombie). Hellhound visuals, Minedrake bulb-hatch + detonation,
 
 | Item | Effort |
 |---|---|
-| Fresh-village wall/building QA across plains, desert, savanna, taiga, and snowy villages | 1-2 hrs |
-| Spirit World horizon/day-angle atmosphere and fresh-chunk vegetation/spawn QA | 1-2 hrs |
+| Spirit Portal, Body/Manifestation, entity animation/audio, and multiplayer feel QA | 1-2 hrs |

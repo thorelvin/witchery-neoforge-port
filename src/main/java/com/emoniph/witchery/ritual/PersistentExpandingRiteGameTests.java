@@ -107,7 +107,7 @@ public final class PersistentExpandingRiteGameTests {
                 RitualExecutor.FERTILITY_PULSE_INTERVAL, 0, 0.0F, false, 0,
                 level.getGameTime(), ItemStack.EMPTY,
                 List.of(new ItemStack(Items.BONE_MEAL), new ItemStack(Items.DIAMOND)),
-                owner.getScoreboardName(), ItemStack.EMPTY);
+                owner.getUUID(), owner.getScoreboardName(), ItemStack.EMPTY);
         RitualSavedData data = RitualSavedData.get(level);
         data.activeRituals.add(fertility);
         data.setDirty();
@@ -157,7 +157,7 @@ public final class PersistentExpandingRiteGameTests {
                 RitualCircleDetector.CircleSize.MEDIUM, center, 1,
                 2, RitualExecutor.FORESTATION_HEIGHT, 3, 2, 0, 0.0F, false, 0,
                 level.getGameTime(), ItemStack.EMPTY, List.of(new ItemStack(Items.OAK_SAPLING)),
-                owner.getScoreboardName(),
+                owner.getUUID(), owner.getScoreboardName(),
                 new ItemStack(Items.OAK_SAPLING));
         data.activeRituals.add(forestation);
         data.setDirty();
@@ -261,7 +261,7 @@ public final class PersistentExpandingRiteGameTests {
                 4, maxRadius, 250, RitualExecutor.EXPANDING_CURSE_PULSE_INTERVAL,
                 0, type == ActiveRitualType.HELL_ON_EARTH ? RitualExecutor.HELL_ON_EARTH_UPKEEP : 0.0F,
                 true, 0, level.getGameTime(), ItemStack.EMPTY, List.of(),
-                owner.getScoreboardName(), ItemStack.EMPTY);
+                owner.getUUID(), owner.getScoreboardName(), ItemStack.EMPTY);
     }
 
     private static void placeRing(ServerLevel level, BlockPos center, RitualCircleDetector.CircleSize size) {

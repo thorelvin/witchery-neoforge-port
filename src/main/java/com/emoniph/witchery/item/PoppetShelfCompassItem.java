@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.entity.PoppetShelfBlockEntity;
+import com.emoniph.witchery.data.AnchoredCurseSavedData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -32,7 +33,7 @@ public class PoppetShelfCompassItem extends Item {
             return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
         }
 
-        Optional<ShelfSignal> signal = findNearestShelf(level, player);
+        Optional<ShelfSignal> signal = findMatureAnchor(level, player).or(() -> findNearestShelf(level, player));
         if (signal.isEmpty()) {
             playCompassFail(level, player);
             player.displayClientMessage(Component.translatable("witchery.poppet_shelf_compass.none")
@@ -46,9 +47,14 @@ public class PoppetShelfCompassItem extends Item {
         int distance = (int) Math.sqrt(nearest.distanceSq());
         String direction = getCardinal(Math.atan2(diff.z, diff.x));
 
-        player.displayClientMessage(Component.translatable("witchery.poppet_shelf_compass.locate",
-                distance, direction, Component.translatable("witchery.poppet_shelf_compass.signal." + nearest.band()))
-                .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        String messageKey = nearest.anchored()
+                ? "witchery.anchored_curse.compass"
+                : "witchery.poppet_shelf_compass.locate";
+        Object first = nearest.anchored() ? direction : distance;
+        Object second = nearest.anchored() ? distance : direction;
+        player.displayClientMessage(Component.translatable(messageKey,
+                first, second, Component.translatable("witchery.poppet_shelf_compass.signal." + nearest.band()))
+                .withStyle(nearest.anchored() ? ChatFormatting.DARK_RED : ChatFormatting.LIGHT_PURPLE), false);
         playShelfSignal(level, player, nearest);
         return InteractionResult.SUCCESS;
     }
@@ -82,7 +88,21 @@ public class PoppetShelfCompassItem extends Item {
 
         return nearest == null
                 ? Optional.empty()
-                : Optional.of(new ShelfSignal(nearest.getBlockPos(), nearestDistSq, signalBand(nearestDistSq)));
+                : Optional.of(new ShelfSignal(nearest.getBlockPos(), nearestDistSq,
+                signalBand(nearestDistSq), false));
+    }
+
+    private static Optional<ShelfSignal> findMatureAnchor(Level level, Player player) {
+        if (level.getServer() == null || !(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) {
+            return Optional.empty();
+        }
+        return AnchoredCurseSavedData.get(level.getServer()).clueFor(serverPlayer.getUUID())
+                .filter(clue -> clue.stage() >= 2)
+                .filter(clue -> clue.dimension().equals(level.dimension().identifier().toString()))
+                .map(clue -> {
+                    double distanceSq = shelfDistanceSq(player.position(), clue.anchor());
+                    return new ShelfSignal(clue.anchor(), distanceSq, signalBand(distanceSq), true);
+                });
     }
 
     public static float signalStrength(double distanceSq) {
@@ -163,11 +183,13 @@ public class PoppetShelfCompassItem extends Item {
         serverLevel.sendParticles(ParticleTypes.WITCH,
                 player.getX(), player.getY() + 0.85D, player.getZ(),
                 8 + signal.band(), 0.22D, 0.28D, 0.22D, 0.02D);
-        serverLevel.sendParticles(ParticleTypes.ENCHANT,
-                signal.pos().getX() + 0.5D, signal.pos().getY() + 0.75D, signal.pos().getZ() + 0.5D,
-                8, 0.35D, 0.35D, 0.35D, 0.02D);
+        if (serverLevel.getChunkSource().hasChunk(signal.pos().getX() >> 4, signal.pos().getZ() >> 4)) {
+            serverLevel.sendParticles(ParticleTypes.ENCHANT,
+                    signal.pos().getX() + 0.5D, signal.pos().getY() + 0.75D, signal.pos().getZ() + 0.5D,
+                    8, 0.35D, 0.35D, 0.35D, 0.02D);
+        }
     }
 
-    private record ShelfSignal(BlockPos pos, double distanceSq, int band) {
+    private record ShelfSignal(BlockPos pos, double distanceSq, int band, boolean anchored) {
     }
 }

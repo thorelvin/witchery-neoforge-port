@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
 class OtherwhereHearthTest {
@@ -28,6 +29,30 @@ class OtherwhereHearthTest {
         assertTrue(volume.contains(volume.max()));
         assertFalse(volume.contains(volume.min().west()));
         assertFalse(volume.contains(volume.max().above()));
+    }
+
+    @Test
+    void seerBoundaryOutlinesTheExactMovingVolume() {
+        OtherwhereHearthTransposition.Volume volume =
+                OtherwhereHearthTransposition.volumeFor(new BlockPos(100, 64, -40));
+        List<Vec3> points = OtherwhereHearthTransposition.boundaryPoints(volume);
+        double minX = volume.min().getX();
+        double minY = volume.min().getY();
+        double minZ = volume.min().getZ();
+        double maxX = volume.max().getX() + 1.0D;
+        double maxY = volume.max().getY() + 1.0D;
+        double maxZ = volume.max().getZ() + 1.0D;
+
+        assertEquals(80, points.size());
+        for (Vec3 point : points) {
+            assertTrue(point.x >= minX && point.x <= maxX);
+            assertTrue(point.y >= minY && point.y <= maxY);
+            assertTrue(point.z >= minZ && point.z <= maxZ);
+            int boundaryPlanes = (point.x == minX || point.x == maxX ? 1 : 0)
+                    + (point.y == minY || point.y == maxY ? 1 : 0)
+                    + (point.z == minZ || point.z == maxZ ? 1 : 0);
+            assertTrue(boundaryPlanes >= 2, "Every particle must lie on a volume edge");
+        }
     }
 
     @Test

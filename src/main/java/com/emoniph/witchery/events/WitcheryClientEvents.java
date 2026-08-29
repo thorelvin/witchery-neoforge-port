@@ -73,6 +73,11 @@ public class WitcheryClientEvents {
         com.emoniph.witchery.client.WoodenScannerPoseHarness.clientTick();
         com.emoniph.witchery.client.LegacyModelParityHarness.clientTick();
         com.emoniph.witchery.client.MachinePresentationHarness.clientTick();
+        SpiritWorldSpecialEffects.pinClientDayTime();
+        com.emoniph.witchery.client.SpiritWorldCaptureHarness.clientTick();
+        com.emoniph.witchery.client.SpiritPresentationCaptureHarness.clientTick();
+        com.emoniph.witchery.client.WitchWellCaptureHarness.clientTick();
+        com.emoniph.witchery.client.SpiritWorldLifecycleHarness.clientTick();
         applySwimmingBoost();
         handleDoubleJumpInput();
         syncBroomControls();
@@ -178,6 +183,7 @@ public class WitcheryClientEvents {
     @SubscribeEvent
     public static void onRenderFramePre(RenderFrameEvent.Pre event) {
         com.emoniph.witchery.client.ScryingCameraState.beforeRenderFrame();
+        com.emoniph.witchery.client.SpiritWorldCaptureHarness.beforeRenderFrame();
     }
 
     @SubscribeEvent
@@ -186,6 +192,9 @@ public class WitcheryClientEvents {
         com.emoniph.witchery.client.WoodenScannerPoseHarness.afterRenderFrame();
         com.emoniph.witchery.client.LegacyModelParityHarness.afterRenderFrame();
         com.emoniph.witchery.client.MachinePresentationHarness.afterRenderFrame();
+        com.emoniph.witchery.client.SpiritWorldCaptureHarness.afterRenderFrame();
+        com.emoniph.witchery.client.SpiritPresentationCaptureHarness.afterRenderFrame();
+        com.emoniph.witchery.client.WitchWellCaptureHarness.afterRenderFrame();
     }
 
     @SubscribeEvent

@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": false,
-      "text": "[#](53341a)It replaces source terrain with Netherrack; an active cat familiar can ignite affected plants when server configuration allows.[#]()",
+      "text": "[#](53341a)It replaces nearby terrain with Netherrack; an active cat familiar can ignite affected plants when server configuration allows.[#]()",
       "title": " ",
       "use_markdown_in_title": false
     },

@@ -1,6 +1,7 @@
 package com.emoniph.witchery.ritual;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -8,6 +9,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -17,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Per-level persistence for staged rituals and pending climate-change plans, so active rites (and the
@@ -31,6 +35,7 @@ import java.util.Map;
 public final class RitualSavedData extends SavedData {
     final List<ActiveRitual> activeRituals = new ArrayList<>();
     final Map<BlockPos, ClimateChangePlan> climatePlans = new HashMap<>();
+    final List<SacrificeBatch> sacrificeBatches = new ArrayList<>();
 
     static <E extends Enum<E>> Codec<E> enumCodec(Class<E> clazz) {
         return Codec.STRING.xmap(s -> Enum.valueOf(clazz, s), Enum::name);
@@ -40,7 +45,9 @@ public final class RitualSavedData extends SavedData {
             ActiveRitual.CODEC.listOf().optionalFieldOf("active_rituals", List.of()).forGetter(d -> d.activeRituals),
             ClimatePlanEntry.CODEC.listOf().optionalFieldOf("climate_plans", List.of()).forGetter(d ->
                     d.climatePlans.entrySet().stream()
-                            .map(e -> new ClimatePlanEntry(e.getKey(), e.getValue())).toList())
+                            .map(e -> new ClimatePlanEntry(e.getKey(), e.getValue())).toList()),
+            SacrificeBatch.CODEC.listOf().optionalFieldOf("sacrifice_batches", List.of())
+                    .forGetter(d -> d.sacrificeBatches)
     ).apply(i, RitualSavedData::fromCodec));
 
     public static final SavedDataType<RitualSavedData> TYPE = new SavedDataType<>(
@@ -48,12 +55,14 @@ public final class RitualSavedData extends SavedData {
 
     public RitualSavedData() {}
 
-    private static RitualSavedData fromCodec(List<ActiveRitual> rituals, List<ClimatePlanEntry> plans) {
+    private static RitualSavedData fromCodec(List<ActiveRitual> rituals, List<ClimatePlanEntry> plans,
+                                             List<SacrificeBatch> batches) {
         RitualSavedData d = new RitualSavedData();
         d.activeRituals.addAll(rituals);
         for (ClimatePlanEntry entry : plans) {
             d.climatePlans.put(entry.pos(), entry.plan());
         }
+        d.sacrificeBatches.addAll(batches);
         return d;
     }
 
@@ -66,11 +75,77 @@ public final class RitualSavedData extends SavedData {
         return activeRituals.size();
     }
 
+    int sacrificeBatchCount() {
+        return sacrificeBatches.size();
+    }
+
     private record ClimatePlanEntry(BlockPos pos, ClimateChangePlan plan) {
         private static final Codec<ClimatePlanEntry> CODEC = RecordCodecBuilder.create(i -> i.group(
                 BlockPos.CODEC.fieldOf("pos").forGetter(ClimatePlanEntry::pos),
                 ClimateChangePlan.CODEC.fieldOf("plan").forGetter(ClimatePlanEntry::plan)
         ).apply(i, ClimatePlanEntry::new));
+    }
+}
+
+enum SacrificeBatchState {
+    PREPARED,
+    PAID,
+    ARMED,
+    REFUNDING
+}
+
+final class SacrificeBatch {
+    static final Codec<SacrificeBatch> CODEC = RecordCodecBuilder.create(i -> i.group(
+            UUIDUtil.CODEC.fieldOf("batch_id").forGetter(b -> b.batchId),
+            BlockPos.CODEC.fieldOf("center").forGetter(b -> b.center),
+            RitualSavedData.enumCodec(SacrificeBatchState.class).fieldOf("state").forGetter(b -> b.state),
+            ItemStack.CODEC.listOf().fieldOf("escrow").forGetter(b -> b.escrow),
+            BlockPos.CODEC.listOf().fieldOf("visual_positions").forGetter(b -> b.visualPositions),
+            Codec.INT.fieldOf("visual_step").forGetter(b -> b.visualStep),
+            Codec.LONG.fieldOf("next_visual_tick").forGetter(b -> b.nextVisualTick),
+            BlockPos.CODEC.optionalFieldOf("altar_pos").forGetter(b -> Optional.ofNullable(b.altarPos)),
+            Codec.INT.optionalFieldOf("altar_power", 0).forGetter(b -> b.altarPower)
+    ).apply(i, SacrificeBatch::fromCodec));
+
+    final UUID batchId;
+    final BlockPos center;
+    SacrificeBatchState state;
+    final List<ItemStack> escrow;
+    final List<BlockPos> visualPositions;
+    int visualStep;
+    long nextVisualTick;
+    BlockPos altarPos;
+    int altarPower;
+    final boolean loadedFromDisk;
+
+    SacrificeBatch(UUID batchId, BlockPos center, List<ItemStack> escrow,
+                   List<BlockPos> visualPositions, long nextVisualTick) {
+        this(batchId, center, SacrificeBatchState.PREPARED, escrow, visualPositions,
+                0, nextVisualTick, null, 0, false);
+    }
+
+    private SacrificeBatch(UUID batchId, BlockPos center, SacrificeBatchState state,
+                           List<ItemStack> escrow, List<BlockPos> visualPositions,
+                           int visualStep, long nextVisualTick, BlockPos altarPos, int altarPower,
+                           boolean loadedFromDisk) {
+        this.batchId = batchId;
+        this.center = center.immutable();
+        this.state = state;
+        this.escrow = new ArrayList<>(escrow.stream().map(ItemStack::copy).toList());
+        this.visualPositions = new ArrayList<>(visualPositions.stream().map(BlockPos::immutable).toList());
+        this.visualStep = Math.clamp(visualStep, 0, this.visualPositions.size());
+        this.nextVisualTick = nextVisualTick;
+        this.altarPos = altarPos == null ? null : altarPos.immutable();
+        this.altarPower = Math.max(0, altarPower);
+        this.loadedFromDisk = loadedFromDisk;
+    }
+
+    private static SacrificeBatch fromCodec(UUID batchId, BlockPos center, SacrificeBatchState state,
+                                            List<ItemStack> escrow, List<BlockPos> visualPositions,
+                                            int visualStep, long nextVisualTick,
+                                            Optional<BlockPos> altarPos, int altarPower) {
+        return new SacrificeBatch(batchId, center, state, escrow, visualPositions, visualStep,
+                nextVisualTick, altarPos.orElse(null), altarPower, true);
     }
 }
 
@@ -114,6 +189,7 @@ final class ActiveRitual {
     final ItemStack focus;
     final ItemStack sacrificedIngredient;
     final List<ItemStack> supplementalSacrifices;
+    UUID ownerUuid;
     final String ownerName;
     final List<BlockPos> path = new ArrayList<>();
     final int heading;
@@ -124,6 +200,14 @@ final class ActiveRitual {
     BlockPos powerSourcePos;
     boolean failedOnStop;
     boolean refundOnStop;
+    boolean ownerMigrationWarned;
+
+    private record RitualOwnerIdentity(Optional<UUID> uuid, String lastKnownName) {
+        private static final MapCodec<RitualOwnerIdentity> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                UUIDUtil.CODEC.optionalFieldOf("owner_uuid").forGetter(RitualOwnerIdentity::uuid),
+                Codec.STRING.optionalFieldOf("owner", "").forGetter(RitualOwnerIdentity::lastKnownName)
+        ).apply(i, RitualOwnerIdentity::new));
+    }
 
     ActiveRitual(ActiveRitualType type, BlockPos center, RitualCircleDetector.CircleSize circleSize,
                  BlockPos effectCenter, int circleVariant,
@@ -141,6 +225,17 @@ final class ActiveRitual {
                  int covenSize, float upkeepCost, boolean enhanced, int heading, long nextGameTime,
                  ItemStack sacrificedIngredient, List<ItemStack> supplementalSacrifices, String ownerName,
                  ItemStack focus) {
+        this(type, center, circleSize, effectCenter, circleVariant, minRadius, maxRadius, targetStage,
+                pulseInterval, covenSize, upkeepCost, enhanced, heading, nextGameTime,
+                sacrificedIngredient, supplementalSacrifices, null, ownerName, focus);
+    }
+
+    ActiveRitual(ActiveRitualType type, BlockPos center, RitualCircleDetector.CircleSize circleSize,
+                 BlockPos effectCenter, int circleVariant,
+                 int minRadius, int maxRadius, int targetStage, int pulseInterval,
+                 int covenSize, float upkeepCost, boolean enhanced, int heading, long nextGameTime,
+                 ItemStack sacrificedIngredient, List<ItemStack> supplementalSacrifices, UUID ownerUuid,
+                 String ownerName, ItemStack focus) {
         this.type = type;
         this.center = center.immutable();
         this.effectCenter = effectCenter.immutable();
@@ -158,6 +253,7 @@ final class ActiveRitual {
         this.nextGameTime = nextGameTime;
         this.sacrificedIngredient = sacrificedIngredient;
         this.supplementalSacrifices = supplementalSacrifices;
+        this.ownerUuid = ownerUuid;
         this.ownerName = ownerName == null ? "" : ownerName;
     }
 
@@ -174,7 +270,8 @@ final class ActiveRitual {
             Codec.LONG.fieldOf("next_game_time").forGetter(r -> r.nextGameTime),
             ItemStack.OPTIONAL_CODEC.fieldOf("sacrificed").forGetter(r -> r.sacrificedIngredient),
             ItemStack.CODEC.listOf().fieldOf("supplemental").forGetter(r -> r.supplementalSacrifices),
-            Codec.STRING.optionalFieldOf("owner", "").forGetter(r -> r.ownerName),
+            RitualOwnerIdentity.MAP_CODEC.forGetter(r ->
+                    new RitualOwnerIdentity(Optional.ofNullable(r.ownerUuid), r.ownerName)),
             BlockPos.CODEC.listOf().fieldOf("path").forGetter(r -> r.path),
             Codec.INT.fieldOf("stage").forGetter(r -> r.stage),
             Codec.FLOAT.fieldOf("upkeep_debt").forGetter(r -> r.upkeepDebt),
@@ -183,12 +280,13 @@ final class ActiveRitual {
 
     private static ActiveRitual fromCodec(ActiveRitualType type, BlockPos center, BlockPos effectCenter,
             RitualCircleDetector.CircleSize circleSize, RitualGeometry geom, float upkeepCost, boolean enhanced,
-            ItemStack focus, long nextGameTime, ItemStack sacrificed, List<ItemStack> supplemental, String ownerName,
+            ItemStack focus, long nextGameTime, ItemStack sacrificed, List<ItemStack> supplemental,
+            RitualOwnerIdentity owner,
             List<BlockPos> path, int stage, float upkeepDebt, boolean awaitingSacrifices) {
         ActiveRitual r = new ActiveRitual(type, center, circleSize, effectCenter, geom.circleVariant(),
                 geom.minRadius(), geom.maxRadius(), geom.targetStage(), geom.pulseInterval(), geom.covenSize(),
-                upkeepCost, enhanced, geom.heading(), nextGameTime, sacrificed, List.copyOf(supplemental), ownerName,
-                focus);
+                upkeepCost, enhanced, geom.heading(), nextGameTime, sacrificed, List.copyOf(supplemental),
+                owner.uuid().orElse(null), owner.lastKnownName(), focus);
         r.stage = stage;
         r.upkeepDebt = upkeepDebt;
         r.awaitingSacrifices = awaitingSacrifices;

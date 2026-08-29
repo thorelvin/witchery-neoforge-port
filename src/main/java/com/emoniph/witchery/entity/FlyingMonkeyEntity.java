@@ -13,6 +13,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -55,6 +56,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -77,6 +79,11 @@ public class FlyingMonkeyEntity extends TamableAnimal {
     private static final double ARRIVAL_RANGE_SQR = 4.0D;
     private static final int TARGET_MISSING_TIMEOUT = 200;
     private static final int LANDING_SEARCH_RADIUS = 4;
+    private static final int PREPARATION_TIMEOUT_TICKS = 20 * 15;
+    private static final int PREPARATION_COOLDOWN_TICKS = 20 * 5;
+    private static final int MAX_CONCURRENT_PREPARATIONS = 8;
+    private static final TicketType WAYSTONE_PREPARATION_TICKET = new TicketType(
+            2L, TicketType.FLAG_LOADING | TicketType.FLAG_KEEP_DIMENSION_ACTIVE);
 
     private static final String TAG_DYE_COLOR = "DyeColor";
     private static final String TAG_COURIER_STATE = "CourierState";
@@ -90,6 +97,8 @@ public class FlyingMonkeyEntity extends TamableAnimal {
     private static final String TAG_WAYSTONE_DIMENSION = "CourierWaystoneDimension";
     private static final String TAG_WAYSTONE_TRACKS_ENTITY = "CourierWaystoneTracksEntity";
     private static final String TAG_TIME_TO_LIVE = "SuicideIn";
+    private static final String TAG_PREPARATION_STARTED = "CourierPreparationStarted";
+    private static final String TAG_NEXT_PREPARATION = "CourierNextPreparation";
 
     private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> DATA_DYE_COLOR =
             net.minecraft.network.syncher.SynchedEntityData.defineId(
@@ -109,6 +118,12 @@ public class FlyingMonkeyEntity extends TamableAnimal {
     private boolean waystoneTracksEntity;
     private int missingTargetTicks;
     private int timeToLive = -1;
+    private long preparationStartedGameTime = Long.MIN_VALUE;
+    private long nextPreparationGameTime = Long.MIN_VALUE;
+    private boolean destinationTicketHeld;
+    @Nullable
+    private ChunkPos destinationTicketChunk;
+    private String destinationTicketDimension = "";
 
     public FlyingMonkeyEntity(EntityType<? extends FlyingMonkeyEntity> type, Level level) {
         super(type, level);
@@ -277,6 +292,14 @@ public class FlyingMonkeyEntity extends TamableAnimal {
     }
 
     private void beginWaystoneJourney(ServerPlayer owner, ItemStack waystone) {
+        long now = owner.level().getGameTime();
+        if (!canStartPreparation(countActivePreparations(owner.level().getServer()),
+                nextPreparationGameTime, now)) {
+            owner.displayClientMessage(translatable(now < nextPreparationGameTime
+                    ? "witchery.flying_monkey.waystone_cooldown"
+                    : "witchery.flying_monkey.waystone_capacity"), false);
+            return;
+        }
         rememberCourierHome();
         waystoneTracksEntity = WaystoneItem.isEntityBoundWaystone(waystone);
         courierTargetUuid = null;
@@ -302,24 +325,18 @@ public class FlyingMonkeyEntity extends TamableAnimal {
                 clearCourierState(false);
                 return;
             }
-            ServerLevel destinationLevel = owner.level().getServer().getLevel(dimension.get());
-            if (destinationLevel == null) {
+            if (owner.level().getServer().getLevel(dimension.get()) == null) {
                 owner.displayClientMessage(translatable("witchery.flying_monkey.waystone_invalid"), false);
                 clearCourierState(false);
                 return;
             }
-            destinationLevel.getChunkAt(destination.get());
-            BlockPos safe = findSafeLanding(destinationLevel, destination.get(), owner);
-            if (safe == null) {
-                owner.displayClientMessage(translatable("witchery.flying_monkey.no_landing"), false);
-                clearCourierState(false);
-                return;
-            }
-            waystonePos = safe.asLong();
+            waystonePos = destination.get().asLong();
             waystoneDimension = dimension.get().identifier().toString();
         }
 
-        courierState = CourierState.WAYSTONE;
+        courierState = CourierState.PREPARING_WAYSTONE;
+        preparationStartedGameTime = now;
+        nextPreparationGameTime = now + PREPARATION_COOLDOWN_TICKS;
         missingTargetTicks = 0;
         setOrderedToSit(false);
         navigation.stop();
@@ -329,9 +346,7 @@ public class FlyingMonkeyEntity extends TamableAnimal {
             clearCourierState(false);
             return;
         }
-        owner.displayClientMessage(translatable(waystoneTracksEntity
-                ? "witchery.flying_monkey.waystone_entity_set"
-                : "witchery.flying_monkey.waystone_set"), false);
+        owner.displayClientMessage(translatable("witchery.flying_monkey.waystone_preparing"), false);
         courierFeedback((ServerLevel) level(), instantEffect(),
                 SoundEvents.EXPERIENCE_ORB_PICKUP, 0.6F, 1.25F);
     }
@@ -442,6 +457,7 @@ public class FlyingMonkeyEntity extends TamableAnimal {
             waystonePos = destination.asLong();
         } else {
             destinationLevel = resolveLevel(level, waystoneDimension);
+            // Fixed waystones store the landing point vetted by PREPARING_WAYSTONE.
             destination = BlockPos.of(waystonePos);
         }
 
@@ -451,12 +467,15 @@ public class FlyingMonkeyEntity extends TamableAnimal {
             return;
         }
 
-        destinationLevel.getChunkAt(destination);
-        BlockPos safe = findSafeLanding(destinationLevel, destination, owner);
-        if (safe == null) {
-            notifyOwner("witchery.flying_monkey.no_landing");
-            abortCourier(false);
-            return;
+        BlockPos safe = destination;
+        if (waystoneTracksEntity) {
+            // A resolved entity is already in a loaded chunk; moving targets need a fresh landing check.
+            safe = findSafeLanding(destinationLevel, destination, owner);
+            if (safe == null) {
+                notifyOwner("witchery.flying_monkey.no_landing");
+                abortCourier(false);
+                return;
+            }
         }
 
         if (destinationLevel != level) {
@@ -469,6 +488,108 @@ public class FlyingMonkeyEntity extends TamableAnimal {
         if (distanceToSqr(target) <= ARRIVAL_RANGE_SQR) {
             finishWaystoneJourney(level, safe, owner);
         }
+    }
+
+    private void tickPrepareWaystone(ServerLevel level) {
+        LivingEntity owner = getOwner();
+        if (owner == null || !owner.isAlive() || !hasPassenger(owner)) {
+            abortCourier(false);
+            return;
+        }
+        long now = level.getGameTime();
+        if (preparationTimedOut(preparationStartedGameTime, now)) {
+            notifyOwner("witchery.flying_monkey.waystone_timeout");
+            abortCourier(false);
+            return;
+        }
+
+        if (waystoneTracksEntity) {
+            LivingEntity target = resolveCourierTarget(level).orElse(null);
+            if (target == null || !target.isAlive()) {
+                if (++missingTargetTicks >= TARGET_MISSING_TIMEOUT) {
+                    notifyOwner("witchery.flying_monkey.target_lost", courierTargetName);
+                    abortCourier(false);
+                }
+                return;
+            }
+            missingTargetTicks = 0;
+            waystoneDimension = target.level().dimension().identifier().toString();
+            waystonePos = target.blockPosition().asLong();
+        }
+
+        ServerLevel destinationLevel = resolveLevel(level, waystoneDimension);
+        BlockPos destination = BlockPos.of(waystonePos);
+        if (destinationLevel == null) {
+            notifyOwner("witchery.flying_monkey.waystone_invalid");
+            abortCourier(false);
+            return;
+        }
+        ensureDestinationTicket(destinationLevel, destination);
+        if (!destinationLevel.hasChunkAt(destination)) {
+            return;
+        }
+        BlockPos safe = findSafeLanding(destinationLevel, destination, owner);
+        if (safe == null) {
+            notifyOwner("witchery.flying_monkey.no_landing");
+            abortCourier(false);
+            return;
+        }
+        waystonePos = safe.asLong();
+        if (destinationLevel == level) {
+            releaseDestinationTicket();
+        }
+        courierState = CourierState.WAYSTONE;
+        notifyOwner(waystoneTracksEntity
+                ? "witchery.flying_monkey.waystone_entity_set"
+                : "witchery.flying_monkey.waystone_set");
+    }
+
+    private void ensureDestinationTicket(ServerLevel destinationLevel, BlockPos destination) {
+        ChunkPos chunk = new ChunkPos(destination);
+        String dimension = destinationLevel.dimension().identifier().toString();
+        if (destinationTicketHeld && chunk.equals(destinationTicketChunk)
+                && dimension.equals(destinationTicketDimension)) {
+            destinationLevel.getChunkSource().addTicketWithRadius(
+                    WAYSTONE_PREPARATION_TICKET, chunk, 0);
+            return;
+        }
+        releaseDestinationTicket();
+        destinationLevel.getChunkSource().addTicketWithRadius(WAYSTONE_PREPARATION_TICKET, chunk, 0);
+        destinationTicketHeld = true;
+        destinationTicketChunk = chunk;
+        destinationTicketDimension = dimension;
+    }
+
+    private void releaseDestinationTicket() {
+        if (!destinationTicketHeld || destinationTicketChunk == null
+                || !(level() instanceof ServerLevel current)) {
+            destinationTicketHeld = false;
+            destinationTicketChunk = null;
+            destinationTicketDimension = "";
+            return;
+        }
+        ServerLevel ticketLevel = resolveLevel(current, destinationTicketDimension);
+        if (ticketLevel != null) {
+            ticketLevel.getChunkSource().removeTicketWithRadius(
+                    WAYSTONE_PREPARATION_TICKET, destinationTicketChunk, 0);
+        }
+        destinationTicketHeld = false;
+        destinationTicketChunk = null;
+        destinationTicketDimension = "";
+    }
+
+    public static void releasePreparationTickets(net.minecraft.server.MinecraftServer server) {
+        for (ServerLevel serverLevel : server.getAllLevels()) {
+            for (Entity entity : serverLevel.getAllEntities()) {
+                if (entity instanceof FlyingMonkeyEntity monkey) {
+                    monkey.releaseDestinationTicket();
+                }
+            }
+        }
+    }
+
+    boolean hasDestinationPreparationTicket() {
+        return destinationTicketHeld;
     }
 
     private void crossDimensionWaystone(ServerLevel source, ServerLevel destination,
@@ -566,6 +687,7 @@ public class FlyingMonkeyEntity extends TamableAnimal {
     }
 
     private void clearCourierState(boolean sit) {
+        releaseDestinationTicket();
         courierState = CourierState.IDLE;
         courierTargetUuid = null;
         courierTargetName = "";
@@ -577,6 +699,7 @@ public class FlyingMonkeyEntity extends TamableAnimal {
         waystoneDimension = "";
         waystoneTracksEntity = false;
         missingTargetTicks = 0;
+        preparationStartedGameTime = Long.MIN_VALUE;
         navigation.stop();
         setDeltaMovement(Vec3.ZERO);
         setOrderedToSit(sit);
@@ -682,10 +805,19 @@ public class FlyingMonkeyEntity extends TamableAnimal {
         switch (courierState) {
             case FETCHING -> tickFetch(level);
             case RETURNING -> tickReturn(level);
+            case PREPARING_WAYSTONE -> tickPrepareWaystone(level);
             case WAYSTONE -> tickWaystone(level);
             case IDLE -> {
             }
         }
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        if (!level().isClientSide()) {
+            releaseDestinationTicket();
+        }
+        super.remove(reason);
     }
 
     @Override
@@ -758,7 +890,7 @@ public class FlyingMonkeyEntity extends TamableAnimal {
         if (!getPassengers().isEmpty()) {
             return false;
         }
-        if (courierState == CourierState.WAYSTONE) {
+        if (courierState == CourierState.PREPARING_WAYSTONE || courierState == CourierState.WAYSTONE) {
             return ownerUuid() != null && ownerUuid().equals(passenger.getUUID());
         }
         return courierTargetUuid != null && courierTargetUuid.equals(passenger.getUUID());
@@ -843,6 +975,8 @@ public class FlyingMonkeyEntity extends TamableAnimal {
             tag.putBoolean(TAG_WAYSTONE_TRACKS_ENTITY, waystoneTracksEntity);
         }
         tag.putInt(TAG_TIME_TO_LIVE, timeToLive);
+        tag.putLong(TAG_PREPARATION_STARTED, preparationStartedGameTime);
+        tag.putLong(TAG_NEXT_PREPARATION, nextPreparationGameTime);
     }
 
     @Override
@@ -860,6 +994,11 @@ public class FlyingMonkeyEntity extends TamableAnimal {
         waystoneDimension = tag.getStringOr(TAG_WAYSTONE_DIMENSION, "");
         waystoneTracksEntity = tag.getBooleanOr(TAG_WAYSTONE_TRACKS_ENTITY, false);
         timeToLive = tag.getIntOr(TAG_TIME_TO_LIVE, -1);
+        preparationStartedGameTime = tag.getLongOr(TAG_PREPARATION_STARTED, Long.MIN_VALUE);
+        nextPreparationGameTime = tag.getLongOr(TAG_NEXT_PREPARATION, Long.MIN_VALUE);
+        destinationTicketHeld = false;
+        destinationTicketChunk = null;
+        destinationTicketDimension = "";
         missingTargetTicks = 0;
         if (courierState != CourierState.IDLE && courierHomeDimension.isBlank()) {
             clearCourierState(false);
@@ -913,6 +1052,7 @@ public class FlyingMonkeyEntity extends TamableAnimal {
         IDLE,
         FETCHING,
         RETURNING,
+        PREPARING_WAYSTONE,
         WAYSTONE;
 
         private static CourierState parse(String value) {
@@ -922,6 +1062,27 @@ public class FlyingMonkeyEntity extends TamableAnimal {
                 return IDLE;
             }
         }
+    }
+
+    static boolean canStartPreparation(int activeJobs, long nextAllowedGameTime, long gameTime) {
+        return activeJobs < MAX_CONCURRENT_PREPARATIONS && gameTime >= nextAllowedGameTime;
+    }
+
+    static boolean preparationTimedOut(long startedGameTime, long gameTime) {
+        return startedGameTime == Long.MIN_VALUE || gameTime - startedGameTime > PREPARATION_TIMEOUT_TICKS;
+    }
+
+    private static int countActivePreparations(net.minecraft.server.MinecraftServer server) {
+        int count = 0;
+        for (ServerLevel serverLevel : server.getAllLevels()) {
+            for (Entity entity : serverLevel.getAllEntities()) {
+                if (entity instanceof FlyingMonkeyEntity monkey
+                        && monkey.courierState == CourierState.PREPARING_WAYSTONE) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     private final class CourierGoal extends Goal {

@@ -9,6 +9,7 @@ import com.emoniph.witchery.worldgen.NbtStructurePlacement;
 import com.emoniph.witchery.worldgen.VanishingHut;
 import com.emoniph.witchery.worldgen.VanishingHutHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -17,8 +18,11 @@ import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -30,10 +34,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @EventBusSubscriber(modid = WitcheryMod.MODID)
 public final class VanishingHutEvents {
 
-    private record Job(ServerLevel level, BlockPos anchorPos) {}
+    private record Job(ResourceKey<net.minecraft.world.level.Level> dimension, BlockPos anchorPos,
+                       boolean allowCrossDimension) {}
 
-    private static final ConcurrentLinkedQueue<Job> QUEUE = new ConcurrentLinkedQueue<>();
+    private static final Map<MinecraftServer, WorkSession> SESSIONS = new WeakHashMap<>();
     private static final int JOBS_PER_TICK = 2;
+
+    private static final class WorkSession {
+        private final ConcurrentLinkedQueue<Job> queue = new ConcurrentLinkedQueue<>();
+    }
 
     private static final int RING_MIN = 48;
     private static final int RING_MAX = 96;
@@ -46,7 +55,12 @@ public final class VanishingHutEvents {
 
     /** Queue a hut (at its buried anchor) to relocate. Safe to call from a block-entity tick. */
     public static void enqueueRelocation(ServerLevel level, BlockPos anchorPos) {
-        QUEUE.add(new Job(level, anchorPos.immutable()));
+        work(level.getServer()).queue.add(new Job(level.dimension(), anchorPos.immutable(), true));
+    }
+
+    /** Certification hook: exercise the real move path while keeping the destination deterministic. */
+    public static void enqueueSameDimensionRelocation(ServerLevel level, BlockPos anchorPos) {
+        work(level.getServer()).queue.add(new Job(level.dimension(), anchorPos.immutable(), false));
     }
 
     /**
@@ -67,29 +81,50 @@ public final class VanishingHutEvents {
         if (level.getBlockEntity(anchor) instanceof VanishingHutAnchorBlockEntity be) {
             be.setResident(witch == null ? null : witch.getUUID());
         }
-        VanishingHutData.get(level).upsert(hutId, level, anchor);
+        VanishingHutData.get(level).upsert(hutId, level, anchor, witch == null ? null : witch.getUUID());
         return anchor;
     }
 
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || QUEUE.isEmpty()) {
+        if (!(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
+        WorkSession session = existing(level.getServer());
+        if (session == null || session.queue.isEmpty()) return;
         int processed = 0;
-        var it = QUEUE.iterator();
+        var it = session.queue.iterator();
         while (it.hasNext() && processed < JOBS_PER_TICK) {
             Job job = it.next();
-            if (job.level() != level) {
+            if (!job.dimension().equals(level.dimension())) {
                 continue;
             }
             it.remove();
             processed++;
-            relocate(job.level(), job.anchorPos());
+            relocate(level, job.anchorPos(), job.allowCrossDimension());
         }
     }
 
-    private static void relocate(ServerLevel oldLevel, BlockPos oldAnchor) {
+    @SubscribeEvent
+    public static void onServerStopping(ServerStoppingEvent event) {
+        synchronized (SESSIONS) {
+            SESSIONS.remove(event.getServer());
+        }
+    }
+
+    private static WorkSession work(MinecraftServer server) {
+        synchronized (SESSIONS) {
+            return SESSIONS.computeIfAbsent(server, ignored -> new WorkSession());
+        }
+    }
+
+    private static WorkSession existing(MinecraftServer server) {
+        synchronized (SESSIONS) {
+            return SESSIONS.get(server);
+        }
+    }
+
+    private static void relocate(ServerLevel oldLevel, BlockPos oldAnchor, boolean allowCrossDimension) {
         if (!(oldLevel.getBlockEntity(oldAnchor) instanceof VanishingHutAnchorBlockEntity be)) {
             return; // hut already gone
         }
@@ -97,7 +132,7 @@ public final class VanishingHutEvents {
         UUID residentUuid = be.residentUuid();
         MinecraftServer server = oldLevel.getServer();
 
-        boolean cross = VanishingHutHelper.pickCrossDimension(oldLevel.random,
+        boolean cross = allowCrossDimension && VanishingHutHelper.pickCrossDimension(oldLevel.random,
                 VanishingHutHelper.CROSS_DIMENSION_CHANCE);
         ServerLevel targetLevel = cross ? crossTarget(server, oldLevel) : oldLevel;
         if (targetLevel == null) {
@@ -135,7 +170,7 @@ public final class VanishingHutEvents {
             newBe.setResident(newResident);
         }
 
-        VanishingHutData.get(oldLevel).upsert(hutId, targetLevel, destAnchor);
+        VanishingHutData.get(oldLevel).relocate(hutId, targetLevel, destAnchor, newResident);
         VanishingHut.vanish(oldLevel, oldAnchor);
         WitcheryMod.LOGGER.info("[VanishingHut] Hut {} moved to {} in {}{}.", hutId, destAnchor,
                 targetLevel.dimension().identifier(), cross ? " (crossed)" : "");

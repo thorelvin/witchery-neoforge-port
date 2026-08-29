@@ -15,6 +15,8 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -27,16 +29,28 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  */
 public class SpiritPortalBlock extends Block {
 
-    private static final VoxelShape X_CONNECTED_SHAPE = Block.box(0.0, 0.0, 6.0, 16.0, 16.0, 10.0);
-    private static final VoxelShape Z_CONNECTED_SHAPE = Block.box(6.0, 0.0, 0.0, 10.0, 16.0, 16.0);
+    /** Source {@code BlockSpiritPortal.colorMultiplier}: vivid green over the animated portal sprite. */
+    public static final int SOURCE_PORTAL_RGB = 0x00FF66;
+    static final int SOURCE_PARTICLES_PER_ANIMATE_TICK = 2;
+    public static final EnumProperty<Direction.Axis> AXIS =
+            EnumProperty.create("axis", Direction.Axis.class, Direction.Axis.X, Direction.Axis.Z);
+
+    private static final VoxelShape X_SHAPE = Block.box(0.0, 0.0, 6.0, 16.0, 16.0, 10.0);
+    private static final VoxelShape Z_SHAPE = Block.box(6.0, 0.0, 0.0, 10.0, 16.0, 16.0);
 
     public SpiritPortalBlock(Properties properties) {
         super(properties);
+        registerDefaultState(stateDefinition.any().setValue(AXIS, Direction.Axis.X));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(AXIS);
     }
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return hasEastWestPortalAxis(level, pos) ? X_CONNECTED_SHAPE : Z_CONNECTED_SHAPE;
+        return state.getValue(AXIS) == Direction.Axis.X ? X_SHAPE : Z_SHAPE;
     }
 
     @Override
@@ -52,10 +66,22 @@ public class SpiritPortalBlock extends Block {
     @Override
     protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos currentPos,
                                      Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
-        if (!isValidPortal(level, currentPos)) {
+        Direction.Axis validAxis = validPortalAxis(level, currentPos, state.getValue(AXIS));
+        if (validAxis == null) {
             return Blocks.AIR.defaultBlockState();
         }
-        return super.updateShape(state, level, ticks, currentPos, facing, facingPos, facingState, random);
+        return super.updateShape(state.setValue(AXIS, validAxis), level, ticks,
+                currentPos, facing, facingPos, facingState, random);
+    }
+
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getLightBlock(BlockState state) {
+        return 0;
     }
 
     @Override
@@ -76,7 +102,7 @@ public class SpiritPortalBlock extends Block {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < SOURCE_PARTICLES_PER_ANIMATE_TICK; i++) {
             boolean positive = random.nextBoolean();
             double x = pos.getX() + random.nextDouble();
             double y = pos.getY() + random.nextDouble();
@@ -85,7 +111,7 @@ public class SpiritPortalBlock extends Block {
             double dy = (random.nextDouble() - 0.5) * 0.5;
             double dz = (random.nextDouble() - 0.5) * 0.5;
 
-            if (hasEastWestPortalAxis(level, pos)) {
+            if (state.getValue(AXIS) == Direction.Axis.X) {
                 z = pos.getZ() + 0.5 + 0.25 * (positive ? 1.0 : -1.0);
                 dz = random.nextFloat() * 2.0F * (positive ? 1.0F : -1.0F);
             } else {
@@ -127,15 +153,26 @@ public class SpiritPortalBlock extends Block {
         for (int width = 0; width < 2; width++) {
             for (int height = 0; height < 2; height++) {
                 level.setBlock(origin.offset(stepX * width, height, stepZ * width),
-                        defaultBlockState(), Block.UPDATE_CLIENTS);
+                        defaultBlockState().setValue(AXIS,
+                                stepX != 0 ? Direction.Axis.X : Direction.Axis.Z),
+                        Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
             }
         }
 
         return true;
     }
 
-    private boolean isValidPortal(LevelReader level, BlockPos pos) {
-        return isValidPortalAxis(level, pos, 1, 0) || isValidPortalAxis(level, pos, 0, 1);
+    private Direction.Axis validPortalAxis(LevelReader level, BlockPos pos, Direction.Axis preferred) {
+        if (preferred == Direction.Axis.X && isValidPortalAxis(level, pos, 1, 0)) {
+            return Direction.Axis.X;
+        }
+        if (preferred == Direction.Axis.Z && isValidPortalAxis(level, pos, 0, 1)) {
+            return Direction.Axis.Z;
+        }
+        if (isValidPortalAxis(level, pos, 1, 0)) {
+            return Direction.Axis.X;
+        }
+        return isValidPortalAxis(level, pos, 0, 1) ? Direction.Axis.Z : null;
     }
 
     private boolean isValidPortalAxis(LevelReader level, BlockPos pos, int stepX, int stepZ) {
@@ -176,12 +213,7 @@ public class SpiritPortalBlock extends Block {
         return true;
     }
 
-    static boolean isFrameCorner(int width, int height) {
+    public static boolean isFrameCorner(int width, int height) {
         return (width == -1 || width == 2) && (height == -1 || height == 2);
-    }
-
-    private boolean hasEastWestPortalAxis(BlockGetter level, BlockPos pos) {
-        return level.getBlockState(pos.west()).is(this)
-                || level.getBlockState(pos.east()).is(this);
     }
 }

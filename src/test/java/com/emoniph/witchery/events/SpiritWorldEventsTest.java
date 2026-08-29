@@ -5,17 +5,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpiritWorldEventsTest {
-    @Test
-    void atmosphereUsesBrightDayForDreamsAndMidnightForNightmares() {
-        assertEquals(6_000L, SpiritWorldEvents.targetTimeOfDay(false));
-        assertEquals(18_000L, SpiritWorldEvents.targetTimeOfDay(true));
-    }
-
     @Test
     void physicalHearthTravelersDoNotCreateNightmareAtmosphere() {
         WitcheryPlayerData data = new WitcheryPlayerData();

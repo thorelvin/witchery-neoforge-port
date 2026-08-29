@@ -6,8 +6,12 @@ import com.emoniph.witchery.world.VanishingHutData;
 import com.emoniph.witchery.worldgen.VanishingHut;
 import com.emoniph.witchery.worldgen.VanishingHutHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -91,8 +95,9 @@ public class VanishingHutAnchorBlockEntity extends BlockEntity {
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
+        VanishingHutData data = VanishingHutData.get(serverLevel);
         if (!be.registered) {
-            VanishingHutData.get(serverLevel).upsert(be.hutId, serverLevel, pos);
+            data.upsert(be.hutId, serverLevel, pos, be.residentUuid);
             be.registered = true;
         }
         if (be.pendingRelocation || serverLevel.getGameTime() % CHECK_INTERVAL != 0L) {
@@ -108,13 +113,59 @@ public class VanishingHutAnchorBlockEntity extends BlockEntity {
         }
 
         boolean watched = VanishingHut.isWatched(serverLevel, pos);
-        boolean held = be.heldInPlace || VanishingHut.isHeldBySalt(serverLevel, pos);
+        boolean salted = VanishingHut.isHeldBySalt(serverLevel, pos);
+        VanishingHutData.Entry entry = updateRestraint(serverLevel, pos, be, data, salted);
+        boolean escapeReady = salted && entry.saltHeldSince() >= 0L
+                && serverLevel.getGameTime() - entry.saltHeldSince() >= VanishingHutHelper.SALT_ESCAPE_TICKS;
+        boolean held = be.heldInPlace || (salted && !escapeReady);
+        boolean departureReady = !be.primed.isEmpty() || entry.bargainCompleted() || escapeReady;
+        long cooldown = entry.bargainCompleted()
+                ? VanishingHutHelper.COMPLETED_BARGAIN_COOLDOWN_TICKS
+                : VanishingHutHelper.DEFAULT_MOVE_COOLDOWN_TICKS;
         long since = serverLevel.getGameTime() - be.lastMoveGameTime;
-        if (VanishingHutHelper.shouldRelocate(anyInside, !be.primed.isEmpty(), watched, held,
-                since, VanishingHutHelper.DEFAULT_MOVE_COOLDOWN_TICKS)) {
+        if (VanishingHutHelper.shouldRelocate(anyInside, departureReady, watched, held, since, cooldown)) {
             be.pendingRelocation = true;
             VanishingHutEvents.enqueueRelocation(serverLevel, pos);
         }
+    }
+
+    private static VanishingHutData.Entry updateRestraint(ServerLevel level, BlockPos pos,
+                                                           VanishingHutAnchorBlockEntity be,
+                                                           VanishingHutData data, boolean salted) {
+        VanishingHutData.Entry entry = data.get(be.hutId).orElseGet(() -> {
+            data.upsert(be.hutId, level, pos, be.residentUuid);
+            return data.get(be.hutId).orElseThrow();
+        });
+        if (!salted) {
+            return data.clearContinuousSalt(be.hutId).orElse(entry);
+        }
+
+        entry = data.observeSalt(be.hutId, level.getGameTime()).orElse(entry);
+        long heldFor = level.getGameTime() - entry.saltHeldSince();
+        if (heldFor >= VanishingHutHelper.SALT_WARNING_TICKS && entry.restraintStage() < 2) {
+            entry = data.setRestraintStage(be.hutId, 2).orElse(entry);
+            announceSaltWarning(level, pos, be.residentUuid);
+        } else if (entry.restraintStage() >= 2 && level.getGameTime() % 40L == 0L) {
+            level.sendParticles(ParticleTypes.SMOKE,
+                    pos.getX() + 0.5D, VanishingHut.groundY(pos) + 1.0D, pos.getZ() - 2.5D,
+                    3, 0.7D, 0.3D, 0.2D, 0.01D);
+        }
+        return entry;
+    }
+
+    private static void announceSaltWarning(ServerLevel level, BlockPos pos, UUID residentUuid) {
+        if (residentUuid != null && level.getEntity(residentUuid) instanceof com.emoniph.witchery.entity.CovenWitchEntity witch) {
+            level.sendParticles(ParticleTypes.ANGRY_VILLAGER,
+                    witch.getX(), witch.getY() + witch.getBbHeight(), witch.getZ(),
+                    10, 0.35D, 0.35D, 0.35D, 0.0D);
+        }
+        Component warning = Component.translatable("witchery.vanishing_hut.salt.warning");
+        for (ServerPlayer player : level.players()) {
+            if (player.distanceToSqr(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 24.0D * 24.0D) {
+                player.displayClientMessage(warning, false);
+            }
+        }
+        level.playSound(null, pos, SoundEvents.ILLUSIONER_CAST_SPELL, SoundSource.HOSTILE, 0.9F, 0.7F);
     }
 
     /** QA: force the hut to relocate on the next tick, bypassing the observation/cooldown gate. */
@@ -132,9 +183,17 @@ public class VanishingHutAnchorBlockEntity extends BlockEntity {
         boolean watched = VanishingHut.isWatched(level, worldPosition);
         boolean salted = VanishingHut.isHeldBySalt(level, worldPosition);
         long since = level.getGameTime() - lastMoveGameTime;
-        return String.format("hut %s: inside=%d primed=%d watched=%b held=%b salted=%b sinceMove=%d/%d pending=%b",
-                hutId, inside, primed.size(), watched, heldInPlace || salted, salted, since,
-                VanishingHutHelper.DEFAULT_MOVE_COOLDOWN_TICKS, pendingRelocation);
+        VanishingHutData.Entry entry = VanishingHutData.get(level).get(hutId).orElse(null);
+        int cycle = entry == null ? -1 : entry.bargainCycle();
+        String bargain = entry == null ? "unknown"
+                : entry.bargainCompleted() ? "completed"
+                : entry.restraintStage() > 0 ? "forfeited" : "open";
+        int restraint = entry == null ? 0 : entry.restraintStage();
+        return String.format("hut %s: inside=%d primed=%d watched=%b held=%b salted=%b "
+                        + "cycle=%d bargain=%s restraint=%d sinceMove=%d/%d pending=%b",
+                hutId, inside, primed.size(), watched, heldInPlace || salted, salted,
+                cycle, bargain, restraint, since, VanishingHutHelper.DEFAULT_MOVE_COOLDOWN_TICKS,
+                pendingRelocation);
     }
 
     @Override

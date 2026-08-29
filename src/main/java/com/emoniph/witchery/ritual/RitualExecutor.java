@@ -4,13 +4,20 @@ import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.blocks.BlightHelper;
 import com.emoniph.witchery.blocks.ChalkCircleBlock;
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
+import com.emoniph.witchery.blocks.entity.BrewFluidHoldBlockEntity;
+import com.emoniph.witchery.blocks.BrewFluidHoldBlock;
 import com.emoniph.witchery.blocks.entity.AreaMarkerBlockEntity;
 import com.emoniph.witchery.blocks.entity.StatueHobgoblinPatronBlockEntity;
 import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.init.WitcheryDimensions;
+import com.emoniph.witchery.data.BlightHeartSavedData;
+import com.emoniph.witchery.data.AnchoredCurseSavedData;
 import com.emoniph.witchery.data.InfusionType;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.effect.EnderInhibitionMobEffect;
+import com.emoniph.witchery.entity.CovenContributionCounter;
+import com.emoniph.witchery.entity.CovenSpecialty;
+import com.emoniph.witchery.entity.CovenSpecialtyContributions;
 import com.emoniph.witchery.entity.DeathEntity;
 import com.emoniph.witchery.entity.DemonEntity;
 import com.emoniph.witchery.entity.FlameImpEntity;
@@ -88,6 +95,7 @@ import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.animal.cow.MushroomCow;
@@ -144,6 +152,7 @@ public class RitualExecutor {
     private static final double BIND_SPECTRAL_STONE_RADIUS = 16.0;
     private static final ThreadLocal<ItemStack> PENDING_RITUAL_INGREDIENT = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
     private static final ThreadLocal<Boolean> EXECUTING_RITUAL_ACTIVATION = ThreadLocal.withInitial(() -> false);
+    private static final ThreadLocal<UUID> PENDING_RITUAL_OWNER = new ThreadLocal<>();
 
     public enum ActivationResult {
         NO_MATCH(false, false),
@@ -197,6 +206,7 @@ public class RitualExecutor {
                 ItemStack.EMPTY);
         fertility.stage = 11;
         fertility.awaitingSacrifices = true;
+        fertility.ownerUuid = UUID.fromString("1531d5d8-92e7-4ebf-8f3c-47c47ad36222");
         fertility.powerSourcePos = new BlockPos(6, 3, -2);
         data.activeRituals.add(fertility);
 
@@ -217,6 +227,17 @@ public class RitualExecutor {
                 "Tester", ItemStack.EMPTY);
         blight.stage = 9;
         data.activeRituals.add(blight);
+
+        SacrificeBatch escrow = new SacrificeBatch(
+                UUID.fromString("4f6a82b4-90d0-4c4d-a5b6-85d436e1ad54"),
+                new BlockPos(3, 64, -5),
+                List.of(new ItemStack(Items.DIAMOND), new ItemStack(Items.REDSTONE)),
+                List.of(new BlockPos(2, 65, -5), new BlockPos(4, 65, -5)), 420L);
+        escrow.state = SacrificeBatchState.ARMED;
+        escrow.visualStep = 1;
+        escrow.altarPos = new BlockPos(8, 64, -5);
+        escrow.altarPower = 3000;
+        data.sacrificeBatches.add(escrow);
         return data;
     }
 
@@ -267,11 +288,50 @@ public class RitualExecutor {
         buildMovingEarthPath(level, movingEarthProbe);
         movingEarthProbe.stage = 12;
         data.activeRituals.add(movingEarthProbe);
+        BlockPos paidProbeCenter = center.south(8);
+        BlockPos preparedProbeCenter = center.south(12);
+        data.sacrificeBatches.removeIf(batch -> batch.center.equals(center)
+                || batch.center.equals(paidProbeCenter) || batch.center.equals(preparedProbeCenter));
+        level.getEntitiesOfClass(ItemEntity.class, new AABB(paidProbeCenter).inflate(2.0D),
+                item -> item.getItem().is(Items.AMETHYST_SHARD)).forEach(Entity::discard);
+        SacrificeBatch escrowProbe = new SacrificeBatch(
+                UUID.fromString("6c31d2ad-7145-4fd1-bda5-98f41bcfdc3a"), center,
+                List.of(new ItemStack(Items.EMERALD), new ItemStack(Items.REDSTONE)),
+                List.of(center.north(), center.south()), level.getGameTime() + 1_000_000L);
+        escrowProbe.state = SacrificeBatchState.ARMED;
+        escrowProbe.visualStep = 1;
+        escrowProbe.altarPos = center.east(6);
+        escrowProbe.altarPower = 1234;
+        data.sacrificeBatches.add(escrowProbe);
+        SacrificeBatch paidProbe = new SacrificeBatch(
+                UUID.fromString("f013d29e-ac46-4c75-8195-521189328e55"), paidProbeCenter,
+                List.of(new ItemStack(Items.AMETHYST_SHARD, 3)), List.of(paidProbeCenter),
+                level.getGameTime() + 1_000_000L);
+        paidProbe.state = SacrificeBatchState.PAID;
+        data.sacrificeBatches.add(paidProbe);
+        SacrificeBatch preparedProbe = new SacrificeBatch(
+                UUID.fromString("3f02f80e-d02c-45db-9643-afc184af23a0"), preparedProbeCenter,
+                List.of(new ItemStack(Items.COAL, 2)), List.of(preparedProbeCenter),
+                level.getGameTime() + 1_000_000L);
+        data.sacrificeBatches.add(preparedProbe);
+        BlockPos fluidProbePos = center.north(24);
+        level.setBlock(fluidProbePos, WitcheryBlocks.BREW_FLUID_HOLD.get().defaultBlockState()
+                .setValue(BrewFluidHoldBlock.FLUID, BrewFluidHoldBlock.HeldFluid.WATER)
+                .setValue(BrewFluidHoldBlock.SOURCE, false), Block.UPDATE_ALL);
+        if (level.getBlockEntity(fluidProbePos) instanceof BrewFluidHoldBlockEntity hold) {
+            hold.setOriginalState(Blocks.WATER.defaultBlockState().setValue(LiquidBlock.LEVEL, 6));
+        } else {
+            return false;
+        }
         data.setDirty();
-        return verifyPersistenceProbe(level, center);
+        return verifyPersistenceProbe(level, center, false);
     }
 
     public static boolean verifyPersistenceProbe(ServerLevel level, BlockPos center) {
+        return verifyPersistenceProbe(level, center, true);
+    }
+
+    private static boolean verifyPersistenceProbe(ServerLevel level, BlockPos center, boolean afterReload) {
         boolean forestationFound = false;
         boolean blightFound = false;
         boolean movingEarthFound = false;
@@ -307,7 +367,35 @@ public class RitualExecutor {
                         RitualCircleDetector.CircleSize.SMALL);
             }
         }
-        return forestationFound && blightFound && movingEarthFound;
+        boolean escrowFound = RitualSavedData.get(level).sacrificeBatches.stream().anyMatch(batch ->
+                batch.batchId.equals(UUID.fromString("6c31d2ad-7145-4fd1-bda5-98f41bcfdc3a"))
+                        && batch.center.equals(center)
+                        && batch.state == SacrificeBatchState.ARMED
+                        && batch.escrow.size() == 2
+                        && batch.escrow.getFirst().is(Items.EMERALD)
+                        && batch.visualStep == 1
+                        && batch.altarPower == 1234);
+        boolean paidBatchFound = RitualSavedData.get(level).sacrificeBatches.stream().anyMatch(batch ->
+                batch.batchId.equals(UUID.fromString("f013d29e-ac46-4c75-8195-521189328e55"))
+                        && batch.state == SacrificeBatchState.PAID
+                        && batch.escrow.size() == 1
+                        && batch.escrow.getFirst().is(Items.AMETHYST_SHARD)
+                        && batch.escrow.getFirst().getCount() == 3);
+        boolean preparedBatchFound = RitualSavedData.get(level).sacrificeBatches.stream().anyMatch(batch ->
+                batch.batchId.equals(UUID.fromString("3f02f80e-d02c-45db-9643-afc184af23a0"))
+                        && batch.state == SacrificeBatchState.PREPARED);
+        int refundedAmethyst = level.getEntitiesOfClass(ItemEntity.class,
+                        new AABB(center.south(8)).inflate(2.0D),
+                        item -> item.getItem().is(Items.AMETHYST_SHARD)).stream()
+                .mapToInt(item -> item.getItem().getCount()).sum();
+        boolean recoveryFound = afterReload
+                ? !paidBatchFound && !preparedBatchFound && refundedAmethyst == 3
+                : paidBatchFound && preparedBatchFound && refundedAmethyst == 0;
+        BlockPos fluidProbePos = center.north(24);
+        boolean fluidStateFound = level.getBlockEntity(fluidProbePos) instanceof BrewFluidHoldBlockEntity hold
+                && Blocks.WATER.defaultBlockState().setValue(LiquidBlock.LEVEL, 6).equals(hold.originalState());
+        return forestationFound && blightFound && movingEarthFound && escrowFound
+                && recoveryFound && fluidStateFound;
     }
 
     private static List<ActiveRitual> activeRituals(ServerLevel level) {
@@ -331,6 +419,7 @@ public class RitualExecutor {
     public static ActivationResult execute(Player player, Level level, BlockPos floorCenter,
                                            List<RitualCircleDetector.DetectionResult> presentCircles, ItemStack ingredient) {
         PENDING_RITUAL_INGREDIENT.set(ingredient.isEmpty() ? ItemStack.EMPTY : ingredient.copyWithCount(1));
+        PENDING_RITUAL_OWNER.set(player.getUUID());
         EXECUTING_RITUAL_ACTIVATION.set(true);
         try {
             if (isRitualAreaNulled(level, floorCenter)) {
@@ -371,6 +460,7 @@ public class RitualExecutor {
             return ActivationResult.NO_MATCH;
         } finally {
             PENDING_RITUAL_INGREDIENT.remove();
+            PENDING_RITUAL_OWNER.remove();
             EXECUTING_RITUAL_ACTIVATION.remove();
         }
     }
@@ -470,10 +560,18 @@ public class RitualExecutor {
     }
 
     private static ServerPlayer ritualOwner(ServerLevel level, ActiveRitual ritual) {
-        if (ritual == null || ritual.ownerName == null || ritual.ownerName.isBlank()) {
+        if (ritual == null) {
             return null;
         }
-        return level.getServer().getPlayerList().getPlayerByName(ritual.ownerName);
+        if (ritual.ownerUuid != null) {
+            return level.getServer().getPlayerList().getPlayer(ritual.ownerUuid);
+        }
+        if (!ritual.ownerName.isBlank() && !ritual.ownerMigrationWarned) {
+            ritual.ownerMigrationWarned = true;
+            WitcheryMod.LOGGER.warn("Legacy ritual at {} has unresolved name-only owner '{}'; ownership is not transferred.",
+                    ritual.center, ritual.ownerName);
+        }
+        return null;
     }
 
     private static String ritualOwnerName(Player player) {
@@ -1327,17 +1425,30 @@ public class RitualExecutor {
         double z = center.getZ() + 0.5D;
         record FamiliarCallTarget(ServerPlayer owner, LivingEntity familiar) {}
         List<FamiliarCallTarget> targets = new ArrayList<>();
+        boolean rootedRefused = false;
         AABB bounds = new AABB(center).inflate(FAMILIAR_BIND_RADIUS, 1.0D, FAMILIAR_BIND_RADIUS);
         for (ServerPlayer nearby : sl.getEntitiesOfClass(ServerPlayer.class, bounds)) {
             if (nearby.distanceToSqr(Vec3.atCenterOf(center)) > FAMILIAR_BIND_RADIUS * FAMILIAR_BIND_RADIUS) {
                 continue;
             }
             LivingEntity familiar = FamiliarHelper.findBoundFamiliarEntity(nearby);
+            if (familiar instanceof Creaking creaking && CreakingFamiliarHelper.isRootedGuard(creaking)) {
+                nearby.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.rooted"), false);
+                rootedRefused = true;
+                continue;
+            }
+            if (familiar == null && CreakingFamiliarHelper.isStoredRootedGuard(nearby)) {
+                nearby.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.rooted"), false);
+                rootedRefused = true;
+                continue;
+            }
             if (familiar == null) familiar = FamiliarHelper.restoreBoundFamiliar(nearby, sl, x, y, z);
             if (familiar != null) targets.add(new FamiliarCallTarget(nearby, familiar));
         }
         if (targets.isEmpty()) {
-            player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.none"), false);
+            if (!rootedRefused) {
+                player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.none"), false);
+            }
             return false;
         }
         RitualTransaction transaction = offerAll(new RitualTransaction(sl, center, 16, 1000,
@@ -2563,7 +2674,11 @@ public class RitualExecutor {
             return false;
         }
         int covenSize = countNearbyCovenWitches(level, center);
-        int maxRadius = fertilityMaxRadius(covenSize);
+        CovenContributionCounter.SpecialtyRoster specialties =
+                CovenSpecialtyContributions.roster(sl, center, player);
+        int maxRadius = fertilityMaxRadius(covenSize)
+                + (specialties.has(CovenSpecialty.HEDGE_WITCH)
+                ? CovenSpecialtyContributions.HEDGE_FERTILITY_RADIUS_BONUS : 0);
         List<ItemStack> refunds = activeRitualRefunds(offerings);
         RitualTransaction transaction = new RitualTransaction(sl, center, 16, altarPower,
                 "witchery.ritual.fertility.no_power");
@@ -2575,6 +2690,8 @@ public class RitualExecutor {
             return false;
         }
         player.displayClientMessage(Component.translatable("witchery.ritual.fertility.started"), false);
+        CovenSpecialtyContributions.revealContribution(
+                player, sl, specialties, CovenSpecialty.HEDGE_WITCH);
         WitcheryMod.LOGGER.info("{} started at {} with radius {} for {}", logPrefix, center, maxRadius,
                 player.getName().getString());
         return true;
@@ -2637,7 +2754,11 @@ public class RitualExecutor {
         }
         List<ItemStack> refunds = activeRitualRefunds(refundableOfferings);
         int radius = forestationRadius(covenSize);
-        int duration = forestationDuration(covenSize);
+        CovenContributionCounter.SpecialtyRoster specialties =
+                CovenSpecialtyContributions.roster(sl, center, player);
+        int duration = forestationDuration(covenSize)
+                + (specialties.has(CovenSpecialty.HEDGE_WITCH)
+                ? CovenSpecialtyContributions.HEDGE_FORESTATION_DURATION_BONUS : 0);
         if (!transaction.commit(player, () -> queuePersistentEffectRitual(sl, ActiveRitualType.FORESTATION,
                 RitualCircleDetector.CircleSize.MEDIUM, center, effectCenter, radius, FORESTATION_HEIGHT,
                 duration, FORESTATION_PULSE_INTERVAL, covenSize, false, saplingStack.copyWithCount(1), refunds,
@@ -2645,6 +2766,8 @@ public class RitualExecutor {
             return false;
         }
         player.displayClientMessage(Component.translatable("witchery.ritual.forest.started"), false);
+        CovenSpecialtyContributions.revealContribution(
+                player, sl, specialties, CovenSpecialty.HEDGE_WITCH);
         WitcheryMod.LOGGER.info("Rite of the Forest started a {} grove at {} for {}",
                 saplingStack.getHoverName().getString(), effectCenter, player.getName().getString());
         return true;
@@ -2793,6 +2916,9 @@ public class RitualExecutor {
         }
         int targetStage = type == ActiveRitualType.PROTECTION_BARRIER_PORTABLE ? 60 : 0;
         if (!ensureActiveRitualCenterAvailable(player, sl, center)) return false;
+        CovenContributionCounter.SpecialtyRoster specialties =
+                CovenSpecialtyContributions.roster(sl, center, player);
+        float effectiveUpkeep = CovenSpecialtyContributions.hearthUpkeep(upkeepCost, specialties);
         List<RitualOffering> allOfferings = new ArrayList<>(offeringsToConsume);
         if (relocation.boundWaystone() != null && !allOfferings.contains(relocation.boundWaystone())) {
             allOfferings.add(relocation.boundWaystone());
@@ -2805,13 +2931,17 @@ public class RitualExecutor {
         }
         if (!transaction.commit(player, () -> queueActiveRitual(sl, type, circleSize,
                 center, relocation.effectCenter(), radius, height, targetStage, 1, 0,
-                upkeepCost, 0, refunds, false, player.getScoreboardName()))) {
+                effectiveUpkeep, 0, refunds, false, player.getScoreboardName()))) {
             player.displayClientMessage(Component.translatable("witchery.ritual.already_active"), false);
             return false;
         }
 
         SacrificeConsumer.runWhenDrained(sl, () -> success(player, level, center,
                 "witchery.ritual.protection.activated", SoundEvents.BEACON_ACTIVATE, 0.9f, 3, 72));
+        if (upkeepCost > 0.0F) {
+            CovenSpecialtyContributions.revealContribution(
+                    player, sl, specialties, CovenSpecialty.HEARTH_WITCH);
+        }
         WitcheryMod.LOGGER.info("Rite of Protection variant {} raised at {} by {}", type, center, player.getName().getString());
         return true;
     }
@@ -3122,7 +3252,11 @@ public class RitualExecutor {
         }
 
         int covenSize = countNearbyCovenWitches(level, center);
-        int duration = 150 + covenSize * 25;
+        CovenContributionCounter.SpecialtyRoster specialties =
+                CovenSpecialtyContributions.roster(sl, center, sp);
+        int duration = 150 + covenSize * 25
+                + (specialties.has(CovenSpecialty.PALE_WITCH)
+                ? CovenSpecialtyContributions.PALE_MANIFESTATION_DURATION_BONUS : 0);
         RitualTransaction transaction = new RitualTransaction(sl, center, 16, 5000,
                 "witchery.ritual.manifestation.no_power")
                 .offer(offerings.get().spectralDust())
@@ -3145,6 +3279,8 @@ public class RitualExecutor {
         }
         success(player, level, center, "witchery.ritual.manifestation.success",
                 SoundEvents.ENDERMAN_TELEPORT, 1.8f, 3, 60);
+        CovenSpecialtyContributions.revealContribution(
+                sp, sl, specialties, CovenSpecialty.PALE_WITCH);
         WitcheryMod.LOGGER.info("Rite of Manifestation: {} prepared {} players for {} seconds of ghost travel.",
                 sp.getName().getString(), targets.size(), duration);
         return true;
@@ -3546,11 +3682,7 @@ public class RitualExecutor {
     static int countNearbyCovenWitches(Level level, BlockPos center) {
         // Counts both wandering Coven Witches and conjured Spectral Witches (the Gathered Lives coven),
         // so a solo caster who has summoned a spectral coven can meet a rite's coven requirement.
-        return level.getEntitiesOfClass(
-                net.minecraft.world.entity.Entity.class,
-                new AABB(center).inflate(16.0),
-                e -> e instanceof com.emoniph.witchery.entity.CovenMember
-        ).size();
+        return CovenContributionCounter.countRitualEligible(level, new AABB(center).inflate(16.0));
     }
 
     private static boolean hasNearbyRitualAltar(ServerLevel level, BlockPos center, int radius) {
@@ -3693,9 +3825,9 @@ public class RitualExecutor {
 
     private static boolean tickActiveRitual(ServerLevel level, ActiveRitual ritual) {
         if (ritual.awaitingSacrifices) {
-            if (!SacrificeConsumer.hasPending(level)) {
-                armActiveRitual(level, ritual);
-            }
+            // Legacy records may still carry this flag. Payment is authoritative before a rite is
+            // queued now, so delayed sacrifice visuals are never a shared activation barrier.
+            armActiveRitual(level, ritual);
             return true;
         }
 
@@ -4552,7 +4684,7 @@ public class RitualExecutor {
                 .toList();
         ActiveRitual ritual = new ActiveRitual(type, center, circleSize, effectCenter, circleVariant,
                 minRadius, maxRadius, targetStage, pulseInterval, covenSize, upkeepCost, enhanced, 0,
-                nextGameTime, ItemStack.EMPTY, refunds, ownerName, focus);
+                nextGameTime, ItemStack.EMPTY, refunds, PENDING_RITUAL_OWNER.get(), ownerName, focus);
         rituals.add(ritual);
         awaitRitualSacrifices(level, ritual);
         markRitualsDirty(level);
@@ -4636,7 +4768,7 @@ public class RitualExecutor {
                 PersistentRitualLifecycle.nextActivationTime(level.getGameTime(), type),
                 sacrificedIngredient.isEmpty() || triggerInRefundLedger
                         ? ItemStack.EMPTY : sacrificedIngredient.copy(),
-                List.copyOf(supplementalSacrifices), ownerName);
+                List.copyOf(supplementalSacrifices), PENDING_RITUAL_OWNER.get(), ownerName, ItemStack.EMPTY);
         rituals.add(ritual);
         awaitRitualSacrifices(level, ritual);
         markRitualsDirty(level);
@@ -4644,8 +4776,8 @@ public class RitualExecutor {
     }
 
     private static void awaitRitualSacrifices(ServerLevel level, ActiveRitual ritual) {
-        ritual.awaitingSacrifices = true;
-        SacrificeConsumer.runWhenDrained(level, () -> armActiveRitual(level, ritual));
+        ritual.awaitingSacrifices = false;
+        ritual.nextGameTime = PersistentRitualLifecycle.nextActivationTime(level.getGameTime(), ritual.type);
     }
 
     private static void armActiveRitual(ServerLevel level, ActiveRitual ritual) {
@@ -4877,12 +5009,12 @@ public class RitualExecutor {
         return true;
     }
 
-    private static Optional<BlockPos> findBlightHeartPos(ServerLevel level, BlockPos center) {
-        return randomEmbeddedBlightHeartPos(level, center)
-                .or(() -> fallbackEmbeddedBlightHeartPos(level, center));
+    private static Optional<BlockPos> findBlightHeartPos(Player player, ServerLevel level, BlockPos center) {
+        return randomEmbeddedBlightHeartPos(player, level, center)
+                .or(() -> fallbackEmbeddedBlightHeartPos(player, level, center));
     }
 
-    private static Optional<BlockPos> randomEmbeddedBlightHeartPos(ServerLevel level, BlockPos center) {
+    private static Optional<BlockPos> randomEmbeddedBlightHeartPos(Player player, ServerLevel level, BlockPos center) {
         int radiusSq = BLIGHT_HEART_RANDOM_RADIUS * BLIGHT_HEART_RANDOM_RADIUS;
         for (int attempt = 0; attempt < 96; attempt++) {
             int dx = level.random.nextInt(BLIGHT_HEART_RANDOM_RADIUS * 2 + 1) - BLIGHT_HEART_RANDOM_RADIUS;
@@ -4891,9 +5023,12 @@ public class RitualExecutor {
                 continue;
             }
 
-            BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE,
-                    new BlockPos(center.getX() + dx, center.getY(), center.getZ() + dz));
-            BlockPos heartPos = embeddedHeartPosFromSurface(level, surface);
+            BlockPos column = new BlockPos(center.getX() + dx, center.getY(), center.getZ() + dz);
+            if (!level.isLoaded(column)) {
+                continue;
+            }
+            BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, column);
+            BlockPos heartPos = embeddedHeartPosFromSurface(player, level, surface);
             if (heartPos != null) {
                 return Optional.of(heartPos);
             }
@@ -4901,17 +5036,20 @@ public class RitualExecutor {
         return Optional.empty();
     }
 
-    private static Optional<BlockPos> fallbackEmbeddedBlightHeartPos(ServerLevel level, BlockPos center) {
+    private static Optional<BlockPos> fallbackEmbeddedBlightHeartPos(Player player, ServerLevel level, BlockPos center) {
         BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, center);
-        return Optional.ofNullable(embeddedHeartPosFromSurface(level, surface));
+        return Optional.ofNullable(embeddedHeartPosFromSurface(player, level, surface));
     }
 
-    private static BlockPos embeddedHeartPosFromSurface(ServerLevel level, BlockPos surface) {
+    private static BlockPos embeddedHeartPosFromSurface(Player player, ServerLevel level, BlockPos surface) {
         BlockPos heartPos = surface.below();
         while (heartPos.getY() > level.getMinY() && level.getBlockState(heartPos).canBeReplaced()) {
             heartPos = heartPos.below();
         }
-        return BlightHelper.canPlaceEmbeddedHeartAt(level, heartPos) ? heartPos : null;
+        return BlightHelper.canPlaceEmbeddedHeartAt(level, heartPos)
+                && canRitualModify(player, level, heartPos, WitcheryProtectionAction.BLOCK_TRANSFORM)
+                && canRitualModify(player, level, heartPos.above(), WitcheryProtectionAction.BLOCK_TRANSFORM)
+                ? heartPos : null;
     }
 
     private static void spreadBlightRing(ServerLevel level, ActiveRitual ritual, int radius, boolean enhanced) {
@@ -5653,7 +5791,10 @@ public class RitualExecutor {
 
     private static boolean startNecromanticStone(Player player, Level level, ServerLevel sl, BlockPos center,
                                                  List<RitualOffering> offerings) {
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 1000,
+        CovenContributionCounter.SpecialtyRoster specialties =
+                CovenSpecialtyContributions.roster(sl, center, player);
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16,
+                CovenSpecialtyContributions.gravePower(1000, specialties),
                 "witchery.ritual.necro_stone.no_power");
         for (RitualOffering offering : offerings) {
             transaction.offer(offering);
@@ -5670,6 +5811,8 @@ public class RitualExecutor {
         })) {
             return false;
         }
+        CovenSpecialtyContributions.revealContribution(
+                player, sl, specialties, CovenSpecialty.GRAVE_WITCH);
         return true;
     }
 
@@ -5704,7 +5847,10 @@ public class RitualExecutor {
 
     private static boolean startSpectralStone(Player player, Level level, ServerLevel sl, BlockPos center,
                                              List<RitualOffering> offerings) {
-        RitualTransaction transaction = new RitualTransaction(sl, center, 16, 6000,
+        CovenContributionCounter.SpecialtyRoster specialties =
+                CovenSpecialtyContributions.roster(sl, center, player);
+        RitualTransaction transaction = new RitualTransaction(sl, center, 16,
+                CovenSpecialtyContributions.gravePower(6000, specialties),
                 "witchery.ritual.spectral_stone.no_power");
         for (RitualOffering offering : offerings) {
             transaction.offer(offering);
@@ -5722,6 +5868,8 @@ public class RitualExecutor {
         })) {
             return false;
         }
+        CovenSpecialtyContributions.revealContribution(
+                player, sl, specialties, CovenSpecialty.GRAVE_WITCH);
         return true;
     }
 
@@ -6207,9 +6355,21 @@ public class RitualExecutor {
         return startBlightHeart(player, level, sl, center, matchedItems);
     }
 
-    private static boolean startBlightHeart(Player player, Level level, ServerLevel sl, BlockPos center,
-                                            List<RitualOffering> offerings) {
-        Optional<BlockPos> heartPos = findBlightHeartPos(sl, center);
+    static boolean startBlightHeart(Player player, Level level, ServerLevel sl, BlockPos center,
+                                    List<RitualOffering> offerings) {
+        if (!BlightHelper.isHeartEnabled()) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.blight_heart.disabled"), false);
+            return false;
+        }
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return false;
+        }
+        if (BlightHeartSavedData.get(sl.getServer())
+                .heartOwnedBy(serverPlayer.getUUID()) != null) {
+            player.displayClientMessage(Component.translatable("witchery.blight_heart.owner_limit"), false);
+            return false;
+        }
+        Optional<BlockPos> heartPos = findBlightHeartPos(player, sl, center);
         if (heartPos.isEmpty()) {
             level.playSound(null, center, SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(Component.translatable("witchery.ritual.blight_heart.no_ground"), false);
@@ -6220,15 +6380,24 @@ public class RitualExecutor {
             return false;
         }
         BlockPos blightHeartPos = heartPos.get();
+        BlightHeartSavedData.PlacementResult placement =
+                BlightHelper.canPlaceHeartFor(sl, serverPlayer, blightHeartPos);
+        if (placement != BlightHeartSavedData.PlacementResult.ALLOWED) {
+            player.displayClientMessage(Component.translatable(BlightHelper.placementFailureKey(placement)), false);
+            return false;
+        }
         RitualTransaction transaction = offerAll(
                 new RitualTransaction(sl, center, 16, BLIGHT_HEART_RITE_POWER,
                         "witchery.ritual.blight_heart.no_power"),
                 offerings);
-        if (!transaction.commitDeferred(player, () -> {
-            BlightHelper.placeHeart(sl, blightHeartPos, true);
+        if (!transaction.commit(player, () -> {
+            if (!BlightHelper.placeHeart(sl, blightHeartPos, true, serverPlayer)) {
+                return false;
+            }
             level.playSound(null, center, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 1.0f, 0.5f);
             spawnBlightRiteBurst(sl, center);
             player.displayClientMessage(Component.translatable("witchery.ritual.blight_heart.success"), false);
+            return true;
         })) {
             return false;
         }
@@ -6335,7 +6504,11 @@ public class RitualExecutor {
                 .toList();
         int minRadius = variant == StormRiteVariant.BASE ? 0 : 3;
         int maxRadius = variant == StormRiteVariant.BASE ? 3 : 7;
-        int targetStage = variant == StormRiteVariant.BASE ? 8 : 18;
+        CovenContributionCounter.SpecialtyRoster specialties =
+                CovenSpecialtyContributions.roster(sl, center, player);
+        int targetStage = (variant == StormRiteVariant.BASE ? 8 : 18)
+                + (specialties.has(CovenSpecialty.STORM_WITCH)
+                ? CovenSpecialtyContributions.STORM_STAGE_BONUS : 0);
         RitualTransaction transaction = offerAll(
                 new RitualTransaction(sl, center, 16, requiredPower, "witchery.ritual.storm.no_power"),
                 allOfferings);
@@ -6347,6 +6520,8 @@ public class RitualExecutor {
         }
         success(player, level, center, "witchery.ritual.storm.success",
                 SoundEvents.LIGHTNING_BOLT_THUNDER, 1f, 4, 48);
+        CovenSpecialtyContributions.revealContribution(
+                player, sl, specialties, CovenSpecialty.STORM_WITCH);
         return true;
     }
 
@@ -7154,7 +7329,15 @@ public class RitualExecutor {
         double z = center.getZ() + 0.5;
 
         LivingEntity familiar = FamiliarHelper.findBoundFamiliarEntity(sp);
+        if (familiar instanceof Creaking creaking && CreakingFamiliarHelper.isRootedGuard(creaking)) {
+            player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.rooted"), false);
+            return false;
+        }
         if (familiar == null) {
+            if (CreakingFamiliarHelper.isStoredRootedGuard(sp)) {
+                player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.rooted"), false);
+                return false;
+            }
             familiar = FamiliarHelper.restoreBoundFamiliar(sp, sl, x, y, z);
             if (familiar == null) {
                 player.displayClientMessage(Component.translatable("witchery.ritual.call_familiar.none"), false);
@@ -8422,6 +8605,58 @@ public class RitualExecutor {
     @FunctionalInterface
     private interface CurseAction { void apply(ServerPlayer target); }
 
+    private interface CursePreparation {
+        CursePreparation DIRECT = new CursePreparation() {
+            @Override
+            public boolean validate(ServerPlayer caster, ServerLevel level, ServerPlayer target) {
+                return true;
+            }
+
+            @Override
+            public boolean commit(ServerPlayer caster, ServerLevel level, ServerPlayer target) {
+                return true;
+            }
+        };
+
+        boolean validate(ServerPlayer caster, ServerLevel level, ServerPlayer target);
+
+        boolean commit(ServerPlayer caster, ServerLevel level, ServerPlayer target);
+    }
+
+    private static final class AnchoredSinkingPreparation implements CursePreparation {
+        private final int potencyBonus;
+        private AnchoredCurseSavedData.Preparation preparation;
+
+        private AnchoredSinkingPreparation(int potencyBonus) {
+            this.potencyBonus = potencyBonus;
+        }
+
+        @Override
+        public boolean validate(ServerPlayer caster, ServerLevel level, ServerPlayer target) {
+            preparation = AnchoredCurseSavedData.get(level.getServer()).prepareSinking(caster, target);
+            if (preparation.allowed()) {
+                return true;
+            }
+            String key = switch (preparation.issue()) {
+                case AMBIGUOUS_ANCHOR -> "witchery.anchored_curse.sinking.ambiguous";
+                case DUPLICATE_PAIR -> "witchery.anchored_curse.sinking.duplicate";
+                case WARDED -> "witchery.anchored_curse.sinking.warded";
+                case INVALID_ANCHOR -> "witchery.anchored_curse.sinking.invalid";
+                case PROTECTED -> "witchery.anchored_curse.sinking.protected";
+                case NONE -> throw new IllegalStateException("Allowed Red Thread preparation was rejected");
+            };
+            caster.displayClientMessage(Component.translatable(key), false);
+            return false;
+        }
+
+        @Override
+        public boolean commit(ServerPlayer caster, ServerLevel level, ServerPlayer target) {
+            return preparation != null && (!preparation.anchored()
+                    || AnchoredCurseSavedData.get(level.getServer()).activateSinking(
+                    preparation, caster, target, potencyBonus));
+        }
+    }
+
     @FunctionalInterface
     private interface CreatureCurseAction { void apply(LivingEntity target); }
 
@@ -8465,6 +8700,14 @@ public class RitualExecutor {
                                                int altarPowerCost, String noPowerKey, CurseAction action,
                                                String successKey, String failKey, boolean checkHunterArmorProtection,
                                                ItemEntity... offerings) {
+        return performOfferedCurse(caster, level, center, offeredTaglock, altarPowerCost, noPowerKey,
+                action, successKey, failKey, checkHunterArmorProtection, CursePreparation.DIRECT, offerings);
+    }
+
+    private static boolean performOfferedCurse(Player caster, Level level, BlockPos center, ItemEntity offeredTaglock,
+                                               int altarPowerCost, String noPowerKey, CurseAction action,
+                                               String successKey, String failKey, boolean checkHunterArmorProtection,
+                                               CursePreparation preparation, ItemEntity... offerings) {
         List<RitualOffering> stagedOfferings = new ArrayList<>(offerings.length + 1);
         stagedOfferings.add(RitualOffering.dropped(offeredTaglock));
         for (ItemEntity offering : offerings) {
@@ -8474,7 +8717,8 @@ public class RitualExecutor {
         }
         return performOfferedCurse(caster, level, center, RitualOffering.dropped(offeredTaglock),
                 altarPowerCost, noPowerKey,
-                action, successKey, failKey, checkHunterArmorProtection, List.copyOf(stagedOfferings));
+                action, successKey, failKey, checkHunterArmorProtection, preparation,
+                List.copyOf(stagedOfferings));
     }
 
     private static boolean performOfferedCurse(Player caster, Level level, BlockPos center,
@@ -8482,6 +8726,15 @@ public class RitualExecutor {
                                                int altarPowerCost, String noPowerKey, CurseAction action,
                                                String successKey, String failKey, boolean checkHunterArmorProtection,
                                                List<RitualOffering> offerings) {
+        return performOfferedCurse(caster, level, center, offeredTaglock, altarPowerCost, noPowerKey,
+                action, successKey, failKey, checkHunterArmorProtection, CursePreparation.DIRECT, offerings);
+    }
+
+    private static boolean performOfferedCurse(Player caster, Level level, BlockPos center,
+                                               RitualOffering offeredTaglock,
+                                               int altarPowerCost, String noPowerKey, CurseAction action,
+                                               String successKey, String failKey, boolean checkHunterArmorProtection,
+                                               CursePreparation preparation, List<RitualOffering> offerings) {
         if (!(caster instanceof ServerPlayer sp)) return false;
         if (!(level instanceof ServerLevel sl)) return false;
         Optional<UUID> taglockUuid = TaglockKitItem.getUUID(offeredTaglock.stack());
@@ -8507,16 +8760,23 @@ public class RitualExecutor {
             sp.displayClientMessage(Component.translatable("witchery.curse.target_protected"), false);
             return false;
         }
+        if (!preparation.validate(sp, sl, target)) {
+            return false;
+        }
 
         RitualTransaction transaction = offerAll(
                 new RitualTransaction(sl, center, 16, altarPowerCost, noPowerKey),
                 offerings);
-        if (!transaction.commitDeferred(caster, () -> {
+        if (!transaction.commit(caster, () -> {
+            if (!preparation.commit(sp, sl, target)) {
+                return false;
+            }
             action.apply(target);
             target.displayClientMessage(Component.translatable(successKey + ".target"), false);
             success(caster, level, center, successKey + ".caster",
                     SoundEvents.WITCH_CELEBRATE, 1f, 3, 48);
             WitchHunterEntity.blackMagicPerformed(sp);
+            return true;
         })) {
             return false;
         }
@@ -8528,11 +8788,21 @@ public class RitualExecutor {
                                                int altarPowerCost, String noPowerKey, CurseAction action,
                                                String successKey, String failKey,
                                                boolean checkHunterArmorProtection) {
+        return performMatchedCurse(caster, level, center, matchedItems, altarPowerCost, noPowerKey,
+                action, successKey, failKey, checkHunterArmorProtection, CursePreparation.DIRECT);
+    }
+
+    private static boolean performMatchedCurse(Player caster, Level level, BlockPos center,
+                                               List<RitualOffering> matchedItems,
+                                               int altarPowerCost, String noPowerKey, CurseAction action,
+                                               String successKey, String failKey,
+                                               boolean checkHunterArmorProtection,
+                                               CursePreparation preparation) {
         if (matchedItems.isEmpty()) {
             return false;
         }
         return performOfferedCurse(caster, level, center, matchedItems.get(0), altarPowerCost, noPowerKey,
-                action, successKey, failKey, checkHunterArmorProtection, matchedItems);
+                action, successKey, failKey, checkHunterArmorProtection, preparation, matchedItems);
     }
 
     private static boolean performOfferedCreatureCurse(Player caster, Level level, BlockPos center,
@@ -8868,6 +9138,9 @@ public class RitualExecutor {
                             || target.hasEffect(MobEffects.MINING_FATIGUE)
                             || target.hasEffect(MobEffects.LEVITATION),
                     target -> {
+                        AnchoredCurseSavedData.get(target.level().getServer()).cleanseTarget(
+                                target.level().getServer(), target.getUUID(),
+                                AnchoredCurseSavedData.CurseType.SINKING);
                         target.removeEffect(MobEffects.SLOWNESS);
                         target.removeEffect(MobEffects.MINING_FATIGUE);
                         target.removeEffect(MobEffects.LEVITATION);
@@ -8953,6 +9226,9 @@ public class RitualExecutor {
                         || target.hasEffect(MobEffects.MINING_FATIGUE)
                         || target.hasEffect(MobEffects.LEVITATION),
                 target -> {
+                    AnchoredCurseSavedData.get(target.level().getServer()).cleanseTarget(
+                            target.level().getServer(), target.getUUID(),
+                            AnchoredCurseSavedData.CurseType.SINKING);
                     target.removeEffect(MobEffects.SLOWNESS);
                     target.removeEffect(MobEffects.MINING_FATIGUE);
                     target.removeEffect(MobEffects.LEVITATION);
@@ -9036,6 +9312,7 @@ public class RitualExecutor {
                 "witchery.curse.sinking",
                 "witchery.curse.sinking",
                 false,
+                new AnchoredSinkingPreparation(potencyBonus),
                 offerings.get().exhaleOfHornedOne(),
                 offerings.get().inkSac(),
                 offerings.get().netherWart(),
@@ -9056,7 +9333,8 @@ public class RitualExecutor {
                 },
                 "witchery.curse.sinking",
                 "witchery.curse.sinking",
-                false);
+                false,
+                new AnchoredSinkingPreparation(potencyBonus));
     }
 
     /** Curse of Insanity — nausea + confusion. */
@@ -9221,11 +9499,7 @@ public class RitualExecutor {
             if (!ritual.center.equals(center)) {
                 return false;
             }
-            if (ritual.awaitingSacrifices && SacrificeConsumer.hasPending(level)) {
-                SacrificeConsumer.runWhenDrained(level, () -> refundRitualIngredient(level, ritual));
-            } else {
-                refundRitualIngredient(level, ritual);
-            }
+            refundRitualIngredient(level, ritual);
             clearClimateChangePlan(level, ritual.center);
             cancelled[0] = true;
             return true;

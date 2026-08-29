@@ -66,6 +66,14 @@ public class PoppetItem extends Item {
             tooltip.accept(Component.translatable("witchery.poppet.tooltip.unbound")
                     .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         }
+        if (RedThreadBinding.isPrepared(stack)) {
+            tooltip.accept(Component.translatable("witchery.poppet.tooltip.red_thread.prepared",
+                    RedThreadBinding.casterName(stack)).withStyle(ChatFormatting.DARK_RED));
+            if (RedThreadBinding.isActive(stack)) {
+                tooltip.accept(Component.translatable("witchery.poppet.tooltip.red_thread.active")
+                        .withStyle(ChatFormatting.RED));
+            }
+        }
     }
 
     // ── Static helpers (used by subclasses and event handlers) ────────────────

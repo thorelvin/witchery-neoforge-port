@@ -27,7 +27,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Protection upkeep is continuous: the altar is charged every tick. The barrier itself redraws on the source 20-tick boundary, so its blocks remain renewed without rebuilding the whole wall every tick.[#]()",
+      "text": "[#](53341a)Protection upkeep is continuous: the altar is charged every tick. The barrier itself redraws on a twenty-tick rhythm, so its blocks remain renewed without rebuilding the whole wall every tick.[#]()",
       "title": "How It Unfolds",
       "use_markdown_in_title": false
     },

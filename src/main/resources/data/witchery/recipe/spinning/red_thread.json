@@ -1,0 +1,20 @@
+{
+  "type": "witchery:spinning",
+  "fibre": {
+    "id": "minecraft:string",
+    "count": 4
+  },
+  "modifiers": [
+    {
+      "id": "minecraft:red_dye"
+    },
+    {
+      "id": "witchery:reek_of_misfortune"
+    }
+  ],
+  "result": {
+    "id": "witchery:red_thread",
+    "count": 4
+  },
+  "cookingtime": 300
+}

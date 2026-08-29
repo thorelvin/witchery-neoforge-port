@@ -22,6 +22,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -186,6 +187,22 @@ public final class VanishingHut {
 
     public static void build(ServerLevelAccessor level, BlockPos anchorPos, UUID hutId) {
         ServerLevel serverLevel = level.getLevel();
+        build(level, anchorPos, hutId, sampleSurfaceState(serverLevel, anchorPos));
+    }
+
+    /** Worldgen-safe build path that never requests a neighboring chunk during feature placement. */
+    public static void buildForWorldgen(WorldGenLevel level, BlockPos anchorPos, UUID hutId) {
+        BlockState surface = normalizeSurface(level.getBlockState(anchorPos.above()));
+        if (surface == null) {
+            surface = normalizeSurface(level.getBlockState(anchorPos));
+        }
+        build(level, anchorPos, hutId,
+                surface == null ? Blocks.GRASS_BLOCK.defaultBlockState() : surface);
+    }
+
+    private static void build(ServerLevelAccessor level, BlockPos anchorPos, UUID hutId,
+                              BlockState surface) {
+        ServerLevel serverLevel = level.getLevel();
         StructureTemplate template = serverLevel.getStructureManager().getOrCreate(TEMPLATE);
         BlockPos origin = templateOrigin(anchorPos);
         boolean placed = template.placeInWorld(level, origin, origin, makeSettings(), serverLevel.random, 3);
@@ -193,7 +210,6 @@ public final class VanishingHut {
             WitcheryMod.LOGGER.warn("[VanishingHut] Could not place template {} at {}", TEMPLATE, origin);
         }
 
-        BlockState surface = sampleSurfaceState(serverLevel, anchorPos);
         backfillAnchorLayer(level, anchorPos, surface);
         restoreSurfaceLayerHoles(level, anchorPos, surface);
         installLootTables(level, anchorPos);
@@ -284,6 +300,15 @@ public final class VanishingHut {
 
     public static BlockPos residentHome(BlockPos anchorPos) {
         return new BlockPos(anchorPos.getX(), groundY(anchorPos) + 1, anchorPos.getZ() + 1);
+    }
+
+    public static BlockPos anchorFromResidentHome(BlockPos home) {
+        return home.offset(0, -(FLOOR_DY + 1), -1);
+    }
+
+    /** Player standing position immediately outside the template's open north-facing door. */
+    public static BlockPos arrivalPos(BlockPos anchorPos) {
+        return new BlockPos(anchorPos.getX(), groundY(anchorPos) + 1, anchorPos.getZ() - 3);
     }
 
     public static void vanish(ServerLevel level, BlockPos anchorPos) {

@@ -32,10 +32,15 @@ keepAliveMinutes = 30
 chatCooldownTicks = 20
 cooldownTicks = 100
 cancelHandledNpcChat = true
+endpointPolicy = "local_only"
 allowLanEndpoint = false
+maxResponseBytes = 131072
+memoryMaxEntries = 4096
+memoryMaxCharacters = 1048576
+memoryMaxAgeTicks = 720000
 apiKeyEnv = ""
 extraHeaders = ""
-responseFormat = "json_object"
+responseFormat = "json_schema"
 ```
 
 The branch keeps `enabled = true` and `prewarmEnabled = true` for local
@@ -46,8 +51,15 @@ also remain visible as normal multiplayer chat. Ambient look-at routing still
 broadcasts player chat even when cancellation is enabled. `chatCooldownTicks`
 controls ordinary NPC chat; `cooldownTicks` controls non-chat triggers such as
 greetings, gaze, and ambient reactions. Set
-`allowLanEndpoint = true` only when the model is running on a trusted LAN sidecar
-machine. For `provider = "openai_compatible"`, set `apiKeyEnv` to the name of an
+`endpointPolicy = "local_only"` accepts loopback endpoints only. `private_lan`
+accepts loopback or literal private-address endpoints for a trusted LAN sidecar;
+it rejects public addresses and DNS hostnames. `remote_allowed` is the explicit
+opt-in for public or DNS endpoints and may send NPC prompts and player conversation
+data off-machine. `allowLanEndpoint` is a legacy migration toggle that can upgrade
+`local_only` to `private_lan`; it never permits public endpoints. `maxResponseBytes`
+bounds provider responses, while `memoryMaxEntries`, `memoryMaxCharacters`, and
+`memoryMaxAgeTicks` bound persisted NPC/player memory. For
+`provider = "openai_compatible"`, set `apiKeyEnv` to the name of an
 environment variable containing a bearer token when the endpoint needs one, for
 example `OPENAI_API_KEY`. `extraHeaders` accepts semicolon- or newline-separated
 `Header: value` entries for compatible servers that need non-auth metadata.
@@ -92,7 +104,11 @@ The cards are guidance, not a hard script. The prompt presents them as targeted 
 ## Safety And Authority
 
 - AI dialogue is local by default. The launcher prepares Ollama/EVA only after user approval.
-- `allowLanEndpoint = false` blocks non-loopback endpoints unless a trusted LAN sidecar is explicitly configured.
+- `endpointPolicy = "local_only"` rejects non-loopback endpoints and deceptive
+  DNS hostnames; `private_lan` permits only literal private addresses, while
+  `remote_allowed` requires an explicit off-machine-data opt-in.
+- LLM response bodies, persisted NPC memory, and concurrent request permits are
+  bounded; stale async completions lose authority after reload or server stop.
 - `WitcheryProtectionService` guards NPC commands and terrain-changing magic.
 - Optional reflective adapters check Open Parties and Claims, FTB Chunks, and Common Protection API when those mods are installed.
 - Model output is treated as speech or classifier help, never as direct game-state authority.

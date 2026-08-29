@@ -1,4 +1,4 @@
-name: Build and Runtime Tests
+name: Release Gates
 
 on: [push, pull_request]
 
@@ -7,38 +7,20 @@ permissions:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
-
-      - name: Setup JDK 21
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'temurin'
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Validate runtime test manifest
-        run: python3 tools/runtime_test_harness.py validate
-
-      - name: Run exact resource contracts
-        run: python3 tools/runtime_test_harness.py resource-contracts
-
-      - name: Build with Gradle
-        run: ./gradlew build --console=plain
-
+          distribution: temurin
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew build --console=plain
       - name: Upload build diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
@@ -47,45 +29,122 @@ jobs:
           path: |
             build/reports/
             build/test-results/
+          if-no-files-found: warn
+          retention-days: 14
+
+  resource-contracts:
+    name: Resource Contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Validate runtime manifest
+        run: python3 tools/runtime_test_harness.py validate
+      - run: python3 tools/runtime_test_harness.py resource-contracts
+      - name: Upload resource diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resource-contract-diagnostics
+          path: |
+            build/reports/
+            build/test-results/
             build/runtime-test/resource-contracts/
           if-no-files-found: warn
           retention-days: 14
 
-  runtime:
+  hardening-tests:
+    name: Hardening Unit Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup JDK 21
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'temurin'
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Validate runtime test manifest
-        run: python3 tools/runtime_test_harness.py validate
-
-      - name: Run named dedicated-server GameTests
-        run: python3 tools/runtime_test_harness.py game-tests
-
-      - name: Run dedicated-server save/reload smoke
-        run: python3 tools/runtime_test_harness.py save-reload
-
-      - name: Upload runtime diagnostics
+          distribution: temurin
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Run transaction and lifecycle tests
+        run: >-
+          ./gradlew test --console=plain
+          --tests com.emoniph.witchery.ritual.RitualPersistenceTest
+          --tests com.emoniph.witchery.events.VampireFlightOwnershipTest
+          --tests com.emoniph.witchery.ai.AiRequestPermitsTest
+          --tests com.emoniph.witchery.ai.LlmEndpointValidatorTest
+          --tests com.emoniph.witchery.ai.LlmHttpBodiesTest
+          --tests com.emoniph.witchery.ai.NpcMemoryDataTest
+          --tests com.emoniph.witchery.data.MysticBranchChannelStateTest
+          --tests com.emoniph.witchery.entity.FlyingMonkeyPreparationTest
+          --tests com.emoniph.witchery.entity.FlyingMonkeySourceParityTest
+          --tests com.emoniph.witchery.symbol.SymbolGlyphTest
+          --tests com.emoniph.witchery.worldgen.VillageWallGeneratorTest
+      - name: Upload hardening diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: runtime-test-diagnostics
+          name: hardening-test-diagnostics
+          path: |
+            build/reports/
+            build/test-results/
+          if-no-files-found: warn
+          retention-days: 14
+
+  game-tests:
+    name: Dedicated GameTests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Validate runtime manifest
+        run: python3 tools/runtime_test_harness.py validate
+      - run: python3 tools/runtime_test_harness.py game-tests
+      - name: Upload GameTest diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gametest-diagnostics
+          path: build/runtime-test/
+          if-no-files-found: warn
+          retention-days: 14
+
+  save-reload:
+    name: Dedicated Save Reload
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Validate runtime manifest
+        run: python3 tools/runtime_test_harness.py validate
+      - run: python3 tools/runtime_test_harness.py save-reload
+      - name: Upload save/reload diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: save-reload-diagnostics
           path: build/runtime-test/
           if-no-files-found: warn
           retention-days: 14

@@ -72,7 +72,8 @@ public final class PersistentRitualQueueGameTests {
         ActiveRitual established = new ActiveRitual(ActiveRitualType.FERTILITY, establishedCenter,
                 RitualCircleDetector.CircleSize.SMALL, establishedCenter, 1,
                 4, 8, 5, 5, 0, 0.0F, false, 0,
-                level.getGameTime(), ItemStack.EMPTY, List.of(), "", ItemStack.EMPTY);
+                level.getGameTime(), ItemStack.EMPTY, List.of(), owner.getUUID(),
+                owner.getScoreboardName(), ItemStack.EMPTY);
         data.activeRituals.add(established);
 
         ItemEntity pending = new ItemEntity(level, establishedCenter.getX() + 10.5D,
@@ -93,7 +94,7 @@ public final class PersistentRitualQueueGameTests {
                 RitualCircleDetector.CircleSize.SMALL, earthCenter, 1,
                 1, 10, 60, 1, 0, 0.0F, false, 2,
                 level.getGameTime(), ItemStack.EMPTY, List.of(new ItemStack(Items.POTION)),
-                owner.getScoreboardName(), ItemStack.EMPTY);
+                owner.getUUID(), owner.getScoreboardName(), ItemStack.EMPTY);
         RitualExecutor.buildMovingEarthPath(level, movingEarth);
         helper.assertTrue(movingEarth.path.size() == 60,
                 "Broken Earth must build the source 60-position path");

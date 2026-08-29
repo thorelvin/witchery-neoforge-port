@@ -88,6 +88,7 @@ public final class FlyingMonkeyCourierGameTests {
                 level, UUID.fromString("d09c9cc2-130e-45c1-932b-e9885045b4d7"), "MonkeyCourierTarget");
         FlyingMonkeyEntity monkey = WitcheryEntities.FLYING_MONKEY.get().create(level, EntitySpawnReason.TRIGGERED);
         Pig target = EntityType.PIG.create(level, EntitySpawnReason.TRIGGERED);
+        long[] nextWaystoneOrderAt = {Long.MIN_VALUE};
         if (monkey == null || target == null) {
             HeadlessGameTestPlayer.remove(owner);
             HeadlessGameTestPlayer.remove(playerTarget);
@@ -139,14 +140,16 @@ public final class FlyingMonkeyCourierGameTests {
                     helper.assertTrue(result.consumesAction(), "A bound waystone must issue an owner journey");
                     helper.assertTrue(waystone.getCount() == 1,
                             "Bound waystone transport must retain the source's reusable waystone");
-                    helper.assertTrue(monkey.getCourierState() == FlyingMonkeyEntity.CourierState.WAYSTONE,
-                            "A bound waystone must put the monkey into WAYSTONE state");
+                    helper.assertTrue(monkey.getCourierState() == FlyingMonkeyEntity.CourierState.PREPARING_WAYSTONE,
+                            "A bound waystone must put the monkey into destination preparation");
                     helper.assertTrue(owner.getVehicle() == monkey,
                             "The owner must hang from the monkey during same-dimension waystone travel");
                 })
                 .thenWaitUntil(() -> {
                     helper.assertTrue(monkey.getCourierState() == FlyingMonkeyEntity.CourierState.IDLE,
                             "The monkey has not completed its waystone journey yet");
+                    helper.assertTrue(!monkey.hasDestinationPreparationTicket(),
+                            "Same-dimension completion must release the destination ticket");
                     helper.assertTrue(!owner.isPassenger(), "The owner must dismount at the destination");
                     helper.assertTrue(owner.distanceToSqr(
                                     waystoneDestination.getX() + 0.5D,
@@ -174,6 +177,9 @@ public final class FlyingMonkeyCourierGameTests {
                                     waystoneDestination.getZ() + 0.5D) <= 25.0D,
                             "The returned player must arrive near the second command origin");
                 })
+                .thenExecute(() -> nextWaystoneOrderAt[0] = level.getGameTime() + 100L)
+                .thenWaitUntil(() -> helper.assertTrue(level.getGameTime() >= nextWaystoneOrderAt[0],
+                        "The fixture is waiting for the waystone preparation cooldown"))
                 .thenExecute(() -> {
                     ItemStack bloodedWaystone = new ItemStack(WitcheryItems.BLOODED_WAYSTONE.get());
                     WaystoneItem.bindToEntity(bloodedWaystone, target);
@@ -248,8 +254,8 @@ public final class FlyingMonkeyCourierGameTests {
         WaystoneItem.bindTo(waystone, destinationPos, Level.NETHER);
         owner.setItemInHand(InteractionHand.MAIN_HAND, waystone);
         monkey.mobInteract(owner, InteractionHand.MAIN_HAND);
-        helper.assertTrue(monkey.getCourierState() == FlyingMonkeyEntity.CourierState.WAYSTONE,
-                "A valid cross-dimension Bound Waystone must start a journey");
+        helper.assertTrue(monkey.getCourierState() == FlyingMonkeyEntity.CourierState.PREPARING_WAYSTONE,
+                "A valid cross-dimension Bound Waystone must start destination preparation");
         helper.assertTrue(owner.getVehicle() == monkey,
                 "The owner must mount before a cross-dimension waystone journey");
         UUID monkeyUuid = monkey.getUUID();
@@ -269,6 +275,9 @@ public final class FlyingMonkeyCourierGameTests {
                     helper.assertTrue(movedMonkey instanceof FlyingMonkeyEntity moved
                                     && moved.getCourierState() == FlyingMonkeyEntity.CourierState.IDLE,
                             "The monkey must cross dimensions and clear its completed order");
+                    helper.assertTrue(movedMonkey instanceof FlyingMonkeyEntity moved
+                                    && !moved.hasDestinationPreparationTicket(),
+                            "Cross-dimension completion must release the destination ticket");
                 })
                 .thenExecute(() -> {
                     Entity movedMonkey = destination.getEntity(monkeyUuid);

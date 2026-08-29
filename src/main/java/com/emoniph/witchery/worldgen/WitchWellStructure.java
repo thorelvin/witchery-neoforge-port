@@ -16,8 +16,6 @@ public class WitchWellStructure extends Structure {
     public static final MapCodec<WitchWellStructure> CODEC = simpleCodec(WitchWellStructure::new);
 
     private static final int TERRAIN_PADDING = 1;
-    private static final int MAX_FOOTPRINT_HEIGHT_VARIANCE = 1;
-
     public WitchWellStructure(StructureSettings settings) {
         super(settings);
     }
@@ -88,7 +86,7 @@ public class WitchWellStructure extends Structure {
         if (minY == Integer.MAX_VALUE) {
             return OptionalInt.empty();
         }
-        if (maxY - minY > MAX_FOOTPRINT_HEIGHT_VARIANCE) {
+        if (maxY - minY > variant.maxFootprintHeightVariance()) {
             return OptionalInt.empty();
         }
         return OptionalInt.of(maxY);

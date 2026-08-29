@@ -229,6 +229,7 @@ public class WitcheryItems {
 
     // ── M14/M15 crafting outputs ───────────────────────────────────────────────
     public static final DeferredItem<Item> FANCIFUL_THREAD     = ITEMS.registerSimpleItem("fanciful_thread");
+    public static final DeferredItem<Item> RED_THREAD          = ITEMS.registerSimpleItem("red_thread");
     public static final DeferredItem<Item> REDSTONE_SOUP       = ITEMS.registerSimpleItem("redstone_soup");
     public static final DeferredItem<Item> DIAMOND_VAPOUR      = ITEMS.registerSimpleItem("diamond_vapour");
     public static final DeferredItem<Item> BAT_WOOL            = ITEMS.registerSimpleItem("bat_wool");

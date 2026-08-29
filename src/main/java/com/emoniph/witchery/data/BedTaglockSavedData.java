@@ -22,6 +22,10 @@ public final class BedTaglockSavedData {
     private BedTaglockSavedData() {
     }
 
+    public static void clearSession() {
+        ENTRIES.clear();
+    }
+
     public static Optional<BedTaglockEntry> getEntry(Level level, BlockPos pos) {
         return Optional.ofNullable(ENTRIES.getOrDefault(level.dimension(), Map.of()).get(pos.asLong()));
     }

@@ -12,6 +12,7 @@ import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryDimensions;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryItems;
+import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.ritual.AltarPowerSourceLookup;
 import com.emoniph.witchery.ritual.OtherwhereHearthTransposition;
 import com.emoniph.witchery.ritual.RitualCircleDetector;
@@ -114,7 +115,7 @@ final class OtherwhereHearthQaFixture {
                         + coordinates(kettlePos) + ".")
                 .withStyle(ChatFormatting.LIGHT_PURPLE), false);
         source.sendSuccess(() -> Component.literal(
-                "It is READY with a bound Kettle, both rings, six coven members, a charged altar, "
+                "It is READY with a bound Kettle, both rings, six sworn living coven witches, a charged altar, "
                         + "containers, sign, fluids, redstone, pets, a hostile, an item, and a ridden minecart. "
                         + "Stand beside the Kettle and run /witchery verify otherwhere_hearth before crossing."), false);
         return 1;
@@ -136,6 +137,20 @@ final class OtherwhereHearthQaFixture {
         buildSourceHearth(sourceLevel, kettlePos, facing, owner);
         buildSourceFixtures(sourceLevel, kettlePos, facing, owner);
         buildDestinationFixtures(destination, kettlePos, facing);
+        fundSelectedAltar(sourceLevel, kettlePos);
+    }
+
+    /** Builds only the already-loaded source side for loaded-only Seer Stone QA. */
+    static void buildLocalAt(ServerPlayer owner, ServerLevel sourceLevel,
+                             BlockPos kettlePos, Direction facing) {
+        OtherwhereHearthTransposition.Volume volume =
+                OtherwhereHearthTransposition.volumeFor(kettlePos);
+        loadChunks(sourceLevel, volume);
+        removeNonPlayers(sourceLevel, volume);
+        clearVolume(sourceLevel, volume);
+        buildShell(sourceLevel, kettlePos, false);
+        buildSourceHearth(sourceLevel, kettlePos, facing, owner);
+        buildSourceFixtures(sourceLevel, kettlePos, facing, owner);
         fundSelectedAltar(sourceLevel, kettlePos);
     }
 
@@ -261,9 +276,10 @@ final class OtherwhereHearthQaFixture {
 
         int[][] covenOffsets = {{-2, -2}, {0, -2}, {2, -2}, {-2, 2}, {0, 2}, {2, 2}};
         for (int index = 0; index < covenOffsets.length; index++) {
-            Mob witch = spawnMob(level, WitcheryEntities.COVEN_WITCH.get(),
+            CovenWitchEntity witch = spawnMob(level, WitcheryEntities.COVEN_WITCH.get(),
                     center.offset(covenOffsets[index][0], 0, covenOffsets[index][1]), index * 60.0F);
             if (witch != null) {
+                witch.setCovenOwner(owner.getUUID());
                 witch.setCustomName(Component.literal("Hearth Coven " + (index + 1)));
             }
         }

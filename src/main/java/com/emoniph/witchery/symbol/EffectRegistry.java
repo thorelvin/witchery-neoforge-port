@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Registry of Mystic Branch symbol spells, keyed by drawn stroke sequence and by id.
@@ -64,6 +65,7 @@ public final class EffectRegistry {
     private final Map<String, SymbolEffect> byStroke = new HashMap<>();
     private final Map<String, Integer> levelByStroke = new HashMap<>();
     private final Map<Integer, SymbolEffect> byId = new HashMap<>();
+    private final Map<Integer, Set<Integer>> levelsById = new HashMap<>();
     private final List<SymbolEffect> all = new ArrayList<>();
 
     private EffectRegistry() {
@@ -91,6 +93,7 @@ public final class EffectRegistry {
             String k = key(set.strokes());
             byStroke.put(k, effect);
             levelByStroke.put(k, set.level());
+            levelsById.computeIfAbsent(effect.getEffectId(), ignored -> new java.util.HashSet<>()).add(set.level());
         }
         byId.put(effect.getEffectId(), effect);
         effect.setDefaultStrokes(sets[0].strokes());
@@ -112,6 +115,12 @@ public final class EffectRegistry {
 
     public SymbolEffect getById(int id) {
         return byId.get(id);
+    }
+
+    /** True only for an effect/level pair backed by an actual registered stroke set. */
+    public boolean isCastableLevel(int id, int level) {
+        Set<Integer> levels = levelsById.get(id);
+        return byId.containsKey(id) && levels != null && levels.contains(level);
     }
 
     public List<SymbolEffect> getEffects() {

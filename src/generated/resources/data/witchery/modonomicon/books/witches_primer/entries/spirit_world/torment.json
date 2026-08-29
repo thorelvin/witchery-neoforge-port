@@ -16,7 +16,7 @@
         "type": "modonomicon:none"
       },
       "show_title_separator": true,
-      "text": "[#](53341a)Torment is a fixed-night dungeon of six isolated, source-shaped mazes. Each level is a perfect **31 x 31** depth-first maze: every corridor eventually connects, but the way may still be long.[#]()",
+      "text": "[#](53341a)Torment is a fixed-night dungeon of six isolated mazes cut to one merciless measure. Each level is a perfect **31 x 31** depth-first maze: every corridor eventually connects, but the way may still be long.[#]()",
       "title": "Torment",
       "use_markdown_in_title": false
     },

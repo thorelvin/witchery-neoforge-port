@@ -111,10 +111,7 @@ public class StrawManTemplatePiece extends TemplateStructurePiece {
                     plantStateForGround(level.getBlockState(pos.below()),
                             isDryShrubBiome(level, pos.getX(), pos.getZ())),
                     3);
-            case MARKER_SPAWNER -> {
-                level.setBlock(pos, adaptiveFootprintGroundState(level, pos), 3);
-                placeSpawner(level, random, pos.below());
-            }
+            case MARKER_SPAWNER -> placeSpawner(level, random, pos);
             default -> WitcheryMod.LOGGER.warn("[StrawMan] Unknown template marker '{}' at {}", name, pos);
         }
     }
@@ -165,6 +162,10 @@ public class StrawManTemplatePiece extends TemplateStructurePiece {
 
     private static boolean isGroundFootprint(int x, int z) {
         return (x >= 1 && x <= 4) || z == 2;
+    }
+
+    static boolean isGroundFootprintForCertification(int x, int z) {
+        return isGroundFootprint(x, z);
     }
 
     private static BlockState adaptiveFootprintGroundState(ServerLevelAccessor level, BlockPos pos) {

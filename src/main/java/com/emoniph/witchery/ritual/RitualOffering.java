@@ -22,16 +22,12 @@ record RitualOffering(ItemEntity itemEntity, GrassperBlockEntity grassper) {
         return new RitualOffering(null, grassper);
     }
 
-    /**
-     * Queue this offering for staged consumption — source {@code SacrificeItem} removes sacrifices one
-     * per 20 ticks with a pop, not all at once. The actual decrement happens at the pop via
-     * {@link #applyConsumption()}.
-     */
+    /** Remove one source unit into durable escrow now; the delayed pop is presentation only. */
     void consumeOne() {
         SacrificeConsumer.stage(this);
     }
 
-    /** The real decrement of the backing stack — called by {@link SacrificeConsumer} at the staged pop. */
+    /** The authoritative decrement used while creating a persisted paid batch. */
     void applyConsumption() {
         if (itemEntity != null) {
             RitualExecutor.removeOfferedItemNow(itemEntity);

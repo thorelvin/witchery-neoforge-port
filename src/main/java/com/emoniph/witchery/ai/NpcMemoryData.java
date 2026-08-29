@@ -1,5 +1,6 @@
 package com.emoniph.witchery.ai;
 
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.UUIDUtil;
@@ -14,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Comparator;
 
 public final class NpcMemoryData extends SavedData {
     private static final int MAX_EXCHANGES = 8;
@@ -89,6 +91,8 @@ public final class NpcMemoryData extends SavedData {
                 data.memories.put(new Key(entry.npc(), entry.player()), memory);
             }
         }
+        long newest = data.memories.values().stream().mapToLong(Memory::updatedGameTime).max().orElse(0L);
+        data.prune(newest, memoryMaxEntries(), memoryMaxCharacters(), memoryMaxAgeTicks());
         return data;
     }
 
@@ -125,6 +129,7 @@ public final class NpcMemoryData extends SavedData {
                 previous == null ? "" : previous.playerName(),
                 previous == null ? List.of() : previous.exchanges(),
                 flags));
+        pruneForWrite(gameTime);
         setDirty();
     }
 
@@ -285,6 +290,7 @@ public final class NpcMemoryData extends SavedData {
                 previous == null ? "" : previous.playerName(),
                 previous == null ? List.of() : previous.exchanges(),
                 previous == null ? List.of() : previous.flags()));
+        pruneForWrite(gameTime);
         setDirty();
     }
 
@@ -306,6 +312,7 @@ public final class NpcMemoryData extends SavedData {
                 playerName,
                 exchanges,
                 previous == null ? List.of() : previous.flags()));
+        pruneForWrite(gameTime);
         setDirty();
     }
 
@@ -381,18 +388,85 @@ public final class NpcMemoryData extends SavedData {
         return notes;
     }
 
-    private static boolean isUnsafeMemoryText(String text) {
+    static boolean isUnsafeMemoryText(String text) {
         String normalized = NpcBrainResponse.sanitize(text, MAX_EXCHANGE_TEXT).toLowerCase();
-        return normalized.contains("prompt")
-                || normalized.contains("instruction")
-                || normalized.contains("system message")
+        return normalized.matches(".*\\bsystem\\s+prompt\\b.*")
+                || normalized.matches(".*\\bdeveloper\\s+(message|instructions?)\\b.*")
+                || normalized.matches(".*\\bignore\\s+(all\\s+)?(previous|prior)\\s+instructions?\\b.*")
+                || normalized.matches(".*\\btool[_\\s-]?calls?\\b.*")
+                || normalized.matches(".*\\bauthorization\\s+header\\b.*")
+                || normalized.matches(".*\\bapi[_\\s-]?key\\b.*")
+                || normalized.matches(".*\\b(reveal|print|return|exfiltrate)\\s+(the\\s+)?(secret|token|credentials?)\\b.*")
                 || normalized.contains("developer message")
-                || normalized.contains("ignore previous")
-                || normalized.contains("tool_call")
-                || normalized.matches(".*<\\s*/?\\s*[a-z][a-z0-9_-]*\\b.*")
-                || normalized.contains("json")
-                || normalized.contains("api")
-                || normalized.contains("model");
+                || normalized.matches(".*<\\s*/?\\s*(tool_call|script|system|developer)\\b.*");
+    }
+
+    int entryCount() {
+        return memories.size();
+    }
+
+    int estimatedCharacterCount() {
+        return memories.values().stream().mapToInt(NpcMemoryData::estimatedCharacters).sum();
+    }
+
+    public String diagnosticsLine() {
+        return "entries=" + entryCount() + ", estimatedCharacters=" + estimatedCharacterCount();
+    }
+
+    public void maintain(long gameTime) {
+        int before = memories.size();
+        pruneForWrite(gameTime);
+        if (memories.size() != before) setDirty();
+    }
+
+    void prune(long now, int maxEntries, int maxCharacters, long maxAgeTicks) {
+        int safeEntries = Math.max(1, maxEntries);
+        int safeCharacters = Math.max(1, maxCharacters);
+        if (maxAgeTicks > 0) {
+            memories.entrySet().removeIf(entry -> now - entry.getValue().updatedGameTime() > maxAgeTicks);
+        }
+        if (memories.size() <= safeEntries && estimatedCharacterCount() <= safeCharacters) {
+            return;
+        }
+        List<Map.Entry<Key, Memory>> oldest = memories.entrySet().stream()
+                .sorted(Comparator.comparingLong(entry -> entry.getValue().updatedGameTime()))
+                .toList();
+        int characters = estimatedCharacterCount();
+        for (Map.Entry<Key, Memory> entry : oldest) {
+            if (memories.size() <= safeEntries && characters <= safeCharacters) {
+                break;
+            }
+            if (memories.remove(entry.getKey(), entry.getValue())) {
+                characters -= estimatedCharacters(entry.getValue());
+            }
+        }
+    }
+
+    private void pruneForWrite(long gameTime) {
+        prune(gameTime, memoryMaxEntries(), memoryMaxCharacters(), memoryMaxAgeTicks());
+    }
+
+    private static int estimatedCharacters(Memory memory) {
+        int characters = memory.text().length() + memory.npcName().length() + memory.playerName().length();
+        for (Exchange exchange : memory.exchanges()) {
+            characters += exchange.playerSpeech().length() + exchange.npcSpeech().length();
+        }
+        for (String flag : memory.flags()) {
+            characters += flag.length();
+        }
+        return characters;
+    }
+
+    private static int memoryMaxEntries() {
+        return WitcheryConfig.LLM_MEMORY_MAX_ENTRIES.get();
+    }
+
+    private static int memoryMaxCharacters() {
+        return WitcheryConfig.LLM_MEMORY_MAX_CHARACTERS.get();
+    }
+
+    private static long memoryMaxAgeTicks() {
+        return WitcheryConfig.LLM_MEMORY_MAX_AGE_TICKS.get();
     }
 
     private static String ensureSentence(String note) {

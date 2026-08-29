@@ -261,6 +261,10 @@ public class WitcheryClient {
         event.register((state, level, pos, tintIndex) -> tintIndex == 0
                         ? com.emoniph.witchery.world.TormentAtmosphere.PORTAL_RGB : -1,
                 WitcheryBlocks.TORMENT_PORTAL.get());
+        // Source BlockSpiritPortal multiplies the vanilla animated portal texture by 0x00FF66.
+        event.register((state, level, pos, tintIndex) -> tintIndex == 0
+                        ? com.emoniph.witchery.blocks.SpiritPortalBlock.SOURCE_PORTAL_RGB : -1,
+                WitcheryBlocks.SPIRIT_PORTAL.get());
     }
 
     public static void registerItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
@@ -704,5 +708,10 @@ public class WitcheryClient {
 
     public static void handleScryingCamera(ScryingCameraPayload payload, IPayloadContext ctx) {
         ctx.enqueueWork(() -> com.emoniph.witchery.client.ScryingCameraState.handle(payload));
+    }
+
+    public static void handleMysticBranchChannel(
+            com.emoniph.witchery.network.MysticBranchChannelPayload payload, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> com.emoniph.witchery.client.SymbolDrawState.beginServerSession(payload.nonce()));
     }
 }

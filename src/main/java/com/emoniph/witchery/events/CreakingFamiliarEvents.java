@@ -4,6 +4,7 @@ import com.emoniph.witchery.entity.familiar.CreakingFamiliarHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.monster.creaking.Creaking;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -61,14 +62,12 @@ public final class CreakingFamiliarEvents {
             return;
         }
 
-        if (!player.isShiftKeyDown()) {
-            return;
-        }
         event.setCanceled(true);
-        if (CreakingFamiliarHelper.getData(creaking).sitting()) {
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        if (player.isShiftKeyDown() && CreakingFamiliarHelper.isRootedGuard(creaking)) {
             CreakingFamiliarHelper.markDismissed(player, creaking, true);
         } else {
-            CreakingFamiliarHelper.toggleSitting(player, creaking);
+            CreakingFamiliarHelper.toggleMode(player, creaking);
         }
     }
 }

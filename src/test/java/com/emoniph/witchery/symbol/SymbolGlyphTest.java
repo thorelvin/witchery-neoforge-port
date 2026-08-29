@@ -7,6 +7,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -83,6 +86,32 @@ class SymbolGlyphTest {
         EffectRegistry.bootstrap();
         assertNull(EffectRegistry.instance().getEffect(new byte[]{0}), "a single up is not a spell");
         assertNull(EffectRegistry.instance().getEffect(new byte[]{0, 1}), "up-down is not a spell");
+    }
+
+    @Test
+    void registryOnlyAcceptsLevelsBackedByRegisteredStrokeSets() {
+        EffectRegistry.bootstrap();
+        assertTrue(EffectRegistry.instance().isCastableLevel(EffectRegistry.ACCIO.getEffectId(), 1));
+        assertFalse(EffectRegistry.instance().isCastableLevel(EffectRegistry.ACCIO.getEffectId(), 99));
+        assertFalse(EffectRegistry.instance().isCastableLevel(Integer.MAX_VALUE, 1));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void registeredGlyphsNeverHideLongerGlyphsBehindAValidPrefix() throws ReflectiveOperationException {
+        EffectRegistry.bootstrap();
+        Field field = EffectRegistry.class.getDeclaredField("byStroke");
+        field.setAccessible(true);
+        Map<String, SymbolEffect> glyphs = (Map<String, SymbolEffect>) field.get(EffectRegistry.instance());
+
+        for (String shorter : glyphs.keySet()) {
+            for (String longer : glyphs.keySet()) {
+                if (!shorter.equals(longer)) {
+                    assertFalse(longer.startsWith(shorter),
+                            () -> "client locks glyph " + shorter + " before longer glyph " + longer + " can finish");
+                }
+            }
+        }
     }
 
     @Test

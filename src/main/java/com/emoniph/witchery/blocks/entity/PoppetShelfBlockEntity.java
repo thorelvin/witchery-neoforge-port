@@ -1,7 +1,9 @@
 package com.emoniph.witchery.blocks.entity;
 
 import com.emoniph.witchery.init.WitcheryBlockEntities;
+import com.emoniph.witchery.data.AnchoredCurseSavedData;
 import com.emoniph.witchery.item.PoppetItem;
+import com.emoniph.witchery.item.RedThreadBinding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -62,20 +64,27 @@ public class PoppetShelfBlockEntity extends BaseContainerBlockEntity {
 
     @Override
     public ItemStack removeItem(int slot, int amount) {
+        terminateRemovedAnchor(items.get(slot));
         ItemStack result = ContainerHelper.removeItem(items, slot, amount);
+        if (RedThreadBinding.isActive(result)) RedThreadBinding.clear(result);
         if (!result.isEmpty()) setChanged();
         return result;
     }
 
     @Override
     public ItemStack removeItemNoUpdate(int slot) {
+        terminateRemovedAnchor(items.get(slot));
         ItemStack result = ContainerHelper.takeItem(items, slot);
+        if (RedThreadBinding.isActive(result)) RedThreadBinding.clear(result);
         if (!result.isEmpty()) setChanged();
         return result;
     }
 
     @Override
     public void setItem(int slot, ItemStack stack) {
+        if (items.get(slot) != stack) {
+            terminateRemovedAnchor(items.get(slot));
+        }
         items.set(slot, stack);
         if (stack.getCount() > getMaxStackSize()) stack.setCount(getMaxStackSize());
         setChanged();
@@ -88,6 +97,10 @@ public class PoppetShelfBlockEntity extends BaseContainerBlockEntity {
 
     @Override
     public void clearContent() {
+        for (ItemStack stack : items) {
+            terminateRemovedAnchor(stack);
+            if (RedThreadBinding.isActive(stack)) RedThreadBinding.clear(stack);
+        }
         for (int i = 0; i < items.size(); i++) {
             items.set(i, ItemStack.EMPTY);
         }
@@ -180,6 +193,10 @@ public class PoppetShelfBlockEntity extends BaseContainerBlockEntity {
         return result;
     }
 
+    public static void clearServer(net.minecraft.server.MinecraftServer server) {
+        ACTIVE_SHELVES.removeIf(shelf -> shelf.level == null || shelf.level.getServer() == server);
+    }
+
     private void registerIfActiveShelf() {
         if (!isInactiveShelf(this)) {
             ACTIVE_SHELVES.add(this);
@@ -216,11 +233,22 @@ public class PoppetShelfBlockEntity extends BaseContainerBlockEntity {
 
     private boolean hasBoundPoppet() {
         for (ItemStack stack : items) {
-            if (!stack.isEmpty() && stack.getItem() instanceof PoppetItem && PoppetItem.isBound(stack)) {
+            if (!stack.isEmpty() && stack.getItem() instanceof PoppetItem && PoppetItem.isBound(stack)
+                    && !RedThreadBinding.isPrepared(stack)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private void terminateRemovedAnchor(ItemStack stack) {
+        if (!RedThreadBinding.isActive(stack)
+                || !(level instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
+            return;
+        }
+        RedThreadBinding.bindingId(stack).ifPresent(bindingId ->
+                AnchoredCurseSavedData.get(serverLevel.getServer()).terminateBinding(
+                        serverLevel.getServer(), bindingId, AnchoredCurseSavedData.TerminationCause.REMOVED));
     }
 
     private static boolean isInactiveShelf(PoppetShelfBlockEntity shelf) {

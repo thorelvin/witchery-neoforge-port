@@ -2,6 +2,7 @@ package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.BlightHelper;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.UseOnContext;
@@ -24,7 +25,9 @@ public class BrewOfCleansingItem extends BrewItem {
             return InteractionResult.PASS;
         }
 
-        int cleansed = BlightHelper.cleanseArea(serverLevel, context.getClickedPos(), BLOCK_RADIUS);
+        ServerPlayer actor = context.getPlayer() instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+        int cleansed = BlightHelper.cleanseArea(
+                serverLevel, context.getClickedPos(), BLOCK_RADIUS, actor);
         if (cleansed <= 0) {
             return InteractionResult.PASS;
         }
@@ -35,8 +38,8 @@ public class BrewOfCleansingItem extends BrewItem {
 
     @Override
     protected void applyEffect(Player player, Level level) {
-        if (level instanceof ServerLevel serverLevel) {
-            BlightHelper.cleanseArea(serverLevel, player.blockPosition(), BLOCK_RADIUS);
+        if (level instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
+            BlightHelper.cleanseArea(serverLevel, player.blockPosition(), BLOCK_RADIUS, serverPlayer);
         }
     }
 }

@@ -269,6 +269,7 @@ public class WitcheryCreativeTabs {
         add(output,
                 WitcheryItems.WITCHES_SALT.get(),
                 WitcheryItems.FANCIFUL_THREAD.get(),
+                WitcheryItems.RED_THREAD.get(),
                 WitcheryItems.GOLDEN_THREAD.get(),
                 WitcheryItems.BONE_NEEDLE.get(),
                 WitcheryItems.IMPREGNATED_LEATHER.get(),

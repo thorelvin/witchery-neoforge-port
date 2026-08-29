@@ -10,16 +10,84 @@
 
 Full feature status: `docs/status/FEATURE_MATRIX.md`
 
+The verified feature-integration correction/expansion sequence is recorded in
+[FEATURE_INTEGRATION_REVIEW_ACTIONS.md](../roadmap/FEATURE_INTEGRATION_REVIEW_ACTIONS.md).
+Priorities 1 and 2, living-coven Hearth semantics and infusion passive parity,
+  closed on 2026-08-27, as did Priority 3A containment and Priority 3B's owned,
+  reversible Blight Heart, and Priority 4's Creaking rooted-ward specialization
+  is closed too. Hearth divination/lore, Red Thread plus one anchored existing
+  curse, restrained Coven specialties/Concord, and Vanishing Hut bargains plus
+  restraint consequences all closed on 2026-08-28.
+
 ## Recent High-Signal Changes
 
 Detailed session history is archived in `docs/archive/CHANGELOG.md`; keep this file focused on backlog and slice candidates.
 
+- 2026-08-28: Spirit World atmosphere and lifecycle certification closed. Four
+  matched original/port scenarios cover clear dream, rainy dream, nightmare, and
+  demonic presentation. Fixed-seed `witchery:spirit_world_fresh_chunks`, the
+  two-player `witchery:spirit_world_lifecycle`, and a separate two-process live
+  Icy Needle wake certificate cover fresh geography/ecology, pressure, Body and
+  inventory isolation, reconnect, blocked return, Manifestation, death/wake, and
+  restart persistence without mutating the Overworld clock.
+- 2026-08-28: Every Coven Witch now keeps one visible, persisted Hedge, Grave,
+  Pale, Storm, or Hearth craft. Only living, nearby, caster-sworn witches lend
+  five small contextual rite bonuses, duplicates collapse, and six living members
+  produce a coloured Coven Concord scene. Vanishing Hut settlements now persist
+  one stable existing-reagent bargain; completion encourages departure, salt
+  forfeits the bargain and escalates toward an unobserved escape, and a resident
+  Taglock gives only vague surroundings through the Crystal Ball. Both dedicated-
+  server fixtures pass.
+- 2026-08-28: Red Thread now comes from the existing Spinning Wheel and prepares
+  exactly one plain player-bound Poppet on a breakable Poppet Shelf. The ordinary
+  full Curse of Sinking rite can settle into one such loaded anchor per caster-
+  target pair; otherwise its finite behavior is unchanged. The anchor persists
+  without force-loading, has staged Seer/Crystal Ball/Compass clues, and ends on
+  Poppet removal, shelf break, or the existing cure with exact effect restoration
+  and a short ward. Focused tests and `witchery:red_thread_anchored_sinking` pass.
+- 2026-08-27: Creaking familiars now persist `FOLLOW` and `ROOTED_GUARD` as
+  exclusive roles. Rooted guards retain a dimension/anchor, do not follow,
+  teleport, share owner damage, or answer Calling rites, and exclusively own
+  bounded intrusion alerts, monster repulsion, and slow non-accumulating resin.
+  Existing sitting data migrates to rooted. Codec tests and dedicated-server
+  `witchery:creaking_familiar_modes` pass. Next correction: Hearth Seer Stone
+  preparation/divination UX plus the remaining language/discovery sweep.
+- 2026-08-27: The Blight Heart redesign is closed behind the still-default-off
+  release gate. A global SavedData journal persists owner, world/anchor, lifecycle,
+  512-change budget, cadence, cleanup actor, and exact original/applied blocks;
+  chunk and mutation indexes replace cubic rediscovery. One journal is allowed
+  per owner, nearby roots cannot overlap, spread pauses without the owner, every
+  mutation checks terrain protection, and loaded-only cleanup never force-loads.
+  Seer Stones trace corruption to its root. Codec/bound tests,
+  `witchery:blight_heart_lifecycle`, and the real two-process
+  `blight-heart-restart` harness pass.
+- 2026-08-27: Blight Heart containment is closed. The rite, Brew of Blight,
+  shared placement, and autonomous spread are gated by
+  `rituals.enableBlightHeart=false`; rejection consumes no offering, escrow, or
+  altar power. Existing blocks still load, disabled Hearts do not spread, and
+  orphan taint cleans one block per successful random tick without the former
+  cubic Heart scan. `witchery:blight_heart_containment` passes.
+- 2026-08-27: Infusions now follow the source default and grant no recurring
+  identity potion buffs. Energy, Witch's Hand powers, Overworld fall cushioning,
+  Infernal creature reactions, one-time grant feedback, and ambient aura remain.
+  `witchery:infusion_passive_parity` passes on a dedicated server. Next
+  correction was default-off Blight Heart containment.
+- 2026-08-27: Otherwhere Hearth coven semantics now require six living,
+  in-volume Coven Witches sworn to the activating owner. Unrecruited,
+  other-owned, dead, removed, out-of-volume, and Spectral Witches do not carry
+  the Hearth; ordinary source rites retain broad living/spectral coven support.
+  Focused JVM/resource tests and dedicated-server ownership, round-trip, and
+  destination-refusal GameTests pass.
 - Village ecosystem certification is closed: full Villager identity survives
   Were-Villager/Wolfman/reversion/cure, creature Taglock/Poppet/curse/sacrifice
   routes have dedicated-server fixtures, and plains/desert/savanna/taiga/snowy
   villages pass canonical claim, palette, resident, wall/gate, safe-arrival,
-  collision-safety, and restart audits. The next package is the wild-structure
-  roster rather than more village mechanics.
+  collision-safety, and restart audits. The wall/gate visual template now also
+  matches the original three-thick curtain, five-wide patrol crown, heavy
+  corners, and integrated arch while preserving biome and terrain adaptation.
+  The Wild-structure roster is now certified too. Controlled client
+  visual/traversal QA is complete; only ordinary multi-village distribution and
+  guard-route feel remain.
 - Brew storage interaction parity is implemented: Brew Bag has its exact
   eight-slot menu and camera-selected, bag-coloured radial casting flow;
   Leonard's Urn has its source one-to-four-focus diamond menu and casts only
@@ -66,7 +134,7 @@ Detailed session history is archived in `docs/archive/CHANGELOG.md`; keep this f
 - The additive Otherwhere Hearth is implemented and pending live multiplayer,
   claim-adapter, and restart QA. Its expensive Kettle batch permanently binds
   one empty Kettle; later crossings use a large Otherwhere ring, medium Ritual
-  ring, six coven members, and a high-strength altar to swap same-coordinate
+  ring, six living Coven Witches sworn to its owner, and a high-strength altar to swap same-coordinate
   25 x 25 x 25 Overworld/Spirit World volumes. Both structures and every movable
   entity on either side are transposed through a persisted recovery journal
   with full non-player entity snapshots.
@@ -113,36 +181,33 @@ Seven implementation lanes - work one bounded slice at a time per lane:
 
 2. **Transformation live QA / vampire polish** — the selectable vampire Blood Power ladder, automatic level perks, village/guard consequences, Observations reader, and lycanthropy's full source progression are implemented. Both transformations still need live camera, audio, HUD, feeding-witness, and multiplayer feel QA. Source: `ExtendedPlayer.java`, `Shapeshift.java`, infusion package, `EntityVampire.java`, `EntityWolfman.java`, `EntityVillagerWere.java`.
 
-3. **Village / mobs / bosses / structures** - village mechanics are now certified across plains, desert, savanna, taiga, and snowy fresh worlds plus restart: canonical building claims, shared biome-family materials, marked residents, persistent gates, safe arrivals, force-ticket ownership, and entity collision safety are automated. Were-Villager identity, creature Taglocks/Poppets/curses, and Villager sacrifice routes have dedicated-server coverage. Remaining village work is live visual/traversal/distribution feel. The next structure package is the non-village wild roster: Coven Circle, Straw Man, Warped Coven, Hobgoblin Hut, wild Witch Hut, and Vanishing Hut.
+3. **Village / mobs / bosses / structures** - village mechanics are certified across plains, desert, savanna, taiga, and snowy fresh worlds plus restart. The six-structure Wild roster and separate three-variant Witch Well family are certified for registry wiring, natural generation, safe arrival, traversal, and restart; Vanishing Hut relocation identity and cursed-well triggers are included. Were-Villager identity, creature Taglocks/Poppets/curses, and Villager sacrifice routes have dedicated-server coverage. Remaining work is ordinary distribution/guard-route feel and explicit additive structure decisions. Evidence: [WILD_STRUCTURE_CERTIFICATION.md](WILD_STRUCTURE_CERTIFICATION.md) and [WITCH_WELL_CERTIFICATION.md](WITCH_WELL_CERTIFICATION.md).
 
 4. **Machines / storage exactness** — sided automation and the current presentation slice are source-audited for Kettle/Oven/Distillery/Spinning Wheel/Brazier/Fume Funnels/Silver Vat. Brew Bag and Leonard's Urn now also restore their exact storage layouts and source interaction split. Exact GUI, renderer-route, spout, splash, state-particle, item-container, and radial contracts are test-backed. Keep only unrelated recipe/container edge cases and ordinary-play feel checks open.
 
-5. **Dimensions / world feel** — Spirit World fresh-chunk QA, Mirror World client visual/audio QA, Torment client feel, exact dimension fog-distance if a concrete source hook surfaces.
+5. **Dimensions / world feel** — Spirit World atmosphere/fresh-chunk/lifecycle and controlled Portal/Body/Manifestation/entity presentation are certified. Remaining Spirit work is one ordinary two-client crossing/audio feel pass; Mirror World client visual/audio QA and Torment client feel also remain. Do not add a custom fog-distance override without a concrete source hook.
 
 6. **AI NPCs / multiplayer safety** - keep the local persona layer grounded in server facts, add more high-value cards where fallbacks still carry too much weight, test ordinary play conversations, and verify protection/claim adapters in actual server packs before treating the feature as release-ready.
 
-7. **Runtime test maintenance / release gates** - complete as of 2026-08-26. CI validates the exact manifest, runs 20 named resource contracts, executes 34 exact GameTests on a clean dedicated server with custom dimensions, proves all six automation-certified machine inventories, command storage, and active Forestation, Blight, and Broken Earth rites survive save/reload, and certifies five village biome families fresh plus restart. Runtime worlds disable the vanilla empty-server pause so long tests continue without a connected player. Keep new registered tests synchronized with `tools/runtime_test_manifest.json`; preserve forced Hearth crash/recovery, real-client presentation, and claim-adapter checks in the documented manual lane.
+7. **Runtime test maintenance / release gates** - complete as of 2026-08-28. CI validates the exact manifest, runs 22 named resource contracts, executes 48 exact GameTests on a clean dedicated server with custom dimensions, and uses a flushed-save/forced-process-stop reload to prove all six automation-certified machine inventories, command storage, active Forestation/Blight/Broken Earth rites, durable ritual escrow recovery, and exact held-fluid state. Five stable CI checks are named `Build`, `Resource Contracts`, `Hardening Unit Tests`, `Dedicated GameTests`, and `Dedicated Save Reload`; repository owners still need to require them in branch protection. GameTest registration is gated behind `witchery.enableGameTests=true`, and runtime worlds disable the vanilla empty-server pause. Keep new registered tests synchronized with `tools/runtime_test_manifest.json`; preserve forced Hearth/Spirit/Blight Heart restart recovery, real-client presentation, provider-interoperability, and claim-adapter checks in the documented manual lane.
 
 Small machine/storage QA fixes run in parallel when clearly bounded. Pull from the QA queue below before broader backlog work unless a new blocker appears.
 
 ## Next recommended work package
 
-**Wild structure fresh-world certification and traversal.** Village certification is closed. The next
-large package should prove the non-village surface/Nether structure roster under real world generation:
+**Spirit presentation live closeout.** The research, implementation, and automated
+portion of the previous package is complete. The direct 0.24.1 ledger, controlled
+original/port captures for all six states, owner skin/name and manifested-equipment
+evidence, focused resource/numeric contracts, two-player lifecycle regression,
+fresh-chunk regression, and full build are recorded in
+[SPIRIT_WORLD_ATMOSPHERE.md](../reference/SPIRIT_WORLD_ATMOSPHERE.md).
 
-1. Build an exact registry/placement inventory for Coven Circle/Stone Circle, Straw Man, Warped Coven,
-   Hobgoblin Hut, wild Witch Hut, and Vanishing Hut: biome tags, spacing, terrain adaptation, dry-land
-   and slope predicates, templates/pieces, residents, spawners, and loot.
-2. Add a deterministic fresh-world harness that locates or probes every structure, records parseable
-   block/resident/loot evidence, verifies safe `/witchery goto` landing and basic traversal, then
-   recertifies persisted state after restart where the structure owns state.
-3. Fix only reproducible source/placement faults exposed by that matrix. Keep optional Baba Yaga hut
-   and broader additive Witch Forest architecture out of scope unless source evidence changes the call.
-4. Capture live-client visuals for the highest-risk shapes after the mechanical gate passes: Coven
-   Circle supports/spawners, Straw Man base/spawner, Warped Coven terrain fit, and Vanishing Hut move.
-
-Exit gate: focused contracts, all six fresh-world audits, applicable restart checks, safe goto/traversal,
-the full runtime manifest, and synchronized status/player docs are green.
+Run one ordinary two-client crossing session. Confirm remote Body visibility and
+interaction, damage wake, owner reconnect, simultaneous peaceful/nightmare
+isolation, Portal teardown, crossing feedback, and Portal/Nightmare sound range and
+cadence. Record the run and any modern-renderer differences. If it passes, close the
+presentation package; do not reopen the completed atmosphere, terrain, lifecycle,
+or renderer contracts without a concrete regression.
 
 ---
 
@@ -163,7 +228,7 @@ These are the current top user-reported parity and visual blockers. Treat each r
 | 9 | Torment refilling chest | Done / QA - all 18 fresh-generated chest block entities, initial fills, and empty-only 72,000-tick refill behavior are certified. | Source placement has Torment Stone beneath the chest, not Bedrock. `/witchery verify torment` checks every chest position and block entity; JVM tests cover refill timing, and the fresh dedicated-world GameTest passed on 2026-08-18. Only live chest rendering/opening feel remains QA. |
 | 10 | Torment portal | Done / QA - source 95% return / 5% more-Torment behavior now uses a dedicated persisted safe anchor. | Entry height, deeper-route anchor preservation, exact safe return, reload persistence, unrelated Spirit anchor preservation, passenger refusal, cooldown-after-success, and effects are implemented. The dedicated portal round-trip GameTest passed on 2026-08-18; only live portal presentation remains QA. |
 | 11 | Arthana | Patched - source-like altar placed-item footprint, support/drop, facing, lift, overlong scale, and break particle fallback corrected; needs in-game verification. | The placed-item block now stores player-facing state like the old metadata path instead of using a position-hash rotation, uses the old thin 0.6-block footprint, requires a solid support center, and drops the stored stack when broken or when support disappears. The renderer uses the source rotation/lift and no longer applies the oversized scale that made the cleaned Arthana sprite read too long or vanish on the altar. Its blockstate now bakes a particle-only model with the old source-style iron-block fallback particle instead of `minecraft:block/air`, so breaking altar-placed Arthana should no longer spawn pink/black particles. The Arthana sprite still uses original 1.7 solid pixels with alpha-1 padding cleared instead of flattened. Verify shift-click altar visibility, break particles, and held/GUI length in-game. |
-| 12 | Spirit World / Nightmare | Source parity implementation complete; needs live-client and fresh-chunk QA. | The dimension again combines Overworld noise with the Overworld multi-noise biome preset, preserving mirrored geography and vanilla biome ecology. A Spirit-only placement filter restores the 75% Wispy Cotton chunk roll, native Spirits use source light/floor/Y/chance checks at weight 1 in groups of 2-5, and Nightmares begin periodic pressure after entry instead of spawning immediately. Dream/nightmare server daylight, Flowing Spirit harm/healing, global nightmare cotton drops, banned harvest drops, Dream Weaver Fasting hunger, portal frame/passenger rules, Overworld Manifestation rite, all-circle Spirit blocking, and source-alpha player-skin ghost rendering are corrected. `/witchery verify spiritworld` now checks the mirrored biome source, cotton placement/modifier, and Spirit spawn modifier. |
+| 12 | Spirit World / Nightmare | Automated and controlled-client certified; one ordinary two-client presentation pass remains. | Fixed-seed chunks and lifecycle/restart certificates cover terrain, ecology, pressure, Body/inventory isolation, reconnect, Manifestation, waking, and cleanup. A direct source ledger plus controlled original/port captures now covers the Portal, Body, manifested equipment/skin, native Spirit, Nightmare, and demonic Nightmare. Portal geometry/tint/particles, Body naming, Spirit mote cadence, entity models, alpha, and Nightmare audio mappings are test-backed. Only ordinary two-client crossing/audio feel and the separate modern rain-density caveat remain. |
 | 13 | Broom movement | Patched - source-like tick order, player-control vehicle hook, rider-facing visual yaw, modern vehicle authority, passenger-turn yaw sync, rider-yaw render-state fallback, item/entity data round-trip, source hit lifecycle, and source bristle tinting restored; needs in-game flight/visual/break verification. | The first fix stopped pure client prediction by letting the server advance ridden brooms too, but once `getControllingPassenger()` was restored to return the first living passenger like `Boat`, Neo/Minecraft began treating player-ridden brooms as ordinary locally controlled vehicles. The vehicle-authority pass removes that double-authority path: ridden brooms now run the source-derived acceleration/move/damp pass only when locally controlled, while server-side player-ridden brooms accept the normal vehicle movement packets instead of doing a second movement pass. Rider-facing visual yaw now syncs entity/body/head yaw after movement, during passenger placement, and when the mounted passenger turns; the renderer also forces the mounted broom render state to the rider's interpolated yaw, so the model should no longer preserve the placed body orientation if entity body-rot sync is stale. Riderless brooms continue to drift server-side. The lifecycle slices transfer custom item names to placed brooms and back, store/persist source `BrushColor` custom data, accept dyes on placed brooms, and now restore the source hit model: damage accumulates by `amount * 10`, decays by 1 per tick, and only threshold/creative breaks drop the matching normal/enchanted broom item. The follow-up bristle layer now applies the source dye table to the bristle strands only, defaulting unset brush color to brown like old `ModelBroom`. |
 | 14 | Enchanted Broom | Patched - GUI bristle tail overlay restored and placed enchanted broom entities render full-bright; needs in-game visual verification. | Source comparison showed the old item icon used a second tinted `ingredient.broomOverlay` pass for the tail. The 1.21 item definition now supplies that overlay layer with the default brown tint, while the entity renderer carries an enchanted render state and forces full-bright lighting for enchanted placed brooms. |
 | 15 | Mirror Wall | Patched - Mirror Wall again uses the source-backed animated brew-flow cube-column visual; needs in-game translucency/animation verification. | Resurrected's `BlockMirrorWall` points at the `witchery:brew` cube-column model with `brew_flow` sides and `brew_still` caps. The remake now uses those same existing textures with translucent rendering and no occlusion instead of the static mirror-glass cube. |
@@ -254,7 +319,7 @@ Items from `docs/status/ITEM_REVIEW.md` still needing work:
 
 ---
 
-### 1. Spirit World - source pass complete, needs live QA (2026-08-19)
+### 1. Spirit World - atmosphere and lifecycle certified (2026-08-28)
 
 Current truth:
 - Terrain and biome geography use the Overworld noise settings and multi-noise preset, matching the source's Overworld provider rather than an invented fixed Spirit biome.
@@ -266,7 +331,17 @@ Current truth:
 - Client render state now applies the source fixed celestial angle, zero-star sky, old horizon `0.0` dark-disc rule, and no-cloud rendering; fog alone uses the source dream/nightmare/demonic color helper, with no invented fog-distance override or whole-sky tint.
 - The Rite of Manifestation is cast in the Overworld, consumes all six offerings plus 5000 power, grants time to every player within five blocks, and is extended by nearby coven witches. All Circle Magic is blocked inside the Spirit World.
 - Manifested players use their real skin at the source 51% alpha and normal world lighting; on-foot portal crossing, same-coordinate travel, timer return, and Icy Needle recall are wired.
-- Remaining: fresh-chunk vegetation/spawn QA with `/witchery verify spiritworld`, plus live atmosphere, portal, and ghost presentation checks.
+- Fixed-seed 9 x 9 fresh-chunk certification proves 5,184 paired biome samples,
+  1,296 raw-terrain samples, natural cotton, ordinary ecology, eligible Spirit
+  floors, and the exact weight-1/group-2-to-5 spawn entry. Two-player lifecycle
+  and two-process client certificates cover Body/inventory isolation, pressure,
+  reconnect, blocked return, Manifestation, death/Icy Needle wake, and restart.
+- Matched original/port captures cover clear dream, rainy dream, nightmare,
+  demonic atmosphere, plus controlled Spirit Portal, Body, Manifestation, Spirit,
+  Nightmare, and demonic-Nightmare presentation. Source geometry, tint, alpha,
+  skin/equipment routes, particle cadence, and audio mappings are locked. Remaining
+  manual work is one ordinary two-client crossing/audio-feel pass; modern rain
+  density is not claimed pixel-identical.
 
 ---
 

@@ -1,0 +1,127 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "creatures",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "witchery:coven_witch_spawn_egg"
+  },
+  "name": "The Living Coven",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A witch with a bound familiar may approach a wandering Coven Witch while crouched and ask her to join. She first sets a trial: fetch what she names, or defeat the creature she calls and return its marked remains.[#]()",
+      "title": "The Living Coven",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Six living witches may swear to one leader.[#]() [#](53341a)Each witch keeps one craft: Hedge, Grave, Pale, Storm, or Hearth. Use a **Seer Stone** upon her, or ask her plainly, to learn it before or after recruitment.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The craft is part of the witch herself; it does not gain levels and cannot be changed.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)A nearby, living witch sworn to the caster may lend a small strength only where her craft belongs. Hedge answers Fertility and Forestation. Grave eases Necromantic and Spectral Stone workings. Pale lengthens Manifestation.[#]()",
+      "title": "Five Narrow Crafts",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Storm strengthens weather calling. Hearth eases the upkeep of protection workings.[#]() [#](53341a)Two witches of the same craft do not double its gift. A dead, distant, unsworn, or differently sworn witch lends nothing.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)Bring all six sworn living witches close to a working and the circle recognizes a **Coven Concord**. Their five colours rise around them and the altar answers with a chime.[#]()",
+      "title": "Coven Concord",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)The Concord is chiefly the proof and spectacle of a coven truly assembled; its greatest reward remains access to workings one witch cannot carry alone.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "[#](53341a)The witch bound to a Vanishing Hut keeps one rare reagent exchange for each place where the house settles. Approach her crouched to ask, then return crouched while holding the full requested stack. Plain use still opens her ordinary wares.[#]()",
+      "title": "The Wandering House",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Once the exchange is made, the house grows restless and may leave soon after you do.[#]() [#](53341a)A three-mark line of Witches' Salt across the door restrains the house for a time, but the insult forfeits that settlement's rare bargain.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": false,
+      "text": "[#](53341a)Keep it bound too long and the timbers warn you before the hut tears free while unoccupied and unwatched.[#]()",
+      "title": " ",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 0
+}

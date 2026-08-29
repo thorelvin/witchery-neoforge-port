@@ -149,7 +149,7 @@ if ([string]::IsNullOrWhiteSpace($DebugLogDirectory)) {
     $stderr = Join-Path $DebugLogDirectory "original-client.stderr.log"
     $process = Start-Process -FilePath $consoleJava -ArgumentList $argumentLine `
         -WorkingDirectory $gameDirectory -RedirectStandardOutput $stdout `
-        -RedirectStandardError $stderr -PassThru
+        -RedirectStandardError $stderr -WindowStyle Hidden -PassThru
 }
 
 Write-Output "Started original Witchery 1.7.10 client (PID $($process.Id), ${Width}x${Height})."

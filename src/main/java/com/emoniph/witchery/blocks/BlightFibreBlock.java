@@ -1,5 +1,6 @@
 package com.emoniph.witchery.blocks;
 
+import com.emoniph.witchery.data.BlightHeartSavedData;
 import com.emoniph.witchery.init.WitcheryItems;
 import com.emoniph.witchery.init.WitcheryBlocks;
 import net.minecraft.core.BlockPos;
@@ -95,9 +96,13 @@ public class BlightFibreBlock extends VineBlock {
             return;
         }
         BlightHelper.decayIfOrphaned(level, pos, state, random);
-        if (level.getBlockState(pos).is(this)) {
-            BlightHelper.trySpreadNear(level, pos, random, false);
-        }
+    }
+
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos,
+                                               boolean movedByPiston) {
+        BlightHeartSavedData.get(level.getServer()).forgetMutation(level, pos);
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
     }
 
     @Override

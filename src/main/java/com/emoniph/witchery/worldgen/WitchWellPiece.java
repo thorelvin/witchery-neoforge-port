@@ -1,9 +1,11 @@
 package com.emoniph.witchery.worldgen;
 
 import com.emoniph.witchery.WitcheryMod;
+import com.emoniph.witchery.blocks.CoffinBlock;
 import com.emoniph.witchery.brewing.BrewContents;
 import com.emoniph.witchery.brewing.CursedBlockData;
 import com.emoniph.witchery.brewing.CursedBlockWarningData;
+import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryStructures;
 import com.emoniph.witchery.world.WitcheryStructureData;
 import net.minecraft.core.BlockPos;
@@ -25,6 +27,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -44,10 +47,10 @@ public class WitchWellPiece extends TemplateStructurePiece {
     private static final int SURFACE_SAMPLE_RADIUS = 12;
     private static final ResourceKey<LootTable> LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
             Identifier.fromNamespaceAndPath(WitcheryMod.MODID, "chests/witch_well"));
-    private static final BrewContents CAVE_ENTRY_CURSE = new BrewContents(
-            List.of(Items.SPIDER_EYE, Items.ZOMBIE_HEAD));
-    private static final String CAVE_ENTRY_WARNING = "You feel uneasy.";
-    private static final int CAVE_ENTRY_WARNING_COOLDOWN_TICKS = 100;
+    static final BrewContents CAVE_ENTRY_CURSE = new BrewContents(
+            List.of(Items.NETHER_WART, Items.SPIDER_EYE, Items.ZOMBIE_HEAD));
+    static final String CAVE_ENTRY_WARNING = "You feel uneasy.";
+    static final int CAVE_ENTRY_WARNING_COOLDOWN_TICKS = 100;
 
     private final Variant variant;
 
@@ -73,7 +76,7 @@ public class WitchWellPiece extends TemplateStructurePiece {
                 variant.surfaceAnchorZ());
     }
 
-    private static StructurePlaceSettings makeSettings() {
+    static StructurePlaceSettings makeSettings() {
         return new StructurePlaceSettings()
                 .setMirror(Mirror.NONE)
                 .setRotation(Rotation.NONE)
@@ -105,6 +108,7 @@ public class WitchWellPiece extends TemplateStructurePiece {
         if (variant == Variant.CAVE) {
             fillCaveExteriorBackfill(level, box);
             clearCaveInteriorBackfill(level, box);
+            restoreCaveCrossChunkCoffin(level, box);
             seedCaveEntryLadders(level, box);
         }
         placeLoot(level, box, random);
@@ -231,19 +235,35 @@ public class WitchWellPiece extends TemplateStructurePiece {
         }
     }
 
+    private void restoreCaveCrossChunkCoffin(WorldGenLevel level, BoundingBox box) {
+        BlockPos foot = templateWorldPos(21, 8, 5);
+        BlockPos head = templateWorldPos(22, 8, 5);
+        if (!box.isInside(foot) && !box.isInside(head)) {
+            return;
+        }
+        BlockState state = WitcheryBlocks.COFFIN.get().defaultBlockState()
+                .setValue(CoffinBlock.FACING, Direction.EAST)
+                .setValue(CoffinBlock.OCCUPIED, false)
+                .setValue(CoffinBlock.OPEN, true);
+        level.setBlock(foot, state.setValue(CoffinBlock.PART, BedPart.FOOT), 2);
+        level.setBlock(head, state.setValue(CoffinBlock.PART, BedPart.HEAD), 2);
+    }
+
     private void seedCaveEntryLadders(WorldGenLevel level, BoundingBox box) {
         LadderSpan ladders = findCaveEntryLadders(level, box);
         if (ladders == null) {
             return;
         }
-        ServerLevel serverLevel = level.getLevel();
+        seedCaveEntryTriggers(level.getLevel(), ladders.top(), ladders.bottom());
+    }
+
+    static void seedCaveEntryTriggers(ServerLevel serverLevel, BlockPos top, BlockPos bottom) {
         CursedBlockWarningData warnings = CursedBlockWarningData.get(serverLevel);
-        if (warnings.get(ladders.top()) == null) {
-            warnings.warn(ladders.top(), CAVE_ENTRY_WARNING, CAVE_ENTRY_WARNING_COOLDOWN_TICKS);
+        if (warnings.get(top) == null) {
+            warnings.warn(top, CAVE_ENTRY_WARNING, CAVE_ENTRY_WARNING_COOLDOWN_TICKS);
         }
 
-        BlockPos bottom = ladders.bottom();
-        if (!bottom.equals(ladders.top())) {
+        if (!bottom.equals(top)) {
             CursedBlockData curses = CursedBlockData.get(serverLevel);
             if (curses.get(bottom) == null) {
                 curses.curse(bottom, CAVE_ENTRY_CURSE, null);
@@ -551,7 +571,19 @@ public class WitchWellPiece extends TemplateStructurePiece {
         }
 
         boolean heightSampleColumn(int localX, int localZ) {
-            return this != SMALL || smallWellDirtRing(localX, localZ);
+            return switch (this) {
+                case REGULAR -> true;
+                case SMALL -> smallWellDirtRing(localX, localZ);
+                case CAVE -> surfaceColumn(localX, localZ);
+            };
+        }
+
+        int maxFootprintHeightVariance() {
+            return switch (this) {
+                case SMALL -> 1;
+                case REGULAR -> 3;
+                case CAVE -> 4;
+            };
         }
 
         boolean adaptsTemplateSurfaceAfterPlacement() {
@@ -566,7 +598,8 @@ public class WitchWellPiece extends TemplateStructurePiece {
                     || inBox(localX, localY, localZ, 17, 6, 7, 22, 11, 13)
                     || inBox(localX, localY, localZ, 20, 5, 5, 25, 11, 15)
                     || inBox(localX, localY, localZ, 9, 13, 5, 19, 16, 15)
-                    || inBox(localX, localY, localZ, 20, 13, 4, 26, 18, 16));
+                    || inBox(localX, localY, localZ, 20, 13, 4, 26, 18, 16)
+                    || inBox(localX, localY, localZ, 14, 7, 14, 14, 9, 14));
         }
 
         private static boolean inBox(int x, int y, int z,
@@ -578,7 +611,8 @@ public class WitchWellPiece extends TemplateStructurePiece {
         }
 
         private static boolean smallWellSurfaceMarker(int x, int z) {
-            if ((x == 3 && z == 4) || (x == 4 && z == 5) || (x == 5 && z == 6)) {
+            if ((x == 3 && z == 4) || (x == 4 && z == 5) || (x == 5 && z == 6)
+                    || (x == 1 && z == 2) || (x == 7 && (z == 2 || z == 8))) {
                 return false;
             }
             int dx = x - 4;

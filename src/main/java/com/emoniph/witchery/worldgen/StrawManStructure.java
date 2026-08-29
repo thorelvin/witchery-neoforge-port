@@ -41,7 +41,7 @@ public class StrawManStructure extends Structure {
 
         // getFirstOccupiedHeight returns the top occupied surface block. Keep the
         // template's base layer on that surface so plants and hay start one block above;
-        // the spawner marker places its actual spawner one block below.
+        // the source spawner occupies the marker cell in that base layer.
         return onTopOfChunkCenter(ctx, Heightmap.Types.WORLD_SURFACE_WG, builder -> {
             builder.addPiece(new StrawManTemplatePiece(
                     ctx.structureTemplateManager(),

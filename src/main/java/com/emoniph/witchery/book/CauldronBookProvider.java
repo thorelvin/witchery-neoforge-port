@@ -159,7 +159,7 @@ public class CauldronBookProvider implements BookSubProvider {
                         + "100. The cauldron announces the 30, 60, and 90 milestones."
                         + "\n\nA Witch's Hat, Baba Yaga's Hat, Witches' Robes, Necromancer Robes, **Brewing "
                         + "Expertise**, and an active Owl familiar improve skilled yield in the exact old tiers. "
-                        + "A Diamond opens capacity eight but imposes the source two-tier yield penalty."));
+                        + "A Diamond opens capacity eight but imposes the traditional two-tier yield penalty."));
         pages.addAll(WitcheryBooks.prose("Altar Power",
                 "Every ingredient may add a power cost. Bottling charges that cost **for each bottle**; taking a "
                         + "Brew Bucket charges it once for the whole batch. A valid altar within eight blocks must "
@@ -309,20 +309,20 @@ public class CauldronBookProvider implements BookSubProvider {
                 "A complete small or medium ritual circle removes the risk carried by casting with no circle. "
                         + "Infernal circles are more dangerous. Keep the altar structure valid before release; a "
                         + "failed delivery validation leaves the brew in the cauldron."
-                        + "\n\nNearby coven witches raise the ritual's permitted strength and extend target reach. The source "
-                        + "examples of raised land and extended blindness are now compositions: choose the world "
+                        + "\n\nNearby coven witches raise the ritual's permitted strength and extend target reach. Raised land "
+                        + "and extended blindness are composed workings: choose the world "
                         + "action or effect reagent, open its capacity, then add ritual delivery and release it "
                         + "from the cauldron.");
     }
 
     private static List<BookPageModel<?>> sourceIndexPages() {
         return WitcheryBooks.prose("Reading the Old Index",
-                "The source book grouped effects under capacity levels I, II, IV, V, VI, VIII, and XII. The "
+                "Older grimoires grouped effects under capacity levels I, II, IV, V, VI, VIII, and XII. The "
                         + "modern edition separates **Potion Reagents** from **World Actions** and prints each "
                         + "accepted ingredient directly from the live brew registry."
                         + "\n\nA row's **level** is the capacity it consumes; **power** is charged by the altar. "
                         + "Inverted names show what Fermented Spider Eye can turn that reagent into. If an old "
-                        + "effect has no live row, it is not an accepted recipe in this build.");
+                        + "effect has no living row, its reagent cannot presently be composed.");
     }
 
     /** Maps every one of the 196 source markup keys to its modern Modonomicon home. */

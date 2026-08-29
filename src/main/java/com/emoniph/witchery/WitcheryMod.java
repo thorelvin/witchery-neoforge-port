@@ -64,28 +64,9 @@ public class WitcheryMod {
         WitcheryStructures.POOL_ELEMENT_TYPES.register(modEventBus);
         WitcheryChunkGenerators.CHUNK_GENERATORS.register(modEventBus);
         WitcheryPlacementModifiers.PLACEMENT_MODIFIERS.register(modEventBus);
-        com.emoniph.witchery.command.OtherwhereHearthGameTests.register(modEventBus);
-        com.emoniph.witchery.command.TormentGameTests.register(modEventBus);
-        com.emoniph.witchery.command.MirrorWorldGameTests.register(modEventBus);
-        com.emoniph.witchery.command.LycanthropyGameTests.register(modEventBus);
-        com.emoniph.witchery.command.VampirePowerGameTests.register(modEventBus);
-        com.emoniph.witchery.events.VampirePassiveGameTests.register(modEventBus);
-        com.emoniph.witchery.events.VampireVillageGameTests.register(modEventBus);
-        com.emoniph.witchery.blocks.WitchCropGameTests.register(modEventBus);
-        com.emoniph.witchery.blocks.MachineAutomationGameTests.register(modEventBus);
-        com.emoniph.witchery.blocks.PatronStatueGameTests.register(modEventBus);
-        com.emoniph.witchery.entity.GoblinBossGameTests.register(modEventBus);
-        com.emoniph.witchery.entity.HobgoblinEcologyGameTests.register(modEventBus);
-        com.emoniph.witchery.entity.FlyingMonkeyCourierGameTests.register(modEventBus);
-        com.emoniph.witchery.entity.WereVillagerGameTests.register(modEventBus);
-        com.emoniph.witchery.brewing.IceWorldGameTests.register(modEventBus);
-        com.emoniph.witchery.brewing.CustomBrewGameTests.register(modEventBus);
-        com.emoniph.witchery.item.InfernalOwnershipGameTests.register(modEventBus);
-        com.emoniph.witchery.item.BrewStorageGameTests.register(modEventBus);
-        com.emoniph.witchery.ritual.RitualOfferingGameTests.register(modEventBus);
-        com.emoniph.witchery.ritual.VillagerMagicGameTests.register(modEventBus);
-        com.emoniph.witchery.ritual.PersistentExpandingRiteGameTests.register(modEventBus);
-        com.emoniph.witchery.ritual.PersistentRitualQueueGameTests.register(modEventBus);
+        if (Boolean.getBoolean("witchery.enableGameTests")) {
+            registerGameTests(modEventBus);
+        }
         modContainer.registerConfig(ModConfig.Type.COMMON, WitcheryConfig.SPEC);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerPayloads);
@@ -124,6 +105,40 @@ public class WitcheryMod {
         });
     }
 
+    private static void registerGameTests(IEventBus modEventBus) {
+        com.emoniph.witchery.command.OtherwhereHearthGameTests.register(modEventBus);
+        com.emoniph.witchery.command.TormentGameTests.register(modEventBus);
+        com.emoniph.witchery.command.MirrorWorldGameTests.register(modEventBus);
+        com.emoniph.witchery.spiritworld.SpiritWorldGameTests.register(modEventBus);
+        com.emoniph.witchery.command.LycanthropyGameTests.register(modEventBus);
+        com.emoniph.witchery.command.VampirePowerGameTests.register(modEventBus);
+        com.emoniph.witchery.events.InfusionParityGameTests.register(modEventBus);
+        com.emoniph.witchery.events.VampirePassiveGameTests.register(modEventBus);
+        com.emoniph.witchery.events.VampireVillageGameTests.register(modEventBus);
+        com.emoniph.witchery.blocks.WitchCropGameTests.register(modEventBus);
+        com.emoniph.witchery.blocks.MachineAutomationGameTests.register(modEventBus);
+        com.emoniph.witchery.blocks.PatronStatueGameTests.register(modEventBus);
+        com.emoniph.witchery.entity.GoblinBossGameTests.register(modEventBus);
+        com.emoniph.witchery.entity.HobgoblinEcologyGameTests.register(modEventBus);
+        com.emoniph.witchery.entity.FlyingMonkeyCourierGameTests.register(modEventBus);
+        com.emoniph.witchery.entity.WereVillagerGameTests.register(modEventBus);
+        com.emoniph.witchery.entity.CovenSpecialtyGameTests.register(modEventBus);
+        com.emoniph.witchery.worldgen.VanishingHutBargainGameTests.register(modEventBus);
+        com.emoniph.witchery.worldgen.WitchWellGameTests.register(modEventBus);
+        com.emoniph.witchery.entity.familiar.CreakingFamiliarGameTests.register(modEventBus);
+        com.emoniph.witchery.brewing.IceWorldGameTests.register(modEventBus);
+        com.emoniph.witchery.brewing.CustomBrewGameTests.register(modEventBus);
+        com.emoniph.witchery.item.InfernalOwnershipGameTests.register(modEventBus);
+        com.emoniph.witchery.item.BrewStorageGameTests.register(modEventBus);
+        com.emoniph.witchery.ritual.RitualOfferingGameTests.register(modEventBus);
+        com.emoniph.witchery.ritual.BlightContainmentGameTests.register(modEventBus);
+        com.emoniph.witchery.blocks.BlightHeartLifecycleGameTests.register(modEventBus);
+        com.emoniph.witchery.blocks.AnchoredCurseGameTests.register(modEventBus);
+        com.emoniph.witchery.ritual.VillagerMagicGameTests.register(modEventBus);
+        com.emoniph.witchery.ritual.PersistentExpandingRiteGameTests.register(modEventBus);
+        com.emoniph.witchery.ritual.PersistentRitualQueueGameTests.register(modEventBus);
+    }
+
     private void registerPayloads(RegisterPayloadHandlersEvent event) {
         var registrar = event.registrar("1");
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
@@ -143,6 +158,10 @@ public class WitcheryMod {
                     ScryingCameraPayload.TYPE,
                     ScryingCameraPayload.STREAM_CODEC,
                     WitcheryClient::handleScryingCamera);
+            registrar.playToClient(
+                    com.emoniph.witchery.network.MysticBranchChannelPayload.TYPE,
+                    com.emoniph.witchery.network.MysticBranchChannelPayload.STREAM_CODEC,
+                    WitcheryClient::handleMysticBranchChannel);
         } else {
             // Keep protocol registration symmetric without resolving client-only handler classes.
             registrar.playToClient(
@@ -160,6 +179,10 @@ public class WitcheryMod {
             registrar.playToClient(
                     ScryingCameraPayload.TYPE,
                     ScryingCameraPayload.STREAM_CODEC,
+                    (payload, context) -> { });
+            registrar.playToClient(
+                    com.emoniph.witchery.network.MysticBranchChannelPayload.TYPE,
+                    com.emoniph.witchery.network.MysticBranchChannelPayload.STREAM_CODEC,
                     (payload, context) -> { });
         }
 

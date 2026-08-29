@@ -3,6 +3,7 @@ package com.emoniph.witchery.events;
 import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.ai.NpcBrainService;
 import com.emoniph.witchery.ai.NpcCommandKind;
+import com.emoniph.witchery.ai.NpcMemoryData;
 import com.emoniph.witchery.ai.NpcPersonas;
 import com.emoniph.witchery.blocks.LeechChestBlock;
 import com.emoniph.witchery.blocks.MirrorBlock;
@@ -38,6 +39,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
@@ -247,6 +249,13 @@ public final class NpcBrainEvents {
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
         NpcBrainService.INSTANCE.prewarm();
+    }
+
+    @SubscribeEvent
+    public static void onLevelTick(LevelTickEvent.Post event) {
+        if (event.getLevel() instanceof ServerLevel level && level.getGameTime() % 1200L == 0L) {
+            NpcMemoryData.get(level).maintain(level.getGameTime());
+        }
     }
 
     @SubscribeEvent

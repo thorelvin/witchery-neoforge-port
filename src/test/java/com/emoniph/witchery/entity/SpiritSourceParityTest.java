@@ -23,6 +23,8 @@ class SpiritSourceParityTest {
     void sourceBaselineRetainsAttackDamageAndBoneFoodPredicate() {
         var attributes = SpiritEntity.createAttributes().build();
         assertTrue(attributes.hasAttribute(Attributes.ATTACK_DAMAGE));
+        assertTrue(attributes.hasAttribute(Attributes.TEMPT_RANGE),
+                "TemptGoal crashes the server tick when the modern tempt-range attribute is absent");
         assertTrue(SpiritEntity.isSourceFood(new ItemStack(Items.BONE)));
         assertFalse(SpiritEntity.isSourceFood(new ItemStack(Items.WHEAT)));
     }
@@ -30,5 +32,8 @@ class SpiritSourceParityTest {
     @Test
     void sourceParticlesUseTheDefaultGoldenTint() {
         assertEquals(0xFFCC00, SpiritEntity.SOURCE_PARTICLE_COLOR);
+        assertEquals(1, SpiritEntity.SOURCE_PARTICLES_PER_CLIENT_TICK);
+        assertEquals(0.1D, SpiritEntity.SOURCE_PARTICLE_Y_MIN);
+        assertEquals(0.2D, SpiritEntity.SOURCE_PARTICLE_Y_RANGE);
     }
 }

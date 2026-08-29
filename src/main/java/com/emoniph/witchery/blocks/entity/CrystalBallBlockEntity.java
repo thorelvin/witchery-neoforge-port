@@ -1,14 +1,19 @@
 package com.emoniph.witchery.blocks.entity;
 
+import com.emoniph.witchery.data.AnchoredCurseSavedData;
 import com.emoniph.witchery.init.WitcheryBlockEntities;
 import com.emoniph.witchery.item.PoppetItem;
 import com.emoniph.witchery.item.TaglockKitItem;
 import com.emoniph.witchery.item.WaystoneItem;
+import com.emoniph.witchery.world.VanishingHutData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -137,6 +142,22 @@ public class CrystalBallBlockEntity extends BlockEntity {
             return false;
         }
 
+        Optional<VanishingHutData.Entry> hut = VanishingHutData.get(sl).byResident(uuid.get());
+        if (hut.isPresent()) {
+            if (!tryConsumePower(player, sl)) {
+                return false;
+            }
+            String surroundings = describeHutSurroundings(sl, hut.get());
+            player.displayClientMessage(Component.translatable(
+                    "witchery.crystal_ball.vanishing_hut_scry",
+                    TaglockKitItem.getBoundName(taglock), surroundings)
+                    .withStyle(ChatFormatting.LIGHT_PURPLE), false);
+            sendFocusParticles(sl, 0x9D4EDD, 32);
+            sl.playSound(null, worldPosition, SoundEvents.AMETHYST_BLOCK_CHIME,
+                    SoundSource.BLOCKS, 0.9f, 0.9f);
+            return true;
+        }
+
         Optional<LivingEntity> target = PoppetItem.findLivingEntity(sl.getServer(), uuid.get());
         if (target.isEmpty() || !target.get().isAlive()) {
             fail(player, sl, Component.translatable("witchery.crystal_ball.taglock_missing",
@@ -155,6 +176,11 @@ public class CrystalBallBlockEntity extends BlockEntity {
 
         player.displayClientMessage(Component.translatable("witchery.crystal_ball.taglock_scry",
                 living.getDisplayName()).withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        AnchoredCurseSavedData.get(sl.getServer()).clueFor(living.getUUID())
+                .filter(clue -> clue.stage() >= 1)
+                .ifPresent(clue -> player.displayClientMessage(Component.translatable(
+                        "witchery.anchored_curse.crystal_ball", living.getDisplayName(), clue.dimension())
+                        .withStyle(ChatFormatting.DARK_RED), false));
         sendFocusParticles(sl, 0xC77DFF, 32);
         sl.sendParticles(ParticleTypes.WITCH,
                 living.getX(),
@@ -163,6 +189,49 @@ public class CrystalBallBlockEntity extends BlockEntity {
                 16, 0.4, 0.5, 0.4, 0.05);
         sl.playSound(null, worldPosition, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.9f, 1.1f);
         return true;
+    }
+
+    /** Broad atmosphere only: this method never exposes distance, direction, or coordinates. */
+    public static String describeHutSurroundings(ServerLevel viewingLevel, VanishingHutData.Entry entry) {
+        Identifier dimensionId;
+        try {
+            dimensionId = Identifier.parse(entry.dimension());
+        } catch (RuntimeException exception) {
+            return "somewhere beyond a veiled horizon";
+        }
+        String dimensionName = switch (dimensionId.toString()) {
+            case "minecraft:overworld" -> "the waking world";
+            case "minecraft:the_nether" -> "the Nether";
+            case "minecraft:the_end" -> "the End";
+            case "witchery:spirit_world" -> "the Spirit World";
+            default -> "a distant realm";
+        };
+        ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, dimensionId);
+        ServerLevel targetLevel = viewingLevel.getServer().getLevel(dimension);
+        if (targetLevel == null || !targetLevel.hasChunkAt(entry.pos())) {
+            return "somewhere in " + dimensionName + ", with its horizon veiled";
+        }
+
+        String biome = targetLevel.getBiome(entry.pos()).unwrapKey()
+                .map(key -> prettify(key.identifier().getPath()))
+                .orElse("strange country");
+        String sky;
+        if (targetLevel.isThundering()) {
+            sky = "under a storm-dark sky";
+        } else if (targetLevel.isRainingAt(entry.pos())) {
+            sky = "under steady rain";
+        } else if (Math.floorMod(targetLevel.getDayTime(), 24_000L) >= 13_000L
+                && Math.floorMod(targetLevel.getDayTime(), 24_000L) <= 23_000L) {
+            sky = "under the night sky";
+        } else {
+            sky = "under the open sky";
+        }
+        return "among " + biome + " in " + dimensionName + ", " + sky;
+    }
+
+    private static String prettify(String path) {
+        String words = path.replace('_', ' ');
+        return words.isEmpty() ? "strange country" : words;
     }
 
     private boolean tryCheckReady(Player player, ServerLevel level) {

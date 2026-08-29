@@ -2076,7 +2076,8 @@ public final class Brews {
             if (pos.distSqr(center) > radius * radius || !sourceMayModify(level, pos, source)) {
                 continue;
             }
-            var fluid = level.getFluidState(pos);
+            BlockState originalState = level.getBlockState(pos);
+            var fluid = originalState.getFluidState();
             if (fluid.isEmpty() || water != fluid.is(FluidTags.WATER)) {
                 continue;
             }
@@ -2090,6 +2091,10 @@ public final class Brews {
                                     : com.emoniph.witchery.blocks.BrewFluidHoldBlock.HeldFluid.LAVA)
                     .setValue(com.emoniph.witchery.blocks.BrewFluidHoldBlock.SOURCE, fluid.isSource());
             level.setBlock(pos, held, Block.UPDATE_ALL);
+            if (level.getBlockEntity(pos) instanceof
+                    com.emoniph.witchery.blocks.entity.BrewFluidHoldBlockEntity hold) {
+                hold.setOriginalState(originalState);
+            }
             level.scheduleTick(pos, WitcheryBlocks.BREW_FLUID_HOLD.get(), duration);
         }
     }

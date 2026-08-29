@@ -1,12 +1,15 @@
 package com.emoniph.witchery.scrying;
 
 import com.emoniph.witchery.entity.ScryingEyeEntity;
+import com.emoniph.witchery.WitcheryMod;
 import com.emoniph.witchery.network.ScryingCameraPayload;
 import net.minecraft.util.Mth;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -15,9 +18,17 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 
+@EventBusSubscriber(modid = WitcheryMod.MODID)
 public final class ScryingSessions {
-    private static final Map<UUID, ScryingEyeEntity> EYES_BY_PLAYER = new ConcurrentHashMap<>();
+    private record ScryingSession(UUID eyeUuid, ResourceKey<Level> dimension) {}
+
+    private static final Map<UUID, ScryingSession> EYES_BY_PLAYER = new ConcurrentHashMap<>();
     private static final double LIVING_CAMERA_DISTANCE = 3.0D;
     private static final double LIVING_CAMERA_HEIGHT = 0.65D;
     private static final double LIVING_CAMERA_GROUND_CLEARANCE = 1.35D;
@@ -32,7 +43,7 @@ public final class ScryingSessions {
             return;
         }
 
-        clearEye(player, level);
+        clearEye(player);
         LivingCameraView view = livingCameraView(level, target);
         ScryingCameraPayload.sendStart(player, view.x(), view.y(), view.z(), view.yaw(), view.pitch());
     }
@@ -81,7 +92,7 @@ public final class ScryingSessions {
                 ScryingCameraPayload.sendStop(player);
                 return;
             }
-            EYES_BY_PLAYER.put(player.getUUID(), eye);
+            EYES_BY_PLAYER.put(player.getUUID(), new ScryingSession(eye.getUUID(), level.dimension()));
         }
 
         eye.refreshLife();
@@ -89,29 +100,73 @@ public final class ScryingSessions {
     }
 
     public static void stop(ServerPlayer player) {
-        if (player.level() instanceof ServerLevel level) {
-            clearEye(player, level);
-        }
+        clearEye(player);
         ScryingCameraPayload.sendStop(player);
     }
 
     private static ScryingEyeEntity currentEye(ServerPlayer player, ServerLevel level) {
-        ScryingEyeEntity eye = EYES_BY_PLAYER.get(player.getUUID());
-        if (eye == null) {
+        ScryingSession session = EYES_BY_PLAYER.get(player.getUUID());
+        if (session == null) {
             return null;
         }
-        if (!eye.isAlive() || eye.isRemoved() || eye.level() != level) {
+        if (!session.dimension().equals(level.dimension())) {
+            clearEye(player);
+            return null;
+        }
+        if (!(level.getEntity(session.eyeUuid()) instanceof ScryingEyeEntity eye)
+                || !eye.isAlive() || eye.isRemoved()) {
             EYES_BY_PLAYER.remove(player.getUUID());
             return null;
         }
         return eye;
     }
 
-    private static void clearEye(ServerPlayer player, ServerLevel level) {
-        ScryingEyeEntity eye = EYES_BY_PLAYER.remove(player.getUUID());
-        if (eye != null && !eye.isRemoved() && eye.level() == level) {
+    private static void clearEye(ServerPlayer player) {
+        ScryingSession session = EYES_BY_PLAYER.remove(player.getUUID());
+        if (session == null) {
+            return;
+        }
+        ServerLevel level = ((ServerLevel) player.level()).getServer().getLevel(session.dimension());
+        if (level != null && level.getEntity(session.eyeUuid()) instanceof ScryingEyeEntity eye
+                && !eye.isRemoved()) {
             eye.discard();
         }
+    }
+
+    public static void eyeRemoved(UUID eyeUuid) {
+        EYES_BY_PLAYER.entrySet().removeIf(entry -> entry.getValue().eyeUuid().equals(eyeUuid));
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            stop(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            stop(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            stop(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onServerStopping(ServerStoppingEvent event) {
+        for (ScryingSession session : EYES_BY_PLAYER.values()) {
+            ServerLevel level = event.getServer().getLevel(session.dimension());
+            if (level != null && level.getEntity(session.eyeUuid()) instanceof ScryingEyeEntity eye) {
+                eye.discard();
+            }
+        }
+        EYES_BY_PLAYER.clear();
     }
 
     private record LivingCameraView(double x, double y, double z, float yaw, float pitch) {}

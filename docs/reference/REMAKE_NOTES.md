@@ -13,6 +13,22 @@ Current target:
 
 ---
 
+## 2026-08-28 Spirit World atmosphere and lifecycle certification
+
+- Source-matched original/port captures cover clear dream, rainy dream,
+  nightmare, and demonic states. Client-local time pinning provides the old fixed
+  day/night presentation without changing the server or Overworld clock.
+- `witchery:spirit_world_fresh_chunks` generates paired fixed-seed 9 x 9 regions
+  and compares 5,184 biome samples plus 1,296 pre-decoration terrain heights while
+  requiring natural Wispy Cotton, ordinary ecology, eligible Spirit floors, and
+  the exact weight/group spawn entry.
+- `witchery:spirit_world_lifecycle` uses two Survival players for concurrent
+  peaceful/nightmare state, Body and inventory isolation, reconnect, blocked
+  return, Manifestation, Nightmare pressure, Icy Needle/death wake, and cleanup.
+- `tools/run_spirit_world_lifecycle_certification.ps1` clones a real dev save and
+  proves exact dream state across two client JVM processes before live Icy Needle
+  use wakes the player and removes the temporary save.
+
 ## 2026-08-26 Village ecosystem and certification closeout
 
 - `WitcheryVillageElement` records a canonical building claim only after a
@@ -21,9 +37,16 @@ Current target:
   can distinguish intended residents from ordinary village population.
 - `VillageWallData` persists candidate and selected-gate evidence instead of a
   bare processed set. Wall jobs track the exact force-load tickets they acquire
-  and release only those tickets. Curtain, gatehouse, and graded-path placement
+  and release only those tickets. Curtain, integrated-gate, and graded-path placement
   relocates blockers to validated dry/collision-free ground; a bounded final
   collision pass prevents delayed terrain suffocation.
+- The visual wall stamp is decoded directly from original
+  `WorldHandlerVillageDistrict`: three blocks thick for eight courses, a
+  recessed open patrol deck inside a five-wide crown, continuous along-run stair
+  caps, and two-course L corner masonry. Its gate is an integrated three-wide,
+  three-deep layered arch under the same patrol crown, not a detached gatehouse.
+  Modern contouring, biome palettes, terrain/water foundations, road detection,
+  graded paths, tree cleanup, and chunk scheduling remain intentionally intact.
 - `/witchery verify village` emits a parseable audit of claims, palette-family
   blocks, residents, gates, and safe landing. The runtime harness uses the fixed
   `witchery-runtime-test` seed across plains, desert, savanna, taiga, and snowy
@@ -491,6 +514,18 @@ Also note: `riteOfBindCreakingFamiliar`'s in-effect `.support` "missing offering
 **unreachable** — the dispatch `.requiringOffering(...)` gate filters the definition out before the
 effect runs, so missing offerings show the generic "unknown ritual" instead. Left as-is for parity
 with the other offering-gated rites; revisit if per-rite "you're missing X" feedback is wanted.
+
+**2026-08-27 specialization:** the old `sitting` attachment bit overloaded neither mode nor a useful
+guard behavior: follow mode also sensed, repelled, and generated resin, while sitting returned before
+all ward work. `CreakingFamiliarData` now persists `FOLLOW`/`ROOTED_GUARD`, guard dimension/position,
+watched state, alert throttle, and resin schedule with optional codec fields. Legacy sitting data
+migrates to rooted and claims its current position on the first owner-active server tick. Follow mode
+alone recovers to and narrowly defends the owner. Rooted mode alone holds its anchor, alerts with a
+30-second unchanged-count throttle, repels at most six monsters per 200-tick pulse, and attempts one
+Resin Clump every 6000 ticks while unwatched and only when no clump waits nearby. It never force-loads
+the anchor chunk, shares owner damage, or accepts a Call Familiar teleport. Normal use toggles modes;
+sneak-use on an already rooted guard dismisses it. `CreakingFamiliarDataTest` and dedicated-server
+`witchery:creaking_familiar_modes` lock migration, mode separation, persistence, and bounded economy.
 
 ## 2026-06-07 RitualExecutor → declarative dispatch (monolith split)
 
@@ -1539,6 +1574,27 @@ private static Identifier resolveSkin(ReflectionEntity entity) {
 - Swept the decompiled `infusion/` tree: the four `InfusionLight/Overworld/Otherwhere/Infernal` classes do **not** override `onUpdate`, base `Infusion.onUpdate` is empty, and the only per-tick infusion hook calls `PlayerEffects.onUpdate` (which is *Imp-familiar* effects, not infusion buffs). Just 4 `getInfusionID(` usages exist in the whole codebase, none applying potion effects. So an infusion in 1.7.10 is purely an **energy pool + active powers** (dispatched through `ItemWitchHand` → `Infusion.onLeftClickEntity/onUsingItemTick/onPlayerStoppedUsing`) + creature powers; it grants no sustained buffs.
 - The remake's `InfusionEvents` buffs (Glowing/Speed/Fire-Res/etc.) were therefore invented. By user decision they are **kept but pared to one small thematic identity effect each**, documented as a divergence: Light = Night Vision, Overworld = Regeneration only while standing on natural ground (`BlockTags.DIRT`/`LEAVES`/moss/farmland), Otherwhere = Slow Falling, Infernal = Fire Resistance — plus a per-infusion grant flash (`onInfusionGranted`, called from both `riteOfInfusion` and `/witchery infuse`) and an ambient aura particle on a 12-tick cadence (`ServerLevel.sendParticles`, no `serverLevel()` accessor in this mapping — cast `(ServerLevel) player.level()`).
 - Rule: when "remaking passives" for a system, first confirm the source actually has them. Infusion completion is otherwise about the energy bar HUD (`RenderInfusionEnergyBar`), the Witch-Hand active powers, creature-power hooks, Infernal `PotionEnslaved`, and the Otherwhere `InfusedSpirit*Effect` family — the phased roadmap, not buffs.
+
+**Correction (2026-08-27): the deliberate identity-passive divergence above is superseded.**
+- `InfusionEvents` no longer refreshes Night Vision, Regeneration, Slow Falling,
+  or Fire Resistance merely because a player is infused. The one-time grant
+  feedback, 12-tick ambient aura, energy pool, Witch's Hand powers, Overworld
+  fall cushion, and Infernal creature-power reactions remain. Dedicated-server
+  `witchery:infusion_passive_parity` locks the source-default behavior.
+
+**Blight Heart containment (2026-08-27)**
+- The non-source Blight Heart ecosystem remains registered for world/item compatibility but is release-default off through `rituals.enableBlightHeart=false`. The rite checks the gate before its 150-block terrain search or `RitualTransaction`; Brew of Blight checks before drinking/use-on; and `BlightHelper.placeHeart`, Heart spread, and adjacent-taint spread all enforce the same boundary.
+- Closed activation consumes no offerings, escrow, altar power, or brew bottle. Existing Heart blocks remain in-world but cannot spread. Existing Fibre/Soil/Stone/Log random ticks skip the former radius-16 by 9-block-tall Heart scan and may only cleanse their own block on the existing one-in-three decay roll.
+- Enabled seeding now also requires the acting player's `WitcheryProtectionService` terrain permission at the embedded Heart and its exposed-above position. This containment behavior was the base for the owned/indexed redesign below.
+- Dedicated-server `witchery:blight_heart_containment` supplies all seven offerings and a real 3000-power altar, then proves closed rejection, no escrow/spend, Brew refusal, shared-placement refusal, existing-ID loading, no spread, and bounded orphan cleanup.
+
+**Blight Heart ownership and exact reversal (2026-08-27)**
+- `BlightHeartSavedData` in the Overworld data store is now the only durable Heart lifecycle owner. Each record persists version, real owner UUID/name, creation dimension/anchor, `ACTIVE`/`DISABLED`/`CLEANSING` state, 512-success spread budget, next 20-tick spread cursor, optional cleanup actor, and at most 513 exact original/applied block pairs (the anchor plus mutations). Unknown future versions and records without an anchor snapshot are discarded into inert legacy behavior rather than trusted.
+- In-memory indexes map dimension/chunk to anchors and exact dimension/position to mutation owners. Blighted blocks no longer spread independently or scan a radius-16 cube to rediscover Hearts. The rite's one-time 96-attempt placement search considers loaded columns only and rejects an owner who already has a journal before searching. A loaded Heart permits four attempts per cadence only while its real owner is online in the same dimension. Every placement and mutation checks `WitcheryProtectionService`; local Blight barrier tags remain an additional skip. Unloaded targets and their inspection neighborhood are rejected before block-state reads, and cleanup skips unloaded positions, so the lifecycle never force-loads placement, ordinary spread, or restoration chunks.
+- One unfinished journal is permitted per owner globally, and anchors from different owners need 32 blocks of separation. Ordinary/creative placement of a dropped Heart remains inert, preventing Silk Touch or relocation from creating a cheap mobile infestation. Existing pre-redesign Hearts also remain loadable but unowned and inert.
+- The ledger records the precise original and applied states before each successful mutation. Breaking or cleansing the anchor enters `CLEANSING`; a per-level ten-tick event processes at most four Hearts, inspects at most 12 entries per Heart, and restores at most four loaded entries. Current blocks that no longer match the recorded corruption are not overwritten. Cleanup uses the initiating player when available or the persisted identity through a same-UUID protection surrogate. Legacy cleanup uses the real cleaner or a stable server cleanup identity and still passes `BLOCK_TRANSFORM` through the protection facade. Exact Grass Block, Cobblestone, and Spruce Log restoration is dedicated-server tested; missing legacy ledger data uses the documented generic compatibility cleanup.
+- A Seer Stone used directly on tracked Heart corruption now reports the root's direction and approximate distance. This gives victims normal in-world discovery before Heart breaking or Brew of Cleansing counterplay.
+- `BlightHeartSavedDataTest` locks codec fields, future/anchorless rejection, the ledger cap, and work budgets. `witchery:blight_heart_lifecycle` locks multiplayer owner limits, protected skip, owner-offline pause, Seer tracing, and exact counterplay. `python tools/runtime_test_harness.py blight-heart-restart` passed a real clean stop/restart against a partially progressed ledger and resumed exact cleanup. The feature remains release-default sealed pending optional claim-adapter and live balance QA.
 
 **Lycanthropy questline — Phase 1: data model + Wolf Altar gates (2026-06-15)**
 - Replaced the remake-invented flat `wolfMastery` 0-3 with a nested `WitcheryPlayerData.WerewolfState` mirroring `VampireState`: `level` (0-10), `form` (`WolfForm` NONE/WOLF/WOLFMAN ordinal), `questState` (`WolfQuestState`), `questCounter`, persisted `howledChunks` (`List<Long>`, same codec shape as the vampire `visited_villages`), `lastHowl`/`lastBoneFind`. **Codec note:** the main CODEC was already at the 16-field DFU limit, so the old `wolf_mastery` field *slot* was swapped for `werewolf_state` (not added) — old saves silently reset werewolf progress to 0 (documented divergence; mastery was a placeholder).

@@ -1,5 +1,6 @@
 package com.emoniph.witchery.blocks;
 
+import com.emoniph.witchery.data.BlightHeartSavedData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -20,8 +21,12 @@ public class BlightedLogBlock extends RotatedPillarBlock {
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         BlightHelper.decayIfOrphaned(level, pos, state, random);
-        if (level.getBlockState(pos).is(this)) {
-            BlightHelper.trySpreadNear(level, pos, random, false);
-        }
+    }
+
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos,
+                                               boolean movedByPiston) {
+        BlightHeartSavedData.get(level.getServer()).forgetMutation(level, pos);
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
     }
 }

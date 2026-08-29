@@ -1,6 +1,7 @@
 package com.emoniph.witchery.item;
 
 import com.emoniph.witchery.blocks.entity.AltarBlockEntity;
+import com.emoniph.witchery.config.WitcheryConfig;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.init.WitcheryAttachments;
 import com.emoniph.witchery.init.WitcheryBlockTags;
@@ -257,7 +258,9 @@ public class DebugInspectorItem extends Item {
         }
         String curse = curseMissing.isEmpty() ? "curse_of_blight=ready"
                 : "curse_of_blight missing=" + String.join(", ", curseMissing);
-        String heart = heartMissing.isEmpty() ? "blight_heart=ready"
+        String heart = !WitcheryConfig.ENABLE_BLIGHT_HEART.get()
+                ? "blight_heart=disabled (rituals.enableBlightHeart=false)"
+                : heartMissing.isEmpty() ? "blight_heart=ready"
                 : "blight_heart missing=" + String.join(", ", heartMissing);
         return curse + "; " + heart;
     }

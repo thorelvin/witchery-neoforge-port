@@ -28,6 +28,18 @@ public final class SpiritWorldSpecialEffects {
         return SpiritWorldAtmosphere.forState(state.nightmare(), state.demonic()).sunAngleRadians();
     }
 
+    /** Keeps the Spirit provider's source celestial angle local to the client viewing that dimension. */
+    public static void pinClientDayTime() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null
+                || !minecraft.level.dimension().equals(com.emoniph.witchery.init.WitcheryDimensions.SPIRIT_WORLD)) {
+            return;
+        }
+        SpiritState state = currentSpiritState();
+        long dayTime = SpiritWorldAtmosphere.forState(state.nightmare(), state.demonic()).clientDayTime();
+        minecraft.level.getLevelData().setDayTime(dayTime);
+    }
+
     public static SpiritColor currentSpiritColor() {
         SpiritState state = currentSpiritState();
         SpiritWorldAtmosphere.Color color =
@@ -45,15 +57,19 @@ public final class SpiritWorldSpecialEffects {
     }
 
     private static SpiritState currentSpiritState() {
-        Player player = Minecraft.getInstance().player;
+        Minecraft minecraft = Minecraft.getInstance();
         boolean nightmare = false;
-        boolean demonic = false;
-        if (player != null) {
-            WitcheryPlayerData data = WitcheryAttachments.get(player);
-            nightmare = data.isNightmare();
-            demonic = data.isDemonicNightmare();
+        if (minecraft.level == null) {
+            return new SpiritState(false, false);
         }
-        return new SpiritState(nightmare, demonic);
+        for (Player player : minecraft.level.players()) {
+            WitcheryPlayerData data = WitcheryAttachments.get(player);
+            if (data.isDemonicNightmare()) {
+                return new SpiritState(true, true);
+            }
+            nightmare |= data.isNightmare();
+        }
+        return new SpiritState(nightmare, false);
     }
 
     public record SpiritColor(float red, float green, float blue) {}

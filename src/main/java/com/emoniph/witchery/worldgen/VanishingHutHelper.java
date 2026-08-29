@@ -27,6 +27,13 @@ public final class VanishingHutHelper {
     /** Minimum ticks between relocations so the hut can't strobe. */
     public static final long DEFAULT_MOVE_COOLDOWN_TICKS = 1200L; // 1 minute
 
+    /** A completed rare bargain lets the hut leave soon after its customer steps outside. */
+    public static final long COMPLETED_BARGAIN_COOLDOWN_TICKS = 100L; // 5 seconds
+
+    /** Continuous salt restraint timing: warning first, then an unobserved escape attempt. */
+    public static final long SALT_WARNING_TICKS = 600L; // 30 seconds
+    public static final long SALT_ESCAPE_TICKS = 2400L; // 2 minutes
+
     private VanishingHutHelper() {}
 
     /**

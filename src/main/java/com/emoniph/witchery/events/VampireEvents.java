@@ -883,13 +883,16 @@ public class VampireEvents {
         }
 
         if (bat) vampire.fallDistance = 0.0F;
-        if (vampire.isCreative() || vampire.isSpectator()) return;
-
         var abilities = vampire.getAbilities();
         boolean oldMayfly = abilities.mayfly;
         boolean oldFlying = abilities.flying;
-        abilities.mayfly = bat;
-        abilities.flying = bat;
+        VampireFlightOwnership.Decision flight = VampireFlightOwnership.reconcile(
+                bat, vampire.isCreative() || vampire.isSpectator(),
+                abilities.mayfly, abilities.flying,
+                data.witcheryOwnsBatFlight(), data.mayflyBeforeBat(), data.flyingBeforeBat());
+        abilities.mayfly = flight.mayfly();
+        abilities.flying = flight.flying();
+        data.setBatFlightOwnership(flight.ownsGrant(), flight.mayflyBefore(), flight.flyingBefore());
         if (oldMayfly != abilities.mayfly || oldFlying != abilities.flying) {
             vampire.onUpdateAbilities();
         }

@@ -1,0 +1,37 @@
+# Core source-run views for the presentation matrix. Entity model pairs are the
+# already-certified legacy-model-parity captures, reused by the certification ledger.
+OUTPUT C:\claude\witchery\captures\spirit-presentation\original
+LOAD WitcherySpiritCertification|Witchery Spirit Presentation
+WAIT_WORLD 30000
+NO_PAUSE
+GAMMA 1.0
+FOV 70
+THIRD_PERSON 0
+CLEAR_SCREEN
+COMMAND /difficulty normal
+COMMAND /gamemode 1
+
+HIDE_GUI true
+SPIRIT_PRESENTATION portal
+COMMAND /tp @p 4096.5 121 4090.5
+WAIT 3000
+LOOK 0 0
+REPORT
+CAPTURE original-portal.png
+
+HIDE_GUI true
+SPIRIT_PRESENTATION body
+COMMAND /tp @p 4096.5 121 4093.5
+WAIT 3000
+LOOK 0 13
+STABILIZE_CAPTURE EntityCorpse 4096.5 121 4099 180 0 original-body.png
+
+HIDE_GUI true
+THIRD_PERSON 2
+SPIRIT_PRESENTATION manifestation
+COMMAND /tp @p 4096.5 121 4097.5
+WAIT 3000
+LOOK 0 0
+REPORT
+CAPTURE original-manifestation.png
+STOP

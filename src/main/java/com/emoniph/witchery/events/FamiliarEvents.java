@@ -36,6 +36,9 @@ public final class FamiliarEvents {
         if (familiar == null || !familiar.isAlive()) {
             return;
         }
+        if (familiar instanceof Creaking creaking && CreakingFamiliarHelper.isRootedGuard(creaking)) {
+            return;
+        }
 
         float redirectedDamage = event.getNewDamage() * REDIRECTED_DAMAGE_PCT_FAR;
         if (familiar.distanceToSqr(player) <= NEAR_FAMILIAR_DISTANCE_SQ) {

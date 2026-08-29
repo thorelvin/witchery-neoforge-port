@@ -57,7 +57,7 @@ public final class NpcBrainService {
     private final Object warmupExecutorLock = new Object();
     private final Object warmupLock = new Object();
     private final Object rejectionLock = new Object();
-    private final AtomicInteger inFlight = new AtomicInteger();
+    private final AiRequestPermits requestPermits = new AiRequestPermits();
     private final AtomicLong successes = new AtomicLong();
     private final AtomicLong failures = new AtomicLong();
     private final AtomicLong rejected = new AtomicLong();
@@ -71,6 +71,7 @@ public final class NpcBrainService {
     private volatile int executorParallelism;
     private volatile String warmedConfigKey = "";
     private volatile boolean warmupInFlight;
+    private volatile long warmupGeneration = -1L;
     private volatile long lastWarmupMillis = -1L;
     private volatile String lastWarmupError = "";
     private volatile String lastError = "";
@@ -83,11 +84,13 @@ public final class NpcBrainService {
             return false;
         }
         String key = warmupConfigKey();
+        long generation = requestPermits.generation();
         synchronized (warmupLock) {
-            if (warmupInFlight || key.equals(warmedConfigKey)) {
+            if ((warmupInFlight && warmupGeneration == generation) || key.equals(warmedConfigKey)) {
                 return false;
             }
             warmupInFlight = true;
+            warmupGeneration = generation;
             lastWarmupError = "";
         }
 
@@ -98,7 +101,7 @@ public final class NpcBrainService {
                     WARMUP_MAX_TOKENS,
                     warmupExecutor());
         } catch (IllegalArgumentException ex) {
-            completeWarmup(key, -1L, ex);
+            completeWarmup(generation, key, -1L, ex);
             return false;
         }
 
@@ -106,7 +109,8 @@ public final class NpcBrainService {
         provider.generate(NpcPromptBuilder.warmup())
                 .orTimeout(WitcheryConfig.LLM_PREWARM_TIMEOUT_MILLIS.get() + 500L, TimeUnit.MILLISECONDS)
                 .whenComplete((response, error) ->
-                        completeWarmup(key, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started), error));
+                        completeWarmup(generation, key,
+                                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started), error));
         return true;
     }
 
@@ -269,7 +273,8 @@ public final class NpcBrainService {
                 || !entity.isAlive() || !player.isAlive() || entity.level() != player.level()) {
             return false;
         }
-        if (!tryAcquireRequestSlot("command_intent:busy")) {
+        AiRequestPermits.Permit permit = tryAcquireRequestSlot("command_intent:busy");
+        if (permit == null) {
             return false;
         }
 
@@ -280,7 +285,7 @@ public final class NpcBrainService {
         try {
             provider = providerFromConfig(timeoutMillis, COMMAND_INTENT_MAX_TOKENS, executor());
         } catch (IllegalArgumentException ex) {
-            releaseRequestSlot();
+            permit.close();
             failure(ex);
             return false;
         }
@@ -288,7 +293,8 @@ public final class NpcBrainService {
         persona.beginConversation(entity, player);
         NpcBrainPrompt prompt = NpcPromptBuilder.commandIntentCheck(persona.roleName(),
                 command.intentLabel(), playerMessage);
-        AiRequestRunner.run(level.getServer(), provider, prompt, timeoutMillis, this::releaseRequestSlot,
+        AiRequestRunner.run(level.getServer(), provider, prompt, timeoutMillis, permit::close,
+                () -> requestPermits.isCurrent(permit.generation()),
                 (response, error) -> handleCommandIntent(level, persona, entity, player,
                         response, error, onAccepted, onRejected));
         return true;
@@ -349,7 +355,8 @@ public final class NpcBrainService {
         if (!entity.isAlive() || entity.level() != player.level()) {
             return false;
         }
-        if (!tryAcquireRequestSlot("social_intent:busy")) {
+        AiRequestPermits.Permit permit = tryAcquireRequestSlot("social_intent:busy");
+        if (permit == null) {
             return false;
         }
 
@@ -360,14 +367,15 @@ public final class NpcBrainService {
         try {
             provider = providerFromConfig(timeoutMillis, SOCIAL_INTENT_MAX_TOKENS, executor());
         } catch (IllegalArgumentException ex) {
-            releaseRequestSlot();
+            permit.close();
             failure(ex);
             return false;
         }
 
         persona.beginConversation(entity, player);
         NpcBrainPrompt prompt = NpcPromptBuilder.socialIntentCheck(persona.roleName(), action, playerMessage);
-        AiRequestRunner.run(level.getServer(), provider, prompt, timeoutMillis, this::releaseRequestSlot,
+        AiRequestRunner.run(level.getServer(), provider, prompt, timeoutMillis, permit::close,
+                () -> requestPermits.isCurrent(permit.generation()),
                 (response, error) -> handleSocialIntentClassification(level, persona, player, entity,
                         playerMessage, action, response, error));
         return true;
@@ -395,7 +403,8 @@ public final class NpcBrainService {
             }
             return requestPersonaChatWithAnalysisContext(persona, entity, player, playerMessage, deterministic);
         }
-        if (!tryAcquireRequestSlot("message_analysis:busy")) {
+        AiRequestPermits.Permit permit = tryAcquireRequestSlot("message_analysis:busy");
+        if (permit == null) {
             return false;
         }
 
@@ -405,7 +414,7 @@ public final class NpcBrainService {
         try {
             provider = providerFromConfig(timeoutMillis, MESSAGE_ANALYSIS_MAX_TOKENS, executor());
         } catch (IllegalArgumentException ex) {
-            releaseRequestSlot();
+            permit.close();
             failure(ex);
             return false;
         }
@@ -413,7 +422,8 @@ public final class NpcBrainService {
         persona.beginConversation(entity, player);
         NpcBrainPrompt prompt = NpcPromptBuilder.messageAnalysis(persona.roleName(),
                 player.getName().getString(), playerMessage);
-        AiRequestRunner.run(level.getServer(), provider, prompt, timeoutMillis, this::releaseRequestSlot,
+        AiRequestRunner.run(level.getServer(), provider, prompt, timeoutMillis, permit::close,
+                () -> requestPermits.isCurrent(permit.generation()),
                 (response, error) -> handleMessageAnalysis(level, persona, player, entity,
                         playerMessage, response, error));
         return true;
@@ -454,7 +464,8 @@ public final class NpcBrainService {
         if (isCoolingDown(cooldownKey, now)) {
             return false;
         }
-        if (!tryAcquireRequestSlot("persona_response:busy")) {
+        AiRequestPermits.Permit permit = tryAcquireRequestSlot("persona_response:busy");
+        if (permit == null) {
             return false;
         }
 
@@ -462,7 +473,7 @@ public final class NpcBrainService {
         try {
             provider = providerFromConfig();
         } catch (IllegalArgumentException ex) {
-            releaseRequestSlot();
+            permit.close();
             failure(ex);
             return false;
         }
@@ -471,7 +482,7 @@ public final class NpcBrainService {
         maybePruneExpiredCooldowns(cooldownUntil, now);
         persona.beginConversation(entity, player);
         AiRequestRunner.run(level.getServer(), provider, prompt, WitcheryConfig.LLM_TIMEOUT_MILLIS.get(),
-                this::releaseRequestSlot,
+                permit::close, () -> requestPermits.isCurrent(permit.generation()),
                 (response, error) -> handlePersonaResponse(level, persona, entity.getUUID(), player, entity,
                         playerMessage, fallback, showFallback, rememberExchange, memoryContextOverride,
                         response, error));
@@ -487,13 +498,15 @@ public final class NpcBrainService {
             source.sendFailure(Component.literal("[AI] " + ex.getMessage()));
             return 0;
         }
-        if (!tryAcquireRequestSlot("probe:busy")) {
+        AiRequestPermits.Permit permit = tryAcquireRequestSlot("probe:busy");
+        if (permit == null) {
             source.sendFailure(Component.literal("[AI] Busy; try again in a moment."));
             return 0;
         }
         source.sendSuccess(() -> Component.literal("[AI] Probe queued for " + WitcheryConfig.LLM_MODEL.get() + "."), false);
         AiRequestRunner.run(source.getServer(), provider, NpcPromptBuilder.probe(promptText),
-                WitcheryConfig.LLM_TIMEOUT_MILLIS.get(), this::releaseRequestSlot, (response, error) -> {
+                WitcheryConfig.LLM_TIMEOUT_MILLIS.get(), permit::close,
+                () -> requestPermits.isCurrent(permit.generation()), (response, error) -> {
                     if (error != null || response == null) {
                         failure(error);
                         source.sendFailure(Component.literal("[AI] Probe failed: " + shortError(error)));
@@ -509,13 +522,13 @@ public final class NpcBrainService {
     public String statusLine() {
         String enabled = WitcheryConfig.LLM_ENABLED.get() ? "enabled" : "disabled";
         LlmEndpointValidator.Validation validation = LlmEndpointValidator.validate(
-                WitcheryConfig.LLM_ENDPOINT.get(), WitcheryConfig.LLM_ALLOW_LAN_ENDPOINT.get());
+                WitcheryConfig.LLM_ENDPOINT.get(), endpointPolicyFromConfig());
         return "[AI] " + enabled
                 + ", provider=" + WitcheryConfig.LLM_PROVIDER.get()
                 + ", model=" + WitcheryConfig.LLM_MODEL.get()
                 + ", endpoint=" + WitcheryConfig.LLM_ENDPOINT.get()
                 + ", endpointValid=" + validation.allowed()
-                + ", inFlight=" + inFlight.get()
+                + ", inFlight=" + requestPermits.inFlight()
                 + ", warmup=" + warmupStatus()
                 + ", providerCache=" + providerCache.size()
                 + ", warmups=" + warmups.get()
@@ -531,18 +544,13 @@ public final class NpcBrainService {
         rememberRejection(reason);
     }
 
-    private boolean tryAcquireRequestSlot(String busyReason) {
-        int current = inFlight.incrementAndGet();
-        if (current <= WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get()) {
-            return true;
+    private AiRequestPermits.Permit tryAcquireRequestSlot(String busyReason) {
+        AiRequestPermits.Permit permit = requestPermits.tryAcquire(
+                WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get());
+        if (permit == null) {
+            reject(busyReason);
         }
-        releaseRequestSlot();
-        reject(busyReason);
-        return false;
-    }
-
-    private void releaseRequestSlot() {
-        inFlight.decrementAndGet();
+        return permit;
     }
 
     void rememberRejection(String reason) {
@@ -592,7 +600,7 @@ public final class NpcBrainService {
                 warmupExecutor = null;
             }
         }
-        inFlight.set(0);
+        requestPermits.invalidate(WitcheryConfig.LLM_MAX_CONCURRENT_REQUESTS.get());
         LlmHttpClients.clear();
         clearProviderCache();
         resetWarmup();
@@ -602,6 +610,7 @@ public final class NpcBrainService {
         synchronized (warmupLock) {
             warmedConfigKey = "";
             warmupInFlight = false;
+            warmupGeneration = -1L;
             lastWarmupMillis = -1L;
             lastWarmupError = "";
         }
@@ -798,7 +807,8 @@ public final class NpcBrainService {
         if (prompt.isEmpty()) {
             return false;
         }
-        if (!tryAcquireRequestSlot("repair:busy")) {
+        AiRequestPermits.Permit permit = tryAcquireRequestSlot("repair:busy");
+        if (permit == null) {
             return false;
         }
 
@@ -807,13 +817,14 @@ public final class NpcBrainService {
             provider = providerFromConfig(REPAIR_TIMEOUT_MILLIS,
                     Math.min(REPAIR_MAX_TOKENS, WitcheryConfig.LLM_MAX_TOKENS.get()), executor());
         } catch (IllegalArgumentException ex) {
-            releaseRequestSlot();
+            permit.close();
             failure(ex);
             return false;
         }
 
         persona.beginConversation(entity, player);
-        AiRequestRunner.run(level.getServer(), provider, prompt.get(), REPAIR_TIMEOUT_MILLIS, this::releaseRequestSlot,
+        AiRequestRunner.run(level.getServer(), provider, prompt.get(), REPAIR_TIMEOUT_MILLIS, permit::close,
+                () -> requestPermits.isCurrent(permit.generation()),
                 (response, error) -> handlePersonaRepairResponse(level, persona, entityId, player, entity,
                         playerMessage, memoryContext, rememberExchange, response, error));
         return true;
@@ -1308,11 +1319,12 @@ public final class NpcBrainService {
                 maxTokens,
                 WitcheryConfig.LLM_ALLOW_LAN_ENDPOINT.get(),
                 WitcheryConfig.LLM_KEEP_ALIVE_MINUTES.get(),
+                WitcheryConfig.LLM_MAX_RESPONSE_BYTES.get(),
                 WitcheryConfig.LLM_API_KEY_ENV.get(),
                 parseExtraHeaders(WitcheryConfig.LLM_EXTRA_HEADERS.get()),
                 WitcheryConfig.LLM_RESPONSE_FORMAT.get());
         LlmEndpointValidator.Validation validation = LlmEndpointValidator.validate(
-                config.endpoint(), config.allowLanEndpoint());
+                config.endpoint(), endpointPolicyFromConfig());
         if (!validation.allowed()) {
             throw new IllegalArgumentException(validation.message());
         }
@@ -1326,6 +1338,16 @@ public final class NpcBrainService {
             clearProviderCache();
         }
         return providerCache.computeIfAbsent(cacheKey, ignored -> createProvider(provider, config, requestExecutor));
+    }
+
+    private static LlmEndpointValidator.Policy endpointPolicyFromConfig() {
+        LlmEndpointValidator.Policy configured = LlmEndpointValidator.Policy.parse(
+                WitcheryConfig.LLM_ENDPOINT_POLICY.get());
+        if (configured == LlmEndpointValidator.Policy.LOCAL_ONLY
+                && WitcheryConfig.LLM_ALLOW_LAN_ENDPOINT.get()) {
+            return LlmEndpointValidator.Policy.PRIVATE_LAN;
+        }
+        return configured;
     }
 
     private LlmProvider createProvider(String provider, LlmProviderConfig config, ExecutorService requestExecutor) {
@@ -1424,9 +1446,16 @@ public final class NpcBrainService {
         return Map.copyOf(headers);
     }
 
-    private void completeWarmup(String key, long elapsedMillis, Throwable error) {
+    private void completeWarmup(long generation, String key, long elapsedMillis, Throwable error) {
         synchronized (warmupLock) {
+            if (warmupGeneration != generation) return;
+            if (!requestPermits.isCurrent(generation)) {
+                warmupInFlight = false;
+                warmupGeneration = -1L;
+                return;
+            }
             warmupInFlight = false;
+            warmupGeneration = -1L;
             lastWarmupMillis = elapsedMillis;
             if (error == null) {
                 warmedConfigKey = key;

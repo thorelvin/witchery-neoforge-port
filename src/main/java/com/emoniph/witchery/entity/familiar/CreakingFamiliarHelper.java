@@ -15,7 +15,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -35,21 +34,27 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * Familiar behaviour for vanilla {@link Creaking} mobs bound through the Pale Garden rite.
- */
+/** Familiar behaviour for vanilla {@link Creaking} mobs bound through the Pale Garden rite. */
 public final class CreakingFamiliarHelper {
 
     public static final int FAMILIAR_TYPE_ID = 5;
+    public static final int WATCH_SCAN_INTERVAL_TICKS = 10;
+    public static final int ROOTED_WARD_INTERVAL_TICKS = 200;
+    public static final int ALERT_COOLDOWN_TICKS = 600;
+    public static final int RESIN_DROP_INTERVAL_TICKS = 6000;
+    public static final int MAX_INTRUDERS_REPORTED = 8;
+    public static final int MAX_MONSTERS_REPELLED = 6;
 
-    private static final double WATCH_RANGE = 16.0;
+    private static final double WATCH_RANGE = 16.0D;
     private static final double WATCH_RANGE_SQ = WATCH_RANGE * WATCH_RANGE;
-    private static final double FOLLOW_DISTANCE = 10.0;
-    private static final double TELEPORT_DISTANCE_SQ = 12.0 * 12.0;
-    private static final double SCARE_RANGE = 8.0;
-    private static final int RESIN_DROP_INTERVAL = 2400;
-    private static final int SCARE_INTERVAL = 100;
-    private static final int PLAYER_SENSE_INTERVAL = 100;
+    private static final double FOLLOW_DISTANCE = 10.0D;
+    private static final double TELEPORT_DISTANCE_SQ = 12.0D * 12.0D;
+    private static final double FOLLOW_DEFENSE_RANGE_SQ = 12.0D * 12.0D;
+    private static final double SCARE_RANGE = 8.0D;
+    private static final double INTRUSION_RANGE = 24.0D;
+    private static final double RESIN_CHECK_RANGE = 3.0D;
+    private static final double ANCHOR_DRIFT_SQ = 0.25D * 0.25D;
+    private static final int FOLLOW_DEFENSE_INTERVAL_TICKS = 20;
 
     private static final String[] CREAKING_NAMES = {
             "Paleguard", "Creak", "Thornwood", "Watcher", "Mossknell", "Eyebloom",
@@ -71,10 +76,20 @@ public final class CreakingFamiliarHelper {
         return getData(creaking).isBound();
     }
 
+    public static boolean isRootedGuard(Creaking creaking) {
+        return isBound(creaking) && getData(creaking).isRootedGuard();
+    }
+
+    public static boolean isStoredRootedGuard(Player player) {
+        WitcheryPlayerData data = WitcheryAttachments.get(player);
+        return matchesStoredType(data.getFamiliarType()) && data.isFamiliarSitting();
+    }
+
     @Nullable
     public static ServerPlayer findOwner(Creaking creaking) {
         Optional<UUID> ownerUuid = getData(creaking).owner();
-        if (ownerUuid.isEmpty() || !(creaking.level() instanceof ServerLevel serverLevel) || serverLevel.getServer() == null) {
+        if (ownerUuid.isEmpty() || !(creaking.level() instanceof ServerLevel serverLevel)
+                || serverLevel.getServer() == null) {
             return null;
         }
         return serverLevel.getServer().getPlayerList().getPlayer(ownerUuid.get());
@@ -119,10 +134,8 @@ public final class CreakingFamiliarHelper {
             creaking.setHealth((float) FamiliarHelper.BOUND_FAMILIAR_MAX_HEALTH);
         }
 
-        CreakingFamiliarData data = CreakingFamiliarData.EMPTY.withOwner(player.getUUID());
-        setData(creaking, data);
+        setData(creaking, CreakingFamiliarData.EMPTY.withOwner(player.getUUID()));
         ensureDefaultName(creaking, level.getRandom());
-
         syncPlayerRecord(player, creaking);
         return creaking;
     }
@@ -154,7 +167,8 @@ public final class CreakingFamiliarHelper {
 
         if (removeEntity && creaking != null && creaking.isAlive()) {
             Level level = creaking.level();
-            level.playSound(null, creaking.blockPosition(), SoundEvents.CREAKING_DEATH, creaking.getSoundSource(), 1.0F, 0.8F);
+            level.playSound(null, creaking.blockPosition(), SoundEvents.CREAKING_DEATH,
+                    creaking.getSoundSource(), 1.0F, 0.8F);
             creaking.discard();
         }
     }
@@ -174,6 +188,10 @@ public final class CreakingFamiliarHelper {
         CreakingFamiliarData restored = CreakingFamiliarData.EMPTY
                 .withOwner(player.getUUID())
                 .withSitting(WitcheryAttachments.get(player).isFamiliarSitting());
+        if (restored.isRootedGuard()) {
+            restored = restored.rootedAt(level.dimension(), BlockPos.containing(x, y, z),
+                    level.getGameTime() + RESIN_DROP_INTERVAL_TICKS);
+        }
         setData(creaking, restored);
         releaseFromHeart(creaking);
         creaking.setPersistenceRequired();
@@ -209,12 +227,8 @@ public final class CreakingFamiliarHelper {
     }
 
     public static void serverTick(ServerLevel level, Creaking creaking) {
-        if (!isBound(creaking)) {
-            return;
-        }
-
-        ServerPlayer owner = findOwner(creaking);
-        if (owner == null) {
+        CreakingFamiliarData data = getData(creaking);
+        if (!data.isBound()) {
             return;
         }
 
@@ -222,47 +236,103 @@ public final class CreakingFamiliarHelper {
             creaking.setIsActive(true);
         }
 
-        CreakingFamiliarData data = getData(creaking);
-        releaseFromHeart(creaking);
+        ServerPlayer owner = findOwner(creaking);
+        if (owner == null) {
+            keepStill(creaking, data.isRootedGuard());
+            return;
+        }
 
-        if (data.sitting()) {
-            creaking.setIsActive(false);
+        if (data.isRootedGuard() && !data.hasGuardAnchor(level.dimension())) {
+            data = data.rootedAt(level.dimension(), creaking.blockPosition(),
+                    level.getGameTime() + RESIN_DROP_INTERVAL_TICKS);
+            setData(creaking, data);
+            syncPlayerRecord(owner, creaking);
+        }
+
+        boolean watched = data.watched();
+        if (creaking.tickCount % WATCH_SCAN_INTERVAL_TICKS == 0) {
+            watched = isWatchedByNonOwner(level, creaking, owner);
+            if (watched != data.watched()) {
+                data = data.withWatched(watched);
+                setData(creaking, data);
+            }
+        }
+        creaking.setIsActive(!watched);
+
+        if (data.isRootedGuard()) {
+            tickRootedGuard(level, creaking, owner, data, watched);
+        } else {
+            tickFollowing(creaking, owner, watched);
+        }
+    }
+
+    private static void tickFollowing(Creaking creaking, ServerPlayer owner, boolean watched) {
+        creaking.setNoAi(false);
+        if (creaking.level() != owner.level() || watched) {
             creaking.getNavigation().stop();
             creaking.setTarget(null);
             return;
         }
 
-        boolean watched = isWatchedByNonOwner(level, creaking, owner);
-        if (watched) {
-            creaking.setIsActive(false);
-            creaking.getNavigation().stop();
-        } else {
-            creaking.setIsActive(true);
-            followOwner(creaking, owner);
+        followOwner(creaking, owner);
+        if (creaking.getTarget() != null && !isValidDefensiveTarget(owner, creaking.getTarget())) {
+            creaking.setTarget(null);
+        }
+        if (creaking.tickCount % FOLLOW_DEFENSE_INTERVAL_TICKS == 0) {
             defendOwner(creaking, owner);
         }
+    }
 
-        if (creaking.tickCount % RESIN_DROP_INTERVAL == 0 && creaking.distanceToSqr(owner) <= 144.0) {
-            dropResinClump(level, creaking);
+    private static void tickRootedGuard(ServerLevel level, Creaking creaking, ServerPlayer owner,
+                                        CreakingFamiliarData data, boolean watched) {
+        creaking.setNoAi(true);
+        creaking.getNavigation().stop();
+        creaking.setTarget(null);
+
+        Optional<BlockPos> guardPosition = data.guardPosition();
+        if (guardPosition.isEmpty() || !data.hasGuardAnchor(level.dimension())) {
+            return;
         }
-        if (creaking.tickCount % SCARE_INTERVAL == 0 && !watched) {
-            scareNearbyMonsters(creaking, owner);
+
+        BlockPos anchor = guardPosition.get();
+        creaking.setHomePos(anchor);
+        if (!level.hasChunkAt(anchor)) {
+            return;
         }
-        if (creaking.tickCount % PLAYER_SENSE_INTERVAL == 0) {
-            senseNearbyPlayers(creaking, owner);
+        Vec3 anchored = Vec3.atBottomCenterOf(anchor);
+        if (creaking.distanceToSqr(anchored) > ANCHOR_DRIFT_SQ) {
+            creaking.snapTo(anchored.x, anchored.y, anchored.z, creaking.getYRot(), creaking.getXRot());
         }
+
+        if (creaking.tickCount % ROOTED_WARD_INTERVAL_TICKS != 0) {
+            return;
+        }
+
+        CreakingFamiliarData updated = updateIntrusionAlert(level, creaking, owner, data);
+        if (!watched) {
+            repelNearbyMonsters(creaking, owner);
+            updated = tryProduceResin(level, creaking, updated);
+        }
+        if (updated != data) {
+            setData(creaking, updated);
+        }
+    }
+
+    private static void keepStill(Creaking creaking, boolean rooted) {
+        creaking.setNoAi(rooted);
+        creaking.setIsActive(false);
+        creaking.getNavigation().stop();
+        creaking.setTarget(null);
     }
 
     public static boolean isWatchedByNonOwner(ServerLevel level, Creaking creaking, ServerPlayer owner) {
         Vec3 creakingEye = creaking.getEyePosition();
-        for (ServerPlayer other : level.players()) {
-            if (other.getUUID().equals(owner.getUUID()) || other.isSpectator()) {
-                continue;
-            }
-            if (other.distanceToSqr(creaking) > WATCH_RANGE_SQ) {
-                continue;
-            }
-            if (!other.hasLineOfSight(creaking)) {
+        AABB watchArea = creaking.getBoundingBox().inflate(WATCH_RANGE);
+        List<ServerPlayer> possibleWatchers = level.getEntitiesOfClass(ServerPlayer.class, watchArea,
+                player -> player.isAlive() && !player.isSpectator()
+                        && !isAuthorizedPlayer(owner, player));
+        for (ServerPlayer other : possibleWatchers) {
+            if (other.distanceToSqr(creaking) > WATCH_RANGE_SQ || !other.hasLineOfSight(creaking)) {
                 continue;
             }
             Vec3 look = other.getViewVector(1.0F).normalize();
@@ -274,16 +344,29 @@ public final class CreakingFamiliarHelper {
         return false;
     }
 
-    public static void toggleSitting(ServerPlayer owner, Creaking creaking) {
-        boolean sitting = !getData(creaking).sitting();
-        setData(creaking, getData(creaking).withSitting(sitting));
-        WitcheryAttachments.get(owner).setFamiliarSitting(sitting);
-        PacketDistributor.sendToPlayer(owner, SyncPlayerDataPayload.from(owner, WitcheryAttachments.get(owner)));
-        if (sitting) {
+    public static void toggleMode(ServerPlayer owner, Creaking creaking) {
+        CreakingFamiliarData current = getData(creaking);
+        CreakingFamiliarData updated;
+        String message;
+        if (current.isRootedGuard()) {
+            updated = current.following();
+            creaking.setNoAi(false);
+            creaking.setIsActive(true);
+            message = "witchery.familiar.creaking.mode.follow";
+        } else {
+            updated = current.rootedAt(creaking.level().dimension(), creaking.blockPosition(),
+                    creaking.level().getGameTime() + RESIN_DROP_INTERVAL_TICKS);
+            creaking.setNoAi(true);
             creaking.setIsActive(false);
             creaking.getNavigation().stop();
             creaking.setTarget(null);
+            message = "witchery.familiar.creaking.mode.rooted_guard";
         }
+        setData(creaking, updated);
+        syncPlayerRecord(owner, creaking);
+        owner.displayClientMessage(Component.translatable(message, creaking.getDisplayName()), true);
+        creaking.level().playSound(null, creaking.blockPosition(), SoundEvents.CREAKING_SWAY,
+                creaking.getSoundSource(), 0.7F, updated.isRootedGuard() ? 0.8F : 1.15F);
     }
 
     private static void followOwner(Creaking creaking, ServerPlayer owner) {
@@ -305,59 +388,127 @@ public final class CreakingFamiliarHelper {
     }
 
     private static void defendOwner(Creaking creaking, ServerPlayer owner) {
+        LivingEntity current = creaking.getTarget();
+        if (current != null && !isValidDefensiveTarget(owner, current)) {
+            creaking.setTarget(null);
+        }
+
         LivingEntity lastHurt = owner.getLastHurtByMob();
-        if (lastHurt != null && lastHurt.isAlive() && lastHurt != creaking && creaking.canAttack(lastHurt)) {
+        if (lastHurt != null && lastHurt.isAlive() && lastHurt != creaking
+                && lastHurt.level() == creaking.level()
+                && lastHurt.distanceToSqr(owner) <= FOLLOW_DEFENSE_RANGE_SQ
+                && !isAuthorizedTarget(owner, lastHurt) && creaking.canAttack(lastHurt)) {
             creaking.setTarget(lastHurt);
             return;
         }
-        if (creaking.getTarget() == null || !creaking.getTarget().isAlive()) {
-            AABB area = creaking.getBoundingBox().inflate(12.0D);
-            List<Monster> threats = creaking.level().getEntitiesOfClass(Monster.class, area,
-                    mob -> mob.isAlive() && mob != creaking && creaking.canAttack(mob)
-                            && mob.getTarget() == owner);
-            if (!threats.isEmpty()) {
-                creaking.setTarget(threats.getFirst());
-            }
+        if (creaking.getTarget() != null) {
+            return;
         }
+
+        AABB area = owner.getBoundingBox().inflate(12.0D);
+        List<Monster> threats = creaking.level().getEntitiesOfClass(Monster.class, area,
+                mob -> mob.isAlive() && mob != creaking && creaking.canAttack(mob)
+                        && !isAuthorizedTarget(owner, mob) && mob.getTarget() == owner);
+        if (!threats.isEmpty()) {
+            creaking.setTarget(threats.getFirst());
+        }
+    }
+
+    private static boolean isValidDefensiveTarget(ServerPlayer owner, LivingEntity target) {
+        if (!target.isAlive() || target.level() != owner.level()
+                || target.distanceToSqr(owner) > FOLLOW_DEFENSE_RANGE_SQ
+                || isAuthorizedTarget(owner, target)) {
+            return false;
+        }
+        if (owner.getLastHurtByMob() == target) {
+            return true;
+        }
+        return target instanceof Monster monster && monster.getTarget() == owner;
+    }
+
+    private static CreakingFamiliarData updateIntrusionAlert(ServerLevel level, Creaking creaking,
+                                                              ServerPlayer owner,
+                                                              CreakingFamiliarData data) {
+        int intruders = countNearbyIntruders(level, creaking, owner);
+        if (intruders == 0) {
+            return data.lastAlertCount() == 0 ? data : data.withAlertCount(0);
+        }
+
+        long gameTime = level.getGameTime();
+        boolean cooldownElapsed = data.lastAlertGameTime() == CreakingFamiliarData.NO_SCHEDULED_TICK
+                || gameTime - data.lastAlertGameTime() >= ALERT_COOLDOWN_TICKS;
+        if (intruders == data.lastAlertCount() && !cooldownElapsed) {
+            return data;
+        }
+
+        owner.displayClientMessage(Component.translatable(
+                "witchery.familiar.creaking.sense", creaking.getDisplayName(), intruders), true);
+        return data.withAlertState(gameTime, intruders);
+    }
+
+    private static int countNearbyIntruders(ServerLevel level, Creaking creaking, ServerPlayer owner) {
+        AABB area = creaking.getBoundingBox().inflate(INTRUSION_RANGE);
+        List<ServerPlayer> players = level.getEntitiesOfClass(ServerPlayer.class, area,
+                player -> player.isAlive() && !player.isSpectator() && !isAuthorizedPlayer(owner, player));
+        return Math.min(players.size(), MAX_INTRUDERS_REPORTED);
+    }
+
+    private static CreakingFamiliarData tryProduceResin(ServerLevel level, Creaking creaking,
+                                                        CreakingFamiliarData data) {
+        long gameTime = level.getGameTime();
+        if (data.nextResinGameTime() == CreakingFamiliarData.NO_SCHEDULED_TICK) {
+            return data.withNextResinGameTime(gameTime + RESIN_DROP_INTERVAL_TICKS);
+        }
+        if (gameTime < data.nextResinGameTime()) {
+            return data;
+        }
+
+        AABB nearby = creaking.getBoundingBox().inflate(RESIN_CHECK_RANGE);
+        boolean resinWaiting = !level.getEntitiesOfClass(ItemEntity.class, nearby,
+                item -> item.isAlive() && item.getItem().is(Items.RESIN_CLUMP)).isEmpty();
+        if (!resinWaiting) {
+            dropResinClump(level, creaking);
+        }
+        return data.withNextResinGameTime(gameTime + RESIN_DROP_INTERVAL_TICKS);
     }
 
     private static void dropResinClump(ServerLevel level, Creaking creaking) {
-        ItemEntity drop = new ItemEntity(level,
-                creaking.getX(), creaking.getY() + 0.5, creaking.getZ(),
-                new ItemStack(Items.RESIN_CLUMP));
+        ItemEntity drop = new ItemEntity(level, creaking.getX(), creaking.getY() + 0.5D,
+                creaking.getZ(), new ItemStack(Items.RESIN_CLUMP));
         drop.setDefaultPickUpDelay();
         level.addFreshEntity(drop);
         level.sendParticles(ParticleTypes.SPORE_BLOSSOM_AIR,
-                creaking.getX(), creaking.getY() + 1.0, creaking.getZ(),
-                4, 0.2, 0.2, 0.2, 0.01);
+                creaking.getX(), creaking.getY() + 1.0D, creaking.getZ(),
+                4, 0.2D, 0.2D, 0.2D, 0.01D);
     }
 
-    private static void scareNearbyMonsters(Creaking creaking, ServerPlayer owner) {
+    private static void repelNearbyMonsters(Creaking creaking, ServerPlayer owner) {
         AABB area = creaking.getBoundingBox().inflate(SCARE_RANGE);
-        List<Monster> mobs = creaking.level().getEntitiesOfClass(Monster.class, area, mob -> mob != creaking);
+        List<Monster> mobs = creaking.level().getEntitiesOfClass(Monster.class, area,
+                mob -> mob.isAlive() && mob != creaking && !isAuthorizedTarget(owner, mob));
+        int repelled = 0;
         for (Monster mob : mobs) {
+            if (repelled++ >= MAX_MONSTERS_REPELLED) {
+                break;
+            }
             mob.getNavigation().moveTo(
-                    mob.getX() + (mob.getX() - creaking.getX()),
-                    mob.getY(),
-                    mob.getZ() + (mob.getZ() - creaking.getZ()),
-                    1.2D);
+                    mob.getX() + (mob.getX() - creaking.getX()), mob.getY(),
+                    mob.getZ() + (mob.getZ() - creaking.getZ()), 1.1D);
         }
     }
 
-    private static void senseNearbyPlayers(Creaking creaking, ServerPlayer owner) {
-        AABB area = creaking.getBoundingBox().inflate(24.0D);
-        List<Player> players = creaking.level().getEntitiesOfClass(Player.class, area,
-                player -> player != owner && player.isAlive() && !player.isSpectator());
-        if (!players.isEmpty()) {
-            owner.displayClientMessage(
-                    Component.translatable("witchery.familiar.creaking.sense", players.size()), true);
-        }
+    private static boolean isAuthorizedPlayer(ServerPlayer owner, Player player) {
+        return owner.getUUID().equals(player.getUUID())
+                || owner.isAlliedTo(player) || player.isAlliedTo(owner);
     }
 
-    /**
-     * Detach a creaking from its pale-garden heart so it can follow the witch.
-     */
+    private static boolean isAuthorizedTarget(ServerPlayer owner, LivingEntity target) {
+        return target == owner || owner.isAlliedTo(target) || target.isAlliedTo(owner);
+    }
+
+    /** Detach a creaking from its pale-garden heart so it can live as a familiar. */
     private static void releaseFromHeart(Creaking creaking) {
+        creaking.setNoAi(false);
         creaking.setHomePos(creaking.blockPosition());
         creaking.setIsActive(true);
     }

@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,7 +35,8 @@ public final class EarthShockwaveEvents {
 
     /** Begin a shockwave centred under the caster, expanding to {@code maxRadius}. */
     public static void start(ServerLevel level, ServerPlayer owner, int maxRadius) {
-        ACTIVE.add(new Shockwave(level, owner.getUUID(), owner.blockPosition().below(), Math.max(2, maxRadius) + 2));
+        ACTIVE.add(new Shockwave(level.dimension(), owner.getUUID(), owner.blockPosition().below(),
+                Math.max(2, maxRadius) + 2));
     }
 
     @SubscribeEvent
@@ -42,24 +44,29 @@ public final class EarthShockwaveEvents {
         if (ACTIVE.isEmpty() || !(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
-        ACTIVE.removeIf(wave -> wave.level == level && wave.tick());
+        ACTIVE.removeIf(wave -> wave.dimension.equals(level.dimension()) && wave.tick(level));
+    }
+
+    static void clearSession() {
+        ACTIVE.clear();
     }
 
     private static final class Shockwave {
-        private final ServerLevel level;
+        private final ResourceKey<net.minecraft.world.level.Level> dimension;
         private final UUID owner;
         private final BlockPos center;
         private final int maxRadius;
         private int stage = 0;
 
-        Shockwave(ServerLevel level, UUID owner, BlockPos center, int maxRadius) {
-            this.level = level;
+        Shockwave(ResourceKey<net.minecraft.world.level.Level> dimension, UUID owner,
+                  BlockPos center, int maxRadius) {
+            this.dimension = dimension;
             this.owner = owner;
             this.center = center;
             this.maxRadius = maxRadius;
         }
 
-        boolean tick() {
+        boolean tick(ServerLevel level) {
             stage++;
             int radius = stage + 1;
             double cx = center.getX() + 0.5;

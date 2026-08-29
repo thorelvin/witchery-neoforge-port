@@ -1,0 +1,56 @@
+[Witchery original capture] Running plan C:\claude\witchery\witchery-port\tools\original_capture_agent\plans\spirit-world-atmosphere.plan
+[Witchery original capture] Line 3: OUTPUT
+[Witchery original capture] Line 4: LOAD
+[Witchery original capture] Line 5: WAIT_WORLD
+[Witchery original capture] World and player are ready
+[Witchery original capture] Line 6: NO_PAUSE
+[Witchery original capture] Line 7: HIDE_GUI
+[Witchery original capture] Line 8: GAMMA
+[Witchery original capture] Line 9: FOV
+[Witchery original capture] Line 10: THIRD_PERSON
+[Witchery original capture] Line 11: CLEAR_SCREEN
+[Witchery original capture] Line 12: SPIRIT_ENTER
+[Witchery original capture] Installed integrated-server tick bridge
+[Witchery original capture] Requested original Spirit World entry: dream
+[Witchery original capture] Line 13: WAIT_DIMENSION
+[Witchery original capture] Player reached dimension -37
+[Witchery original capture] Line 14: WAIT
+[Witchery original capture] Line 15: SPIRIT_STUDIO
+[Witchery original capture] Built original Spirit World comparison studio at 4096 120 4096
+[Witchery original capture] Line 16: COMMAND
+[Witchery original capture] Line 17: COMMAND
+[Witchery original capture] Line 18: COMMAND
+[Witchery original capture] Line 19: COMMAND
+[Witchery original capture] Line 20: LOOK
+[Witchery original capture] Line 21: WAIT
+[Witchery original capture] Line 22: REPORT_SPIRIT
+[Witchery original capture] Spirit report dimension=-37 nightmare=0 worldTime=6000 provider=com.emoniph.witchery.dimension.WorldProviderDreamWorld
+[Witchery original capture] Line 23: CAPTURE
+[Witchery original capture] Captured C:\claude\witchery\captures\spirit-world\original\original-dream-clear.png
+[Witchery original capture] Line 24: COMMAND
+[Witchery original capture] Line 25: WAIT
+[Witchery original capture] Line 26: CAPTURE
+[Witchery original capture] Captured C:\claude\witchery\captures\spirit-world\original\original-dream-rain.png
+[Witchery original capture] Line 27: COMMAND
+[Witchery original capture] Line 28: WAIT
+[Witchery original capture] Line 29: SPIRIT_STATE
+[Witchery original capture] Original Spirit World state set to nightmare (1)
+[Witchery original capture] Line 30: WAIT
+[Witchery original capture] Line 31: REPORT_SPIRIT
+[Witchery original capture] Spirit report dimension=-37 nightmare=1 worldTime=6000 provider=com.emoniph.witchery.dimension.WorldProviderDreamWorld
+[Witchery original capture] Line 32: CAPTURE
+[Witchery original capture] Captured C:\claude\witchery\captures\spirit-world\original\original-nightmare-clear.png
+[Witchery original capture] Line 33: SPIRIT_STATE
+[Witchery original capture] Original Spirit World state set to demonic (2)
+[Witchery original capture] Line 34: WAIT
+[Witchery original capture] Line 35: REPORT_SPIRIT
+[Witchery original capture] Spirit report dimension=-37 nightmare=2 worldTime=6000 provider=com.emoniph.witchery.dimension.WorldProviderDreamWorld
+[Witchery original capture] Line 36: CAPTURE
+[Witchery original capture] Captured C:\claude\witchery\captures\spirit-world\original\original-demonic-clear.png
+[Witchery original capture] Line 37: SPIRIT_WAKE
+[Witchery original capture] Requested original Spirit World wake-up
+[Witchery original capture] Line 38: WAIT_DIMENSION
+[Witchery original capture] Player reached dimension 0
+[Witchery original capture] Line 39: WAIT
+[Witchery original capture] Line 40: STOP
+[Witchery original capture] Plan complete

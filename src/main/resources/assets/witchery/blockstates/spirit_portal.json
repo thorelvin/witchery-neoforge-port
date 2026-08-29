@@ -1,5 +1,6 @@
 {
   "variants": {
-    "": { "model": "witchery:block/spirit_portal" }
+    "axis=x": { "model": "witchery:block/spirit_portal_ns" },
+    "axis=z": { "model": "witchery:block/spirit_portal_ew" }
   }
 }

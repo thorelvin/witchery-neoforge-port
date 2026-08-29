@@ -1,0 +1,40 @@
+# Deterministic original-Witchery atmosphere reference.
+# Run against the disposable WitcherySpiritCertification save.
+OUTPUT C:\claude\witchery\captures\spirit-world\original
+LOAD WitcherySpiritCertification|Witchery Spirit Certification
+WAIT_WORLD 30000
+NO_PAUSE
+HIDE_GUI true
+GAMMA 1.0
+FOV 70
+THIRD_PERSON 0
+CLEAR_SCREEN
+SPIRIT_ENTER dream
+WAIT_DIMENSION -37
+WAIT 4000
+SPIRIT_STUDIO 4096 120 4096
+COMMAND /gamemode 1
+COMMAND /time set 6000
+COMMAND /weather clear
+COMMAND /tp @p 4096.5 121 4086.5
+LOOK 0 -4
+WAIT 12000
+REPORT_SPIRIT
+CAPTURE original-dream-clear.png
+COMMAND /weather rain
+WAIT 7000
+CAPTURE original-dream-rain.png
+COMMAND /weather clear
+WAIT 7000
+SPIRIT_STATE nightmare
+WAIT 3000
+REPORT_SPIRIT
+CAPTURE original-nightmare-clear.png
+SPIRIT_STATE demonic
+WAIT 3000
+REPORT_SPIRIT
+CAPTURE original-demonic-clear.png
+SPIRIT_WAKE
+WAIT_DIMENSION 0
+WAIT 2000
+STOP

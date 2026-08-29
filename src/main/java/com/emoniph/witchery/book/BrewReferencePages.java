@@ -191,7 +191,7 @@ final class BrewReferencePages {
             case DURATION -> "duration tier " + reference.modifierCeiling();
             case INVERT -> "inverts the next effect or action";
             case SPLASH -> reference.item() == WitcheryItems.ARTICHOKE.get()
-                    ? "source instant or splash dispersal" : "splash dispersal";
+                    ? "instant or splash dispersal" : "splash dispersal";
             case GAS -> "moving gas dispersal";
             case LIQUID -> "moving liquid dispersal";
             case TRIGGER -> "triggered curse dispersal";

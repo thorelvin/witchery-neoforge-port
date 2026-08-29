@@ -1,9 +1,14 @@
 package com.emoniph.witchery.item;
 
+import com.emoniph.witchery.blocks.BlightHelper;
+import com.emoniph.witchery.blocks.entity.KettleBlockEntity;
+import com.emoniph.witchery.data.BlightHeartSavedData;
+import com.emoniph.witchery.data.AnchoredCurseSavedData;
 import com.emoniph.witchery.data.WitcheryPlayerData;
 import com.emoniph.witchery.entity.CovenWitchEntity;
 import com.emoniph.witchery.entity.familiar.FamiliarHelper;
 import com.emoniph.witchery.init.WitcheryAttachments;
+import com.emoniph.witchery.ritual.OtherwhereHearthTransposition;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,6 +28,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -44,6 +50,8 @@ public class SeerStoneItem extends Item {
     private static final double TARGET_RANGE = 3.0;
     private static final double COVEN_CALL_RADIUS_XZ = 64.0;
     private static final double COVEN_CALL_RADIUS_Y = 16.0;
+    private static final int HEARTH_COOLDOWN_TICKS = 100;
+    private static final int MAX_HEARTH_BLOCKERS_SHOWN = 4;
 
     public SeerStoneItem(Properties props) {
         super(props.rarity(Rarity.UNCOMMON));
@@ -80,7 +88,143 @@ public class SeerStoneItem extends Item {
     }
 
     @Override
+    public InteractionResult useOn(UseOnContext context) {
+        Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        if (level.getBlockEntity(pos) instanceof KettleBlockEntity) {
+            if (level.isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
+            if (!(level instanceof ServerLevel serverLevel)
+                    || !(context.getPlayer() instanceof ServerPlayer player)) {
+                return InteractionResult.PASS;
+            }
+            ItemStack stack = context.getItemInHand();
+            if (player.getCooldowns().isOnCooldown(stack)) {
+                return InteractionResult.CONSUME;
+            }
+            inspectOtherwhereHearth(serverLevel, player, pos);
+            player.getCooldowns().addCooldown(stack, HEARTH_COOLDOWN_TICKS);
+            return InteractionResult.CONSUME;
+        }
+        if (!BlightHelper.isBlight(level.getBlockState(pos))) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        if (!(level instanceof ServerLevel serverLevel)
+                || !(context.getPlayer() instanceof ServerPlayer player)) {
+            return InteractionResult.PASS;
+        }
+
+        BlightHeartSavedData.HeartRecord heart = BlightHeartSavedData.get(serverLevel.getServer())
+                .heartOwningMutation(serverLevel, pos);
+        if (heart == null) {
+            player.displayClientMessage(Component.translatable(
+                    "item.witchery.seer_stone.blight_unrooted").withStyle(ChatFormatting.DARK_PURPLE), false);
+        } else if (heart.anchor().equals(pos)) {
+            player.displayClientMessage(Component.translatable(
+                    "item.witchery.seer_stone.blight_here").withStyle(ChatFormatting.DARK_PURPLE), false);
+        } else {
+            int dx = heart.anchor().getX() - pos.getX();
+            int dz = heart.anchor().getZ() - pos.getZ();
+            Direction direction = Direction.getApproximateNearest(dx, 0.0D, dz);
+            int distance = Mth.ceil(Math.sqrt(heart.anchor().distSqr(pos)));
+            player.displayClientMessage(Component.translatable(
+                    "item.witchery.seer_stone.blight_trace",
+                    Component.translatable("direction.minecraft." + direction.getName()), distance)
+                    .withStyle(ChatFormatting.DARK_PURPLE), false);
+        }
+        serverLevel.sendParticles(ParticleTypes.WITCH,
+                pos.getX() + 0.5D, pos.getY() + 0.7D, pos.getZ() + 0.5D,
+                12, 0.3D, 0.35D, 0.3D, 0.01D);
+        serverLevel.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME,
+                SoundSource.PLAYERS, 0.55F, 0.75F);
+        return InteractionResult.CONSUME;
+    }
+
+    private static void inspectOtherwhereHearth(
+            ServerLevel level, ServerPlayer player, BlockPos kettlePos) {
+        OtherwhereHearthTransposition.PlayerInspection inspection =
+                OtherwhereHearthTransposition.inspectForPlayer(player, level, kettlePos);
+        level.playSound(null, kettlePos, SoundEvents.AMETHYST_BLOCK_CHIME,
+                SoundSource.PLAYERS, 0.65F, inspection.authorized() ? 0.8F : 0.55F);
+
+        if (!inspection.authorized()) {
+            inspection.localBlockers().stream().findFirst().ifPresent(blocker ->
+                    player.displayClientMessage(blocker.message().copy()
+                            .withStyle(ChatFormatting.DARK_PURPLE), false));
+            return;
+        }
+
+        for (Vec3 point : OtherwhereHearthTransposition.boundaryPoints(inspection.volume())) {
+            level.sendParticles(player, ParticleTypes.ENCHANT, false, false,
+                    point.x, point.y, point.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        }
+
+        if (inspection.localReady()) {
+            player.displayClientMessage(Component.translatable(
+                    "item.witchery.seer_stone.hearth_near_ready")
+                    .withStyle(ChatFormatting.GREEN), false);
+        } else {
+            showBlockers(player, "item.witchery.seer_stone.hearth_near_blocked",
+                    inspection.localBlockers());
+        }
+
+        if (!inspection.localReady()) {
+            player.displayClientMessage(Component.translatable(
+                    "item.witchery.seer_stone.hearth_far_veiled")
+                    .withStyle(ChatFormatting.DARK_PURPLE), false);
+            return;
+        }
+        switch (inspection.destinationStatus()) {
+            case VEILED -> player.displayClientMessage(Component.translatable(
+                    "item.witchery.seer_stone.hearth_far_veiled")
+                    .withStyle(ChatFormatting.DARK_PURPLE), false);
+            case READY -> player.displayClientMessage(Component.translatable(
+                    "item.witchery.seer_stone.hearth_far_ready")
+                    .withStyle(ChatFormatting.AQUA), false);
+            case BLOCKED -> showBlockers(player,
+                    "item.witchery.seer_stone.hearth_far_blocked",
+                    inspection.destinationBlockers());
+            case UNAVAILABLE -> showBlockers(player,
+                    "item.witchery.seer_stone.hearth_far_unavailable",
+                    inspection.destinationBlockers());
+        }
+    }
+
+    private static void showBlockers(
+            ServerPlayer player, String headingKey,
+            List<OtherwhereHearthTransposition.PreflightIssue> blockers) {
+        player.displayClientMessage(Component.translatable(headingKey, blockers.size())
+                .withStyle(ChatFormatting.RED), false);
+        int shown = Math.min(MAX_HEARTH_BLOCKERS_SHOWN, blockers.size());
+        for (int index = 0; index < shown; index++) {
+            player.displayClientMessage(Component.literal("- ")
+                    .append(blockers.get(index).message().copy())
+                    .withStyle(ChatFormatting.GRAY), false);
+        }
+        if (blockers.size() > shown) {
+            player.displayClientMessage(Component.translatable(
+                    "item.witchery.seer_stone.hearth_more", blockers.size() - shown)
+                    .withStyle(ChatFormatting.DARK_GRAY), false);
+        }
+    }
+
+    @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity target, InteractionHand hand) {
+        if (target instanceof CovenWitchEntity witch) {
+            if (!user.level().isClientSide()) {
+                user.displayClientMessage(Component.translatable("item.witchery.seer_stone.coven_specialty",
+                                witch.getDisplayName(), witch.getSpecialty().displayName(),
+                                witch.getSpecialty().seerDescription())
+                        .withStyle(ChatFormatting.DARK_PURPLE), false);
+                user.level().playSound(null, witch.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
+                        SoundSource.PLAYERS, 0.55F, 1.2F);
+            }
+            return InteractionResult.SUCCESS;
+        }
         if (!(user instanceof ServerPlayer reader) || !(target instanceof ServerPlayer targetPlayer)) {
             return InteractionResult.PASS;
         }
@@ -179,6 +323,15 @@ public class SeerStoneItem extends Item {
                             .withStyle(ChatFormatting.RED),
                     false);
         }
+
+        AnchoredCurseSavedData.get(target.level().getServer()).clueFor(target.getUUID()).ifPresent(clue -> {
+            reader.displayClientMessage(Component.translatable("witchery.anchored_curse.seer")
+                    .withStyle(ChatFormatting.DARK_RED), false);
+            if (clue.stage() >= 1) {
+                reader.displayClientMessage(Component.translatable("witchery.anchored_curse.seer.realm",
+                        clue.dimension()).withStyle(ChatFormatting.DARK_PURPLE), false);
+            }
+        });
 
         playReadEffects(reader, target);
     }

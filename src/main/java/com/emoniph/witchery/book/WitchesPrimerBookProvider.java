@@ -477,12 +477,12 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                     + "below the circle, then parts one point every tick. It cuts 8 to 12 blocks deep; more "
                     + "than two nearby Coven witches widen the rift. Breaking the sustaining circle stops the "
                     + "working and returns its consumed offering.";
-            case "moving_earth" -> "These are the three source column-raising workings despite the family "
+            case "moving_earth" -> "These are three column-raising workings despite the family "
                     + "name. Small, medium, and large Ritual circles choose the footprint and use Gunpowder, "
                     + "Redstone, or Glowstone Dust respectively. One terrain layer rises every five ticks. "
                     + "Only the small working accepts an optional Bound Waystone destination.";
             case "protection" -> "Protection upkeep is continuous: the altar is charged every tick. The "
-                    + "barrier itself redraws on the source 20-tick boundary, so its blocks remain renewed "
+                    + "barrier itself redraws on a twenty-tick rhythm, so its blocks remain renewed "
                     + "without rebuilding the whole wall every tick. Re-click the active circle to end the "
                     + "working and recover its refundable offerings.";
             case "blindness" -> "The curse waits for the next full second, then expands from radius 4 by one "
@@ -498,7 +498,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                     + "Protection activations, a broken circle, or a failed sustaining check abort and refund it.";
             case "hell_on_earth" -> "After its 5000-power opening and Villager sacrifice, the curse expands from "
                     + "radius 4 by one block every five ticks to radius 20 plus 2 blocks per Coven witch. It "
-                    + "replaces source terrain with Netherrack; an active cat familiar can ignite affected plants "
+                    + "replaces nearby terrain with Netherrack; an active cat familiar can ignite affected plants "
                     + "when server configuration allows. Once fully expanded it consumes 200 altar power every "
                     + "40 ticks and calls a weighted Demon, Ghast, Blaze, Magma Cube, or Zombified Piglin at the "
                     + "working's centre. A Bound Waystone moves that centre.";
@@ -509,16 +509,22 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
     private BookEntryModel blightHeartEntry(BookCategoryModel cat, int sort) {
         return rite(cat, "circle_magic/rites/blight_heart", "Rite of the Blight Heart",
                 WitcheryItems.BLIGHT_HEART.get(), sort,
-                "This port-added working is separate from the original **Curse of Blight**. It plants one "
-                        + "persistent Blight Heart in suitable buried ground within 150 blocks, beginning the "
-                        + "local Blight ecosystem without replacing the source expanding curse.",
+                "Some covens whisper of a buried heart distinct from the true **Curse of Blight**. The older "
+                        + "curse travels outward through flesh and field; this forbidden working would root one "
+                        + "persistent Heart in nearby soil. By default the buried heart lies sealed and takes "
+                        + "neither offering nor altar power. Where unsealed, each witch may sustain only one "
+                        + "Heart, and two Hearts cannot root close together.",
                 ritualCard("3000", 0, List.of(ringInfernal("medium")),
                         WitcheryItems.ATTUNED_STONE_CHARGED.get(), WitcheryItems.REDSTONE_SOUP.get(),
                         WitcheryItems.REEK_OF_MISFORTUNE.get(), Items.FERMENTED_SPIDER_EYE,
                         Items.POISONOUS_POTATO, Items.ROTTEN_FLESH, Items.DIAMOND),
-                "Activate the complete medium Infernal circle while all seven offerings are present. The "
-                        + "Poisonous Potato distinguishes this rite from the original curse's Glistering Melon "
-                        + "Slice. If no safe embedded position can be found, nothing is consumed.");
+                "Where the seal has been lifted, activate the complete medium Infernal circle while all seven "
+                        + "offerings are present. The Poisonous Potato distinguishes this rite from the original "
+                        + "curse's Glistering Melon Slice. If no permitted root can be found, or another Heart "
+                        + "already answers to the witch, nothing is consumed. The Heart spreads only while its "
+                        + "witch is present in that world and remembers every changed block. Use a Seer Stone on "
+                        + "the stain to feel the root's direction. Break or cleanse the Heart and loaded land "
+                        + "returns to the blocks it held before the corruption.");
     }
 
     private static String ritualCompendiumWorking(RitualCompendium.Variant variant) {
@@ -1206,7 +1212,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "to a giant, harder still to fell."));
         leonard.addAll(WitcheryBooks.prose("Reward",
                 "A defeated Shade drops **Leonard's Urn**, a vessel of considerable infernal standing. Its "
-                        + "use is concrete enough: use it to open the source-shaped focus inventory, then "
+                        + "use is concrete enough: use it to open the diamond focus inventory, then "
                         + "place one splash, gas, or liquid brew in each available slot. The urn does not "
                         + "cast directly from the hand; the Mystic Branch's four urn glyphs call the matching "
                         + "stored focus without spending it. "
@@ -1294,11 +1300,32 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "Build it, fill it, and stop thinking about it. It will think for itself when the time "
                         + "comes."));
 
+        List<BookPageModel<?>> redThread = new ArrayList<>(WitcheryBooks.prose("Red Thread",
+                "Red Thread gives a Curse of Sinking a place to cling after its natural span. At a Spinning "
+                        + "Wheel, work four String with Red Dye and Reek of Misfortune. After fifteen seconds the "
+                        + "wheel yields four lengths of Red Thread."
+                        + "\n\nBind a plain Poppet to the intended victim and leave that one suitable Poppet "
+                        + "on a breakable Poppet Shelf. Use Red Thread on the shelf to prepare the knot."));
+        redThread.add(spotlight(WitcheryItems.RED_THREAD.get(), "The Anchored Curse",
+                "Perform the ordinary Curse of Sinking with the victim's Taglock, full offerings, infernal "
+                        + "circle, thunder, and altar power. If exactly one of your prepared knots answers, "
+                        + "the curse settles into it. Without a prepared knot, the rite remains an ordinary "
+                        + "finite Curse of Sinking."));
+        redThread.addAll(WitcheryBooks.prose("Finding and Breaking the Knot",
+                "The victim first feels the curse tighten again, then senses something distant holding it, "
+                        + "and finally recognizes a Poppet Shelf at the far end. A Seer Stone can name the "
+                        + "binding; a Crystal Ball used with the victim's Taglock can reveal its realm; once "
+                        + "the trail matures, a Poppet Shelf Compass points to the anchor."
+                        + "\n\nBreak the shelf, remove the threaded Poppet, or perform the Breath of the "
+                        + "Goddess cure for Sinking to sever the curse. A broken knot briefly wards that "
+                        + "caster and victim against another Red Thread binding."));
+
         cat.withEntries(
                 entry(cat, "poppets/taglock_kit", "Taglock Kit", WitcheryItems.TAGLOCK_KIT.get(), 0, taglock),
                 entry(cat, "poppets/poppets", "Poppets", WitcheryItems.VOODOO_POPPET.get(), 1, poppetsList),
                 entry(cat, "poppets/poppet_shelf", "The Poppet Shelf", WitcheryItems.POPPET_SHELF.get(), 2, shelf),
-                gatedByItem("guide/obtained/poppet", whatsNext(cat, "poppets", 3, "book_spirit_world", "Witchcraft: The Spirit World", WitcheryItems.BOOK_SPIRIT_WORLD.get(), "The Spirit World")));
+                entry(cat, "poppets/red_thread", "Red Thread", WitcheryItems.RED_THREAD.get(), 3, redThread),
+                gatedByItem("guide/obtained/poppet", whatsNext(cat, "poppets", 4, "book_spirit_world", "Witchcraft: The Spirit World", WitcheryItems.BOOK_SPIRIT_WORLD.get(), "The Spirit World")));
         return cat;
     }
 
@@ -1333,13 +1360,14 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "not viewing distance, and peaceful-dream daylight does not burn vampires here."));
 
         List<BookPageModel<?>> hearth = new ArrayList<>(WitcheryBooks.prose("The Otherwhere Hearth",
-                "This additive endgame working carries a settled home bodily between the waking world and "
-                        + "the Spirit World. Brew and bottle an Otherwhere Hearth, then use it on an empty, "
-                        + "dry Kettle. The Kettle binds permanently to the witch who named it."
+                "A hearth may be taught to cross the veil with every wall and soul held inside it. Brew and "
+                        + "bottle an Otherwhere Hearth, then use it on an empty, dry Kettle. The Kettle binds "
+                        + "permanently to the witch who named it."
                         + "\n\nTo cross, draw a **large Otherwhere ring** and a **medium Ritual ring** around "
-                        + "the block beneath the Kettle. Gather six coven witches and a complete altar inside "
-                        + "the hearth, fill that altar with at least 10,000 power, then crouch and touch the "
-                        + "bound Kettle with an empty hand."));
+                        + "the block beneath the Kettle. Gather six living witches sworn to the hearth's owner "
+                        + "and a complete altar inside the hearth, fill that altar with at least 10,000 power, "
+                        + "then crouch and touch the bound Kettle with an empty hand. Remembered dead may lend "
+                        + "their voices to lesser rites, but they cannot carry a home bodily across the veil."));
         hearth.add(spotlight(WitcheryItems.OTHERWHERE_HEARTH_BREW.get(), "Otherwhere Hearth",
                 "The hearth is a **25 x 25 x 25** volume: twelve blocks outward from the Kettle in every "
                         + "horizontal direction, eight below it, and sixteen above. The same coordinates in "
@@ -1362,9 +1390,16 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "may settle while a traveller is offline, but that witch remains in the manifest "
                         + "and is delivered before the record clears. Witches carried bodily into the Spirit World keep their "
                         + "inventory and face ordinary death there; this is not dream walking."));
+        hearth.addAll(WitcheryBooks.prose("Reading the Hearth",
+                "Touch the bound Kettle with a **Seer Stone** to trace the moving hearth in violet motes. "
+                        + "The Stone names faults in the near hearth without taking offerings or altar power. "
+                        + "Only the witch bound to the Kettle may read it."
+                        + "\n\nThe far hearth remains veiled unless its ground is already awake. A quiet Stone "
+                        + "is a preparation, not a promise: the crossing itself judges both worlds before "
+                        + "anything is spent."));
 
         List<BookPageModel<?>> torment = new ArrayList<>(WitcheryBooks.prose("Torment",
-                "Torment is a fixed-night dungeon of six isolated, source-shaped mazes. Each level is a "
+                "Torment is a fixed-night dungeon of six isolated mazes cut to one merciless measure. Each level is a "
                         + "perfect **31 x 31** depth-first maze: every corridor eventually connects, but the "
                         + "way may still be long. Invisible, unbreakable **Force** makes the walls and ceiling. "
                         + "Indestructible **Torment Stone** makes the floor, foundation, and portal frame; its "
@@ -1451,11 +1486,17 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                 "The rite returns a Crystal Ball attuned for fortune work. Use it near a powered altar, or "
                         + "focus it with waystones and taglocks. Bad foci are refused before the altar is "
                         + "charged; a true focus wakes the ball with violet motes."));
+        crystal.addAll(WitcheryBooks.prose("A House Through Glass",
+                "A filled Taglock taken from the resident of a Vanishing Hut catches a different vision. "
+                        + "Even when witch and house are beyond waking sight, the glass may show the realm, "
+                        + "the sort of country, and the temper of the sky around them. It gives no road, "
+                        + "bearing, distance, or coordinates. The house keeps some secrets even from glass."));
 
         cat.withEntries(
                 entry(cat, "spirit_world/spirit_world", "The Spirit World", WitcheryItems.BREW_OF_SLEEPING.get(), 0, spirit),
-                entry(cat, "spirit_world/otherwhere_hearth", "The Otherwhere Hearth",
-                        WitcheryItems.OTHERWHERE_HEARTH_BREW.get(), 1, hearth),
+                gatedByItem("guide/obtained/soul_of_torment",
+                        entry(cat, "spirit_world/otherwhere_hearth", "The Otherwhere Hearth",
+                                WitcheryItems.OTHERWHERE_HEARTH_BREW.get(), 1, hearth)),
                 entry(cat, "spirit_world/torment", "Torment", WitcheryItems.SOUL_OF_TORMENT.get(), 2, torment),
                 entry(cat, "spirit_world/mirror_world", "The Mirror World", WitcheryItems.MIRROR.get(), 3, mirror),
                 entry(cat, "spirit_world/dream_weavers", "Dream Weavers", WitcheryItems.DREAM_CATCHER.get(), 4, dream),
@@ -1483,6 +1524,13 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         familiars.add(creature("witchery:toad", "The Toad",
                 "Patient, damp, and helpful to a brewer. It gathers what falls, coaxes the odd extra bottle "
                         + "from the kettle, and strengthens brews you drink yourself.", 1.0F, -0.3F));
+        familiars.add(creature("minecraft:creaking", "The Creaking",
+                "Bind a wild Creaking in a Medium ritual circle through the Rite of the Creakening. While "
+                        + "following it recovers to your side, offers restrained defence, and freezes beneath "
+                        + "a stranger's gaze. Use it to sink its roots where it stands: only then will it warn "
+                        + "of intruders, turn nearby monsters away, and slowly shed Resin Clumps while unwatched. "
+                        + "Use it again to call it from the earth; sneak-use a rooted guardian to dismiss it. "
+                        + "The Rite of Calling will not uproot a chosen watch.", 0.7F, -0.2F));
 
         List<BookPageModel<?>> hunter = new ArrayList<>(WitcheryBooks.prose("Witch Hunters",
                 "They exist because we exist. Witch Hunters are organised, motivated, and unpleasant — they "
@@ -1493,6 +1541,34 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
         hunter.add(creature("witchery:witch_hunter", "Witch Hunter",
                 "Known by the hat, the coat, and the look of someone certain of their cause. They drop "
                         + "silver bolts and the occasional armour piece.", 0.85F, -0.4F));
+
+        List<BookPageModel<?>> coven = new ArrayList<>(WitcheryBooks.prose("The Living Coven",
+                "A witch with a bound familiar may approach a wandering Coven Witch while crouched and ask "
+                        + "her to join. She first sets a trial: fetch what she names, or defeat the creature "
+                        + "she calls and return its marked remains. Six living witches may swear to one leader."
+                        + "\n\nEach witch keeps one craft: Hedge, Grave, Pale, Storm, or Hearth. Use a **Seer "
+                        + "Stone** upon her, or ask her plainly, to learn it before or after recruitment. The "
+                        + "craft is part of the witch herself; it does not gain levels and cannot be changed."));
+        coven.addAll(WitcheryBooks.prose("Five Narrow Crafts",
+                "A nearby, living witch sworn to the caster may lend a small strength only where her craft "
+                        + "belongs. Hedge answers Fertility and Forestation. Grave eases Necromantic and "
+                        + "Spectral Stone workings. Pale lengthens Manifestation. Storm strengthens weather "
+                        + "calling. Hearth eases the upkeep of protection workings."
+                        + "\n\nTwo witches of the same craft do not double its gift. A dead, distant, "
+                        + "unsworn, or differently sworn witch lends nothing."));
+        coven.addAll(WitcheryBooks.prose("Coven Concord",
+                "Bring all six sworn living witches close to a working and the circle recognizes a **Coven "
+                        + "Concord**. Their five colours rise around them and the altar answers with a chime. "
+                        + "The Concord is chiefly the proof and spectacle of a coven truly assembled; its "
+                        + "greatest reward remains access to workings one witch cannot carry alone."));
+        coven.addAll(WitcheryBooks.prose("The Wandering House",
+                "The witch bound to a Vanishing Hut keeps one rare reagent exchange for each place where "
+                        + "the house settles. Approach her crouched to ask, then return crouched while holding "
+                        + "the full requested stack. Plain use still opens her ordinary wares. "
+                        + "Once the exchange is made, the house grows restless and may leave soon after you do."
+                        + "\n\nA three-mark line of Witches' Salt across the door restrains the house for a "
+                        + "time, but the insult forfeits that settlement's rare bargain. Keep it bound too long "
+                        + "and the timbers warn you before the hut tears free while unoccupied and unwatched."));
 
         List<BookPageModel<?>> hobgoblin = new ArrayList<>(WitcheryBooks.prose("Hobgoblins",
                 "Hobgoblins are small, territorial, and largely reasonable as long as you do not disturb "
@@ -1580,13 +1656,15 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
 
         cat.withEntries(
                 entry(cat, "creatures/familiars", "Familiars", WitcheryItems.OWL_SPAWN_EGG.get(), 0, familiars),
-                entry(cat, "creatures/witch_hunter", "Witch Hunters", WitcheryItems.HUNTER_HAT.get(), 1, hunter),
-                entry(cat, "creatures/hobgoblin", "Hobgoblins", WitcheryItems.KOBOLDITE_INGOT.get(), 2, hobgoblin),
-                entry(cat, "creatures/spectral_familiar", "Spectral Familiar", WitcheryItems.DROP_OF_LUCK.get(), 3, spectral),
-                entry(cat, "creatures/creature_traps", "Creature Traps", WitcheryItems.BEARTRAP.get(), 4, traps),
+                entry(cat, "creatures/living_coven", "The Living Coven",
+                        WitcheryItems.COVEN_WITCH_SPAWN_EGG.get(), 1, coven),
+                entry(cat, "creatures/witch_hunter", "Witch Hunters", WitcheryItems.HUNTER_HAT.get(), 2, hunter),
+                entry(cat, "creatures/hobgoblin", "Hobgoblins", WitcheryItems.KOBOLDITE_INGOT.get(), 3, hobgoblin),
+                entry(cat, "creatures/spectral_familiar", "Spectral Familiar", WitcheryItems.DROP_OF_LUCK.get(), 4, spectral),
+                entry(cat, "creatures/creature_traps", "Creature Traps", WitcheryItems.BEARTRAP.get(), 5, traps),
                 entry(cat, "creatures/flying_monkey", "Flying Monkeys",
-                        WitcheryItems.FLYING_MONKEY_SPAWN_EGG.get(), 5, monkey),
-                whatsNext(cat, "creatures", 6, "book_transformations", "Witchcraft: Transformations", WitcheryItems.BOOK_TRANSFORMATIONS.get(), "Transformations"));
+                        WitcheryItems.FLYING_MONKEY_SPAWN_EGG.get(), 6, monkey),
+                whatsNext(cat, "creatures", 7, "book_transformations", "Witchcraft: Transformations", WitcheryItems.BOOK_TRANSFORMATIONS.get(), "Transformations"));
         return cat;
     }
 
@@ -1608,7 +1686,7 @@ public class WitchesPrimerBookProvider implements BookSubProvider {
                         + "500 human blood, recover two every forty ticks, and yield less while awake than while "
                         + "sleeping. Villagers yield a full bite while sleeping or mesmerised. Werewolf blood "
                         + "burns the drinker instead."
-                        + "\n\nThe source blood-drop display beneath the crosshair shows what remains in a "
+                        + "\n\nThe blood-drop display beneath the crosshair shows what remains in a "
                         + "Villager, Village Guard, or mortal player whenever a vampire holds them in view."
                         + "\n\nThe curse also works without spending Blood Power. In human form, level 1 "
                         + "doubles ordinary attack damage, level 4 triples it, and level 7 quadruples it. From "

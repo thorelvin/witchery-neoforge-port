@@ -37,10 +37,19 @@ write new notes.
   parity status. Use it for feature state changes, not session journaling.
 - [status/VILLAGE_CERTIFICATION.md](status/VILLAGE_CERTIFICATION.md) - exact
   five-biome fresh-world/restart village gate and evidence ledger.
+- [status/WILD_STRUCTURE_CERTIFICATION.md](status/WILD_STRUCTURE_CERTIFICATION.md) -
+  exact six-structure fresh-world, traversal, relocation, restart, provenance,
+  and client-evidence ledger.
+- [status/WITCH_WELL_CERTIFICATION.md](status/WITCH_WELL_CERTIFICATION.md) -
+  additive well provenance, exact designer-NBT contracts, fixed-seed natural
+  generation, cursed triggers, traversal, restart, and client-evidence ledger.
 - [status/NEXT_TASKS.md](status/NEXT_TASKS.md) - backlog and slice candidates.
   Keep it focused on future work.
 - [status/COMMIT_AUDIT.md](status/COMMIT_AUDIT.md) - compact recent-commit
   audit for the active branch when a handoff needs commit-level context.
+- [roadmap/FEATURE_INTEGRATION_REVIEW_ACTIONS.md](roadmap/FEATURE_INTEGRATION_REVIEW_ACTIONS.md) -
+  verified integration corrections, bounded expansion order, and the mandatory
+  original-client Spirit World atmosphere comparison.
 
 ## Player-Facing Docs
 
@@ -85,7 +94,8 @@ documented mirror process. Do not copy every dev-note into them.
 - [reference/OBSCURE_MECHANICS.md](reference/OBSCURE_MECHANICS.md) - source
   mechanics worth preserving.
 - [reference/SPIRIT_WORLD_ATMOSPHERE.md](reference/SPIRIT_WORLD_ATMOSPHERE.md)
-  - Spirit World atmosphere notes.
+  - Spirit World source atmosphere contract, matched captures, fixed-seed chunk
+    evidence, lifecycle certificate, and remaining presentation QA.
 - [experiments/LLM_NPCS.md](experiments/LLM_NPCS.md) - local AI NPC setup,
   scope, config, model notes, and playtest boundaries.
 - [experiments/LLM_NPC_PERSONA_AND_KNOWLEDGE_EXPANSION_PLAN_v3.md](experiments/LLM_NPC_PERSONA_AND_KNOWLEDGE_EXPANSION_PLAN_v3.md)

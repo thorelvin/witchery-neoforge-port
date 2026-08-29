@@ -10,6 +10,7 @@
     "com.emoniph.witchery.resources.WitchCauldronModelTest",
     "com.emoniph.witchery.resources.WitcheryResourceIntegrityTest",
     "com.emoniph.witchery.item.BrewStorageInteractionParityTest",
+    "com.emoniph.witchery.item.RedThreadResourceTest",
     "com.emoniph.witchery.ritual.OtherwhereHearthResourceTest",
     "com.emoniph.witchery.spiritworld.SpiritWorldResourceParityTest",
     "com.emoniph.witchery.world.MirrorWorldResourceParityTest",
@@ -20,6 +21,7 @@
     "com.emoniph.witchery.worldgen.NbtStructureTemplateTest",
     "com.emoniph.witchery.worldgen.StrawManTemplateTest",
     "com.emoniph.witchery.worldgen.StrawManWorldgenConfigTest",
+    "com.emoniph.witchery.worldgen.WildStructureRegistryTest",
     "com.emoniph.witchery.worldgen.VillageStructureContractTest"
   ],
   "game_tests": [
@@ -64,6 +66,26 @@
       "timeout_seconds": 120
     },
     {
+      "id": "witchery:creaking_familiar_modes",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:coven_specialty_contributions",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:vanishing_hut_bargain_cycle",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:witch_well_cursed_ladder_triggers",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
       "id": "witchery:patron_statue_lifecycle",
       "lane": "ci",
       "timeout_seconds": 120
@@ -89,6 +111,16 @@
       "timeout_seconds": 120
     },
     {
+      "id": "witchery:ritual_independent_escrows",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:ritual_escrow_lifecycle",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
       "id": "witchery:persistent_expanding_rites",
       "lane": "ci",
       "timeout_seconds": 160
@@ -99,12 +131,32 @@
       "timeout_seconds": 160
     },
     {
+      "id": "witchery:blight_heart_containment",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:blight_heart_lifecycle",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:red_thread_anchored_sinking",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
       "id": "witchery:persistent_ritual_queue",
       "lane": "ci",
       "timeout_seconds": 120
     },
     {
       "id": "witchery:vampire_power_activation",
+      "lane": "ci",
+      "timeout_seconds": 120
+    },
+    {
+      "id": "witchery:infusion_passive_parity",
       "lane": "ci",
       "timeout_seconds": 120
     },
@@ -174,6 +226,16 @@
       "timeout_seconds": 300
     },
     {
+      "id": "witchery:otherwhere_hearth_coven_ownership",
+      "lane": "ci",
+      "timeout_seconds": 300
+    },
+    {
+      "id": "witchery:otherwhere_hearth_seer_preflight",
+      "lane": "ci",
+      "timeout_seconds": 300
+    },
+    {
       "id": "witchery:torment_structure_and_refill",
       "lane": "ci",
       "timeout_seconds": 300
@@ -194,10 +256,26 @@
       "timeout_seconds": 300
     },
     {
+      "id": "witchery:spirit_world_lifecycle",
+      "lane": "ci",
+      "timeout_seconds": 300
+    },
+    {
+      "id": "witchery:spirit_world_fresh_chunks",
+      "lane": "ci",
+      "timeout_seconds": 300
+    },
+    {
       "id": "witchery:otherwhere_hearth_recovery_resume",
       "lane": "manual_restart",
       "timeout_seconds": 300,
       "reason": "Requires a deliberately interrupted round-trip process with a persisted recovery journal."
+    },
+    {
+      "id": "witchery:blight_heart_restart_resume",
+      "lane": "manual_restart",
+      "timeout_seconds": 180,
+      "reason": "Requires running stage one, stopping cleanly, restarting the same world, and running stage two against the persisted partial mutation ledger."
     }
   ],
   "save_reload": {
@@ -324,5 +402,28 @@
       {"biome": "taiga", "structure": "minecraft:village_taiga"},
       {"biome": "snowy", "structure": "minecraft:village_snowy"}
     ]
+  },
+  "wild_structure_certification": {
+    "force_radius_blocks": 64,
+    "timeout_seconds": 180,
+    "relocation_timeout_seconds": 120,
+    "structures": [
+      {"name": "coven_circle", "structure": "witchery:coven_circle", "dimension": "minecraft:overworld"},
+      {"name": "straw_man", "structure": "witchery:straw_man", "dimension": "minecraft:overworld"},
+      {"name": "hobgoblin_hut", "structure": "witchery:hobgoblin_hut", "dimension": "minecraft:overworld"},
+      {"name": "witch_hut", "structure": "witchery:witch_hut", "dimension": "minecraft:overworld"},
+      {"name": "warped_coven", "structure": "witchery:warped_coven", "dimension": "minecraft:the_nether"},
+      {"name": "vanishing_hut", "structure": "witchery:vanishing_hut", "dimension": "minecraft:overworld"}
+    ]
+  },
+  "witch_well_certification": {
+    "force_radius_blocks": 64,
+    "timeout_seconds": 180,
+    "max_candidate_wells": 64,
+    "level_seed": -119995921,
+    "spacing": 40,
+    "separation": 12,
+    "salt": 912347651,
+    "variants": ["regular", "small", "cave"]
   }
 }

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,6 +22,8 @@ class NbtStructureTemplateTest {
             "data/witchery/structure/hobgoblin_hut/hobgobhut.nbt";
     private static final String WARPED_COVEN_TEMPLATE =
             "data/witchery/structure/warped_coven/warpedcoven.nbt";
+    private static final String VANISHING_HUT_TEMPLATE =
+            "data/witchery/structure/vanishing_hut/vanishing_hut.nbt";
     private static final String WITCH_WELL_TEMPLATE =
             "data/witchery/structure/witch_well/well.nbt";
     private static final String WITCH_WELL_SMALL_TEMPLATE =
@@ -43,6 +47,7 @@ class NbtStructureTemplateTest {
     void packagedTemplatesStayVanillaStructureBlockReadable() throws IOException {
         assertVanillaStructureTemplate(HOBGOBLIN_HUT_TEMPLATE);
         assertVanillaStructureTemplate(WARPED_COVEN_TEMPLATE);
+        assertVanillaStructureTemplate(VANISHING_HUT_TEMPLATE);
         assertVanillaStructureTemplate(WITCH_WELL_TEMPLATE);
         assertVanillaStructureTemplate(WITCH_WELL_SMALL_TEMPLATE);
         assertVanillaStructureTemplate(WITCH_WELL_CAVE_TEMPLATE);
@@ -70,6 +75,19 @@ class NbtStructureTemplateTest {
         assertFalse(paletteContainsBlockNamePart(template, "mirror"));
         assertFalse(paletteContainsBlockNamePart(template, "snow"));
         assertFalse(blockNbtContainsId(template, "witchery:mirror"));
+    }
+
+    @Test
+    void vanishingHutTemplateKeepsItsExactEditableShellAndInterior() throws IOException {
+        CompoundTag template = readTemplate(VANISHING_HUT_TEMPLATE);
+
+        assertSize(template, 7, 10, 9);
+        assertEquals(630, list(template, "blocks").size());
+        assertTrue(paletteContainsBlock(template, "minecraft:oxidized_copper_chest"));
+        assertTrue(blockNbtContainsId(template, "minecraft:chest"));
+        assertTrue(blockNbtContainsId(template, "witchery:witch_cauldron"));
+        assertFalse(paletteContainsBlock(template, "witchery:vanishing_hut_anchor"),
+                "the buried runtime anchor belongs to code, not the editable NBT");
     }
 
     @Test
@@ -103,10 +121,8 @@ class NbtStructureTemplateTest {
         CompoundTag well = readTemplate(WITCH_WELL_TEMPLATE);
         CompoundTag cave = readTemplate(WITCH_WELL_CAVE_TEMPLATE);
 
-        assertSize(well, 15, 15, 14);
-        assertSize(cave, 30, 20, 30);
-        assertEquals(138, list(well, "blocks").size());
-        assertEquals(496, list(cave, "blocks").size());
+        assertWitchWellContract(well, WitchWellPiece.Variant.REGULAR);
+        assertWitchWellContract(cave, WitchWellPiece.Variant.CAVE);
 
         assertFalse(paletteContainsBlock(well, "minecraft:structure_block"));
         assertFalse(paletteContainsBlock(cave, "minecraft:structure_block"));
@@ -123,19 +139,23 @@ class NbtStructureTemplateTest {
         assertTrue(blockNbtContainsId(cave, "minecraft:chest"));
         assertTrue(blockNbtContainsId(cave, "witchery:brazier"));
         assertFalse(blockNbtContainsKey(cave, "WITCPlacer"));
+        assertEquals(3, blockNbtCount(well));
+        assertEquals(19, blockNbtCount(cave));
     }
 
     @Test
-    void smallWitchWellKeepsEditableSurfaceMarkersButNoDebugBlocks() throws IOException {
+    void smallWitchWellKeepsOnlyAuthoredGeometryAndNoCapturedMarkers() throws IOException {
         CompoundTag small = readTemplate(WITCH_WELL_SMALL_TEMPLATE);
 
-        assertSize(small, 10, 8, 10);
-        assertEquals(800, list(small, "blocks").size());
-        assertTrue(paletteContainsBlock(small, "minecraft:grass_block"));
-        assertTrue(paletteContainsBlock(small, "minecraft:dirt"));
+        assertWitchWellContract(small, WitchWellPiece.Variant.SMALL);
+        assertEquals(42, list(small, "blocks").size());
+        assertFalse(paletteContainsBlock(small, "minecraft:air"));
+        assertFalse(paletteContainsBlock(small, "minecraft:grass_block"));
+        assertFalse(paletteContainsBlock(small, "minecraft:dirt"));
         assertTrue(paletteContainsBlock(small, "minecraft:cauldron"));
         assertFalse(paletteContainsBlock(small, "minecraft:structure_block"));
         assertFalse(paletteContainsBlockNamePart(small, "snow"));
+        assertEquals(0, blockNbtCount(small));
     }
 
     @Test
@@ -191,6 +211,9 @@ class NbtStructureTemplateTest {
         assertTrue(small.surfaceColumn(0, 4));
         assertTrue(small.surfaceColumn(4, 4));
         assertTrue(small.surfaceColumn(5, 5));
+        assertFalse(small.surfaceColumn(1, 2));
+        assertFalse(small.surfaceColumn(7, 2));
+        assertFalse(small.surfaceColumn(7, 8));
         assertFalse(small.surfaceColumn(4, 5));
         assertFalse(small.surfaceColumn(9, 9));
         assertTrue(small.heightSampleColumn(3, 5));
@@ -198,12 +221,29 @@ class NbtStructureTemplateTest {
         assertTrue(small.heightSampleColumn(5, 5));
         assertFalse(small.heightSampleColumn(0, 4));
         assertFalse(small.heightSampleColumn(4, 5));
+        assertTrue(cave.heightSampleColumn(14, 10));
+        assertFalse(cave.heightSampleColumn(7, 3));
+        assertEquals(1, small.maxFootprintHeightVariance());
+        assertEquals(3, regular.maxFootprintHeightVariance());
+        assertEquals(4, cave.maxFootprintHeightVariance());
+        int smallSurfaceCells = 0;
+        int smallHeightSamples = 0;
+        for (int x = 0; x <= 8; x++) {
+            for (int z = 1; z <= 9; z++) {
+                if (small.surfaceColumn(x, z)) smallSurfaceCells++;
+                if (small.heightSampleColumn(x, z)) smallHeightSamples++;
+            }
+        }
+        assertEquals(55, smallSurfaceCells);
+        assertEquals(6, smallHeightSamples);
         assertTrue(cave.clearsCaveBackfillAt(14, 10, 10));
         assertTrue(cave.clearsCaveBackfillAt(12, 8, 8));
         assertTrue(cave.clearsCaveBackfillAt(16, 10, 12));
         assertTrue(cave.clearsCaveBackfillAt(14, 13, 10));
         assertTrue(cave.clearsCaveBackfillAt(22, 10, 15));
         assertTrue(cave.clearsCaveBackfillAt(25, 10, 10));
+        assertTrue(cave.clearsCaveBackfillAt(14, 7, 14));
+        assertTrue(cave.clearsCaveBackfillAt(14, 9, 14));
         assertFalse(cave.clearsCaveBackfillAt(16, 11, 10));
         assertFalse(cave.clearsCaveBackfillAt(11, 8, 10));
         assertFalse(cave.clearsCaveBackfillAt(14, 12, 10));
@@ -313,6 +353,33 @@ class NbtStructureTemplateTest {
             }
         }
         return false;
+    }
+
+    private static void assertWitchWellContract(CompoundTag template, WitchWellPiece.Variant variant) {
+        WitchWellSourceContract.Contract contract = WitchWellSourceContract.forVariant(variant);
+        assertSize(template, contract.sizeX(), contract.sizeY(), contract.sizeZ());
+        assertEquals(contract.cleanedBlockCount(), list(template, "blocks").size());
+
+        ListTag palette = list(template, "palette");
+        Map<String, Integer> counts = new HashMap<>();
+        for (int i = 0; i < list(template, "blocks").size(); i++) {
+            CompoundTag block = compoundAt(list(template, "blocks"), i);
+            String name = string(compoundAt(palette, integer(block, "state")), "Name");
+            counts.merge(name, 1, Integer::sum);
+        }
+        assertEquals(contract.blockCounts(), counts,
+                variant.serializedName() + " must retain the exact authored non-terrain signature");
+    }
+
+    private static int blockNbtCount(CompoundTag template) {
+        int count = 0;
+        ListTag blocks = list(template, "blocks");
+        for (int i = 0; i < blocks.size(); i++) {
+            if (compoundAt(blocks, i).contains("nbt")) {
+                count++;
+            }
+        }
+        return count;
     }
 
     private static ListTag list(CompoundTag tag, String key) {

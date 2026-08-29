@@ -72,6 +72,20 @@
       "rotate": false,
       "scale": 1.0,
       "text": "[#](53341a)Patient, damp, and helpful to a brewer. It gathers what falls, coaxes the odd extra bottle from the kettle, and strengthens brews you drink yourself.[#]()"
+    },
+    {
+      "type": "modonomicon:entity",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "default_rotation": 180.0,
+      "entity_id": "minecraft:creaking",
+      "name": "The Creaking",
+      "offset": -0.2,
+      "rotate": false,
+      "scale": 0.7,
+      "text": "[#](53341a)Bind a wild Creaking in a Medium ritual circle through the Rite of the Creakening. While following it recovers to your side, offers restrained defence, and freezes beneath a stranger's gaze. Use it to sink its roots where it stands: only then will it warn of intruders, turn nearby monsters away, and slowly shed Resin Clumps while unwatched. Use it again to call it from the earth; sneak-use a rooted guardian to dismiss it. The Rite of Calling will not uproot a chosen watch.[#]()"
     }
   ],
   "show_when_any_parent_unlocked": false,

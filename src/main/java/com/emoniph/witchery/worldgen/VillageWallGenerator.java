@@ -32,22 +32,25 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Generates adaptive fortress walls around a vanilla village.
- * Source parity: WitcheryWalls 1.12.2 VillageWallGenerator, ported to 1.21.11.
+ * Visible block template: Witchery 1.7.10 WorldHandlerVillageDistrict, adapted to 1.21.11.
+ * The modern contour, biome palette, terrain, road, and chunk-scheduling systems remain.
  *
  * Algorithm:
  *  1. Collect all village piece bounding boxes and find extents.
  *  2. Build a 2D occupancy grid (1 cell = 1 world block).
- *  3. Fill narrow gaps between structures (range-7 pass).
+ *  3. Fill narrow gaps between structures (range-4 pass).
  *  4. Identify perimeter cells (empty, adjacent to interior).
  *  5. Detect gate positions by scanning for DIRT_PATH blocks.
- *  6. Place cobblestone walls 8 high with merlon caps on perimeter cells.
- *  7. Carve 5-wide gate arches at gate positions.
- *  8. Spawn guards on wall-top every ~150 usable wall-walk blocks.
+ *  6. Stamp the source wall's 3-wide curtain and recessed 5-wide crown along the perimeter.
+ *  7. Carve the source wall's integrated 3-wide gate arches at road exits.
+ *  8. Spawn guards on the recessed patrol deck every ~150 usable wall-walk blocks.
  */
 public final class VillageWallGenerator {
     public record GenerationResult(boolean generated, int gateCandidates, int gates) {
@@ -58,12 +61,78 @@ public final class VillageWallGenerator {
 
     private record GateDetection(List<GateDef> gates, int candidates) {}
 
-    private record WallColumnResult(boolean placed, BlockPos guardPos) {
-        private static final WallColumnResult SKIPPED = new WallColumnResult(false, null);
+    enum SourceWallPart {
+        MASONRY,
+        ARCH_WALL,
+        STAIR
     }
 
-    private static final int WALL_HEIGHT   = 6;   // blocks above surface
-    private static final int GATEHOUSE_CLEAR_ABOVE_WALL = 10;
+    record SourceWallBlock(BlockPos offset, SourceWallPart part, Direction facing, Half half, int priority) {}
+
+    private record PlannedWallBlock(BlockState state, boolean force, int priority) {}
+    private record HorizontalPos(int x, int z) {}
+
+    private static final class WallBuildPlan {
+        private final Map<BlockPos, PlannedWallBlock> blocks = new LinkedHashMap<>();
+        private final Map<HorizontalPos, Integer> foundationStarts = new LinkedHashMap<>();
+        private int minX = Integer.MAX_VALUE;
+        private int minY = Integer.MAX_VALUE;
+        private int minZ = Integer.MAX_VALUE;
+        private int maxX = Integer.MIN_VALUE;
+        private int maxY = Integer.MIN_VALUE;
+        private int maxZ = Integer.MIN_VALUE;
+
+        private void add(int x, int y, int z, BlockState state, boolean force, int priority) {
+            BlockPos pos = new BlockPos(x, y, z);
+            PlannedWallBlock next = new PlannedWallBlock(state, force, priority);
+            blocks.merge(pos, next, (current, candidate) ->
+                    candidate.priority() > current.priority() ? candidate : current);
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            minZ = Math.min(minZ, z);
+            maxX = Math.max(maxX, x);
+            maxY = Math.max(maxY, y);
+            maxZ = Math.max(maxZ, z);
+        }
+
+        private void addFoundationColumn(int x, int startY, int z) {
+            foundationStarts.merge(new HorizontalPos(x, z), startY, Math::min);
+        }
+
+        private boolean intersects(AABB box) {
+            int minX = (int) Math.floor(box.minX);
+            int minY = (int) Math.floor(box.minY);
+            int minZ = (int) Math.floor(box.minZ);
+            int maxX = (int) Math.ceil(box.maxX) - 1;
+            int maxY = (int) Math.ceil(box.maxY) - 1;
+            int maxZ = (int) Math.ceil(box.maxZ) - 1;
+            for (int x = minX; x <= maxX; x++) {
+                for (int y = minY; y <= maxY; y++) {
+                    for (int z = minZ; z <= maxZ; z++) {
+                        if (blocks.containsKey(new BlockPos(x, y, z))) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private void removeIntersecting(AABB box) {
+            blocks.keySet().removeIf(pos -> blockIntersects(pos, box));
+        }
+
+        private AABB bounds() {
+            return blocks.isEmpty() ? null : new AABB(minX, minY, minZ, maxX + 1.0D, maxY + 1.0D, maxZ + 1.0D);
+        }
+
+        private static boolean blockIntersects(BlockPos pos, AABB box) {
+            return pos.getX() < box.maxX && pos.getX() + 1.0D > box.minX
+                    && pos.getY() < box.maxY && pos.getY() + 1.0D > box.minY
+                    && pos.getZ() < box.maxZ && pos.getZ() + 1.0D > box.minZ;
+        }
+    }
+
+    private static final int WALL_HEIGHT   = 8;   // source curtain courses above surface
+    private static final int GATE_CLEAR_ABOVE_WALL = 4;
     private static final int MIN_BUILD_Y   = -64;
     private static final int MAX_BUILD_Y   = 319;
     // PADDING must exceed SMOOTH + BLOCK (see step 3c) so the coarse-hull blocks can never
@@ -75,15 +144,23 @@ public final class VillageWallGenerator {
     private static final int GUARD_SPACING = 150; // usable wall-walk blocks between guard spawns
     private static final int GATE_FLAT_FACE_HALF_WIDTH = 1; // path must hit a 3-wide flat wall face
     private static final int GATE_PATH_OUTWARD_MAX = 10;
-    private static final int GATE_PATH_INWARD_MAX = 15;
-    private static final int GATEHOUSE_HALF_WIDTH = 3;
+    private static final int GATE_FLAT_APRON_DEPTH = 2;
+    private static final int SOURCE_GATE_HALF_WIDTH = 2;
+    private static final int SOURCE_GATE_DEPTH = 1;
+    private static final int SOURCE_GATE_OPENING_HALF_WIDTH = 1;
+    private static final int SOURCE_GATE_ARCH_DROP = 3;
+    private static final int PLAN_PRIORITY_STAIR = 10;
+    private static final int PLAN_PRIORITY_RAIL = 20;
+    private static final int PLAN_PRIORITY_CORNER = 30;
+    private static final int PLAN_PRIORITY_BODY = 40;
     private static final int TREE_CLEAR_MAX_BLOCKS = 384;
     private static final int TREE_CLEAR_SCAN_Y_ABOVE = 24;
     private static final int TREE_CLEAR_SCAN_Y_BELOW = 2;
-    private static final int TREE_CLEAR_WALL_TOUCH_RADIUS = 1;
+    private static final int TREE_CLEAR_WALL_TOUCH_RADIUS = 2;
     private static final int TREE_CLEAR_PATH_TOUCH_RADIUS = 1;
     private static final int TREE_CLEAR_TREE_RADIUS = 7;
     private static final int WALL_ENTITY_RELOCATION_RADIUS = 12;
+    private static final int WALL_ENTITY_RELOCATION_VERTICAL_LIMIT = 4;
     // Morphological dilation applied to the village footprint before perimeter detection.
     // Expands INTERIOR outward by this many cells, absorbing small concave recesses so
     // the wall traces a smoother, more regularised contour (see reference: contour
@@ -290,15 +367,12 @@ public final class VillageWallGenerator {
         if (villageType == null) {
             villageType = VillageBuildingMaterials.typeForSample(level, cx, cz);
         }
-        BlockState wallBlock   = wallMaterial(villageType);
-        BlockState brickBlock  = brickMaterial(villageType);
-        BlockState merlonBlock = merlonMaterial(villageType);
-        BlockState stairBlock  = stairMaterial(villageType);
+        BlockState wallBlock  = wallMaterial(villageType);
+        BlockState archBlock  = archMaterial(villageType);
+        BlockState stairBlock = stairMaterial(villageType);
 
-        // 7b. Detect gates as independent definitions (built after the wall, overriding it).
-        //     No GATE cells are marked in the grid — the wall ring is solid and each gatehouse
-        //     overrides whatever it covers. Road/path material is biome-aware (desert villages
-        //     pave with smooth sandstone, not dirt path).
+        // 7b. Detect gates independently. The grid remains a solid ring; integrated source
+        //     arches are carved after the curtain. Desert village roads remain sandstone.
         boolean desert = villageType == VillageBuildingMaterials.VillageType.DESERT;
         BlockState pathBlock = desert ? Blocks.SMOOTH_SANDSTONE.defaultBlockState()
                                       : Blocks.DIRT_PATH.defaultBlockState();
@@ -346,8 +420,9 @@ public final class VillageWallGenerator {
             }
         }
 
-        // 9. Place wall columns (gates are built afterwards, overriding the wall).
-        int guardCounter = 0;
+        // 9. Build and apply the deduplicated source-style curtain.
+        WallBuildPlan wallPlan = new WallBuildPlan();
+        List<BlockPos> guardCandidates = new ArrayList<>();
         for (int x = 0; x < w; x++) {
             for (int z = 0; z < d; z++) {
                 if (grid[x][z] != WALL) continue;
@@ -364,18 +439,32 @@ public final class VillageWallGenerator {
                 if (z > 0   && grid[x][z-1] == WALL && heights[x][z-1] > 0) floorTo = Math.min(floorTo, heights[x][z-1]);
                 if (z < d-1 && grid[x][z+1] == WALL && heights[x][z+1] > 0) floorTo = Math.min(floorTo, heights[x][z+1]);
 
-                WallColumnResult column = placeWallColumn(level, wx, sy, wz, wallBlock, brickBlock,
-                        merlonBlock, stairBlock, floorTo, grid, heights, x, z, w, d);
-                if (spawnGuards && column.placed() && column.guardPos() != null && ++guardCounter >= GUARD_SPACING) {
-                    spawnGuard(level, column.guardPos());
+                addSourceWallStamp(wallPlan, wx, sy, wz, floorTo, wallBlock, stairBlock,
+                        grid, x, z, w, d);
+                guardCandidates.add(new BlockPos(wx, sy + WALL_HEIGHT, wz));
+            }
+        }
+
+        relocatePlanBlockers(level, wallPlan, "wall");
+        applyWallPlan(level, wallPlan, wallBlock);
+
+        // 10. Carve road-aligned source arches through the completed curtain.
+        for (GateDef g : gates) buildSourceGate(level, g, wallBlock, archBlock, stairBlock,
+                pathBlock, desert, spawnGuards);
+
+        if (spawnGuards) {
+            int guardCounter = 0;
+            for (BlockPos candidate : guardCandidates) {
+                if (isInsideGateCrown(candidate, gates)) continue;
+                if (!level.getBlockState(candidate.below()).isSolid() || !isSpawnClear(level, candidate)) continue;
+                if (++guardCounter >= GUARD_SPACING) {
+                    spawnGuard(level, candidate);
                     guardCounter = 0;
                 }
             }
         }
-
-        // 10. Build gatehouses — independent locked 7×3 models that override the wall.
-        for (GateDef g : gates) buildGatehouse(level, g, brickBlock, merlonBlock, pathBlock, desert, spawnGuards);
-        rescueCollidingLivingEntities(level, minX - PADDING, minZ - PADDING, maxX + PADDING, maxZ + PADDING);
+        rescueCollidingLivingEntities(level, wallPlan,
+                minX - PADDING, minZ - PADDING, maxX + PADDING, maxZ + PADDING);
 
         WitcheryMod.LOGGER.info("[VillageWalls] Generated walls for village at {},{} ({}x{}), {} gate(s).",
                 cx, cz, w, d, gates.size());
@@ -545,13 +634,14 @@ public final class VillageWallGenerator {
 
     // ── Gate detection ─────────────────────────────────────────────────────────
 
-    /** A gatehouse to build: world centre on the wall line, base height, inward + along-wall axes. */
+    /** An integrated gate: world center, threshold height, inward axis, and along-wall axis. */
     private record GateDef(int centerWX, int centerWZ, int refY,
-                           int inDX, int inDZ, int axisDX, int axisDZ) {}
+                           int inDX, int inDZ, int axisDX, int axisDZ,
+                           int roadDepth) {}
 
     /**
      * Finds where village streets exit the wall and returns a GateDef for the best few.
-     * No grid cells are marked — gatehouses are built afterwards and override the wall.
+     * No grid cells are marked; source arches are carved through the completed wall plan.
      *
      * Phase 1: DIRT_PATH surface cells = road (no gravel/dirt → no farm/deposit false hits).
      * Phase 2: candidates = the END of a long straight street, traced to the wall cell it
@@ -625,7 +715,8 @@ public final class VillageWallGenerator {
             if (refY < 0) refY = wallBaseHeight(level, cwx, cwz);
 
             int axisDX = (ddx != 0) ? 0 : 1, axisDZ = (ddx != 0) ? 1 : 0; // along the wall
-            gates.add(new GateDef(cwx, cwz, refY, -ddx, -ddz, axisDX, axisDZ));
+            int roadDepth = gateRoadDepth(nx, nz, tipx, tipz);
+            gates.add(new GateDef(cwx, cwz, refY, -ddx, -ddz, axisDX, axisDZ, roadDepth));
             chosen.add(c);
             if (gates.size() >= MAX_GATES) break;
         }
@@ -727,11 +818,19 @@ public final class VillageWallGenerator {
         return count;
     }
 
+    static int gateRoadDepth(int wallX, int wallZ, int roadTipX, int roadTipZ) {
+        return Math.abs(wallX - roadTipX) + Math.abs(wallZ - roadTipZ);
+    }
+
+    static int inwardGateGradeLength(int roadDepth) {
+        return Math.max(0, roadDepth - GATE_FLAT_APRON_DEPTH);
+    }
+
     // ── Wall placement ─────────────────────────────────────────────────────────
 
     /**
      * A road may only create a gate where it reaches a straight wall face head-on.
-     * This rejects corner and parallel-wall hits that would put the gatehouse sideways
+     * This rejects corner and parallel-wall hits that would put the arch sideways
      * against the nearby path instead of opening through the curtain.
      */
     private static boolean isFlatGateFace(byte[][] grid, int x, int z,
@@ -762,199 +861,209 @@ public final class VillageWallGenerator {
         return x >= 0 && z >= 0 && x < w && z < d;
     }
 
-    /**
-     * One wall column:
-     *  - Stone brick base (2 courses)
-     *  - Stone brick main shaft
-     *  - Stone brick cap
-     *  - 1-high stone brick wall merlon every 2 blocks (classic castle cadence)
-     *  - Corner bonus: +2 height + 2-high merlon (tower effect)
-     *
-     * The curtain is extended down to {@code floorTo} (the lowest along-wall neighbour base)
-     * so the wall stays connected across steps over cliffs; stone fills the foundation below.
-     */
-    private static WallColumnResult placeWallColumn(ServerLevel level, int wx, int sy, int wz,
-                                                     BlockState wall, BlockState brick, BlockState merlon, BlockState stair,
-                                                     int floorTo, byte[][] grid, short[][] heights,
-                                                     int gx, int gz, int w, int d) {
-        int top = sy + WALL_HEIGHT;
-        if (!moveLivingEntitiesOutOfWallColumn(level, wx, Math.min(sy, floorTo), wz, top + 1,
-                grid, gx, gz, w, d))
-            return WallColumnResult.SKIPPED;
-
-        // Base: 2 courses of stone brick (stone if submerged)
-        placeWallMat(level, wx, sy,     wz, brick);
-        placeWallMat(level, wx, sy + 1, wz, brick);
-        // Main shaft (stone if submerged)
-        for (int dy = 2; dy < WALL_HEIGHT - 1; dy++)
-            placeWallMat(level, wx, sy + dy, wz, wall);
-        // Cap course: stone brick
-        setBlock(level, wx, top - 1, wz, brick);
-
-        // Merlons: 1-high stone brick wall every 2 blocks (period=2, classic castle).
-        int phase = Math.floorMod(wx + wz, 2);
-        if (phase == 0) {
-            setBlock(level, wx, top, wz, merlon);
-        }
-
-        BlockPos guardPos = null;
-        if (canPlaceRampartDetails(grid, heights, gx, gz, sy, w, d)) {
-            guardPos = placeRampartDetails(level, wx, top, wz, brick, stair,
-                    grid, heights, gx, gz, sy, w, d);
-        }
-
-        // Extend the curtain down to the lowest neighbour so cliff steps stay connected
-        // (stone wherever submerged, via placeWallMat).
-        for (int y = sy - 1; y >= floorTo; y--) placeWallMat(level, wx, y, wz, wall);
-        fillDown(level, wx, Math.min(sy, floorTo) - 1, wz, brick);
-        return new WallColumnResult(true, guardPos);
-    }
-
-    /**
-     * Witchery Walls' old curtain used block lips and stair caps on exposed top faces.
-     * Keep the same visual language without widening the whole wall shaft: outer faces
-     * get a stair-capped rampart lip, while the village side gets a narrow wall-walk ledge.
-     */
-    private static BlockPos placeRampartDetails(ServerLevel level, int wx, int top, int wz,
-                                                 BlockState brick, BlockState stair,
-                                                 byte[][] grid, short[][] heights,
-                                                 int gx, int gz, int sy, int w, int d) {
-        boolean northOutside = isGridCell(grid, gx, gz - 1, w, d, EMPTY);
-        boolean southOutside = isGridCell(grid, gx, gz + 1, w, d, EMPTY);
-        boolean eastOutside = isGridCell(grid, gx + 1, gz, w, d, EMPTY);
-        boolean westOutside = isGridCell(grid, gx - 1, gz, w, d, EMPTY);
-
-        BlockPos guardPos = null;
-        if (isGridCell(grid, gx, gz - 1, w, d, INTERIOR)
-                && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.NORTH, INTERIOR))
-            guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx, top, wz - 1, brick));
-        if (isGridCell(grid, gx, gz + 1, w, d, INTERIOR)
-                && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.SOUTH, INTERIOR))
-            guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx, top, wz + 1, brick));
-        if (isGridCell(grid, gx + 1, gz, w, d, INTERIOR)
-                && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.EAST, INTERIOR))
-            guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx + 1, top, wz, brick));
-        if (isGridCell(grid, gx - 1, gz, w, d, INTERIOR)
-                && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.WEST, INTERIOR))
-            guardPos = firstGuardPos(guardPos, placeWallWalk(level, wx - 1, top, wz, brick));
-
-        guardPos = placeCornerWallWalks(level, wx, top, wz, brick,
-                grid, heights, gx, gz, sy, w, d, guardPos);
-
-        if (northOutside && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.NORTH, EMPTY))
-            placeRampartFace(level, wx, top, wz, brick, stair, Direction.NORTH);
-        if (southOutside && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.SOUTH, EMPTY))
-            placeRampartFace(level, wx, top, wz, brick, stair, Direction.SOUTH);
-        if (eastOutside && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.EAST, EMPTY))
-            placeRampartFace(level, wx, top, wz, brick, stair, Direction.EAST);
-        if (westOutside && hasMatchingSideRampartNeighbor(grid, heights, gx, gz, sy, w, d, Direction.WEST, EMPTY))
-            placeRampartFace(level, wx, top, wz, brick, stair, Direction.WEST);
-
-        placeOuterCornerRamparts(level, wx, top, wz, brick, stair, grid, heights, gx, gz, sy, w, d);
-
-        return guardPos;
-    }
-
-    private static BlockPos placeCornerWallWalks(ServerLevel level, int wx, int top, int wz,
-                                                  BlockState brick, byte[][] grid, short[][] heights,
-                                                  int gx, int gz, int sy, int w, int d,
-                                                  BlockPos guardPos) {
-        for (int dx : new int[]{-1, 1}) {
-            for (int dz : new int[]{-1, 1}) {
-                if (!isGridCell(grid, gx + dx, gz + dz, w, d, INTERIOR)) continue;
-                if (!isRampartCompatibleNeighbor(grid, heights, gx + dx, gz, sy, w, d)) continue;
-                if (!isRampartCompatibleNeighbor(grid, heights, gx, gz + dz, sy, w, d)) continue;
-                guardPos = firstGuardPos(guardPos, placeCornerWallWalk(level, wx + dx, top, wz + dz, brick));
+    static List<SourceWallBlock> sourceWallTemplate(byte[][] grid, int gx, int gz, int w, int d) {
+        List<SourceWallBlock> blocks = new ArrayList<>();
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                for (int dy = 0; dy < WALL_HEIGHT; dy++) {
+                    blocks.add(new SourceWallBlock(new BlockPos(dx, dy, dz), SourceWallPart.MASONRY,
+                            null, Half.BOTTOM, PLAN_PRIORITY_BODY));
+                }
             }
         }
-        return guardPos;
+
+        boolean n = isWallCell(grid, gx, gz - 1, w, d);
+        boolean s = isWallCell(grid, gx, gz + 1, w, d);
+        boolean e = isWallCell(grid, gx + 1, gz, w, d);
+        boolean west = isWallCell(grid, gx - 1, gz, w, d);
+        boolean ne = isWallCell(grid, gx + 1, gz - 1, w, d);
+        boolean nw = isWallCell(grid, gx - 1, gz - 1, w, d);
+        boolean se = isWallCell(grid, gx + 1, gz + 1, w, d);
+        boolean sw = isWallCell(grid, gx - 1, gz + 1, w, d);
+
+        if (!ne && !n && !e) addSourceCorner(blocks, 1, -1);
+        if (!nw && !n && !west) addSourceCorner(blocks, -1, -1);
+        if (!se && !s && !e) addSourceCorner(blocks, 1, 1);
+        if (!sw && !s && !west) addSourceCorner(blocks, -1, 1);
+
+        if (!n && !ne && !nw) addSourceFace(blocks, 0, -2, Direction.EAST);
+        if (!e && !se && !ne) addSourceFace(blocks, 2, 0, Direction.SOUTH);
+        if (!s && !se && !sw) addSourceFace(blocks, 0, 2, Direction.EAST);
+        if (!west && !nw && !sw) addSourceFace(blocks, -2, 0, Direction.SOUTH);
+        return blocks;
     }
 
-    private static void placeRampartFace(ServerLevel level, int wx, int top, int wz,
-                                          BlockState brick, BlockState stair, Direction outward) {
-        int dx = outward.getStepX();
-        int dz = outward.getStepZ();
-        setBlock(level, wx + dx, top - 1, wz + dz, brick);
-        setBlock(level, wx + dx, top, wz + dz, stairFor(stair, outward));
+    static List<SourceWallBlock> sourceGateTemplate(int axisDX, int axisDZ, int inDX, int inDZ) {
+        List<SourceWallBlock> blocks = new ArrayList<>();
+        int walkY = WALL_HEIGHT;
+        int archY = walkY - SOURCE_GATE_ARCH_DROP;
+
+        for (int along : new int[]{-SOURCE_GATE_HALF_WIDTH, SOURCE_GATE_HALF_WIDTH}) {
+            for (int depth = -SOURCE_GATE_DEPTH; depth <= SOURCE_GATE_DEPTH; depth++) {
+                for (int y = 0; y <= archY; y++) {
+                    addOriented(blocks, along, depth, y, axisDX, axisDZ, inDX, inDZ,
+                            SourceWallPart.MASONRY, null, Half.BOTTOM, PLAN_PRIORITY_BODY);
+                }
+            }
+        }
+        for (int along = -SOURCE_GATE_HALF_WIDTH; along <= SOURCE_GATE_HALF_WIDTH; along++) {
+            for (int depth = -SOURCE_GATE_DEPTH; depth <= SOURCE_GATE_DEPTH; depth++) {
+                for (int y = archY + 1; y < walkY; y++) {
+                    addOriented(blocks, along, depth, y, axisDX, axisDZ, inDX, inDZ,
+                            SourceWallPart.MASONRY, null, Half.BOTTOM, PLAN_PRIORITY_BODY);
+                }
+            }
+        }
+
+        for (int along = -SOURCE_GATE_OPENING_HALF_WIDTH;
+             along <= SOURCE_GATE_OPENING_HALF_WIDTH; along++) {
+            addOriented(blocks, along, 0, archY, axisDX, axisDZ, inDX, inDZ,
+                    SourceWallPart.ARCH_WALL, null, Half.BOTTOM, PLAN_PRIORITY_CORNER);
+        }
+
+        Direction axisFacing = horizontalDirection(axisDX, axisDZ);
+        for (int along : new int[]{-SOURCE_GATE_OPENING_HALF_WIDTH, SOURCE_GATE_OPENING_HALF_WIDTH}) {
+            Direction facing = along < 0 ? axisFacing.getOpposite() : axisFacing;
+            for (int depth : new int[]{-SOURCE_GATE_DEPTH, SOURCE_GATE_DEPTH}) {
+                addOriented(blocks, along, depth, archY, axisDX, axisDZ, inDX, inDZ,
+                        SourceWallPart.STAIR, facing, Half.TOP, PLAN_PRIORITY_CORNER);
+            }
+        }
+
+        for (int along = -SOURCE_GATE_HALF_WIDTH; along <= SOURCE_GATE_HALF_WIDTH; along++) {
+            for (int depth : new int[]{-2, 2}) {
+                addOriented(blocks, along, depth, walkY, axisDX, axisDZ, inDX, inDZ,
+                        SourceWallPart.MASONRY, null, Half.BOTTOM, PLAN_PRIORITY_RAIL);
+                addOriented(blocks, along, depth, walkY + 1, axisDX, axisDZ, inDX, inDZ,
+                        SourceWallPart.STAIR, axisFacing, Half.BOTTOM, PLAN_PRIORITY_STAIR);
+            }
+        }
+        return blocks;
     }
 
-    private static void placeOuterCornerRamparts(ServerLevel level, int wx, int top, int wz,
-                                                  BlockState brick, BlockState stair,
-                                                  byte[][] grid, short[][] heights,
-                                                  int gx, int gz, int sy, int w, int d) {
-        for (int dx : new int[]{-1, 1}) {
-            for (int dz : new int[]{-1, 1}) {
-                if (!isGridCell(grid, gx + dx, gz, w, d, EMPTY)) continue;
-                if (!isGridCell(grid, gx, gz + dz, w, d, EMPTY)) continue;
-                if (!isRampartCompatibleNeighbor(grid, heights, gx - dx, gz, sy, w, d)) continue;
-                if (!isRampartCompatibleNeighbor(grid, heights, gx, gz - dz, sy, w, d)) continue;
-
-                setBlock(level, wx + dx, top - 1, wz + dz, brick);
-                setBlock(level, wx + dx, top, wz + dz, cornerStairFor(stair, dx, dz));
+    private static void addSourceWallStamp(WallBuildPlan plan, int wx, int sy, int wz, int floorTo,
+                                           BlockState masonry, BlockState stair,
+                                           byte[][] grid, int gx, int gz, int w, int d) {
+        for (SourceWallBlock block : sourceWallTemplate(grid, gx, gz, w, d)) {
+            BlockPos offset = block.offset();
+            plan.add(wx + offset.getX(), sy + offset.getY(), wz + offset.getZ(),
+                    sourceState(block, masonry, masonry, stair), false, block.priority());
+        }
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                for (int y = floorTo; y < sy; y++) {
+                    plan.add(wx + dx, y, wz + dz, masonry, false, PLAN_PRIORITY_BODY);
+                }
+                plan.addFoundationColumn(wx + dx, floorTo - 1, wz + dz);
             }
         }
     }
 
-    private static boolean isGridCell(byte[][] grid, int x, int z, int w, int d, byte value) {
-        return insideGrid(x, z, w, d) && grid[x][z] == value;
-    }
-
-    private static boolean canPlaceRampartDetails(byte[][] grid, short[][] heights,
-                                                   int gx, int gz, int sy, int w, int d) {
-        return !hasSteepRampartStep(grid, heights, gx, gz, sy, w, d)
-                && (isRampartCompatibleNeighbor(grid, heights, gx - 1, gz, sy, w, d)
-                || isRampartCompatibleNeighbor(grid, heights, gx + 1, gz, sy, w, d)
-                || isRampartCompatibleNeighbor(grid, heights, gx, gz - 1, sy, w, d)
-                || isRampartCompatibleNeighbor(grid, heights, gx, gz + 1, sy, w, d));
-    }
-
-    private static boolean hasMatchingSideRampartNeighbor(byte[][] grid, short[][] heights,
-                                                           int gx, int gz, int sy, int w, int d,
-                                                           Direction side, byte sideValue) {
-        if (side.getAxis() == Direction.Axis.Z) {
-            return isMatchingSideRampartNeighbor(grid, heights, gx - 1, gz, sy, w, d, side, sideValue)
-                    || isMatchingSideRampartNeighbor(grid, heights, gx + 1, gz, sy, w, d, side, sideValue);
+    private static void addSourceCorner(List<SourceWallBlock> blocks, int dx, int dz) {
+        int[][] offsets = {{dx * 2, dz * 2}, {dx * 2, dz}, {dx, dz * 2}};
+        for (int[] offset : offsets) {
+            blocks.add(new SourceWallBlock(new BlockPos(offset[0], WALL_HEIGHT, offset[1]),
+                    SourceWallPart.MASONRY, null, Half.BOTTOM, PLAN_PRIORITY_CORNER));
+            blocks.add(new SourceWallBlock(new BlockPos(offset[0], WALL_HEIGHT + 1, offset[1]),
+                    SourceWallPart.MASONRY, null, Half.BOTTOM, PLAN_PRIORITY_CORNER));
         }
-        return isMatchingSideRampartNeighbor(grid, heights, gx, gz - 1, sy, w, d, side, sideValue)
-                || isMatchingSideRampartNeighbor(grid, heights, gx, gz + 1, sy, w, d, side, sideValue);
     }
 
-    private static boolean isMatchingSideRampartNeighbor(byte[][] grid, short[][] heights,
-                                                          int gx, int gz, int sy, int w, int d,
-                                                          Direction side, byte sideValue) {
-        return isRampartCompatibleNeighbor(grid, heights, gx, gz, sy, w, d)
-                && isGridCell(grid, gx + side.getStepX(), gz + side.getStepZ(), w, d, sideValue);
+    private static void addSourceFace(List<SourceWallBlock> blocks, int dx, int dz, Direction facing) {
+        blocks.add(new SourceWallBlock(new BlockPos(dx, WALL_HEIGHT, dz), SourceWallPart.MASONRY,
+                null, Half.BOTTOM, PLAN_PRIORITY_RAIL));
+        blocks.add(new SourceWallBlock(new BlockPos(dx, WALL_HEIGHT + 1, dz), SourceWallPart.STAIR,
+                facing, Half.BOTTOM, PLAN_PRIORITY_STAIR));
     }
 
-    private static boolean isRampartCompatibleNeighbor(byte[][] grid, short[][] heights,
-                                                        int gx, int gz, int sy, int w, int d) {
-        if (!insideGrid(gx, gz, w, d) || grid[gx][gz] != WALL || heights[gx][gz] == 0) return false;
-        return Math.abs(heights[gx][gz] - sy) <= 1
-                && !hasSteepRampartStep(grid, heights, gx, gz, heights[gx][gz], w, d);
+    private static void addOriented(List<SourceWallBlock> blocks, int along, int depth, int y,
+                                    int axisDX, int axisDZ, int inDX, int inDZ,
+                                    SourceWallPart part, Direction facing, Half half, int priority) {
+        blocks.add(new SourceWallBlock(
+                new BlockPos(axisDX * along + inDX * depth, y, axisDZ * along + inDZ * depth),
+                part, facing, half, priority));
     }
 
-    private static BlockPos placeWallWalk(ServerLevel level, int x, int top, int z, BlockState brick) {
-        BlockPos floor = new BlockPos(x, top - 1, z);
-        if (level.getChunkSource().getChunkNow(floor.getX() >> 4, floor.getZ() >> 4) == null) return null;
-        setBlock(level, floor.getX(), floor.getY(), floor.getZ(), brick);
-        BlockPos stand = floor.above();
-        if (!level.getBlockState(floor).isSolid() || !isSpawnClear(level, stand)) return null;
-        return stand;
+    private static boolean isWallCell(byte[][] grid, int x, int z, int w, int d) {
+        return insideGrid(x, z, w, d) && grid[x][z] == WALL;
     }
 
-    private static BlockPos placeCornerWallWalk(ServerLevel level, int x, int top, int z, BlockState brick) {
-        if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) return null;
-        forceSet(level, x, top - 1, z, brick);
-        forceSet(level, x, top, z, Blocks.AIR.defaultBlockState());
-        forceSet(level, x, top + 1, z, Blocks.AIR.defaultBlockState());
-        BlockPos floor = new BlockPos(x, top - 1, z);
-        BlockPos stand = floor.above();
-        if (!level.getBlockState(floor).isSolid() || !isSpawnClear(level, stand)) return null;
-        return stand;
+    private static BlockState sourceState(SourceWallBlock block, BlockState masonry,
+                                          BlockState archWall, BlockState stair) {
+        return switch (block.part()) {
+            case MASONRY -> masonry;
+            case ARCH_WALL -> archWall;
+            case STAIR -> stair.setValue(StairBlock.FACING, block.facing())
+                    .setValue(StairBlock.HALF, block.half())
+                    .setValue(StairBlock.SHAPE, StairsShape.STRAIGHT);
+        };
     }
 
-    private static BlockPos firstGuardPos(BlockPos current, BlockPos candidate) {
-        return current != null ? current : candidate;
+    private static void applyWallPlan(ServerLevel level, WallBuildPlan plan, BlockState foundation) {
+        for (Map.Entry<HorizontalPos, Integer> entry : plan.foundationStarts.entrySet()) {
+            HorizontalPos pos = entry.getKey();
+            fillDown(level, pos.x(), entry.getValue(), pos.z(), foundation);
+        }
+        for (Map.Entry<BlockPos, PlannedWallBlock> entry : plan.blocks.entrySet()) {
+            BlockPos pos = entry.getKey();
+            PlannedWallBlock block = entry.getValue();
+            if (block.force()) forceSet(level, pos.getX(), pos.getY(), pos.getZ(), block.state());
+            else placeWallMat(level, pos.getX(), pos.getY(), pos.getZ(), block.state());
+        }
+    }
+
+    private static void relocatePlanBlockers(ServerLevel level, WallBuildPlan plan, String feature) {
+        AABB bounds = plan.bounds();
+        if (bounds == null) return;
+        List<LivingEntity> blockers = level.getEntitiesOfClass(LivingEntity.class, bounds,
+                entity -> entity.isAlive() && plan.intersects(entity.getBoundingBox()));
+        for (LivingEntity blocker : blockers) {
+            BlockPos safe = findPlanRelocation(level, blocker, plan);
+            if (safe == null) {
+                plan.removeIntersecting(blocker.getBoundingBox());
+                WitcheryMod.LOGGER.info("[VillageWalls] Could not safely move {} out of {}; leaving its occupied blocks open.",
+                        blocker.getType(), feature);
+                continue;
+            }
+            blocker.teleportTo(safe.getX() + 0.5D, safe.getY(), safe.getZ() + 0.5D);
+            WitcheryMod.LOGGER.info("[VillageWalls] Moved {} out of {} to {},{},{} before placement.",
+                    blocker.getType(), feature, safe.getX(), safe.getY(), safe.getZ());
+        }
+    }
+
+    private static BlockPos findPlanRelocation(ServerLevel level, LivingEntity entity, WallBuildPlan plan) {
+        BlockPos origin = entity.blockPosition();
+        for (int radius = 1; radius <= WALL_ENTITY_RELOCATION_RADIUS; radius++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dz)) != radius) continue;
+                    BlockPos candidate = safeRelocationPos(level, origin.getX() + dx, origin.getZ() + dz, entity);
+                    if (candidate == null) continue;
+                    if (!isRelocationHeightAllowed(origin.getY(), candidate.getY())) continue;
+                    AABB reservedSpace = entityBoxAt(entity, candidate.getX(), candidate.getY(), candidate.getZ())
+                            .expandTowards(0.0D, -1.0D, 0.0D);
+                    if (!plan.intersects(reservedSpace)) {
+                        return candidate;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    static boolean isRelocationHeightAllowed(int originY, int candidateY) {
+        return Math.abs(candidateY - originY) <= WALL_ENTITY_RELOCATION_VERTICAL_LIMIT;
+    }
+
+    private static boolean isInsideGateCrown(BlockPos candidate, List<GateDef> gates) {
+        for (GateDef gate : gates) {
+            int dx = candidate.getX() - gate.centerWX();
+            int dz = candidate.getZ() - gate.centerWZ();
+            int along = dx * gate.axisDX() + dz * gate.axisDZ();
+            int depth = dx * gate.inDX() + dz * gate.inDZ();
+            if (Math.abs(along) <= SOURCE_GATE_HALF_WIDTH && Math.abs(depth) <= 2) return true;
+        }
+        return false;
     }
 
     private static boolean isSpawnClear(ServerLevel level, BlockPos pos) {
@@ -962,85 +1071,6 @@ public final class VillageWallGenerator {
         BlockState feet = level.getBlockState(pos);
         BlockState head = level.getBlockState(pos.above());
         return (feet.isAir() || feet.canBeReplaced()) && (head.isAir() || head.canBeReplaced());
-    }
-
-    private static boolean hasSteepRampartStep(byte[][] grid, short[][] heights,
-                                                int gx, int gz, int sy, int w, int d) {
-        return hasSteepWallNeighbor(grid, heights, gx - 1, gz, sy, w, d)
-                || hasSteepWallNeighbor(grid, heights, gx + 1, gz, sy, w, d)
-                || hasSteepWallNeighbor(grid, heights, gx, gz - 1, sy, w, d)
-                || hasSteepWallNeighbor(grid, heights, gx, gz + 1, sy, w, d);
-    }
-
-    private static boolean hasSteepWallNeighbor(byte[][] grid, short[][] heights,
-                                                 int gx, int gz, int sy, int w, int d) {
-        if (!insideGrid(gx, gz, w, d) || grid[gx][gz] != WALL || heights[gx][gz] == 0) return false;
-        return Math.abs(heights[gx][gz] - sy) > 1;
-    }
-
-    private static BlockState stairFor(BlockState base, Direction facing) {
-        return base.setValue(StairBlock.FACING, facing)
-                .setValue(StairBlock.HALF, Half.BOTTOM)
-                .setValue(StairBlock.SHAPE, StairsShape.STRAIGHT);
-    }
-
-    static BlockState cornerStairFor(BlockState base, int dx, int dz) {
-        // Match vanilla outer-stair shaping: face the diagonal cap toward the
-        // adjacent north/south rampart stair, then choose left/right from that
-        // neighbor's facing.
-        Direction facing = dx < 0 ? Direction.EAST : Direction.WEST;
-        Direction neighborFacing = dz < 0 ? Direction.NORTH : Direction.SOUTH;
-        StairsShape shape = neighborFacing == facing.getCounterClockWise()
-                ? StairsShape.OUTER_LEFT
-                : StairsShape.OUTER_RIGHT;
-        return base.setValue(StairBlock.FACING, facing)
-                .setValue(StairBlock.HALF, Half.BOTTOM)
-                .setValue(StairBlock.SHAPE, shape);
-    }
-
-    private static boolean moveLivingEntitiesOutOfWallColumn(ServerLevel level, int x, int minY, int z, int maxY,
-                                                              byte[][] grid, int gx, int gz, int w, int d) {
-        AABB box = new AABB(x, minY, z, x + 1.0, maxY + 1.0, z + 1.0);
-        List<LivingEntity> blockers = level.getEntitiesOfClass(LivingEntity.class, box, LivingEntity::isAlive);
-        if (blockers.isEmpty()) return true;
-
-        for (LivingEntity blocker : blockers) {
-            BlockPos safe = findWallBlockerRelocation(level, x, z, grid, gx, gz, w, d, blocker);
-            if (safe == null) {
-                WitcheryMod.LOGGER.info("[VillageWalls] Could not safely move {} out of wall column {},{}; skipping column.",
-                        blocker.getType(), x, z);
-                return false;
-            }
-            blocker.teleportTo(safe.getX() + 0.5D, safe.getY(), safe.getZ() + 0.5D);
-            WitcheryMod.LOGGER.info("[VillageWalls] Moved {} from wall column {},{} to {},{},{} before placing wall.",
-                    blocker.getType(), x, z,
-                    safe.getX(), safe.getY(), safe.getZ());
-        }
-
-        return level.getEntitiesOfClass(LivingEntity.class, box, LivingEntity::isAlive).isEmpty();
-    }
-
-    private static BlockPos findWallBlockerRelocation(ServerLevel level, int wx, int wz,
-                                                       byte[][] grid, int gx, int gz, int w, int d,
-                                                       LivingEntity entity) {
-        for (int radius = 1; radius <= WALL_ENTITY_RELOCATION_RADIUS; radius++) {
-            for (int dx = -radius; dx <= radius; dx++) {
-                for (int dz = -radius; dz <= radius; dz++) {
-                    if (Math.max(Math.abs(dx), Math.abs(dz)) != radius) continue;
-                    int candidateGX = gx + dx;
-                    int candidateGZ = gz + dz;
-                    if (!insideGrid(candidateGX, candidateGZ, w, d)) continue;
-                    byte cell = grid[candidateGX][candidateGZ];
-                    if (cell == WALL || cell == GATE) continue;
-
-                    int candidateX = wx + dx;
-                    int candidateZ = wz + dz;
-                    BlockPos candidate = safeRelocationPos(level, candidateX, candidateZ, entity);
-                    if (candidate != null) return candidate;
-                }
-            }
-        }
-        return null;
     }
 
     private static boolean moveLivingEntitiesOutOfGateColumn(ServerLevel level, int x, int minY, int z, int maxY,
@@ -1078,14 +1108,15 @@ public final class VillageWallGenerator {
         return null;
     }
 
-    private static void rescueCollidingLivingEntities(ServerLevel level, int minX, int minZ, int maxX, int maxZ) {
+    private static void rescueCollidingLivingEntities(ServerLevel level, WallBuildPlan wallPlan,
+                                                       int minX, int minZ, int maxX, int maxZ) {
         AABB villageEnvelope = new AABB(minX, MIN_BUILD_Y, minZ, maxX + 1.0, MAX_BUILD_Y + 1.0, maxZ + 1.0);
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, villageEnvelope, LivingEntity::isAlive)) {
             if (level.noCollision(entity, entity.getBoundingBox())) continue;
             int x = entity.blockPosition().getX();
             int y = entity.blockPosition().getY();
             int z = entity.blockPosition().getZ();
-            BlockPos safe = findNearbyRelocation(level, x, z, entity);
+            BlockPos safe = findPlanRelocation(level, entity, wallPlan);
             if (safe == null) {
                 WitcheryMod.LOGGER.warn("[VillageWalls] Could not rescue colliding {} at {},{},{} after wall generation.",
                         entity.getType(), entity.getX(), entity.getY(), entity.getZ());
@@ -1105,16 +1136,20 @@ public final class VillageWallGenerator {
         if (!level.getBlockState(stand.below()).isSolid()) return null;
         if (!isRelocationSpace(level, stand) || !isRelocationSpace(level, stand.above())) return null;
 
-        double halfWidth = Math.max(0.3D, entity.getBbWidth() * 0.5D);
-        double height = Math.max(1.0D, entity.getBbHeight());
-        double cx = x + 0.5D;
-        double cz = z + 0.5D;
-        AABB targetBox = new AABB(cx - halfWidth, y, cz - halfWidth,
-                cx + halfWidth, y + height, cz + halfWidth);
+        AABB targetBox = entityBoxAt(entity, x, y, z);
         if (!level.getEntitiesOfClass(LivingEntity.class, targetBox,
                 other -> other.isAlive() && other != entity).isEmpty())
             return null;
         return level.noCollision(entity, targetBox) ? stand : null;
+    }
+
+    private static AABB entityBoxAt(LivingEntity entity, int x, int y, int z) {
+        double halfWidth = Math.max(0.3D, entity.getBbWidth() * 0.5D);
+        double height = Math.max(1.0D, entity.getBbHeight());
+        double cx = x + 0.5D;
+        double cz = z + 0.5D;
+        return new AABB(cx - halfWidth, y, cz - halfWidth,
+                cx + halfWidth, y + height, cz + halfWidth);
     }
 
     private static boolean isRelocationSpace(ServerLevel level, BlockPos pos) {
@@ -1123,147 +1158,111 @@ public final class VillageWallGenerator {
     }
 
     /**
-     * Builds one gatehouse as an independent locked 7×3 model, OVERRIDING whatever wall or
-     * terrain it covers. It is built straight along the wall axis from the centre + reference
-     * height in the GateDef, so it never bends with a corner and its side towers are always
-     * intact regardless of nearby corners.
-     *
-     * Layout along the wall axis (offset o): |o|=2,3 → solid stone-brick PILLAR (2 taller than
-     * the wall); |o|<=1 → OPENING (3-deep cleared passage, stone-brick arch, fence-less, path
-     * floor). Matching fillDown bridges the structure down to the terrain/sea floor, and the path
-     * is laid out and in (meeting the existing road) for the central 3 lanes.
+     * Rebuilds the source wall's integrated gate: a 3-wide, 3-deep tunnel with mirrored
+     * upside-down stair shoulders, a narrow wall-block beam, two roof courses, and the same
+     * recessed patrol deck as the curtain. Modern path grading and terrain support remain.
      */
-    private static void buildGatehouse(ServerLevel level, GateDef g, BlockState brick, BlockState gateCap,
-                                        BlockState pathBlock, boolean desert, boolean spawnGuards) {
-        BlockState pathSupport = pathSupportMaterial(level, g.centerWX(), g.centerWZ(), desert);
-        int refY = g.refY();
+    private static void buildSourceGate(ServerLevel level, GateDef gate, BlockState masonry,
+                                        BlockState archWall, BlockState stair, BlockState pathBlock,
+                                        boolean desert, boolean spawnGuards) {
+        int refY = gate.refY();
+        int walkY = refY + WALL_HEIGHT;
+        BlockState pathSupport = pathSupportMaterial(level, gate.centerWX(), gate.centerWZ(), desert);
 
-        clearGatehouseFootprint(level, g);
-        clearGatehouseInsideLedgeBlocks(level, g, brick);
+        WallBuildPlan gatePlan = new WallBuildPlan();
+        for (SourceWallBlock block : sourceGateTemplate(
+                gate.axisDX(), gate.axisDZ(), gate.inDX(), gate.inDZ())) {
+            BlockPos offset = block.offset();
+            gatePlan.add(gate.centerWX() + offset.getX(), refY + offset.getY(), gate.centerWZ() + offset.getZ(),
+                    sourceState(block, masonry, archWall, stair), true, block.priority());
+        }
+        relocatePlanBlockers(level, gatePlan, "gate arch");
 
-        // Depth -1..+1 centres the 3-deep gatehouse on the wall line, so the wall meets the
-        // gate at the middle of its sides (one block of the gate sits outside the wall).
-        for (int o = -GATEHOUSE_HALF_WIDTH; o <= GATEHOUSE_HALF_WIDTH; o++) {
-            int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
-            boolean opening = Math.abs(o) <= 1;
-            for (int depth = -1; depth <= 1; depth++) {
-                int dwx = bx + g.inDX() * depth, dwz = bz + g.inDZ() * depth;
-                clearTouchedVegetation(level, dwx, refY - 1, dwz, WALL_HEIGHT + GATEHOUSE_CLEAR_ABOVE_WALL, TREE_CLEAR_WALL_TOUCH_RADIUS);
-                if (!moveLivingEntitiesOutOfGateColumn(level, dwx, refY - 2, dwz,
-                        refY + WALL_HEIGHT + 2, "gatehouse")) continue;
-                if (opening) {
-                    for (int dy = 0; dy < 5; dy++) forceSet(level, dwx, refY + dy, dwz, Blocks.AIR.defaultBlockState());
-                    for (int dy = 5; dy < WALL_HEIGHT; dy++) forceSet(level, dwx, refY + dy, dwz, brick); // arch
-                    forceSet(level, dwx, refY - 1, dwz, pathBlock);                                       // floor
-                    fillDown(level, dwx, refY - 2, dwz, pathSupport);
-                } else {
-                    for (int dy = 0; dy <= WALL_HEIGHT + 1; dy++) forceSet(level, dwx, refY + dy, dwz, brick);
-                    forceSet(level, dwx, refY + WALL_HEIGHT + 2, dwz, gateCap);
-                    fillDown(level, dwx, refY - 1, dwz, brick);
-                }
+        clearSourceGateFootprint(level, gate);
+        buildFlatGateFloor(level, gate, pathBlock, pathSupport);
+        applyWallPlan(level, gatePlan, masonry);
+
+        for (int along : new int[]{-SOURCE_GATE_HALF_WIDTH, SOURCE_GATE_HALF_WIDTH}) {
+            for (int depth = -SOURCE_GATE_DEPTH; depth <= SOURCE_GATE_DEPTH; depth++) {
+                int x = gate.centerWX() + gate.axisDX() * along + gate.inDX() * depth;
+                int z = gate.centerWZ() + gate.axisDZ() * along + gate.inDZ() * depth;
+                fillDown(level, x, refY - 1, z, masonry);
             }
         }
 
-        // Path through the 3 opening lanes — GRADED so a hill outside can't block the gate.
-        // Starts from the gate's outer/inner edge cell (depth ±1, floor refY-1) and ramps to
-        // the terrain at most 1 block per cell, cutting headroom so there is never a dirt face
-        // across the opening. Inward stops when it meets the existing village road.
-        int oDX = -g.inDX(), oDZ = -g.inDZ();
-        for (int o = -1; o <= 1; o++) {
-            int bx = g.centerWX() + g.axisDX() * o, bz = g.centerWZ() + g.axisDZ() * o;
-            gradePath(level, bx + oDX, bz + oDZ, oDX, oDZ, refY - 1, GATE_PATH_OUTWARD_MAX, false, false, pathBlock, pathSupport, desert);
-            gradePath(level, bx + g.inDX(), bz + g.inDZ(), g.inDX(), g.inDZ(), refY - 1, GATE_PATH_INWARD_MAX, true, true, pathBlock, pathSupport, desert);
-        }
-
-        // Place the high gatehouse walk last so the terrain-only inward path grader sees the
-        // terrain below the ledge, not the ledge itself as a blocking building column.
-        buildGatehouseGuardRampart(level, g, brick, gateCap, spawnGuards);
-    }
-
-    /** Clears old wall and rampart blocks from the locked 7x3 gatehouse footprint. */
-    private static void clearGatehouseFootprint(ServerLevel level, GateDef g) {
-        for (int o = -GATEHOUSE_HALF_WIDTH; o <= GATEHOUSE_HALF_WIDTH; o++) {
-            int bx = g.centerWX() + g.axisDX() * o;
-            int bz = g.centerWZ() + g.axisDZ() * o;
-            for (int depth = -1; depth <= 1; depth++) {
-                int x = bx + g.inDX() * depth;
-                int z = bz + g.inDZ() * depth;
-                for (int dy = 0; dy <= WALL_HEIGHT + GATEHOUSE_CLEAR_ABOVE_WALL; dy++) {
-                    forceSet(level, x, g.refY() + dy, z, Blocks.AIR.defaultBlockState());
-                }
-            }
-        }
-    }
-
-    /** Clears the previous version of the inside ledge before the inward path grades terrain. */
-    private static void clearGatehouseInsideLedgeBlocks(ServerLevel level, GateDef g, BlockState brick) {
-        int minY = Math.max(MIN_BUILD_Y, g.refY() + WALL_HEIGHT - 3);
-        int maxY = Math.min(MAX_BUILD_Y, g.refY() + WALL_HEIGHT + GATEHOUSE_CLEAR_ABOVE_WALL);
-        int insideDX = g.inDX();
-        int insideDZ = g.inDZ();
-        for (int o = -GATEHOUSE_HALF_WIDTH - 1; o <= GATEHOUSE_HALF_WIDTH + 1; o++) {
-            int x = g.centerWX() + g.axisDX() * o + insideDX * 2;
-            int z = g.centerWZ() + g.axisDZ() * o + insideDZ * 2;
-            if (level.getChunkSource().getChunkNow(x >> 4, z >> 4) == null) continue;
-            for (int y = minY; y <= maxY; y++) {
-                BlockPos pos = new BlockPos(x, y, z);
-                if (isWallLedgeMaterial(level.getBlockState(pos), brick)) {
-                    level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-                }
-            }
-        }
-    }
-
-    private static boolean isWallLedgeMaterial(BlockState state, BlockState brick) {
-        return state.is(brick.getBlock())
-                || state.is(Blocks.STONE_BRICKS)
-                || state.is(Blocks.CHISELED_SANDSTONE)
-                || state.is(Blocks.ORANGE_TERRACOTTA);
-    }
-
-    private static void buildGatehouseGuardRampart(ServerLevel level, GateDef g,
-                                                    BlockState brick, BlockState rail,
-                                                    boolean spawnGuards) {
-        int floorY = g.refY() + WALL_HEIGHT - 1;
-        int standY = floorY + 1;
-        for (int o = -1; o <= 1; o++) {
-            int walkX = g.centerWX() + g.axisDX() * o;
-            int walkZ = g.centerWZ() + g.axisDZ() * o;
-            forceSet(level, walkX, floorY, walkZ, brick);
-
-            int outsideX = walkX - g.inDX();
-            int outsideZ = walkZ - g.inDZ();
-            forceSet(level, outsideX, standY, outsideZ, rail);
-        }
-
-        int insideDX = g.inDX();
-        int insideDZ = g.inDZ();
-        for (int o = -GATEHOUSE_HALF_WIDTH - 1; o <= GATEHOUSE_HALF_WIDTH + 1; o++) {
-            int walkX = g.centerWX() + g.axisDX() * o + insideDX * 2;
-            int walkZ = g.centerWZ() + g.axisDZ() * o + insideDZ * 2;
-            forceSet(level, walkX, floorY, walkZ, brick);
-            forceSet(level, walkX, standY, walkZ, Blocks.AIR.defaultBlockState());
-            forceSet(level, walkX, standY + 1, walkZ, Blocks.AIR.defaultBlockState());
+        int outDX = -gate.inDX();
+        int outDZ = -gate.inDZ();
+        for (int along = -SOURCE_GATE_OPENING_HALF_WIDTH;
+             along <= SOURCE_GATE_OPENING_HALF_WIDTH; along++) {
+            int x = gate.centerWX() + gate.axisDX() * along;
+            int z = gate.centerWZ() + gate.axisDZ() * along;
+            gradePath(level, x + outDX * GATE_FLAT_APRON_DEPTH, z + outDZ * GATE_FLAT_APRON_DEPTH,
+                    outDX, outDZ, refY - 1, GATE_PATH_OUTWARD_MAX, false, false,
+                    pathBlock, pathSupport, desert);
+            gradePath(level, x + gate.inDX() * GATE_FLAT_APRON_DEPTH,
+                    z + gate.inDZ() * GATE_FLAT_APRON_DEPTH,
+                    gate.inDX(), gate.inDZ(), refY - 1, inwardGateGradeLength(gate.roadDepth()),
+                    true, true, pathBlock, pathSupport, desert);
         }
 
         if (spawnGuards) {
-            placeGatehouseLanterns(level, g, rail);
-            BlockPos guardPos = new BlockPos(g.centerWX(), standY, g.centerWZ());
-            if (isSpawnClear(level, guardPos)) spawnGuard(level, guardPos);
+            placeGateLanterns(level, gate, archWall);
+            BlockPos guardPos = new BlockPos(gate.centerWX(), walkY, gate.centerWZ());
+            if (level.getBlockState(guardPos.below()).isSolid() && isSpawnClear(level, guardPos)) {
+                spawnGuard(level, guardPos);
+            }
         }
     }
 
-    private static void placeGatehouseLanterns(ServerLevel level, GateDef g, BlockState bracket) {
+    /** Keeps the tunnel and one apron block on both sides level with clear player headroom. */
+    private static void buildFlatGateFloor(ServerLevel level, GateDef gate,
+                                           BlockState pathBlock, BlockState pathSupport) {
+        int floorY = gate.refY() - 1;
+        for (int along = -SOURCE_GATE_OPENING_HALF_WIDTH;
+             along <= SOURCE_GATE_OPENING_HALF_WIDTH; along++) {
+            for (int depth = -GATE_FLAT_APRON_DEPTH; depth <= GATE_FLAT_APRON_DEPTH; depth++) {
+                int x = gate.centerWX() + gate.axisDX() * along + gate.inDX() * depth;
+                int z = gate.centerWZ() + gate.axisDZ() * along + gate.inDZ() * depth;
+                if (!moveLivingEntitiesOutOfGateColumn(level, x, floorY, z,
+                        gate.refY() + 4, "flat gate floor")) {
+                    continue;
+                }
+                forceSet(level, x, floorY, z, pathBlock);
+                fillDown(level, x, floorY - 1, z, pathSupport);
+                for (int y = gate.refY(); y <= gate.refY() + 4; y++) {
+                    forceSet(level, x, y, z, Blocks.AIR.defaultBlockState());
+                }
+            }
+        }
+    }
+
+    private static void clearSourceGateFootprint(ServerLevel level, GateDef gate) {
+        int walkY = gate.refY() + WALL_HEIGHT;
+        for (int along = -SOURCE_GATE_HALF_WIDTH; along <= SOURCE_GATE_HALF_WIDTH; along++) {
+            for (int depth = -2; depth <= 2; depth++) {
+                int x = gate.centerWX() + gate.axisDX() * along + gate.inDX() * depth;
+                int z = gate.centerWZ() + gate.axisDZ() * along + gate.inDZ() * depth;
+                clearTouchedVegetation(level, x, gate.refY() - 1, z,
+                        WALL_HEIGHT + GATE_CLEAR_ABOVE_WALL, TREE_CLEAR_WALL_TOUCH_RADIUS);
+                int minY = Math.abs(depth) <= SOURCE_GATE_DEPTH ? gate.refY() : walkY;
+                for (int y = minY; y <= walkY + 1; y++) {
+                    forceSet(level, x, y, z, Blocks.AIR.defaultBlockState());
+                }
+            }
+        }
+    }
+
+    private static void placeGateLanterns(ServerLevel level, GateDef g, BlockState bracket) {
         BlockState lantern = Blocks.LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true);
         int outsideDX = -g.inDX();
         int outsideDZ = -g.inDZ();
-        Direction towardGatehouse = horizontalDirection(g.inDX(), g.inDZ());
+        Direction towardWall = horizontalDirection(g.inDX(), g.inDZ());
         int bracketY = g.refY() + 4;
         int lanternY = bracketY - 1;
         for (int o : new int[]{-2, 2}) {
             int x = g.centerWX() + g.axisDX() * o + outsideDX * 2;
             int z = g.centerWZ() + g.axisDZ() * o + outsideDZ * 2;
-            forceSet(level, x, bracketY, z, bracketConnectedToward(bracket, towardGatehouse));
+            forceSet(level, x, bracketY, z, bracketConnectedToward(bracket, towardWall));
             forceSet(level, x, lanternY, z, lantern);
         }
     }
@@ -1428,10 +1427,10 @@ public final class VillageWallGenerator {
 
     // ── Village-type materials ────────────────────────────────────────────────
 
-    private static BlockState wallMaterial(VillageBuildingMaterials.VillageType villageType) {
-        // Stone-brick family only — no cobblestone.
+    static BlockState wallMaterial(VillageBuildingMaterials.VillageType villageType) {
+        // One dominant masonry per village family, matching the source wall's solid mass.
         if (villageType == VillageBuildingMaterials.VillageType.DESERT)
-            return Blocks.SANDSTONE.defaultBlockState();
+            return Blocks.SMOOTH_SANDSTONE.defaultBlockState();
         if (villageType == VillageBuildingMaterials.VillageType.SAVANNA)
             return Blocks.ORANGE_TERRACOTTA.defaultBlockState();
         if (villageType == VillageBuildingMaterials.VillageType.TAIGA)
@@ -1439,26 +1438,19 @@ public final class VillageWallGenerator {
         return Blocks.STONE_BRICKS.defaultBlockState();
     }
 
-    private static BlockState brickMaterial(VillageBuildingMaterials.VillageType villageType) {
-        if (villageType == VillageBuildingMaterials.VillageType.DESERT)
-            return Blocks.CHISELED_SANDSTONE.defaultBlockState();
-        if (villageType == VillageBuildingMaterials.VillageType.SAVANNA)
-            return Blocks.ORANGE_TERRACOTTA.defaultBlockState();
-        return Blocks.STONE_BRICKS.defaultBlockState();
-    }
-
-    /** Battlement / merlon material — biome-adaptive wall-block variant. */
-    private static BlockState merlonMaterial(VillageBuildingMaterials.VillageType villageType) {
-        // Stone-brick family only — no cobblestone wall.
+    /** Narrow wall-block beam in the source arch, also used by its lantern brackets. */
+    static BlockState archMaterial(VillageBuildingMaterials.VillageType villageType) {
         if (villageType == VillageBuildingMaterials.VillageType.DESERT)
             return Blocks.SANDSTONE_WALL.defaultBlockState();
         if (villageType == VillageBuildingMaterials.VillageType.SAVANNA)
             return Blocks.RED_SANDSTONE_WALL.defaultBlockState();
-        return Blocks.STONE_BRICK_WALL.defaultBlockState();
+        if (villageType == VillageBuildingMaterials.VillageType.TAIGA)
+            return Blocks.MOSSY_COBBLESTONE_WALL.defaultBlockState();
+        return Blocks.COBBLESTONE_WALL.defaultBlockState();
     }
 
-    /** Stair caps used for the Witchery Walls-style rampart lips. */
-    private static BlockState stairMaterial(VillageBuildingMaterials.VillageType villageType) {
+    /** Biome-adaptive stair caps for the crown rails and mirrored arch shoulders. */
+    static BlockState stairMaterial(VillageBuildingMaterials.VillageType villageType) {
         if (villageType == VillageBuildingMaterials.VillageType.DESERT)
             return Blocks.SANDSTONE_STAIRS.defaultBlockState();
         if (villageType == VillageBuildingMaterials.VillageType.SAVANNA)
@@ -1467,17 +1459,6 @@ public final class VillageWallGenerator {
     }
 
     // ── Block helpers ──────────────────────────────────────────────────────────
-
-    private static void setBlock(ServerLevel level, int x, int y, int z, BlockState state) {
-        BlockPos pos = new BlockPos(x, y, z);
-        if (level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4) == null) return;
-        BlockState existing = level.getBlockState(pos);
-        // Replace air, liquids, replaceable decoration, and natural vegetation.
-        // Logs and leaves are solid+non-replaceable in 1.21 but must be cleared for walls.
-        if (!existing.isAir() && !existing.liquid() && !existing.canBeReplaced()
-                && !isConnectedVegetationBlock(existing)) return;
-        level.setBlock(pos, state, 3);
-    }
 
     // Foundation / underwater fill: deep enough to bridge a wall sitting at the water
     // surface all the way down to the sea floor.

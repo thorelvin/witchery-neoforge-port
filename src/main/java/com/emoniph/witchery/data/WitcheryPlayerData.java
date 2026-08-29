@@ -110,6 +110,9 @@ public class WitcheryPlayerData {
         public int bloodReserve = 0;
         public int humanBlood = 0;
         public boolean batForm = false;
+        public boolean witcheryOwnsBatFlight = false;
+        public boolean mayflyBeforeBat = false;
+        public boolean flyingBeforeBat = false;
         // Max level the player can reach without quest-gating items; 10 = uncapped during dev.
         public int levelCap = 10;
         public int questCounter = 0;
@@ -120,6 +123,7 @@ public class WitcheryPlayerData {
 
         private VampireState(boolean vampire, int level, int ultimate, int ultimateCharges,
                              int bloodPower, int bloodReserve, int humanBlood, boolean batForm,
+                             boolean witcheryOwnsBatFlight, boolean mayflyBeforeBat, boolean flyingBeforeBat,
                              int levelCap, int questCounter,
                              java.util.List<Long> visitedVillages) {
             this.vampire = vampire;
@@ -130,6 +134,9 @@ public class WitcheryPlayerData {
             this.bloodReserve = Math.clamp(bloodReserve, 0, 250);
             this.humanBlood = Math.clamp(humanBlood, 0, 500);
             this.batForm = batForm && this.vampire && this.level >= VampirePower.BAT.unlockLevel();
+            this.witcheryOwnsBatFlight = witcheryOwnsBatFlight;
+            this.mayflyBeforeBat = mayflyBeforeBat;
+            this.flyingBeforeBat = flyingBeforeBat;
             this.levelCap = Math.clamp(levelCap, 1, 10);
             this.questCounter = Math.max(0, questCounter);
             this.visitedVillages.addAll(visitedVillages);
@@ -144,6 +151,9 @@ public class WitcheryPlayerData {
             Codec.INT.optionalFieldOf("blood_reserve", 0).forGetter(s -> s.bloodReserve),
             Codec.INT.optionalFieldOf("human_blood", 0).forGetter(s -> s.humanBlood),
             Codec.BOOL.optionalFieldOf("bat_form", false).forGetter(s -> s.batForm),
+            Codec.BOOL.optionalFieldOf("owns_bat_flight", false).forGetter(s -> s.witcheryOwnsBatFlight),
+            Codec.BOOL.optionalFieldOf("mayfly_before_bat", false).forGetter(s -> s.mayflyBeforeBat),
+            Codec.BOOL.optionalFieldOf("flying_before_bat", false).forGetter(s -> s.flyingBeforeBat),
             Codec.INT.optionalFieldOf("level_cap", 10).forGetter(s -> s.levelCap),
             Codec.INT.optionalFieldOf("quest_counter", 0).forGetter(s -> s.questCounter),
             Codec.LONG.listOf().optionalFieldOf("visited_villages", java.util.List.of()).forGetter(s -> s.visitedVillages)
@@ -389,6 +399,10 @@ public class WitcheryPlayerData {
     // player has drawn during the current use. -1 = nothing prepared. Not in the CODEC.
     private int preparedSpellId = -1;
     private int preparedSpellLevel = 1;
+    private long mysticBranchSessionNonce = 0L;
+    private long mysticBranchSessionExpiresAt = Long.MIN_VALUE;
+    private long mysticBranchLastPacketTick = Long.MIN_VALUE;
+    private boolean mysticBranchPreparationAccepted = false;
     private boolean ghostWalkerActive = false;
     private int tormentPortalCooldown = 0;
     private boolean demonicNightmare = false;
@@ -463,6 +477,9 @@ public class WitcheryPlayerData {
     public int getMaxAvailableVampirePowerOrdinal() { return VampirePower.maxOrdinalForLevel(vs.level); }
     public boolean isVampireVisionActive() { return isVampire() && vs.level >= 2 && vampireVisionActive; }
     public boolean isVampireBatForm() { return isVampire() && vs.batForm; }
+    public boolean witcheryOwnsBatFlight() { return vs.witcheryOwnsBatFlight; }
+    public boolean mayflyBeforeBat() { return vs.mayflyBeforeBat; }
+    public boolean flyingBeforeBat() { return vs.flyingBeforeBat; }
     public int getVampirePowerCooldown() { return vampirePowerCooldown; }
     public boolean isWerewolf() { return werewolf; }
     public int getBloodLevel() { return bloodLevel; }
@@ -535,6 +552,11 @@ public class WitcheryPlayerData {
     }
     public void setVampireBatForm(boolean active) {
         vs.batForm = active && isVampire() && vs.level >= VampirePower.BAT.unlockLevel();
+    }
+    public void setBatFlightOwnership(boolean ownsGrant, boolean mayflyBefore, boolean flyingBefore) {
+        vs.witcheryOwnsBatFlight = ownsGrant;
+        vs.mayflyBeforeBat = ownsGrant && mayflyBefore;
+        vs.flyingBeforeBat = ownsGrant && flyingBefore;
     }
     public void setVampirePowerCooldown(int ticks) { vampirePowerCooldown = Math.max(0, ticks); }
     public void tickVampirePowerCooldown() {
@@ -814,6 +836,42 @@ public class WitcheryPlayerData {
     public int getPreparedSpellLevel() { return preparedSpellLevel; }
     public void setPreparedSpell(int id, int level) { this.preparedSpellId = id; this.preparedSpellLevel = level; }
     public void clearPreparedSpell() { this.preparedSpellId = -1; this.preparedSpellLevel = 1; }
+    public enum MysticBranchPreparationResult { ACCEPT, NO_SESSION, EXPIRED, RATE_LIMITED, REPLAYED }
+    public void beginMysticBranchChannel(long nonce, long expiresAt) {
+        clearMysticBranchChannel();
+        if (nonce == 0L) throw new IllegalArgumentException("Mystic Branch nonce must be non-zero");
+        mysticBranchSessionNonce = nonce;
+        mysticBranchSessionExpiresAt = expiresAt;
+    }
+    public MysticBranchPreparationResult validateMysticBranchPreparation(long nonce, long gameTime) {
+        if (nonce == 0L || nonce != mysticBranchSessionNonce) {
+            return MysticBranchPreparationResult.NO_SESSION;
+        }
+        if (gameTime > mysticBranchSessionExpiresAt) {
+            clearMysticBranchChannel();
+            return MysticBranchPreparationResult.EXPIRED;
+        }
+        if (mysticBranchPreparationAccepted) {
+            return MysticBranchPreparationResult.REPLAYED;
+        }
+        if (mysticBranchLastPacketTick != Long.MIN_VALUE && gameTime - mysticBranchLastPacketTick < 4L) {
+            return MysticBranchPreparationResult.RATE_LIMITED;
+        }
+        mysticBranchLastPacketTick = gameTime;
+        return MysticBranchPreparationResult.ACCEPT;
+    }
+    public void acceptMysticBranchPreparation() { mysticBranchPreparationAccepted = true; }
+    public boolean hasActiveMysticBranchChannel() { return mysticBranchSessionNonce != 0L; }
+    public boolean isMysticBranchChannelExpired(long gameTime) {
+        return hasActiveMysticBranchChannel() && gameTime > mysticBranchSessionExpiresAt;
+    }
+    public void clearMysticBranchChannel() {
+        mysticBranchSessionNonce = 0L;
+        mysticBranchSessionExpiresAt = Long.MIN_VALUE;
+        mysticBranchLastPacketTick = Long.MIN_VALUE;
+        mysticBranchPreparationAccepted = false;
+        clearPreparedSpell();
+    }
     // ── Werewolf progression (source werewolfLevel / form / Wolf-Altar quest) ───
     public int getWerewolfLevel() { return wws.level; }
     public void setWerewolfLevel(int level) {
@@ -889,6 +947,7 @@ public class WitcheryPlayerData {
     public void copyFrom(WitcheryPlayerData other, boolean keepOnDeath) {
         this.vs = new VampireState(other.vs.vampire, other.vs.level, other.vs.ultimate, other.vs.ultimateCharges,
                 other.vs.bloodPower, other.vs.bloodReserve, other.vs.humanBlood, other.vs.batForm,
+                other.vs.witcheryOwnsBatFlight, other.vs.mayflyBeforeBat, other.vs.flyingBeforeBat,
                 other.vs.levelCap, other.vs.questCounter,
                 other.vs.visitedVillages);
         this.werewolf = other.werewolf;

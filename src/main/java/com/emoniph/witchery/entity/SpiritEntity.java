@@ -26,6 +26,7 @@ import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -54,6 +55,9 @@ public class SpiritEntity extends TamableAnimal {
     private static final int SPIRIT_TYPE_NORMAL = 0;
     private static final int SPIRIT_TYPE_VILLAGE = 1;
     static final int SOURCE_PARTICLE_COLOR = 0xFFCC00;
+    static final int SOURCE_PARTICLES_PER_CLIENT_TICK = 1;
+    static final double SOURCE_PARTICLE_Y_MIN = 0.1D;
+    static final double SOURCE_PARTICLE_Y_RANGE = 0.2D;
     private static final int VILLAGE_SPIRIT_TTL_TICKS = 20 * 10;
     private static final int VILLAGE_SEARCH_RADIUS_CHUNKS = 8;
     private static final List<String> VILLAGE_STRUCTURE_IDS = List.of(
@@ -83,7 +87,7 @@ public class SpiritEntity extends TamableAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
+        return Animal.createAnimalAttributes()
                 .add(Attributes.MAX_HEALTH, 4.0)
                 .add(Attributes.ATTACK_DAMAGE, 4.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4)
@@ -212,14 +216,13 @@ public class SpiritEntity extends TamableAnimal {
     }
 
     private void spawnSpiritParticles() {
-        if (random.nextInt(4) != 0) {
-            return;
+        for (int i = 0; i < SOURCE_PARTICLES_PER_CLIENT_TICK; i++) {
+            level().addParticle(new DustParticleOptions(SOURCE_PARTICLE_COLOR, 0.55F),
+                    getX() + (random.nextDouble() - 0.5D) * getBbWidth(),
+                    getY() + SOURCE_PARTICLE_Y_MIN + random.nextDouble() * SOURCE_PARTICLE_Y_RANGE,
+                    getZ() + (random.nextDouble() - 0.5D) * getBbWidth(),
+                    0.0D, 0.0D, 0.0D);
         }
-        level().addParticle(new DustParticleOptions(SOURCE_PARTICLE_COLOR, 0.55F),
-                getX() + (random.nextDouble() - 0.5D) * 0.45D,
-                getY() + 0.2D + random.nextDouble() * 0.25D,
-                getZ() + (random.nextDouble() - 0.5D) * 0.45D,
-                0.0D, 0.01D, 0.0D);
     }
 
     @Override

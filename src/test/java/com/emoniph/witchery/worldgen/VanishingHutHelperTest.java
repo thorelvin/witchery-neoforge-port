@@ -63,4 +63,13 @@ class VanishingHutHelperTest {
         assertEquals(VanishingHutHelper.WATCH_RANGE * VanishingHutHelper.WATCH_RANGE,
                 VanishingHutHelper.WATCH_RANGE_SQ);
     }
+
+    @Test
+    void bargainAndSaltTimingRemainRestrained() {
+        assertTrue(VanishingHutHelper.COMPLETED_BARGAIN_COOLDOWN_TICKS
+                < VanishingHutHelper.DEFAULT_MOVE_COOLDOWN_TICKS);
+        assertTrue(VanishingHutHelper.SALT_WARNING_TICKS < VanishingHutHelper.SALT_ESCAPE_TICKS);
+        assertTrue(VanishingHutHelper.SALT_ESCAPE_TICKS
+                >= VanishingHutHelper.DEFAULT_MOVE_COOLDOWN_TICKS);
+    }
 }

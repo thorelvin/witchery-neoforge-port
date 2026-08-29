@@ -1,7 +1,6 @@
 package com.emoniph.witchery.worldgen;
 
 import com.emoniph.witchery.entity.CovenWitchEntity;
-import com.emoniph.witchery.init.WitcheryBlocks;
 import com.emoniph.witchery.init.WitcheryEntities;
 import com.emoniph.witchery.init.WitcheryStructures;
 import net.minecraft.core.BlockPos;
@@ -86,7 +85,7 @@ public class CovenCirclePiece extends StructurePiece {
 
         BlockState stone  = isDesert ? Blocks.SANDSTONE.defaultBlockState()
                                      : Blocks.COBBLESTONE.defaultBlockState();
-        BlockState brick  = isDesert ? Blocks.CUT_SANDSTONE.defaultBlockState()
+        BlockState brick  = isDesert ? Blocks.SMOOTH_SANDSTONE.defaultBlockState()
                                      : Blocks.CHISELED_STONE_BRICKS.defaultBlockState();
 
         BlockState altar  = Blocks.CHISELED_STONE_BRICKS.defaultBlockState();
@@ -129,8 +128,13 @@ public class CovenCirclePiece extends StructurePiece {
                 placeBlock(level, altar, ax, 1, az, box);
             }
         }
-        // Center altar top: use Witchery Kettle as the cauldron-like focal point
-        placeBlock(level, WitcheryBlocks.KETTLE.get().defaultBlockState(), 5, 1, 5, box);
+        // ComponentCoven places full water at metadata 0 in the altar centre.
+        // Use a direct write like the floor: StructurePiece's guarded placement can
+        // silently skip this fluid during world generation.
+        BlockPos altarCenter = localPos(5, 1, 5);
+        if (box.isInside(altarCenter)) {
+            level.setBlock(altarCenter, Blocks.WATER.defaultBlockState(), 3);
+        }
 
         // ── Standing stone ring — y=1 (base, cobblestone) ────────────────────
         // Source exactly — 18 base positions forming the oval ring

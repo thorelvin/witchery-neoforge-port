@@ -1,10 +1,10 @@
 # Village Certification
 
-Last certified: 2026-08-26
+Last certified: 2026-08-27
 
-This is the repeatable mechanical gate for Witchery's village ecosystem. It is
-not a substitute for live-client visual, traversal, guard-movement, or
-distribution judgment.
+This is the repeatable mechanical gate for Witchery's village ecosystem,
+supplemented by a controlled live-client wall and gate baseline. Broad
+distribution judgment and ordinary multi-guard movement remain manual QA.
 
 ## Run It
 
@@ -17,6 +17,15 @@ NPCs enabled, seed `witchery-runtime-test`, and a fixed five-biome matrix. For
 each qualifying village it runs `/witchery verify village`, saves and stops the
 server cleanly, restarts the same world, and recertifies the same coordinates.
 It fails if any wall-generation log reports `suffocated in a wall`.
+
+Before the live matrix, `VillageWallGeneratorTest` locks the decoded source
+geometry: 76 unique blocks in a straight wall stamp, eight three-wide curtain
+courses, the recessed five-wide crown, two-course L corner masonry, and 93
+unique blocks in each rotated integrated-gate stamp with a clear 3x3 tunnel.
+The gate contract also locks a shared-level three-wide by five-deep floor, solid
+support, four-block headroom, and uncapped inward grading to the detected village
+road at no more than one block of rise or fall per cell. The same contract checks
+plains, desert, savanna, taiga, and snowy palettes.
 
 The verifier requires:
 
@@ -45,15 +54,34 @@ selection is weighted; the harness recorded that outcome, removed its temporary
 force loads, and selected the next unique taiga village instead of weakening the
 assertion.
 
+## Controlled Client Baseline
+
+On 2026-08-27 the certified world was copied into a disposable dev-client save
+and inspected from overhead and ground level. Plains, desert, savanna, and taiga
+captures confirmed the source-shaped three-block curtain, recessed crown,
+continuous cap, corner mass, integrated arch, and biome palettes. The savanna
+and taiga sites covered severe elevation changes, exposed terrain cuts, snow,
+trees, and water-edge runs without visible wall seams or unsupported crowns.
+
+The plains gate was inspected from both sides and walked from the exterior path
+through the complete tunnel in Creative mode. Its three-wide floor, four-block
+headroom, lanterns, wall beam, arch shoulders, and graded road connection were
+clear and collision-free. Representative local captures are retained under
+`C:\claude\witchery\captures\village-walls\port`.
+
 ## Persistence And Safety Contract
 
 `WitcheryStructureData` stores successful village-building claims only after
 piece placement. Spawned residents carry durable building type and origin
 provenance. `VillageWallData` stores a wall key plus candidate/gate counts, and
 manual or queued wall jobs release only forced chunks whose tickets they
-actually acquired. Wall, gatehouse, and graded-path blockers are moved only to
+actually acquired. The gate passage is leveled across the whole wall depth, then
+graded inward until it meets the detected village road and outward into the
+terrain. Wall, integrated-gate, and graded-path blockers are moved only to
 solid, dry, collision-free nearby ground; a final bounded village-envelope scan
-rescues any living entity still intersecting generated terrain.
+rescues any living entity still intersecting generated terrain. The relocation
+reservation includes the future floor under the entity, excludes the wall crown,
+and rejects candidate roofs more than four blocks above or below the origin.
 
 No migration for older remake saves is provided yet. The project currently
 targets new worlds and current-format saves by explicit decision.
@@ -63,7 +91,9 @@ targets new worlds and current-format saves by explicit decision.
 - Machine-readable result: `build/runtime-test/village-certification/summary.json`
 - Per-biome captures: `build/runtime-test/village-certification/captures/`
 - Fresh/restart logs: `build/runtime-test/village-certification/minecraft-*.log`
+- Controlled client captures: `C:\claude\witchery\captures\village-walls\port`
 - Structure contracts: `VillageStructureContractTest`
 - Wall persistence contract: `VillageWallDataTest`
+- Source wall/gate coordinate and palette contract: `VillageWallGeneratorTest`
 - Villager lifecycle fixture: `witchery:were_villager_state_cycle`
 - Magic/sacrifice fixture: `witchery:villager_magic_and_sacrifices`

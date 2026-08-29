@@ -25,7 +25,7 @@ class FlyingMonkeySourceParityTest {
         assertTrue(FlyingMonkeyEntity.isSourceFood(new ItemStack(Items.BEEF)));
         assertTrue(FlyingMonkeyEntity.isSourceFood(new ItemStack(Items.PORKCHOP)));
         assertFalse(FlyingMonkeyEntity.isSourceFood(new ItemStack(Items.CHICKEN)));
-        assertEquals(4, FlyingMonkeyEntity.CourierState.values().length);
+        assertEquals(5, FlyingMonkeyEntity.CourierState.values().length);
         assertEquals(FlyingMonkeyEntity.CourierState.IDLE,
                 FlyingMonkeyEntity.CourierState.valueOf("IDLE"));
         assertEquals(FlyingMonkeyEntity.CourierState.FETCHING,
@@ -34,5 +34,7 @@ class FlyingMonkeySourceParityTest {
                 FlyingMonkeyEntity.CourierState.valueOf("RETURNING"));
         assertEquals(FlyingMonkeyEntity.CourierState.WAYSTONE,
                 FlyingMonkeyEntity.CourierState.valueOf("WAYSTONE"));
+        assertEquals(FlyingMonkeyEntity.CourierState.PREPARING_WAYSTONE,
+                FlyingMonkeyEntity.CourierState.valueOf("PREPARING_WAYSTONE"));
     }
 }

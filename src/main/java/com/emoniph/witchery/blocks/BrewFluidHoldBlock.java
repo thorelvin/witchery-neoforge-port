@@ -1,20 +1,24 @@
 package com.emoniph.witchery.blocks;
 
+import com.emoniph.witchery.blocks.entity.BrewFluidHoldBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.Fluids;
+import org.jetbrains.annotations.Nullable;
 
 /** Invisible source {@code BlockSlurp}: temporarily holds water or lava, then restores it. */
-public final class BrewFluidHoldBlock extends Block {
+public final class BrewFluidHoldBlock extends BaseEntityBlock {
     public enum HeldFluid implements StringRepresentable {
         WATER("water"), LAVA("lava");
 
@@ -40,7 +44,7 @@ public final class BrewFluidHoldBlock extends Block {
     }
 
     @Override
-    protected MapCodec<? extends Block> codec() {
+    protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
 
@@ -54,8 +58,19 @@ public final class BrewFluidHoldBlock extends Block {
         return RenderShape.INVISIBLE;
     }
 
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new BrewFluidHoldBlockEntity(pos, state);
+    }
+
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (level.getBlockEntity(pos) instanceof BrewFluidHoldBlockEntity hold
+                && hold.originalState() != null) {
+            level.setBlock(pos, hold.originalState(), Block.UPDATE_ALL);
+            return;
+        }
         var fluid = state.getValue(FLUID) == HeldFluid.WATER
                 ? (state.getValue(SOURCE) ? Fluids.WATER : Fluids.FLOWING_WATER)
                 : (state.getValue(SOURCE) ? Fluids.LAVA : Fluids.FLOWING_LAVA);

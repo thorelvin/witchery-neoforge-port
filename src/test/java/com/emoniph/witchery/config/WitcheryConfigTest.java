@@ -10,4 +10,9 @@ class WitcheryConfigTest {
         assertFalse(WitcheryConfig.LLM_ENABLED.getDefault());
         assertFalse(WitcheryConfig.LLM_PREWARM_ENABLED.getDefault());
     }
+
+    @Test
+    void additiveBlightHeartDefaultsOff() {
+        assertFalse(WitcheryConfig.ENABLE_BLIGHT_HEART.getDefault());
+    }
 }

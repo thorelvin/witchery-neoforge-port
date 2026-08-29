@@ -31,4 +31,11 @@ class SpiritWorldAtmosphereTest {
         assertTrue(dream > nightmare);
         assertEquals(nightmare, demonic);
     }
+
+    @Test
+    void clientClockMatchesTheSourceProviderWithoutChangingServerTime() {
+        assertEquals(6_000L, SpiritWorldAtmosphere.forState(false, false).clientDayTime());
+        assertEquals(18_000L, SpiritWorldAtmosphere.forState(true, false).clientDayTime());
+        assertEquals(18_000L, SpiritWorldAtmosphere.forState(true, true).clientDayTime());
+    }
 }

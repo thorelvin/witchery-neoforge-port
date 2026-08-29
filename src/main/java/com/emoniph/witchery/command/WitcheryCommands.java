@@ -336,6 +336,21 @@ public class WitcheryCommands {
                                 .executes(ctx -> verifyOtherwhereHearth(ctx.getSource())))
                         .then(Commands.literal("lycanthropy")
                                 .executes(ctx -> verifyLycanthropy(ctx.getSource())))
+                        .then(Commands.literal("wild_structure")
+                                .then(Commands.argument("structure", StringArgumentType.greedyString())
+                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+                                                java.util.List.of("witchery:coven_circle", "witchery:straw_man",
+                                                        "witchery:hobgoblin_hut", "witchery:witch_hut",
+                                                        "witchery:warped_coven", "witchery:vanishing_hut"), builder))
+                                        .executes(ctx -> verifyWildStructure(ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "structure")))))
+                        .then(Commands.literal("well")
+                                .executes(ctx -> verifyWitchWell(ctx.getSource(), "any"))
+                                .then(Commands.argument("variant", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+                                                java.util.List.of("any", "regular", "small", "cave"), builder))
+                                        .executes(ctx -> verifyWitchWell(ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "variant")))))
                         .then(Commands.literal("village")
                                 .executes(ctx -> verifyVillage(ctx.getSource()))))
 
@@ -349,7 +364,10 @@ public class WitcheryCommands {
                                 .then(Commands.literal("setup")
                                         .executes(ctx -> setupRitualPersistenceProbe(ctx.getSource())))
                                 .then(Commands.literal("verify")
-                                        .executes(ctx -> verifyRitualPersistenceProbe(ctx.getSource())))))
+                                        .executes(ctx -> verifyRitualPersistenceProbe(ctx.getSource()))))
+                        .then(Commands.literal("wild_structure")
+                                .then(Commands.literal("relocate_vanishing_hut")
+                                        .executes(ctx -> relocateVanishingHutForCertification(ctx.getSource())))))
 
                 // Debug: force a specific crystal-ball prophecy to come true immediately.
                 // /witchery crystal <prophecy> [target]   (use "all" to fire every prophecy)
@@ -568,6 +586,8 @@ public class WitcheryCommands {
     private static int aiStatus(CommandSourceStack src) {
         src.sendSuccess(() -> Component.literal(NpcBrainService.INSTANCE.statusLine()), false);
         src.sendSuccess(() -> Component.literal("[AI] Knowledge " + NpcKnowledgeBase.diagnosticsLine()), false);
+        src.sendSuccess(() -> Component.literal("[AI] Memory "
+                + NpcMemoryData.get(src.getLevel()).diagnosticsLine()), false);
         return 1;
     }
 
@@ -837,7 +857,7 @@ public class WitcheryCommands {
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer p = src.getPlayerOrException();
         com.emoniph.witchery.brewing.BrewContents brew = new com.emoniph.witchery.brewing.BrewContents(
-                java.util.List.of(Items.SPIDER_EYE, Items.ZOMBIE_HEAD));
+                java.util.List.of(Items.NETHER_WART, Items.SPIDER_EYE, Items.ZOMBIE_HEAD));
         ItemStack stack = new ItemStack(WitcheryItems.SPLASH_BREW_BOTTLE.get(), 8);
         com.emoniph.witchery.item.BrewContainers.stamp(stack, brew);
         if (!p.getInventory().add(stack)) {
@@ -1276,7 +1296,7 @@ public class WitcheryCommands {
             src.sendFailure(Component.literal("Ritual persistence probe is missing or changed."));
             return 0;
         }
-        src.sendSuccess(() -> Component.literal("Ritual persistence probe survived with stages, path, focus, destination, and refunds intact."),
+        src.sendSuccess(() -> Component.literal("Ritual persistence probe survived with stages, path, focus, destination, refunds, paid escrow, and held fluid state intact."),
                 false);
         return 1;
     }
@@ -2545,9 +2565,16 @@ public class WitcheryCommands {
         if (destLevel == null) {
             destLevel = level;
         }
-        BlockPos floor = found.pos().above();
-        destLevel.getChunk(floor.getX() >> 4, floor.getZ() >> 4, ChunkStatus.FULL, true);
-        player.teleportTo(destLevel, floor.getX() + 0.5, floor.getY(), floor.getZ() + 0.5,
+        BlockPos anchor = found.pos();
+        destLevel.getChunk(anchor.getX() >> 4, anchor.getZ() >> 4, ChunkStatus.FULL, true);
+        BlockPos landing = com.emoniph.witchery.worldgen.WildStructureArrival
+                .findVanishingHutLanding(destLevel, anchor);
+        if (landing == null) {
+            src.sendFailure(Component.literal("The hut is remembered, but its doorway is obstructed.")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
+            return 0;
+        }
+        player.teleportTo(destLevel, landing.getX() + 0.5, landing.getY(), landing.getZ() + 0.5,
                 java.util.Set.of(), player.getYRot(), player.getXRot(), false);
         src.sendSuccess(() -> Component.literal("The hidden paths lead you to the witch's hut.")
                 .withStyle(ChatFormatting.LIGHT_PURPLE), false);
@@ -3349,6 +3376,54 @@ public class WitcheryCommands {
         return 0;
     }
 
+    private static int verifyWildStructure(CommandSourceStack src, String structureId) {
+        com.emoniph.witchery.worldgen.WildStructureCertification.Report report =
+                com.emoniph.witchery.worldgen.WildStructureCertification.audit(
+                        src.getLevel(), structureId, BlockPos.containing(src.getPosition()));
+        WitcheryMod.LOGGER.info(report.summary());
+        if (report.passed()) {
+            src.sendSuccess(() -> Component.literal(report.summary()), false);
+            return 1;
+        }
+        src.sendFailure(Component.literal(report.summary()));
+        return 0;
+    }
+
+    private static int verifyWitchWell(CommandSourceStack src, String variant) {
+        com.emoniph.witchery.worldgen.WitchWellCertification.Report report =
+                com.emoniph.witchery.worldgen.WitchWellCertification.audit(
+                        src.getLevel(), variant, BlockPos.containing(src.getPosition()));
+        WitcheryMod.LOGGER.info(report.summary());
+        if (report.passed()) {
+            src.sendSuccess(() -> Component.literal(report.summary()), false);
+            return 1;
+        }
+        src.sendFailure(Component.literal(report.summary()));
+        return 0;
+    }
+
+    private static int relocateVanishingHutForCertification(CommandSourceStack src) {
+        ServerLevel level = src.getLevel();
+        BlockPos near = BlockPos.containing(src.getPosition());
+        var entry = com.emoniph.witchery.world.VanishingHutData.get(level).nearest(level, near);
+        if (entry.isEmpty()) {
+            src.sendFailure(Component.literal("[WildStructureCertification] No tracked Vanishing Hut nearby."));
+            return 0;
+        }
+        BlockPos anchor = entry.get().pos();
+        level.getChunk(anchor.getX() >> 4, anchor.getZ() >> 4, ChunkStatus.FULL, true);
+        if (!(level.getBlockEntity(anchor)
+                instanceof com.emoniph.witchery.blocks.entity.VanishingHutAnchorBlockEntity)) {
+            src.sendFailure(Component.literal("[WildStructureCertification] Tracked hut anchor is not loaded."));
+            return 0;
+        }
+        com.emoniph.witchery.events.VanishingHutEvents.enqueueSameDimensionRelocation(level, anchor);
+        src.sendSuccess(() -> Component.literal(
+                "[WildStructureCertification] Queued same-dimension Vanishing Hut relocation from "
+                        + anchor.getX() + "," + anchor.getY() + "," + anchor.getZ()), false);
+        return 1;
+    }
+
     private static int resetWalls(CommandSourceStack src)
             throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerLevel level = src.getLevel();
@@ -3836,7 +3911,14 @@ public class WitcheryCommands {
         BlockPos destination = found;
         int surfaceY;
         if (level.dimension().equals(Level.NETHER)) {
-            BlockPos landing = findSafeNetherStructureLanding(level, found);
+            net.minecraft.world.level.levelgen.structure.StructureStart wildStart =
+                    com.emoniph.witchery.worldgen.WildStructureArrival.findLoadedStart(
+                            level, net.minecraft.resources.Identifier.parse(fullId), found, 4);
+            BlockPos landing = com.emoniph.witchery.worldgen.WildStructureArrival.findLanding(
+                    level, net.minecraft.resources.Identifier.parse(fullId), wildStart);
+            if (landing == null) {
+                landing = findSafeNetherStructureLanding(level, found);
+            }
             if (landing == null) {
                 src.sendFailure(Component.literal(
                         "The scrying mists found " + fullId

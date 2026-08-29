@@ -115,6 +115,9 @@ public class WitcheryBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BrewFluidBlockEntity>> BREW_FLUID =
             BLOCK_ENTITIES.register("brew_fluid", () -> new BlockEntityType<>(BrewFluidBlockEntity::new,
                     Set.of(WitcheryBlocks.BREW_GAS.get(), WitcheryBlocks.BREW_LIQUID.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BrewFluidHoldBlockEntity>> BREW_FLUID_HOLD =
+            BLOCK_ENTITIES.register("brew_fluid_hold", () -> new BlockEntityType<>(BrewFluidHoldBlockEntity::new,
+                    Set.of(WitcheryBlocks.BREW_FLUID_HOLD.get())));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<VanishingHutAnchorBlockEntity>> VANISHING_HUT_ANCHOR =
             BLOCK_ENTITIES.register("vanishing_hut_anchor", () -> new BlockEntityType<>(
                     VanishingHutAnchorBlockEntity::new, Set.of(WitcheryBlocks.VANISHING_HUT_ANCHOR.get())));

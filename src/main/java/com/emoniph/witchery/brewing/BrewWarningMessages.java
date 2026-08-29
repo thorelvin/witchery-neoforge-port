@@ -29,6 +29,10 @@ public final class BrewWarningMessages {
 
     private BrewWarningMessages() {}
 
+    public static void clearSession() {
+        RECENT.clear();
+    }
+
     public static boolean isBindingItem(Item item) {
         return item == Items.WRITABLE_BOOK;
     }

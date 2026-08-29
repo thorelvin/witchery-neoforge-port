@@ -42,6 +42,8 @@ public class CorpseEntity extends Mob {
     public static final float SOURCE_RENDER_Y_OFFSET = 0.25F;
     public static final float SOURCE_PRONE_ROTATION_DEGREES = 90.0F;
     public static final double SOURCE_MOVEMENT_SPEED = 1.0D;
+    /** Modern readability adaptation for the owner custom name assigned by the source entry path. */
+    public static final boolean OWNER_NAMEPLATE_VISIBLE = true;
     private static final String SOURCE_OWNER_TAG = "Owner";
 
     private static final EntityDataAccessor<String> DATA_OWNER_NAME =
@@ -127,7 +129,7 @@ public class CorpseEntity extends Mob {
         this.entityData.set(DATA_OWNER_UUID, player.getUUID().toString());
         this.entityData.set(DATA_OWNER_NAME, player.getGameProfile().name());
         this.setCustomName(Component.literal(player.getGameProfile().name()));
-        this.setCustomNameVisible(false);
+        this.setCustomNameVisible(OWNER_NAMEPLATE_VISIBLE);
         this.setPersistenceRequired();
     }
 
@@ -199,7 +201,7 @@ public class CorpseEntity extends Mob {
         this.entityData.set(DATA_OWNER_NAME, ownerName);
         if (!ownerName.isBlank() && !this.hasCustomName()) {
             this.setCustomName(Component.literal(ownerName));
-            this.setCustomNameVisible(false);
+            this.setCustomNameVisible(OWNER_NAMEPLATE_VISIBLE);
         }
         if (!ownerName.isBlank()) {
             this.setPersistenceRequired();

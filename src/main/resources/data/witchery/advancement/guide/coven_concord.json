@@ -1,0 +1,12 @@
+{
+  "criteria": {
+    "concord": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "concord"
+    ]
+  ]
+}
