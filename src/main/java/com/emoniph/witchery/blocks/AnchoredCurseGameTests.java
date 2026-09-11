@@ -150,37 +150,38 @@ public final class AnchoredCurseGameTests {
             helper.runAfterDelay(25, () -> {
                 target.removeEffect(MobEffects.SLOWNESS);
                 target.removeEffect(MobEffects.MINING_FATIGUE);
-                saved.tickLevel(level);
-                helper.assertTrue(target.hasEffect(MobEffects.SLOWNESS)
-                                && target.hasEffect(MobEffects.MINING_FATIGUE),
-                        "A loaded intact anchor must renew the original finite curse effects");
+                helper.runAfterDelay(AnchoredCurseSavedData.TICK_INTERVAL + 1, () -> {
+                    helper.assertTrue(target.hasEffect(MobEffects.SLOWNESS)
+                                    && target.hasEffect(MobEffects.MINING_FATIGUE),
+                            "A loaded intact anchor must renew the original finite curse effects");
 
-                level.destroyBlock(shelfPos, false, caster);
-                MobEffectInstance restored = target.getEffect(MobEffects.SLOWNESS);
-                helper.assertTrue(saved.clueFor(target.getUUID()).isEmpty()
-                                && restored != null && restored.getAmplifier() == 1
-                                && !target.hasEffect(MobEffects.MINING_FATIGUE),
-                        "Breaking the shelf must end the record and restore the exact prior Sinking effects");
+                    level.destroyBlock(shelfPos, false, caster);
+                    MobEffectInstance restored = target.getEffect(MobEffects.SLOWNESS);
+                    helper.assertTrue(saved.clueFor(target.getUUID()).isEmpty()
+                                    && restored != null && restored.getAmplifier() == 1
+                                    && !target.hasEffect(MobEffects.MINING_FATIGUE),
+                            "Breaking the shelf must end the record and restore the exact prior Sinking effects");
 
-                BlockPos replacementPos = shelfPos.east();
-                level.setBlock(replacementPos, WitcheryBlocks.POPPET_SHELF.get().defaultBlockState(),
-                        Block.UPDATE_ALL);
-                PoppetShelfBlockEntity replacement =
-                        (PoppetShelfBlockEntity) level.getBlockEntity(replacementPos);
-                helper.assertTrue(replacement != null,
-                        "The ward fixture must place a replacement Poppet Shelf block entity");
-                ItemStack replacementPoppet = new ItemStack(WitcheryItems.POPPET.get());
-                PoppetItem.bind(replacementPoppet, target);
-                helper.assertTrue(RedThreadBinding.prepare(replacementPoppet, caster),
-                        "The ward fixture must prepare a replacement binding");
-                replacement.setItem(0, replacementPoppet);
-                helper.assertTrue(saved.prepareSinking(caster, target).issue()
-                                == AnchoredCurseSavedData.PreparationIssue.WARDED,
-                        "A broken anchor must briefly ward this caster-target pair against rebinding");
+                    BlockPos replacementPos = shelfPos.east();
+                    level.setBlock(replacementPos, WitcheryBlocks.POPPET_SHELF.get().defaultBlockState(),
+                            Block.UPDATE_ALL);
+                    PoppetShelfBlockEntity replacement =
+                            (PoppetShelfBlockEntity) level.getBlockEntity(replacementPos);
+                    helper.assertTrue(replacement != null,
+                            "The ward fixture must place a replacement Poppet Shelf block entity");
+                    ItemStack replacementPoppet = new ItemStack(WitcheryItems.POPPET.get());
+                    PoppetItem.bind(replacementPoppet, target);
+                    helper.assertTrue(RedThreadBinding.prepare(replacementPoppet, caster),
+                            "The ward fixture must prepare a replacement binding");
+                    replacement.setItem(0, replacementPoppet);
+                    helper.assertTrue(saved.prepareSinking(caster, target).issue()
+                                    == AnchoredCurseSavedData.PreparationIssue.WARDED,
+                            "A broken anchor must briefly ward this caster-target pair against rebinding");
 
-                HeadlessGameTestPlayer.remove(caster);
-                HeadlessGameTestPlayer.remove(target);
-                helper.succeed();
+                    HeadlessGameTestPlayer.remove(caster);
+                    HeadlessGameTestPlayer.remove(target);
+                    helper.succeed();
+                });
             });
         });
     }
