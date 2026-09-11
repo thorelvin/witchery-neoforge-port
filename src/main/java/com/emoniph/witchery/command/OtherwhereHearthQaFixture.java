@@ -42,7 +42,6 @@ import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.phys.AABB;
 
 import java.util.List;
@@ -125,8 +124,8 @@ final class OtherwhereHearthQaFixture {
                         BlockPos kettlePos, Direction facing) {
         OtherwhereHearthTransposition.Volume volume =
                 OtherwhereHearthTransposition.volumeFor(kettlePos);
-        loadChunks(sourceLevel, volume);
-        loadChunks(destination, volume);
+        OtherwhereHearthTransposition.loadVolumeForInspection(sourceLevel, kettlePos);
+        OtherwhereHearthTransposition.loadVolumeForInspection(destination, kettlePos);
         removeNonPlayers(sourceLevel, volume);
         removeNonPlayers(destination, volume);
         clearVolume(sourceLevel, volume);
@@ -145,7 +144,7 @@ final class OtherwhereHearthQaFixture {
                              BlockPos kettlePos, Direction facing) {
         OtherwhereHearthTransposition.Volume volume =
                 OtherwhereHearthTransposition.volumeFor(kettlePos);
-        loadChunks(sourceLevel, volume);
+        OtherwhereHearthTransposition.loadVolumeForInspection(sourceLevel, kettlePos);
         removeNonPlayers(sourceLevel, volume);
         clearVolume(sourceLevel, volume);
         buildShell(sourceLevel, kettlePos, false);
@@ -403,15 +402,6 @@ final class OtherwhereHearthQaFixture {
         for (BlockPos cursor : BlockPos.betweenClosed(volume.min(), volume.max())) {
             level.setBlock(cursor, Blocks.AIR.defaultBlockState(),
                     Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
-        }
-    }
-
-    private static void loadChunks(ServerLevel level,
-                                   OtherwhereHearthTransposition.Volume volume) {
-        for (int chunkX = volume.min().getX() >> 4; chunkX <= volume.max().getX() >> 4; chunkX++) {
-            for (int chunkZ = volume.min().getZ() >> 4; chunkZ <= volume.max().getZ() >> 4; chunkZ++) {
-                level.getChunk(chunkX, chunkZ, ChunkStatus.FULL, true);
-            }
         }
     }
 
